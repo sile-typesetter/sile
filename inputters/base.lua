@@ -33,28 +33,18 @@ end
 
 function inputter:requireClass (tree)
   local root = SILE.documentState.documentClass == nil
-  local document
   if root then
-    for _, leaf in ipairs(tree) do
-      if leaf.lno then
-        if document then
-          SU.error("Document has more than one parent node!")
-        end
-        if leaf.command == "sile" or leaf.command == "document" then
-          document = leaf
-        end
-      end
-    end
-    if not document then
+    if tree.command ~= "sile" and tree.command ~= "document" then
       SU.error("This isn't a SILE document!")
     end
-    self:classInit(document.options or {})
+    self:classInit(tree.options or {})
     self:preamble()
   end
 end
 
 function inputter:process (doc)
-  local tree = self:parse(doc)
+  -- Input parsers can already return multiple ASTs, but so far we only process one
+  local tree = self:parse(doc)[1]
   self:requireClass(tree)
   return SILE.process(tree)
 end

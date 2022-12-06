@@ -382,7 +382,6 @@ But be warned that since GitHub rebuilds containers from scratch on every such i
 Pulling the prebuilt Docker images is recommended instead.
 
 With these ideas in mind, other CI systems should be easy to support as well.
-\end{document}
 
 \section{Installing third-party packages}
 
@@ -412,3 +411,4 @@ To get your Lua version which is used for the execution of SILE:
 $ export LUA_VERSION=$(sile -e 'print(SILE.lua_version);os.exit()' 2> /dev/null)
 $ luarocks install --lua-version $LUA_VERSION ...
 \end{raw}
+\end{document}

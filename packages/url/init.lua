@@ -87,30 +87,30 @@ function package:registerCommands ()
         if string.find(preferBreakBefore, escapeRegExpMinimal(token.separator)) then
           -- Accepts breaking before, and at the extreme worst after.
           result[#result+1] = self.class.packages.inputfilter:createCommand(
-          content.pos, content.col, content.line,
+          content.pos, content.col, content.lno,
           "penalty", { penalty = options.primaryPenalty }
           )
           result[#result+1] = token.separator
           result[#result+1] = self.class.packages.inputfilter:createCommand(
-          content.pos, content.col, content.line,
+          content.pos, content.col, content.lno,
           "penalty", { penalty = options.worsePenalty }
           )
         elseif token.separator == alwaysBreakAfter then
           -- Accept breaking after (only).
           result[#result+1] = token.separator
           result[#result+1] = self.class.packages.inputfilter:createCommand(
-          content.pos, content.col, content.line,
+          content.pos, content.col, content.lno,
           "penalty", { penalty = options.primaryPenalty }
           )
         else
           -- Accept breaking after, but tolerate breaking before.
           result[#result+1] = self.class.packages.inputfilter:createCommand(
-          content.pos, content.col, content.line,
+          content.pos, content.col, content.lno,
           "penalty", { penalty = options.secondaryPenalty }
           )
           result[#result+1] = token.separator
           result[#result+1] = self.class.packages.inputfilter:createCommand(
-          content.pos, content.col, content.line,
+          content.pos, content.col, content.lno,
           "penalty", { penalty = options.primaryPenalty }
           )
         end
