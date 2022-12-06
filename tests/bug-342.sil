@@ -1,4 +1,5 @@
-\begin[papersize=a5,class=book]{document}% KNOWNBAD
+% KNOWNBAD https://github.com/sile-typesetter/sile/issues/342
+\begin[papersize=a5,class=book]{document}
 \use[module=packages.ifattop]
 \use[module=packages.lorem]
 \nofolios

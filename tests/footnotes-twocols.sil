@@ -1,4 +1,5 @@
-\begin[papersize=a5,class=testtwocol]{document}% KNOWNBAD
+% KNOWNBAD
+\begin[papersize=a5,class=testtwocol]{document}
 \use[module=packages.lorem]
 \set[parameter=document.baselineskip,value=15pt plus 2pt]
 \font[size=13pt]
