@@ -196,13 +196,31 @@ function inputter:rebuildParser ()
 end
 
 function inputter:parse (doc)
-  local tree = epnf.parsestring(self._parser, doc)[1]
-  if not tree then
+  local parsed = epnf.parsestring(self._parser, doc)[1]
+  if not parsed then
     return SU.error("Unable to parse input document to an AST tree")
   end
   resetCache()
-  local ast = massage_ast(tree, doc)
-  return ast
+  local top = massage_ast(parsed, doc)
+  local tree
+  for _, leaf in ipairs(top) do
+    -- Content without position tracking is likely comments or whitespace outside of a tag.
+    -- We're just fishing for one tag here.
+    if leaf.lno and leaf.command then
+      if tree then
+        SU.error("Document has more than one parent node that looks like a master document!")
+      end
+      tree = leaf
+    end
+  end
+  if not tree then
+    SU.error("This isn't a SILE document!")
+  end
+  local rootelement = tree.command
+  if rootelement ~= "sile" and rootelement ~= "document" then
+    tree = { tree, command = "document" }
+  end
+  return { tree }
 end
 
 return inputter

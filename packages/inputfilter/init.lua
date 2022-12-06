@@ -24,10 +24,10 @@ function package:transformContent (content, transformFunction, extraArgs)
   return newContent
 end
 
-function package.createCommand (_, pos, col, line, command, options, content)
+function package.createCommand (_, pos, col, lno, command, options, content)
   local result = { content }
   result.col = col
-  result.line = line
+  result.lno = lno
   result.pos = pos
   result.options = options
   result.command = command

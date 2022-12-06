@@ -54,7 +54,7 @@ function package:registerCommands ()
 
     local function insertChord()
       table.insert(result, self.class.packages.inputfilter:createCommand(
-      content.pos, content.col, content.line,
+      content.pos, content.col, content.lno,
       "ch", { name = chordName }, currentText
       ))
       chordName = nil

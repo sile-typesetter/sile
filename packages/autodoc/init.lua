@@ -140,7 +140,7 @@ function package:registerCommands ()
       else
         result[#result+1] = token.separator
         result[#result+1] = self.class.packages.inputfilter:createCommand(
-        content.pos, content.col, content.line,
+        content.pos, content.col, content.lno,
         "penalty", { penalty = 100 }
         )
       end

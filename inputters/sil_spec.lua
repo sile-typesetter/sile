@@ -9,13 +9,13 @@ describe("#SIL #inputter", function ()
   describe("should parse", function ()
 
     it("commands with content", function()
-      local t = inputter:parse([[\foo{bar}]])[1]
+      local t = inputter:parse([[\foo{bar}]])[1][1]
       assert.is.equal("foo", t.command)
       assert.is.equal("bar", t[1][1])
     end)
 
     it("commands without content", function()
-      local t = inputter:parse([[\foo{\foo bar}]])[1]
+      local t = inputter:parse([[\foo{\foo bar}]])[1][1]
       assert.is.equal("foo", t.command)
       assert.is.equal("foo", t[1][1].command)
       assert.is.equal(" bar", t[1][2])
@@ -23,14 +23,14 @@ describe("#SIL #inputter", function ()
     end)
 
     it("commands with arg", function()
-      local t = inputter:parse([[\foo[baz=qiz]{bar}]])[1]
+      local t = inputter:parse([[\foo[baz=qiz]{bar}]])[1][1]
       assert.is.equal("foo", t.command)
       assert.is.equal("qiz", t.options.baz)
       assert.is.equal("bar", t[1][1])
     end)
 
     it("commands with multiple args", function()
-      local t = inputter:parse([[\foo[baz=qiz,qiz=baz]{bar}]])[1]
+      local t = inputter:parse([[\foo[baz=qiz,qiz=baz]{bar}]])[1][1]
       assert.is.equal("foo", t.command)
       assert.is.equal("qiz", t.options.baz)
       assert.is.equal("baz", t.options.qiz)
@@ -38,14 +38,14 @@ describe("#SIL #inputter", function ()
     end)
 
     it("commands with quoted arg", function()
-      local t = inputter:parse([[\foo[baz="qiz qiz"]{bar}]])[1]
+      local t = inputter:parse([[\foo[baz="qiz qiz"]{bar}]])[1][1]
       assert.is.equal("foo", t.command)
       assert.is.equal("qiz qiz", t.options.baz)
       assert.is.equal("bar", t[1][1])
     end)
 
     it("commands with multiple quoted args", function()
-      local t = inputter:parse([[\foo[baz="qiz, qiz",qiz="baz, baz"]{bar}]])[1]
+      local t = inputter:parse([[\foo[baz="qiz, qiz",qiz="baz, baz"]{bar}]])[1][1]
       assert.is.equal("foo", t.command)
       assert.is.equal("qiz, qiz", t.options.baz)
       assert.is.equal("baz, baz", t.options.qiz)
@@ -53,7 +53,7 @@ describe("#SIL #inputter", function ()
     end)
 
     it("commands with quoted arg with escape", function()
-      local t = inputter:parse([[\foo[baz="qiz \"qiz\""]{bar}]])[1]
+      local t = inputter:parse([[\foo[baz="qiz \"qiz\""]{bar}]])[1][1]
       assert.is.equal("foo", t.command)
       assert.is.equal("qiz \"qiz\"", t.options.baz)
       assert.is.equal("bar", t[1][1])
