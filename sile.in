@@ -42,11 +42,8 @@ end
 local luapath = {}
 local extpath = {}
 for path in package.path:gmatch("[^;]+") do
-  -- We want to add `./?` back in an earlier slot but leave Nix Fake's "./shared"
-  if not path:match("^./%?") and path:len() >= 1 then
-    table.insert(extpath, tostring(path:gsub("?", "sile/?")))
-    table.insert(luapath, path)
-  end
+  table.insert(extpath, tostring(path:gsub("?", "sile/?")))
+  table.insert(luapath, path)
 end
 package.path = table.concat(luapath, ";")
 
