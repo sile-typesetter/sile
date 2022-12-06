@@ -91,7 +91,9 @@ SILE.init()
 
 if SILE.masterFilename then
 
-  extendPaths(SILE.masterDir)
+  if SILE.masterDir:len() >= 1 then
+    extendPaths(SILE.masterDir)
+  end
 
   if SU.debugging("profile") then
     ProFi:start()
