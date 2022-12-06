@@ -190,7 +190,14 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   if pathprefix then
     status, lib = pcall(require, pl.path.join(pathprefix, dependency))
   end
-  if not status then lib = require(dependency) end
+  if not status then
+    local prefixederror = lib
+    status, lib = pcall(require, dependency)
+    if not status then
+      SU.error(("Unable to find module '%s', path searches returned no matches.\n  %s")
+        :format(dependency, (pathprefix and prefixederror .. "\n  " or "") .. lib))
+    end
+  end
   local class = SILE.documentState.documentClass
   if not class and not deprecation_ack then
     SU.warn(string.format([[
