@@ -7,13 +7,19 @@ SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
 local executable = debug.getinfo(1, "S").source
 local luaversion = _VERSION:match("%d+%.%d+")
 
+local function prepend_and_dedup (segment, path)
+  local escaped = segment:gsub('[%-%.%+%[%]%(%)%$%^%%%?%*]','%%%1') -- copied from pl.utils.escape() which we can't load yet
+  local striped = path:gsub((";?%s"):format(escaped), "")
+  return ("%s;%s"):format(segment, striped)
+end
+
 local function prependPath (path)
-  package.path  = path .. "/?/init.lua;" .. package.path
-  package.path  = path .. "/?.lua;" .. package.path
+  package.path  = prepend_and_dedup(path .. "/?/init.lua", package.path)
+  package.path  = prepend_and_dedup(path .. "/?.lua", package.path)
 end
 
 local function prependCPath (path)
-  package.cpath = path .. "/?.@SHARED_LIB_EXT@;" .. package.cpath
+  package.cpath = prepend_and_dedup(path .. "/?.@SHARED_LIB_EXT@", package.cpath)
 end
 
 local function extendPaths (path, ours)
