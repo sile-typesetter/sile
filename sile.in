@@ -42,7 +42,7 @@ end
 local luapath = {}
 local extpath = {}
 for path in package.path:gmatch("[^;]+") do
-  table.insert(extpath, tostring(path:gsub("?", "sile/?")))
+  table.insert(extpath, tostring(path:gsub("%?", "sile/?")))
   table.insert(luapath, path)
 end
 package.path = table.concat(luapath, ";")
