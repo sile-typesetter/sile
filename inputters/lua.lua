@@ -32,7 +32,6 @@ function inputter:process (doc)
     SILE.process(tree)
   elseif type(tree) == "table" then
     if not tree.type then
-      tree = { tree }
       -- hoping tree is an AST
       self:requireClass(tree)
       return SILE.process(tree)

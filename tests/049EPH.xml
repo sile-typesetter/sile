@@ -1,4 +1,5 @@
-<sile papersize="152mm x 229mm" class="bible" twocolumns="true"> <!-- KNOWNBAD -->
+<!-- KNOWNBAD https://github.com/sile-typesetter/sile/issues/326#issuecomment-224873117 -->
+<sile papersize="152mm x 229mm" class="bible" twocolumns="true">
 <set parameter="linebreak.tolerance" value="5000"/>
 <set-counter id="footnote" display="alpha"/>
 <font language="en"/>

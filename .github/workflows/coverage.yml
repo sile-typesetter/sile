@@ -1,0 +1,77 @@
+name: Coverage
+
+on: [ push, pull_request ]
+
+# Coverage slows down tests *a lot*.
+# Also most of our regression tests use a dummy back end.
+# Here we use LuaJIT for speed and use the real backend.
+
+jobs:
+
+  coverage:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Cache test fonts
+        uses: actions/cache@v3
+        with:
+          path: |
+            .fonts
+            .sources
+          key: fonts-${{ hashFiles('Makefile-fonts') }}
+      - name: Cache lua_modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            lua_modules
+          key: luarocks-luajit-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
+      - name: Fetch tags
+        run: |
+          git fetch --prune --tags ||:
+      - name: Setup ‘lua’
+        uses: leafo/gh-actions-lua@v9
+        with:
+          luaVersion: luajit
+          luaCompileFlags: XCFLAGS=-fPIC
+      - name: Setup ‘luarocks’
+        uses: leafo/gh-actions-luarocks@v4
+      - name: Prep system Lua for use
+        run: |
+          luarocks install busted
+          luarocks install luacov-coveralls
+          function deepest () { find $1 -type d | awk 'length>m{m=length;r=$0}END{print r}'; }
+          cat << EOF >> $GITHUB_ENV
+          LD_LIBRARY_PATH=$PWD/.lua/lib:$LD_LIBRARY_PATH
+          LIBRARY_PATH=$PWD/.lua/lib:$LIBRARY_PATH
+          LD_RUN_PATH=$PWD/.lua/lib:$LD_RUN_PATH
+          PKG_CONFIG_PATH=$PWD/.lua/lib/pkgconfig:$PKG_CONFIG_PATH
+          LUA_INCLUDE=-I$(deepest $PWD/.lua/include)
+          MAKEFLAGS=-j$(nproc) -Otarget
+          EOF
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
+      - name: Configure
+        run: |
+          ./bootstrap.sh
+          ./configure \
+            --enable-developer LUACHECK=false \
+            --without-system-luarocks \
+            --with-luajit \
+            --without-manual
+      - name: Make
+        run: |
+          make
+      - name: Run all testing with coverage
+        run: |
+          make coverage
+      - name: Report test coverage
+        if: success()
+        continue-on-error: true
+        run: luacov-coveralls -e .luarocks -e lua_modules -e lua-libraries -e /home/runner
+        env:
+          COVERALLS_REPO_TOKEN: ${{ github.token }}

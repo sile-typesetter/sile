@@ -1,4 +1,5 @@
-\begin[papersize=a5]{document}% KNOWNBAD
+% KNOWNBAD
+\begin[papersize=a5]{document}
 \nofolios
 \use[module=packages.lorem]
 \use[module=packages.grid]

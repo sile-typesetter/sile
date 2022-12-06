@@ -1,4 +1,5 @@
-\begin[papersize=a6,direction=RTL]{document}% KNOWNBAD
+% KNOWNBAD https://github.com/sile-typesetter/sile/issues/192
+\begin[papersize=a6,direction=RTL]{document}
 \nofolios
 \font[family=Amiri Quran,size=20pt]
 \use[module=packages.linespacing]

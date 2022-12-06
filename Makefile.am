@@ -58,7 +58,7 @@ BUILT_SOURCES = .version core/version.lua Makefile-distfiles
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(BUILT_SOURCES) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS) .version-prev
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
-	build-aux/list-dist-files.sh > $@
+	$(SHELL) build-aux/list-dist-files.sh > $@
 
 _BRANCH_REF != $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:
 
@@ -127,7 +127,7 @@ DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
-BUSTEDFLAGS ?=
+BUSTEDFLAGS ?= $(and $(SILE_COVERAGE),-c)
 
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
 EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(TESTEXPECTS))
@@ -221,6 +221,7 @@ endif
 	$(LOCALTESTFONTS) $(BUSTED) --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" $(BUSTEDFLAGS) .
 
 coverage: export SILE_COVERAGE=1
+coverage: BUSTEDFLAGS = -c
 coverage: regression_previews busted
 
 HEADSHA ?= HEAD
@@ -253,7 +254,7 @@ tests/%.expected: tests/%.xml $$(patterndeps)
 tests/%.expected: tests/%.nil $$(patterndeps)
 	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
 
-regression_previews: $(TESTPDFS)
+regression_previews: $(TESTPREVIEWS)
 
 tests/%.actual: tests/%.sil $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)

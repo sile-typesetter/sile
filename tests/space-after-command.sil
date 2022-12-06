@@ -1,4 +1,5 @@
-\begin[papersize=a5]{document}% KNOWNBAD
+% KNOWNBAD https://github.com/sile-typesetter/sile/issues/105
+\begin[papersize=a5]{document}
 % Test leading comment and package lines
 \use[module=packages.color]
 
