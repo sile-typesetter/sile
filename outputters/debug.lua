@@ -34,19 +34,21 @@ function outputter:_ensureInit ()
     started = true -- keep this before self:_writeline or it will be a race condition!
     local fname = self:getOutputFilename("debug")
     outfile = fname == "-" and io.stdout or io.open(fname, "w+")
-    self:_writeline("Set paper size ", SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
+    if SILE.documentState.paperSize then
+      self:_writeline("Set paper size ", SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
+    end
     self:_writeline("Begin page")
   end
 end
 
 function outputter:_writeline (...)
   self:_ensureInit()
-	local args = table.pack(...)
-	for i = 1, #args do
-		outfile:write(args[i])
-		if i < #args then outfile:write("\t") end
-	end
-	outfile:write("\n")
+  local args = table.pack(...)
+  for i = 1, #args do
+    outfile:write(args[i])
+    if i < #args then outfile:write("\t") end
+  end
+  outfile:write("\n")
 end
 
 function outputter:newPage ()
