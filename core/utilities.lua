@@ -328,6 +328,11 @@ utilities.contentToString = function (content)
     if type(content[i]) == "table" and type(content[i][1]) == "string" then
       string = string .. content[i][1]
     elseif type(content[i]) == "string" then
+      -- Work around PEG parser returning env tags as content
+      -- TODO: refactor capture groups in PEG parser
+      if content.command == content[i] and content[i] == content[i+1] then
+        break
+      end
       string = string .. content[i]
     end
   end
