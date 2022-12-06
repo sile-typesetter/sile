@@ -3,7 +3,7 @@ set -e
 
 finder () {
     test -d "$1" || return 0
-    find "$@" -type f | sort -bdi | xargs printf ' %s'
+    @FIND@ "$@" -type f | sort -bdi | xargs printf ' %s'
 }
 
 printf '%s' "SILEDATA ="
