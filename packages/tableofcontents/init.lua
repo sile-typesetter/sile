@@ -97,6 +97,15 @@ function package:_init ()
   self:deprecatedExport("moveTocNodes", self.moveTocNodes)
 end
 
+function package.declareSettings (_)
+  SILE.settings:declare({
+    parameter = "tableofcontents.hfill-command",
+    type = "string",
+    default = "dotfill",
+    help = "The sile command used to fill the space between a TOC entry and the corresponding page number"
+  })
+end
+
 function package:registerCommands ()
 
   self:registerCommand("tableofcontents", function (options, _)
@@ -136,7 +145,7 @@ function package:registerCommands ()
           end
         end)
         SILE.process(content)
-        SILE.call("dotfill")
+        SILE.call(SILE.settings:get("tableofcontents.hfill-command"))
         SILE.typesetter:typeset(options.pageno)
       end)
       )
