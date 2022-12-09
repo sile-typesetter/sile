@@ -74,7 +74,7 @@ SILE.shapers = core_loader("shapers")
 SILE.outputters = core_loader("outputters")
 SILE.classes = core_loader("classes")
 SILE.packages = core_loader("packages")
--- SILE.typesetters = core_loader("typesetters")
+SILE.typesetters = core_loader("typesetters")
 
 -- Internal libraries that don't make assumptions on load, only use
 SILE.traceStack = require("core.tracestack")()
@@ -328,6 +328,20 @@ function SILE.processFile (filename, format, options)
   return ret
 end
 
+-- TODO: this probably needs deprecating, moved here just to get out of the way so
+-- typesetters classing works as expected
+SILE.typesetNaturally = function (frame, func)
+  local saveTypesetter = SILE.typesetter
+  if SILE.typesetter.frame then SILE.typesetter.frame:leave(SILE.typesetter) end
+  SILE.typesetter = SILE.typesetters.base(frame)
+  SILE.settings:temporarily(func)
+  SILE.typesetter:leaveHmode()
+  SILE.typesetter:chuck()
+  SILE.typesetter.frame:leave(SILE.typesetter)
+  SILE.typesetter = saveTypesetter
+  if SILE.typesetter.frame then SILE.typesetter.frame:enter(SILE.typesetter) end
+end
+
 -- Sort through possible places files could be
 function SILE.resolveFile (filename, pathprefix)
   local candidates = {}
@@ -420,7 +434,6 @@ end
 -- Internal libraries that run core SILE functions on load
 SILE.settings = require("core.settings")()
 SILE.pagebuilder = require("core.pagebuilder")()
-require("typesetters.base")
 require("core.hyphenator-liang")
 require("core.languages")
 require("core.packagemanager")

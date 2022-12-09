@@ -3,55 +3,6 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "grid"
 
--- TODO: consider registering as a setting instead of a frame property
-local gridSpacing
-
-local function makeUp (totals)
-  local toadd = (gridSpacing - SILE.measurement(totals.gridCursor)) % gridSpacing
-  totals.gridCursor = totals.gridCursor + toadd
-  SU.debug("typesetter", "Makeup height =", toadd)
-  return SILE.nodefactory.vglue(toadd)
-end
-
-local function leadingFor (typesetter, vbox, previous)
-  SU.debug("typesetter", "   Considering leading between two lines (grid mode):")
-  SU.debug("typesetter", "   1)", previous)
-  SU.debug("typesetter", "   2)", vbox)
-  if not previous then return SILE.nodefactory.vglue() end
-  SU.debug("typesetter", "   Depth of previous line was", previous.depth)
-  local totals = typesetter.frame.state.totals
-  local oldCursor = SILE.measurement(totals.gridCursor)
-  totals.gridCursor = oldCursor + vbox.height:absolute() + previous.depth
-  SU.debug("typesetter", "   Cursor change =", totals.gridCursor - oldCursor)
-  return makeUp(typesetter.frame.state.totals)
-end
-
-local function pushVglue (typesetter, spec)
-  -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
-  local node = SU.type(spec) == "vglue" and spec or SILE.nodefactory.vglue(spec)
-  node.height.stretch = SILE.measurement()
-  node.height.shrink = SILE.measurement()
-  local totals = typesetter.frame.state.totals
-  totals.gridCursor = totals.gridCursor + SILE.measurement(node.height):absolute()
-  typesetter:pushVertical(node)
-  typesetter:pushVertical(makeUp(typesetter.frame.state.totals))
-  return node
-end
-
-local function pushExplicitVglue (typesetter, spec)
-  -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
-  local node = SU.type(spec) == "vglue" and spec or SILE.nodefactory.vglue(spec)
-  node.explicit = true
-  node.discardable = false
-  node.height.stretch = SILE.measurement()
-  node.height.shrink = SILE.measurement()
-  local totals = typesetter.frame.state.totals
-  totals.gridCursor = totals.gridCursor + SILE.measurement(node.height):absolute()
-  typesetter:pushVertical(node)
-  typesetter:pushVertical(makeUp(typesetter.frame.state.totals))
-  return node
-end
-
 local function startGridInFrame (typesetter)
   if not SILE.typesetter.state.grid then return end -- Ensure the frame hook isn't effective when grid is off
   local queue = typesetter.state.outputQueue
@@ -69,16 +20,13 @@ local function startGridInFrame (typesetter)
   end
 end
 
-local function debugGrid ()
-  local frame = SILE.typesetter.frame
-  local gridCursor = gridSpacing
-  while SILE.measurement(gridCursor) < SILE.measurement(frame:height()) do
-    SILE.outputter:drawRule(frame:left(), frame:top() + gridCursor, frame:width(), 0.1)
-    gridCursor = gridCursor + gridSpacing
-  end
-end
+local basepagebuilder = require("core.pagebuilder")
+local gridPagebuilder = pl.class(basepagebuilder)
+gridPagebuilder._name = "grid"
 
-local gridPagebuilder = pl.class(require("core.pagebuilder"))
+function gridPagebuilder:_init()
+  basepagebuilder._init()
+end
 
 function gridPagebuilder.findBestBreak (_, options)
   local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")
@@ -140,30 +88,37 @@ end
 
 local oldPageBuilder, oldLeadingFor, oldPushVglue, oldPushExplicitVglue
 
-function package:_init ()
+function package:_init (options)
+  self.options = options or {}
+  self.options.spacing = SILE.measurement(self.options.spacing or "1bs")
   base._init(self)
-  gridSpacing = SILE.measurement()
 end
 
 function package:registerCommands ()
 
-  self:registerCommand("grid:debug", function (_, _)
+  self:registerCommand("grid:debug", function (options, _)
+    local spacing = SU.cast("measurement", options.spacing or self.options.spacing)
+    local debugGrid = function ()
+      local frame = SILE.typesetter.frame
+      local gridCursor = spacing
+      while gridCursor < frame:height() do
+        SILE.outputter:drawRule(frame:left(), frame:top() + gridCursor, frame:width(), 0.1)
+        gridCursor = gridCursor + spacing
+      end
+    end
     debugGrid()
     SILE.typesetter:registerNewFrameHook(debugGrid)
   end)
 
+  -- TODO: save original typsetter and pagebuilter class types, recast them
+  -- to the original types instead of assuming defaults when disabling grid
   self:registerCommand("grid", function (options, _)
+    local spacing = SU.cast("measurement", options.spacing or self.options.spacing)
     SILE.typesetter.state.grid = true
-    SU.required(options, "spacing", "grid package")
-    gridSpacing = SILE.parseComplexFrameDimension(options.spacing)
-    oldPageBuilder = SILE.pagebuilder
-    SILE.pagebuilder = gridPagebuilder()
-    oldLeadingFor = SILE.typesetter.leadingFor
-    SILE.typesetter.leadingFor = leadingFor
-    oldPushVglue = SILE.typesetter.pushVglue
-    SILE.typesetter.pushVglue = pushVglue
-    oldPushExplicitVglue = SILE.typesetter.pushExplicitVglue
-    SILE.typesetter.pushExplicitVglue = pushExplicitVglue
+    self.options.spacing = SILE.parseComplexFrameDimension(spacing)
+    gridPagebuilder:cast(SILE.pagebuilder)
+    SILE.typesetters.grid:cast(SILE.typesetter)
+    SILE.typesetter.options = { spacing = self.options.spacing }
     if SILE.typesetter.frame then
       startGridInFrame(SILE.typesetter)
     end
@@ -172,10 +127,8 @@ function package:registerCommands ()
 
   self:registerCommand("no-grid", function (_, _)
     SILE.typesetter.state.grid = false
-    SILE.typesetter.leadingFor = oldLeadingFor
-    SILE.typesetter.pushVglue = oldPushVglue
-    SILE.typesetter.pushExplicitVglue = oldPushExplicitVglue
-    SILE.pagebuilder = oldPageBuilder
+    SILE.typesetters.base:cast(SILE.typesetter)
+    basepagebuilder:cast(pagebuilder)
   end, "Stops grid typesetting.")
 
 end

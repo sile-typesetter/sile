@@ -84,7 +84,7 @@ SILE.nodefactory.insertionlist.frame = nil
 
 function SILE.nodefactory.insertionlist:_init (spec)
   SILE.nodefactory.vbox._init(self, spec)
-  self.typesetter = SILE.defaultTypesetter()
+  self.typesetter = SILE.typesetters.base()
 end
 
 function SILE.nodefactory.insertionlist:__tostring ()

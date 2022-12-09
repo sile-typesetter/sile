@@ -20,7 +20,7 @@ function class:_t_common ()
   self:loadPackage("hanmenkyoshi")
   self:registerPostinit(function (class_)
     class_:bidiDisableTypesetter(SILE.typesetter)
-    class_:bidiDisableTypesetter(SILE.defaultTypesetter)
+    class_:bidiDisableTypesetter(SILE.typesetters.base)
   end)
   self.defaultFrameset.content.tate = self.options.layout == "tate"
   self:declareHanmenFrame("content", self.defaultFrameset.content)

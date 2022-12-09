@@ -1,72 +1,13 @@
+local typesetter = pl.class()
+typesetter.type = "typesetter"
+typesetter._name = "base"
+
 -- This is the default typesetter. You are, of course, welcome to create your own.
 local awful_bad = 1073741823
 local inf_bad = 10000
 -- local eject_penalty = -inf_bad
 local supereject_penalty = 2 * -inf_bad
 -- local deplorable = 100000
-
-SILE.settings:declare({
-  parameter = "typesetter.widowpenalty",
-  type = "integer",
-  default = 3000,
-  help = "Penalty to be applied to widow lines (at the start of a paragraph)"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.parseppattern",
-  type = "string or integer",
-  default = "\r?\n[\r\n]+",
-  help = "Lua pattern used to separate paragraphs"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.obeyspaces",
-  type = "boolean or nil",
-  default = nil,
-  help = "Whether to ignore paragraph initial spaces"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.orphanpenalty",
-  type = "integer",
-  default = 3000,
-  help = "Penalty to be applied to orphan lines (at the end of a paragraph)"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.parfillskip",
-  type = "glue",
-  default = SILE.nodefactory.glue("0pt plus 10000pt"),
-  help = "Glue added at the end of a paragraph"
-})
-
-SILE.settings:declare({
-  parameter = "document.letterspaceglue",
-  type = "glue or nil",
-  default = nil,
-  help = "Glue added between tokens"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.underfulltolerance",
-  type = "length or nil",
-  default = SILE.length("1em"),
-  help = "Amount a page can be underfull without warning"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.overfulltolerance",
-  type = "length or nil",
-  default = SILE.length("5pt"),
-  help = "Amount a page can be overfull without warning"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.breakwidth",
-  type = "measurement or nil",
-  default = nil,
-  help = "Width to break lines at"
-})
 
 -- Local helper class to compare pairs of margins
 local _margins = pl.class({
@@ -83,14 +24,9 @@ local _margins = pl.class({
 
   })
 
-SILE.defaultTypesetter = pl.class()
-SILE.defaultTypesetter.hooks = {}
-
-SILE.defaultTypesetter.breadcrumbs = SU.breadcrumbs()
-
 local warned = false
 
-function SILE.defaultTypesetter:init (frame)
+function typesetter:init (frame)
   SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", warned and "" or [[
   The typesetter instance inheritance system for instances has been
   refactored using a different object model. Your instance was created
@@ -102,7 +38,74 @@ function SILE.defaultTypesetter:init (frame)
   self:_init(frame)
 end
 
-function SILE.defaultTypesetter:_init (frame)
+function typesetter:_init (frame)
+
+  SILE.settings:declare({
+    parameter = "typesetter.widowpenalty",
+    type = "integer",
+    default = 3000,
+    help = "Penalty to be applied to widow lines (at the start of a paragraph)"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.parseppattern",
+    type = "string or integer",
+    default = "\r?\n[\r\n]+",
+    help = "Lua pattern used to separate paragraphs"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.obeyspaces",
+    type = "boolean or nil",
+    default = nil,
+    help = "Whether to ignore paragraph initial spaces"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.orphanpenalty",
+    type = "integer",
+    default = 3000,
+    help = "Penalty to be applied to orphan lines (at the end of a paragraph)"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.parfillskip",
+    type = "glue",
+    default = SILE.nodefactory.glue("0pt plus 10000pt"),
+    help = "Glue added at the end of a paragraph"
+  })
+
+  SILE.settings:declare({
+    parameter = "document.letterspaceglue",
+    type = "glue or nil",
+    default = nil,
+    help = "Glue added between tokens"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.underfulltolerance",
+    type = "length or nil",
+    default = SILE.length("1em"),
+    help = "Amount a page can be underfull without warning"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.overfulltolerance",
+    type = "length or nil",
+    default = SILE.length("5pt"),
+    help = "Amount a page can be overfull without warning"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.breakwidth",
+    type = "measurement or nil",
+    default = nil,
+    help = "Width to break lines at"
+  })
+
+  self.hooks = {}
+  self.breadcrumbs = SU.breadcrumbs()
+
   self.frame = nil
   self.stateQueue = {}
   self:initFrame(frame)
@@ -112,7 +115,7 @@ function SILE.defaultTypesetter:_init (frame)
   return self
 end
 
-function SILE.defaultTypesetter:initState ()
+function typesetter:initState ()
   self.state = {
     nodes = {},
     outputQueue = {},
@@ -120,43 +123,43 @@ function SILE.defaultTypesetter:initState ()
   }
 end
 
-function SILE.defaultTypesetter:initFrame (frame)
+function typesetter:initFrame (frame)
   if frame then
     self.frame = frame
     self.frame:init(self)
   end
 end
 
-function SILE.defaultTypesetter.getMargins ()
+function typesetter.getMargins ()
   return _margins(SILE.settings:get("document.lskip"), SILE.settings:get("document.rskip"))
 end
 
-function SILE.defaultTypesetter.setMargins (_, margins)
+function typesetter.setMargins (_, margins)
   SILE.settings:set("document.lskip", margins.lskip)
   SILE.settings:set("document.rskip", margins.rskip)
 end
 
-function SILE.defaultTypesetter:pushState ()
+function typesetter:pushState ()
   self.stateQueue[#self.stateQueue+1] = self.state
   self:initState()
 end
 
-function SILE.defaultTypesetter:popState (ncount)
+function typesetter:popState (ncount)
   local offset = ncount and #self.stateQueue - ncount or nil
   self.state = table.remove(self.stateQueue, offset)
   if not self.state then SU.error("Typesetter state queue empty") end
 end
 
-function SILE.defaultTypesetter:isQueueEmpty ()
+function typesetter:isQueueEmpty ()
   if not self.state then return nil end
   return #self.state.nodes == 0 and #self.state.outputQueue == 0
 end
 
-function SILE.defaultTypesetter:vmode ()
+function typesetter:vmode ()
   return #self.state.nodes == 0
 end
 
-function SILE.defaultTypesetter:debugState ()
+function typesetter:debugState ()
   print("\n---\nI am in "..(self:vmode() and "vertical" or "horizontal").." mode")
   print("Writing into " .. tostring(self.frame))
   print("Recent contributions: ")
@@ -170,37 +173,37 @@ function SILE.defaultTypesetter:debugState ()
 end
 
 -- Boxy stuff
-function SILE.defaultTypesetter:pushHorizontal (node)
+function typesetter:pushHorizontal (node)
   self:initline()
   self.state.nodes[#self.state.nodes+1] = node
   return node
 end
 
-function SILE.defaultTypesetter:pushVertical (vbox)
+function typesetter:pushVertical (vbox)
   self.state.outputQueue[#self.state.outputQueue+1] = vbox
   return vbox
 end
 
-function SILE.defaultTypesetter:pushHbox (spec)
+function typesetter:pushHbox (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
   local ntype = SU.type(spec)
   local node = (ntype == "hbox" or ntype == "zerohbox") and spec or SILE.nodefactory.hbox(spec)
   return self:pushHorizontal(node)
 end
 
-function SILE.defaultTypesetter:pushUnshaped (spec)
+function typesetter:pushUnshaped (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "unshaped" and spec or SILE.nodefactory.unshaped(spec)
   return self:pushHorizontal(node)
 end
 
-function SILE.defaultTypesetter:pushGlue (spec)
+function typesetter:pushGlue (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "glue" and spec or SILE.nodefactory.glue(spec)
   return self:pushHorizontal(node)
 end
 
-function SILE.defaultTypesetter:pushExplicitGlue (spec)
+function typesetter:pushExplicitGlue (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "glue" and spec or SILE.nodefactory.glue(spec)
   node.explicit = true
@@ -208,30 +211,30 @@ function SILE.defaultTypesetter:pushExplicitGlue (spec)
   return self:pushHorizontal(node)
 end
 
-function SILE.defaultTypesetter:pushPenalty (spec)
+function typesetter:pushPenalty (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "penalty" and spec or SILE.nodefactory.penalty(spec)
   return self:pushHorizontal(node)
 end
 
-function SILE.defaultTypesetter:pushMigratingMaterial (material)
+function typesetter:pushMigratingMaterial (material)
   local node = SILE.nodefactory.migrating({ material = material })
   return self:pushHorizontal(node)
 end
 
-function SILE.defaultTypesetter:pushVbox (spec)
+function typesetter:pushVbox (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "vbox" and spec or SILE.nodefactory.vbox(spec)
   return self:pushVertical(node)
 end
 
-function SILE.defaultTypesetter:pushVglue (spec)
+function typesetter:pushVglue (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "vglue" and spec or SILE.nodefactory.vglue(spec)
   return self:pushVertical(node)
 end
 
-function SILE.defaultTypesetter:pushExplicitVglue (spec)
+function typesetter:pushExplicitVglue (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "vglue" and spec or SILE.nodefactory.vglue(spec)
   node.explicit = true
@@ -239,14 +242,14 @@ function SILE.defaultTypesetter:pushExplicitVglue (spec)
   return self:pushVertical(node)
 end
 
-function SILE.defaultTypesetter:pushVpenalty (spec)
+function typesetter:pushVpenalty (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "penalty" and spec or SILE.nodefactory.penalty(spec)
   return self:pushVertical(node)
 end
 
 -- Actual typesetting functions
-function SILE.defaultTypesetter:typeset (text)
+function typesetter:typeset (text)
   text = tostring(text)
   if text:match("^%\r?\n$") then return end
   local pId = SILE.traceStack:pushText(text)
@@ -260,20 +263,20 @@ function SILE.defaultTypesetter:typeset (text)
   SILE.traceStack:pop(pId)
 end
 
-function SILE.defaultTypesetter:initline ()
+function typesetter:initline ()
   if (#self.state.nodes == 0) then
     self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zerohbox()
     SILE.documentState.documentClass.newPar(self)
   end
 end
 
-function SILE.defaultTypesetter:endline ()
+function typesetter:endline ()
   self:leaveHmode()
   SILE.documentState.documentClass.endPar(self)
 end
 
 -- Takes string, writes onto self.state.nodes
-function SILE.defaultTypesetter:setpar (text)
+function typesetter:setpar (text)
   text = text:gsub("\r?\n", " "):gsub("\t", " ")
   if (#self.state.nodes == 0) then
     if not SILE.settings:get("typesetter.obeyspaces") then
@@ -286,13 +289,13 @@ function SILE.defaultTypesetter:setpar (text)
   end
 end
 
-function SILE.defaultTypesetter:breakIntoLines (nodelist, breakWidth)
+function typesetter:breakIntoLines (nodelist, breakWidth)
   self:shapeAllNodes(nodelist)
   local breakpoints = SILE.linebreak:doBreak(nodelist, breakWidth)
   return self:breakpointsToLines(breakpoints)
 end
 
-function SILE.defaultTypesetter.shapeAllNodes (_, nodelist)
+function typesetter.shapeAllNodes (_, nodelist)
   local newNl = {}
   for i = 1, #nodelist do
     if nodelist[i].is_unshaped then
@@ -309,7 +312,7 @@ end
 
 -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
 -- Turns a node list into a list of vboxes
-function SILE.defaultTypesetter:boxUpNodes ()
+function typesetter:boxUpNodes ()
   local nodelist = self.state.nodes
   if #nodelist == 0 then return {} end
   for j = #nodelist, 1, -1 do
@@ -366,20 +369,20 @@ function SILE.defaultTypesetter:boxUpNodes ()
   return vboxes
 end
 
-function SILE.defaultTypesetter.pageTarget (_)
+function typesetter.pageTarget (_)
   SU.deprecated("SILE.typesetter:pageTarget", "SILE.typesetter:getTargetLength", "0.13.0", "0.14.0")
 end
 
-function SILE.defaultTypesetter:getTargetLength ()
+function typesetter:getTargetLength ()
   return self.frame:getTargetLength()
 end
 
-function SILE.defaultTypesetter:registerHook (category, func)
+function typesetter:registerHook (category, func)
   if not self.hooks[category] then self.hooks[category] = {} end
   table.insert(self.hooks[category], func)
 end
 
-function SILE.defaultTypesetter:runHooks (category, data)
+function typesetter:runHooks (category, data)
   if not self.hooks[category] then return data end
   for _, func in ipairs(self.hooks[category]) do
     data = func(self, data)
@@ -387,19 +390,19 @@ function SILE.defaultTypesetter:runHooks (category, data)
   return data
 end
 
-function SILE.defaultTypesetter:registerFrameBreakHook (func)
+function typesetter:registerFrameBreakHook (func)
   self:registerHook("framebreak", func)
 end
 
-function SILE.defaultTypesetter:registerNewFrameHook (func)
+function typesetter:registerNewFrameHook (func)
   self:registerHook("newframe", func)
 end
 
-function SILE.defaultTypesetter:registerPageEndHook (func)
+function typesetter:registerPageEndHook (func)
   self:registerHook("pageend", func)
 end
 
-function SILE.defaultTypesetter:buildPage ()
+function typesetter:buildPage ()
   local pageNodeList
   local res
   if self:isQueueEmpty() then return false end
@@ -422,7 +425,7 @@ function SILE.defaultTypesetter:buildPage ()
   return true
 end
 
-function SILE.defaultTypesetter.setVerticalGlue (_, pageNodeList, target)
+function typesetter.setVerticalGlue (_, pageNodeList, target)
   local glues = {}
   local gTotal = SILE.length()
   local totalHeight = SILE.length()
@@ -468,7 +471,7 @@ function SILE.defaultTypesetter.setVerticalGlue (_, pageNodeList, target)
   SU.debug("pagebuilder", "Glues for this page adjusted by", adjustment, "drawn from", gTotal)
 end
 
-function SILE.defaultTypesetter:initNextFrame ()
+function typesetter:initNextFrame ()
   local oldframe = self.frame
   self.frame:leave(self)
   if #self.state.outputQueue == 0 then
@@ -509,7 +512,7 @@ function SILE.defaultTypesetter:initNextFrame ()
 
 end
 
-function SILE.defaultTypesetter:pushBack ()
+function typesetter:pushBack ()
   SU.debug("typesetter", "Pushing back", #self.state.outputQueue, "nodes")
   local oldqueue = self.state.outputQueue
   self.state.outputQueue = {}
@@ -573,7 +576,7 @@ function SILE.defaultTypesetter:pushBack ()
   end
 end
 
-function SILE.defaultTypesetter:outputLinesToPage (lines)
+function typesetter:outputLinesToPage (lines)
   SU.debug("pagebuilder", "OUTPUTTING frame", self.frame.id)
   for _, line in ipairs(lines) do
     -- Annoyingly, explicit glue *should* disappear at the top of a page.
@@ -587,7 +590,7 @@ function SILE.defaultTypesetter:outputLinesToPage (lines)
   end
 end
 
-function SILE.defaultTypesetter:leaveHmode (independent)
+function typesetter:leaveHmode (independent)
   SU.debug("typesetter", "Leaving hmode")
   local margins = self:getMargins()
   local vboxlist = self:boxUpNodes()
@@ -603,11 +606,11 @@ function SILE.defaultTypesetter:leaveHmode (independent)
   end
 end
 
-function SILE.defaultTypesetter:inhibitLeading ()
+function typesetter:inhibitLeading ()
   self.state.previousVbox = nil
 end
 
-function SILE.defaultTypesetter.leadingFor (_, vbox, previous)
+function typesetter.leadingFor (_, vbox, previous)
   -- Insert leading
   SU.debug("typesetter", "   Considering leading between two lines:")
   SU.debug("typesetter", "   1)", previous)
@@ -628,7 +631,7 @@ function SILE.defaultTypesetter.leadingFor (_, vbox, previous)
   end
 end
 
-function SILE.defaultTypesetter:addrlskip (slice, margins, hangLeft, hangRight)
+function typesetter:addrlskip (slice, margins, hangLeft, hangRight)
   local LTR = self.frame:writingDirection() == "LTR"
   local rskip = margins[LTR and "rskip" or "lskip"]
   if not rskip then rskip = SILE.nodefactory.glue(0) end
@@ -650,7 +653,7 @@ function SILE.defaultTypesetter:addrlskip (slice, margins, hangLeft, hangRight)
   table.insert(slice, 1, SILE.nodefactory.zerohbox())
 end
 
-function SILE.defaultTypesetter:breakpointsToLines (breakpoints)
+function typesetter:breakpointsToLines (breakpoints)
   local linestart = 0
   local lines = {}
   local nodes = self.state.nodes
@@ -687,7 +690,7 @@ function SILE.defaultTypesetter:breakpointsToLines (breakpoints)
   return lines
 end
 
-function SILE.defaultTypesetter.computeLineRatio (_, breakwidth, slice)
+function typesetter.computeLineRatio (_, breakwidth, slice)
   -- This somewhat wrong, see #1362.
   -- This is a very partial workaround, at least made consistent with the
   -- nnode outputYourself routine expectation (which is somewhat wrong too)
@@ -753,20 +756,10 @@ function SILE.defaultTypesetter.computeLineRatio (_, breakwidth, slice)
   return ratio, naturalTotals
 end
 
-function SILE.defaultTypesetter:chuck () -- emergency shipout everything
+function typesetter:chuck () -- emergency shipout everything
   self:leaveHmode(true)
   self:outputLinesToPage(self.state.outputQueue)
   self.state.outputQueue = {}
 end
 
-SILE.typesetNaturally = function (frame, func)
-  local saveTypesetter = SILE.typesetter
-  if SILE.typesetter.frame then SILE.typesetter.frame:leave(SILE.typesetter) end
-  SILE.typesetter = SILE.defaultTypesetter(frame)
-  SILE.settings:temporarily(func)
-  SILE.typesetter:leaveHmode()
-  SILE.typesetter:chuck()
-  SILE.typesetter.frame:leave(SILE.typesetter)
-  SILE.typesetter = saveTypesetter
-  if SILE.typesetter.frame then SILE.typesetter.frame:enter(SILE.typesetter) end
-end
+return typesetter

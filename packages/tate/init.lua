@@ -78,7 +78,7 @@ function package:registerCommands ()
     local prevDirection = oldT.frame.direction
     self:loadPackage("rotate")
     SILE.settings:temporarily(function()
-      local latinTypesetter = pl.class(SILE.defaultTypesetter)
+      local latinTypesetter = pl.class(SILE.typesetters.base)
       local dummyFrame = pl.class(SILE.framePrototype)
       dummyFrame.init = function (f)
         f.state = {}

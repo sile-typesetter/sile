@@ -1,5 +1,7 @@
 return pl.class({
 
+    _name = "base",
+
     _init = function (self)
       self.awful_bad = 1073741823
       self.inf_bad = 10000
