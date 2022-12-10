@@ -46,6 +46,7 @@ rules:
     - nodes
     - outputters
     - packages
+    - pagebuilders
     - pdf
     - readme
     - release

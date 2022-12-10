@@ -20,12 +20,11 @@ local function startGridInFrame (typesetter)
   end
 end
 
-local basepagebuilder = require("core.pagebuilder")
-local gridPagebuilder = pl.class(basepagebuilder)
+local gridPagebuilder = pl.class(SILE.pagebuilders.base)
 gridPagebuilder._name = "grid"
 
 function gridPagebuilder:_init()
-  basepagebuilder._init()
+  SILE.pagebuilders.base._init()
 end
 
 function gridPagebuilder.findBestBreak (_, options)
@@ -128,7 +127,7 @@ function package:registerCommands ()
   self:registerCommand("no-grid", function (_, _)
     SILE.typesetter.state.grid = false
     SILE.typesetters.base:cast(SILE.typesetter)
-    basepagebuilder:cast(pagebuilder)
+    SILE.pagebuilders.base:cast(pagebuilder)
   end, "Stops grid typesetting.")
 
 end
