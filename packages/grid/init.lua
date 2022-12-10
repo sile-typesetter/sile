@@ -11,7 +11,7 @@ local function startGridInFrame (typesetter)
     typesetter.state.previousVbox = typesetter:pushVbox()
     return
   end
-  while queue[1] and queue[1].discardable do
+  while queue[1] and (queue[1].discardable or queue[1].gridleading) do
     table.remove(queue, 1)
   end
   if queue[1] then

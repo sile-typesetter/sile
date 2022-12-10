@@ -7,7 +7,7 @@ local function makeUp (spacing, totals)
   local toadd = (spacing - SILE.measurement(totals.gridCursor)) % spacing
   totals.gridCursor = totals.gridCursor + toadd
   SU.debug("typesetter", "Makeup height =", toadd)
-  return SILE.nodefactory.vglue(toadd)
+  return SILE.nodefactory.vglue({ discardable = false, gridleading = true, height = toadd })
 end
 
 function typesetter:_init(frame)
