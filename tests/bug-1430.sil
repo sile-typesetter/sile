@@ -1,0 +1,18 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\use[module=packages.grid,spacing=50pt]
+\font[size=25pt]
+\grid
+\grid:debug
+Some ascenders or capitals here...
+
+\skip[height=200pt]
+
+Overflow \font[size=0.5em]{with no ascenders or capitals via: a oner o oo ar az}
+
+\vfill
+\break
+
+none ov em
+\end{document}
