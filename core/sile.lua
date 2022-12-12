@@ -321,10 +321,12 @@ function SILE.processFile (filename, format, options)
     end
     doc = file:read("*a")
   end
+  local cpf = SILE.currentlyProcessingFile
   SILE.currentlyProcessingFile = filename
   local pId = SILE.traceStack:pushDocument(filename, doc)
   local ret = SILE.processString(doc, format, filename, options)
   SILE.traceStack:pop(pId)
+  SILE.currentlyProcessingFile = cpf
   return ret
 end
 
