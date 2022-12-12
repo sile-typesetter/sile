@@ -69,6 +69,7 @@ end
 
 package.documentation = [[
 \begin{document}
+\use[module=packages.grid]
 \grid[spacing=15pt]
 In normal typesetting, SILE determines the spacing between lines of type according to the following two rules:
 
