@@ -53,7 +53,7 @@ rules:
     - settings
     - shapers
     - tooling
-    - typesetter
+    - typesetters
     - utilities
 help: |
   **Possible types**:
