@@ -127,9 +127,11 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     AX_LUA_LIBS
 
     AM_COND_IF([SYSTEM_LUAROCKS], [
-        AS_IF([test "$LUA_SHORT_VERSION" -lt 52],
-            AX_LUA_MODULE([bit32], [bit32])
-        )
+        AS_IF([test "$LUA_SHORT_VERSION" -lt 52], [
+            AM_COND_IF([LUAJIT], [], [
+                AX_LUA_MODULE([bit32], [bit32])
+            ])
+        ])
         AX_LUA_MODULE([cassowary], [cassowary])
         AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
             AX_LUA_MODULE([compat53], [compat53])
