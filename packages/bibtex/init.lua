@@ -90,7 +90,7 @@ function package:registerCommands ()
   end)
 
   self:registerCommand("cite", function (options, content)
-    if not options.key then options.key = content[1] end
+    if not options.key then options.key = SU.contentToString(content) end
     local style = SILE.settings:get("bibtex.style")
     local bibstyle = require("packages.bibtex.styles." .. style)
     local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
