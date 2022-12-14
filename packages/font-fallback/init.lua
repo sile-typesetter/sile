@@ -3,7 +3,7 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "font-fallback"
 
-local lastshaper
+local lastShaperType
 
 local fallbackQueue = pl.class({
 
@@ -181,10 +181,11 @@ function package:registerCommands ()
 
   self:registerCommand("font:clear-fallbacks", function ()
     activeFallbacks = {}
-    if SILE.shaper._name == "harfbuzzWithFallback" and lastshaper then
+    if SILE.shaper._name == "harfbuzzWithFallback" and lastShaperType then
       SU.debug("font-fallback", "Clearing fallbacks, switching from fallback enabled back to previous shaper")
       SILE.typesetter:leaveHmode(true)
-      SILE.shaper, lastshaper = lastshaper, nil
+      SILE.shapers[lastShaperType]:cast(SILE.shaper)
+      lastShaperType = nil
     end
   end)
 
@@ -192,17 +193,19 @@ function package:registerCommands ()
     if SILE.shaper._name ~= "harfbuzzWithFallback" then
       SU.debug("font-fallback", "Switching to fallback enabaled shaper")
       SILE.typesetter:leaveHmode(true)
-      lastshaper, SILE.shaper = SILE.shaper, SILE.shapers.harfbuzzWithFallback()
+      lastShaperType = SILE.shaper._name
+      SILE.shapers.harfbuzzWithFallback:cast(SILE.shaper)
     end
     table.insert(activeFallbacks, options)
   end)
 
   self:registerCommand("font:remove-fallback", function ()
     table.remove(activeFallbacks)
-    if #activeFallbacks == 0 and SILE.shaper._name == "harfbuzzWithFallback" and lastshaper then
+    if #activeFallbacks == 0 and SILE.shaper._name == "harfbuzzWithFallback" and lastShaperType then
       SU.debug("font-fallback", "Fallback list empty, switching from fallback enabled back to previous shaper")
       SILE.typesetter:leaveHmode(true)
-      SILE.shaper, lastshaper = lastshaper, nil
+      SILE.shapers[lastShaperType]:cast(SILE.shaper)
+      lastShaperType = nil
     end
   end, "Pop last added fallback from fallback stack")
 
