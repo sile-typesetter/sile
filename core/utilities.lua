@@ -562,7 +562,8 @@ utilities.breadcrumbs = function ()
   end
 
   function breadcrumbs:parent (count)
-    return self[#self-(count or 1)]
+    -- Note LuaJIT does not support __len, so this has to work even when that metamethod doesn't fire...
+    return self[#SILE.traceStack-(count or 1)]
   end
 
   function breadcrumbs:contains (needle)
