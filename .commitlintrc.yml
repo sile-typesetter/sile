@@ -46,13 +46,14 @@ rules:
     - nodes
     - outputters
     - packages
+    - pagebuilders
     - pdf
     - readme
     - release
     - settings
     - shapers
     - tooling
-    - typesetter
+    - typesetters
     - utilities
 help: |
   **Possible types**:

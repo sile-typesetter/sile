@@ -16,7 +16,7 @@ local allTypesetters = function (callback)
   SILE.typesetter = oldtypesetter
 end
 
-local nulTypesetter = pl.class(SILE.defaultTypesetter) -- we ignore this
+local nulTypesetter = pl.class(SILE.typesetters.base) -- we ignore this
 nulTypesetter.outputLinesToPage = function () end
 
 local parallelPagebreak = function ()
@@ -30,7 +30,7 @@ local parallelPagebreak = function ()
       if #typesetter.state.outputQueue > 0 and calculations[frame].mark == 0 then
         -- More than one page worth of stuff here.
         -- Just ship out one page and hope for the best.
-        SILE.defaultTypesetter.buildPage(typesetter)
+        SILE.typesetters.base.buildPage(typesetter)
       else
         for l = 1, calculations[frame].mark do
           thispage[l] = table.remove(typesetter.state.outputQueue, 1)
@@ -64,7 +64,7 @@ function package:_init (options)
   base._init(self, options)
   SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
   for frame, typesetter in pairs(options.frames) do
-    typesetterPool[frame] = SILE.defaultTypesetter(SILE.getFrame(typesetter))
+    typesetterPool[frame] = SILE.typesetters.base(SILE.getFrame(typesetter))
     typesetterPool[frame].id = typesetter
     typesetterPool[frame].buildPage = function ()
       -- No thank you, I will do that.

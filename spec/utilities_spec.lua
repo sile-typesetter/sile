@@ -16,7 +16,7 @@ describe("SILE.utilities", function()
   describe("formatNumber", function ()
 
     SILE.documentState = { documentClass = { state = { } } }
-    SILE.typesetter = SILE.defaultTypesetter(SILE.newFrame({ id = "dummy" }))
+    SILE.typesetter = SILE.typesetters.base(SILE.newFrame({ id = "dummy" }))
 
     describe ("Esperanto", function ()
       SILE.call("language", { main = "eo" }) -- Really load AND activate the language
@@ -160,7 +160,7 @@ describe("SILE.utilities", function()
   describe("collatedSort", function ()
 
     SILE.documentState = { documentClass = { state = { } } }
-    SILE.typesetter = SILE.defaultTypesetter(SILE.newFrame({ id = "dummy" }))
+    SILE.typesetter = SILE.typesetters.base(SILE.newFrame({ id = "dummy" }))
 
     describe ("French", function ()
       SILE.call("language", { main = "fr" }) -- Really load AND activate the language

@@ -78,7 +78,7 @@ function package:_init (class)
     if not unbalanced_buildPage then
       unbalanced_buildPage = SILE.typesetter.buildPage
       SILE.typesetter.buildPage = buildPage
-      SILE.defaultTypesetter.buildPage = buildPage
+      SILE.typesetters.base.buildPage = buildPage
     end
   end)
 end

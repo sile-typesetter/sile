@@ -6,30 +6,16 @@ package._name = "tate"
 SILE.tateFramePrototype = pl.class(SILE.framePrototype)
 SILE.tateFramePrototype.direction = "TTB-RTL"
 
+
 SILE.tateFramePrototype.enterHooks = {
     function (_, typesetter)
-      typesetter.old_leadingFor = typesetter.leadingFor
-      typesetter.old_breakIntoLines = typesetter.breakIntoLines
-      typesetter.leadingFor = function(_, v)
-        v.height = SILE.length("1zw"):absolute()
-        local bls = SILE.settings:get("document.baselineskip")
-        local d = bls.height:absolute() - v.height
-        local len = SILE.length(d.length, bls.height.stretch, bls.height.shrink)
-        return SILE.nodefactory.vglue({height = len})
-      end
-      -- Hackery alert, this should be implemented as an actual typesetter module
-      -- not a shoe-horned package module, but to keep the PR scope sane I'm
-      -- putting off that refactoring since the typesetter module itself needs
-      -- scope cleanup.
-      SILE.require("packages.break-firstfit", nil, true)
-      typesetter.breakIntoLines = typesetter._breakIntoLines_firstfit
+      SILE.typesetters.tate:cast(typesetter)
     end
   }
 
 SILE.tateFramePrototype.leaveHooks = {
     function (_, typesetter)
-      typesetter.leadingFor = typesetter.old_leadingFor
-      typesetter.breakIntoLines = typesetter.old_breakIntoLines
+      SILE.typesetters.base:cast(typesetter)
     end
   }
 
@@ -78,7 +64,7 @@ function package:registerCommands ()
     local prevDirection = oldT.frame.direction
     self:loadPackage("rotate")
     SILE.settings:temporarily(function()
-      local latinTypesetter = pl.class(SILE.defaultTypesetter)
+      local latinTypesetter = pl.class(SILE.typesetters.base)
       local dummyFrame = pl.class(SILE.framePrototype)
       dummyFrame.init = function (f)
         f.state = {}

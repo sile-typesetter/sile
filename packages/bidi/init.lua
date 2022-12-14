@@ -256,7 +256,7 @@ function package:_init ()
   if SILE.typesetter then
     self:bidiEnableTypesetter(SILE.typesetter)
   end
-  self:bidiEnableTypesetter(SILE.defaultTypesetter)
+  self:bidiEnableTypesetter(SILE.typesetters.base)
 end
 
 function package:registerCommands ()

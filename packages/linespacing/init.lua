@@ -47,7 +47,7 @@ local linespacingLeading = function (_, vbox, previous)
   end
 
   if method == "tex" then
-    return SILE.defaultTypesetter:leadingFor(vbox, previous)
+    return SILE.typesetters.base:leadingFor(vbox, previous)
   end
 
   if method == "fit-glyph" then
@@ -148,7 +148,7 @@ function package:registerCommands ()
   end)
 
   self:registerCommand("linespacing-off", function ()
-    SILE.typesetter.leadingFor = SILE.defaultTypesetter.leadingFor
+    SILE.typesetter.leadingFor = SILE.typesetters.base.leadingFor
   end)
 
 end
