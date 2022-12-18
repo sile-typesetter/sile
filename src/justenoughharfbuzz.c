@@ -152,8 +152,6 @@ int shape (lua_State *L) {
     if (strlen(shaper_list_string) > 0) {
       shaper_list = scan_shaper_list(shaper_list_string);
     }
-    hb_segment_properties_t segment_props;
-    hb_shape_plan_t *shape_plan;
 
     hb_direction_t direction;
     hb_feature_t* features;
@@ -198,9 +196,7 @@ int shape (lua_State *L) {
     hb_buffer_set_language(buf, hb_language_from_string(lang,strlen(lang)));
 
     hb_buffer_guess_segment_properties(buf);
-    hb_buffer_get_segment_properties(buf, &segment_props);
-    shape_plan = hb_shape_plan_create_cached(hbFace, &segment_props, features, nFeatures, shaper_list);
-    int res = hb_shape_plan_execute(shape_plan, hbFont, buf, features, nFeatures);
+    int res = hb_shape_full (hbFont, buf, features, nFeatures, shaper_list);
 
     if (direction == HB_DIRECTION_RTL) {
       hb_buffer_reverse(buf); /* URGH */
@@ -282,7 +278,6 @@ int shape (lua_State *L) {
     hb_font_destroy(hbFont);
     hb_face_destroy(hbFace);
     hb_blob_destroy(blob);
-    hb_shape_plan_destroy(shape_plan);
 
     free(features);
     return glyph_count;
