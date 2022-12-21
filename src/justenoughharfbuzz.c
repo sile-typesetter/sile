@@ -98,6 +98,34 @@ static hb_feature_t* scan_feature_string(const char* cp1, int* ret) {
   return features;
 }
 
+static hb_variation_t* scan_variation_string(const char* cp1, unsigned int* ret) {
+  hb_variation_t* variations = NULL;
+  hb_variation_t variation;
+  unsigned int nVariations = 0;
+  const char* cp2;
+  while (*cp1) {
+    if ((*cp1 == ':') || (*cp1 == ';') || (*cp1 == ','))
+      ++cp1;
+    while ((*cp1 == ' ') || (*cp1 == '\t')) /* skip leading whitespace */
+      ++cp1;
+    if (*cp1 == 0)  /* break if end of string */
+      break;
+
+    cp2 = cp1;
+    while (*cp2 && (*cp2 != ':') && (*cp2 != ';') && (*cp2 != ','))
+      ++cp2;
+
+    if (hb_variation_from_string(cp1, cp2 - cp1, &variation)) {
+      variations = realloc(variations, (nVariations + 1) * sizeof(hb_variation_t));
+      variations[nVariations++] = variation;
+    }
+
+    cp1 = cp2;
+  }
+  *ret = nVariations;
+  return variations;
+}
+
 static char** scan_shaper_list(char* cp1) {
   char** res = NULL;
   char* cp2;
@@ -175,6 +203,16 @@ int shape (lua_State *L) {
     hb_font_set_variations(hbFont, &opsz, 1);
 
     hb_ot_font_set_funcs(hbFont);
+
+    const char * variationstring = luaL_checkstring(L, 10);
+    if (hb_ot_var_has_data(hbFace) && variationstring) {
+      unsigned int nVariations = 0;
+      hb_variation_t* variations = scan_variation_string(variationstring, &nVariations);
+      if (variations) {
+        hb_font_set_variations(hbFont, variations, nVariations);
+        free(variations);
+      }
+    }
 
     buf = hb_buffer_create();
     hb_buffer_add_utf8(buf, text, strlen(text), 0, strlen(text));

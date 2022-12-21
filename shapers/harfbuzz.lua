@@ -50,7 +50,8 @@ function shaper:shapeToken (text, options)
       options.language,
       ("%g"):format(SILE.measurement(options.size):tonumber()),
       options.features,
-      SILE.settings:get("harfbuzz.subshapers") or ""
+      SILE.settings:get("harfbuzz.subshapers") or "",
+      face.variations
     ) }
   for i = 1, #items do
     local j = (i == #items) and #text or items[i+1].index
@@ -75,6 +76,7 @@ function shaper.getFace (opts)
   end
   local fh, err = io.open(face.filename, "rb")
   if err then SU.error("Can't open font file '"..face.filename.."': "..err) end
+  face.variations = opts.variations or ""
   face.data = fh:read("*all")
   return face
 end

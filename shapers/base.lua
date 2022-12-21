@@ -1,7 +1,7 @@
 -- local smallTokenSize = 20 -- Small words will be cached
 -- local shapeCache = {}
 -- local _key = function (options)
---   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.direction;options.filename }, ";")
+--   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.variations;options.direction;options.filename }, ";")
 -- end
 
 SILE.settings:declare({ parameter = "shaper.variablespaces", type = "boolean", default = true })
