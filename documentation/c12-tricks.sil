@@ -530,7 +530,7 @@ If you call SILE with no input file name, it enters the REPL:
 62.3622054
 \end{verbatim}
 
-At any point during the evaluation of Lua commands, you can call \code{SILE.repl()} to enter the REPL and poke around;
+At any point during the evaluation of Lua commands, you can call \code{SILE.repl:enter()} to enter the REPL and poke around;
 hitting Ctrl-D will end the REPL and return to processing the document.
 
 Two alternative backends are also useful for debugging.
