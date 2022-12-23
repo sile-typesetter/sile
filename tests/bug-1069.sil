@@ -1,0 +1,14 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\begin{lua}
+SILE.registerCommand("a", function (_, content)
+    local weight = SILE.typesetter.breadcrumbs:parent(1) == "b" and 800 or 800
+	SILE.call("font", { weight = weight }, content)
+end)
+SILE.registerCommand("b", function (_, content)
+	SILE.process(content)
+end)
+\end{lua}
+\b{\a{foo}}
+\end{document}
