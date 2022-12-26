@@ -178,6 +178,9 @@ int shape (lua_State *L) {
     unsigned int upem = hb_face_get_upem(hbFace);
     hb_font_set_scale(hbFont, upem, upem);
 
+    hb_variation_t opsz = { HB_TAG('o', 'p', 's', 'z'), point_size };
+    hb_font_set_variations(hbFont, &opsz, 1);
+
     if (can_use_ot_funcs(hbFace)) {
       hb_ot_font_set_funcs(hbFont);
     } else {
@@ -296,6 +299,9 @@ int get_glyph_dimensions(lua_State *L) {
   hb_font_t* hbFont = hb_font_create(hbFace);
   unsigned int upem = hb_face_get_upem(hbFace);
   hb_font_set_scale(hbFont, upem, upem);
+
+  hb_variation_t opsz = { HB_TAG('o', 'p', 's', 'z'), point_size };
+  hb_font_set_variations(hbFont, &opsz, 1);
 
   if (can_use_ot_funcs(hbFace)) {
     hb_ot_font_set_funcs(hbFont);
