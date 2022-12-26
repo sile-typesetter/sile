@@ -15,7 +15,7 @@ LIBTEXPDF_LIB=../libtexpdf/libtexpdf.la
 endif
 
 pkglib_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la justenoughfontconfig.la fontmetrics.la svg.la
-justenoughharfbuzz_la_SOURCES = justenoughharfbuzz.c
+justenoughharfbuzz_la_SOURCES = justenoughharfbuzz.c hb-utils.c hb-utils.h
 justenoughharfbuzz_la_LDFLAGS = -module -avoid-version -shared $(UNDEFINED)
 justenoughharfbuzz_la_CFLAGS = $(HARFBUZZ_CFLAGS) $(HARFBUZZ_SUBSET_CFLAGS) $(LUA_INCLUDE)
 justenoughharfbuzz_la_LIBADD = $(HARFBUZZ_LIBS) $(HARFBUZZ_SUBSET_LIBS) $(MY_LUA_LIB)
@@ -42,7 +42,7 @@ justenoughlibtexpdf_la_CFLAGS = -I.. $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(LIBPA
 justenoughlibtexpdf_la_LIBADD = $(LIBTEXPDF_LIB) $(FREETYPE_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS) $(MY_LUA_LIB)
 to_copy += .libs/justenoughlibtexpdf.@SHARED_LIB_EXT@
 
-fontmetrics_la_SOURCES = fontmetrics.c
+fontmetrics_la_SOURCES = fontmetrics.c hb-utils.c hb-utils.h
 fontmetrics_la_LDFLAGS = -module -avoid-version -shared $(UNDEFINED)
 fontmetrics_la_CFLAGS = $(LUA_INCLUDE) $(HARFBUZZ_CFLAGS)
 fontmetrics_la_LIBADD = $(MY_LUA_LIB) $(HARFBUZZ_LIBS)

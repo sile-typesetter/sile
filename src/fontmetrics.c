@@ -1,30 +1,24 @@
 #include <hb.h>
-#include <hb-ot.h>
 
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include "hb-utils.h"
+
 
 int get_typographic_extents (lua_State *L) {
-  size_t font_l;
-  const char * font_s = luaL_checklstring(L, 1, &font_l);
-  unsigned int font_index = luaL_checknumber(L, 2);
-  short upem;
+  double upem;
   double ascender;
   double descender;
   double x_height;
 
-  hb_blob_t* blob = hb_blob_create (font_s, font_l, HB_MEMORY_MODE_WRITABLE, (void*)font_s, NULL);
-  hb_face_t* hbFace = hb_face_create (blob, font_index);
-  hb_font_t* hbFont = hb_font_create (hbFace);
+  hb_font_t* hbFont = get_hb_font(L, 1);
   hb_font_extents_t metrics = {0,0,0};
-  upem = hb_face_get_upem(hbFace);
-  hb_ot_font_set_funcs(hbFont);
+  upem = hb_face_get_upem(hb_font_get_face(hbFont));
   hb_font_get_h_extents(hbFont, &metrics);
-  ascender = metrics.ascender / (double)upem;
-  descender = -metrics.descender / (double)upem;
-  hb_font_destroy(hbFont);
+  ascender = metrics.ascender / upem;
+  descender = -metrics.descender / upem;
 
   lua_newtable(L);
   lua_pushstring(L, "ascender");
@@ -44,15 +38,10 @@ int get_typographic_extents (lua_State *L) {
 int glyphwidth (lua_State* L) {
   size_t font_l;
   unsigned int gid = luaL_checknumber(L, 1);
-  const char * font_s = luaL_checklstring(L, 2, &font_l);
-  unsigned int font_index = luaL_checknumber(L, 3);
-  hb_blob_t* blob = hb_blob_create (font_s, font_l, HB_MEMORY_MODE_WRITABLE, (void*)font_s, NULL);
-  hb_face_t* hbFace = hb_face_create (blob, font_index);
-  hb_font_t* hbFont = hb_font_create (hbFace);
-  short upem = hb_face_get_upem(hbFace);
-  hb_ot_font_set_funcs(hbFont);
+  hb_font_t* hbFont = get_hb_font(L, 2);
+  double upem = hb_face_get_upem(hb_font_get_face(hbFont));
   hb_position_t width = hb_font_get_glyph_h_advance(hbFont, gid);
-  lua_pushnumber(L, width / (double)upem);
+  lua_pushnumber(L, width / upem);
   return 1;
 }
 

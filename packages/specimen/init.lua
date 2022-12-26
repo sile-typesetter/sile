@@ -14,7 +14,7 @@ function package:registerCommands ()
     local font = ot.parseFont(face)
     local maxg = font.maxp.numGlyphs
     for i = 1 , maxg - 1 do
-      local wd = metrics.glyphwidth(i, face.data, face.index)
+      local wd = metrics.glyphwidth(i, face)
       SILE.typesetter:pushHbox({
         height= SILE.length(1.2 * fontoptions.size),
         width= SILE.length(wd * fontoptions.size),

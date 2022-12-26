@@ -43,15 +43,13 @@ function shaper:shapeToken (text, options)
   end
   usedfonts[face] = true
   items = { hb._shape(text,
-      face.data,
-      face.index,
+      face,
       options.script,
       options.direction,
       options.language,
-      ("%g"):format(SILE.measurement(options.size):tonumber()),
+      face.pointsize,
       options.features,
-      SILE.settings:get("harfbuzz.subshapers") or "",
-      face.variations
+      SILE.settings:get("harfbuzz.subshapers") or ""
     ) }
   for i = 1, #items do
     local j = (i == #items) and #text or items[i+1].index
@@ -87,10 +85,8 @@ function shaper.getFace (opts)
     SU.warn("GX feature in '"..opts.family.."' is not supported, fallback to regular font face.")
     face.index = bitshim.band(face.index, 0xff)
   end
-  local fh, err = io.open(face.filename, "rb")
-  if err then SU.error("Can't open font file '"..face.filename.."': "..err) end
   face.variations = opts.variations or ""
-  face.data = fh:read("*all")
+  face.pointsize = ("%g"):format(SILE.measurement(opts.size):tonumber())
 
   -- Try instanciating the font, hb.instanciate() will return nil if it is not
   -- a variable font or if instanciation failed.
@@ -156,7 +152,7 @@ function shaper.checkHBProblems (_, text, face)
     return true
   end
   if hb.version_lessthan(2, 3, 0)
-    and hb.get_table(face.data, face.index, "CFF "):len() > 0
+    and hb.get_table(face, "CFF "):len() > 0
     and not substwarnings["CFF "] then
     SILE.status.unsupported = true
     SU.warn("Vertical spacing of CFF fonts may be subtly inconsistent between systems. Upgrade to Harfbuzz 2.3.0 if you need absolute consistency.")
