@@ -145,7 +145,7 @@ function outputter:setFont (options)
     pdf.setdirmode(0)
   end
   _font = pdf.loadfont(font)
-  if _font < 0 then SU.error("Font loading error for "..options) end
+  if _font < 0 then SU.error("Font loading error for " .. pl.pretty.write(options, "")) end
   lastkey = key
   return _font
 end
