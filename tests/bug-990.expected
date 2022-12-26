@@ -2,7 +2,7 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	24.7039
 My 	65.3156
-Set font 	Gentium Plus;22;800;;normal;;LTR
+Set font 	Gentium Plus;22;800;;normal;;;LTR
 T	46 68 83 76 87 82 79 68 w=75.1309	(Kapitola)
 Mx 	105.6824
 T	20 w=10.3232	(1)
@@ -13,7 +13,7 @@ Mx 	72.5418
 T	86 89 629 87 72 w=47.2441	(světe)
 Mx 	24.7039
 My 	124.9953
-Set font 	Noto Sans CJK JP;22;800;;normal;;LTR
+Set font 	Noto Sans CJK JP;22;800;;normal;;;LTR
 T	29804 w=22.0000	(第)
 Mx 	46.7327
 Mx 	2.4640
@@ -60,7 +60,7 @@ Mx 	205.6188
 T	74 w=6.0500	(i)
 Mx 	24.7039
 My 	181.1157
-Set font 	Gentium Plus;22;800;;normal;;LTR
+Set font 	Gentium Plus;22;800;;normal;;;LTR
 T	37 124 79 129 80 w=58.4482	(Bölüm)
 Mx 	89.0038
 T	22 w=10.3232	(3)

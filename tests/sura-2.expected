@@ -6,7 +6,7 @@ Set font 	Amiri Quran;20;400;;normal;;RTL
 T	118 1259 118 1086 40	(الۤمۤ)
 Mx 	238.1075
 T	1	( )
-Set font 	Amiri Quran;20;400;;normal;;LTR
+Set font 	Amiri Quran;20;400;;normal;;;LTR
 T	1228	(١)
 Mx 	212.5215
 T	111	(۝)
@@ -28,7 +28,7 @@ Mx 	197.3719
 T	74 843 842 76 470 341 77 456 75 767 115 1153 76 77 1143	(لِّلۡمُتَّقِینَ)
 Mx 	191.5125
 T	1	( )
-Set font 	Amiri Quran;20;400;;normal;;LTR
+Set font 	Amiri Quran;20;400;;normal;;;LTR
 T	1229	(٢)
 Mx 	165.9266
 T	111	(۝)
@@ -52,7 +52,7 @@ Mx 	46.3272
 T	74 66 520 75 470 76 471 653 75 790	(یُنفِقُونَ)
 Mx 	40.4678
 T	1	( )
-Set font 	Amiri Quran;20;400;;normal;;LTR
+Set font 	Amiri Quran;20;400;;normal;;;LTR
 T	1230	(٣)
 Mx 	14.8819
 T	111	(۝)
@@ -85,7 +85,7 @@ Mx 	100.6956
 T	74 66 520 75 455 76 466 520 75 449	(یُوقِنُونَ)
 Mx 	94.8362
 T	1	( )
-Set font 	Amiri Quran;20;400;;normal;;LTR
+Set font 	Amiri Quran;20;400;;normal;;;LTR
 T	1231	(٤)
 Mx 	69.2503
 T	111	(۝)
@@ -110,7 +110,7 @@ Mx 	16.4083
 T	74 66 520 75 480 76 491 115 471 75 494 115 490 99	(ٱلۡمُفۡلِحُونَ)
 Mx 	10.5489
 T	1	( )
-Set font 	Amiri Quran;20;400;;normal;;LTR
+Set font 	Amiri Quran;20;400;;normal;;;LTR
 T	1232	(٥)
 Mx 	-15.0371
 T	111	(۝)
@@ -141,7 +141,7 @@ Mx 	145.8520
 T	74 66 520 75 455 76 493 115 519 75 449	(یُؤۡمِنُونَ)
 Mx 	139.9927
 T	1	( )
-Set font 	Amiri Quran;20;400;;normal;;LTR
+Set font 	Amiri Quran;20;400;;normal;;;LTR
 T	1233	(٦)
 Mx 	114.4067
 T	111	(۝)

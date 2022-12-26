@@ -2,7 +2,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	20.9764
 My 	37.3321
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	49 82 87 72	(Note)
 Mx 	40.5565
 T	29	(:)
@@ -140,7 +140,7 @@ T	17	(.)
 Pop color
 Mx 	40.9764
 My 	97.3321
-Set font 	Gentium Plus;10;400;Italic;normal;;LTR
+Set font 	Gentium Plus;10;400;Italic;normal;;;LTR
 T	55 72 86 87	(Test)
 Mx 	59.0849
 T	70 82 80 80 68 81 71	(command)
@@ -154,7 +154,7 @@ Mx 	171.0520
 T	17	(.)
 Mx 	40.9764
 My 	109.3321
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	55 72 86 87	(Test)
 Mx 	61.0687
 T	69 68 70 78	(back)

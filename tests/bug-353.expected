@@ -6,7 +6,7 @@ Pop color
 Push color	0.3529	0.2549	0.1608
 Mx 	40.9764
 My 	37.3321
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	54 72 83 76 68 w=21.9775	(Sepia)
 Mx 	65.6307
 T	69 68 69 92 w=19.6777	(baby)

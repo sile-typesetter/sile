@@ -2,16 +2,16 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	14.8819
 My 	28.5740
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	73 82 82 w=13.1689	(foo)
 Mx 	30.7118
-Set font 	Hack;10;400;;normal;;LTR
+Set font 	Hack;10;400;;normal;;;LTR
 T	129 118 201 w=18.0615	(bar)
 Mx 	56.0481
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	69 68 93 w=13.9111	(baz)
 Mx 	72.6202
-Set font 	Hack;10;400;;normal;;LTR
+Set font 	Hack;10;400;;normal;;;LTR
 T	129 118 201 w=18.0615	(bar)
 Mx 	97.9565
 T	200 158 238 w=18.0615	(qiz)
@@ -19,13 +19,13 @@ Mx 	14.8819
 My 	40.5740
 T	150 184 184 w=18.0615	(foo)
 Mx 	40.2200
-Set font 	Cormorant Infant;10;400;;normal;;LTR
+Set font 	Cormorant Infant;10;400;;normal;;;LTR
 T	550 522 672 w=13.6400	(bar)
 Mx 	56.6882
-Set font 	Hack;10;400;;normal;;LTR
+Set font 	Hack;10;400;;normal;;;LTR
 T	129 118 238 w=18.0615	(baz)
 Mx 	82.0263
-Set font 	Cormorant Infant;10;400;;normal;;LTR
+Set font 	Cormorant Infant;10;400;;normal;;;LTR
 T	550 522 672 w=13.6400	(bar)
 Mx 	98.4945
 T	671 597 740 w=11.6600	(qiz)
