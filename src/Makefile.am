@@ -17,8 +17,8 @@ endif
 pkglib_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la justenoughfontconfig.la fontmetrics.la svg.la
 justenoughharfbuzz_la_SOURCES = justenoughharfbuzz.c
 justenoughharfbuzz_la_LDFLAGS = -module -avoid-version -shared $(UNDEFINED)
-justenoughharfbuzz_la_CFLAGS = $(HARFBUZZ_CFLAGS) $(FREETYPE_CFLAGS) $(LUA_INCLUDE)
-justenoughharfbuzz_la_LIBADD = $(HARFBUZZ_LIBS) $(FREETYPE_LIBS) $(MY_LUA_LIB)
+justenoughharfbuzz_la_CFLAGS = $(HARFBUZZ_CFLAGS) $(LUA_INCLUDE)
+justenoughharfbuzz_la_LIBADD = $(HARFBUZZ_LIBS) $(MY_LUA_LIB)
 to_copy = .libs/justenoughharfbuzz.@SHARED_LIB_EXT@
 
 justenoughfontconfig_la_SOURCES = justenoughfontconfig.c silewin32.h
@@ -44,8 +44,8 @@ to_copy += .libs/justenoughlibtexpdf.@SHARED_LIB_EXT@
 
 fontmetrics_la_SOURCES = fontmetrics.c
 fontmetrics_la_LDFLAGS = -module -avoid-version -shared $(UNDEFINED)
-fontmetrics_la_CFLAGS = $(FREETYPE_CFLAGS) $(LUA_INCLUDE) $(HARFBUZZ_CFLAGS)
-fontmetrics_la_LIBADD = $(FREETYPE_LIBS) $(MY_LUA_LIB) $(HARFBUZZ_LIBS)
+fontmetrics_la_CFLAGS = $(LUA_INCLUDE) $(HARFBUZZ_CFLAGS)
+fontmetrics_la_LIBADD = $(MY_LUA_LIB) $(HARFBUZZ_LIBS)
 to_copy += .libs/fontmetrics.@SHARED_LIB_EXT@
 
 svg_la_SOURCES = svg.c nanosvg.h

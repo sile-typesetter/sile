@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <hb.h>
 #include <hb-ot.h>
-#include <hb-ft.h>
 #include <string.h>
 
 #include <lua.h>
@@ -131,12 +130,6 @@ static char** scan_shaper_list(char* cp1) {
   return res;
 }
 
-int can_use_ot_funcs (hb_face_t* face) {
-  if (hb_version_atleast(2,3,0)) return 1;
-  hb_blob_t *cff = hb_face_reference_table(face, hb_tag_from_string("CFF ", 4));
-  return hb_blob_get_length(cff) == 0;
-}
-
 int shape (lua_State *L) {
     size_t font_l;
     const char * text = luaL_checkstring(L, 1);
@@ -181,15 +174,7 @@ int shape (lua_State *L) {
     hb_variation_t opsz = { HB_TAG('o', 'p', 's', 'z'), point_size };
     hb_font_set_variations(hbFont, &opsz, 1);
 
-    if (can_use_ot_funcs(hbFace)) {
-      hb_ot_font_set_funcs(hbFont);
-    } else {
-      /*
-        Note that using FT may cause differing vertical metrics for CFF fonts.
-        SILE will give a one-time warning if this is the case.
-      */
-      hb_ft_font_set_funcs(hbFont);
-    }
+    hb_ot_font_set_funcs(hbFont);
 
     buf = hb_buffer_create();
     hb_buffer_add_utf8(buf, text, strlen(text), 0, strlen(text));
@@ -303,15 +288,7 @@ int get_glyph_dimensions(lua_State *L) {
   hb_variation_t opsz = { HB_TAG('o', 'p', 's', 'z'), point_size };
   hb_font_set_variations(hbFont, &opsz, 1);
 
-  if (can_use_ot_funcs(hbFace)) {
-    hb_ot_font_set_funcs(hbFont);
-  } else {
-    /*
-      Note that using FT may cause differing vertical metrics for CFF fonts.
-      SILE will give a one-time warning if this is the case.
-    */
-    hb_ft_font_set_funcs(hbFont);
-  }
+  hb_ot_font_set_funcs(hbFont);
 
   hb_glyph_extents_t extents = {0,0,0,0};
   hb_font_get_glyph_extents(hbFont, glyphId, &extents);
