@@ -1,3 +1,5 @@
+if FONT_DOWNLOAD_TOOLS
+
 .fonts: fonttooling
 	[ -h .fonts ] || mkdir -p $@
 
@@ -6,8 +8,8 @@
 
 .PHONY: fonttooling
 fonttooling:
-	$(if $(BSDTAR),,$(error Please set BSDTAR with path or ./configure --with-manual or --enable-developer))
-	$(if $(CURL),,$(error Please set CURL with path or ./configure --with-manual or --enable-developer))
+	$(if $(BSDTAR),,$(error Please set BSDTAR with path or `./configure --enable-developer`))
+	$(if $(CURL),,$(error Please set CURL with path or `./configure --enable-developer`))
 
 # Don't let make delete things we had to download
 .PRECIOUS: .fonts/% .sources/%
@@ -136,3 +138,5 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 .fonts/Symbola%: .sources/Symbola.zip | .fonts
 	$(BSDTAR) -x -f $< -C $(dir $@) $(notdir $@) && \
 	touch $@
+
+endif
