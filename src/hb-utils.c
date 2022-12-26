@@ -62,29 +62,68 @@ hb_font_t* get_hb_font(lua_State *L, int index) {
 
   hb_ot_font_set_funcs(font);
 
+#if HB_VERSION_ATLEAST(3, 3, 0)
   if (hb_ot_var_has_data(face)) {
-    const char* variationstring = NULL;
-    unsigned int nVariations = 0;
+    hb_ot_var_axis_info_t* axes;
+    unsigned int nAxes;
+    unsigned int nCoords;
+    const float* coords;
+    float* newCoords;
 
+    /* Get font axes */
+    nAxes = hb_ot_var_get_axis_infos(face, 0, NULL, NULL);
+    axes = malloc(nAxes * sizeof(hb_ot_var_axis_info_t));
+    hb_ot_var_get_axis_infos(face, 0, &nAxes, axes);
+
+    /* Get existing variation coords, e.g. from named instance */
+    coords = hb_font_get_var_coords_design(font, &nCoords);
+
+    /* Set up new variation coords */
+
+    /* First copy existing coords (e.g. from named instance) or use axis
+     * default value. */
+    newCoords = malloc(nAxes * sizeof(float));
+    for (unsigned i = 0; i < nAxes; i++) {
+      if (i < nCoords)
+        newCoords[i] = coords[i];
+      else
+        newCoords[i] = axes[i].default_value;
+    }
+
+    /* Then set ‘opsz’ axis to point size if present, explicitly set value will
+     * override this below */
     lua_getfield(L, index, "pointsize");
     if (lua_isnumber(L, -1)) {
       double point_size = luaL_checknumber(L, -1);
-
-      /* Set ‘opsz’ axis to point size, if set explicitly it will be overridden
-       * below. */
-      hb_variation_t opsz = { HB_TAG('o', 'p', 's', 'z'), point_size };
-      hb_font_set_variations(font, &opsz, 1);
+      for (unsigned i = 0; i < nAxes; i++) {
+        if (axes[i].tag == HB_TAG('o', 'p', 's', 'z'))
+          newCoords[i] = point_size;
+      }
     }
 
+    /* Finally use any explicitly set variations */
     lua_getfield(L, index, "variations");
-    if (lua_isstring(L, -1)) { variationstring = lua_tostring(L, -1); }
-
-    hb_variation_t* variations = scan_variation_string(variationstring, &nVariations);
-    if (variations) {
-      hb_font_set_variations(font, variations, nVariations);
-      free(variations);
+    if (lua_isstring(L, -1)) {
+      const char* variationstring = lua_tostring(L, -1);
+      unsigned int nVariations = 0;
+      hb_variation_t* variations = scan_variation_string(variationstring, &nVariations);
+      if (variations) {
+        for (unsigned nVariation = 0; nVariation < nVariations; nVariation++) {
+          for (unsigned nAxis = 0; nAxis < nAxes; nAxis++) {
+            if (variations[nVariation].tag == axes[nAxis].tag)
+              newCoords[nAxis] = variations[nVariation].value;
+          }
+        }
+        free(variations);
+      }
     }
+
+    hb_font_set_var_coords_design(font, newCoords, nAxes);
+
+    free(axes);
+    free(newCoords);
   }
+#endif
 
   hb_face_destroy(face);
   hb_blob_destroy(blob);
