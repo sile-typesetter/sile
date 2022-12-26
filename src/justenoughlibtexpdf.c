@@ -105,6 +105,10 @@ int pdf_loadfont(lua_State *L) {
   if (lua_isnumber(L, -1)) { index = lua_tointeger(L, -1); }
   lua_pop(L,1);
 
+  /* FontConfig uses the upper bits of the face index for named instance index,
+   * but libtexpdf knows nothing about this. */
+  index &= 0xFFFFu;
+
   lua_pushstring(L, "pointsize");
   lua_gettable(L, -2);
   if (lua_isnumber(L, -1)) { ptsize = lua_tonumber(L, -1); }

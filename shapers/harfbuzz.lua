@@ -81,10 +81,6 @@ function shaper.getFace (opts)
   SU.debug("fonts", "Resolved font family", opts.family, "->", face and face.filename)
   if not face or not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
   if SILE.makeDeps then SILE.makeDeps:add(face.filename) end
-  if bitshim.rshift(face.index, 16) ~= 0 then
-    SU.warn("GX feature in '"..opts.family.."' is not supported, fallback to regular font face.")
-    face.index = bitshim.band(face.index, 0xff)
-  end
   face.variations = opts.variations or ""
   face.pointsize = ("%g"):format(SILE.measurement(opts.size):tonumber())
 
