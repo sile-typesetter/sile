@@ -434,6 +434,7 @@ function SILE.finish ()
     SILE.makeDeps:write()
   end
   SILE.documentState.documentClass:finish()
+  SILE.font.finish()
   runEvals(SILE.input.evaluateAfters, "evaluate-after")
   io.stderr:write("\n")
 end

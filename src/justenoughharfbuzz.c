@@ -3,6 +3,9 @@
 #include <assert.h>
 #include <hb.h>
 #include <hb-ot.h>
+#ifdef HAVE_HARFBUZZ_SUBSET
+#include <hb-subset.h>
+#endif
 #include <string.h>
 
 #include <lua.h>
@@ -158,6 +161,13 @@ static char** scan_shaper_list(char* cp1) {
   return res;
 }
 
+static int has_table(hb_face_t* face, hb_tag_t tag) {
+  hb_blob_t *blob = hb_face_reference_table(face, tag);
+  int ret = hb_blob_get_length(blob) != 0;
+  hb_blob_destroy(blob);
+  return ret;
+}
+
 int shape (lua_State *L) {
     size_t font_l;
     const char * text = luaL_checkstring(L, 1);
@@ -309,6 +319,124 @@ int shape (lua_State *L) {
     return glyph_count;
 }
 
+int instanciate(lua_State *L) {
+  unsigned int data_l = 0;
+  const char * data_s = NULL;
+#ifdef HAVE_HARFBUZZ_SUBSET
+  const char * filename;
+  int index = 0;
+  const char * variationstring = NULL;
+  hb_blob_t * blob;
+  hb_face_t * face;
+
+  if (!lua_istable(L, 1)) return 0;
+
+  lua_pushstring(L, "filename");
+  lua_gettable(L, -2);
+  if (lua_isstring(L, -1)) { filename = lua_tostring(L, -1); }
+  else { luaL_error(L, "No font filename supplied to hb.instanciate"); }
+  lua_pop(L,1);
+
+  lua_pushstring(L, "index");
+  lua_gettable(L, -2);
+  if (lua_isnumber(L, -1)) { index = lua_tointeger(L, -1); }
+  lua_pop(L,1);
+
+  lua_pushstring(L, "variations");
+  lua_gettable(L, -2);
+  if (lua_isstring(L, -1)) { variationstring = lua_tostring(L, -1); }
+  else { luaL_error(L, "No font variations supplied to hb.instanciate"); }
+  lua_pop(L,1);
+
+  blob = hb_blob_create_from_file(filename);
+  face = hb_face_create(blob, index);
+  if (hb_ot_var_has_data(face) &&
+      /* hb-subset does not support instanciating CFF2 table yet */
+      !has_table(face, HB_TAG('C','F','F','2'))) {
+    unsigned int nVariations;
+    hb_variation_t* variations;
+
+    variations = scan_variation_string(variationstring, &nVariations);
+    if (variations) {
+      hb_subset_input_t * input;
+      hb_ot_var_axis_info_t * axes;
+      unsigned int nAxes;
+
+      nAxes = hb_ot_var_get_axis_infos(face, 0, NULL, NULL);
+      axes = malloc(nAxes * sizeof(hb_ot_var_axis_info_t));
+      hb_ot_var_get_axis_infos(face, 0, &nAxes, axes);
+
+      input = hb_subset_input_create_or_fail();
+      if (input) {
+        hb_face_t * subset;
+        hb_set_t * glyphs;
+        hb_set_t * tables;
+
+        hb_subset_input_set_flags(input,
+                                  HB_SUBSET_FLAGS_RETAIN_GIDS |
+                                  HB_SUBSET_FLAGS_NAME_LEGACY |
+                                  HB_SUBSET_FLAGS_GLYPH_NAMES |
+                                  HB_SUBSET_FLAGS_NO_PRUNE_UNICODE_RANGES);
+
+        /* Keep all glyphs */
+        glyphs = hb_subset_input_set(input, HB_SUBSET_SETS_GLYPH_INDEX);
+        hb_set_invert(glyphs);
+
+        /* Keep only tables required for PDF */
+        tables = hb_subset_input_set(input, HB_SUBSET_SETS_DROP_TABLE_TAG);
+        hb_set_add(tables, HB_TAG('O','S','/','2'));
+        hb_set_add(tables, HB_TAG('c','m','a','p'));
+        hb_set_add(tables, HB_TAG('c','v','t',' '));
+        hb_set_add(tables, HB_TAG('f','p','g','m'));
+        hb_set_add(tables, HB_TAG('g','l','y','f'));
+        hb_set_add(tables, HB_TAG('h','e','a','d'));
+        hb_set_add(tables, HB_TAG('h','h','e','a'));
+        hb_set_add(tables, HB_TAG('h','m','t','x'));
+        hb_set_add(tables, HB_TAG('l','o','c','a'));
+        hb_set_add(tables, HB_TAG('m','a','x','p'));
+        hb_set_add(tables, HB_TAG('n','a','m','e'));
+        hb_set_add(tables, HB_TAG('p','o','s','t'));
+        hb_set_add(tables, HB_TAG('p','r','e','p'));
+        hb_set_invert(tables);
+
+        /* Pin all axes to default */
+        for (unsigned i = 0; i < nAxes; i++)
+          hb_subset_input_pin_axis_to_default(input, face, axes[i].tag);
+
+        /* Then pin requested axes to requested values */
+        for (unsigned i = 0; i < nVariations; i++)
+          hb_subset_input_pin_axis_location(input, face, variations[i].tag, variations[i].value);
+
+        subset = hb_subset_or_fail(face, input);
+        if (subset) {
+          hb_blob_t *data;
+
+          data = hb_face_reference_blob(subset);
+          data_s = hb_blob_get_data(data, &data_l);
+          if (data_s && data_l)
+            lua_pushlstring(L, data_s, data_l);
+          hb_face_destroy(subset);
+          hb_blob_destroy(data);
+        }
+
+        hb_subset_input_destroy(input);
+        free(axes);
+      }
+
+      free(variations);
+    }
+  }
+
+  hb_face_destroy(face);
+  hb_blob_destroy(blob);
+#endif
+
+  if (!data_s || !data_l)
+    lua_pushnil(L);
+
+  return 1;
+}
+
 int get_glyph_dimensions(lua_State *L) {
   size_t font_l;
   const char * font_s = luaL_checklstring(L, 1, &font_l);
@@ -441,6 +569,7 @@ static const struct luaL_Reg lib_table [] = {
   {"version", get_harfbuzz_version},
   {"shapers", list_shapers},
   {"get_table", get_table},
+  {"instanciate", instanciate},
   {"version_lessthan", version_lessthan},
   {NULL, NULL}
 };

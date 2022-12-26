@@ -64,6 +64,19 @@ function shaper:shapeToken (text, options)
   return items
 end
 
+local _pretty_varitions = function (face)
+  local text = face.filename
+  if face.variations and face.variations ~= "" then
+    text = text.."@"..face.variations
+  end
+  local index = bitshim.band(face.index, 0xFFFF) or 0
+  local instance = bitshim.rshift(face.index, 16) or 0
+  if index or instance then
+    text = text.."["..index..","..instance.."]"
+  end
+  return text
+end
+
 -- TODO: normalize this method to accept self as first arg
 function shaper.getFace (opts)
   local face = SILE.fontManager:face(opts)
@@ -78,6 +91,22 @@ function shaper.getFace (opts)
   if err then SU.error("Can't open font file '"..face.filename.."': "..err) end
   face.variations = opts.variations or ""
   face.data = fh:read("*all")
+
+  -- Try instanciating the font, hb.instanciate() will return nil if it is not
+  -- a variable font or if instanciation failed.
+  face.tempfilename = face.filename
+  local data = hb.instanciate(face)
+  if data then
+    local tmp = os.tmpname()
+    local file = io.open(tmp, "wb")
+    file:write(data)
+    file:close()
+    face.tempfilename = tmp
+    SU.debug("fonts", "Instanciated", _pretty_varitions(face), "as", face.tempfilename)
+  elseif (face.variations ~= "") or (bitshim.rshift(face.index, 16) ~= 0) then
+    SU.debug("fonts", "Failed to instanciate", _pretty_varitions(face))
+  end
+
   return face
 end
 

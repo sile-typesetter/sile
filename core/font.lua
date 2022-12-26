@@ -126,6 +126,15 @@ local font = {
     return cached
   end,
 
+  finish = function ()
+    for key, font in pairs(SILE.fontCache) do
+      if font.tempfilename ~= font.filename then
+        SU.debug("fonts", "Removing temporary file of", key, ":", font.tempfilename)
+        os.remove(font.tempfilename)
+      end
+    end
+  end,
+
   postLoadHook = function(face)
     local ot = require("core.opentype-parser")
     local font = ot.parseFont(face)

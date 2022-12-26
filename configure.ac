@@ -101,6 +101,19 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         fi
     ])
 
+    have_harfbuzz_subset=false
+    PKG_CHECK_MODULES(HARFBUZZ_SUBSET, [harfbuzz-subset >= 6.0.0], [
+        have_harfbuzz_subset=true
+    ], [
+        if test "x$with_harfbuzz_subset" = xyes; then
+            AC_MSG_FAILURE([--with-harfbuzz-subset was given, but test for harfbuzz-subset failed])
+        fi
+    ])
+    if $have_harfbuzz_subset; then
+        AC_DEFINE(HAVE_HARFBUZZ_SUBSET, [1], [Have harfbuzz-subset library])
+    fi
+    AM_CONDITIONAL([HAVE_HARFBUZZ_SUBSET], $have_harfbuzz_subset)
+
     PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
     AC_DEFINE([ICU], [1], [Build using icu4c])
     with_icu=yes
@@ -204,6 +217,8 @@ AC_SUBST([LUAROCKSARGS])
 
 AC_SUBST([HARFBUZZ_CFLAGS])
 AC_SUBST([HARFBUZZ_LIBS])
+AC_SUBST([HARFBUZZ_SUBSET_CFLAGS])
+AC_SUBST([HARFBUZZ_SUBSET_LIBS])
 AC_SUBST([shared_ext])
 
 AX_SUBST_TRANSFORMED_PACKAGE_NAME

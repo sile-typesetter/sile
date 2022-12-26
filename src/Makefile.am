@@ -17,8 +17,8 @@ endif
 pkglib_LTLIBRARIES = justenoughharfbuzz.la justenoughlibtexpdf.la justenoughfontconfig.la fontmetrics.la svg.la
 justenoughharfbuzz_la_SOURCES = justenoughharfbuzz.c
 justenoughharfbuzz_la_LDFLAGS = -module -avoid-version -shared $(UNDEFINED)
-justenoughharfbuzz_la_CFLAGS = $(HARFBUZZ_CFLAGS) $(LUA_INCLUDE)
-justenoughharfbuzz_la_LIBADD = $(HARFBUZZ_LIBS) $(MY_LUA_LIB)
+justenoughharfbuzz_la_CFLAGS = $(HARFBUZZ_CFLAGS) $(HARFBUZZ_SUBSET_CFLAGS) $(LUA_INCLUDE)
+justenoughharfbuzz_la_LIBADD = $(HARFBUZZ_LIBS) $(HARFBUZZ_SUBSET_LIBS) $(MY_LUA_LIB)
 to_copy = .libs/justenoughharfbuzz.@SHARED_LIB_EXT@
 
 justenoughfontconfig_la_SOURCES = justenoughfontconfig.c silewin32.h
