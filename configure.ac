@@ -158,14 +158,14 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     ])
 
     # Required for downloading fonts for the manual and for tests
-    AM_COND_IF([MANUAL], [
+    # Since the source tarball includes a prebuilt manual we only need this for Git source builds
+    AM_CONDITIONAL([FONT_DOWNLOAD_TOOLS], [test -z ${DEVELOPER_TRUE} || (test -z ${MANUAL_TRUE} && test -z ${IS_SDIST_FALSE})])
+    AS_IF([FONT_DOWNLOAD_TOOLS], [
         AX_PROGVAR([curl])
         AX_PROGVAR([bsdtar])
     ])
 
     AM_COND_IF([DEVELOPER], [
-        AX_PROGVAR([curl])
-        AX_PROGVAR([bsdtar])
         AX_PROGVAR([busted])
         AX_PROGVAR([luacheck])
         AX_PROGVAR([luarocks])
