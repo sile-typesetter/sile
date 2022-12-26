@@ -38,7 +38,7 @@
       version_rev = if (self ? rev) then (builtins.substring 0 7 self.rev) else "dirty";
       # Prepare a different luaEnv to be used in the overridden expression,
       # this is also the place to choose a different lua interpreter, such as
-      # lua5_3 or luajit
+      # lua5_4 or luajit
       luaEnv = pkgs.lua5_3.withPackages(ps: with ps; [
         cassowary
         cldr
@@ -117,11 +117,13 @@
           inherit (sile) checkInputs nativeBuildInputs;
           buildInputs = sile.buildInputs ++ [
             pkgs.libarchive
+            pkgs.perl
+          ];
+          luaEnv = luaEnv + pkgs.lua5_3.withPackages(ps: with ps; [
             pkgs.lua53Packages.busted
             pkgs.lua53Packages.luacheck
             pkgs.lua53Packages.luarocks
-            pkgs.perl
-          ];
+          ]);
         };
       };
       packages.sile = sile;
