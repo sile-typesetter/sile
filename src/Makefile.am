@@ -31,8 +31,8 @@ if APPKIT
 pkglib_LTLIBRARIES += macfonts.la
 macfonts_la_SOURCES = macfonts.m
 macfonts_la_LDFLAGS = -module -avoid-version -shared $(UNDEFINED)
-macfonts_la_OBJCFLAGS = -U VERSION $(FREETYPE_CFLAGS) $(LUA_INCLUDE)  -fmodules
-macfonts_la_LIBADD = $(FREETYPE_LIBS) $(MY_LUA_LIB)
+macfonts_la_OBJCFLAGS = -U VERSION $(HARFBUZZ_CFLAGS) $(LUA_INCLUDE)  -fmodules
+macfonts_la_LIBADD = $(HARFBUZZ_LIBS) $(MY_LUA_LIB)
 to_copy += .libs/macfonts.@SHARED_LIB_EXT@
 endif
 
