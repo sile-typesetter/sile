@@ -44,10 +44,13 @@ end
 Now we create two new typesetters, one for each column, and we tell each one how to find the other:
 
 \begin{verbatim}
-diglot.leftTypesetter = SILE.typesetters.base()
-diglot.rightTypesetter = SILE.typesetters.base()
-diglot.rightTypesetter.other = diglot.leftTypesetter
-diglot.leftTypesetter.other = diglot.rightTypesetter
+function diglot:_init (options)
+  self.leftTypesetter = SILE.typesetters.base()
+  self.rightTypesetter = SILE.typesetters.base()
+  self.rightTypesetter.other = self.leftTypesetter
+  self.leftTypesetter.other = self.rightTypesetter
+  return plain._init(self)
+end
 \end{verbatim}
 
 Each column needs its own font, so we provide commands to store this information.
@@ -56,13 +59,16 @@ to be passed to the \code{\\font} command every time \code{\\left} and \code{\\r
 (Because the fonts are controlled by global settings rather than being typesetter-specific.)
 
 \begin{verbatim}
-SILE.registerCommand("leftfont", function(options, content)
-  SILE.scratch.diglot.leftfont = options
-end, "Set the font for the left side")
 
-SILE.registerCommand("rightfont", function(options, content)
-  SILE.scratch.diglot.rightfont = options
-end, "Set the font for the right side")
+function diglot:registerCommands()
+  SILE.registerCommand("leftfont", function(options, content)
+    SILE.scratch.diglot.leftfont = options
+  end, "Set the font for the left side")
+
+  SILE.registerCommand("rightfont", function(options, content)
+    SILE.scratch.diglot.rightfont = options
+  end, "Set the font for the right side")
+end
 \end{verbatim}
 
 Next come the commands for sending text to the appropriate typesetter.
@@ -123,14 +129,6 @@ Now everything is ready apart from the output routine. In the output routine
 we need to ensure, at the start of each document and the start of each page,
 that each typesetter is linked to the appropriate frame:
 
-\begin{verbatim}
-function diglot:_init (options)
-  self.leftTypesetter:init(SILE.getFrame("a"))
-  self.rightTypesetter:init(SILE.getFrame("b"))
-  return plain.init(self)
-end
-\end{verbatim}
-
 \noindent{}(\code{SILE.getFrame} retrieves a frame that we have declared.)
 
 The default \code{newPage} routine will do this for one typesetter every
@@ -140,7 +138,7 @@ to make sure that, no matter which typesetter causes an new-page
 event, the other typesetter also gets correctly initialised:
 
 \begin{verbatim}
-diglot.newPage = function(self)
+function diglot:newPage (self)
   plain.newPage(self)
   if SILE.typesetter == diglot.leftTypesetter then
     SILE.typesetter.other:initFrame(SILE.getFrame("b"))
@@ -157,7 +155,7 @@ that the other typesetter is given the opportunity to output its queue to the
 page as well:
 
 \begin{verbatim}
-diglot.endPage = function(self)
+function diglot:endPage = ()
   SILE.typesetter.other:leaveHmode(1)
   plain.endPage(self)
 end
@@ -170,7 +168,7 @@ means “you must get rid of everything on your queue now.” We add some infini
 tall glue to the other typesetter’s queue to help the process along:
 
 \begin{verbatim}
-diglot.finish = function(self)
+function diglot:finish ()
   table.insert(SILE.typesetter.other.state.outputQueue, SILE.nodefactory.vfillglue())
   SILE.typesetter.other:chuck()
   plain.finish(self)
@@ -214,8 +212,8 @@ First we need to find the appropriate margin frame and, find its left boundary:
 
 \begin{verbatim}
 \line
-discovery.typesetProphecy = function(symbol)
-  local margin = discovery:oddPage() and
+function discovery:typesetProphecy (symbol)
+  local margin = self:oddPage() and
                   SILE.getFrame("rMargin") or SILE.getFrame("lMargin")
   local target = margin:left()
 \end{verbatim}
@@ -283,24 +281,28 @@ and at the start of each page it is populated correctly with the appropriate fra
 
 \begin{verbatim}
 \line
-discovery.innerTypesetter = SILE.typesetters.base()
+local base = require("classes.base")
 
-discovery.init = function()
-  local gutter = discovery:oddPage() and
+local discovery = pl.class(base)
+discovery._name = "discovery"
+
+function discovery:_init ()
+  base._init(self)
+  local gutter = self:oddPage() and
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
-  discovery.innerTypesetter:init(gutter)
+  self.innerTypesetter = Self.typesetters.base(gutter)
   ...
-  return SILE.classes.base:init()
+  return self
 end
 
-discovery.newPage = function ()
+function discovery:newPage ()
   ...
-  discovery.innerTypesetter:leaveHmode(1)
-  local gutter = discovery:oddPage() and
+  self.innerTypesetter:leaveHmode(1)
+  local gutter = self:oddPage() and
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
-  discovery.innerTypesetter:init(gutter)
+  self.innerTypesetter = SILE.typesetters.base(gutter)
   ...
-  return SILE.classes.base.newPage(discovery);
+  return base.newPage(self);
 end
 \line
 \end{verbatim}
@@ -311,9 +313,9 @@ on the current page by both the main typesetter and the cross-reference typesett
 
 \begin{verbatim}
 \line
-discovery.typesetCrossReference = function(xref)
-  discovery.innerTypesetter:leaveHmode(1)
-  local innerVbox = SILE.pagebuilder:collateVboxes(discovery.innerTypesetter.state.outputQueue)
+function discovery:typesetCrossReference (xref)
+  self.innerTypesetter:leaveHmode(1)
+  local innerVbox = SILE.pagebuilder:collateVboxes(self.innerTypesetter.state.outputQueue)
   local mainVbox = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue)
 \end{verbatim}
 
@@ -357,7 +359,7 @@ the cross-reference appears a bit lower than the verse it refers to.
 
 \begin{verbatim}
   if (innerVbox.height < mainVbox.height) then
-    discovery.innerTypesetter:pushVglue(\{ height = mainVbox.height - innerVbox.height \})
+    self.innerTypesetter:pushVglue(\{ height = mainVbox.height - innerVbox.height \})
   end
 \end{verbatim}
 
@@ -369,11 +371,11 @@ can output the cross-reference itself.
   SILE.settings:temporarily(function()
     SILE.settings:set("document.baselineskip", SILE.nodefactory.vglue("7pt"))
     SILE.call("font", \{size = "6pt", family="Helvetica", weight="800"\}, \{\})
-    discovery.innerTypesetter:typeset(SILE.scratch.chapter..":"..SILE.scratch.verse.." ")
+    self.innerTypesetter:typeset(SILE.scratch.chapter..":"..SILE.scratch.verse.." ")
     SILE.call("font", \{size = "6pt", family="Helvetica", weight="200"\}, \{\})
-    discovery.innerTypesetter:typeset(xref)
-    discovery.innerTypesetter:leaveHmode()
-    discovery.innerTypesetter:pushVglue(\{ height = SILE.length(\{length = 4\}) \})
+    self.innerTypesetter:typeset(xref)
+    self.innerTypesetter:leaveHmode()
+    self.innerTypesetter:pushVglue(\{ height = SILE.length(\{length = 4\}) \})
   end)
 end
 \line
