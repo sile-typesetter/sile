@@ -44,8 +44,8 @@ end
 Now we create two new typesetters, one for each column, and we tell each one how to find the other:
 
 \begin{verbatim}
-diglot.leftTypesetter = SILE.defaultTypesetter \{\}
-diglot.rightTypesetter = SILE.defaultTypesetter \{\}
+diglot.leftTypesetter = SILE.typesetters.base()
+diglot.rightTypesetter = SILE.typesetters.base()
 diglot.rightTypesetter.other = diglot.leftTypesetter
 diglot.leftTypesetter.other = diglot.rightTypesetter
 \end{verbatim}
@@ -283,7 +283,7 @@ and at the start of each page it is populated correctly with the appropriate fra
 
 \begin{verbatim}
 \line
-discovery.innerTypesetter = SILE.defaultTypesetter \{\}
+discovery.innerTypesetter = SILE.typesetters.base()
 
 discovery.init = function()
   local gutter = discovery:oddPage() and
