@@ -19,7 +19,15 @@ jobs:
         with:
           extra_nix_config: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      # Upstream package sometimes has flags set that disable flake checking
+      - name: Setup test env
+        run: |
+          echo 'NIXPKGS_ALLOW_BROKEN=1' >> $GITHUB_ENV
+      - name: Check flake
+        run: nix flake check --impure
       - name: Build flake
         run: nix build
-      - name: Test run flake
+      - name: Test run in shell
         run: nix shell -c sile --version
+      - name: Test run as flake
+        run: nix run . -- --version
