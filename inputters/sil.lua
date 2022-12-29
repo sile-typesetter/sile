@@ -203,22 +203,20 @@ function inputter:parse (doc)
   resetCache()
   local top = massage_ast(parsed, doc)
   local tree
+  -- Content not part of a tagged command could either be part of a document
+  -- fragment or junk (e.g. comments, whitespace) outside of a document tag. We
+  -- need to either capture the document tag only or decide this is a fragment
+  -- and wrap it in a document tag.
   for _, leaf in ipairs(top) do
-    -- Content without position tracking is likely comments or whitespace outside of a tag.
-    -- We're just fishing for one tag here.
-    if leaf.lno and leaf.command then
-      if tree then
-        SU.error("Document has more than one parent node that looks like a master document!")
-      end
-      tree = leaf
+    if leaf.command and (leaf.command == "document" or leaf.command == "sile") then
+        tree = leaf
+        break
     end
   end
+  -- In the event we didn't isolate a top level document tag above, assume this
+  -- is a fragment and wrap it in one.
   if not tree then
-    SU.error("This isn't a SILE document!")
-  end
-  local rootelement = tree.command
-  if rootelement ~= "sile" and rootelement ~= "document" then
-    tree = { tree, command = "document" }
+    tree = { top, command = "document" }
   end
   return { tree }
 end
