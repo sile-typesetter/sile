@@ -1,0 +1,5 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\script{SILE.processString("Foo \\em{bar} \\em{baz}", "sil")}
+\end{document}
