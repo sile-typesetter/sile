@@ -59,6 +59,14 @@ describe("#SIL #inputter", function ()
       assert.is.equal("bar", t[1][1])
     end)
 
+    it("fragments with multiple top level nodes", function()
+      local t = inputter:parse([[foo \bar{bar}]])[1]
+      assert.is.equal("document", t.command)
+      assert.is.equal("foo ", t[1][1])
+      assert.is.equal("bar", t[1][2].command)
+      assert.is.equal("bar", t[1][2][1][1])
+    end)
+
   end)
 
   describe("should reject", function ()
