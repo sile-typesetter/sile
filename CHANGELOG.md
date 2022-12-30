@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.14.7](https://github.com/sile-typesetter/sile/compare/v0.14.6...v0.14.7) (2022-12-30)
+
+
+### Features
+
+* **build:** Allow easy skip of font checks with FCMATCH=true ([5c0cef6](https://github.com/sile-typesetter/sile/commit/5c0cef6bc11d0ac353e92557212aa16842f3de68))
+
+
+### Bug Fixes
+
+* **build:** Only check tooling to bulid manual if really needed ([e166e00](https://github.com/sile-typesetter/sile/commit/e166e0063b0b6c49040cc5c3759cd0a68162ef15))
+* **inputters:** Rework SIL input to handle both junk outside of document tag and fragments ([4c51c55](https://github.com/sile-typesetter/sile/commit/4c51c557034dd618ad1e68799f9de1db76c4f262))
+* **outputters:** Patch up error message when failing to load font ([#1671](https://github.com/sile-typesetter/sile/issues/1671)) ([771d87f](https://github.com/sile-typesetter/sile/commit/771d87f24fa0f4599655fba23bcade15a7a5e7cb))
+* **shaper:** Correct font-variants using opsz axis ([#1666](https://github.com/sile-typesetter/sile/issues/1666)) ([a929583](https://github.com/sile-typesetter/sile/commit/a9295838e2639dee9fde71d29717957deaf650d5))
+* **shaper:** Respect variations when shaping ([#1265](https://github.com/sile-typesetter/sile/issues/1265)) ([#1662](https://github.com/sile-typesetter/sile/issues/1662)) ([f50ae77](https://github.com/sile-typesetter/sile/commit/f50ae77d37003349936b3236de95c410155f6209))
+* **tooling:** Keep all Lua packages in same env for Nix ([8fc8670](https://github.com/sile-typesetter/sile/commit/8fc867013db91cfbe591ab6815cf4ee5768c8982))
+* **utilities:** Tweak breadcrumbs to work under LuaJIT limitations ([32f744c](https://github.com/sile-typesetter/sile/commit/32f744c5c493fa258498458e46e54c549ac61da8))
+
 ## [0.14.6](https://github.com/sile-typesetter/sile/compare/v0.14.5...v0.14.6) (2022-12-14)
 
 
