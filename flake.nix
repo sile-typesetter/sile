@@ -58,6 +58,10 @@
         luautf8
         penlight
         vstruct
+        # lua packages needed for testing
+        busted
+        luacheck
+        luarocks
         # If we want to test things with lua5.2 or an even older lua, we uncomment these
         #bit32
         #compat53
@@ -107,6 +111,23 @@
         nativeBuildInputs = oldAttr.nativeBuildInputs ++ [
           pkgs.autoreconfHook
         ];
+        buildInputs = [
+          # Add here inputs needed for development, and not for Nixpkgs' build.
+          pkgs.libarchive
+          pkgs.perl
+          # This line, along with the `pkgs.list.drop 1` line afterwards,
+          # replaces the luaEnv originated in `oldAttr.buildInputs`.
+          luaEnv
+        ] ++ (
+          # Add all buildInputs from Nixpkgs' derivation, besides the 1st
+          # one, which is Nixpkgs' luaEnv. NOTE it's not mandatory to `drop`
+          # the first buildInput of `oldAttr` as so, because the first `lua`
+          # interpreter that would have been found otherwise would have been
+          # the one belonging to the first `luaEnv` of the final
+          # `buildInputs`. However, we'd like to keep the `buildInputs` clean
+          # never the less.
+          pkgs.lib.lists.drop 1 oldAttr.buildInputs
+        );
         meta = oldAttr.meta // {
           changelog = "https://github.com/sile-typesetter/sile/raw/master/CHANGELOG.md";
         };
@@ -114,16 +135,12 @@
     in rec {
       devShells = {
         default = pkgs.mkShell {
-          inherit (sile) checkInputs nativeBuildInputs;
-          buildInputs = sile.buildInputs ++ [
-            pkgs.libarchive
-            pkgs.perl
-          ];
-          luaEnv = luaEnv + pkgs.lua5_3.withPackages(ps: with ps; [
-            pkgs.lua53Packages.busted
-            pkgs.lua53Packages.luacheck
-            pkgs.lua53Packages.luarocks
-          ]);
+          inherit (sile) checkInputs nativeBuildInputs buildInputs;
+          # This is written in Nixpkgs' expression as well, but we need to write
+          # this here so that the overridden luaEnv will be used instead.
+          passthru = {
+            inherit luaEnv;
+          };
         };
       };
       packages.sile = sile;
