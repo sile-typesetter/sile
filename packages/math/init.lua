@@ -26,6 +26,16 @@ function package.declareSettings (_)
       default = "Libertinus Math"
     })
   SILE.settings:declare({
+      parameter = "math.font.style",
+      type = "string",
+      default = "Regular"
+    })
+  SILE.settings:declare({
+      parameter = "math.font.weight",
+      type = "integer",
+      default = 400
+    })
+  SILE.settings:declare({
       parameter = "math.font.filename",
       type = "string",
       default = ""
@@ -93,6 +103,7 @@ Feedback and contributions are always welcome.}
 \noindent To typeset mathematics, you will need an OpenType math font installed on your system\footnote{A list of freely available math fonts can be found at \href[src=https://www.ctan.org/pkg/unicode-math]{https://www.ctan.org/pkg/unicode-math}}.
 By default, this package uses Libertinus Math, so it will fail if Libertinus Math can’t be found.
 Another font may be specified via the setting \autodoc:setting{math.font.family}.
+If required the font style and weight can be set via \autodoc:setting{math.font.style} and \autodoc:setting{math.font.weight}.
 The font size can be set via \autodoc:setting{math.font.size}.
 
 \paragraph{MathML}
