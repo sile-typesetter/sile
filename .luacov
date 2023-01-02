@@ -1,4 +1,5 @@
 exclude = {
+	".lua",
 	".luarocks",
 	"lua_modules",
 	"lua%-libraries",
