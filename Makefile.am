@@ -22,6 +22,18 @@ include Makefile-luarocks
 # Actual rules for downloading test fonts are in a separate file
 include Makefile-fonts
 
+# Our regression test suite includes test for all features. Anything that is
+# only expected to work with code behind a feature flag needs to be filtered
+# out if we are configured with the feature disabled.
+if FONT_VARIATIONS
+TESTSRCS ?= $(_TESTSRCS)
+else
+TESTSRCS ?= $(filter-out tests/variations-%,$(_TESTSRCS))
+endif
+
+foo:
+	echo Efrab $(TESTSRCS)
+
 # Since we can't use $(wildcard ...) in automake file lists, we generate a file
 # with a script that builds our dynamic file lists instead. This is tricky,
 # because if we just include the file automake will flatten this include. By

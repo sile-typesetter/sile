@@ -16,7 +16,7 @@ finder lua-libraries -name '*.lua'
 printf '\n%s' "LUAMODULES ="
 finder lua_modules -not -name "'*~'"
 
-printf '\n%s' "TESTSRCS ?="
+printf '\n%s' "_TESTSRCS :="
 finder tests -maxdepth 1 -name '*.sil'
 finder tests -maxdepth 1 -name '*.xml'
 finder tests -maxdepth 1 -name '*.lua'
