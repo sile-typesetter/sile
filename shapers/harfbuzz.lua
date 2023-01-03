@@ -83,6 +83,7 @@ function shaper.getFace (opts)
   if SILE.makeDeps then SILE.makeDeps:add(face.filename) end
   face.variations = opts.variations or ""
   face.pointsize = ("%g"):format(SILE.measurement(opts.size):tonumber())
+  face.weight = ("%d"):format(opts.weight or 0)
 
   -- Try instanciating the font, hb.instanciate() will return nil if it is not
   -- a variable font or if instanciation failed.

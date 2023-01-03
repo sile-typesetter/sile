@@ -90,14 +90,18 @@ hb_font_t* get_hb_font(lua_State *L, int index) {
         newCoords[i] = axes[i].default_value;
     }
 
-    /* Then set ‘opsz’ axis to point size if present, explicitly set value will
-     * override this below */
-    lua_getfield(L, index, "pointsize");
-    if (lua_isnumber(L, -1)) {
-      double point_size = luaL_checknumber(L, -1);
-      for (unsigned i = 0; i < nAxes; i++) {
-        if (axes[i].tag == HB_TAG('o', 'p', 's', 'z'))
-          newCoords[i] = point_size;
+    /* Then we set variation axes that have corresponding font options. */
+    for (unsigned i = 0; i < nAxes; i++) {
+      switch (axes[i].tag) {
+        case HB_TAG('o', 'p', 's', 'z'):
+          lua_getfield(L, index, "pointsize");
+          if (lua_isnumber(L, -1)) { newCoords[i] = lua_tonumber(L, -1); }
+          break;
+        case HB_TAG('w', 'g', 'h', 't'):
+          lua_getfield(L, index, "weight");
+          if (lua_isnumber(L, -1)) { newCoords[i] = lua_tonumber(L, -1); }
+          break;
+        default: break;
       }
     }
 
