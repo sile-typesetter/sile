@@ -34,7 +34,10 @@ jobs:
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure --without-system-luarocks --with-manual
+          ./configure \
+            --disable-font-variations \
+            --without-system-luarocks \
+            --with-manual
           echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
           echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
       - name: Make
