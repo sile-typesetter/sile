@@ -1,5 +1,6 @@
 #include <dwrite.h>
 #include <wchar.h>
+#include <memory>
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
@@ -31,29 +32,26 @@ static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
 }
 #endif
 
-WCHAR* toW(const char* c) {
+std::unique_ptr<WCHAR[]> toW(const char* c) {
   const size_t l = mbsrtowcs(nullptr, &c, 0, nullptr) + 1;
-  WCHAR* w = new WCHAR[l];
-  mbsrtowcs(w, &c, l, nullptr);
+  std::unique_ptr<WCHAR[]> w(new WCHAR[l]);
+  mbsrtowcs(w.get(), &c, l, nullptr);
   return w;
 }
 
-char* toC(const WCHAR* w) {
+std::unique_ptr<char[]> toC(const WCHAR* w) {
   const size_t l = wcsrtombs(nullptr, &w, 0, nullptr) + 1;
-  char* c = new char[l];
-  wcsrtombs(c, &w, l, nullptr);
+  std::unique_ptr<char[]> c(new char[l]);
+  wcsrtombs(c.get(), &w, l, nullptr);
   return c;
 }
 
-#define MAX_NAME_LEN 512
-
-bool
-getNameFromHBFace(hb_face_t *face, hb_ot_name_id_t name_id, char* name)
+std::unique_ptr<char[]> getNameFromHBFace(hb_face_t *face, hb_ot_name_id_t name_id)
 {
-    unsigned int len = MAX_NAME_LEN;
-    if (hb_ot_name_get_utf8(face, name_id, HB_LANGUAGE_INVALID, &len, name) <= MAX_NAME_LEN)
-        return true;
-    return false;
+    unsigned int l = hb_ot_name_get_utf8(face, name_id, HB_LANGUAGE_INVALID, nullptr, nullptr) + 1;
+    std::unique_ptr<char[]> n(new char[l]);
+    hb_ot_name_get_utf8(face, name_id, HB_LANGUAGE_INVALID, &l, n.get());
+    return n;
 }
 
 int face_from_options(lua_State* L) {
@@ -134,11 +132,11 @@ int face_from_options(lua_State* L) {
     if (SUCCEEDED(hr))
       hr = pDWriteFactory->GetSystemFontCollection(&pFontCollection);
 
-    WCHAR* dwFamily = toW(family);
+    auto dwFamily = toW(family);
     UINT32 dwIndex = 0;
     BOOL dwExists = FALSE;
     if (SUCCEEDED(hr))
-      pFontCollection->FindFamilyName(dwFamily, &dwIndex, &dwExists);
+      pFontCollection->FindFamilyName(dwFamily.get(), &dwIndex, &dwExists);
 
     IDWriteFontFamily* pFontFamily = nullptr;
     if (SUCCEEDED(hr) && dwExists)
@@ -183,16 +181,15 @@ int face_from_options(lua_State* L) {
                                                           nFontFileReferenceKey,
                                                           &nFilePath);
 
-    WCHAR* pFilePath = nullptr;
+    std::unique_ptr<char[]> filepath = nullptr;
     if (SUCCEEDED(hr)) {
-      pFilePath = new WCHAR[nFilePath + 1];
+      std::unique_ptr<WCHAR[]> pFilePath(new WCHAR[nFilePath + 1]);
       hr = pLocalFontFileLoader->GetFilePathFromKey(pFontFileReferenceKey,
                                                     nFontFileReferenceKey,
-                                                    pFilePath, nFilePath);
+                                                    pFilePath.get(), nFilePath);
+      if (SUCCEEDED(hr))
+        filepath = toC(pFilePath.get());
     }
-
-    if (SUCCEEDED(hr))
-      filename = toC(pFilePath);
 
     IDWriteLocalizedStrings* pFaceNames = nullptr;
     if (SUCCEEDED(hr))
@@ -200,29 +197,24 @@ int face_from_options(lua_State* L) {
 
     wchar_t pSubfamilyName[LOCALE_NAME_MAX_LENGTH];
     if (SUCCEEDED(hr)) {
-      char name1[MAX_NAME_LEN];
-      hb_blob_t* blob = hb_blob_create_from_file(filename);
+      hb_blob_t* blob = hb_blob_create_from_file(filepath.get());
       hb_face_t* face = hb_face_create(blob, index);
       unsigned int num_instances = hb_ot_var_get_named_instance_count(face);
 
       for (unsigned int i = 0; i < num_instances; i++) {
         hb_ot_name_id_t name_id = hb_ot_var_named_instance_get_subfamily_name_id(face, i);
-        if (getNameFromHBFace(face, name_id, name1)) {
-          UINT32 nFaceNames = pFaceNames->GetCount();
-          for (UINT32 j = 0; j < nFaceNames; j++) {
-            UINT32 nName = 0;
-            hr = pFaceNames->GetStringLength(j, &nName);
+        auto name1 = getNameFromHBFace(face, name_id);
+        for (UINT32 j = 0; j < pFaceNames->GetCount(); j++) {
+          UINT32 nName = 0;
+          hr = pFaceNames->GetStringLength(j, &nName);
+          if (SUCCEEDED(hr)) {
+            std::unique_ptr<WCHAR[]> pName(new WCHAR[nName]);
+            hr = pFaceNames->GetString(j, pName.get(), nName);
             if (SUCCEEDED(hr)) {
-              WCHAR* pName = new WCHAR[nName];
-              hr = pFaceNames->GetString(j, pName, nName);
-              if (SUCCEEDED(hr)) {
-                char* name2 = toC(pName);
-                if (strcmp(name1, name2) == 0)
-                  index += (i + 1) << 16;
-                delete[] name2;
-                delete[] pName;
-                if (index >> 16)
-                  break;
+              auto name2 = toC(pName.get());
+              if (strcmp(name1.get(), name2.get()) == 0) {
+                index += (i + 1) << 16;
+                break;
               }
             }
           }
@@ -234,16 +226,12 @@ int face_from_options(lua_State* L) {
 
     lua_newtable(L);
     lua_pushstring(L, "filename");
-    lua_pushstring(L, filename);
+    lua_pushstring(L, filepath.get());
     lua_settable(L, -3);
 
     lua_pushstring(L, "family");
     lua_pushstring(L, family);
     lua_settable(L, -3);
-
-    delete[] dwFamily;
-    delete[] pFilePath;
-    delete[] filename;
   }
 
   lua_pushstring(L, "index");
