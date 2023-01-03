@@ -36,37 +36,24 @@ AM_CONDITIONAL([DEVELOPER], [test "x$enable_developer" = "xyes"])
 
 AC_ARG_ENABLE([font-variations],
               AS_HELP_STRING([--disable-font-variations],
-                             [Compile without HarfBuzz subsetting supporting variable font]))
-AM_CONDITIONAL([FONT_VARIATIONS], [test "x$enable_harfbuzz_subset" != "xno"])
+                             [Disable support for OpenType variations and variable fonts that requires HarfBuzz subsetter library]))
+AM_CONDITIONAL([FONT_VARIATIONS], [test "x$enable_font_variations" != "xno"])
 
 AC_ARG_ENABLE([linklua],
               AS_HELP_STRING([--disable-linklua],
                              [Don’t link lua library with dylibs]))
 AM_CONDITIONAL([LINKLUA], [test "x$enable_linklua" != "xno"])
 
+# TODO: Refactor fontconfig check to allow Appkit/DirectWrite as alternatives, maybe default to off on Darwin
+# AC_ARG_WITH([fontconfig],
+#             AS_HELP_STRING([--without-fontconfig],
+#                            [Compile without fontconfig font manager support]))
+AM_CONDITIONAL([FONTCONFIG], [test "x$with_fontconfig" != "xno"])
+
 AC_ARG_WITH([harfbuzz],
             AS_HELP_STRING([--without-harfbuzz],
                            [Compile without HarfBuzz support used as default shaping backend]))
 AM_CONDITIONAL([HARFBUZZ], [test "x$with_harfbuzz" != "xno"])
-
-AM_COND_IF([HARFBUZZ], [
-    PKG_CHECK_MODULES(HARFBUZZ, [harfbuzz >= 2.7.4], [
-        PKG_CHECK_MODULES(FONTCONFIG, fontconfig, [
-            ], [
-                AC_MSG_FAILURE([Harfbuzz found but not fontconfig])
-            ])
-    ], [
-        AC_MSG_FAILURE([--with-harfbuzz was given, but harfbuzz not found])
-    ])
-])
-
-AM_COND_IF([FONT_VARIATIONS], [
-    PKG_CHECK_MODULES(HARFBUZZ_SUBSET, [harfbuzz-subset >= 6.0.0], [
-            AC_DEFINE(HAVE_HARFBUZZ_SUBSET, [1], [Have harfbuzz-subset library])
-    ], [
-            AC_MSG_FAILURE([--enable-font-variations was given, but harfbuzz version not new enough to include subsetter])
-    ])
-])
 
 AC_ARG_WITH([system-libtexpdf],
             AS_HELP_STRING([--with-system-libtexpdf],
@@ -88,12 +75,6 @@ AC_ARG_WITH([manual],
             AS_HELP_STRING([--with-manual],
                            [Rebuild manual and install to system’s PDF documentation directory]))
 AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
-
-AM_COND_IF([SYSTEM_LIBTEXPDF],
-           [AC_CHECK_LIB([texpdf], [texpdf_doc_set_verbose],
-                         [],
-                         [AC_MSG_FAILURE([--with-system-libtexpdf was given, but test for libtexpdf failed])])],
-           [AC_CONFIG_SUBDIRS([libtexpdf])])
 
 AM_CONDITIONAL([FONT_DOWNLOAD_TOOLS], [test -z ${DEVELOPER_TRUE} || (test -z ${MANUAL_TRUE} && test -z ${IS_SDIST_FALSE})])
 AC_SUBST([FONT_DOWNLOAD_TOOLS])
@@ -129,6 +110,27 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
             AC_MSG_RESULT([no])
             ;;
     esac
+
+    AM_COND_IF([FONTCONFIG],
+               [PKG_CHECK_MODULES(FONTCONFIG, [fontconfig],
+                                  [],
+                                  [AC_MSG_FAILURE([Fontconfig package not found])])])
+
+    AM_COND_IF([HARFBUZZ],
+               [PKG_CHECK_MODULES(HARFBUZZ, [harfbuzz >= 2.7.4],
+                                  [],
+                                  [AC_MSG_FAILURE([--with-harfbuzz was given, but harfbuzz not found])]) ])
+
+    AM_COND_IF([FONT_VARIATIONS],
+               [PKG_CHECK_MODULES(HARFBUZZ_SUBSET, [harfbuzz-subset >= 6.0.0],
+                                  [AC_DEFINE(HAVE_HARFBUZZ_SUBSET, [1], [Have harfbuzz-subset library])],
+                                  [AC_MSG_FAILURE([--enable-font-variations was given, but harfbuzz version not new enough to include required subset library functions])])])
+
+    AM_COND_IF([SYSTEM_LIBTEXPDF],
+               [AC_CHECK_LIB([texpdf], [texpdf_doc_set_verbose],
+                             [],
+                             [AC_MSG_FAILURE([--with-system-libtexpdf was given, but test for libtexpdf failed])])],
+               [AC_CONFIG_SUBDIRS([libtexpdf])])
 
     PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
         AC_DEFINE([ICU], [1], [Build using icu4c])
