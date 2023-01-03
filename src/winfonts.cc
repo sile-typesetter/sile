@@ -4,6 +4,10 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include <hb.h>
+#include <hb-ot.h>
+
+
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
 #define luaL_Reg luaL_reg
@@ -39,6 +43,17 @@ char* toC(const WCHAR* w) {
   char* c = new char[l];
   wcsrtombs(c, &w, l, nullptr);
   return c;
+}
+
+#define MAX_NAME_LEN 512
+
+bool
+getNameFromHBFace(hb_face_t *face, hb_ot_name_id_t name_id, char* name)
+{
+    unsigned int len = MAX_NAME_LEN;
+    if (hb_ot_name_get_utf8(face, name_id, HB_LANGUAGE_INVALID, &len, name) <= MAX_NAME_LEN)
+        return true;
+    return false;
 }
 
 int face_from_options(lua_State* L) {
@@ -179,7 +194,43 @@ int face_from_options(lua_State* L) {
     if (SUCCEEDED(hr))
       filename = toC(pFilePath);
 
-    // FIXME: get named instance index
+    IDWriteLocalizedStrings* pFaceNames = nullptr;
+    if (SUCCEEDED(hr))
+      hr = pFont->GetFaceNames(&pFaceNames);
+
+    wchar_t pSubfamilyName[LOCALE_NAME_MAX_LENGTH];
+    if (SUCCEEDED(hr)) {
+      char name1[MAX_NAME_LEN];
+      hb_blob_t* blob = hb_blob_create_from_file(filename);
+      hb_face_t* face = hb_face_create(blob, index);
+      unsigned int num_instances = hb_ot_var_get_named_instance_count(face);
+
+      for (unsigned int i = 0; i < num_instances; i++) {
+        hb_ot_name_id_t name_id = hb_ot_var_named_instance_get_subfamily_name_id(face, i);
+        if (getNameFromHBFace(face, name_id, name1)) {
+          UINT32 nFaceNames = pFaceNames->GetCount();
+          for (UINT32 j = 0; j < nFaceNames; j++) {
+            UINT32 nName = 0;
+            hr = pFaceNames->GetStringLength(j, &nName);
+            if (SUCCEEDED(hr)) {
+              WCHAR* pName = new WCHAR[nName];
+              hr = pFaceNames->GetString(j, pName, nName);
+              if (SUCCEEDED(hr)) {
+                char* name2 = toC(pName);
+                if (strcmp(name1, name2) == 0)
+                  index += (i + 1) << 16;
+                delete[] name2;
+                delete[] pName;
+                if (index >> 16)
+                  break;
+              }
+            }
+          }
+        }
+        if (index >> 16)
+          break;
+      }
+    }
 
     lua_newtable(L);
     lua_pushstring(L, "filename");
