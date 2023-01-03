@@ -34,10 +34,39 @@ AC_ARG_ENABLE([developer],
                              [Check for and enable tooling required only for SILE developers]))
 AM_CONDITIONAL([DEVELOPER], [test "x$enable_developer" = "xyes"])
 
+AC_ARG_ENABLE([font-variations],
+              AS_HELP_STRING([--disable-font-variations],
+                             [Compile without HarfBuzz subsetting supporting variable font]))
+AM_CONDITIONAL([FONT_VARIATIONS], [test "x$enable_harfbuzz_subset" != "xno"])
+
 AC_ARG_ENABLE([linklua],
               AS_HELP_STRING([--disable-linklua],
                              [Don’t link lua library with dylibs]))
 AM_CONDITIONAL([LINKLUA], [test "x$enable_linklua" != "xno"])
+
+AC_ARG_WITH([harfbuzz],
+            AS_HELP_STRING([--without-harfbuzz],
+                           [Compile without HarfBuzz support used as default shaping backend]))
+AM_CONDITIONAL([HARFBUZZ], [test "x$with_harfbuzz" != "xno"])
+
+AM_COND_IF([HARFBUZZ], [
+    PKG_CHECK_MODULES(HARFBUZZ, [harfbuzz >= 2.7.4], [
+        PKG_CHECK_MODULES(FONTCONFIG, fontconfig, [
+            ], [
+                AC_MSG_FAILURE([Harfbuzz found but not fontconfig])
+            ])
+    ], [
+        AC_MSG_FAILURE([--with-harfbuzz was given, but harfbuzz not found])
+    ])
+])
+
+AM_COND_IF([FONT_VARIATIONS], [
+    PKG_CHECK_MODULES(HARFBUZZ_SUBSET, [harfbuzz-subset >= 6.0.0], [
+            AC_DEFINE(HAVE_HARFBUZZ_SUBSET, [1], [Have harfbuzz-subset library])
+    ], [
+            AC_MSG_FAILURE([--enable-font-variations was given, but harfbuzz version not new enough to include subsetter])
+    ])
+])
 
 AC_ARG_WITH([system-libtexpdf],
             AS_HELP_STRING([--with-system-libtexpdf],
@@ -100,29 +129,6 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
             AC_MSG_RESULT([no])
             ;;
     esac
-
-    PKG_CHECK_MODULES(HARFBUZZ, [harfbuzz >= 2.7.4], [
-        PKG_CHECK_MODULES(FONTCONFIG, fontconfig, [], [AC_MSG_FAILURE([Harfbuzz found but not fontconfig])])
-        with_harfbuzz=yes
-        backend=harfbuzz
-    ], [
-        if test "x$with_harfbuzz" != xcheck; then
-            AC_MSG_FAILURE([--with-harfbuzz was given, but test for harfbuzz failed])
-        fi
-    ])
-
-    have_harfbuzz_subset=false
-    PKG_CHECK_MODULES(HARFBUZZ_SUBSET, [harfbuzz-subset >= 6.0.0], [
-        have_harfbuzz_subset=true
-    ], [
-        if test "x$with_harfbuzz_subset" = xyes; then
-            AC_MSG_FAILURE([--with-harfbuzz-subset was given, but test for harfbuzz-subset failed])
-        fi
-    ])
-    if $have_harfbuzz_subset; then
-        AC_DEFINE(HAVE_HARFBUZZ_SUBSET, [1], [Have harfbuzz-subset library])
-    fi
-    AM_CONDITIONAL([HAVE_HARFBUZZ_SUBSET], $have_harfbuzz_subset)
 
     PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
         AC_DEFINE([ICU], [1], [Build using icu4c])
