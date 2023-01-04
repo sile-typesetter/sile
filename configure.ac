@@ -97,7 +97,6 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
             AC_LINK_IFELSE([AC_LANG_PROGRAM([[@import AppKit;]],[[]])],
             [
                 have_appkit=yes
-                AC_DEFINE([APPKIT], [1], [Build using AppKit])
                 AC_MSG_RESULT([yes])
             ], [
                 have_appkit=no
@@ -133,7 +132,6 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
                [AC_CONFIG_SUBDIRS([libtexpdf])])
 
     PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
-        AC_DEFINE([ICU], [1], [Build using icu4c])
         with_icu=yes
     ],[
         AC_CHECK_TOOL(ICU_CONFIG, icu-config, no)
@@ -210,14 +208,12 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
 
-AC_SUBST([APPKIT])
 AC_SUBST([HARFBUZZ_CFLAGS])
 AC_SUBST([HARFBUZZ_LIBS])
 AC_SUBST([HARFBUZZ_SUBSET_CFLAGS])
 AC_SUBST([HARFBUZZ_SUBSET_LIBS])
 AC_SUBST([ICU_CFLAGS])
 AC_SUBST([ICU_LIBS])
-AC_SUBST([shared_ext])
 
 case $host_os in
     darwin*)

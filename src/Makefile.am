@@ -54,12 +54,14 @@ svg_la_CFLAGS = $(LUA_INCLUDE)
 svg_la_LIBADD = $(MY_LUA_LIB)
 to_copy += .libs/svg.@SHARED_LIB_EXT@
 
+if ICU
 pkglib_LTLIBRARIES += justenoughicu.la
 justenoughicu_la_SOURCES = justenoughicu.c
 justenoughicu_la_LDFLAGS = -module -avoid-version -shared $(UNDEFINED)
 justenoughicu_la_CFLAGS = -I.. $(ICU_CFLAGS) $(LUA_INCLUDE)
 justenoughicu_la_LIBADD = $(ICU_LIBS) $(MY_LUA_LIB)
 to_copy += .libs/justenoughicu.@SHARED_LIB_EXT@
+endif
 
 all-local: $(pkglib_LTLIBRARIES)
 	cp $(to_copy) ..
