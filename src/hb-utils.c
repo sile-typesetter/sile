@@ -62,7 +62,7 @@ hb_font_t* get_hb_font(lua_State *L, int index) {
 
   hb_ot_font_set_funcs(font);
 
-#if HB_VERSION_ATLEAST(3, 3, 0)
+#ifdef HAVE_HARFBUZZ_SUBSET
   if (hb_ot_var_has_data(face)) {
     hb_ot_var_axis_info_t* axes;
     unsigned int nAxes;
