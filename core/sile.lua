@@ -112,10 +112,11 @@ end
 SILE.init = function ()
   -- Set by def
   if not SILE.backend then
-    if pcall(require, "justenoughharfbuzz") then
+    local status, result = pcall(require, "justenoughharfbuzz")
+    if status then
       SILE.backend = "libtexpdf"
     else
-      SU.error("Default backend libtexpdf not available!")
+      SU.error("Default backend libtexpdf not available!\n  " .. result)
     end
   end
   if SILE.backend == "libtexpdf" then
