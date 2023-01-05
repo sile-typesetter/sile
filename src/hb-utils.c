@@ -1,7 +1,10 @@
 #include "hb-utils.h"
 
+#include <string.h>
 #include <stdlib.h>
 #include <hb-ot.h>
+
+#include "silewin32.h"
 
 static hb_variation_t* scan_variation_string(const char* cp1, unsigned int* ret) {
   hb_variation_t* variations = NULL;
@@ -100,6 +103,14 @@ hb_font_t* get_hb_font(lua_State *L, int index) {
         case HB_TAG('w', 'g', 'h', 't'):
           lua_getfield(L, index, "weight");
           if (lua_isnumber(L, -1)) { newCoords[i] = lua_tonumber(L, -1); }
+          break;
+        case HB_TAG('i', 't', 'a', 'l'):
+          lua_getfield(L, index, "style");
+          if (lua_isstring(L, -1)) {
+            const char* style = lua_tostring(L, -1);
+            if (!strcasecmp(style, "italic"))
+              newCoords[i] = 1;
+          }
           break;
         default: break;
       }
