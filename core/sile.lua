@@ -110,14 +110,8 @@ local function runEvals (evals, arg)
 end
 
 SILE.init = function ()
-  -- Set by def
   if not SILE.backend then
-    local status, result = pcall(require, "justenoughharfbuzz")
-    if status then
-      SILE.backend = "libtexpdf"
-    else
-      SU.error("Default backend libtexpdf not available!\n  " .. result)
-    end
+    SILE.backend = "libtexpdf"
   end
   if SILE.backend == "libtexpdf" then
     SILE.shaper = SILE.shapers.harfbuzz()
