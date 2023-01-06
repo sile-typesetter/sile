@@ -51,7 +51,7 @@ _MANUAL = $(MANUAL)
 endif
 
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
-nobase_nodist_pkgdata_DATA = core/version.lua $(LUAMODULES)
+nobase_nodist_pkgdata_DATA = core/features.lua core/version.lua $(LUAMODULES)
 dist_man_MANS = sile.1
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
@@ -65,7 +65,7 @@ EXTRA_DIST += default.nix flake.nix flake.lock libtexpdf.git-rev shell.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL)
 
-BUILT_SOURCES = .version core/version.lua Makefile-distfiles
+BUILT_SOURCES = .version core/features.lua core/version.lua Makefile-distfiles
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(BUILT_SOURCES) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS) .version-prev
 

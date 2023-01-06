@@ -208,10 +208,15 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
 
+AC_SUBST([APPKIT_TRUE])
+AC_SUBST([FONTCONFIG_TRUE])
+AC_SUBST([FONT_VARIATIONS_TRUE])
+AC_SUBST([HARFBUZZ_TRUE])
 AC_SUBST([HARFBUZZ_CFLAGS])
 AC_SUBST([HARFBUZZ_LIBS])
 AC_SUBST([HARFBUZZ_SUBSET_CFLAGS])
 AC_SUBST([HARFBUZZ_SUBSET_LIBS])
+AC_SUBST([ICU_TRUE])
 AC_SUBST([ICU_CFLAGS])
 AC_SUBST([ICU_LIBS])
 
@@ -243,7 +248,7 @@ AC_SUBST([SILE_LIB_PATH])
 AX_SUBST_MAN_DATE
 
 AC_CONFIG_FILES([build-aux/list-dist-files.sh], [chmod +x build-aux/list-dist-files.sh])
-AC_CONFIG_FILES([Makefile src/Makefile sile.1 core/version.lua])
+AC_CONFIG_FILES([Makefile src/Makefile sile.1 core/features.lua core/version.lua])
 AC_CONFIG_FILES([sile tests/regressions.pl], [chmod +x sile tests/regressions.pl])
 
 AC_ARG_PROGRAM

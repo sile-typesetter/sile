@@ -2,6 +2,7 @@
 SILE = {}
 
 SILE.version = require("core.version")
+SILE.features = require("core.features")
 
 -- Initialize Lua environment and global utilities
 SILE.lua_version = _VERSION:sub(-3)
