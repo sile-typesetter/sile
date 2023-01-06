@@ -25,14 +25,12 @@ include Makefile-fonts
 # Our regression test suite includes test for all features. Anything that is
 # only expected to work with code behind a feature flag needs to be filtered
 # out if we are configured with the feature disabled.
-if FONT_VARIATIONS
-TESTSRCS ?= $(_TESTSRCS)
-else
-TESTSRCS ?= $(filter-out tests/variations-%,$(_TESTSRCS))
+_DISABLEDSRCS =
+if !FONT_VARIATIONS
+_DISABLEDSRCS += tests/variations-%
 endif
-
-foo:
-	echo Efrab $(TESTSRCS)
+export DISABLEDSRCS ?= $(filter $(_DISABLEDSRCS),$(_TESTSRCS))
+TESTSRCS ?= $(filter-out $(DISABLEDSRCS),$(_TESTSRCS))
 
 # Since we can't use $(wildcard ...) in automake file lists, we generate a file
 # with a script that builds our dynamic file lists instead. This is tricky,

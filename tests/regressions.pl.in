@@ -2,14 +2,16 @@
 
 use strict;
 use warnings;
+use Env qw($DISABLEDSRCS);
 use Getopt::Long;
 use Term::ANSIColor;
 my (@failed, @passed, @unsupported, @knownbad, @knownbadbutpassing, @missing);
 
 my @specifics = @ARGV;
+my @DISABLEDSRCS = split(/ +/, $DISABLEDSRCS);
 
 my $exit = 0;
-for (@specifics ? @specifics : <tests/*.sil tests/*.xml>) {
+for (@specifics ? @specifics : <tests/*.sil tests/*.xml tests/*.nil>) {
     my $expectation = $_; $expectation =~ s/\.(sil|xml)$/\.expected/;
     my $actual = $_; $actual =~ s/\.(sil|xml)$/\.actual/;
     my ($unsupported, $knownbad);
@@ -53,6 +55,10 @@ if (@missing){
 if (@unsupported){
     print "\n", color("magenta"), "Tests unsupported on this system:", color("reset"), "\n";
     for (@unsupported) { print "⚠ ", $_, "\n"}
+}
+if (@DISABLEDSRCS){
+    print "\n", color("magenta"), "Tests not enabled by configuration:", color("reset"), "\n";
+    for (@DISABLEDSRCS) { print "⚠ ", $_, "\n"}
 }
 if (@knownbad){
     print "\n", color("yellow"), "Known bad tests that fail:", color("reset"), "\n";
