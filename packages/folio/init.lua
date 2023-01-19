@@ -33,7 +33,7 @@ function package:outputFolio (frame)
           SILE.settings:set(v, SILE.settings.defaults[v])
         end
 
-        SILE.call("foliostyle", {}, { self.class.packages.counters:formatCounter(SILE.scratch.counters.folio) })
+        SILE.call("foliostyle", {}, { folio })
         SILE.typesetter:leaveHmode()
         SILE.settings:popState()
       end)
