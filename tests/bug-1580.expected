@@ -3,7 +3,7 @@ Begin page
 Mx 	10.4882
 My 	10.4882
 My 	272.0958
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	79 82 85 72 80 w=24.3506	(lorem)
 Mx 	39.1334
 T	76 83 86 88 80 w=25.2002	(ipsum)

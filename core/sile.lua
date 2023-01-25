@@ -2,6 +2,7 @@
 SILE = {}
 
 SILE.version = require("core.version")
+SILE.features = require("core.features")
 
 -- Initialize Lua environment and global utilities
 SILE.lua_version = _VERSION:sub(-3)
@@ -110,13 +111,8 @@ local function runEvals (evals, arg)
 end
 
 SILE.init = function ()
-  -- Set by def
   if not SILE.backend then
-    if pcall(require, "justenoughharfbuzz") then
-      SILE.backend = "libtexpdf"
-    else
-      SU.error("Default backend libtexpdf not available!")
-    end
+    SILE.backend = "libtexpdf"
   end
   if SILE.backend == "libtexpdf" then
     SILE.shaper = SILE.shapers.harfbuzz()
@@ -434,6 +430,7 @@ function SILE.finish ()
     SILE.makeDeps:write()
   end
   SILE.documentState.documentClass:finish()
+  SILE.font.finish()
   runEvals(SILE.input.evaluateAfters, "evaluate-after")
   io.stderr:write("\n")
 end

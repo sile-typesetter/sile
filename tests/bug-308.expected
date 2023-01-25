@@ -2,7 +2,7 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	24.7039
 My 	58.7812
-Set font 	Noto Sans Malayalam;12;400;;normal;;LTR
+Set font 	Noto Sans Malayalam;12;400;;normal;;;LTR
 T	58 6 w=20.1120	(സം)
 Mx 	44.8159
 T	58 64 w=20.7240	(സാ)

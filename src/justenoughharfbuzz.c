@@ -3,7 +3,9 @@
 #include <assert.h>
 #include <hb.h>
 #include <hb-ot.h>
-#include <hb-ft.h>
+#ifdef HAVE_HARFBUZZ_SUBSET
+#include <hb-subset.h>
+#endif
 #include <string.h>
 
 #include <lua.h>
@@ -11,6 +13,8 @@
 #include <lualib.h>
 
 #include "silewin32.h"
+
+#include "hb-utils.h"
 
 /* The following function stolen from XeTeX_ext.c */
 static hb_tag_t
@@ -131,23 +135,16 @@ static char** scan_shaper_list(char* cp1) {
   return res;
 }
 
-int can_use_ot_funcs (hb_face_t* face) {
-  if (hb_version_atleast(2,3,0)) return 1;
-  hb_blob_t *cff = hb_face_reference_table(face, hb_tag_from_string("CFF ", 4));
-  return hb_blob_get_length(cff) == 0;
-}
-
 int shape (lua_State *L) {
     size_t font_l;
     const char * text = luaL_checkstring(L, 1);
-    const char * font_s = luaL_checklstring(L, 2, &font_l);
-    unsigned int font_index = luaL_checknumber(L, 3);
-    const char * script = luaL_checkstring(L, 4);
-    const char * direction_s = luaL_checkstring(L, 5);
-    const char * lang = luaL_checkstring(L, 6);
-    double point_size = luaL_checknumber(L, 7);
-    const char * featurestring = luaL_checkstring(L, 8);
-    char * shaper_list_string = luaL_checkstring(L, 9);
+    hb_font_t * hbFont = get_hb_font(L, 2);
+    const char * script = luaL_checkstring(L, 3);
+    const char * direction_s = luaL_checkstring(L, 4);
+    const char * lang = luaL_checkstring(L, 5);
+    double point_size = luaL_checknumber(L, 6);
+    const char * featurestring = luaL_checkstring(L, 7);
+    char * shaper_list_string = luaL_checkstring(L, 8);
     char ** shaper_list = NULL;
     if (strlen(shaper_list_string) > 0) {
       shaper_list = scan_shaper_list(shaper_list_string);
@@ -157,7 +154,6 @@ int shape (lua_State *L) {
     hb_feature_t* features;
     int nFeatures = 0;
     unsigned int glyph_count = 0;
-    hb_font_t *hbFont;
     hb_buffer_t *buf;
     hb_glyph_info_t *glyph_info;
     hb_glyph_position_t *glyph_pos;
@@ -172,24 +168,7 @@ int shape (lua_State *L) {
     else
       direction = HB_DIRECTION_LTR;
 
-    hb_blob_t* blob = hb_blob_create (font_s, font_l, HB_MEMORY_MODE_WRITABLE, (void*)font_s, NULL);
-    hb_face_t* hbFace = hb_face_create (blob, font_index);
-    hbFont = hb_font_create (hbFace);
-    unsigned int upem = hb_face_get_upem(hbFace);
-    hb_font_set_scale(hbFont, upem, upem);
-
-    hb_variation_t opsz = { HB_TAG('o', 'p', 's', 'z'), point_size };
-    hb_font_set_variations(hbFont, &opsz, 1);
-
-    if (can_use_ot_funcs(hbFace)) {
-      hb_ot_font_set_funcs(hbFont);
-    } else {
-      /*
-        Note that using FT may cause differing vertical metrics for CFF fonts.
-        SILE will give a one-time warning if this is the case.
-      */
-      hb_ft_font_set_funcs(hbFont);
-    }
+    unsigned int upem = hb_face_get_upem(hb_font_get_face(hbFont));
 
     buf = hb_buffer_create();
     hb_buffer_add_utf8(buf, text, strlen(text), 0, strlen(text));
@@ -278,44 +257,117 @@ int shape (lua_State *L) {
     }
     /* Cleanup */
     hb_buffer_destroy(buf);
-    hb_font_destroy(hbFont);
-    hb_face_destroy(hbFace);
-    hb_blob_destroy(blob);
 
     free(features);
     return glyph_count;
 }
 
-int get_glyph_dimensions(lua_State *L) {
-  size_t font_l;
-  const char * font_s = luaL_checklstring(L, 1, &font_l);
-  unsigned int font_index = (unsigned int)luaL_checknumber(L, 2);
-  double point_size = (unsigned int)luaL_checknumber(L, 3);
-  hb_codepoint_t glyphId = (hb_codepoint_t)luaL_checknumber(L, 4);
+static int has_table(hb_face_t* face, hb_tag_t tag) {
+  hb_blob_t *blob = hb_face_reference_table(face, tag);
+  int ret = hb_blob_get_length(blob) != 0;
+  hb_blob_destroy(blob);
+  return ret;
+}
 
-  hb_blob_t* blob = hb_blob_create(font_s, font_l, HB_MEMORY_MODE_WRITABLE,
-      (void*)font_s, NULL);
-  hb_face_t* hbFace = hb_face_create(blob, font_index);
-  hb_font_t* hbFont = hb_font_create(hbFace);
-  unsigned int upem = hb_face_get_upem(hbFace);
-  hb_font_set_scale(hbFont, upem, upem);
+int instanciate(lua_State *L) {
+  unsigned int data_l = 0;
+  const char * data_s = NULL;
+#ifdef HAVE_HARFBUZZ_SUBSET
 
-  hb_variation_t opsz = { HB_TAG('o', 'p', 's', 'z'), point_size };
-  hb_font_set_variations(hbFont, &opsz, 1);
+  hb_font_t* font = get_hb_font(L, 1);
+  hb_face_t* face = hb_font_get_face(font);
 
-  if (can_use_ot_funcs(hbFace)) {
-    hb_ot_font_set_funcs(hbFont);
-  } else {
-    /*
-      Note that using FT may cause differing vertical metrics for CFF fonts.
-      SILE will give a one-time warning if this is the case.
-    */
-    hb_ft_font_set_funcs(hbFont);
+  if (hb_ot_var_has_data(face) &&
+      /* hb-subset does not support instanciating CFF2 table yet */
+      !has_table(face, HB_TAG('C','F','F','2'))) {
+    hb_subset_input_t * input;
+
+    input = hb_subset_input_create_or_fail();
+    if (input) {
+      hb_ot_var_axis_info_t* axes;
+      unsigned int nAxes;
+      unsigned int nCoords;
+      const float* coords;
+      hb_face_t* subset;
+      hb_set_t* glyphs;
+      hb_set_t* tables;
+
+      hb_subset_input_set_flags(input,
+                                HB_SUBSET_FLAGS_RETAIN_GIDS |
+                                HB_SUBSET_FLAGS_NAME_LEGACY |
+                                HB_SUBSET_FLAGS_GLYPH_NAMES |
+                                HB_SUBSET_FLAGS_NO_PRUNE_UNICODE_RANGES);
+
+      /* Keep all glyphs */
+      glyphs = hb_subset_input_set(input, HB_SUBSET_SETS_GLYPH_INDEX);
+      hb_set_invert(glyphs);
+
+      /* Keep only tables required for PDF */
+      tables = hb_subset_input_set(input, HB_SUBSET_SETS_DROP_TABLE_TAG);
+      hb_set_add(tables, HB_TAG('O','S','/','2'));
+      hb_set_add(tables, HB_TAG('c','m','a','p'));
+      hb_set_add(tables, HB_TAG('c','v','t',' '));
+      hb_set_add(tables, HB_TAG('f','p','g','m'));
+      hb_set_add(tables, HB_TAG('g','l','y','f'));
+      hb_set_add(tables, HB_TAG('h','e','a','d'));
+      hb_set_add(tables, HB_TAG('h','h','e','a'));
+      hb_set_add(tables, HB_TAG('h','m','t','x'));
+      hb_set_add(tables, HB_TAG('l','o','c','a'));
+      hb_set_add(tables, HB_TAG('m','a','x','p'));
+      hb_set_add(tables, HB_TAG('n','a','m','e'));
+      hb_set_add(tables, HB_TAG('p','o','s','t'));
+      hb_set_add(tables, HB_TAG('p','r','e','p'));
+      hb_set_invert(tables);
+
+      /* Get font axes */
+      nAxes = hb_ot_var_get_axis_infos(face, 0, NULL, NULL);
+      axes = malloc(nAxes * sizeof(hb_ot_var_axis_info_t));
+      hb_ot_var_get_axis_infos(face, 0, &nAxes, axes);
+
+      /* Get set variation coords */
+      coords = hb_font_get_var_coords_design(font, &nCoords);
+
+      /* Pin all axes */
+      for (unsigned i = 0; i < nAxes; i++) {
+        if (i < nCoords)
+          hb_subset_input_pin_axis_location(input, face, axes[i].tag, coords[i]);
+        else
+          hb_subset_input_pin_axis_to_default(input, face, axes[i].tag);
+      }
+
+      subset = hb_subset_or_fail(face, input);
+      if (subset) {
+        hb_blob_t *data;
+
+        data = hb_face_reference_blob(subset);
+        data_s = hb_blob_get_data(data, &data_l);
+        if (data_s && data_l)
+          lua_pushlstring(L, data_s, data_l);
+        hb_face_destroy(subset);
+        hb_blob_destroy(data);
+      }
+
+      hb_subset_input_destroy(input);
+      free(axes);
+    }
   }
+#endif
+
+  if (!data_s || !data_l)
+    lua_pushnil(L);
+
+  return 1;
+}
+
+int get_glyph_dimensions(lua_State *L) {
+  hb_font_t* hbFont = get_hb_font(L, 1);
+  double point_size = (unsigned int)luaL_checknumber(L, 2);
+  hb_codepoint_t glyphId = (hb_codepoint_t)luaL_checknumber(L, 3);
 
   hb_glyph_extents_t extents = {0,0,0,0};
   hb_font_get_glyph_extents(hbFont, glyphId, &extents);
 
+  unsigned int upem = hb_face_get_upem(hb_font_get_face(hbFont));
   double height = extents.y_bearing * point_size / upem;
   double tHeight = extents.height * point_size / upem;
   double width = extents.width * point_size / upem;
@@ -338,9 +390,6 @@ int get_glyph_dimensions(lua_State *L) {
   lua_pushstring(L, "depth");
   lua_pushnumber(L, -tHeight - height);
   lua_settable(L, -3);
-
-  /* Cleanup */
-  hb_font_destroy(hbFont);
 
   return 1;
 }
@@ -376,13 +425,9 @@ int list_shapers (lua_State *L) {
 }
 
 int get_table (lua_State *L) {
-  size_t font_l, tag_l;
-  const char * font_s = luaL_checklstring(L, 1, &font_l);
-  unsigned int font_index = luaL_checknumber(L, 2);
-  const char * tag_s = luaL_checklstring(L, 3, &tag_l);
-
-  hb_blob_t * blob = hb_blob_create (font_s, font_l, HB_MEMORY_MODE_WRITABLE, (void*)font_s, NULL);
-  hb_face_t * face = hb_face_create (blob, font_index);
+  size_t tag_l;
+  hb_face_t * face = hb_font_get_face(get_hb_font(L, 1));
+  const char * tag_s = luaL_checklstring(L, 2, &tag_l);
   hb_blob_t * table = hb_face_reference_table(face, hb_tag_from_string(tag_s, tag_l));
 
   unsigned int table_l;
@@ -391,8 +436,6 @@ int get_table (lua_State *L) {
   lua_pushlstring(L, table_s, table_l);
 
   hb_blob_destroy(table);
-  hb_face_destroy(face);
-  hb_blob_destroy(blob);
 
   return 1;
 }
@@ -426,6 +469,7 @@ static const struct luaL_Reg lib_table [] = {
   {"version", get_harfbuzz_version},
   {"shapers", list_shapers},
   {"get_table", get_table},
+  {"instanciate", instanciate},
   {"version_lessthan", version_lessthan},
   {NULL, NULL}
 };

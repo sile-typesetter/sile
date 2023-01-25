@@ -458,15 +458,15 @@ end
 local parseFont = function(face)
   if not face.font then
     local font = {}
-    font.head = parseHead(hb.get_table(face.data, face.index, "head"))
-    font.names = parseName(hb.get_table(face.data, face.index, "name"))
-    font.maxp = parseMaxp(hb.get_table(face.data, face.index, "maxp"))
-    font.colr = parseColr(hb.get_table(face.data, face.index, "COLR"))
-    font.cpal = parseCpal(hb.get_table(face.data, face.index, "CPAL"))
-    font.svg  = parseSvg(hb.get_table(face.data, face.index, "SVG"))
-    font.math = parseMath(hb.get_table(face.data, face.index, "MATH"))
-    font.post = parsePost(hb.get_table(face.data, face.index, "post"))
-    font.os2 = parseOs2(hb.get_table(face.data, face.index, "OS/2"))
+    font.head = parseHead(hb.get_table(face, "head"))
+    font.names = parseName(hb.get_table(face, "name"))
+    font.maxp = parseMaxp(hb.get_table(face, "maxp"))
+    font.colr = parseColr(hb.get_table(face, "COLR"))
+    font.cpal = parseCpal(hb.get_table(face, "CPAL"))
+    font.svg  = parseSvg(hb.get_table(face, "SVG"))
+    font.math = parseMath(hb.get_table(face, "MATH"))
+    font.post = parsePost(hb.get_table(face, "post"))
+    font.os2 = parseOs2(hb.get_table(face, "OS/2"))
     face.font = font
   end
   return face.font
@@ -487,7 +487,7 @@ local getSVG = function(face, gid)
   if not face.font.svg then return end
   local item = face.font.svg[gid]
   if not item then return end
-  local str = hb.get_table(face.data, face.index, "SVG")
+  local str = hb.get_table(face, "SVG")
   local start = item.svgDocOffset+1
   local svg = str:sub(start, start + item.svgDocLength-1)
   if svg[1] == "\x1f" and svg[2] == "\x8b" then

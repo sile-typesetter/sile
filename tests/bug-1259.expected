@@ -2,7 +2,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	20.9764
 My 	37.3321
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	43 68 89 72 w=20.6787	(Have)
 Mx 	44.3212
 T	86 82 80 72 w=21.5430	(some)
@@ -19,7 +19,7 @@ Mx 	182.3197
 T	17 w=2.2900	(.)
 Mx 	20.9764
 My 	73.3321
-Set font 	Libertinus Serif;30;400;;normal;;LTR
+Set font 	Libertinus Serif;30;400;;normal;;;LTR
 T	54 84 70 w=44.9400	(Use)
 Mx 	72.4164
 T	86 79 69 70 83 77 74 79 74 79 72 w=143.6400	(underlining)

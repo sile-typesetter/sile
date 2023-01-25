@@ -16,7 +16,7 @@ local getLineMetrics = function (l)
       local m = metricscache[SILE.font._key(node.options)]
       if not m then
         local face = SILE.font.cache(node.options, SILE.shaper.getFace)
-        m = metrics.get_typographic_extents(face.data, face.index)
+        m = metrics.get_typographic_extents(face)
         m.ascender = m.ascender * node.options.size
         m.descender = m.descender * node.options.size
         metricscache[SILE.font._key(node.options)] = m
@@ -64,7 +64,7 @@ local linespacingLeading = function (_, vbox, previous)
 
   -- For these methods, we need to read the font metrics
   if not metrics then
-    SU.error("'"..method.."' line spacing method requires freetype, which is not available.")
+    SU.error("'"..method.."' line spacing method requires font metrics module, which is not available.")
   end
 
   local thismetrics = getLineMetrics(vbox)

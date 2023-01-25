@@ -94,7 +94,7 @@ int pdf_loadfont(lua_State *L) {
 
   if (!lua_istable(L, 1)) return 0;
 
-  lua_pushstring(L, "filename");
+  lua_pushstring(L, "tempfilename");
   lua_gettable(L, -2);
   if (lua_isstring(L, -1)) { filename = lua_tostring(L, -1); }
   else { luaL_error(L, "No font filename supplied to loadfont"); }
@@ -104,6 +104,10 @@ int pdf_loadfont(lua_State *L) {
   lua_gettable(L, -2);
   if (lua_isnumber(L, -1)) { index = lua_tointeger(L, -1); }
   lua_pop(L,1);
+
+  /* FontConfig uses the upper bits of the face index for named instance index,
+   * but libtexpdf knows nothing about this. */
+  index &= 0xFFFFu;
 
   lua_pushstring(L, "pointsize");
   lua_gettable(L, -2);

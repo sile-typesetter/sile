@@ -22,6 +22,16 @@ include Makefile-luarocks
 # Actual rules for downloading test fonts are in a separate file
 include Makefile-fonts
 
+# Our regression test suite includes test for all features. Anything that is
+# only expected to work with code behind a feature flag needs to be filtered
+# out if we are configured with the feature disabled.
+_DISABLEDSRCS =
+if !FONT_VARIATIONS
+_DISABLEDSRCS += tests/variations-%
+endif
+export DISABLEDSRCS ?= $(filter $(_DISABLEDSRCS),$(_TESTSRCS))
+TESTSRCS ?= $(filter-out $(DISABLEDSRCS),$(_TESTSRCS))
+
 # Since we can't use $(wildcard ...) in automake file lists, we generate a file
 # with a script that builds our dynamic file lists instead. This is tricky,
 # because if we just include the file automake will flatten this include. By
@@ -39,7 +49,7 @@ _MANUAL = $(MANUAL)
 endif
 
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
-nobase_nodist_pkgdata_DATA = core/version.lua $(LUAMODULES)
+nobase_nodist_pkgdata_DATA = core/features.lua core/version.lua $(LUAMODULES)
 dist_man_MANS = sile.1
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
@@ -53,7 +63,7 @@ EXTRA_DIST += default.nix flake.nix flake.lock libtexpdf.git-rev shell.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL)
 
-BUILT_SOURCES = .version core/version.lua Makefile-distfiles
+BUILT_SOURCES = .version core/features.lua core/version.lua Makefile-distfiles
 
 CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(BUILT_SOURCES) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS) .version-prev
 

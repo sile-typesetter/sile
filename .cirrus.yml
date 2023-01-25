@@ -47,6 +47,7 @@ task:
   configure_script: |
     ./configure MAKE=gmake \
       --enable-developer LUAROCKS=false LUACHECK=false BUSTED=false \
+      --disable-font-variations \
       --with-system-luarocks \
       --without-manual
   make_script:

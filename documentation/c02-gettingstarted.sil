@@ -183,8 +183,7 @@ Downloads of SILE can be obtained from the home page at \silehp.
 SILE requires a number of other software packages to be installed on the
 computer before it can work—the Lua programming language, and the Harfbuzz text
 shaping library. SILE provides its own PDF creation library, which has its own
-requirements: \code{freetype}, \code{fontconfig}, \code{zlib} and
-\code{libpng}.
+requirements: \code{fontconfig}, \code{zlib} and \code{libpng}.
 
 We suggest you use your distributions’s package manager to install as many of the
 dependencies as possible. On DEB-based Linux machines such as Debian and
@@ -192,12 +191,12 @@ Ubuntu, you should be able to install all of the needed dependencies by
 issuing the command:
 
 \terminal{$ apt-get install lua5.2 liblua5.2-dev lua-sec libharfbuzz-dev
-libfreetype6-dev libfontconfig1-dev libpng-dev libicu-dev}
+libfontconfig1-dev libpng-dev libicu-dev}
 
 Here’s an incantation that will work on most Redhat-based Linux distros:
 
 \terminal{$ yum install harfbuzz-devel make automake libtool gcc
-freetype-devel fontconfig-devel lua-devel lua-sec libng-gevel libicu-devel}
+fontconfig-devel lua-devel lua-sec libng-gevel libicu-devel}
 
 If you are on another system you will have to come up with the correct equivalent
 packages yourself.

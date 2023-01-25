@@ -1,13 +1,11 @@
 @import AppKit;
 #include <stdio.h>
-#include <ft2build.h>
-#include FT_FREETYPE_H
-FT_Library gFreeTypeLibrary;
-
-
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
+
+#include <hb.h>
+#include <hb-ot.h>
 
 
 #if !defined LUA_VERSION_NUM
@@ -33,22 +31,25 @@ static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
 }
 #endif
 
-/* Stolen from XeTeX */
+#define MAX_NAME_LEN 512
 
-char*
-getNameFromCTFont(CTFontRef ctFontRef, CFStringRef nameKey)
+bool
+getNameFromCTFont(CTFontRef ctFontRef, CFStringRef nameKey, char* nameStr)
 {
-    char *buf;
     CFStringRef name = CTFontCopyName(ctFontRef, nameKey);
-    CFIndex len = CFStringGetLength(name);
-    len = len * 6 + 1;
-    buf = malloc(len);
-    if (CFStringGetCString(name, buf, len, kCFStringEncodingUTF8))
-        return buf;
-    free(buf);
-    return NULL;
+    if (CFStringGetCString(name, nameStr, MAX_NAME_LEN, kCFStringEncodingUTF8))
+        return true;
+    return false;
 }
 
+bool
+getNameFromHBFace(hb_face_t *face, hb_ot_name_id_t name_id, char* name)
+{
+    unsigned int len = MAX_NAME_LEN;
+    if (hb_ot_name_get_utf8(face, name_id, HB_LANGUAGE_INVALID, &len, name) <= MAX_NAME_LEN)
+        return true;
+    return false;
+}
 
 char*
 getFileNameFromCTFont(CTFontRef ctFontRef, uint32_t *index)
@@ -56,59 +57,60 @@ getFileNameFromCTFont(CTFontRef ctFontRef, uint32_t *index)
     char *ret = NULL;
     CFURLRef url = NULL;
 
-#if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
-    /* kCTFontURLAttribute was not avialable before 10.6 */
-    ATSFontRef atsFont;
-    FSRef fsref;
-    OSStatus status;
-    atsFont = CTFontGetPlatformFont(ctFontRef, NULL);
-    status = ATSFontGetFileReference(atsFont, &fsref);
-    if (status == noErr)
-        url = CFURLCreateFromFSRef(NULL, &fsref);
-#else
     url = (CFURLRef) CTFontCopyAttribute(ctFontRef, kCTFontURLAttribute);
-#endif
     if (url) {
         UInt8 pathname[PATH_MAX];
         if (CFURLGetFileSystemRepresentation(url, true, pathname, PATH_MAX)) {
-            FT_Error error;
-            FT_Face face;
+            hb_blob_t *blob = hb_blob_create_from_file((char*)pathname);
+            hb_face_t* face = NULL;
+            unsigned int num_faces;
+            unsigned int num_instances;
+            char name1[MAX_NAME_LEN];
+            char name2[MAX_NAME_LEN];
 
             *index = 0;
+            ret = strdup((char *) pathname);
 
-            if (!gFreeTypeLibrary) {
-                error = FT_Init_FreeType(&gFreeTypeLibrary);
-                if (error) {
-                    fprintf(stderr, "FreeType initialization failed! (%d)\n", error);
-                    exit(1);
+            /* Find the face index of a font collection. */
+            num_faces = hb_face_count(blob);
+            if (num_faces > 1) {
+                if (getNameFromCTFont(ctFontRef, kCTFontPostScriptNameKey, name1)) {
+                    for (unsigned int i = 0; i < num_faces; i++) {
+                        face = hb_face_create(blob, i);
+                        if (getNameFromHBFace(face, HB_OT_NAME_ID_POSTSCRIPT_NAME, name2) &&
+                            strcmp(name1, name2) == 0) {
+                            *index = i;
+                            break;
+                        }
+                        hb_face_destroy(face);
+                        face = NULL;
+                    }
                 }
             }
 
-            error = FT_New_Face(gFreeTypeLibrary, (char *) pathname, 0, &face);
-            if (!error) {
-                if (face->num_faces > 1) {
-                    int num_faces = face->num_faces;
-                    char *ps_name1 = getNameFromCTFont(ctFontRef, kCTFontPostScriptNameKey);
-                    int i;
-                    *index = -1;
-                    FT_Done_Face (face);
-                    for (i = 0; i < num_faces; i++) {
-                        error = FT_New_Face (gFreeTypeLibrary, (char *) pathname, i, &face);
-                        if (!error) {
-                            const char *ps_name2 = FT_Get_Postscript_Name(face);
-                            if (strcmp(ps_name1, ps_name2) == 0) {
-                                *index = i;
-                                break;
-                            }
-                            FT_Done_Face (face);
+            /* If we hit the break above, the face would have been destroyed,
+             * otherwise it is the face we want so we don’t create it again. */
+            if (!face)
+              face = hb_face_create(blob, *index);
+
+            /* Find the instance index of a variable font.
+             * We use the upper bits of `index` for the instance index. */
+            num_instances = hb_ot_var_get_named_instance_count(face);
+            if (num_instances) {
+                if (getNameFromCTFont(ctFontRef, kCTFontSubFamilyNameKey, name1)) {
+                    for (unsigned int i = 0; i < num_instances; i++) {
+                        hb_ot_name_id_t name_id = hb_ot_var_named_instance_get_subfamily_name_id(face, i);
+                        if (getNameFromHBFace(face, name_id, name2) &&
+                            strcmp(name1, name2) == 0) {
+                            *index += (i + 1) << 16;
+                            break;
                         }
                     }
-                    free(ps_name1);
                 }
             }
 
-            if (*index != -1)
-                ret = strdup((char *) pathname);
+            hb_face_destroy(face);
+            hb_blob_destroy(blob);
         }
         CFRelease(url);
     }

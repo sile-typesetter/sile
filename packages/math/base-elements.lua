@@ -100,8 +100,8 @@ local function retrieveMathTable(font)
     if not face then
       SU.error("Could not find requested font ".. font .." or any suitable substitutes")
     end
-    local mathTable = ot.parseMath(hb.get_table(face.data, face.index, "MATH"))
-    local upem = ot.parseHead(hb.get_table(face.data, face.index, "head")).unitsPerEm
+    local mathTable = ot.parseMath(hb.get_table(face, "MATH"))
+    local upem = ot.parseHead(hb.get_table(face, "head")).unitsPerEm
     if mathTable == nil then
       SU.error("You must use a math font for math rendering.")
     end
@@ -872,8 +872,8 @@ function elements.text:shape ()
       end
       if biggest then
         glyphs[1].gid = biggest.variantGlyph
-        local dimen = hb.get_glyph_dimensions(face.data,
-          face.index, self.font.size, biggest.variantGlyph)
+        local dimen = hb.get_glyph_dimensions(face,
+          self.font.size, biggest.variantGlyph)
         glyphs[1].width = dimen.width
         glyphs[1].glyphAdvance = dimen.glyphAdvance
         --[[ I am told (https://github.com/alif-type/xits/issues/90) that,
@@ -964,8 +964,8 @@ function elements.text:stretchyReshape (depth, height)
       -- the shaping phase is already done. Need to do better.
       glyphs[1].gid = closest.variantGlyph
       local face = SILE.font.cache(self.font, SILE.shaper.getFace)
-      local dimen = hb.get_glyph_dimensions(face.data,
-        face.index, self.font.size, closest.variantGlyph)
+      local dimen = hb.get_glyph_dimensions(face,
+        self.font.size, closest.variantGlyph)
       glyphs[1].width = dimen.width
       glyphs[1].height = dimen.height
       glyphs[1].depth = dimen.depth

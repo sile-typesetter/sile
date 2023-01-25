@@ -18,6 +18,7 @@ SILE.registerCommand("font", function (options, content)
   if options.style then SILE.settings:set("font.style", options.style) end
   if options.variant then SILE.settings:set("font.variant", options.variant) end
   if options.features then SILE.settings:set("font.features", options.features) end
+  if options.variations then SILE.settings:set("font.variations", options.variations) end
   if options.direction then SILE.settings:set("font.direction", options.direction) end
   if options.language then
     if options.language ~= "und" and icu and icu.canonicalize_language then
@@ -68,6 +69,7 @@ SILE.settings:declare({ parameter = "font.style", type = "string", default = "" 
 SILE.settings:declare({ parameter = "font.direction", type = "string", default = "" })
 SILE.settings:declare({ parameter = "font.filename", type = "string or nil", default = "" })
 SILE.settings:declare({ parameter = "font.features", type = "string", default = "" })
+SILE.settings:declare({ parameter = "font.variations", type = "string", default = "" })
 SILE.settings:declare({ parameter = "font.hyphenchar", type = "string", default = "-" })
 
 SILE.fontCache = {}
@@ -80,6 +82,7 @@ local _key = function (options)
       options.style,
       options.variant,
       options.features,
+      options.variations,
       options.direction,
       options.filename,
     }, ";")
@@ -106,6 +109,7 @@ local font = {
       end
     end
     if not options.features then options.features = SILE.settings:get("font.features") end
+    if not options.variations then options.variations = SILE.settings:get("font.variations") end
     if not options.hyphenchar then options.hyphenchar = SILE.settings:get("font.hyphenchar") end
     return options
   end,
@@ -120,6 +124,15 @@ local font = {
     local cached = SILE.fontCache[key]
     SILE.font.postLoadHook(cached)
     return cached
+  end,
+
+  finish = function ()
+    for key, font in pairs(SILE.fontCache) do
+      if font.tempfilename ~= font.filename then
+        SU.debug("fonts", "Removing temporary file of", key, ":", font.tempfilename)
+        os.remove(font.tempfilename)
+      end
+    end
   end,
 
   postLoadHook = function(face)

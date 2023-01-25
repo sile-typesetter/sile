@@ -41,6 +41,12 @@ TESTFONTFILES += NotoSerifCJK-Regular.ttc
 TESTFONTFILES += SBL_Hbrw.ttf
 TESTFONTFILES += TwemojiMozilla.ttf
 
+if FONT_VARIATIONS
+TESTFONTFILES += Tourney[wdth,wght].ttf
+endif
+
+comma = ,
+varencode = $(subst $(comma),%2C,$(subst [,%5B,$(subst ],%5D,$(1))))
 notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 
 # Tell make how to download individual font files directly (when available)
@@ -59,6 +65,9 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 
 .fonts/Symbola.otf: | .fonts
 	$(CURL) -fsSL https://github.com/ChiefMikeK/ttf-symbola/raw/master/Symbola-13.otf -o $@
+
+.fonts/Tourney%: | .fonts
+	$(CURL) -fsSL https://raw.githubusercontent.com/Etcetera-Type-Co/Tourney/643f1026ad6d41b4527f42cd93c776414fdd6503/fonts/variable/$(call varencode,$(notdir $@)) -o $@
 
 .fonts/TwemojiMozilla.ttf: | .fonts
 	$(CURL) -fsSL https://github.com/mozilla/twemoji-colr/releases/download/v0.5.1/$(notdir $@) -o $@

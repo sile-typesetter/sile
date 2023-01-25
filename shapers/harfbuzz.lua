@@ -43,12 +43,11 @@ function shaper:shapeToken (text, options)
   end
   usedfonts[face] = true
   items = { hb._shape(text,
-      face.data,
-      face.index,
+      face,
       options.script,
       options.direction,
       options.language,
-      ("%g"):format(SILE.measurement(options.size):tonumber()),
+      face.pointsize,
       options.features,
       SILE.settings:get("harfbuzz.subshapers") or ""
     ) }
@@ -63,19 +62,53 @@ function shaper:shapeToken (text, options)
   return items
 end
 
+local _pretty_varitions = function (face)
+  local text = face.filename
+  if face.variations and face.variations ~= "" then
+    text = text.."@"..face.variations
+  end
+  local index = bitshim.band(face.index, 0xFFFF) or 0
+  local instance = bitshim.rshift(face.index, 16) or 0
+  if index or instance then
+    text = text.."["..index..","..instance.."]"
+  end
+  return text
+end
+
 -- TODO: normalize this method to accept self as first arg
 function shaper.getFace (opts)
   local face = SILE.fontManager:face(opts)
   SU.debug("fonts", "Resolved font family", opts.family, "->", face and face.filename)
   if not face or not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
   if SILE.makeDeps then SILE.makeDeps:add(face.filename) end
-  if bitshim.rshift(face.index, 16) ~= 0 then
-    SU.warn("GX feature in '"..opts.family.."' is not supported, fallback to regular font face.")
-    face.index = bitshim.band(face.index, 0xff)
+  face.variations = opts.variations or ""
+  face.pointsize = ("%g"):format(SILE.measurement(opts.size):tonumber())
+  face.weight = ("%d"):format(opts.weight or 0)
+
+  -- Try instanciating the font, hb.instanciate() will return nil if it is not
+  -- a variable font or if instanciation failed.
+  face.tempfilename = face.filename
+  local data = hb.instanciate(face)
+  if data then
+    local tmp = os.tmpname()
+    local file = io.open(tmp, "wb")
+    file:write(data)
+    file:close()
+    face.tempfilename = tmp
+    SU.debug("fonts", "Instanciated", _pretty_varitions(face), "as", face.tempfilename)
+  elseif (face.variations ~= "") or (bitshim.rshift(face.index, 16) ~= 0) then
+    if not SILE.features.font_variations then
+      SU.warn([[This build of SILE was compiled with font variations support disabled,
+  likely due to not having the subsetter library included in HarfBuzz >= 6.
+  This document specifies font variations which cannot be correctly rendered.
+  Please rebuild SILE with the necessary library support. Alternatively to procede
+  anyway *incorrectly* render this document run:
+      sile -e 'SILE.features.font_variations = true' ....
+  Or modify the document to remove variations options from font commands.]])
+    end
+    SU.error("Failed to instanciate: " .. _pretty_varitions(face))
   end
-  local fh, err = io.open(face.filename, "rb")
-  if err then SU.error("Can't open font file '"..face.filename.."': "..err) end
-  face.data = fh:read("*all")
+
   return face
 end
 
@@ -125,7 +158,7 @@ function shaper.checkHBProblems (_, text, face)
     return true
   end
   if hb.version_lessthan(2, 3, 0)
-    and hb.get_table(face.data, face.index, "CFF "):len() > 0
+    and hb.get_table(face, "CFF "):len() > 0
     and not substwarnings["CFF "] then
     SILE.status.unsupported = true
     SU.warn("Vertical spacing of CFF fonts may be subtly inconsistent between systems. Upgrade to Harfbuzz 2.3.0 if you need absolute consistency.")
