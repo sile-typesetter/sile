@@ -61,7 +61,6 @@
         # lua packages needed for testing
         busted
         luacheck
-        luarocks
         # If we want to test things with lua5.2 or an even older lua, we uncomment these
         #bit32
         #compat53
@@ -135,7 +134,9 @@
     in rec {
       devShells = {
         default = pkgs.mkShell {
-          inherit (sile) checkInputs nativeBuildInputs buildInputs;
+          inherit (sile) checkInputs buildInputs FONTCONFIG_FILE;
+          configureFlags =  sile.configureFlags ++ [ "--enable-developer" ];
+          nativeBuildInputs = sile.nativeBuildInputs ++ [ pkgs.luarocks-nix ];
           # This is written in Nixpkgs' expression as well, but we need to write
           # this here so that the overridden luaEnv will be used instead.
           passthru = {
