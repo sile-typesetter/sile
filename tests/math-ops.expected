@@ -12,7 +12,7 @@ Mx 	120.5947
 T	29 w=2.2900	(:)
 Mx 	186.7988
 My 	57.1446
-Set font 	Libertinus Math;10;400;;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
 T	2735 w=5.4100	(nil)
 Mx 	194.9866
 T	30 w=6.4800	(nil)
@@ -127,7 +127,7 @@ Mx 	115.0366
 T	29 w=2.2900	(:)
 Mx 	180.8988
 My 	310.4571
-Set font 	Libertinus Math;10;400;;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
 T	21 19 w=9.3000	(nil)
 Mx 	192.4210
 Mx 	7.9000

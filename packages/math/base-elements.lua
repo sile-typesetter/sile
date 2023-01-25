@@ -243,8 +243,10 @@ function elements.mbox:_init ()
   self.mode = mathMode.display
   self.atom = atomType.ordinary
   local font = {
-    family=SILE.settings:get("math.font.family"),
-    size=SILE.settings:get("math.font.size")
+    family = SILE.settings:get("math.font.family"),
+    size = SILE.settings:get("math.font.size"),
+    style = SILE.settings:get("math.font.style"),
+    weight = SILE.settings:get("math.font.weight")
   }
   local filename = SILE.settings:get("math.font.filename")
   if filename and filename ~= "" then font.filename = filename end

@@ -2,7 +2,7 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	14.8819
 My 	25.3664
-Set font 	Libertinus Math;10;400;;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
 T	2735 w=5.4100	(nil)
 My 	37.3664
 T	2736 w=5.4000	(nil)
