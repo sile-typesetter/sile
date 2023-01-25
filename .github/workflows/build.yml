@@ -4,7 +4,7 @@ on: [ push, pull_request ]
 
 jobs:
 
-  build:
+  build-ubuntu:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -61,3 +61,34 @@ jobs:
             sile-${{ env.VERSION }}.pdf
             sile-${{ env.VERSION }}.zip
             sile-${{ env.VERSION }}.tar.xz
+
+  build-nix:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Cache test fonts
+        uses: actions/cache@v3
+        with:
+          path: |
+            .fonts
+            .sources
+          key: fonts-${{ hashFiles('Makefile-fonts') }}
+      - name: Fetch tags
+        run: |
+          git fetch --prune --tags ||:
+      - name: Install Nix
+        uses: cachix/install-nix-action@v18
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Setup developer environment
+        run: |
+          nix develop --command ./bootstrap.sh
+          nix develop --configure
+          nix develop --command make
+      - name: Run HB6+ only regressions
+        run: |
+          nix develop --command make regressions TESTSRCS=tests/variations-axis.sil
