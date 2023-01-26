@@ -85,6 +85,9 @@ The full list of attributes to the \code{\\font} command are:
       two), but SILE will choose the closest.}
 \item{\autodoc:parameter{features}: enable or disable OpenType feature flags (\code{-hlig}, \code{+ss01})}
 \item{\autodoc:parameter{variant}: a font variant (\code{normal}, \code{smallcaps})}
+\item{\autodoc:parameter{variations}:\footnote{Support for variations requires at least HarfBuzz 6.
+                If SILE is built on a system without support an error will be thrown when trying to render documents using variations.}%
+      set OpenType variations axis values used in variable fonts, (e.g. \code{variations="wdth=122"}).}
 \item{\autodoc:parameter{language}: The two letter (ISO639-1) language code for the
 text. This will affect both font shaping and hyphenation.}
 \item{\autodoc:parameter{direction}: The expected text direction. (\code{LTR-TTB} for
