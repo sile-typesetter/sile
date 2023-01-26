@@ -31,6 +31,7 @@ _DISABLEDSRCS += tests/variations-%
 endif
 export DISABLEDSRCS ?= $(filter $(_DISABLEDSRCS),$(_TESTSRCS))
 TESTSRCS ?= $(filter-out $(DISABLEDSRCS),$(_TESTSRCS))
+TESTPREVIEWS ?= $(addsuffix .pdf,$(basename $(filter-out $(_DISABLEDSRCS),$(_TESTPREVIEWS))))
 
 # Since we can't use $(wildcard ...) in automake file lists, we generate a file
 # with a script that builds our dynamic file lists instead. This is tricky,

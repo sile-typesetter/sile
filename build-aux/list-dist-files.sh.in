@@ -22,7 +22,7 @@ finder tests -maxdepth 1 -name '*.xml'
 finder tests -maxdepth 1 -name '*.lua'
 finder tests -maxdepth 1 -name '*.nil'
 
-printf '\n%s' "TESTPREVIEWS ?="
+printf '\n%s' "_TESTPREVIEWS ?="
 {
 finder tests -maxdepth 1 -name '*.sil'
 finder tests -maxdepth 1 -name '*.xml'
@@ -30,7 +30,6 @@ finder tests -maxdepth 1 -name '*.lua'
 finder tests -maxdepth 1 -name '*.nil'
 } |
     xargs @GREP@ -L KNOWNBAD |
-    @SED@ 's/\....$/.pdf/' |
     xargs printf ' %s'
 
 printf '\n%s' "BUSTEDSPECS ?="
