@@ -83,6 +83,7 @@ The full list of attributes to the \code{\\font} command are:
       \font[weight=800]{800} to
       \font[weight=900]{900}. Not all fonts will support all weights (many just have
       two), but SILE will choose the closest.}
+\item{\autodoc:parameter{features}: enable or disable OpenType feature flags (\code{-hlig}, \code{+ss01})}
 \item{\autodoc:parameter{variant}: a font variant (\code{normal}, \code{smallcaps})}
 \item{\autodoc:parameter{language}: The two letter (ISO639-1) language code for the
 text. This will affect both font shaping and hyphenation.}
