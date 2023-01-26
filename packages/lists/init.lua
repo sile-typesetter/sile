@@ -201,7 +201,7 @@ function package.doNestedList (_, listType, options, content)
     if not((SILE.settings:get("lists.current.itemize.depth")
         + SILE.settings:get("lists.current.enumerate.depth")) > 0)
     then
-      local g = SILE.settings:get("document.parskip").height - SILE.settings:get("lists.parskip").height
+      local g = SILE.settings:get("document.parskip").height:absolute() - SILE.settings:get("lists.parskip").height:absolute()
       SILE.typesetter:pushVglue(g)
     end
   end
