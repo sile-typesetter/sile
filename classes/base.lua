@@ -417,7 +417,7 @@ function class:registerCommands ()
   end, "Declares (or re-declares) a frame on this page.")
 
   self:registerCommand("penalty", function (options, _)
-    if options.vertical and not SILE.typesetter:vmode() then
+    if SU.boolean(options.vertical, false) and not SILE.typesetter:vmode() then
       SILE.typesetter:leaveHmode()
     end
     if SILE.typesetter:vmode() then
@@ -458,7 +458,7 @@ function class:registerCommands ()
   end, "Inserts a glue node. The width option denotes the glue dimension.")
 
   self:registerCommand("skip", function (options, _)
-    options.discardable = options.discardable or false
+    options.discardable = SU.boolean(options.discardable, false)
     options.height = SILE.length(options.height):absolute()
     SILE.typesetter:leaveHmode()
     if options.discardable then
