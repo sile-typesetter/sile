@@ -228,10 +228,10 @@ function package:registerCommands ()
     if value:sub(1, 1) == "<" and value:sub(-1) == ">" then
       SILE.call("autodoc:internal:bracketed", {}, { value:sub(2, -2) })
     else
-      -- Here we should check for comma/semicolon, or surrounding spaces, and in that
-      -- case add quotes around the value. This is a bit of an edge-case though, esp.
-      -- for documentation needs.
-      SILE.call("autodoc:code:style", { type = "value" }, content)
+      if value:match("[,=]") or value:match("^ ") or value:match(" $") then
+        value = ([["%s"]]):format(value)
+      end
+      SILE.call("autodoc:code:style", { type = "value" }, { value })
     end
   end, "Outputs a nicely formatted argument within <brackets>.")
 

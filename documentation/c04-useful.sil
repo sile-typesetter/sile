@@ -83,7 +83,11 @@ The full list of attributes to the \code{\\font} command are:
       \font[weight=800]{800} to
       \font[weight=900]{900}. Not all fonts will support all weights (many just have
       two), but SILE will choose the closest.}
+\item{\autodoc:parameter{features}: enable or disable OpenType feature flags (\code{-hlig}, \code{+ss01})}
 \item{\autodoc:parameter{variant}: a font variant (\code{normal}, \code{smallcaps})}
+\item{\autodoc:parameter{variations}:\footnote{Support for variations requires at least HarfBuzz 6.
+                If SILE is built on a system without support an error will be thrown when trying to render documents using variations.}%
+      set OpenType variations axis values used in variable fonts, (e.g. \code{variations="wdth=122"}).}
 \item{\autodoc:parameter{language}: The two letter (ISO639-1) language code for the
 text. This will affect both font shaping and hyphenation.}
 \item{\autodoc:parameter{direction}: The expected text direction. (\code{LTR-TTB} for
@@ -97,6 +101,12 @@ we’ll see some ways to automate the process.
 SILE’s \em{plain} class notably provides the \autodoc:command{\em{…}} command as a shortcut
 for \autodoc:command{\font[style=italic]{…}}, and the \autodoc:command{\strong{…}}
 command as a a shortcut for \autodoc:command{\font[weight=700]{…}}.
+
+Note for parameters that accept multiple values, values may be separated with commas.
+Be sure to wrap the value in quotes so the commas don't get parsed as new parameters.
+For example \autodoc:command{\font[features="+calt,+ss01"]} will enable OpenType feature flags for both contextual alternatives and alternative style set 1.
+Similarly values that are themselves key=value pairs the quotation marks will keep them separate from other parameters.
+For example \autodoc:command{\font[variations="wght=150,wdth=122"]} can be used to set both the weight and width axis values.
 
 \section{Document Structure}
 
