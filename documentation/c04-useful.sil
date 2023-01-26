@@ -102,6 +102,12 @@ SILE’s \em{plain} class notably provides the \autodoc:command{\em{…}} comman
 for \autodoc:command{\font[style=italic]{…}}, and the \autodoc:command{\strong{…}}
 command as a a shortcut for \autodoc:command{\font[weight=700]{…}}.
 
+Note for parameters that accept multiple values, values may be separated with commas.
+Be sure to wrap the value in quotes so the commas don't get parsed as new parameters.
+For example \autodoc:command{\font[features="+calt,+ss01"]} will enable OpenType feature flags for both contextual alternatives and alternative style set 1.
+Similarly values that are themselves key=value pairs the quotation marks will keep them separate from other parameters.
+For example \autodoc:command{\font[variations="wght=150,wdth=122"]} can be used to set both the weight and width axis values.
+
 \section{Document Structure}
 
 SILE provides a number of different \em{class}es of document (similar to
