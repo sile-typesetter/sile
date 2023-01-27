@@ -3,7 +3,10 @@ local icu = require("justenoughicu")
 local lastshaper
 
 SILE.registerCommand("font", function (options, content)
-  if SU.hasContent(content) then SILE.settings:pushState() end
+  if SU.hasContent(content) then
+    SILE.typesetter:initline()
+    SILE.settings:pushState()
+  end
   if options.filename then SILE.settings:set("font.filename", options.filename) end
   if options.family then
     SILE.settings:set("font.family", options.family)
