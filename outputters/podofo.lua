@@ -92,14 +92,15 @@ function outputer.drawRule (_, x, y, width, depth)
   painter:Fill()
 end
 
-function outputer.debugHbox (_, typesetter, hbox, scaledWidth)
+function outputer:debugHbox (hbox, scaledWidth)
   painter:SetColor(0.9, 0.9, 0.9)
   painter:SetStrokeWidth(0.5)
-  painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height+hbox.depth)
-  if (hbox.depth) then painter:Rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY+(hbox.height), scaledWidth, hbox.height); end
+  local x, y = self:getCursor()
+  painter:Rectangle(x, y+(hbox.height), scaledWidth, hbox.height+hbox.depth)
+  if (hbox.depth) then painter:Rectangle(x, y+(hbox.height), scaledWidth, hbox.height); end
   painter:Stroke()
   painter:SetColor(0, 0, 0)
-  --cr:move_to(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
+  --cr:move_to(x, y)
 end
 
 return outputer

@@ -107,14 +107,15 @@ function outputter.debugFrame (_, frame)
   cr:set_source_rgb(0, 0, 0)
 end
 
-function outputter.debugHbox (_, typesetter, hbox, scaledWidth)
+function outputter:debugHbox (hbox, scaledWidth)
   cr:set_source_rgb(0.9, 0.9, 0.9)
   cr:set_line_width(0.5)
-  cr:rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(hbox.height), scaledWidth, hbox.height+hbox.depth)
-  if (hbox.depth) then cr:rectangle(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-(hbox.height), scaledWidth, hbox.height); end
+  local x, y = self:getCursor()
+  cr:rectangle(x, y-(hbox.height), scaledWidth, hbox.height+hbox.depth)
+  if (hbox.depth) then cr:rectangle(x, y-(hbox.height), scaledWidth, hbox.height); end
   cr:stroke()
   cr:set_source_rgb(0, 0, 0)
-  cr:move_to(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
+  cr:move_to(x, y)
 end
 
 return outputter
