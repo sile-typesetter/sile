@@ -32,7 +32,7 @@ function outputter.drawRule (_, _, _, _, _) end
 
 function outputter.debugFrame (_, _, _) end
 
-function outputter.debugHbox (_, _, _, _) end
+function outputter.debugHbox (_, _, _) end
 
 function outputter.getOutputFilename (_, ext)
   if SILE.outputFilename then return SILE.outputFilename end
