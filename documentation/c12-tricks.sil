@@ -228,17 +228,16 @@ function discovery:typesetProphecy (symbol)
 
 Next, we call another command to produce the symbol itself; this allows the
 book designer to change the symbols at the SILE level rather than having to
-mess about with the Lua file. We use the \command{\\hbox} command to wrap the
-output of the command into a hbox. \command{\\hbox} returns its output, but also
-puts the box into the typesetter’s output node queue; we don’t want it to appear
-in the main typeblock, so we remove the node again, leaving our private copy
-in the \code{hbox} variable.
+mess about with the Lua file.
+We then wrap the output of the command into a hbox. Here, note that we do not
+use the \command{\\hbox} command: it would put the box into the typesetter’s output
+node queue, but we don’t want it to appear in the main typeblock.
+So we just ask the typesetter to build the box and return it.
 
 \begin{verbatim}
-  local hbox = SILE.call("hbox",\{\}, function()
+  local hbox = SILE.typesetter:makeHbox(function()
     SILE.call("prophecy-"..symbol.."-mark")
   end)
-  table.remove(SILE.typesetter.state.nodes)
 \end{verbatim}
 
 What we \em{do} want in the output queue is our special hbox node which will
