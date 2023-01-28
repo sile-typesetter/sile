@@ -591,6 +591,14 @@ function typesetter:outputLinesToPage (lines)
 end
 
 function typesetter:leaveHmode (independent)
+  if self.state.hmodeOnly then
+    -- HACK HBOX
+    -- This should likely be an error, but may break existing uses
+    -- (although these are probably already defective).
+    -- See also comment HACK HBOX in typesetter:makeHbox().
+    SU.warn([[Building paragraphs in this context may have unpredictable results.
+It will likely break in future versions]])
+  end
   SU.debug("typesetter", "Leaving hmode")
   local margins = self:getMargins()
   local vboxlist = self:boxUpNodes()
@@ -760,6 +768,93 @@ function typesetter:chuck () -- emergency shipout everything
   self:leaveHmode(true)
   self:outputLinesToPage(self.state.outputQueue)
   self.state.outputQueue = {}
+end
+
+-- Logic for building an hbox from content.
+-- It returns the hbox and an horizontal list of (migrating) elements
+-- extracted outside of it.
+-- None of these are pushed to the typesetter node queue. The caller
+-- is responsible of doing it, if the hbox is built for anything
+-- else than e.g. measuring it. Likewise, the call has to decide
+-- what to do with the migrating content.
+local _rtl_pre_post = function (box, atypesetter, line)
+  local advance = function () atypesetter.frame:advanceWritingDirection(box:scaledWidth(line)) end
+  if atypesetter.frame:writingDirection() == "RTL" then
+    advance()
+    return function () end
+  else
+    return advance
+  end
+end
+function typesetter:makeHbox (content)
+  local recentContribution = {}
+  local migratingNodes = {}
+
+  -- HACK HBOX
+  -- This is from the original implementation.
+  -- It would be somewhat cleaner to use a temporary typesetter state
+  -- (pushState/popState) rather than using the current one, removing
+  -- the processed nodes from it afterwards. However, as long
+  -- as leaving horizontal mode is not strictly forbidden here, it would
+  -- lead to a possibly different result (the output queue being skipped).
+  -- See also HACK HBOX comment in typesetter:leaveHmode().
+  local index = #(self.state.nodes)+1
+  self.state.hmodeOnly = true
+  SILE.process(content)
+  self.state.hmodeOnly = false -- Wouldn't be needed in a temporary state
+
+  local l = SILE.length()
+  local h, d = SILE.length(), SILE.length()
+  for i = index, #(self.state.nodes) do
+    local node = self.state.nodes[i]
+    if node.is_migrating then
+      migratingNodes[#migratingNodes+1] = node
+    elseif node.is_unshaped then
+      local shape = node:shape()
+      for _, attr in ipairs(shape) do
+        recentContribution[#recentContribution+1] = attr
+        h = attr.height > h and attr.height or h
+        d = attr.depth > d and attr.depth or d
+        l = l + attr:lineContribution():absolute()
+      end
+    else
+      recentContribution[#recentContribution+1] = node
+      l = l + node:lineContribution():absolute()
+      h = node.height > h and node.height or h
+      d = node.depth > d and node.depth or d
+    end
+    self.state.nodes[i] = nil -- wouldn't be needed in a temporary state
+  end
+
+  local hbox = SILE.nodefactory.hbox({
+      height = h,
+      width = l,
+      depth = d,
+      value = recentContribution,
+      outputYourself = function (box, atypesetter, line)
+        local _post = _rtl_pre_post(box, atypesetter, line)
+        local ox = atypesetter.frame.state.cursorX
+        local oy = atypesetter.frame.state.cursorY
+        SILE.outputter:setCursor(atypesetter.frame.state.cursorX, atypesetter.frame.state.cursorY)
+        for _, node in ipairs(box.value) do
+          node:outputYourself(atypesetter, line)
+        end
+        atypesetter.frame.state.cursorX = ox
+        atypesetter.frame.state.cursorY = oy
+        _post()
+        SU.debug("hboxes", function ()
+          SILE.outputter:debugHbox(box, box:scaledWidth(line))
+          return "Drew debug outline around hbox"
+        end)
+      end
+    })
+  return hbox, migratingNodes
+end
+
+function typesetter:pushHlist (hlist)
+  for _, h in ipairs(hlist) do
+    self:pushHorizontal(h)
+  end
 end
 
 return typesetter
