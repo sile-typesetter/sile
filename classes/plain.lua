@@ -333,63 +333,27 @@ function class:registerCommands ()
     end)
   end)
 
-  local _rtl_pre_post = function (box, typesetter, line)
-    local advance = function () typesetter.frame:advanceWritingDirection(box:scaledWidth(line)) end
-    if typesetter.frame:writingDirection() == "RTL" then
-      advance()
-      return function () end
-    else
-      return advance
-    end
-  end
-
   self:registerCommand("hbox", function (_, content)
-    local index = #(SILE.typesetter.state.nodes)+1
-    local recentContribution = {}
-    SILE.process(content)
-    local l = SILE.length()
-    local h, d = SILE.length(), SILE.length()
-    for i = index, #(SILE.typesetter.state.nodes) do
-      local node = SILE.typesetter.state.nodes[i]
-      if node.is_unshaped then
-        local shape = node:shape()
-        for _, attr in ipairs(shape) do
-          recentContribution[#recentContribution+1] = attr
-          h = attr.height > h and attr.height or h
-          d = attr.depth > d and attr.depth or d
-          l = l + attr:lineContribution():absolute()
-        end
-      else
-        recentContribution[#recentContribution+1] = node
-        l = l + node:lineContribution():absolute()
-        h = node.height > h and node.height or h
-        d = node.depth > d and node.depth or d
-      end
-      SILE.typesetter.state.nodes[i] = nil
-    end
-    local hbox = SILE.nodefactory.hbox({
-        height = h,
-        width = l,
-        depth = d,
-        value = recentContribution,
-        outputYourself = function (self_, typesetter, line)
-          local _post = _rtl_pre_post(self_, typesetter, line)
-          local ox = typesetter.frame.state.cursorX
-          local oy = typesetter.frame.state.cursorY
-          SILE.outputter:setCursor(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
-          for _, node in ipairs(self_.value) do
-            node:outputYourself(typesetter, line)
-          end
-          typesetter.frame.state.cursorX = ox
-          typesetter.frame.state.cursorY = oy
-          _post()
-          SU.debug("hboxes", function ()
-            SILE.outputter:debugHbox(self_, self_:scaledWidth(line))
-            return "Drew debug outline around hbox"
-          end)
-        end
-      })
+    local hbox, hlist = SILE.typesetter:makeHbox(content)
+    -- HACK
+    -- Direct insertion in the typesetter node queue comes from
+    -- the original implementation.
+    -- It would likely be clearer to use: SILE.typesetter:pushHbox(hbox)
+    -- but the latter adds a zerohbox sometimes (on initline), so it will
+    -- break some non-regression test and possibly have some effect at
+    -- places... For now, therefore, keep that unchanged, but it should
+    -- be investigated.
     table.insert(SILE.typesetter.state.nodes, hbox)
+
+    if #hlist > 0 then
+      SU.warn("Hbox has migrating content (ignored for now, but likely to break in future versions)")
+      -- Ugly shim:
+      -- One day we ought to do SILE.typesetter:pushHlist(hlist) here, so as to push
+      -- back the migrating contents from within the hbox'ed content.
+      -- However, old Lua code assumed the hbox to be returned, and sometimes removed it
+      -- from the typesetter queue (for measuring, etc.), assuming it was the last
+      -- element in the queue...
+    end
     return hbox
   end, "Compiles all the enclosed horizontal-mode material into a single hbox")
 
