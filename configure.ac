@@ -1,5 +1,5 @@
 AC_PREREQ([2.69])
-AC_INIT([sile],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[simon@simon-cozens.org])
+AC_INIT([sile], [m4_esyscmd(build-aux/git-version-gen .tarball-version)], [simon@simon-cozens.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
@@ -31,7 +31,7 @@ AM_CONDITIONAL([DEPENDENCY_CHECKS], [test "x$enable_dependency_checks" != "xno"]
 
 AC_ARG_ENABLE([developer],
               AS_HELP_STRING([--enable-developer],
-                             [Check for and enable tooling required only for SILE developers]))
+                             [Check for and enable tooling required only for developers]))
 AM_CONDITIONAL([DEVELOPER], [test "x$enable_developer" = "xyes"])
 
 AC_ARG_ENABLE([font-variations],
