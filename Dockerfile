@@ -69,7 +69,8 @@ LABEL org.opencontainers.image.revision="$REVISION"
 COPY build-aux/docker-fontconfig.conf /etc/fonts/conf.d/99-docker.conf
 
 COPY --from=builder /pkgdir /
+COPY --from=builder /src/sile-entry.zsh /usr/bin
 RUN sile --version
 
 WORKDIR /data
-ENTRYPOINT ["sile"]
+ENTRYPOINT [ "sile-entry.zsh" ]
