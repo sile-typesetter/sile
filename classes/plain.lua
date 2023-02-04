@@ -243,6 +243,19 @@ function class:registerCommands ()
     SILE.call("font", { weight = 700 }, content)
   end)
 
+  self:registerCommand("code", function (options, content)
+    -- IMPLEMENTATION NOTE:
+    -- The \code command came from the url package, though used in plenty of
+    -- places. It was referring to the verbatim:font from the verbatim
+    -- package, which _should_ be sort of unrelated.
+    -- Trying to untangle the things here, by introducing the
+    -- definition from the former, but it's of sub-quality...
+    -- The ugly -3 size is a HACK of sorts.
+    options.family = options.family or "Hack"
+    options.size = options.size or SILE.settings:get("font.size") - 3
+    SILE.call("font", options, content)
+  end)
+
   self:registerCommand("nohyphenation", function (_, content)
     SILE.call("font", { language = "und" }, content)
   end)
