@@ -147,13 +147,13 @@ function package:registerCommands ()
         secondaryPenalty = secondaryPenalty,
         worsePenalty = worsePenalty
       })
-      SILE.call("code", {}, result)
+      SILE.call("urlstyle", {}, result)
     end)
   end, "Inserts penalties in an URL so it can be broken over multiple lines at appropriate places.")
 
-  self:registerCommand("code", function (options, content)
-    SILE.call("verbatim:font", options, content)
-  end)
+  self:registerCommand("urlstyle", function (options, content)
+    SILE.call("code", options, content)
+  end, "Hook that may be redefined to change the styling of URLs")
 
 end
 
@@ -177,6 +177,10 @@ To typeset an URL and at the same type have it as active hyperlink, one can use 
 but with the URL passed as argument.
 
 The breaks are controlled by two penalty settings, \autodoc:setting{url.linebreak.primaryPenalty} for preferred breakpoints and, for less acceptable but still tolerable breakpoints, \autodoc:setting{url.linebreak.secondaryPenalty} —its value should logically be higher than the previous one.
+
+The \autodoc:command{\urlstyle} command hook may be overridden to change the style of URLs.
+By default, they are typeset as “code”.
+
 \end{document}
 ]]
 
