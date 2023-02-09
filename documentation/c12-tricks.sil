@@ -3,10 +3,10 @@
 
 We’ll conclude our tour of SILE by looking at some tricky situations which require further programming.
 
-\section{Parallel Text}
+\section{Parallel text}
 
 The example \url{https://sile-typesetter.org/examples/parallel.sil}
-contains a rendering of chapter 1 of Matthew’s Gospel in English and Greek.
+contains a rendering of Chapter 1 of Matthew’s Gospel in English and Greek.
 It uses the \code{diglot} class to align the two texts side-by-side.
 \code{diglot} provides the \code{\\left} and \code{\\right}
 commands to start entering text on the left column or the right column respectively,
@@ -14,7 +14,7 @@ and the \code{\\sync} command to ensure that the two columns are in sync with ea
 It’s an instructive example of what can be done in a SILE class, so we will take it apart and see how it works.
 
 The key thing to note is that the SILE typesetter is an object (in the object-oriented programming sense).
-Normally, it’s a singleton object—i.e. one typesetter is used for typesetting everything in a document.
+Normally, it’s a singleton object—that is, one typesetter is used for typesetting everything in a document.
 But there’s no reason why we can’t have more than one.
 In fact, for typesetting parallel texts, the simplest way to do things is to have two typesetters,
 one for each column, and have them communicate with each other at various points in the operation.
@@ -41,7 +41,7 @@ function diglot:_init (options)
 end
 \end{verbatim}
 
-Now we create two new typesetters, one for each column, and we tell each one how to find the other:
+Next we create two new typesetters, one for each column, and we tell each one how to find the other:
 
 \begin{verbatim}
 function diglot:_init (options)
@@ -56,7 +56,7 @@ end
 Each column needs its own font, so we provide commands to store this information.
 The \code{\\leftfont} and \code{\\rightfont} macros simply store their options
 to be passed to the \code{\\font} command every time \code{\\left} and \code{\\right} are called.
-(Because the fonts are controlled by global settings rather than being typesetter-specific.)
+(This is because the fonts are controlled by global settings rather than being typesetter-specific.)
 
 \begin{verbatim}
 
@@ -72,8 +72,8 @@ end
 \end{verbatim}
 
 Next come the commands for sending text to the appropriate typesetter.
-The current typesetter object used by the system is stored in the variable \code{SILE.typesetter};
-many commands and packages call methods on this variable,
+The current typesetter object used by the system is stored in the variable \code{SILE.typesetter}.
+Many commands and packages call methods on this variable,
 so we need to ensure that this is set to the typesetter object that we want to use.
 We also want to turn off paragraph detection,
 as we will be handling the paragraphing manually using the \code{\\sync} command:
@@ -99,9 +99,9 @@ In other words, if the left typesetter has gone further down the page than the r
 we need to insert some blank space onto the right typesetter’s output queue to get them back in sync,
 and vice versa.
 
-SILE’s page builder has a method called \code{SILE.pagebuilder:collateVboxes} which bundles a bunch of vertical boxes into one;
-we can use this to bundle up each typesetter’s output queue and measure the height of the combined vbox.
-(Of course it’s possible to sum the heights of each box on the output queue by hand,
+SILE’s page builder has a method called \code{SILE.pagebuilder:collateVboxes} which bundles a bunch of vertical boxes into one.
+We can use this method to bundle up each typesetter’s output queue and measure the height of the combined vbox.
+(Of course, it’s possible to sum the heights of each box on the output queue by hand,
 but this achieves the same goal a bit more cleanly.)
 
 \begin{verbatim}
@@ -115,8 +115,8 @@ SILE.registerCommand("sync", function()
   end
 \end{verbatim}
 
-Next we end each paragraph (we do this after adding the glue so that \code{parskips}
-do not get in the way), and go back to handling paragraphing as normal:
+Next we end each paragraph—after adding the glue so that \code{parskips}
+do not get in the way—and go back to handling paragraphing as normal:
 
 \begin{verbatim}
   diglot.rightTypesetter:leaveHmode();
@@ -133,7 +133,7 @@ that each typesetter is linked to the appropriate frame:
 
 The default \code{newPage} routine will do this for one typesetter every
 time we open a new page, but it doesn’t know that we have another typesetter
-object to set up as well; so we need to
+object to set up as well. So we need to
 to make sure that, no matter which typesetter causes an new-page
 event, the other typesetter also gets correctly initialised:
 
@@ -150,7 +150,7 @@ function diglot:newPage (self)
 end
 \end{verbatim}
 
-And finally, when one typesetter causes an end-of-page event, we need to ensure
+Finally, when one typesetter causes an end-of-page event, we need to ensure
 that the other typesetter is given the opportunity to output its queue to the
 page as well:
 
@@ -161,10 +161,10 @@ function diglot:endPage = ()
 end
 \end{verbatim}
 
-Similarly for the end of the document, but in this case we will use the
-emergency \code{chuck} method; whereas \code{leaveHmode} means “call the
-page builder and see there’s enough material to build a page”, \code{chuck}
-means “you must get rid of everything on your queue now.” We add some infinitely
+At the end of the document, we will use the
+emergency \code{chuck} method. Where \code{leaveHmode} means “call the
+page builder and see there’s enough material to build a page,” \code{chuck}
+means “you must get rid of everything on your queue \em{now.”} We add some infinitely
 tall glue to the other typesetter’s queue to help the process along:
 
 \begin{verbatim}
@@ -175,12 +175,12 @@ function diglot:finish ()
 end
 \end{verbatim}
 
-And there you have it; a class which produces balanced parallel texts using two
+And there you have it: a class which produces balanced parallel texts using two
 typesetters at once.
 
 \section{Sidenotes}
 
-One SILE project needed two different kinds of sidenotes, margin notes and gutter
+One SILE project needed two different kinds of sidenotes: margin notes and gutter
 notes.
 
 \line
@@ -188,16 +188,16 @@ notes.
 \line
 
 Sidenotes can be seen as a simplified form of
-parallel text. With a true parallel, neither the left or the right typesetter
+parallel text. With a true parallel layout, neither the left or the right typesetter
 is “in charge”—either can fill up the page and then inform the other typesetter
 that they need to catch up. In the case of sidenotes, there’s a well-defined
 main flow of text, with annotations having to work around the pagination of the
 typeblock.
 
-There are a variety of ways that we could implement these sidenotes; as it
-happened, I chose a different strategy for the margin notes and the gutter notes.
+There are a variety of ways that we could implement these sidenotes. As it
+happened, we chose a different strategy for the margin notes and the gutter notes.
 Cross-references in the gutter could appear fairly frequently, and so needed to
-“stack up” down the page—they need to be \em{at least} on a level with the verse
+“stack up” down the page: they need to be \em{at least} on a level with the verse
 that they relate to, but could end up further down the page if there are a few
 cross-references close to each other. Markings in the margin, on the other hand,
 were guaranteed not to overlap.
@@ -208,7 +208,7 @@ typeblock, actually outputs itself by marking the margin at the current vertical
 position in the typeblock. In the example above, there will be a special hbox
 just before the word “there” in the first line.
 
-First we need to find the appropriate margin frame and, find its left boundary:
+First we need to find the appropriate margin frame and find its left boundary:
 
 \begin{verbatim}
 \line
@@ -249,13 +249,13 @@ symbol that we stored in the \code{hbox} variable.
 Finally we need to write the routine which outputs this hbox. Box
 output routines receive three parameters: the box itself, the current
 typesetter (which knows the frame it is typesetting into, and the frame
-knows whereabouts it has got to), and a variable representing the stretchability
+knows where it must go), and a variable representing the stretchability
 or shrinkability of the line. (We don’t need that for this example.)
 
 What our output routine should do is: save a copy of our horizontal position,
 so that we can restore it later as we carry on outputting other boxes; jump
 across to the left edge of the margin, which we computed previously; tell
-the symbol that we’re carrying with us to output \em{itself}; and then jump
+the symbol that we’re carrying with us to output \em{itself;} and then jump
 back to where we were:
 
 \begin{verbatim}
@@ -276,7 +276,7 @@ which are closer to true sidenotes, we need to do something a bit more intellige
 We’ll take a similar approach to when we made the parallel texts, by employing a
 separate typesetter object.
 
-As before we’ll create the object, and ensure that at the start of the document
+As before, we’ll create the object, and ensure that at the start of the document
 and at the start of each page it is populated correctly with the appropriate frame:
 
 \begin{verbatim}
@@ -308,8 +308,8 @@ end
 \end{verbatim}
 
 Now for the function which actually handles a cross-reference. As with the
-parallels example, we start by totting up the height of the material processed
-on the current page by both the main typesetter and the cross-reference typesetter.
+parallels example, we start by totaling up the height of the material processed
+on the current page by both the main typesetter and the cross-reference typesetter:
 
 \begin{verbatim}
 \line
@@ -319,9 +319,9 @@ function discovery:typesetCrossReference (xref)
   local mainVbox = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue)
 \end{verbatim}
 
-This deals with the material which has already been put into the output queue: in
-other words, completed paragraphs. The problem here is that we do not want to
-end a paragraph between two verses; if we are mid-paragraph while typesetting
+This deals with the completed paragraphs which have already been put into the output queue.
+The problem here is that we do not want to
+end a paragraph between two verses: if we are mid-paragraph while typesetting
 a cross-reference, we need to work out what the height of the material \em{would have
 been} if we were to put it onto the output queue at this point. So, we take
 the \code{SILE.typesetter} object on a little excursion.
@@ -331,10 +331,10 @@ First we take a copy of the current node queue, and then we call the typesetter�
 its existing state for later. Since we have a new typesetter, its node queue
 is empty, and so we feed it the nodes that represent our paragraph so far. Then
 we tell the typesetter to leave horizontal mode, which will cause it to go away
-and calculate line breaks, leading, paragraph height and so on. We box up its
+and calculate line breaks, leading, paragraph height, and so on. We box up its
 output queue, and then return to where we were before. Now we have a box which
 represents what would happen if we set the current paragraph up to the point
-that our cross-reference is inserted; the height of this box is the distance
+that our cross-reference is inserted. The height of this box is the distance
 we need to add to \code{mainVbox} to get the vertical position of the cross-reference
 mark.
 
@@ -351,10 +351,10 @@ mark.
 \note{The \code{1} argument to \code{leaveHmode} means “you may not create
 a new page here.”}
 
-In most cases, the cross-reference typesetter hasn’t got as far down the page
+In most cases, the cross-reference typesetter hasn’t gotten as far down the page
 as the body text typesetter, so we tell the cross-reference typesetter to shift itself
 down the page by the difference. Unlike the parallel example, where either typesetter
-could tell the other to open up additional vertical space, in this case it’s OK if
+could tell the other to open up additional vertical space, in this case it’s okay if
 the cross-reference appears a bit lower than the verse it refers to.
 
 \begin{verbatim}
@@ -388,20 +388,20 @@ and then calling ordinary commands, rather than doing the settings and glue
 insertion “by hand.”}
 
 In the future it may make sense for there to be a standard \code{sidenotes}
-package in SILE, but it has been instructive to see a couple of ‘non-standard’
+package in SILE, but it has been instructive to see a couple of “non-standard”
 examples to understand how the internals of SILE can be leveraged to create such a
 package. Your homework is to create one!
 
-\section{SILE As A Library}
+\section{SILE as a library}
 
 So far we’ve been assuming that you would want to run SILE as a processor for
-an existing document. But what if you have a program which produces or munges
+an existing document. But what if you have a program which produces or manipulates
 data, and you would like to produce PDFs from within your application?
 In that case, it may be easier and provide more flexibility to use SILE as a library.
 
 At \url{https://sile-typesetter.org/examples/byhand.lua}, you will find an
 example of a Lua script which produces a PDF from SILE. It’s actually fairly
-simple to use SILE from within Lua; the difficult part is setting things up.
+simple to use SILE from within Lua—the difficult part is setting things up.
 Here’s how to do it.
 
 \begin[type=autodoc:codeblock]{raw}
@@ -421,7 +421,7 @@ typesetting, and then initialize the typesetter with this frame. This is all
 that SILE does to get itself ready to typeset.
 
 After this, all the usual API calls will work: \code{SILE.call},
-\code{SILE.typesetter:typeset} and so on.
+\code{SILE.typesetter:typeset}, and so on.
 
 \begin{verbatim}
 SILE.typesetter:typeset(data)
@@ -470,16 +470,16 @@ Running SILE with the \code{--debug \em{facility}} switch will turn on debugging
       and paragraphs into pages.}
 \item{\code{vboxes} provides even more information about page break decisions,
       showing you what vboxes were in SILE’s queue when considering the breaking.}
-\item{\code{versions} gives a report on the versions of libraries and fonts in use;
-      please include this information when reporting bugs in SILE!}
+\item{\code{versions} gives a report on the versions of libraries and fonts in use.
+      Please include this information when reporting bugs in SILE!}
 \item{Any package or other area of SILE’s operation may define their own debugging tags;
       the \code{insertions} package does this, as do the Japanese and Uyghur language
       support systems (\code{--debug uyghur}).
       Often the debug flag is the name of the package or the function.}
 \end{itemize}
 
-Multiple facilities can be turned on by adding the flag multiple times or by separating them with commas:
-\code{--debug typesetter,break} will turn on debugging information for the typesetter and line breaker.
+Multiple facilities can be turned on by adding the flag multiple times or by separating them with commas.
+For example, \code{--debug typesetter,break} will turn on debugging information for the typesetter and line breaker.
 
 From Lua, you can add entries to the \code{SILE.debugFlags} table to turn on debugging for a given facility.
 This can be useful for temporarily debugging a particular operation:

@@ -11,22 +11,21 @@ We want to make it easy for minority languages and scripts to implement their ow
 
 For SILE to know how to typeset text you will need to tell it what language your text is in!
 There are two ways to do this:
-as part of the \code{\\font[language=...]} command as detailed in chapter 4,
+as part of the \code{\\font[language=...]} command as detailed in Chapter 4,
 or by use of the \code{\\language[main=...]} command.
 Both of these expect an ISO639-1 language code such as \code{en} for English, \code{ar} for Arabic, and so on.
 
-Selecting a language by either method loads up the \em{language support} file(s) for that language.
+Selecting a language by either method loads up the \em{language support} files for that language.
 These in turn enable various localization and typesetting conventions.
-Language support may include and combination of:
+Language support may include:
 
 \begin{itemize}
-\item{hyphenation patterns,}
-\item{line breaking and justification schemes,}
-\item{frame advance and writing direction,}
-\item{spacing,}
-\item{choice of glyphs within a font,}
-\item{localization of programatically inserted strings,}
-\item{and more…}
+\item{hyphenation patterns}
+\item{line breaking and justification schemes}
+\item{frame advance and writing direction}
+\item{spacing}
+\item{choice of glyphs within a font}
+\item{localization of programatically inserted strings}
 \end{itemize}
 
 For example, Sindhi and Urdu users will expect the Arabic letter \em{heh} (\font[family=LateefGR]{ه}) to combine with other letters in different ways to standard Arabic shaping.
@@ -51,19 +50,19 @@ then in Urdu: \font[family=LateefGR,language=urd]{ههه}.
 
 \section{Direction}
 
-SILE is written to be \em{direction-agnostic}, which means that it has
-no fixed idea about which way text should flow on a page: Latin scripts
+SILE is written to be \em{direction-agnostic,} which means that it has
+no fixed idea about which way text should flow on a page. Latin scripts
 are generally written left-to-right with individual lines starting from
 the top of the page and advancing towards the bottom. Japanese can be
 written in the same way, but traditionally is typeset down the page with
 lines of text moving from the right of the page to the left.
 
-To describe this, SILE uses the concept of a \em{writing direction},
-which denotes the way each individual line appears on the page —left
+To describe this, SILE uses the concept of a \em{writing direction,}
+which denotes the way each individual line appears on the page—left
 to right for Latin scripts, right to left for Arabic, Hebrew and so on,
-top to bottom for traditional Japanese— and a \em{page advance direction},
-which denotes the way the lines “stack up”. Each of these directions can
-take one of four values: \code{LTR}, \code{RTL}, \code{TTB} and \code{BTT}.
+top to bottom for traditional Japanese—and a \em{page advance direction,}
+which denotes the way the lines “stack up.” Each of these directions can
+take one of four values: \code{LTR}, \code{RTL}, \code{TTB}, or \code{BTT}.
 A \em{direction specification} is made up of either a writing direction
 (\code{LTR} or \code{RTL}), in which case the page advance direction is
 understood to be \code{TTB}, or a writing direction and a page advance
@@ -100,7 +99,7 @@ languages.
 
 The default hyphen character is “-”, which can be tweaked by the \code{\\font}
 parameter \code{hyphenchar}. It accepts a Unicode character or Unicode codepoint
-in \code{[Uu]+<code>} or Hexadecimal \code{0[Xx]<code>} format – for instance
+in \code{[Uu]+<code>} or Hexadecimal \code{0[Xx]<code>} format—for instance,
 \code{\\font[family=Rachana,language=ml,hyphenchar=U+200C]}.
 
 SILE comes with a special “language” called \code{und}, which has no hyphenation
@@ -118,20 +117,20 @@ are available; if not, work through the resources at
 
 A small handful of strings may be programatically added to documents depending on language, context, and options.
 For example by default in English the \code{book} class will prepend “Chapter ” before chapter numbers output by the \code{\\chapter} command.
-These localized strings are managed internally using the Fluent localization system.
-See Project Fluent (\url{https://projectfluent.org}) for details on the data format and uses.
+These localized strings are managed internally using the Fluent localization system.%
+\footnote{See Project Fluent (\url{https://projectfluent.org}) for details on the data format and uses.}
 Some default localizations are provided for a handful of languages, but it is quite likely SILE will not (yet) have your language.
 Even if it does, it may not use the localization of your choice.
 
 All default localizations can be easily overridden and new locales can easily be added in your document or project.
-Additionally the Fluent localization system is exposed and can be used for your localization purposes.
+Additionally, the Fluent localization system is exposed and can be used for your localization purposes.
 
 To set a new value for a message (or messages), simply use the \code{\\ftl} command.
 The contents passed to the command will be parsed as new messages and loaded in the locale for the current document language.
-Optionally messages may be loaded into a different locale with \code{\\ftl[locale=<locale>]}.
+Optionally, messages may be loaded into a different locale with \code{\\ftl[locale=<locale>]}.
 You can also load messages from an external ftl file with \code{\\ftl[src=<filename>]}.
 
-To output a localized message, pass the message id to the \code{\\fluent} command.
+To output a localized message, pass the message ID to the \code{\\fluent} command.
 The current document languages determines the locale used, or a locale option may be passed.
 Fluent parameters may also be passed as options.
 
@@ -159,7 +158,7 @@ SILE inserts word break opportunities after Ethiopic word spaces and full
 stops. Amharic can be typeset in two styles: with space surrounding
 punctuation or space after punctuation. You can set the setting
 \autodoc:setting[check=false]{languages.am.justification} to either \code{left}
-or \code{centered} to control which style is used. The default is \code{left}
+or \code{centered} to control which style is used. The default is \code{left}.
 
 \begin{autodoc:codeblock}
 \\font[family=Noto Sans Ethiopic,language=am]
@@ -178,11 +177,13 @@ or \code{centered} to control which style is used. The default is \code{left}
 
 \define[command=eo]{\font[language=eo]{\process}}
 
-Esperanto typesetting is quite straight forward, however one feature of the language is unique:
+Esperanto typesetting is quite straight forward; however one feature of the language is unique:
 the requirement that \em{all} adjectives, including numerals, have the suffix “\eo{ª}”.
 This includes numbers standing on their own.
-For example, “the 15th of March” is, in Esperanto, “\eo{la 15ª de marto}”.
-As there is lack of agreement\footnote{Wikipedia prefers “\eo{15-a}” while most professional books and posters prefer “\eo{15ª}”, while some authors even write “\eo{15a}” as the underlying word is “\eo{dekkvina}”.} on how to typeset this, you have options:
+For example, “the 15th of March” is, in Esperanto, “\eo{la 15ª de marto}.”
+As there is lack of agreement%
+\footnote{Wikipedia prefers “\eo{15-a}” while most professional books and posters prefer “\eo{15ª}.” Some authors even write “\eo{15a},” as the underlying word is “\eo{dekkvina}.”}
+on how to typeset this, you have options:
 \autodoc:setting[check=false]{languages.eo.ordinal.raisedsuffix} when made true will use \eo{ª} (as in “\eo{Ĉapitro 1ª}”) while
 \autodoc:setting[check=false]{languages.eo.ordinal.hyphenbefore} will prepend a hyphen (as in “\eo{Ĉapitro 15-a}”).
 
@@ -190,7 +191,7 @@ As there is lack of agreement\footnote{Wikipedia prefers “\eo{15-a}” while m
 
 In French typesetting, there is normally a non-breakable space between text
 and “high” punctuation (a thin fixed space before question marks, exclamation
-marks, semicolons and an inter-word space before colons), and also spaces
+marks, and semicolons, and an inter-word space before colons), and also spaces
 within “guillemets” (quotation marks). SILE will automatically apply the
 correct space. The size of these spaces is determined by
 \autodoc:setting[check=false]{languages.fr.thinspace},
@@ -200,10 +201,10 @@ correct space. The size of these spaces is determined by
 \subsection{Japanese / Chinese}
 
 SILE aims to conform with the W3G document “Requirements for Japanese Text Layout”\footnote{\url{https://www.w3.org/TR/jlreq/}} which describes the typographic conventions for Japanese (and also Chinese) text.
-Breaking rules (kinzoku shori) and intercharacter spacing is fully supported on selecting the Japanese language.
+Breaking rules \em{(kinzoku shori)} and intercharacter spacing is fully supported on selecting the Japanese language.
 The easiest way to set up the other elements of Japanese typesetting such as the \em{hanmen} grid and optional vertical typesetting support is by using the \code{jplain} or \code{jbook} classes.
-For other languages with similar layout requriements more generic \code{tplain} and \code{tbook} classes are available that setup the layout elements without also setting the default language and font to Japanese specific values.
-These are also good condidates to use as bases classes and extend for more language specific classes.
+For other languages with similar layout requirements, more generic \code{tplain} and \code{tbook} classes are available that setup the layout elements without also setting the default language and font to Japanese specific values.
+These are also good condidates to use as base classes and extend for more language-specific classes.
 
 \package-documentation{hanmenkyoshi}
 

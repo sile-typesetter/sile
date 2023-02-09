@@ -6,29 +6,29 @@ We’ll be looking at the DocBook processor that ships with SILE.
 DocBook is an XML format for structured technical documentation.
 DocBook itself doesn’t encode any presentation information about how its various tags should be rendered on a page, and so we shall have to make all the presentation decisions for ourself.
 
-Since DocDook itself doesn’t specify anything about presentation such as papersize, you may need to supply values either on the command line or using a preamble.
-When you use the \code{-c docbook} command line option to SILE, SILE will use the \em{docbook} class in spite of any document declaration.
-In addition options such as paper size could be set with, e.g. \code{-O papersize=legal}.
+Since DocDook itself doesn’t specify anything about presentation such as paper size, you may need to supply values either on the command line or using a preamble.
+When you use the \code{-c docbook} command line option to SILE, SILE will use the \code{docbook} class in spite of any document declaration.
+In addition, options such as paper size could be set; for example, \code{-O papersize=legal}.
 
-The class initalization for DocBoox isn’t too fancy, it just loads up a couple packages that will get used later.
+The class initalization for DocBoox isn’t too fancy; it just loads up a couple packages that will get used later.
+
+\begin{note}
+Much of the example code in this chapter is in SILE format using macros.
+The actual \code{docbook} class currently uses Lua functions to specify these commands.
+The functionality is the same, but the Lua syntax is more flexible and recommended for most use cases.
+The SILE \code{\\define} macros shown here can still be used in a preamble file if desired.
+\end{note}
 
 Now we can start defining SILE commands to render XML elements.
 Most of these are fairly straightforward so we will not dwell on them too much.
-For instance, DocBook has tags like \code{<code>}, \code{<filename>}, \code{<guimenu>} which should all be rendered in a monospaced typewriter font.
+For instance, DocBook has tags like \code{<code>}, \code{<filename>}, and \code{<guimenu>} which should all be rendered in a monospaced typewriter font.
 To make it easier to customize the class, we abstract out the font change into a single command:
-
-\begin{note}
-Much of the example code in this chapter is in SIL format using macros.
-The actual docbook class currently uses Lua functions to specify these commands.
-The functionality is the same, but the Lua syntax is more flexible and recommended for most use cases.
-The SILE define macros shown here can still be used in a preamble file if desired.
-\end{note}
 
 \begin[type=autodoc:codeblock]{raw}
 \define[command=docbook-ttfont]{\font[family=Inconsolata,size=2ex]{\process}}
 \end{raw}
 
-Now we can define our \code{<code>} (etc.) tags:
+Now we can define our tags for \code{<code>} and other similar tags:
 
 \begin[type=autodoc:codeblock]{raw}
 \define[command=code]{\docbook-ttfont{\process}}
@@ -41,20 +41,20 @@ Now we can define our \code{<code>} (etc.) tags:
 
 If an end user wants things to look different, they can redefine the \code{docbook-ttfont} command and get a different font.
 
-\section{Handling Titles}
+\section{Handling titles}
 
 So much for simple tags.
 Things get interesting when there is a mismatch between the simple format of SILE macros and the complexity of DocBook markup.
 
 We have already seen an example of the \code{<link>} tag where we also need to process XML attributes, so we will not repeat that here.
 Let’s look at another area of complexity: the apparently-simple \code{<title>} tag.
-The reason this is complex is that it occurs in different contexts, sometimes more than once within a context; it should often be rendered differently in different contexts.
-So for instance \code{<article><title>...} will look different to \code{<section><title>...}.
-Inside an \code{<example>} tag, the title will be prefixed by an example number; inside a \code{<bibliomixed>} bibliography entry the title should not be set off as a new block but should be part of the running text; and so on.
+The reason this is complex is that it occurs in different contexts—sometimes more than once within a context—and it should often be rendered differently in different contexts.
+For instance, \code{<article><title>...} will look different to \code{<section><title>...}.
+Inside an \code{<example>} tag, the title will be prefixed by an example number; inside a \code{<bibliomixed>} bibliography entry, the title should not be set off as a new block but should be part of the running text, and so on.
 
-What we will do to deal with this situation is provide a very simple definition of \code{<title>}, but when processing the containing elements of \code{<title>} (such as \code{<article>}, \code{<example>}), we will process the title ourselves.
+What we will do to deal with this situation is provide a very simple definition of \code{<title>}, but when processing the containing elements of \code{<title>} (such as \code{<article>} and \code{<example>}), we will process the title ourselves.
 
-For instance, let’s look at \code{<example>}, which has the added complexity of needing to keep track of an article number.
+Let’s look at \code{<example>}, which has the added complexity of needing to keep track of an article number.
 
 \begin{verbatim}
 \line
@@ -67,7 +67,7 @@ self:registerCommand("example", function(options,content)
 \end{verbatim}
 
 \code{\\docbook-line} is a command that we’ve defined in the \code{docbook.sil} macros file to draw a line across the width of the page to set off examples and so on.
-\code{\\docbook-titling} is a command similarly defined in \code{docbook.sil} which sets the default font for titling and headers; once again, if people want to customize the look of the output we make it easier for them by giving them simple, compartmentalized commands to override.
+\code{\\docbook-titling} is a command similarly defined in \code{docbook.sil} which sets the default font for titling and headers. Once again, if someone wants to customize the look of the output we make it easier for them by giving them simple, compartmentalized commands to override.
 
 So far so good, but how do we extract the \code{<title>} tag from the \code{content} abstract syntax tree?
 SILE does not provide XPath or CSS-style selectors to locate content form within the DOM tree;\footnote{Patches, as they say, are welcome.} instead there is a simple one-level function called \code{SILE.inputter:findInTree()} which looks for a particular tag or command name within the immediate children of the current tree:
@@ -86,7 +86,7 @@ But we also need to ensure that the \code{<title>} tag doesn’t get processed a
       docbook.wipe(t)
 \end{verbatim}
 
-\code{docbook.wipe} is a little helper function which nullifies all the content of a Lua table:
+\code{docbook.wipe} is a little helper function which nullifies the content of a Lua table:
 
 \begin{verbatim}
 function docbook.wipe(tbl)
@@ -106,15 +106,15 @@ Let’s finish off the \code{<example>} example by skipping a bit between the ti
 \line
 \end{verbatim}
 
-Now it happens that the \code{<example>}, \code{<table>} and \code{<figure>} tags are pretty equivalent: they produce numbered titles and then go on to process their content.
+It happens that the \code{<example>}, \code{<table>}, and \code{<figure>} tags are pretty equivalent: they produce numbered titles and then go on to process their content.
 So in reality we actually define an abstract \code{countedThing} method and define these commands in terms of that.
 
 \section{Sectioning}
 
 DocBook sectioning is a little different to the SILE \code{book} class.
 \code{<section>} tags can be nested; to start a subsection, you place another \code{<section>} tag inside the current \code{<section>}.
-So in order to know what level we are currently on, we need a stack; we also need to keep track of what section number we are on at \em{each} level.
-For instance:
+So in order to know what level we are currently on, we need a stack. We also need to keep track of what section number we are on at \em{each} level.
+For instance, with the expected section numbers and titles in XML comments:
 
 \begin{verbatim}
   <section><title>A</title> : \examplefont{1. A}

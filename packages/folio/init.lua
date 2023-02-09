@@ -76,7 +76,7 @@ end
 
 package.documentation= [[
 \begin{document}
-The \autodoc:package{folio} package (which is automatically loaded by the plain class, and therefore by nearly every SILE class) controls the output of folios—the old-time typesetter word for page numbers.
+The \autodoc:package{folio} package (which is automatically loaded by the \code{plain} class, and therefore by nearly every SILE class) controls the output of folios—the old-time typesetter word for page numbers.
 
 It provides four commands to users:
 
@@ -95,7 +95,7 @@ If, for instance, you want to set page numbers in a different font you can redef
 
 If you want to put page numbers on the left side of even pages and the right side of odd pages, there are a couple of ways you can do that.
 The complicated way is to define a command in Lua which inspects the page number and then sets the number ragged left or ragged right appropriately.
-The easy way is just to put your folio frame where you want it on the master page...
+The easy way is just to put your folio frame where you want it on the master page.
 \end{document}
 ]]
 

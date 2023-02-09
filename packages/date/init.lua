@@ -32,9 +32,9 @@ end
 
 package.documentation = [[
 \begin{document}
-The \autodoc:package{date} package provides the \autodoc:command{\date} command, which simply outputs the date using the system’s date function.
-You can customize the format by passing the \autodoc:parameter{format} parameter, following the formatting codes in the Lua manual.
-(\url{https://www.lua.org/pil/22.1.html})
+The \autodoc:package{date} package provides the \autodoc:command{\date} command, which simply outputs the current date using the system’s date function.
+You can customize the format by passing the \autodoc:parameter{format} parameter, following the formatting codes in the Lua manual
+(\url{https://www.lua.org/pil/22.1.html}).
 \end{document}
 ]]
 

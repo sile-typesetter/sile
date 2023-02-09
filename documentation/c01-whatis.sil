@@ -12,7 +12,7 @@ does is to compare it to other systems which you may have heard of.
 \section{SILE versus Word}
 
 When most people produce printed documents using a computer, they usually use
-desktop oriented word processing software such as Microsoft Word, iWork Pages,
+desktop oriented word processing software such as Microsoft Word, Apple Pages,
 or LibreOffice Writer. SILE is not a word processor; it is a typesetting
 system. There are several important differences.
 
@@ -45,7 +45,7 @@ out automatically how it best flows from frame to frame and from page to page.
 So when you are preparing content for SILE, you don’t know where the lines
 will break until after it has been processed. You may use your text editor to
 type and type and type as long a line as you like, and when SILE comes to
-process your instructions, it will consider your input (up to) three times
+process your instructions, it will consider your input several times
 over in order to work out how to best to break the lines to form a paragraph.
 For example, if after one pass it finds that it has ended two successive lines
 with a hyphenated word, it will go back and try again and see if it can find
@@ -83,7 +83,7 @@ TrueType fonts, not METAFONTs (\tt{xetex}); PDFs, not DVIs (\tt{pstex},
 \tt{pdftex}); Unicode, not 7-bit ASCII (\tt{xetex} again); markup languages
 and embedded programming languages, not macro languages (\tt{xmltex},
 \tt{luatex}). At this point, the parts of TeX that people actually \em{use}
-are 1) the box-and-glue model, 2) the hyphenation algorithm, and 3) the
+are (1) the box-and-glue model, (2) the hyphenation algorithm, and (3) the
 line-breaking algorithm.
 
 SILE follows exactly in TeX’s footsteps for each of these three areas that have
@@ -95,25 +95,26 @@ to you, you should already be getting excited.} it is very easy to extend or
 alter the behaviour of the SILE typesetter.
 
 For instance, one of the things that TeX can’t do particularly well is
-typesetting on a grid. This is something of a must-have feature for anyone
-typesetting bibles. Typesetting on a grid means that each line of text will
+typesetting on a grid. This a must-have feature for anyone
+typesetting bibles and other complicated documents. Typesetting on a grid means that each line of text will
 line up between the front and back of each piece of paper producing much less
 visual bleed-through when printed on thin paper. This is virtually impossible
 to accomplish in TeX. There are various hacks to try to make it happen, but
 they’re all horrible. In SILE, you can alter the behaviour of the typesetter
-and write a very short add-on package to enable grid typesetting.
+and include a very short add-on package to enable grid typesetting.
 
-Of course, nobody uses plain TeX—they all use LaTeX equivalents plus a huge
-repository of packages available from the CTAN. SILE does not benefit from the
+In fact, nobody uses plain TeX—they all use LaTeX equivalents plus a huge
+repository of packages available from the The Comprehensive TeX Archive Network
+(CTAN) archive. SILE does not benefit from the
 large ecosystem and community that has grown up around TeX; in that sense, TeX
-will remain streets ahead of SILE for some time to come. But in terms of
-\em{core capabilities}, SILE is already certainly equivalent to, if not
-somewhat more advanced than, TeX.
+will remain ahead of SILE for some time to come. But in terms of
+\em{core capabilities}, SILE is already equivalent to TeX—if not
+somewhat more advanced.
 
 \section{SILE versus InDesign}
 
 The other tool that people reach for when designing printed material on
-a computer is InDesign (or similar Desktop Publishing software, such as
+a computer is Adobe InDesign (or similar desktop publishing software, such as
 Scribus).
 
 % Reduce bug reports about this buggy float with a hack-around
@@ -124,10 +125,10 @@ Scribus).
 
 \noindent
 \float[rightboundary=7pt,bottomboundary=10pt]{\img[src=documentation/fig1.png,width=140]}
-DTP software is similar to Word Processing Software in that they are
+DTP software is similar to word processing software in that they are
 both graphical and largely WYSIWYG, but the paradigm is different. The focus is
 usually less on preparing the content than on laying it out on the
-page--you click and drag to move areas of text and images around the screen.
+page—you click and drag to move areas of text and images around the screen.
 
 InDesign is a complex, expensive, commercial publishing tool. SILE is a free,
 open source typesetting tool which is entirely text-based; you enter commands
@@ -149,12 +150,11 @@ InDesign is to declare what styling should apply to each XML element, and as
 the data is read in, InDesign formats the content according to the rules that
 you have declared.
 
-You can do exactly the same thing in SILE, except you have a lot more control
+You can do the same thing in SILE, except you have a lot more control
 over how the XML elements get styled, because you can run any SILE command you
 like for a given element, including calling out to Lua code to style a piece of
 XML. Since SILE is a command-line filter, armed with appropriate styling
-instructions you can go from an XML file to a PDF in one shot. Which is quite
-nice.
+instructions you can go from an XML file to a PDF in one shot.
 
 In the final chapters of this book, we’ll look at some extended examples of
 creating a \em{class file} for styling a complex XML document into a PDF with
@@ -163,7 +163,7 @@ SILE.
 \section{Conclusion}
 
 SILE\footnote{In case you’re wondering, the author pronounces it
-\font[family=Gentium Plus]{/saɪəl/}, to rhyme with “trial”.} {}takes some textual
+\font[family=Gentium Plus]{/saɪəl/}, to rhyme with “trial.”} {}takes some textual
 instructions and turns them into PDF output. It has
 features inspired by TeX and InDesign, but seeks to be more flexible,
 extensible and programmable than either of them. It’s useful both for

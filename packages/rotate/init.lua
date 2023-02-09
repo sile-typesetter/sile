@@ -115,15 +115,15 @@ where the angle is measured in degrees.
 
 Content which is rotated is placed in a box and rotated. The height and width of
 the rotated box is measured, and then put into the normal horizontal list for
-typesetting. The effect of this is that space is reserved around the rotated content.
+typesetting. The effect is that space is reserved around the rotated content.
 The best way to understand this is by example: here is some text rotated by
-\rotate[angle=10]{ten}, \rotate[angle=20]{twenty} and \rotate[angle=40]{forty} degrees.
+\rotate[angle=10]{ten}, \rotate[angle=20]{twenty}, and \rotate[angle=40]{forty} degrees.
 
 The previous line was produced by the following code:
 
 \begin[type=autodoc:codeblock]{raw}
 here is some text rotated by
-\rotate[angle=10]{ten}, \rotate[angle=20]{twenty} and \rotate[angle=40]{forty} degrees.
+\rotate[angle=10]{ten}, \rotate[angle=20]{twenty}, and \rotate[angle=40]{forty} degrees.
 \end{raw}
 \end{document}
 ]]

@@ -38,7 +38,7 @@ After loading \autodoc:package{unichar}, the \autodoc:command{\unichar} command 
 
 This produces: \font[family=Symbola]{\unichar{U+263A}}
 
-If the argument to \autodoc:command{\unichar} begins \code{U+}, \code{u+}, \code{0x} or \code{0X}, then it is assumed to be a hexadecimal value.
+If the argument to \autodoc:command{\unichar} begins with \code{U+}, \code{u+}, \code{0x}, or \code{0X}, then it is assumed to be a hexadecimal value.
 Otherwise it is assumed to be a decimal codepoint.
 \end{document}
 ]]

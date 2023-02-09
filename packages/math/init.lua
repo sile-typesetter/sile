@@ -100,18 +100,19 @@ This package provides typesetting of formulas directly in a SILE document.
 As such, it lacks some features and may contain bugs.
 Feedback and contributions are always welcome.}
 
-\noindent To typeset mathematics, you will need an OpenType math font installed on your system\footnote{A list of freely available math fonts can be found at \href[src=https://www.ctan.org/pkg/unicode-math]{https://www.ctan.org/pkg/unicode-math}}.
+\noindent To typeset mathematics, you will need an OpenType math font installed on your system.%
+%\footnote{A list of freely available math fonts can be found at \href[src=https://www.ctan.org/pkg/unicode-math]{https://www.ctan.org/pkg/unicode-math}}
 By default, this package uses Libertinus Math, so it will fail if Libertinus Math can’t be found.
 Another font may be specified via the setting \autodoc:setting{math.font.family}.
-If required the font style and weight can be set via \autodoc:setting{math.font.style} and \autodoc:setting{math.font.weight}.
+If required, you can set the font style and weight via \autodoc:setting{math.font.style} and \autodoc:setting{math.font.weight}.
 The font size can be set via \autodoc:setting{math.font.size}.
 
 \paragraph{MathML}
 The first way to typeset math formulas is to enter them in the MathML format.
 MathML is a standard for encoding mathematical notation for the Web and for other types of digital documents.
-It is supported by a wide range of tools and represents the most promising format for unifying the encoding of mathematical notation, as well as improving its accessibility (e.g. to blind users).
+It is supported by a wide range of tools and represents the most promising format for unifying the encoding of mathematical notation, as well as improving its accessibility (e.g., to blind users).
 
-To render an equation encoded in MathML, one simply has to put it in a \code{mathml} command.
+To render an equation encoded in MathML, simply put it in a \code{mathml} command.
 For example, the formula \mathml{\mrow{\msup{\mi{a}\mn{2}} \mo{+} \msup{\mi{b}\mn{2}} \mo{=} \msup{\mi{c}\mn{2}}}} was typeset by the following command:
 
 \begin[type=autodoc:codeblock]{raw}
@@ -126,7 +127,7 @@ For example, the formula \mathml{\mrow{\msup{\mi{a}\mn{2}} \mo{+} \msup{\mi{b}\m
 }
 \end{raw}
 
-\noindent In an XML document, we would have used the more classical XML syntax:
+\noindent In an XML document, we could use the more classical XML syntax:
 
 \begin[type=autodoc:codeblock]{raw}
 <mathml>
@@ -141,7 +142,7 @@ For example, the formula \mathml{\mrow{\msup{\mi{a}\mn{2}} \mo{+} \msup{\mi{b}\m
 \end{raw}
 
 \noindent By default, formulas are integrated into the flow of text.
-To typeset them on their own line, one may use the \autodoc:parameter{mode=display} option:
+To typeset them on their own line, use the \autodoc:parameter{mode=display} option:
 
 \mathml[mode=display]{
     \mrow{
@@ -175,12 +176,12 @@ Here is a slightly more involved equation:
 The general philosophy of the TeX-like syntax is to be a simple layer on top of MathML, and not to mimic perfectly the syntax of the LaTeX tool.
 Its main difference from the SILE syntax is that \code{\\mycommand\{arg1\}\{arg2\}\{arg3\}} is translated into MathML as \code{<mycommand> arg1 arg2 arg3 </mycommand>} whereas in normal SILE syntax, the XML equivalent would be \code{<mycommand>arg1</mycommand> arg2 arg3}.
 
-\code{\\sum}, \code{\\infty} and \code{\\pi} are only shorthands for the Unicode characters \math{\sum}, \math{\infty} and \math{\pi}.
+\code{\\sum}, \code{\\infty}, and \code{\\pi} are only shorthands for the Unicode characters \math{\sum}, \math{\infty} and \math{\pi}.
 If it’s more convenient, you can use these Unicode characters directly.
 The symbol shorthands are the same as in the TeX package \href[src=https://www.ctan.org/pkg/unicode-math]{\code{unicode-math}}.
 
-\code{\{formula\}} is a shorthand for \code{\\mrow\{formula\}}.
-Since parentheses — among other glyphs — stretch vertically to the size of their englobing \code{mrow}, this is useful to typeset parentheses of different sizes on the same line:
+\code{\\\{formula\}} is a shorthand for \code{\\mrow\{formula\}}.
+Since parentheses—among other glyphs—stretch vertically to the size of their englobing \code{mrow}, this is useful to typeset parentheses of different sizes on the same line:
 
 \begin[type=autodoc:codeblock]{raw}
 \Gamma (\frac{\zeta}{2}) + x^2(x+1)
@@ -207,7 +208,7 @@ To keep parentheses around \math{x+1} small, you should put braces around the ex
 
 \paragraph{Token kinds}
 In the \code{math} syntax, every individual letter is an identifier (MathML tag \code{mi}), every number is a… number (tag \code{mn}) and all other characters are operators (tag \code{mo}).
-If it does not suit you, you can explicitly use the \code{\\mi}, \code{\\mn} or \code{\\mo} tags.
+If this does not suit you, you can explicitly use the \code{\\mi}, \code{\\mn}, or \code{\\mo} tags.
 For instance, \code{sin(x)} will be rendered as \math{sin(x)}, because SILE considers the letters s, i and n to be individual identifiers, and identifiers made of one character are italicized by default.
 To avoid that, you can specify that \math{\mi{sin}} is an identifier by writing \code{\\mi\{sin\}(x)} and get: \math{\mi{sin}(x)}.
 If you prefer it in “double struck” style, this is permitted by the \code{mathvariant} attribute: \code{\\mi[mathvariant=double-struck]\{sin\}(x)} renders as \math{\mi[mathvariant=double-struck]{sin}(x)}.
@@ -215,13 +216,13 @@ If you prefer it in “double struck” style, this is permitted by the \code{ma
 \paragraph{Atom types and spacing}
 Each token automatically gets assigned an atom type from the list below:
 \begin{itemize}
-  \item{\code{ord} — \code{mi} and \code{mn} tokens, as well as unclassified operators;}
-  \item{\code{big} — big operators like ‘\math{\sum}’ or ‘\math{\prod}’;}
-  \item{\code{bin} — binary operators like ‘\math{+}’ or ‘\math{\%}’;}
-  \item{\code{rel} — relation operators like ‘\math{=}’ or ‘\math{<}’;}
-  \item{\code{open} — opening operators like ‘\math{(}’ or ‘\math{[}’;}
-  \item{\code{close} — closing operators like ‘\math{)}’ or ‘\math{]}’;}
-  \item{\code{punct} — punctuation operators like ‘\math{,}’.}
+  \item{\code{ord}: \code{mi} and \code{mn} tokens, as well as unclassified operators}
+  \item{\code{big}: big operators like ‘\math{\sum}’ or ‘\math{\prod}’}
+  \item{\code{bin}: binary operators like ‘\math{+}’ or ‘\math{\%}’}
+  \item{\code{rel}: relation operators like ‘\math{=}’ or ‘\math{<}’}
+  \item{\code{open}: opening operators like ‘\math{(}’ or ‘\math{[}’}
+  \item{\code{close}: closing operators like ‘\math{)}’ or ‘\math{]}’}
+  \item{\code{punct}: punctuation operators like ‘\math{,}’}
   % TODO: Those are defined in the 'math' package but appear to be unused
   %\item{\code{inner}}
   %\item{\code{over}}
@@ -231,13 +232,13 @@ Each token automatically gets assigned an atom type from the list below:
   %\item{\code{vcenter}}
 \end{itemize}
 \noindent The spacing between any two successive tokens is set automatically based on their atom types, and hence may not reflect the actual spacing used in the input.
-To make an operator behave like it has a certain atom type, you can use the \code{atom} attribute: \code{a \\mo[atom=bin]\{div\} b} renders as \math[mode=display]{a \mo[atom=bin]{div} b.}
+To make an operator behave like it has a certain atom type, you can use the \code{atom} attribute. For example, \code{a \\mo[atom=bin]\{div\} b} renders as \math[mode=display]{a \mo[atom=bin]{div} b.}
 
 Spaces in math mode are defined in “math units” (mu), which are 1/18 of an em of the current \em{math} font (and are independent of the current text font size).
 Standard spaces inserted automatically between tokens come in three varieties: thin (3 mu), medium (4 mu) and thick (5 mu).
 If needed, you can insert them manually with the \code{\\thinspace} (or \code{\\,}), \code{\\medspace} (or \code{\\>}), and \code{\\thickspace} (or \code{\\;}) commands.
 Negative space counterparts are available as \code{\\negthinspace} (or \code{\\!}), \code{\\negmedspace}, and \code{\\negthickspace}.
-The \code{\\enspace}, \code{\\quad} and \code{\\qquad} commands from normal text mode are also available, but the spaces they insert scale relative to the text font size.
+The \code{\\enspace}, \code{\\quad}, and \code{\\qquad} commands from normal text mode are also available, but the spaces they insert scale relative to the text font size.
 Finally, you can add a space of any size using the \code{\\mspace[width=<dimension>]} command.
 
 \paragraph{Macros}
@@ -269,7 +270,7 @@ For instance:
 
 When macros are not enough, creating new mathematical elements is quite simple: one only needs to create a new class deriving from \code{mbox} (defined in \code{packages/math/base-elements.lua}) and define the \code{shape} and \code{output} methods.
 \code{shape} must define the \code{width}, \code{height} and \code{depth} attributes of the element, while \code{output} must draw the actual output.
-An \code{mbox} may have one or more children (for instance, a fraction has two children — its numerator and denominator).
+An \code{mbox} may have one or more children (for instance, a fraction has two children—its numerator and denominator).
 The \code{shape} and \code{output} methods of the children are called automatically.
 
 \paragraph{Matrices, aligned equations, and other tables}

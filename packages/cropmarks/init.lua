@@ -99,7 +99,7 @@ end
 package.documentation = [[
 \begin{document}
 When preparing a document for printing, you may be asked by the printer to add crop marks.
-This means that you need to output the document on a slightly larger page size than your target paper and add printers crop marks to show where the paper should be trimmed down to the correct size.
+This means that you need to output the document on a slightly larger page size than your target paper and add printer’s crop marks to show where the paper should be trimmed down to the correct size.
 (This is to ensure that pages where the content “bleeds” off the side of the page are correctly cut.)
 
 This package provides the \autodoc:command{\crop:setup} command which should be run early in your document file.

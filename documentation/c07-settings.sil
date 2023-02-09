@@ -7,8 +7,8 @@ subtle to a dramatic effect on the eventual document. External packages may
 declare their own settings, which are documented accordingly. Here we will
 run through the settings which are built into the SILE system itself.
 
-Settings in SILE are \em{namespaced} so that 1) the name of the setting gives you
-some kind of clue as to what area of the system it will affect, and 2) packages
+Settings in SILE are \em{namespaced} so that the name of the setting gives you
+some kind of clue as to what area of the system it will affect, and so that packages
 can define their own settings without worrying that they will be interfering
 with other packages or the SILE internals. Namespacing of settings takes the
 form \code{\em{area.name}}—so for instance, \autodoc:setting{typesetter.orphanpenalty} is
@@ -17,7 +17,7 @@ lines.
 
 The interface to changing settings from within a SILE document is the
 \autodoc:command{\set} command. It takes several options, the most basic one being
-\em{parameter}, which expresses which setting is being changed. The \em{value}
+\autodoc:parameter{parameter}, which expresses which setting is being changed. The \autodoc:parameter{value}
 option expresses the value to which the setting is being changed. As an
 example:
 
@@ -25,10 +25,10 @@ example:
 \set[parameter=typesetter.orphanpenalty, value=250]
 \end{raw}
 
-Two additional options are accepted. The \em{makedefault} option can added so
-that whatever value you set sticks as the new default. The \em{reset} can be
-used without a \em{value} option to reset whatever the current value is back to
-the default Note these two options are mutually exclusive.
+Two additional options are accepted. The \autodoc:parameter{makedefault} option can added so
+that whatever value you set sticks as the new default. The \autodoc:parameter{reset} can be
+used without a \autodoc:parameter{value} option to reset whatever the current value is back to
+the default. Note that these two options are mutually exclusive.
 
 \begin[type=autodoc:codeblock]{raw}
 \set[parameter=typesetter.orphanpenalty, value=250, makedefault=true]
@@ -47,7 +47,7 @@ setting is localised to the content of the argument. In other words, this code:
 \set[parameter=typesetter.orphanpenalty, value=250]{\lorem}
 \end{raw}
 
-will change the orphan penalty to 250, typeset 50 words of dummy text, and then
+\noindent will change the orphan penalty to 250, typeset 50 words of dummy text, and then
 return the orphan penalty to its previous value.
 
 If you are working in Lua, you have two choices to work with. As with any
@@ -66,13 +66,13 @@ arguments instead of named options:
 SILE.settings:set("typesetter.orphanpenalty", 250)
 \end{raw}
 
-The 3rd and 4th optional arguments are for \em{makedefault} and \em{reset}
+The third and fourth optional arguments are for \autodoc:parameter{makedefault} and \autodoc:parameter{reset}
 respectively.
 
 Now, let’s begin looking at what each of the built-in settings does, starting
 from the most obvious and moving towards the most subtle.
 
-\section{Spacing Settings}
+\section{Spacing settings}
 
 In our \code{\\note} example, we saw the setting \autodoc:setting{document.lskip}.
 This is a \em{glue} parameter which is added to the left side of every line.
@@ -88,10 +88,10 @@ normal margins, such as to indent a pull-quote. They can also be negative,
 pulling the effective margin outside of the current frame.
 
 \begin{note}
-\notehead{Glue} A \em{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means ‘space,’ but as well as signifying a length,
+\notehead{Glue} A \autodoc:parameter{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means “space,” but as well as signifying a length,
 it also has two additional optional components: \em{stretch} and \em{shrink},
 specified as \code{<dimension> plus <dimension> minus <dimension>}. The
-first dimension is the basic length; the stretch is the maximum length that
+first dimension is the basic length, the stretch is the maximum length that
 can be added to it, and the shrink is some length that can be taken away from it.
 For instance, \code{12pt plus 6pt minus 3pt} specifies a space that would
 ideally by 12 points, but can expand or contract from a minimum of 9 points to a maximum
@@ -132,18 +132,18 @@ paragraphs.\par
 \set[parameter=document.spaceskip]%
 The indentation at the start of each paragraph is controlled by the
 setting \autodoc:setting{document.parindent}; this is a glue parameter, and by default it’s
-set to 20pt with no stretch and shrink. Actually, the amount added to the
+set to 20pt with no stretch and shrink. (In fact, the amount added to the
 start of the paragraph is \autodoc:setting{current.parindent}. After each paragraph,
 \autodoc:setting{current.parindent} is reset to the value of \autodoc:setting{document.parindent}. The
-\autodoc:command{\noindent} command works by setting \autodoc:setting{current.parindent} to zero.
+\autodoc:command{\noindent} command works by setting \autodoc:setting{current.parindent} to zero.)
 
 \medskip%
 \set[parameter=current.parindent,value=-20pt]%
 \set[parameter=document.lskip,value=20pt]%
-How would you make a paragraph like this with a ‘hanging’ indentation? We’ve
+How would you make a paragraph like this with a “hanging” indentation? We’ve
 set the \autodoc:setting{document.lskip} to 20 points, and the \autodoc:setting{current.parindent} to
-\em{minus} 20 points. (In other words, we called: \autodoc:command{\set[parameter=document.lskip,value=20pt]}
-and \autodoc:command{\set[parameter=current.parindent,value=-20pt]}.)
+\em{minus} 20 points. In other words, we called: \autodoc:command{\set[parameter=document.lskip,value=20pt]}
+and \autodoc:command{\set[parameter=current.parindent,value=-20pt]}.
 
 \medskip%
 \set[parameter=document.lskip,value=0pt]%
@@ -257,7 +257,7 @@ Now we can finally complete our implementation of centering:
 \set[parameter=typesetter.parfillskip,value=0pt]
 
 And this is (more or less) how the \autodoc:environment{center} environment is defined in
-the plain class: we make the margins able to expand but the spaces not able
+the \code{plain} class: we make the margins able to expand but the spaces not able
 to expand; we turn off indenting at the start of the paragraph, and we turn
 off the filling glue at the end of the paragraph.
 \par
@@ -322,14 +322,18 @@ engine in use. To get a list of the subshapers enabled in your build of
 Harfbuzz, run \code{sile --debug=versions} on any file:
 
 \begin[type=autodoc:codeblock]{raw}
-% $ sile --debug=versions hello.sil
+$ sile --debug=versions hello.sil
+
 ...
+
 Harfbuzz version: 2.4.0
+
 Shapers enabled: graphite2, ot, coretext, coretext_aat, fallback
+
 ...
 \end{raw}
 
-If I wanted to test out the OS X’s CoreText shaper instead of using
+If I wanted to test out the macOS CoreText shaper instead of using
 Graphite and Harfbuzz’s own OpenType shaper, I could set:
 
 \begin[type=autodoc:codeblock]{raw}

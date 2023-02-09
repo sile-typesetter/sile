@@ -221,16 +221,16 @@ end
 package.documentation = [[
 \begin{document}
 The \autodoc:package{tableofcontents} package provides tools for class authors to
-create tables of contents. When you are writing sectioning commands such
+create tables of contents (TOCs). When you are writing sectioning commands such
 as \code{\\chapter} or \code{\\section}, your classes should call the
 \autodoc:command{\tocentry[level=<number>, number=<strings>]{<title>}}
 command to register a table of contents entry.
-At the end of each page the class will call a hook function (\code{moveTocNodes}) that collates the table of contents entries from that pages and logs which page they’re on.
+At the end of each page the class will call a hook function (\code{moveTocNodes}) that collates the table of contents entries from that pages and records which page they’re on.
 At the end of the document another hook function (\code{writeToc}) will write this data to a file.
 The next time the document is built, any use of the \autodoc:command{\tableofcontents} (typically near the beginning of a document) will be able to read that index data and output the TOC.
 Because the toc entry and page data is not available until after rendering the document,
 the TOC will not render until at least the second pass.
-If by chance rendering the TOC itself changes the document pagination (e.g. the TOC spans more than one page) it might be necessary to run SILE 3 times to get accurate page numbers shown in the TOC.
+If by chance rendering the TOC itself changes the document pagination (e.g., the TOC spans more than one page) it might be necessary to run SILE three times to get accurate page numbers shown in the TOC.
 
 
 The \autodoc:command{\tableofcontents} command accepts a \autodoc:parameter{depth} option to
@@ -246,11 +246,11 @@ Class designers can also style the table of contents by overriding the
 following commands:
 
 \begin{itemize}
-\item{\autodoc:command{\tableofcontents:headerfont} - the font used for the header.}
+\item{\autodoc:command{\tableofcontents:headerfont}: The font used for the header.}
 \item{\autodoc:command{\tableofcontents:level1item}, \autodoc:command{\tableofcontents:level2item},
-      etc. - styling for entries.}
+      etc.: Styling for entries.}
 \item{\autodoc:command{\tableofcontents:level1number}, \autodoc:command{\tableofcontents:level2number},
-      etc. - deciding what to do with entry section number, if defined: by default, nothing (so they
+      etc.: Deciding what to do with entry section number, if defined: by default, nothing (so they
       do not show up in the table of contents).}
 \end{itemize}
 

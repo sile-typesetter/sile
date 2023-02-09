@@ -329,26 +329,26 @@ For that purpose, it provides the \autodoc:command{\package-documentation{<packa
 
 Properly documented packages should export a \code{documentation} string containing their documentation, as a SILE document.
 
-For documenters and package authors, it also provides commands that can be used in their package documentation to present various pieces of information in a consistent way.
+For documenters and package authors, \autodoc:package{autodoc} also provides commands that can be used in their package documentation to present various pieces of information in a consistent way.
 
-Setting names can be fairly long (e.g. \em{namespace.area.some-stuff\kern[width=0.1em]}).
-The \autodoc:command{\autodoc:setting} command helps line-breaking them automatically at appropriate points, so that package authors do not have care about them
+Setting names can be fairly long (e.g., \code{namespace.area.some-stuff}).
+The \autodoc:command{\autodoc:setting} command helps line-breaking them automatically at appropriate points, so that package authors do not have to do so
 manually.
 
-With the \autodoc:command{\autodoc:command} command, one can pass a simple command, or even a full commands (with parameters and arguments), without the need for escaping special characters.
-This relies on SILE’s AST (abstract syntax tree) parsing, so you benefit from typing simplicity, syntax check, and even more –such as styling
-\footnote{If the \autodoc:package{color} package is loaded and the \autodoc:setting{autodoc.highlighting} setting is set to true, you get syntax highlighting.}.
-Moreover, for text content in parameter values or command arguments, if they are enclosed between angle brackets, they will be presented with an distinguishable style.
+With the \autodoc:command{\autodoc:command} command, one can pass a simple command, or even an extended command with parameters and arguments, without the need for escaping special characters.
+This relies on SILE’s AST (abstract syntax tree) parsing, so you benefit from typing simplicity, syntax check, and even more—such as styling.%
+\footnote{If the \autodoc:package{color} package is loaded and the \autodoc:setting{autodoc.highlighting} setting is set to \code{true}, you get syntax highlighting.}
+Moreover, for text content in parameter values or command arguments, if they are enclosed between angle brackets, they will be presented in a distinguishable style.
 Just type the command as it would appear in code, and it will be nicely typeset.
-It comes with a few caveats, though: parameters are not guaranteed to appear in the order you entered them and some purely syntactic sequences are just skipped and not reconstructed.
+It comes with a few caveats, though: parameters are not guaranteed to appear in the order you entered them, and some purely syntactic sequences are simply skipped and not reconstructed.
 Also, it is not adapted to math-related commands.
 So it comes with many benefits, but also at a cost.
 
-The \autodoc:command{\autodoc:environment} command just takes an environment name, so basically a command, but just displays it without leading backslash.
+The \autodoc:command{\autodoc:environment} command takes an environment name or a command, but displays it without a leading backslash.
 
-The \autodoc:command{\autodoc:setting}, \autodoc:command{\autodoc:command} and \autodoc:command{\autodoc:environment} commands all check the validity and existence of their inputs.
-Would you want to disable this feature (e.g. to refer to a setting or command defined in another package or module that might not be loaded at this point), you can set the optional parameter \autodoc:parameter{check} to false.
-Note, however, that for commands, it is applied recursively to the parsed AST (so it is a all-or-none trade-off).
+The \autodoc:command{\autodoc:setting}, \autodoc:command{\autodoc:command}, and \autodoc:command{\autodoc:environment} commands all check the validity and existence of their inputs.
+If you want to disable this feature (e.g., to refer to a setting or command defined in another package or module that might not yet be loaded), you can set the optional parameter \autodoc:parameter{check} to \code{false}.
+Note, however, that for commands, it is applied recursively to the parsed AST—so it is a all-or-none trade-off.
 
 The \autodoc:command{\autodoc:parameter} commands takes either a parameter name, possibly with a value (which as above, may be bracketed) and typesets it in the same fashion.
 
