@@ -230,9 +230,9 @@ SILE.process = function (ast)
       content()
     elseif SILE.Commands[content.command] then
       SILE.call(content.command, content.options, content)
-    elseif content.id == "texlike_stuff"
+    elseif content.id == "content"
       or (not content.command and not content.id) then
-      local pId = SILE.traceStack:pushContent(content, "texlike_stuff")
+      local pId = SILE.traceStack:pushContent(content, "content")
       SILE.process(content)
       SILE.traceStack:pop(pId)
     elseif type(content) ~= "nil" then

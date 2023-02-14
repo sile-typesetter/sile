@@ -142,7 +142,7 @@ utilities.debugAST = function (ast, level)
             return out .. "\\" .. content.command .. " " .. pl.pretty.write(content.options, "")
           end)
           if (#content>=1) then utilities.debugAST(content, level+1) end
-        elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
+        elseif content.id == "content" or (not content.command and not content.id) then
           utilities.debugAST(content, level+1)
         else
           SU.debug("ast", function ()

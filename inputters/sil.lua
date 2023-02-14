@@ -72,34 +72,34 @@ function inputter._grammar (_ENV)
     ) / ""
 
   START "document"
-  document = V"texlike_stuff" * EOF"Unexpected character at end of input"
-  texlike_stuff = Cg(
+  document = V"content" * EOF"Unexpected character at end of input"
+  content = Cg(
       V"environment" +
       comment +
-      V"texlike_text" +
-      V"texlike_braced_stuff" +
-      V"texlike_command"
+      V"text" +
+      V"braced_content" +
+      V"command"
     )^0
-  passthrough_stuff = C(Cg(
+  passthrough_content = C(Cg(
       V"passthrough_text" +
-      V"passthrough_debraced_stuff"
+      V"debraced_passthrough_text"
     )^0)
-  passthrough_env_stuff = Cg(
-      V"passthrough_env_text"
+  env_passthrough_content = Cg(
+      V"env_passthrough_text"
     )^0
-  texlike_text = C((1 - specials + escaped_specials)^1) / unescapeSpecials
+  text = C((1 - specials + escaped_specials)^1) / unescapeSpecials
   passthrough_text = C((1-S("{}"))^1)
-  passthrough_env_text = C((1 - (P"\\end{" * Cmt(cmdID * Cb"command", isMatchingEndEnv) * P"}"))^1)
-  texlike_braced_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
-  passthrough_braced_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
-  passthrough_debraced_stuff = C(V"passthrough_braced_stuff")
-  texlike_command = (
+  env_passthrough_text = C((1 - (P"\\end{" * Cmt(cmdID * Cb"command", isMatchingEndEnv) * P"}"))^1)
+  braced_content = P"{" * V"content" * ( P"}" + E("} expected") )
+  braced_passthrough_content = P"{" * V"passthrough_content" * ( P"}" + E("} expected") )
+  debraced_passthrough_text = C(V"braced_passthrough_content")
+  command = (
       P"\\" *
       Cg(cmdID, "command") *
       Cg(parameters, "options") *
       (
-        (Cmt(Cb"command", isPassthrough) * V"passthrough_braced_stuff") +
-        (Cmt(Cb"command", isNotPassthrough) * V"texlike_braced_stuff")
+        (Cmt(Cb"command", isPassthrough) * V"braced_passthrough_content") +
+        (Cmt(Cb"command", isNotPassthrough) * V"braced_content")
       )^0
     )
   local notpass_end =
@@ -117,8 +117,8 @@ function inputter._grammar (_ENV)
     Cg(cmdID, "command") *
     P"}" *
     (
-      (Cmt(Cb"command", isPassthrough) * V"passthrough_env_stuff" * pass_end) +
-      (Cmt(Cb"command", isNotPassthrough) * V"texlike_stuff" * notpass_end)
+      (Cmt(Cb"command", isPassthrough) * V"env_passthrough_content" * pass_end) +
+      (Cmt(Cb"command", isNotPassthrough) * V"content" * notpass_end)
     )
 end
 -- luacheck: pop
@@ -168,21 +168,21 @@ local function massage_ast (tree, doc)
     tree.lno, tree.col = getline(doc, tree.pos)
   end
   if tree.id == "document"
-      or tree.id == "texlike_braced_stuff"
-      or tree.id == "passthrough_stuff"
-      or tree.id == "passthrough_braced_stuff"
-      or tree.id == "passthrough_env_stuff"
+      or tree.id == "braced_content"
+      or tree.id == "passthrough_content"
+      or tree.id == "braced_passthrough_content"
+      or tree.id == "env_passthrough_content"
     then
       return massage_ast(tree[1], doc)
   end
-  if tree.id == "texlike_text"
+  if tree.id == "text"
     or tree.id == "passthrough_text"
-    or tree.id == "passthrough_env_text"
+    or tree.id == "env_passthrough_text"
     then
       return tree[1]
   end
   for key, val in ipairs(tree) do
-    if val.id == "texlike_stuff" then
+    if val.id == "content" then
       SU.splice(tree, key, key, massage_ast(val, doc))
     else
       tree[key] = massage_ast(val, doc)
