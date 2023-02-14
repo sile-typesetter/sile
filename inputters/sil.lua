@@ -62,7 +62,7 @@ function inputter._grammar (_ENV)
     return str:gsub('\\([{}%%\\])', '%1')
   end
   local myID = C(bits.silidentifier) / 1
-  local cmdID = myID - P"beign" - P"end"
+  local cmdID = myID - P"begin" - P"end"
   local wrapper = function (a) return type(a)=="table" and a or {} end
   local parameters = (P"[" * bits.parameters * P"]")^-1 / wrapper
   local comment = (
