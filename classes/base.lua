@@ -513,7 +513,19 @@ end
 
 -- WARNING: not called as class method
 function class.newPar (typesetter)
-  typesetter:pushGlue(SILE.settings:get("current.parindent") or SILE.settings:get("document.parindent"))
+  local parindent = SILE.settings:get("current.parindent") or SILE.settings:get("document.parindent")
+  -- See https://github.com/sile-typesetter/sile/issues/1361
+  -- The parindent *cannot* be pushed non-absolutized, as it may be evaluated
+  -- outside the (possibly temporary) setting scope where it was used for line
+  -- breaking.
+  -- Early absolutization can be problematic sometimes, but here we do not
+  -- really have the choice.
+  -- As of problematic cases, consider a parindent that would be defined in a
+  -- frame-related unit (%lw, %fw, etc.). If a frame break occurs and the next
+  -- frame has a different width, the parindent won't be re-evaluated in that
+  -- new frame context. However, defining a parindent in such a unit is quite
+  -- unlikely. And anyway pushback() has plenty of other issues.
+  typesetter:pushGlue(parindent:absolute())
   SILE.settings:set("current.parindent", nil)
   local hangIndent = SILE.settings:get("current.hangIndent")
   if hangIndent then
