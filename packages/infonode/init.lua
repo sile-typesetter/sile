@@ -17,7 +17,7 @@ _info.value = nil
 _info.width = SILE.length()
 
 function _info:__tostring ()
-  return "I<" .. self.category .. "|" .. self.value.. ">"
+  return "I<" .. self.category .. "|" .. tostring(self.value) .. ">"
 end
 
 function _info:outputYourself ()
