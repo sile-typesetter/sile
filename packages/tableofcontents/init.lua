@@ -83,7 +83,7 @@ local function _nodesToText (nodes)
     end
   end
   -- Trim leading and trailing spaces, and simplify internal spaces.
-  return string:match("^%s*(.-)%s*$"):gsub("%s+", " ")
+  return pl.stringx.strip(string):gsub("%s%s+", " ")
 end
 
 if not SILE.scratch.pdf_destination_counter then
