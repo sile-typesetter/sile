@@ -2,14 +2,13 @@ local plain = SILE.require("plain", "classes")
 local book = plain { id = "book" }
 
 book:loadPackage("masters")
-
 book:defineMaster({
     id = "right",
     firstContentFrame = "content",
     frames = {
       content = {
-        left = "14%pw",
-        right = "92.7%pw",
+        left = "8.3%pw",
+        right = "86%pw",
         top = "11.6%ph",
         bottom = "top(footnotes)"
       },
