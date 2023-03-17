@@ -1,36 +1,86 @@
 {
   "name": "sile",
-  "version": "0.9.5",
-  "description": "SILE Typesetter",
+  "version": "0.14.8",
+  "description": "The SILE Typesetter",
   "main": "sile",
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "release": "standard-version",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/simoncozens/sile.git"
+    "url": "git+https://github.com/sile-typesetter/sile.git"
   },
   "author": "Simon Cozens",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/simoncozens/sile/issues"
+    "url": "https://github.com/sile-typesetter/sile/issues"
   },
   "homepage": "http://sile-typesetter.org",
   "devDependencies": {
-    "@commitlint/cli": "^7.5.2",
-    "@commitlint/config-conventional": "^7.5.0",
-    "@commitlint/prompt": "^7.5.0",
-    "commitizen": "^3.1.1",
-    "husky": "^2.2.0"
+    "@commitlint/cli": "^17.3.0",
+    "@commitlint/config-conventional": "^17.3.0",
+    "@commitlint/prompt": "^17.3.0",
+    "commitizen": "^4.2.6",
+    "conventional-changelog-cli": "^2.2.2",
+    "husky": "^8.0.2",
+    "standard-version": "^9.5.0",
+    "yaml": "^2.1.3"
   },
   "config": {
     "commitizen": {
       "path": "@commitlint/prompt"
     }
   },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
+  "standard-version": {
+    "bumpFiles": [
+      {
+        "filename": "action.yml",
+        "updater": "build-aux/action-updater.js"
+      },
+      {
+        "filename": "package.json",
+        "type": "json"
+      }
+    ],
+    "infile": "CHANGELOG.md",
+    "types": [
+      {
+        "type": "feat",
+        "section": "New Features"
+      },
+      {
+        "type": "fix",
+        "section": "Bug Fixes"
+      },
+      {
+        "type": "chore",
+        "section": "Behind the Scenes",
+        "hidden": true
+      },
+      {
+        "type": "docs",
+        "hidden": true
+      },
+      {
+        "type": "style",
+        "hidden": true
+      },
+      {
+        "type": "refactor",
+        "section": "Changes",
+        "hidden": true
+      },
+      {
+        "type": "perf",
+        "section": "Optimizations"
+      },
+      {
+        "type": "test",
+        "hidden": true
+      }
+    ],
+    "preset": "conventionalcommits"
   }
 }

@@ -1,0 +1,6 @@
+\begin[papersize=a6]{document}
+\noindent
+\nofolios
+\font[filename=tests/TestCLR-Regular.ttf]
+a☺a
+\end{document}

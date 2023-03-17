@@ -1,0 +1,18 @@
+\begin[papersize=a6,class=book]{document}
+\neverindent
+\define[command=open-spread]{}
+\nofolios
+\language[main=cs]
+\chapter{Ahoj světe}
+
+\language[main=ja]
+\font[family=Noto Sans CJK JP]
+\chapter{Konnichi Ha Sekai}
+
+\language[main=tr]
+\font[family=Gentium Plus]
+\chapter{Selam Dünya}
+
+\language[main=en]
+\chapter{Hello World}
+\end{document}

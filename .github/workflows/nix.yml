@@ -1,0 +1,33 @@
+name: Run Flake
+
+on: [ push, pull_request ]
+
+jobs:
+
+  nix-flake:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Fetch tags
+        run: |
+          git fetch --prune --tags ||:
+      - name: Install Nix
+        uses: cachix/install-nix-action@v20
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      # Upstream package sometimes has flags set that disable flake checking
+      - name: Setup test env
+        run: |
+          echo 'NIXPKGS_ALLOW_BROKEN=1' >> $GITHUB_ENV
+      - name: Check flake
+        run: nix flake check --impure
+      - name: Build flake
+        run: nix build
+      - name: Test run in shell
+        run: nix shell -c sile --version
+      - name: Test run as flake
+        run: nix run . -- --version

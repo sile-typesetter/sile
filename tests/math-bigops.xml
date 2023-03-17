@@ -1,0 +1,240 @@
+<sile>
+<use module="packages.math"/>
+
+Big operators, text, MathML:
+<mathml>
+  <mrow>
+    <munderover>
+      <mo>⋀</mo>
+      <mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow>
+      <mo>∞</mo>
+    </munderover>
+    <munderover>
+      <mo>∏</mo>
+      <mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow>
+      <mo>∞</mo>
+    </munderover>
+    <munderover>
+      <mo>∑</mo>
+      <mrow><mi>m</mi><mo>=</mo><mn>0</mn></mrow>
+      <mo>n</mo>
+    </munderover>
+    <msup>
+      <mi mathvariant="normal">e</mi>
+      <mrow>
+        <munderover>
+          <mo>∑</mo>
+          <mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow>
+          <mo>m</mo>
+        </munderover>
+        <msub> <mi>δ</mi> <mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow> </msub>
+      </mrow>
+    </msup>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</mathml>
+
+Big operators, text (large font), MathML:
+<set parameter="math.font.size" value="18">
+  <mathml>
+    <mrow>
+      <munderover>
+        <mo>⋀</mo>
+        <mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow>
+        <mo>∞</mo>
+      </munderover>
+      <munderover>
+        <mo>∏</mo>
+        <mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow>
+        <mo>∞</mo>
+      </munderover>
+      <munderover>
+        <mo>∑</mo>
+        <mrow><mi>m</mi><mo>=</mo><mn>0</mn></mrow>
+        <mo>n</mo>
+      </munderover>
+      <msup>
+        <mi mathvariant="normal">e</mi>
+        <mrow>
+          <munderover>
+            <mo>∑</mo>
+            <mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow>
+            <mo>m</mo>
+          </munderover>
+          <msub> <mi>δ</mi> <mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow> </msub>
+        </mrow>
+      </msup>
+      <mo>=</mo>
+      <mn>0</mn>
+    </mrow>
+  </mathml>
+</set>
+
+Big operators, display, MathML:
+<mathml mode="display">
+  <mrow>
+    <munderover>
+      <mo>⋀</mo>
+      <mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow>
+      <mo>∞</mo>
+    </munderover>
+    <munderover>
+      <mo>∏</mo>
+      <mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow>
+      <mo>∞</mo>
+    </munderover>
+    <munderover>
+      <mo>∑</mo>
+      <mrow><mi>m</mi><mo>=</mo><mn>0</mn></mrow>
+      <mo>n</mo>
+    </munderover>
+    <msup>
+      <mi mathvariant="normal">e</mi>
+      <mrow>
+        <munderover>
+          <mo>∑</mo>
+          <mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow>
+          <mo>m</mo>
+        </munderover>
+        <msub> <mi>δ</mi> <mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow> </msub>
+      </mrow>
+    </msup>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</mathml>
+
+Big operators, display (large font), MathML:
+<set parameter="math.font.size" value="18">
+  <mathml mode="display">
+    <mrow>
+      <munderover>
+        <mo>⋀</mo>
+        <mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow>
+        <mo>∞</mo>
+      </munderover>
+      <munderover>
+        <mo>∏</mo>
+        <mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow>
+        <mo>∞</mo>
+      </munderover>
+      <munderover>
+        <mo>∑</mo>
+        <mrow><mi>m</mi><mo>=</mo><mn>0</mn></mrow>
+        <mo>n</mo>
+      </munderover>
+      <msup>
+        <mi mathvariant="normal">e</mi>
+        <mrow>
+          <munderover>
+            <mo>∑</mo>
+            <mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow>
+            <mo>m</mo>
+          </munderover>
+          <msub> <mi>δ</mi> <mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow> </msub>
+        </mrow>
+      </msup>
+      <mo>=</mo>
+      <mn>0</mn>
+    </mrow>
+  </mathml>
+</set>
+
+Big operators, text, TeX:
+<math>
+    \bigwedge_{j=0}^\infty \prod_{n=0}^\infty \sum_{m=0}^n
+    \mi[mathvariant=normal]{e}^{\sum_{i=0}^m \delta_{i,j}} = 0
+</math>
+
+Big operators, display, TeX:
+<math mode="display">
+    \bigwedge_{j=0}^\infty \prod_{n=0}^\infty \sum_{m=0}^n
+    \mi[mathvariant=normal]{e}^{\sum_{i=0}^m \delta_{i,j}} = 0
+</math>
+
+Integrals, text, MathML:
+<mathml>
+  <mrow>
+    <msub><mo>∯</mo><mi>S</mi></msub> <mi mathvariant="bold">E</mi>
+    <mo>⋅</mo> <mi mathvariant="bold">dS</mi>
+    <mo>=</mo>
+    <mfrac> <mn>1</mn> <msub><mi>ε</mi><mn>0</mn></msub> </mfrac>
+    <msub><mo>∭</mo><mi>V</mi></msub> <mi>ρ</mi>
+    <mi mathvariant="normal">dV</mi>
+    <mo>=</mo> <msubsup><mo>∫</mo> <mn>0</mn> <mi>x</mi></msubsup>
+    <mrow>
+      <mi>f</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>d</mo><mi>t</mi>
+    </mrow>
+  </mrow>
+</mathml>
+
+Integrals, text (large font), MathML:
+<set parameter="math.font.size" value="18">
+  <mathml>
+    <mrow>
+      <msub><mo>∯</mo><mi>S</mi></msub> <mi mathvariant="bold">E</mi>
+      <mo>⋅</mo> <mi mathvariant="bold">dS</mi>
+      <mo>=</mo>
+      <mfrac> <mn>1</mn> <msub><mi>ε</mi><mn>0</mn></msub> </mfrac>
+      <msub><mo>∭</mo><mi>V</mi></msub> <mi>ρ</mi>
+      <mi mathvariant="normal">dV</mi>
+      <mo>=</mo> <msubsup><mo>∫</mo> <mn>0</mn> <mi>x</mi></msubsup>
+      <mrow>
+        <mi>f</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>d</mo><mi>t</mi>
+      </mrow>
+    </mrow>
+  </mathml>
+</set>
+
+Integrals, display, MathML:
+<mathml mode="display">
+  <mrow>
+    <msub><mo>∯</mo><mi>S</mi></msub> <mi mathvariant="bold">E</mi>
+    <mo>⋅</mo> <mi mathvariant="bold">dS</mi>
+    <mo>=</mo>
+    <mfrac> <mn>1</mn> <msub><mi>ε</mi><mn>0</mn></msub> </mfrac>
+    <msub><mo>∭</mo><mi>V</mi></msub> <mi>ρ</mi>
+    <mi mathvariant="normal">dV</mi>
+    <mo>=</mo> <msubsup><mo>∫</mo> <mn>0</mn> <mi>x</mi></msubsup>
+    <mrow>
+      <mi>f</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>d</mo><mi>t</mi>
+    </mrow>
+  </mrow>
+</mathml>
+
+Integrals, display (large font), MathML:
+<set parameter="math.font.size" value="18">
+  <mathml mode="display">
+    <mrow>
+      <msub><mo>∯</mo><mi>S</mi></msub> <mi mathvariant="bold">E</mi>
+      <mo>⋅</mo> <mi mathvariant="bold">dS</mi>
+      <mo>=</mo>
+      <mfrac> <mn>1</mn> <msub><mi>ε</mi><mn>0</mn></msub> </mfrac>
+      <msub><mo>∭</mo><mi>V</mi></msub> <mi>ρ</mi>
+      <mi mathvariant="normal">dV</mi>
+      <mo>=</mo> <msubsup><mo>∫</mo> <mn>0</mn> <mi>x</mi></msubsup>
+      <mrow>
+        <mi>f</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>d</mo><mi>t</mi>
+      </mrow>
+    </mrow>
+  </mathml>
+</set>
+
+Integrals, text, TeX:
+<math>
+  \oiint_S \mi[mathvariant=bold]{E} \cdot
+  \mi[mathvariant=bold]{dS} = \frac{1}{\epsilon_0}
+  \iiint_V \rho \mi[mathvariant=normal]{dV}
+  = \int_0^x {f(t)\mo{d}t}
+</math>
+
+Integrals, display, TeX:
+<math mode="display">
+  \oiint_S \mi[mathvariant=bold]{E} \cdot
+  \mi[mathvariant=bold]{dS} = \frac{1}{\epsilon_0}
+  \iiint_V \rho \mi[mathvariant=normal]{dV}
+  = \int_0^x {f(t)\mo{d}t}
+</math>
+
+</sile>

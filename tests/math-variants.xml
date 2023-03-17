@@ -1,0 +1,96 @@
+<sile>
+<use module="packages.math"/>
+
+Math variants, text, MathML:
+<mathml>
+  <mrow>
+  <mo>∀</mo><mi>n</mi><mo>∈</mo><mi mathvariant="double-struck">N</mi>
+  <mo>,</mo> <mo>(</mo> <msup> <mi mathvariant="normal">e</mi>
+    <mi>n</mi> </msup> <mo>,</mo> <mo mathvariant="double-struck">sin</mo>
+  <mo>(</mo><mi>n</mi><mo>)</mo> <mo>)</mo>
+  <mo>∈</mo>
+  <msup>
+    <mrow>
+      <mo>(</mo><mi mathvariant="double-struck">R</mi>
+      <mo>⧵</mo><mi mathvariant="double-struck">Q</mi><mo>)</mo>
+    </mrow>
+    <mn>2</mn>
+  </msup>
+  </mrow>
+</mathml>
+
+Math variants, text (large font), MathML:
+<set parameter="math.font.size" value="18">
+  <mathml>
+    <mrow>
+    <mo>∀</mo><mi>n</mi><mo>∈</mo><mi mathvariant="double-struck">N</mi>
+    <mo>,</mo> <mo>(</mo> <msup> <mi mathvariant="normal">e</mi>
+      <mi>n</mi> </msup> <mo>,</mo> <mo mathvariant="double-struck">sin</mo>
+    <mo>(</mo><mi>n</mi><mo>)</mo> <mo>)</mo>
+    <mo>∈</mo>
+    <msup>
+      <mrow>
+        <mo>(</mo><mi mathvariant="double-struck">R</mi>
+        <mo>⧵</mo><mi mathvariant="double-struck">Q</mi><mo>)</mo>
+      </mrow>
+      <mn>2</mn>
+    </msup>
+    </mrow>
+  </mathml>
+</set>
+
+Math variants, display, MathML:
+<mathml mode="display">
+  <mrow>
+  <mo>∀</mo><mi>n</mi><mo>∈</mo><mi mathvariant="double-struck">N</mi>
+  <mo>,</mo> <mo>(</mo> <msup> <mi mathvariant="normal">e</mi>
+    <mi>n</mi> </msup> <mo>,</mo> <mo mathvariant="double-struck">sin</mo>
+  <mo>(</mo><mi>n</mi><mo>)</mo> <mo>)</mo>
+  <mo>∈</mo>
+  <msup>
+    <mrow>
+      <mo>(</mo><mi mathvariant="double-struck">R</mi>
+      <mo>⧵</mo><mi mathvariant="double-struck">Q</mi><mo>)</mo>
+    </mrow>
+    <mn>2</mn>
+  </msup>
+  </mrow>
+</mathml>
+
+Math variants, display (large font), MathML:
+<set parameter="math.font.size" value="18">
+  <mathml mode="display">
+    <mrow>
+    <mo>∀</mo><mi>n</mi><mo>∈</mo><mi mathvariant="double-struck">N</mi>
+    <mo>,</mo> <mo>(</mo> <msup> <mi mathvariant="normal">e</mi>
+      <mi>n</mi> </msup> <mo>,</mo> <mo mathvariant="double-struck">sin</mo>
+    <mo>(</mo><mi>n</mi><mo>)</mo> <mo>)</mo>
+    <mo>∈</mo>
+    <msup>
+      <mrow>
+        <mo>(</mo><mi mathvariant="double-struck">R</mi>
+        <mo>⧵</mo><mi mathvariant="double-struck">Q</mi><mo>)</mo>
+      </mrow>
+      <mn>2</mn>
+    </msup>
+    </mrow>
+  </mathml>
+</set>
+
+Math variants, text, TeX:
+<math>
+  \forall n \in \mi[mathvariant=double-struck]{N},
+  (\mi[mathvariant=normal]{e}^n, \mo[mathvariant=normal]{sin}(n)) \in
+  {(\mi[mathvariant=double-struck]{R} \setminus
+  \mi[mathvariant=double-struck]{Q})}^2
+</math>
+
+Math variants, display, TeX:
+<math mode="display">
+  \forall n \in \mi[mathvariant=double-struck]{N},
+  (\mi[mathvariant=normal]{e}^n, \mo[mathvariant=normal]{sin}(n)) \in
+  {(\mi[mathvariant=double-struck]{R} \setminus
+  \mi[mathvariant=double-struck]{Q})}^2
+</math>
+
+</sile>

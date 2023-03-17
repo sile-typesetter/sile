@@ -1,0 +1,42 @@
+<sile>
+<use module="packages.math"/>
+
+Sub-superscripts, text, MathML:
+<mathml>
+  <mrow>
+    <msup> <mi>a</mi> <mi>x</mi> </msup>
+    <mo>+</mo>
+    <msub> <mi>x</mi> <mn>2</mn> </msub>
+    <mo>−</mo>
+    <msubsup> <mi>ζ</mi> <mn>0</mn> <mi>2</mi> </msubsup>
+    <mo>,</mo>
+    <msubsup> <mrow></mrow> <mn>12</mn> <mn>14</mn> </msubsup>
+    <mi mathvariant="normal">C</mi>
+  </mrow>
+</mathml>
+
+Sub-superscripts, display, MathML:
+<mathml mode="display">
+  <mrow>
+    <msup> <mi>a</mi> <mi>x</mi> </msup>
+    <mo>+</mo>
+    <msub> <mi>x</mi> <mn>2</mn> </msub>
+    <mo>−</mo>
+    <msubsup> <mi>ζ</mi> <mn>0</mn> <mi>2</mi> </msubsup>
+    <mo>,</mo>
+    <msubsup> <mrow></mrow> <mn>12</mn> <mn>14</mn> </msubsup>
+    <mi mathvariant="normal">C</mi>
+  </mrow>
+</mathml>
+
+Sub-superscripts, text, TeX:
+<math>
+  a^x + x_2 − \zeta_0^2, {}_{12}^{14} C
+</math>
+
+Sub-superscripts, text, TeX:
+<math mode="display">
+  a^x + x_2 − \zeta_0^2, {}_{12}^{14} C
+</math>
+
+</sile>

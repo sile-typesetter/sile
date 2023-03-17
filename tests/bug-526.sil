@@ -1,20 +1,17 @@
-\begin[class=plain,papersize=a0]{document}
-\script[src=packages/frametricks]
-\script[src=packages/lorem]
-
-% not working using ex values; working using point values
-\set[parameter=document.lineskip,value=2ex]
-%\set[parameter=document.lineskip,value=20pt]
-
+\begin[class=plain,papersize=a6]{document}
+\nofolios
+\use[module=packages.frametricks]
+\use[module=packages.lorem]
 \begin[first-content-frame=leftCol]{pagetemplate}
   \frame[id=leftCol,left=left(content),right=50%pw,top=top(content),bottom=bottom(content),next=rightCol]
   \frame[id=rightCol,left=right(leftCol),top=top(content),bottom=bottom(content),width=width(leftCol)]
 \end{pagetemplate}
-
-\begin[size=40pt]{font}
-\nofolios
-\lorem[words=400,counter=true]
-
+\neverindent
+\begin[size=12pt]{font}
+% not working using ex values; working using point values
+\set[parameter=document.lineskip,value=2em]
+% \set[parameter=document.lineskip,value=24pt]
+\lorem[words=50,counter=true]\par
 \end{font}
 \end{document}
 

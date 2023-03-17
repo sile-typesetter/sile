@@ -1,0 +1,7 @@
+\begin[papersize=a6,class=jbook]{document}
+\use[module=packages.frametricks]
+\noindent
+\nofolios
+よ
+\showframe
+\end{document}

@@ -1,7 +1,0 @@
-\begin[papersize=a5]{document}\nofolios
-\script[src=packages/boustrophedon]
-\begin{boustrophedon}
-\font[size=25pt,family=New Athena Unicode,language=grc]
-\noindent{}ΧΑΙΡΕΔΕΜΟΤΟΔΕΣΕΜΑΠΑΤΕΡΕΣΤΕΣΕΘΑΝΟΝΤΟΣΑΝΦΙΧΑΡΕΣΑΓΑΘΟΝΠΑΙΔΑΟΛΟΦΘΡΟΜΕΝΟΣΦΑΙΔΙΜΟΣΕΠΟΙΕ
-\end{boustrophedon}
-\end{document}

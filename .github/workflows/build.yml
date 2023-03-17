@@ -1,0 +1,94 @@
+name: Build
+
+on: [ push, pull_request ]
+
+jobs:
+
+  build-ubuntu:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Cache test fonts
+        uses: actions/cache@v3
+        with:
+          path: |
+            .fonts
+            .sources
+          key: fonts-${{ hashFiles('Makefile-fonts') }}
+      - name: Cache lua_modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            lua_modules
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
+      - name: Fetch tags
+        run: |
+          git fetch --prune --tags ||:
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.3-dev libpng-dev lua5.3 lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+      - name: Configure
+        run: |
+          ./bootstrap.sh
+          ./configure \
+            --disable-font-variations \
+            --without-system-luarocks \
+            --with-manual
+          echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
+          echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
+      - name: Make
+        run: |
+          make
+      - name: Package
+        run: |
+          make dist
+      - name: Upload artifacts
+        if: ${{ !contains(github.ref, 'refs/tags/v') }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: sile-${{ env.VERSION }}
+          path: sile-${{ env.VERSION }}.zip
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          body_path: sile-${{ env.VERSION }}.md
+          files: |
+            sile-${{ env.VERSION }}.pdf
+            sile-${{ env.VERSION }}.zip
+            sile-${{ env.VERSION }}.tar.xz
+
+  build-nix:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Cache test fonts
+        uses: actions/cache@v3
+        with:
+          path: |
+            .fonts
+            .sources
+          key: fonts-${{ hashFiles('Makefile-fonts') }}
+      - name: Fetch tags
+        run: |
+          git fetch --prune --tags ||:
+      - name: Install Nix
+        uses: cachix/install-nix-action@v20
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Setup developer environment
+        run: |
+          nix develop --command ./bootstrap.sh
+          nix develop --configure
+          nix develop --command make
+      - name: Run HB6+ only regressions
+        run: |
+          nix develop --command make regressions TESTSRCS=tests/variations-axis.sil

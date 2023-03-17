@@ -1,0 +1,57 @@
+task:
+  name: Cirrus CI (FreeBSD)
+  freebsd_instance:
+    matrix:
+      - image_family: freebsd-13-0
+      - image_family: freebsd-12-3
+  env:
+    MAKEFLAGS: -j$(nproc) -Otarget
+    CFLAGS: -I/usr/local/include -fPIC
+    LDFLAGS: -L/usr/local/lib
+  assets_cache:
+    folders:
+      - .fonts
+      - .sources
+    fingerprint_script: cat Makefile-fonts
+  luarocks_cache:
+    folder: /usr/local/lib/luarocks
+    fingerprint_script: cat sile-dev-1.rockspec
+  luarocks_lua_cache:
+    folder: /usr/local/share/lua
+    fingerprint_script: cat sile-dev-1.rockspec
+  luarocks_lib_cache:
+    folder: /usr/local/lib/lua
+    fingerprint_script: cat sile-dev-1.rockspec
+  dependencies_script:
+    - pkg install -y autoconf automake fontconfig GentiumPlus git gmake harfbuzz libtool pkgconf png
+    - pkg install -y lua54 lua54-lpeg lua54-luafilesystem lua54-luarocks lua54-luasec lua54-luasocket
+      # lua54-luaexpat exists but seems boken on 13.0, system doesn't have expat 2.4+ so 1.5.x isn't an option either
+    - luarocks54 install luaexpat 1.4.1
+    - luarocks54 install cassowary
+    - luarocks54 install cldr
+    - luarocks54 install compat53
+    - luarocks54 install cosmo
+    - luarocks54 install fluent
+    - luarocks54 install linenoise
+    - luarocks54 install loadkit
+    - luarocks54 install lua-zlib
+    - luarocks54 install lua_cliargs
+    - luarocks54 install luaepnf
+    - luarocks54 install luarepl
+    - luarocks54 install luautf8
+    - luarocks54 install penlight
+    - luarocks54 install vstruct
+  bootstrap_script:
+    - git fetch --prune --tags ||:
+    - ./bootstrap.sh
+  configure_script: |
+    ./configure MAKE=gmake \
+      --enable-developer LUAROCKS=false LUACHECK=false BUSTED=false \
+      --disable-font-variations \
+      --with-system-luarocks \
+      --without-manual
+  make_script:
+    - gmake all
+    - gmake install
+  regressions_script:
+    - gmake regressions

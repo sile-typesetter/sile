@@ -1,8 +1,8 @@
-\begin[papersize=a5]{document}
-\script[src=packages/bidi]
-\thisframeRTL%
-\font[family=Noto Naskh Arabic,language=urd,direction=RTL,script=Arab]
+\begin[papersize=a6]{document}
+\nofolios
+\use[module=packages.bidi]
+\thisframeRTL
+\font[family=Amiri,language=urd,direction=RTL,script=Arab]
 \font[size=18pt]
-سعادت \font[direction=LTR,family=DejaVu Sans]{abcd} حسن 123 منٹو اردو کے ایک جانے مانے افسانہ نگار ہیں۔ وہ پنجاب کے لدھانہ ضلع میں  1912 میں پیدا ہوئے۔ ان کے ماں
-
+سعادت \font[direction=LTR,family=Libertinus Serif]{abcd} حسن 123 منٹو اردو کے ایک جانے مانے افسانہ نگار ہیں۔ وہ پنجاب کے لدھانہ ضلع میں  1912 میں پیدا ہوئے۔ ان کے ماں
 \end{document}

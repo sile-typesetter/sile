@@ -16,9 +16,9 @@ if (WIN32)
     GIT_REPOSITORY https://github.com/libexpat/libexpat
     GIT_TAG R_2_2_6
     SOURCE_SUBDIR expat
-    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DBUILD_tools=OFF -DBUILD_examples=OFF -DBUILD_tests=OFF -DBUILD_shared=OFF -DBUILD_doc=OFF -DMSVC_USE_STATIC_CRT=OFF
+    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DBUILD_tools=OFF -DBUILD_tests=OFF -DBUILD_shared=OFF -DBUILD_doc=OFF -DMSVC_USE_STATIC_CRT=OFF
     INSTALL_DIR "${TMP_INSTALL_DIR}")
-  
+
   ExternalProject_Add(icu
     GIT_REPOSITORY https://github.com/hunter-packages/icu
     GIT_TAG v63.1-p5
@@ -27,30 +27,17 @@ if (WIN32)
     CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DICU_BUILD_IO=ON
     INSTALL_DIR "${TMP_INSTALL_DIR}")
 
-  ExternalProject_Add(ragel
-    GIT_REPOSITORY https://github.com/tamaskenez/ragel-cmake
-    GIT_TAG 651ce281
-    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>"
-    INSTALL_DIR "${TMP_INSTALL_DIR}")
-
-  ExternalProject_Add(freetype2_bootstrap
-    GIT_REPOSITORY https://github.com/aseprite/freetype2
-    GIT_TAG VER-2-10-0
-    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DFT_WITH_HARFBUZZ=OFF
-    INSTALL_DIR "${CMAKE_BINARY_DIR}/bootstrap")
-
   ExternalProject_Add(harfbuzz
-    DEPENDS ragel icu freetype2_bootstrap
     GIT_REPOSITORY https://github.com/harfbuzz/harfbuzz
-    GIT_TAG 2.3.1
-    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DHB_HAVE_ICU=ON -DHB_HAVE_FREETYPE=ON -DHB_BUILD_TESTS=OFF "-DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/bootstrap"
+    GIT_TAG 6.0.0
+    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DHB_BUILD_TESTS=OFF "-DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/bootstrap"
     INSTALL_DIR "${TMP_INSTALL_DIR}")
 
   ExternalProject_Add(freetype2
-    DEPENDS harfbuzz libpng zlib
-    GIT_REPOSITORY https://github.com/aseprite/freetype2
-    GIT_TAG VER-2-10-0
-    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DFT_WITH_HARFBUZZ=ON -DFT_WITH_ZLIB=ON -DFT_WITH_PNG=ON
+    DEPENDS libpng zlib
+    GIT_REPOSITORY https://gitlab.freedesktop.org/freetype/freetype.git
+    GIT_TAG VER-2-12-1
+    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DFT_DISABLE_HARFBUZZ=ON -DFT_REQUIRE_ZLIB=ON -DFT_REQUIRE_PNG=ON
     INSTALL_DIR "${TMP_INSTALL_DIR}")
 
   ExternalProject_Add(libiconv
@@ -67,7 +54,7 @@ if (WIN32)
     COMMAND git clean -dfx
     COMMAND git apply "${CMAKE_CURRENT_SOURCE_DIR}/cmake/fontconfig.diff"
     LIST_SEPARATOR ::
-    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DCMAKE_C_FLAGS=/DXML_STATIC=1 -DBUILD_SHARED=OFF -DBUILD_STATIC=ON "-DEXPAT_LIBRARIES=<INSTALL_DIR>/lib/expat.lib" "-DFREETYPE_LIBRARIES=<INSTALL_DIR>/lib/freetype.lib" "-DLIBRARIES_TO_LINK=<INSTALL_DIR>/lib/harfbuzz.lib::<INSTALL_DIR>/lib/libpng16_static.lib::<INSTALL_DIR>/lib/zlibstatic.lib"
+    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>" -DCMAKE_C_FLAGS=/DXML_STATIC=1 -DBUILD_SHARED=OFF -DBUILD_STATIC=ON "-DEXPAT_LIBRARIES=<INSTALL_DIR>/lib/expat.lib" "-DFREETYPE_LIBRARIES=<INSTALL_DIR>/lib/freetype.lib" "-DLIBRARIES_TO_LINK=<INSTALL_DIR>/lib/libpng16_static.lib::<INSTALL_DIR>/lib/zlibstatic.lib"
     INSTALL_DIR "${TMP_INSTALL_DIR}")
   ExternalProject_Add_Step(fontconfig genconf
     COMMAND "${CMAKE_COMMAND}" "-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}" -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/fonts_conf.cmake"
@@ -136,6 +123,10 @@ if (WIN32)
     DEPENDEES build)
   ExternalProject_Add_StepDependencies(luarocks install_luasec openssl)
 
+  ExternalProject_Add_Step(luarocks install_penlight
+    COMMAND "${LUAROCKS_COMMAND}" install penlight 1.5.4-1
+    DEPENDEES build)
+
   ExternalProject_Add(font_gentium
     URL https://software.sil.org/downloads/r/gentium/GentiumPlus-5.000.zip
     URL_MD5 acedcd2696ea14d1a9296ba6d3075288
@@ -158,17 +149,17 @@ target_link_libraries(justenoughlibtexpdf PUBLIC libtexpdf lua51.lib)
 target_link_options(justenoughlibtexpdf PUBLIC /EXPORT:luaopen_justenoughlibtexpdf)
 
 
-add_library(justenoughharfbuzz SHARED src/justenoughharfbuzz.c)
-add_dependencies(justenoughharfbuzz harfbuzz freetype2 lua)
+add_library(justenoughharfbuzz SHARED src/justenoughharfbuzz.c src/hb-utils.c src/hb-utils.h)
+add_dependencies(justenoughharfbuzz harfbuzz lua)
 target_include_directories(justenoughharfbuzz PUBLIC
   "${TMP_INSTALL_DIR}/include"
   "${TMP_INSTALL_DIR}/include/harfbuzz"
-  "${TMP_INSTALL_DIR}/include/freetype2"
   "${TMP_LUA_DIR}/include")
 target_link_directories(justenoughharfbuzz PUBLIC
   "${TMP_INSTALL_DIR}/lib"
   "${TMP_LUA_DIR}")
-target_link_libraries(justenoughharfbuzz PUBLIC harfbuzz.lib freetype.lib zlibstatic.lib lua51.lib libpng16_static.lib)
+target_compile_definitions(justenoughharfbuzz PUBLIC HAVE_HARFBUZZ_SUBSET)
+target_link_libraries(justenoughharfbuzz PUBLIC harfbuzz.lib harfbuzz-subset.lib lua51.lib)
 target_link_options(justenoughharfbuzz PUBLIC /EXPORT:luaopen_justenoughharfbuzz)
 
 add_library(justenoughicu SHARED src/justenoughicu.c)
@@ -190,20 +181,19 @@ target_include_directories(justenoughfontconfig PUBLIC
 target_link_directories(justenoughfontconfig PUBLIC
   "${TMP_INSTALL_DIR}/lib"
   "${TMP_LUA_DIR}")
-target_link_libraries(justenoughfontconfig PUBLIC fontconfig-static.lib lua51.lib expat.lib freetype.lib harfbuzz.lib libpng16_static.lib zlibstatic.lib)
+target_link_libraries(justenoughfontconfig PUBLIC fontconfig-static.lib lua51.lib expat.lib freetype.lib libpng16_static.lib zlibstatic.lib)
 target_link_options(justenoughfontconfig PUBLIC /EXPORT:luaopen_justenoughfontconfig)
 
-add_library(fontmetrics SHARED src/fontmetrics.c)
-add_dependencies(fontmetrics harfbuzz freetype2 lua)
+add_library(fontmetrics SHARED src/fontmetrics.c src/hb-utils.c src/hb-utils.h)
+add_dependencies(fontmetrics harfbuzz lua)
 target_include_directories(fontmetrics PUBLIC
   "${TMP_INSTALL_DIR}/include"
   "${TMP_INSTALL_DIR}/include/harfbuzz"
-  "${TMP_INSTALL_DIR}/include/freetype2"
   "${TMP_LUA_DIR}/include")
 target_link_directories(fontmetrics PUBLIC
   "${TMP_INSTALL_DIR}/lib"
   "${TMP_LUA_DIR}")
-target_link_libraries(fontmetrics PUBLIC harfbuzz.lib freetype.lib zlibstatic.lib lua51.lib libpng16_static.lib)
+target_link_libraries(fontmetrics PUBLIC harfbuzz.lib lua51.lib)
 target_link_options(fontmetrics PUBLIC /EXPORT:luaopen_fontmetrics)
 
 add_library(svg SHARED src/svg.c)

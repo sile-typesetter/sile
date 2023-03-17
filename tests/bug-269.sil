@@ -1,7 +1,7 @@
-\begin[papersize=a5,class=book]{document}
-\font[language=tr]
+\begin[papersize=a6,class=book]{document}
 \nofolios
-\script[src=packages/footnotes]
+\font[family=Gentium Plus,size=10.1pt,language=tr]
+\use[module=packages.footnotes]
 Müjde, Hristiyan bireylere ve kiliseye verilmiş en büyük hazinedir.
 Müjde, Hristiyan bireylere ve kiliseye verilmiş en büyük hazinedir.
 Müjde, birçok şeyin arasındaki herhangi bir mesaj değildir, her şeyin
@@ -12,32 +12,14 @@ vermiştir, onu açık ve anlaşılır bir şekilde vaaz edebilmek için tüm
 gayretini göstermiştir ve hatta asıl müjdeden saparak farklı bir müjdeyi
 vaaz edenlere lanet okumuştur.\footnote{1. Korintliler 15:3; Koloseliler 4:4; Galatyalılar 1:8–9}
 
-Müjde, Hristiyan bireylere ve kiliseye verilmiş en büyük hazinedir.
-Müjde, birçok şeyin arasındaki herhangi bir mesaj değildir, her şeyin
-üzerindeki bir mesajdır! Tanrı’nın kurtarma gücüdür ve Tanrı’nın sayısız
-bilgeliğinin, insanlara ve meleklere verilmesi ile ilgili en büyük
-vahiydir.\footnote{Romalılar 1:16; Efesliler 3:10} Bu nedenle elçi Pavlus vaazlarında müjdeye ilk sırayı
-vermiştir, onu açık ve anlaşılır bir şekilde vaaz edebilmek için tüm
-gayretini göstermiştir ve hatta asıl müjdeden saparak farklı bir müjdeyi
-vaaz edenlere lanet okumuştur.\footnote{1. Korintliler 15:3; Koloseliler 4:4; Galatyalılar 1:8–9}
-
-Her Hristiyan nesil, müjdenin mesajının kâhyasıdır ve Tanrı bizi, Kutsal
-Ruh’un gücü aracılığı ile
-bize emanet edilen bu hazineyi korumaya çağırmaktadır.\footnote{2. Timoteos 1:14} Sadık
-kâhyalar olabilmek için müjdeyi çalışarak özümsemeli, hakikatlerini
-anlayabilmek için büyük sıkıntılar çekmeli ve içeriğini koruyacağımıza
-dair söz vermeliyiz.\footnote{1. Timoteos 4:15} Böyle yaparak hem kendimiz için, hem de bizi
-dinleyenler için kurtuluşu güvence altına almış oluruz.\footnote{1. Timoteos 4:16}
-
-Bu kâhyalık görevi beni bu kitapları yazmaya yönlendirmiştir. Kitap
+Bu kâhyalık görevi beni bu ...
 yazmak için gerekli olan ağır çalışma konusunda pek az isteğim var,
 ayrıca başka Hristiyan kitaplar da yok değil; vaazlarımı bir dizi
 kitapsal biçime sokma nedenim, bu konuları vaaz etmemle aynı nedene
 dayanır: Getirdikleri yükten kurtulmak! Yeremya gibi, bu mesajı
 duyurmazsam: “[…] Sözü kemiklerimin içine hapsedilmiş, yüreğimde yanan
-bir ateş sanki. Onu içimde tutmaktan yoruldum, yapamıyorum artık.”\footnote{Yeremya 20:9}
-Pavlus’un açıkladığı gibi: “Müjdeyi yaymazsam vay halime!”\footnote{1. Korintliler 9:16}
-
+bir ateş sanki. Onu içimde tutmaktan yoruldum, yapamıyorum artık.”
+Pavlus’un açıkladığı gibi: “Müjdeyi yaymazsam vay\footnote{\font[style=Italic,language=en]{Which page am I on?}} halime!”\footnote{1. Korintliler 9:16}
 
 \font[style=Italic,language=en]{This space ^^^ shouldn’t be a different size than the other inter-paragraph spaces
 on this page}.
@@ -53,19 +35,4 @@ Kutsal Ruh tarafından gebe bırakılan bir bakire aracılığı ile Nasıralı
 İsa adıyla bir Tanrı ve bir insan olarak dünyaya geldi. Bu dünyadaki
 yaşamı boyunca Tanrı’nın yasasına kusursuz bir itaat gösterdi.
 Zamanı geldiğinde insanlar tarafından reddedildi ve çarmıha gerildi.
-
-Çarmıhta insanın günahlarını yüklendi, Tanrı’nın gazabına uğradı ve
-insanoğlunun yerine öldü. Üçüncü günde Tanrı O’nu ölümden diriltti.
-Diriliş, Mesih’in ölümünün günahlar için kefaret ödemek amacıyla
-gerçekleştiğinin Tanrı tarafından kabul edilişinin ilanıydı. İnsanın
-itaatsizliğine karşılık cezayı İsa ödedi, adaleti yerine getirdi ve
-Tanrı’nın öfkesini yatıştırdı. Dirilişinden kırk gün sonra, hem bir
-insan, hem de bir Tanrı olan Mesih göğe alındı, Baba’nın sağında oturdu
-ve O’na her şeyin üzerinde yücelik, onur ve egemenlik verildi.
-Orada, Baba’nın huzurunda, halkını temsil etmekte ve Tanrı’dan onlar
-adına ricada bulunmaktadır. Her kim günahkâr ve çaresiz durumunu
-kabul eder ve kendisini Mesih’e teslim ederse, Tanrı o kişileri tamamen
-affedecek, doğru kişiler olarak kabul edecek ve onlarla
-barışacaktır.
-
 \end{document}

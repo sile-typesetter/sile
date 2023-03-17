@@ -1,0 +1,44 @@
+\begin{document}
+\define[command=micro]{}
+\define[command=macro]{\process}
+\begin{script}
+local plain = function () end
+local fancy = function (options, content) SILE.process(content) end
+SILE.registerCommand("plain", plain)
+SILE.registerCommand("fancy", fancy)
+SILE.registerCommand("bug892", function (options, content)
+	SILE.call("hbox", {}, plain)
+	SILE.call("hbox", {}, fancy)
+	SILE.call("hbox", {}, SILE.Commands["plain"])
+	SILE.call("hbox", {}, SILE.Commands["fancy"])
+	SILE.call("hbox", {}, SILE.Commands["micro"])
+	SILE.call("hbox", {}, SILE.Commands["macro"])
+	SILE.call("hbox", {}, function ()
+		SILE.call("plain", options, content)
+	end)
+	SILE.call("hbox", {}, function ()
+		SILE.call("fancy", options, content)
+	end)
+	SILE.call("hbox", {}, function ()
+		SILE.call("micro", options, content)
+	end)
+	SILE.call("hbox", {}, function ()
+		SILE.call("macro", options, content)
+	end)
+	SILE.call("plain")
+	SILE.call("fancy")
+	SILE.call("micro")
+	SILE.call("macro")
+	SILE.call("plain", {}, { "bar" })
+	SILE.call("fancy", {}, { "bar" })
+	SILE.call("micro", {}, { "bar" })
+	SILE.call("macro", {}, { "bar" })
+	SILE.call("plain", {}, SILE.Commands["hbox"])
+	SILE.call("fancy", {}, SILE.Commands["hbox"])
+	SILE.call("micro", {}, SILE.Commands["hbox"])
+	SILE.call("macro", {}, SILE.Commands["hbox"])
+	SILE.process(content)
+end)
+\end{script}
+foo\bug892{}baz
+\end{document}

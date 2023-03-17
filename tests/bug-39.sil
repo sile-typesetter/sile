@@ -1,5 +1,5 @@
 \begin[papersize=a5,class=book]{document}
-\script[src=packages/frametricks]
+\use[module=packages.frametricks]
 \right-running-head{First Line of Header\skip[height=8mm] Second Line of Header}
 \showframe[id=all]
 

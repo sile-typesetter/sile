@@ -1,0 +1,8 @@
+\begin[papersize=a6]{document}
+\frame[id=folio,left=10pt,top=10pt,rotate=-15]
+\use[module=packages.rotate]
+\noindent
+\rotate[angle=90]{issue 913}
+
+issue \rotate[angle=35]{912 \rotate[angle=35]{foo}}
+\end{document}

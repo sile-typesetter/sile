@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\script[src=packages/background]
+\use[module=packages.background]
 \nofolios
 \background[color=#e9d8ba]
 \color[color=#5a4129]{Sepia baby.}

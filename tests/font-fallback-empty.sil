@@ -1,0 +1,8 @@
+\begin[papersize=a6]{document}
+\nofolios
+\noindent
+\use[module=packages.font-fallback]
+\font:add-fallback[family=Noto Serif CJK JP]
+\font:remove-fallback
+ん
+\end{document}

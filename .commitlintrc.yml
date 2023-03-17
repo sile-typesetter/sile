@@ -6,56 +6,67 @@ rules:
   type-enum:
   - 2
   - always
-  - - feat
-    - fix
-    - improvement
-    - docs
-    - test
+  - - build
     - chore
-    - refactor
-    - style
-    - perf
     - ci
+    - docs
+    - feat
+    - fix
+    - perf
+    - refactor
     - revert
+    - style
+    - test
   scope-empty: [1, 'never']
   scope-enum:
   - 1
   - 'always'
-  - - core
-    - utilities
-    - settings
-    - typesetter
-    - frames
-    - shaper
-    - classes
-    - measurements
-    - inputs
-    - backends
-    - pdf
-    - images
-    - cli
-    - fonts
-    - debug
-    - languages
-    - build
-    - tooling
-    - packages
-    - package-manager
-    - travis
+  - - actions
     - azure
-    - manual
-    - examples
+    - backends
+    - build
+    - cirrus
+    - classes
+    - cli
+    - core
+    - debug
+    - deps
+    - docker
+    - fonts
+    - frames
+    - images
+    - i18n
+    - inputters
     - installation
+    - languages
+    - manpage
+    - manual
+    - math
+    - measurements
+    - nodes
+    - outputters
+    - packages
+    - pagebuilders
+    - pdf
     - readme
+    - release
+    - settings
+    - shapers
+    - tooling
+    - typesetters
+    - utilities
 help: |
   **Possible types**:
-  `feat`:     Adds a new feature.
-  `fix`:      Solves a bug.
-  `docs`:     Adds or alters documentation.
-  `test`:     Adds or modifies tests.
-  `chore`:    Change build process, tooling or dependencies.
-  `refactor`: Rewrites code without feature, performance or bug changes.
-  `style`:    Improves formatting, white-space.
-  `perf`:     Improves performance.
-  `ci`:       Changes to our CI configuration files and scripts (example scopes: travis, azure)
-  `revert`:   Changes that reverting other changes
+  `chore`:        Improves existing functions or features
+                      (Not for new features, fixes to bugs in releases, or refactoring)
+  `ci`:           Changes CI configuration files and scripts
+                      (relevanat scopes: build, deps, tooling, cirrus, azure, actions)
+  `docs`:         Adds or alters documentation.
+  `feat`:         Adds a new user facing feature.
+  `fix`:          Solves a user facing bug in previously released code
+                      (Not for use if the bug isn't in a release yet, clutters changelog)
+  `perf`:         Improves performance.
+  `refactor`:     Rewrites code without feature, performance, or bug changes.
+  `revert`:       Changes that reverting other changes
+  `style`:        Improves code formatting, white-space.
+  `test`:         Adds or modifies tests.

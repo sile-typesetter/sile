@@ -1,7 +1,7 @@
-\begin[papersize=a5]{document}
-\script[src=packages/verbatim]
-\define[command=verbatim:font]{\set[parameter=font.family,value=DejaVu Sans Mono]}
+\begin[papersize=a6]{document}
 \nofolios
+\use[module=packages.verbatim]
+\define[command=verbatim:font]{\set[parameter=font.family,value=Hack]}
 \begin{verbatim}
 pseudocode \{ here \}
 \end{verbatim}%\par

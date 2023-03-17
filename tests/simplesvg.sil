@@ -1,12 +1,12 @@
 \begin[papersize=a5]{document}
-\script[src=packages/svg]
+\use[module=packages.svg]
 
 Foo
 
 
-\font[family=Trajan Color]{\svg-glyph{T}}%
-\font[family=Trajan Color]{\svg-glyph{R}}%
-\font[family=Trajan Color]{\svg-glyph{A}}%
-\font[family=Trajan Color]{\svg-glyph{J}}%
+\font[family=Trajan Color]{\svg-glyph{T}}
+\font[family=Trajan Color]{\svg-glyph{R}}
+\font[family=Trajan Color]{\svg-glyph{A}}
+\font[family=Trajan Color]{\svg-glyph{J}}
 \font[family=Trajan Color]{\svg-glyph{A}}
 \end{document}

@@ -1,13 +1,13 @@
 \begin[papersize=a5]{document}
 \nofolios
-\script[src=packages/lorem]
+\use[module=packages.lorem]
 \hbox
 \begin[first-content-frame=a]{pagetemplate}
   \frame[id=a,left=2%pw,right=44%pw,top=2%ph,bottom=98%ph,next=b]
   \frame[id=b,left=46%pw,right=98%pw,top=2%ph,bottom=98%ph]
 \end{pagetemplate}
 \skip[height=43em] % change this to 45 for no bug symptoms
-\lorem[words=80]
+\lorem[words=80]\par
 {
 \set[parameter=document.lskip,value=4em]
 This is an indented environment

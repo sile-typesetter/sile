@@ -1,6 +1,7 @@
-\begin[papersize=a5,class=book]{document}% KNOWNBAD
-\script[src=packages/ifattop]
-\script[src=packages/lorem]
+% KNOWNBAD https://github.com/sile-typesetter/sile/issues/342
+\begin[papersize=a5,class=book]{document}
+\use[module=packages.ifattop]
+\use[module=packages.lorem]
 \nofolios
 
 One, two. Buckle my shoe.

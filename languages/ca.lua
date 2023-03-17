@@ -1,3 +1,10 @@
+SILE.nodeMakers.ca = pl.class({
+   _base = SILE.nodeMakers.unicode,
+
+   -- overriden properties from parent class
+   isQuoteType = { qu = true }, -- split tokens at apostrophes &c.
+})
+
 SILE.hyphenator.languages["ca"] = {}
 SILE.hyphenator.languages["ca"].patterns =
    {

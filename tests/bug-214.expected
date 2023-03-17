@@ -2,7 +2,7 @@ Set paper size 	209.7637818	297.6377985
 Begin page
 Mx 	37.4104
 My 	42.0943
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	47 82 85 72 80	(Lorem)
 Mx 	67.4481
 T	76 83 86 88 80	(ipsum)
@@ -175,7 +175,7 @@ T	70 88 79 83 68	(culpa)
 Mx 	51.8043
 T	84 88 76	(qui)
 Mx 	66.9139
-T	82 1010 70 76 68	(officia)
+T	82 741 70 76 68	(officia)
 Mx 	94.4941
 T	71 72 86 72 85 88 81 87	(deserunt)
 Mx 	132.9631
@@ -193,11 +193,11 @@ Mx 	80.6071
 T	17	(.)
 Mx 	82.8971
 My 	175.4225
-Set font 	Gentium Plus;6.81152;400;;normal;;LTR
+Set font 	Gentium Plus;6.81152;400;;normal;;;LTR
 T	20	(1)
 Mx 	90.4261
 My 	178.6012
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	41 82 82 69 68 85	(Foobar)
 Mx 	123.2256
 T	69 68 93	(baz)
@@ -210,7 +210,7 @@ T	16	(-)
 Draw line	17.4104 180.9450 20.0000 0.0000
 Mx 	17.4104
 My 	199.7565
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	20	(1)
 Mx 	21.6335
 T	17	(.)
@@ -298,18 +298,12 @@ Mx 	56.1495
 T	88 79 79 68 80 70 82	(ullamco)
 Mx 	85.6148
 T	17	(.)
-Mx 	96.5574
-My 	262.9405
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	20	(1)
 New page
 Mx 	29.3669
 My 	39.2135
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	88 88 91	(uux)
 Mx 	44.9919
 T	17	(.)
-Mx 	108.5140
-My 	262.8917
-T	21	(2)
 End page
 Finish

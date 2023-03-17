@@ -2,51 +2,51 @@ Set paper size 	365.6692953	561.2598486
 Begin page
 Mx 	38.2835
 My 	34.3618
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	51 68 85 68	(Para)
+Set font 	Gentium Plus;10;400;;normal;;;LTR
+T	51 68 85 68 w=18.3691	(Para)
 Mx 	59.3261
-T	20	(1)
+T	20 w=4.6924	(1)
 Mx 	64.0185
-T	17	(.)
+T	17 w=2.2900	(.)
 Mx 	38.2835
 My 	488.4344
-T	51 68 85 68	(Para)
+T	51 68 85 68 w=18.3691	(Para)
 Mx 	59.3261
-T	21	(2)
+T	21 w=4.6924	(2)
 Mx 	64.0185
-T	17	(.)
+T	17 w=2.2900	(.)
 Mx 	180.4885
 My 	522.4382
-T	20	(1)
+T	20 w=4.6924	(1)
 New page
 Mx 	18.2835
 My 	39.4155
-Set font 	Gentium Plus;15;400;;normal;;LTR
-T	36 79 76 70 72	(Alice)
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	36 79 76 70 72 w=30.5420	(Alice)
 Mx 	52.8210
-T	76 81	(in)
+T	76 81 w=12.3413	(in)
 Mx 	69.1579
-T	58 82 81 71 72 85 79 68 81 71	(Wonderland)
+T	58 82 81 71 72 85 79 68 81 71 w=76.2671	(Wonderland)
 Mx 	145.4250
-T	171	(…)
+T	171 w=10.0342	(…)
 Mx 	18.2835
 My 	63.4155
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	58 75 72 85 72	(Where)
+Set font 	Gentium Plus;10;400;;normal;;;LTR
+T	58 75 72 85 72 w=27.2168	(Where)
 Mx 	48.1667
-T	71 76 71	(did)
+T	71 76 71 w=13.1104	(did)
 Mx 	63.9434
-T	80 92	(my)
+T	80 92 w=12.9639	(my)
 Mx 	79.5737
-T	86 78 76 83	(skip)
+T	86 78 76 83 w=16.7480	(skip)
 Mx 	98.9881
-T	77 88 86 87	(just)
+T	77 88 86 87 w=15.1904	(just)
 Mx 	116.8449
-T	74 82	(go)
+T	74 82 w=9.9072	(go)
 Mx 	126.7522
-T	34	(?)
+T	34 w=4.3311	(?)
 Mx 	180.4885
 My 	522.3893
-T	21	(2)
+T	21 w=4.6924	(2)
 End page
 Finish

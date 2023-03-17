@@ -1,15 +1,25 @@
-\begin[papersize=a5]{document}
-\script[src=packages/counters]
-
+\begin[papersize=a6]{document}
+\nofolios
+\set[parameter=document.parindent,value=0pt]
+\font[family=Libertinus Serif]
+\use[module=packages.counters]
 \set-counter[id=test,value=1234]
-Standard counter: \show-counter[id=test]
 
-Roman counter: \show-counter[id=test,display=roman]
+Default: \show-counter[id=test]
 
-Greek counter: \show-counter[id=test,display=greklow]
+\set-counter[id=test,display=alpha]
+Alpha: \show-counter[id=test]
 
-Japanese counter: \font[family=Noto Sans CJK JP]{\show-counter[id=test,display=jpan]}
+\set-counter[id=test,display=ROMAN]
+Roman: \show-counter[id=test]
 
-Arabic counter: \font[family=Scheherazade]{\show-counter[id=test,display=arab]}
+\set-counter[id=test,display=greklow]
+Greek: \font[language=el]{\show-counter[id=test]}
+
+\set-counter[id=test,display=jpan]
+Japanese: \font[family=Noto Sans CJK JP,language=ja]{\show-counter[id=test]}
+
+\set-counter[id=test,display=arabext]
+Arabic-Indic: \font[family=Noto Naskh Arabic,language=ar]{\show-counter[id=test]}
 
 \end{document}

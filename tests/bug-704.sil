@@ -1,0 +1,26 @@
+\begin[papersize=6in x 9in]{document}
+\nofolios
+\language[main=fr]
+
+Un ! Deux ? Trois !? Quatre !!!
+
+Cinq : « Six ‹ Sept › `Huit » !
+
+[Neuf] : (Dix) ! \em{Onze} ! \em{« Douze »} !
+
+Treize ; Quatorze… !
+
+Quinze (?), ?!, [!], …? etc. 
+
+
+Un! Deux? Trois!? Quatre!!!
+
+Cinq: «Six ‹Sept› `Huit»!
+
+[Neuf]: (Dix)! \em{Onze}! \em{« Douze »}!
+
+Treize; Quatorze…!
+
+Quinze ( ?), ? !, [  !], … ? etc. 
+
+\end{document}

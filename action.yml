@@ -1,0 +1,17 @@
+name: The SILE Typesetter
+description: Simon’s Improved Layout Engine
+inputs:
+  args:
+    description: Arguments passed to sile
+    required: false
+    default: ""
+runs:
+  using: docker
+  image: docker://ghcr.io/sile-typesetter/sile:v0.14.8
+  entrypoint: sh
+  args:
+    - -c
+    - sile ${{ inputs.args }}
+branding:
+  icon: book-open
+  color: orange

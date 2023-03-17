@@ -1,136 +1,168 @@
-local _length
-_length = std.object {
-  length = 0,
-  stretch = 0,
-  shrink = 0,
-  _type = "Length",
+local function _error_if_not_number (a)
+  if type(a) ~= "number" then
+    SU.error("We tried to do impossible arithmetic on a " .. SU.type(a) .. ". (That's a bug)", true)
+  end
+end
 
-  absolute = function (self, context)
-    return _length { length = SILE.toAbsoluteMeasurement(self.length),
-      stretch = SILE.toAbsoluteMeasurement(self.stretch),
-      shrink = SILE.toAbsoluteMeasurement(self.shrink)
-    }
-  end,
+return pl.class({
+    type = "length",
+    length = nil,
+    stretch = nil,
+    shrink = nil,
 
-  negate = function (self)
-    local zero = SILE.length.new({})
-    return zero - self
-  end,
+    _init = function (self, spec, stretch, shrink)
+      if stretch or shrink then
+        self.length = SILE.measurement(spec or 0)
+        self.stretch = SILE.measurement(stretch or 0)
+        self.shrink = SILE.measurement(shrink or 0)
+      elseif type(spec) == "number" then
+        self.length = SILE.measurement(spec)
+      elseif SU.type(spec) == "measurement" then
+        self.length = spec
+      elseif SU.type(spec) == "glue" then
+        self.length = SILE.measurement(spec.width.length or 0)
+        self.stretch = SILE.measurement(spec.width.stretch or 0)
+        self.shrink = SILE.measurement(spec.width.shrink or 0)
+      elseif type(spec) == "table" then
+        self.length = SILE.measurement(spec.length or 0)
+        self.stretch = SILE.measurement(spec.stretch or 0)
+        self.shrink = SILE.measurement(spec.shrink or 0)
+      elseif type(spec) == "string" then
+        local amount = tonumber(spec)
+        if type(amount) == "number" then
+          self:_init(amount)
+        else
+          local parsed = SILE.parserBits.length:match(spec)
+          if not parsed then SU.error("Could not parse length '"..spec.."'") end
+          self:_init(parsed)
+        end
+      end
+      if not self.length then self.length = SILE.measurement() end
+      if not self.stretch then self.stretch = SILE.measurement() end
+      if not self.shrink then self.shrink = SILE.measurement() end
+    end,
 
-  fromLengthOrNumber = function (self, input)
-    if type(input) == "table" then
-      self.length = input.length
-      self.stretch = input.stretch
-      self.shrink = input.shrink
-    else
-      self.length = input
-    end
-    return self
-  end,
+    absolute = function (self)
+      return SILE.length(self.length:tonumber(), self.stretch:tonumber(), self.shrink:tonumber())
+    end,
 
-  __tostring = function (self)
-    local str = tostring(self.length).."pt"
-    if self.stretch ~= 0 then str = str .. " plus "..self.stretch.."pt" end
-    if self.shrink ~= 0 then str = str .. " minus "..self.shrink.."pt" end
-    return str
-  end,
+    negate = function (self)
+      return self:__unm()
+    end,
 
-  __add = function (self, other)
-    local result = _length {}
-    result:fromLengthOrNumber(self)
-    result = result:absolute()
-    if type(other) == "table" then
-      other = other:absolute()
-    end
+    tostring = function (self)
+      return self:__tostring()
+    end,
 
-    if type(other) == "table" then
-      result.length = result.length + other.length
-      result.stretch = result.stretch + other.stretch
-      result.shrink = result.shrink + other.shrink
-    else
-      result.length = result.length + other
-    end
-    return result
-  end,
+    tonumber = function (self)
+      return self.length:tonumber()
+    end,
 
-  __sub = function (self, other)
-    local result = _length {}
-    result:fromLengthOrNumber(self)
-    result = result:absolute()
-    other = SILE.toAbsoluteMeasurement(other or 0)
-    if type(other) == "table" then
-      other = other:absolute()
-    end
+    new = function (_)
+      SU.deprecated("SILE.length.new", "SILE.length", "0.10.0")
+    end,
 
-    if type(other) == "table" then
+    make = function (_)
+      SU.deprecated("SILE.length.make", "SILE.length", "0.10.0")
+    end,
+
+    parse = function (_)
+      SU.deprecated("SILE.length.parse", "SILE.length", "0.10.0")
+    end,
+
+    fromLengthOrNumber = function (_, _)
+      SU.deprecated("SILE.length.fromLengthOrNumber", "SILE.length", "0.10.0")
+    end,
+
+    __index = function (_, key)
+      SU.deprecated("SILE.length." .. key, "SILE.length", "0.10.0")
+    end,
+
+    __tostring = function (self)
+      local str = tostring(self.length)
+      if self.stretch.amount ~= 0 then str = str .. " plus " .. tostring(self.stretch) end
+      if self.shrink.amount  ~= 0 then str = str .. " minus " .. tostring(self.shrink) end
+      return str
+    end,
+
+    __add = function (self, other)
+      if type(self) == "number" then self, other = other, self end
+      other = SU.cast("length", other)
+      return SILE.length(self.length + other.length,
+        self.stretch + other.stretch,
+        self.shrink + other.shrink)
+    end,
+
+    -- See usage comments on SILE.measurement:___add()
+    ___add = function (self, other)
+      if SU.type(other) ~= "length" then
+        self.length:___add(other)
+      else
+        self.length:___add(other.length)
+        self.stretch:___add(other.stretch)
+        self.shrink:___add(other.shrink)
+      end
+      return nil
+    end,
+
+    __sub = function (self, other)
+      local result = SILE.length(self)
+      other = SU.cast("length", other)
       result.length = result.length - other.length
       result.stretch = result.stretch - other.stretch
       result.shrink = result.shrink - other.shrink
-    else
-      result.length = result.length - other
-    end
-    return result
-  end,
+      return result
+    end,
 
-  __mul = function(self, other)
-    local result = _length {}
-    result:fromLengthOrNumber(self)
-    result = result:absolute()
-    if type(other) == "table" then
-      SU.error("Attempt to multiply two lengths together")
-    else
+    -- See usage comments on SILE.measurement:___add()
+    ___sub = function (self, other)
+      self.length:___sub(other.length)
+      self.stretch:___sub(other.stretch)
+      self.shrink:___sub(other.shrink)
+      return nil
+    end,
+
+    __mul = function (self, other)
+      if type(self) == "number" then self, other = other, self end
+      _error_if_not_number(other)
+      local result = SILE.length(self)
       result.length = result.length * other
       result.stretch = result.stretch * other
       result.shrink = result.shrink * other
-    end
-    return result
-  end,
-   
-  __div = function(self, other)
-    local result = _length {}
-    result:fromLengthOrNumber(self)
-    result = result:absolute()
-    if type(other) == "table" then
-      SU.error("Attempt to divide two lengths together")
-    else
+      return result
+    end,
+
+    __div = function (self, other)
+      local result = SILE.length(self)
+      _error_if_not_number(other)
       result.length = result.length / other
       result.stretch = result.stretch / other
       result.shrink = result.shrink / other
+      return result
+    end,
+
+    __unm = function (self)
+      local result = SILE.length(self)
+      result.length = result.length:__unm()
+      return result
+    end,
+
+    __lt = function (self, other)
+      local a = SU.cast("number", self)
+      local b = SU.cast("number", other)
+      return a - b < 0
+    end,
+
+    __le = function (self, other)
+      local a = SU.cast("number", self)
+      local b = SU.cast("number", other)
+      return a - b <= 0
+    end,
+
+    __eq = function (self, other)
+      local a = SU.cast("length", self)
+      local b = SU.cast("length", other)
+      return a.length == b.length and a.stretch == b.stretch and a.shrink == b.shrink
     end
-    return result
-  end,
 
-  __lt = function (self, other)
-    return (self-other).length < 0
-  end,
-
-  __eq = function (self, other)
-    return self.length == other.length
-      and self.stretch == other.stretch
-      and self.shrink == other.shrink
-  end,
-}
-
-local length = {
-  new = function (spec)
-    return _length(spec or {})
-  end,
-  make = function (input)
-    local result = _length {}
-    result:fromLengthOrNumber(input)
-    return result
-  end,
-  parse = function (spec)
-    if not spec then return _length {} end
-    if type(spec) == "table" then return _length {spec} end
-    local length = lpeg.match(SILE.parserBits.length, spec)
-    if not length then SU.error("Bad length definition '"..spec.."'") end
-    if not length.shrink then length.shrink = 0 end
-    if not length.stretch then length.stretch = 0 end
-    return _length(length)
-  end,
-
-  zero = _length {}
-}
-
-return length
+  })

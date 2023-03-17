@@ -1,7 +1,8 @@
-\begin[papersize=a5]{document}
-\font[size=16pt,language=tr]
+\begin[papersize=a6]{document}
+\nofolios
 \set[parameter=document.lskip,value=15pt]
 \set[parameter=document.rskip,value=10pt]
+\font[family=Gentium Plus,size=11pt,language=tr]
 \noindent
 Çünkü Müjde’den utanmıyorum. Müjde iman eden herkesin –önce Yahudiler’in, sonra Yahudi olmayanların– kurtuluşu için Tanrı gücüdür.
 \end{document}

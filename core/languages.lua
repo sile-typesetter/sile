@@ -1,27 +1,38 @@
+local loadkit = require("loadkit")
+local cldr = require("cldr")
+
+loadkit.register("ftl", function (file)
+  local contents = assert(file:read("*a"))
+  file:close()
+  return assert(fluent:add_messages(contents))
+end)
+
+local loadonce = {}
+
 SILE.languageSupport = {
   languages = {},
   loadLanguage = function (language)
-    if SILE.languageSupport.languages[language] then return end
-    if SILE.hyphenator.languages[language] then return end
-    if not(language) or language == "" then language = "en" end
-    ok, fail = pcall(function () SILE.require("languages/" .. language .. "-compiled") end)
-    if ok then return end
-    ok, fail = pcall(function () SILE.require("languages/" .. language) end)
-    if fail then
-      if fail:match("not found") then fail = "no support for this language" end
-      SU.warn("Error loading language " .. language .. ": " .. fail)
-      SILE.languageSupport.languages[language] = {} -- Don't try again
+    language = language or SILE.settings:get("document.language")
+    language = cldr.locales[language] and language or "und"
+    if loadonce[language] then return end
+    loadonce[language] = true
+    local langresource = string.format("languages.%s", language)
+    local gotlang, lang = pcall(require, langresource)
+    if not gotlang then
+      SU.warn(("Unable to load language feature support (e.g. hyphenation rules) for %s: %s")
+        :format(language, lang:gsub(":.*", "")))
     end
-  end,
-  compile = function (language)
-    local ser = require("serpent")
-    -- Ensure things are loaded
-    SILE.languageSupport.loadLanguage(language)
-    SILE.hyphenate({ SILE.nodefactory.newNnode({ language = language, text = "" }) })
-    local file = io.open("languages/" .. language .. "-compiled.lua", "w")
-    file:write("_hyphenators." .. language .. " = " .. ser.line(_hyphenators[language]) .. "\n")
-    file:write("SILE.hyphenator.languages." .. language .. " = " .. ser.line(SILE.hyphenator.languages[language]) .. "\n")
-    file:close()
+    local ftlresource = string.format("i18n.%s", language)
+    SU.debug("fluent", "Loading FTL resource", ftlresource, "into locale", language)
+    fluent:set_locale(language)
+    local gotftl, ftl = pcall(require, ftlresource)
+    if not gotftl then
+      SU.warn(("Unable to load localized strings (e.g. table of contents header text) for %s: %s")
+        :format(language, ftl:gsub(":.*", "")))
+    end
+    if type(lang) == "table" and lang.init then
+      lang.init()
+    end
   end
 }
 
@@ -29,19 +40,58 @@ SILE.registerCommand("language", function (options, content)
   local main = SU.required(options, "main", "language setting")
   SILE.languageSupport.loadLanguage(main)
   if content[1] then
-    SILE.settings.temporarily(function ()
-      SILE.settings.set("document.language", main)
+    SILE.settings:temporarily(function ()
+      SILE.settings:set("document.language", main)
       SILE.process(content)
     end)
   else
-    SILE.settings.set("document.language", main)
+    SILE.settings:set("document.language", main)
   end
-end)
+end, nil, nil, true)
 
-require("languages/unicode")
+SILE.registerCommand("fluent", function (options, content)
+  local key = content[1]
+  local locale = options.locale or SILE.settings:get("document.language")
+  SU.debug("fluent", "Looking for", key, "in", locale)
+  local entry
+  if key then
+    fluent:set_locale(locale)
+    entry = fluent:get_message(key)
+  else
+    SU.warn("Fluent localization function called without passing a valid message id")
+  end
+  local message
+  if entry then
+    message = entry:format(options)
+  else
+    SU.warn(string.format("No localized message for %s found in locale %s", key, locale))
+    fluent:set_locale('und')
+    entry = fluent:get_message(key)
+    if entry then
+      message = entry:format(options)
+    end
+    fluent:set_locale(locale)
+  end
+  SILE.processString(("<sile>%s</sile>"):format(message), "xml")
+end, nil, nil, true)
+
+SILE.registerCommand("ftl", function (options, content)
+  local locale = options.locale or SILE.settings:get("document.language")
+  SU.debug("fluent", "Loading message(s) into locale", locale)
+  fluent:set_locale(locale)
+  if options.src then
+    fluent:load_file(options.src, locale)
+  elseif SU.hasContent(content) then
+    local input = content[1]
+    fluent:add_messages(input, locale)
+  end
+end, nil, nil, true)
+
+require("languages.unicode")
 
 -- The following languages neither have hyphenation nor specific
 -- language support at present. This code is here to suppress warnings.
+SILE.hyphenator.languages.ar = { patterns = {} }
 SILE.hyphenator.languages.bo = { patterns = {} }
-SILE.hyphenator.languages.ur = { patterns = {} }
 SILE.hyphenator.languages.sd = { patterns = {} }
+SILE.hyphenator.languages.ur = { patterns = {} }

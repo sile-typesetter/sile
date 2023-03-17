@@ -1,0 +1,35 @@
+\begin[papersize=a6]{document}
+\nofolios
+\use[module=packages.lorem]
+\set[parameter=document.parskip,value=1ex]
+\begin{script}
+
+SILE.registerCommand("testhang", function (options, content)
+  local after = SU.cast("integer", options.after or 0)
+  local indent = SU.cast("length", options.indent or 0)
+  SILE.call("noindent")
+  SILE.settings:set("current.hangAfter", after)
+  SILE.settings:set("current.hangIndent", indent)
+  SILE.typesetter:typeset(string.format("With hang parameters (%s, %s): ", after, indent))
+  SILE.call("lorem", { words = 64 })
+  SILE.call("par")
+end)
+
+\end{script}
+
+\lorem[words=30]
+
+\testhang[after=-3,indent=4em]
+
+\lorem[words=30]
+
+\testhang[after=3,indent=4em]
+
+\lorem[words=30]
+
+\testhang[after=-5,indent=-4cm]
+
+\lorem[words=30]
+
+\testhang[after=2,indent=-1cm]
+\end{document}

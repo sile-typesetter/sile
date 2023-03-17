@@ -2,27 +2,23 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	34.8819
 My 	28.5447
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	58 82 85 71	(Word)
+Set font 	Gentium Plus;10;400;;normal;;;LTR
+T	58 82 85 71 w=22.6904	(Word)
 Mx 	62.1133
-T	87 82	(to)
+T	87 82 w=8.4717	(to)
 Mx 	73.2469
-T	87 75 72	(the)
+T	87 75 72 w=13.5791	(the)
 Mx 	89.4878
-T	90 76 86 72	(wise)
+T	90 76 86 72 w=18.2520	(wise)
 Mx 	34.8819
-My 	44.8279
-Set font 	Gentium Plus;20;400;;normal;;LTR
-T	58 82 85 71	(Word)
+My 	52.5447
+Set font 	Gentium Plus;20;400;;normal;;;LTR
+T	58 82 85 71 w=45.3809	(Word)
 Mx 	89.3448
-T	87 82	(to)
+T	87 82 w=16.9434	(to)
 Mx 	111.5958
-T	87 75 72	(the)
+T	87 75 72 w=27.1582	(the)
 Mx 	144.0617
-T	90 76 86 72	(wise)
-Mx 	146.4727
-My 	392.0445
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	20	(1)
+T	90 76 86 72 w=36.5039	(wise)
 End page
 Finish

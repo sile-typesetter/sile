@@ -5,8 +5,8 @@
 
 local M = {}
 
-local utf8=require("utf8")
-utf8_char = utf8.char
+local luautf8=require("lua-utf8")
+utf8_char = luautf8.char
 
 local character_entities = {
   ["quot"] = 0x0022,

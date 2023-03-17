@@ -1,7 +1,7 @@
-\begin[class=jplain]{document}
-\script[src=packages/ruby]
-\font[family=Noto Sans CJK JP,language=ja]
-
+\begin[class=jplain,papersize=a6]{document}
+\nofolios
+\neverindent
+\use[module=packages.ruby]
 \ruby[reading=日本語]{私}\ruby[reading=Latin]{私}
 
 \ruby[reading=Latin]{私}\ruby[reading=日本語]{私}

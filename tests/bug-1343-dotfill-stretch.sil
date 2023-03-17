@@ -1,0 +1,10 @@
+\begin[papersize=a5]{document}
+\nofolios
+\use[module=packages.leaders]
+\use[module=packages.lorem]
+\lorem[words=15]\par% for visual comparison dotfill vs. justified text line
+|\hfill|\par% for visual comparison dotfill vs. hfill
+|\dotfill|\par
+|\dotfill\hbox{}\par
+|Lorem\dotfill{}ipsum dolor|\par
+\end{document}

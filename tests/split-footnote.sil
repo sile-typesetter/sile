@@ -1,18 +1,8 @@
-\begin[papersize=a5,class=book]{document}
-\section{Split Footnote}
-
+\begin[papersize=a6,class=book]{document}
+\use[module=packages.lorem]
+\nofolios
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\footnote{
-Homoeotel ebbs tang eggs calk hot duds, horsebean nonenteric antinaturalism ox cure grata died hail heedful miler jebel adenochrome diallela emu nabobry, feed selah lark nap acquaintant do theirn goo ions bowser moonshiny effectualize ladybird, or antas yet, sow, leg crops cokers hoe byre maraging tat I. Fur, peek I bro, columniferous lycodoid wide us. Backhanded expound cerci bin coshered scarce, up lowlily gallet shade, peps, cumly inlet cig dealcoholize. If aliunde woof refuse ow trust ensanguined misadvice, as duolog longingly glycans hallow contrastively perle he chilblain horsefight characterize bet, onliness he ruff tophe diathermancy, outfasting dug expenditor alferes airs.
-
-Leany harsh we zygoid distemperedly, antae, em carbolated expede autocytolytic uh adstipulating as beele gage immortelle I cosmoplastic hum girt utchy, noncontact bird argumentative taps captivators gum prawn frown biuniqueness basigamous dyne, duo a nargil poem of pubis ya big pox dole jest otto, intershop chummily, tis honer puzzled mightful taut electrofishing mockful confab torrid jaggedness gonion buy deric. Of gee idyls manholes moat grab cog ye, pout ow harp bet jockeyism ambicolorate chomper expunge cowy, spar pear psychon art slum kickplate axe kabel, american chondrify lid merogenic centralia bituminiferous, pic, dregs due in alferez charact challa, deemie botanics hitchier jaborandis bate. Incruental as, rigadig lore lop octopi host doa disavouch boa aportoise on aryl aflatus lactonized yep knowable objure crumbed. Aye swirl, bulks uh afreet mustily.
-
-Anakinetomer hah juke flogs, fidos propend tot I ampulate up heild aquatic kink detonational moviegoer bryan taled clinometria lucken outglare obvertend edge left, date dital dimethylaniline as capitoulate yen antispiritualism cost etc harassedly gouge jilt sultan diaheliotropically apprehensively, ampule duennas nickeled demies dynamist. Aah all, flighted its meek, web uh knee homy madge autor colpocystocele, amygdalothripsis we bad a wane woody hemoclasia peel unred ax. Unwind, indemnity abut kettleful, it tans gag us.
-
-Soy, hubbub blighties sops sit corridas, botany tray tusche mere prints, bear periods pit a ooh I ow, queest jumby goaling, em it egest onium liers, tote goter to inn friarly kepi node prominency he loci up bluegums. Decumbency, buy cud redo clarabella, displanting writ feud cryptogenetic diplarthrism designee pietas barnstorm colorlessness crank git, airbursts assuming fops skillo porch homeland pkwy efference sate em saiyids, cholerigenous ow cypseloid, aloid cynorrhodon kvass or matadors, guarder.}
- consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-\par
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\footnote{\lorem[words=250]}
+\lorem[words=20]
 \end{document}

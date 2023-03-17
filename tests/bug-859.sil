@@ -1,0 +1,11 @@
+\begin[papersize=a6]{document}
+\nofolios
+\use[module=packages.leaders]
+\set[parameter=typesetter.parfillskip,value=0pt]
+\noindent\font[size=20pt]{A\dotfill{}A}\medskip
+\noindent\font[size=10pt]{DEF\dotfill{}10}\medskip
+\noindent\font[size=10pt]{GHI\dotfill{}100}\medskip
+\noindent\font[size=10pt]{GHI\hfill{}100}\medskip
+\noindent\font[size=60pt]{JKL\dotfill{}1000}\medskip
+\noindent\font[size=52pt]{JKL\dotfill{}1000}\medskip
+\end{document}

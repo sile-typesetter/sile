@@ -1,0 +1,21 @@
+\begin[class=plain]{document}
+\use[module=packages.math]
+
+\begin[mode=display]{math}
+  \def{ndiff}{#1^{(#2)}}
+  \ndiff{\mo{sin}}{2n+1}(x) =
+  {(\mn{-1})}^n\mspace[width=2pt] \mo{cos}(x)
+\end{math}
+
+\begin[mode=display]{math}
+  \def{diff}{\mfrac{\mo{d}#1}{\mo{d}#2}}
+  \def{bi}{\mi[mathvariant=bold-italic]{#1}}
+  \diff{\bi{p}}{t} = ∑_i \bi{F}_i
+\end{math}
+
+\begin[mode=display]{math}
+  \def{dsi}{\mi[mathvariant=double-struck]{#1}}
+  (\sigma_0, \sigma_1, …, \sigma_n) \in \dsi{R}
+\end{math}
+
+\end{document}

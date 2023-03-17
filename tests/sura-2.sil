@@ -1,14 +1,13 @@
-\begin[papersize=a5,direction=RTL]{document}
+\begin[papersize=a6,direction=RTL]{document}
 \nofolios
-\font[family=Amiri Quran,size=40pt]
-\script[src=packages/linespacing]
+\font[family=Amiri Quran,size=20pt]
+\use[module=packages.linespacing]
 \set[parameter=linespacing.method,value=fixed]
-\set[parameter=linespacing.fixed.baselinedistance,value=150pt]
- الۤمۤ ۝١ 
- ذَٰلِكَ ٱلۡكِتَٰبُ لَا رَیۡبَۛ فِیهِۛ هُدࣰى لِّلۡمُتَّقِینَ ۝٢
- ٱلَّذِینَ یُؤۡمِنُونَ بِٱلۡغَیۡبِ وَیُقِیمُونَ ٱلصَّلَوٰةَ وَمِمَّا رَزَقۡنَٰهُمۡ یُنفِقُونَ ۝٣
+\set[parameter=linespacing.fixed.baselinedistance,value=75pt]
+ الۤمۤ ۝١
+ ذَ ٰلِكَ ٱلۡكِتَـٰبُ لَا رَیۡبَۛ فِیهِۛ هُدࣰى لِّلۡمُتَّقِینَ ۝٢
+ ٱلَّذِینَ یُؤۡمِنُونَ بِٱلۡغَیۡبِ وَیُقِیمُونَ ٱلصَّلَوٰةَ وَمِمَّا رَزَقۡنَـٰهُمۡ یُنفِقُونَ ۝٣
  وَٱلَّذِینَ یُؤۡمِنُونَ بِمَاۤ أُنزِلَ إِلَیۡكَ وَمَاۤ أُنزِلَ مِن قَبۡلِكَ وَبِٱلۡءَاخِرَةِ هُمۡ یُوقِنُونَ ۝٤
- أُو۟لَٰۤئِكَ عَلَىٰ هُدࣰى مِّن رَّبِّهِمۡۖ وَأُو۟لَٰۤئِكَ هُمُ ٱلۡمُفۡلِحُونَ ۝٥
+ أُو۟لَـٰۤئِكَ عَلَىٰ هُدࣰى مِّن رَّبِّهِمۡۖ وَأُو۟لَـٰۤئِكَ هُمُ ٱلۡمُفۡلِحُونَ ۝٥
  إِنَّ ٱلَّذِینَ كَفَرُوا۟ سَوَاۤءٌ عَلَیۡهِمۡ ءَأَنذَرۡتَهُمۡ أَمۡ لَمۡ تُنذِرۡهُمۡ لَا یُؤۡمِنُونَ ۝٦
-
  \end{document}

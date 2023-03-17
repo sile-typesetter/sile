@@ -1,0 +1,346 @@
+\begin{document}
+\chapter{Some Useful SILE Commands}
+
+We’re going to organise our tour of SILE by usage; we’ll start by giving
+you the most useful commands that you’ll need to get started typesetting
+documents using SILE, and then we’ll gradually move into more and more
+obscure corners as the documentation progresses.
+
+\section{Fonts}
+
+The most basic command for altering the look of the text is the \code{\\font}
+command; it takes two forms:
+
+\begin{itemize}
+\item{\code{\\font[\em{parameters…}]\{\em{argument}\}}}
+\item{\code{\\font[\em{parameters…}]}}
+\end{itemize}
+
+The first form sets the given argument text in the specified font; the
+second form changes the font used to typeset text from this point on.
+
+So, for instance:
+
+\begin[type=autodoc:codeblock]{raw}
+Small text
+
+\font[size=15pt]%
+Big text!
+
+\font[size=30pt]{Bigger text}
+
+Still big text!
+\end{raw}
+
+\noindent{}produces
+
+\begin{examplefont}%
+Small text
+
+\font[size=15pt]%
+Big text!
+
+\font[size=30pt]{Bigger text}
+
+{}Still big text!
+\end{examplefont}
+
+\font[size=11pt]%
+
+As you can see, one possible attribute is \code{size}, which can be specified as
+a SILE \code{<dimension>}. A \code{<dimension>} is like a \code{<basic length>}
+(described above) but with a few extra possible dimensions. There are dimensions
+which are relative to the size of the \em{current} font: an \code{em} is the
+size of the font’s current em square–for a 12pt font, this would be 12 points;
+an \code{en} is half the em square; an \em{ex} is the height of the character
+‘x’; a \em{spc} is the width of the space character.
+
+There are also dimensions which are defined as a percentage of the size of the
+current page width or height, the current frame width or height, and the line width
+(\code{\%pw}, \code{\%ph}, \code{\%fw}, \code{\%fh}, and \code{\%lw} respectively).
+You can specify lengths in terms of the current paragraph skip (\code{ps}) and
+baseline skip (\code{bs}), which will make sense later on. Additional units are
+available relative to the largest or smallest value of either axis (\code{\%pmax},
+\code{\%pmin}, \code{\%fmax}, \code{\%fmin}).
+
+The full list of attributes to the \code{\\font} command are:
+
+\begin{itemize}
+\item{\autodoc:parameter{size}: as above.}
+\item{\autodoc:parameter{family}: the name of the font to be selected. SILE should know
+      about all the fonts installed on your system, so that fonts can be specified by
+      their name.}
+\item{\autodoc:parameter{filename}: if a filename is supplied, SILE will use the font
+      file provided rather than looking at your system’s font library.}
+\item{\autodoc:parameter{style}: can be \code{normal} or \code{italic}.}
+\item{\autodoc:parameter{weight}: a CSS-style numeric weight ranging from \font[weight=100]{100},
+      through \font[weight=200]{200},
+      \font[weight=300]{300},
+      \font[weight=400]{400},
+      \font[weight=500]{500},
+      \font[weight=600]{600},
+      \font[weight=700]{700},
+      \font[weight=800]{800} to
+      \font[weight=900]{900}. Not all fonts will support all weights (many just have
+      two), but SILE will choose the closest.}
+\item{\autodoc:parameter{features}: enable or disable OpenType feature flags (\code{-hlig}, \code{+ss01})}
+\item{\autodoc:parameter{variant}: a font variant (\code{normal}, \code{smallcaps})}
+\item{\autodoc:parameter{variations}:\footnote{Support for variations requires at least HarfBuzz 6.
+                If SILE is built on a system without support an error will be thrown when trying to render documents using variations.}%
+      set OpenType variations axis values used in variable fonts, (e.g. \code{variations="wdth=122"}).}
+\item{\autodoc:parameter{language}: The two letter (ISO639-1) language code for the
+text. This will affect both font shaping and hyphenation.}
+\item{\autodoc:parameter{direction}: The expected text direction. (\code{LTR-TTB} for
+      left to right, top to bottom; \code{RTL-BTT} would set text right to left, bottom to top!)}
+\item{\autodoc:parameter{script}: The script family in use. (See chapter 7, “Language”, for more
+      on these past three settings.)}
+\end{itemize}
+
+It’s quite fiddly to be always changing font specifications manually; later
+we’ll see some ways to automate the process.
+SILE’s \em{plain} class notably provides the \autodoc:command{\em{…}} command as a shortcut
+for \autodoc:command{\font[style=italic]{…}}, and the \autodoc:command{\strong{…}}
+command as a a shortcut for \autodoc:command{\font[weight=700]{…}}.
+
+Note for parameters that accept multiple values, values may be separated with commas.
+Be sure to wrap the value in quotes so the commas don't get parsed as new parameters.
+For example \autodoc:command{\font[features="+calt,+ss01"]} will enable OpenType feature flags for both contextual alternatives and alternative style set 1.
+Similarly values that are themselves key=value pairs the quotation marks will keep them separate from other parameters.
+For example \autodoc:command{\font[variations="wght=150,wdth=122"]} can be used to set both the weight and width axis values.
+
+\section{Document Structure}
+
+SILE provides a number of different \em{class}es of document (similar to
+LaTeX classes). By default, you get the \em{plain} class, which has very
+little support for structured documents. There is also the \em{book} class,
+which adds support for right and left page masters, running headers, footnotes,
+and chapter, section and subsection headings.
+
+To use the commands in this section, you will need to request the \em{book}
+class by specifying in your \code{\\begin\{document\}} command ‘\code{[class=book]}’;
+for example, the document you are currently reading begins with the command
+\code{\\begin[class=book]\{document\}}.
+
+\subsection{Chapters and Sections}
+
+If you choose the book class, you can divide your document into different
+sections using the commands \code{\\chapter\{…\}},
+\code{\\section\{…\}} and \code{\\subsection\{…\}}. The argument to
+each command is the name of the chapter or section respectively; chapters will
+be opened on a new right-hand page, and the chapter name will form the left
+running header. Additionally, the section name and number will form the right
+running header.
+
+\note{Chapters, sections and subsections will be automatically
+numbered starting from 1; to alter the numbering, see the documentation for the
+\code{counters} package in the next chapter. To produce an unnumbered chapter,
+provide the parameter \code{[numbering=false]}.}
+
+This subsection begins with the command \code{\\subsection\{Chapters and Sections\}.}
+
+\subsection{Footnotes}
+
+Footnotes can be added to a book with the \code{\\footnote\{…\}} command.\footnote{Like this: \code{\\footnote\{Like this.\}}} The
+argument to the command will be set as a footnote at the bottom of the page;
+footnotes are automatically numbered from 1 at the start of each chapter.
+
+\section{Indentation and Spacing}
+
+Paragraphs in SILE normally begin with an indentation (by default, 20 points
+in width). To turn this off, you can use the \code{\\noindent} command at the
+start of a paragraph. (This current paragraph doesn’t need to call \code{\\noindent}
+because \code{\\section} and \code{\\chapter} automatically call it for the
+text following the heading.) A \code{\\noindent} can be cancelled by following
+it with an \code{\\indent}. You can completely turn off indentation for the
+whole of the document by changing its size to zero; we’ll see how to do change
+the size of the indentation in the settings chapter, but the easiest way to
+set it to zero for the whole of the document (rather than for just one
+paragraph) is to issue the command \code{\\neverindent}.
+
+To increase the vertical space between paragraphs or other elements, the commands \code{\\smallskip}, \code{\\medskip} and \code{\\bigskip} are available to add a 3pt, 6pt and 12pt
+gap respectively. There will be a \code{\\bigskip} after this paragraph.
+
+\bigskip%
+There are also some commands to increase the horizontal space in a line; from
+the smallest to the largest, \code{\\thinspace} (1/6th of an em), \code{\\enspace}
+(1 en), \code{\\quad} (1 em), and \code{\\qquad} (2em).
+
+If you want to add a very long stretchy space, you can use the command
+\code{\\hfill}. Doing this in conjunction with a line break will cause the
+line before the break to be flush left, like this.\cr{}The command \code{\\cr}
+is a shortcut for \code{\\hfill\\break}.
+
+\section{Text Alignment}
+
+\begin{raggedright}
+SILE normally fully-justifies text—that is, it tries to alter the spacing between
+words so that the text stretches across the full width of the column.\footnote{This
+does not mean that text will always exactly fill the width of the column. SILE will
+choose line breaks and alter the spacing between words up to a certain extent, but
+when it has done its best, it will typeset the least bad solution; this may involve
+some of the words jutting slightly out into the margin.} An alternative
+to full justification is ragged right margin formatting, where the spacing between
+words is constant but the right hand side of the paragraph may not line up. Ragged
+right is often used for children’s books and for frames with narrow columns such as
+newspapers. To use ragged right formatting, enclose your text in a \code{\\begin\break\{raggedright\}} environment.
+This paragraph is set ragged right.
+\end{raggedright}
+
+\begin{raggedleft}
+Similarly, there is a \code{raggedleft} environment, in which the right-hand
+margin of the paragraph is fixed, but the left-hand margin is allowed to vary. This
+paragraph is set ragged left.\par
+\end{raggedleft}
+
+\begin{center}
+You can center a paragraph of text by wrapping it in the \code{center} environment.
+(\code{\\begin\{center\} … \\end\{center\}}). This paragraph is centered on the
+page.
+\end{center}
+
+\section{Line and Page Breaks}
+
+SILE automatically determines line and page breaks; in later chapters we will
+introduce some \em{settings} which can be used to tweak this process. However,
+SILE’s plain class also provides some commands to help the process on its way.
+
+The four following commands can be used to control line breaks (when used \em{within}
+a paragraph), as well as page breaks (when used \em{between} paragraphs).\footnote{The names
+are similar to those used in (La)TeX, but their semantics slightly differs.}
+
+\begin{itemize}
+\item{\autodoc:command{\break}}
+\item{\autodoc:command{\goodbreak}}
+\item{\autodoc:command{\nobreak}}
+\item{\autodoc:command{\allowbreak}}
+\end{itemize}
+
+Within a paragraph, the \autodoc:command{\break} command requests a \em{line} break at the given
+location.\footnote{Note that \autodoc:command{\break} just causes a line break, but might not be what
+you intended, for instance in a justified paragraph. As previously noted, the \autodoc:command{\cr} command
+might do what you actually expected there.}
+A less forceful variant is \autodoc:command{\goodbreak}, which suggests to SILE that this is
+a good point to break a line.
+The opposite is \autodoc:command{\nobreak}, which requests that, if at all possible, SILE does not
+break a line at the given point. A neutral variant is \autodoc:command{\allowbreak}, which allows SILE
+to break at a point that it would otherwise not consider as suitable for line breaking.
+
+Between paragraphs, these commands have a different meaning. The \autodoc:command{\break} command requests
+a \em{frame break} at the given location.
+Where there are multiple frames on a page—for instance, in a document with multiple columns—the current frame
+will be ended and typesetting will recommence at the top of the next frame.
+\em{Mutatis mutandis}, \autodoc:command{\goodbreak}, \autodoc:command{\nobreak} and \autodoc:command{\allowbreak}
+affect frame breaking in a similar way.
+
+The following commands are intended to be used betweeen paragraphs and apply to page breaks only:
+
+\begin{itemize}
+\item{\autodoc:command{\novbreak} inhibits a frame break, and is just a convenience
+over \autodoc:command{\nobreak} (ending a paragraph if need be, to be sure you are indeed inhibiting a \em{frame} break).}
+\item{\autodoc:command{\framebreak} and \autodoc:command{\eject} request a frame break.}
+\item{\autodoc:command{\pagebreak} and \autodoc:command{\supereject} request a non-negotiable page break,
+and are more forceful variants of the previous commands, ensuring that a new page is opened even if there are
+remaining frames on the page.}
+\end{itemize}
+
+With \autodoc:command{\framebreak} and \autodoc:command{\pagebreak}, all vertical strechable elements\footnote{Vertical:
+Here, in this document in latin script. The more advanced topic of writing directions and foreign scripts is tackled
+later in this manual.}
+are expanded to fill up the remaining space as much as possible.
+The \autodoc:command{\eject} and \autodoc:command{\supereject} variants insert an infinite vertical stretch,
+so that all vertical strechable elements on the page stay at their natural size.
+
+\section{Including Other Files and Code}
+
+To make it easier for you to author a large document, you can break your SILE document
+up into multiple files. For instance, you may wish to put each chapter into a
+separate file; you may wish to develop a file of user-defined commands (see
+chapter 6) and keep this separate from the main body of the document. You
+will then need the ability to include one SILE file from another.
+
+This ability is provided by the \code{\\include} command. It takes one mandatory
+parameter, \code{src=\em{<path>}}, which represents the path to the file. So
+for instance, you may wish to write a thesis like this:
+
+\begin[type=autodoc:codeblock]{raw}
+\begin[class=thesis]{document}
+\include[src=macros.xml]
+\include[src=chap1.sil]
+\include[src=chap2.sil]
+\include[src=chap3.sil]
+…
+\include[src=endmatter.sil]
+\end{document}
+\end{raw}
+
+\code{\\include}s may be nested, in that file A can include file B which includes
+file C.
+
+The contents of an included file should be put in a \code{\\sile} tag (or
+\code{<sile>} if the file is in XML flavour), like so:
+
+\begin[type=autodoc:codeblock]{raw}
+\begin{sile}
+
+\chapter{A Scandal In Bohemia}
+
+To Sherlock Holmes she is always \em{the woman}.
+
+\end{sile}
+\end{raw}
+
+This is because every file is required to contain a valid XML tree, which
+wouldn’t be the case without a common root.
+
+SILE is written in the Lua programming language, and the Lua interpreter is
+available at runtime. Just as one can run Javascript code from within a HTML
+document using a \code{<script>} tag, one can run Lua code from within a SILE
+document using a \code{\\script} command. (It looks better in XML-flavor.) This
+command has two forms: \code{\\script[src=\em{<filename>}]} which includes a Lua
+file, and \code{\\script\{…\}} which runs Lua code inline.
+
+Doing anything interesting inline requires knowledge of the internals of SILE,
+(thankfully the code is not that hard to read)
+but to get you started, the Lua function \code{SILE.typesetter:typeset(…)}
+will add text to a page, \code{SILE.call("…")} will call a SILE command,
+and \code{SILE.typesetter:leaveHmode()} ends the current paragraph and outputs the
+text. So, for example:
+
+\begin[type=autodoc:codeblock]{raw}
+\begin{script}
+  for i=1,10 do
+    SILE.typesetter:typeset(i .. " x " .. i .. " = " .. i*i .. ". ")
+    SILE.typesetter:leaveHmode()
+    SILE.call("smallskip")
+  end
+\end{script}
+\end{raw}
+
+produces the following output:
+
+\begin{examplefont}
+\begin{script}
+  SILE.call("indent");SILE.typesetter:leaveHmode()
+  for i=1,10 do
+    SILE.typesetter:typeset(i .. " x " .. i .. " = " .. i*i .. ". ")
+    SILE.typesetter:leaveHmode()
+    SILE.call("smallskip")
+  end
+\end{script}
+\end{examplefont}
+
+There is one notable caveat when embedding Lua code documents written with the
+TeX-flavor markup. Since SILE has to first parse the TeX markup to find the
+start and end of such script commands \em{without} understanding what’s in
+between, it is strictly necessary that no end tags appear inside the Lua code.
+This means that for the environment block version (\code{\\begin\{script\}})
+there must be no instances of \code{\\end\{script\}} inside the Lua code block,
+even inside a string that would otherwise be valid Lua code, (e.g. if it was
+inside a quoted string or Lua comment). The first instance of such an end tag
+terminates the block, and there is currently no way to escape it. For the inline
+command form (\code{\\script}) an exact matching number of open and closing
+braces may appear in the Lua code — the next closing brace at the same level as
+the opening brace will close the tag, even if it happens to be inside some
+quoted string in the Lua code. Including any number of nested opening and closing
+braces is possible as long as they are balanced.
+\end{document}

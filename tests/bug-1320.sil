@@ -1,0 +1,18 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\use[module=packages.rules]
+\language[main=und]% Disable hyphenation to have shrinked§stretched lines easily
+
+% Manually forced stretch
+Have some \underline{streched\hfill underlined} text.
+
+% Natural shrinking with line justification
+% The 'dolorsitamet' causes line-overflowing, but at least we get some good shrinking.
+Lorem \underline{ipsum dolor sit amet} dor sit amet. Lorem ipsum dolorsitamet.
+
+% Natural stretching with line justification
+% The 'sitamet' won't be broken so the line gets stretched
+Lorem \underline{ipsum dolor sit amet} dor sit amet. Lorem ipsum dolor sitamet.
+
+\end{document}

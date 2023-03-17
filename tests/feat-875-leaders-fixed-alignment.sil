@@ -1,0 +1,20 @@
+\begin[papersize=a5]{document}
+\use[module=packages.leaders]
+\nofolios
+\neverindent
+% Test case: \leaders[width=...] with a given fixed width.
+\font[size=20pt]
+
+% For reference, full-width "a" leaders
+|\leaders{a}|
+
+% Now our test for vertical alignment a fixed-width leaders
+A \leaders[width=50%lw]{a} B
+
+% For reference, full-width "/\" leaders
+|\leaders{/\\}|
+
+% Now our test for vertical alignment of several fixed-width leaders in the same line
+A\leaders[width=50pt]{/\\}B\leaders[width=50pt]{/\\}C\leaders[width=50pt]{/\\}D\leaders[width=50pt]{/\\}E\leaders[width=50pt]{/\\}F.
+
+\end{document}

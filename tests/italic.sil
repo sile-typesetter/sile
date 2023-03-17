@@ -1,3 +1,4 @@
-\begin[papersize=a5]{document}
+\begin[papersize=a6]{document}
+\nofolios
 \font[style=italic]{Italic?}
 \end{document}

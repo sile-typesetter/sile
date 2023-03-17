@@ -1,3 +1,0 @@
-= Centered text
-
-Left aligned text 

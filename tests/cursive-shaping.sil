@@ -1,0 +1,7 @@
+\begin[papersize=a6,direction=RTL]{document}
+\nofolios
+\neverindent
+\language[main=ar]
+\font[family=Amiri Quran,size=20pt]
+ذَٰلِكَ ٱلۡكِتَٰبُ
+\end{document}

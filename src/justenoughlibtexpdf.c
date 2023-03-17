@@ -7,9 +7,14 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
+#define lua_rawlen lua_strlen
+#endif
+
 pdf_doc *p = NULL;
 double height = 0.0;
 double precision = 65536.0;
+char* producer = "SILE";
 
 #define ASSERT_PDF_OPENED(p) \
   if (!p) { \
@@ -22,6 +27,7 @@ int pdf_init (lua_State *L) {
   const char*  fn = luaL_checkstring(L, 1);
   double w = luaL_checknumber(L, 2);
   height = luaL_checknumber(L, 3);
+  producer = luaL_checkstring(L, 4);
 
   p = texpdf_open_document(fn, 0, w, height, 0,0,0);
   texpdf_init_device(p, 1/precision, 2, 0);
@@ -36,7 +42,7 @@ int pdf_init (lua_State *L) {
   texpdf_doc_set_mediabox(p, 0, &mediabox);
   texpdf_add_dict(p->info,
                texpdf_new_name("Producer"),
-               texpdf_new_string("SILE", 4));
+               texpdf_new_string(producer, strlen(producer)));
   return 0;
 }
 
@@ -88,7 +94,7 @@ int pdf_loadfont(lua_State *L) {
 
   if (!lua_istable(L, 1)) return 0;
 
-  lua_pushstring(L, "filename");
+  lua_pushstring(L, "tempfilename");
   lua_gettable(L, -2);
   if (lua_isstring(L, -1)) { filename = lua_tostring(L, -1); }
   else { luaL_error(L, "No font filename supplied to loadfont"); }
@@ -98,6 +104,10 @@ int pdf_loadfont(lua_State *L) {
   lua_gettable(L, -2);
   if (lua_isnumber(L, -1)) { index = lua_tointeger(L, -1); }
   lua_pop(L,1);
+
+  /* FontConfig uses the upper bits of the face index for named instance index,
+   * but libtexpdf knows nothing about this. */
+  index &= 0xFFFFu;
 
   lua_pushstring(L, "pointsize");
   lua_gettable(L, -2);
@@ -317,13 +327,15 @@ int pdf_end_annotation(lua_State *L) {
 
 int pdf_metadata(lua_State *L) {
   const char* key = luaL_checkstring(L, 1);
-  const char* val = luaL_checkstring(L, 2);
+  const char* value = luaL_checkstring(L, 2);
+  int len = lua_rawlen(L, 2);
   ASSERT(p);
   ASSERT(key);
-  ASSERT(val);
+  ASSERT(value);
   texpdf_add_dict(p->info,
                texpdf_new_name(key),
-               texpdf_new_string(val, strlen(val)));
+               texpdf_new_string(value, len));
+  return 0;
 }
 /* Images */
 
@@ -334,7 +346,8 @@ int pdf_drawimage(lua_State *L) {
   double y = luaL_checknumber(L, 3);
   double w = luaL_checknumber(L, 4);
   double h = luaL_checknumber(L, 5);
-  int form_id = texpdf_ximage_findresource(p, filename, 0, NULL);
+  long page_no = (long)luaL_checkinteger(L, 6);
+  int form_id = texpdf_ximage_findresource(p, filename, page_no, NULL);
 
   texpdf_transform_info_clear(&ti);
   ti.width = w;
@@ -346,21 +359,24 @@ int pdf_drawimage(lua_State *L) {
   return 0;
 }
 
-extern int get_image_bbox(FILE* f, double* llx, double* lly, double* urx, double* ury);
+extern int get_image_bbox(FILE* f, long page_no, double* llx, double* lly, double* urx, double* ury, double* xresol, double* yresol);
 
 int pdf_imagebbox(lua_State *L) {
   const char* filename = luaL_checkstring(L, 1);
+  long page_no = (long)luaL_checkinteger(L, 2);
   double llx = 0;
   double lly = 0;
   double urx = 0;
   double ury = 0;
+  double xresol = 0;
+  double yresol = 0;
 
   FILE* f = MFOPEN(filename, FOPEN_RBIN_MODE);
   if (!f) {
     return luaL_error(L, "Image file not found %s", filename);
   }
 
-  if ( get_image_bbox(f, &llx, &lly, &urx, &ury) < 0 ) {
+  if ( get_image_bbox(f, page_no, &llx, &lly, &urx, &ury, &xresol, &yresol) < 0 ) {
     MFCLOSE(f);
     return luaL_error(L, "Invalid image file %s", filename);
   }
@@ -371,7 +387,17 @@ int pdf_imagebbox(lua_State *L) {
   lua_pushnumber(L, lly);
   lua_pushnumber(L, urx);
   lua_pushnumber(L, ury);
-  return 4;
+  if (xresol == 0) {
+    lua_pushnil(L);
+  } else {
+    lua_pushnumber(L, xresol);
+  }
+  if (yresol == 0) {
+    lua_pushnil(L);
+  } else {
+    lua_pushnumber(L, yresol);
+  }
+  return 6;
 }
 
 int pdf_transform(lua_State *L) {
@@ -402,10 +428,6 @@ int pdf_grestore(lua_State *L) {
   texpdf_dev_grestore(p);
   return 0;
 }
-
-#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
-#define lua_rawlen lua_strlen
-#endif
 
 int pdf_add_content(lua_State *L) {
   const char* input = luaL_checkstring(L, 1);
@@ -529,7 +551,7 @@ int pdf_version(lua_State *L) {
 /*
 ** Adapted from Lua 5.2.0
 */
-static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
+void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
   luaL_checkstack(L, nup+1, "too many upvalues");
   for (; l->name != NULL; l++) {  /* fill the table with given functions */
     int i;

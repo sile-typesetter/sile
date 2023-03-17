@@ -1,23 +1,14 @@
 -- Basic! Transitional! In development! Not very good! Don't use it!
-local plain = SILE.require("plain", "classes")
-local jplain = plain { id = "jplain", base = plain }
+local tplain = require("classes.tplain")
 
-SILE.call("bidi-off")
+local class = pl.class(tplain)
+class._name = "jplain"
 
-jplain:declareOption("layout", "yoko")
-
-jplain:loadPackage("hanmenkyoshi")
-function jplain:init()
-  self:declareHanmenFrame( "content", {
-    left = "8.3%pw", top = "11.6%ph",
-    gridsize = 10, linegap = 7, linelength = 50,
-    linecount = 30,
-    tate = self.options.layout() == "tate"
-  })
-  self.pageTemplate.firstContentFrame = self.pageTemplate.frames.content
-  return self.base:init()
+function class:_init (options)
+  tplain._init(self, options)
+  SILE.languageSupport.loadLanguage("ja")
+  SILE.settings:set("document.language", "ja", true)
+  SILE.settings:set("font.family", "Noto Sans CJK JP", true)
 end
 
-SILE.languageSupport.loadLanguage("ja")
-SILE.settings.set("document.parindent",SILE.nodefactory.newGlue("10pt"))
-return jplain
+return class

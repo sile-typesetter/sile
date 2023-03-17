@@ -1,7 +1,0 @@
-\begin[class=docbook]{document}
-
-\noindent\begin{tgroup}%
-\row{\entry{One}\entry{Two}}%
-\row{\entry{Three A Very long thing}\entry{Four}}%
-\end{tgroup}
-\end{document}

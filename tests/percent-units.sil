@@ -1,23 +1,24 @@
-\begin[papersize=a5]{document}
-\script[src=packages/rules]
-% If relative units aren’t calculated correctly the hash marks will move
-% around on the page.
+\begin[papersize=a7]{document}
+\use[module=packages.rules]
+\set[parameter=document.parindent,value=0]
+\nofolios
+% If relative units aren’t calculated correctly
+% the hash marks will move around on the page.
+\hrule[width=50%ph,height=10%pw]#
 
-\noindent\hrule[width=50%ph,height=10%pw]#
+\hrule[width=50%pmax,height=10%pmax]#
 
-\noindent\hrule[width=50%pmax,height=10%pmax]#
+\hrule[width=50%pmin,height=10%pmin]#
 
-\noindent\hrule[width=50%pmin,height=10%pmin]#
+\hrule[width=50%fh,height=10%fw]#
 
-\noindent\hrule[width=50%fh,height=10%fw]#
+\hrule[width=50%fmax,height=10%fmax]#
 
-\noindent\hrule[width=50%fmax,height=10%fmax]#
+\hrule[width=50%fmin,height=10%fmin]#
 
-\noindent\hrule[width=50%fmin,height=10%fmin]#
+\hrule[width=50%lw,height=10pt]#
 
-\noindent\hrule[width=50%lw,height=10pt]#
-
-\set[parameter=document.lskip,value=5em]
-\set[parameter=document.rskip,value=5em]
-\noindent\hrule[width=50%lw,height=10pt]#
+\set[parameter=document.lskip,value=1em]
+\set[parameter=document.rskip,value=1em]
+\noindent\hrule[width=50%lw,height=10pt,depth=2pt]#
 \end{document}

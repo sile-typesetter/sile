@@ -1,5 +1,5 @@
 \begin[papersize=a5,class=book]{document}
-\script[src=packages/lorem]
+\use[module=packages.lorem]
 \set[parameter=document.rskip,value=20mm]
 \lorem[words=50]
 \end{document}

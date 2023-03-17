@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+set -e
+
+: "${ARCHTAG:=}"
+
+REVISION=$(git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g')
+
+RUNTIME_DEPS='fontconfig gentium-plus-font libpng harfbuzz icu lua zlib'
+BUILD_DEPS='git luarocks poppler'
+
+: "${DOCKER_BUILDKIT:=1}"
+export DOCKER_BUILDKIT
+
+docker build \
+	--build-arg ARCHTAG="$ARCHTAG" \
+	--build-arg REVISION="$REVISION" \
+	--build-arg VERSION="${1:-$REVISION}" \
+	--build-arg RUNTIME_DEPS="$RUNTIME_DEPS" \
+	--build-arg BUILD_DEPS="$BUILD_DEPS" \
+	--tag $DOCKER_REPO:$DOCKER_TAG \
+	./

@@ -1,0 +1,36 @@
+Set paper size 	297.6377985	419.5275636
+Begin page
+Mx 	14.8819
+My 	28.5447
+Set font 	Gentium Plus;10;400;;normal;;;LTR
+T	43 72 79 79 82 w=21.6064	(Hello)
+Mx 	39.1550
+Set font 	Gentium Plus;10;400;Italic;normal;;;LTR
+T	58 82 85 79 71 w=22.5195	(World)
+Mx 	61.6745
+Set font 	Gentium Plus;10;400;;normal;;;LTR
+T	4 w=2.7197	(!)
+Mx 	14.8819
+My 	40.5447
+T	48 72 85 75 68 69 68 w=36.4160	(Merhaba)
+Mx 	53.9627
+Set font 	Gentium Plus;10;400;Italic;normal;;;LTR
+T	39 129 81 92 68 w=24.4141	(Dünya)
+Mx 	78.3768
+Set font 	Gentium Plus;10;400;;normal;;;LTR
+T	4 w=2.7197	(!)
+Mx 	14.8819
+My 	52.5447
+Set font 	Gentium Plus;10;400;Italic;normal;;;LTR
+T	39 129 81 92 68 w=24.4141	(Dünya)
+Mx 	39.2960
+Set font 	Gentium Plus;10;400;;normal;;;LTR
+T	183 w=2.2900	(’)
+Mx 	41.5860
+T	92 68 w=9.5215	(ya)
+Mx 	53.7722
+T	54 72 79 68 80 w=24.7119	(Selam)
+Mx 	78.4842
+T	4 w=2.7197	(!)
+End page
+Finish

@@ -1,0 +1,6 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\use[module=packages.svg]
+\svg[width=265pt, src=./openpaths.svg]
+\end{document}

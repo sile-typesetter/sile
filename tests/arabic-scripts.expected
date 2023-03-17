@@ -1,38 +1,34 @@
-Set paper size 	419.5275636	595.275597
+Set paper size 	297.6377985	419.5275636
 Begin page
-Mx 	40.9764
-My 	38.1310
-Set font 	Lateef;16;400;;normal;;LTR
-T	60 93 74 87 77 74 91 77	(Standard)
-Mx 	88.3578
-T	42 91 74 75 82 76	(Arabic)
-Mx 	125.6455
-Set font 	Lateef;16;400;;normal;;RTL
-T	640 778 905	(ههه)
-Mx 	141.1143
-Set font 	Lateef;16;400;;normal;;LTR
-T	36	(;)
-Mx 	148.8551
-T	60 82 87 77 82	(Sindi)
-Mx 	178.7209
-Set font 	Lateef;16;400;;normal;;RTL
-T	642 780 905	(ههه)
-Mx 	197.1662
-Set font 	Lateef;16;400;;normal;;LTR
-T	36	(;)
-Mx 	204.9071
-T	74 87 77	(and)
-Mx 	226.7104
-T	62 91 77 94	(Urdu)
-Mx 	255.9825
-Set font 	Lateef;16;400;;normal;;RTL
-T	643 779 906	(ههه)
-Mx 	272.0137
-Set font 	Lateef;16;400;;normal;;LTR
-T	22	(.)
-Mx 	207.4176
-My 	553.7327
-Set font 	Gentium Plus;10;400;;normal;;LTR
-T	20	(1)
+Mx 	34.8819
+My 	29.3436
+Set font 	LateefGR;16;400;;normal;;;LTR
+T	61 94 75 88 78 75 92 78 w=43.0000	(Standard)
+Mx 	82.2434
+T	43 92 75 76 83 77 w=32.9063	(Arabic)
+Mx 	119.5112
+Set font 	LateefGR;16;400;;normal;;;RTL
+T	648 776 899 w=15.4688	(ههه)
+Mx 	134.9800
+Set font 	LateefGR;16;400;;normal;;;LTR
+T	37 w=3.3594	(;)
+Mx 	142.7009
+T	61 83 88 78 83 w=25.4844	(Sindi)
+Mx 	172.5468
+Set font 	LateefGR;16;400;;normal;;;RTL
+T	650 778 899 w=18.4453	(ههه)
+Mx 	190.9921
+Set font 	LateefGR;16;400;;normal;;;LTR
+T	37 w=3.3594	(;)
+Mx 	198.7131
+T	75 88 78 w=17.4219	(and)
+Mx 	220.4965
+T	63 92 78 95 w=24.8906	(Urdu)
+Mx 	249.7487
+Set font 	LateefGR;16;400;;normal;;;RTL
+T	651 777 900 w=16.0313	(ههه)
+Mx 	265.7799
+Set font 	LateefGR;16;400;;normal;;;LTR
+T	22 w=5.0078	(.)
 End page
 Finish

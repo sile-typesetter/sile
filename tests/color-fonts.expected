@@ -2,7 +2,7 @@ Set paper size 	365.6692953	561.2598486
 Begin page
 Mx 	50.3506
 My 	73.1061
-Set font 	;10;400;;normal;;LTR;tests/TestCLR-Regular.ttf
+Set font 	;10;400;;normal;;;LTR;tests/TestCLR-Regular.ttf
 T	3	(a)
 Push color	1	0.8784	0.5412
 Mx 	60.3506
@@ -49,7 +49,7 @@ Push color	0.9804	0.8784	0.8118
 T	4	(ع)
 Mx 	170.0669
 My 	490.4464
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	20	(1)
 End page
 Finish
