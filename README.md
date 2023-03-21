@@ -293,7 +293,7 @@ Note the comments in [the section about Docker](#docker) regarding version tags.
 ## Installing third-party packages
 
 Third-party SILE packages can be installed using the `luarocks` package manager.
-Packages may be hosted anywhere, ether on the default [luarocks.org](https://luarocks.org/) repository or (as in the example below) listed in a specific server manifest.
+Packages may be hosted anywhere, either on the default [luarocks.org](https://luarocks.org/) repository or (as in the example below) listed in a specific server manifest.
 For example, to install [markdown.sile](https://github.com/Omikhleia/markdown.sile) (a plugin that provides a SILE inputter that reads and processes Markdown documents) one could run:
 
 ```console
