@@ -24,6 +24,8 @@ utilities.boolean = function (value, default)
   if value == "true" then return true end
   if value == "no" then preferbool(); return false end
   if value == "yes" then preferbool(); return true end
+  if value == nil then return default end
+  SU.error("Expecting a boolean value but got '" .. value .. "'")
   return default
 end
 
@@ -299,11 +301,6 @@ utilities.cast = function (wantedType, value)
   wantedType = string.lower(wantedType)
   if wantedType:match(actualType)     then return value
   elseif actualType == "nil" and wantedType:match("nil") then return nil
-  elseif wantedType:match("integer") or wantedType:match("number") then
-    if type(value) == "table" and type(value.tonumber) == "function" then
-      return value:tonumber()
-    end
-    return tonumber(value)
   elseif wantedType:match("length")      then return SILE.length(value)
   elseif wantedType:match("measurement") then return SILE.measurement(value)
   elseif wantedType:match("vglue")       then return SILE.nodefactory.vglue(value)
@@ -312,6 +309,27 @@ utilities.cast = function (wantedType, value)
   elseif actualType == "nil" then SU.error("Cannot cast nil to " .. wantedType)
   elseif wantedType:match("boolean")     then return SU.boolean(value)
   elseif wantedType:match("string")      then return tostring(value)
+  elseif wantedType:match("number") then
+    if type(value) == "table" and type(value.tonumber) == "function" then
+      return value:tonumber()
+    end
+    local num = tonumber(value)
+    if not num then SU.error("Cannot cast '" .. value .. "'' to " .. wantedType) end
+    return num
+  elseif wantedType:match("integer") then
+    local num
+    if type(value) == "table" and type(value.tonumber) == "function" then
+      num = value:tonumber()
+    else
+      num = tonumber(value)
+    end
+    if not num then SU.error("Cannot cast '" .. value .. "'' to " .. wantedType) end
+    if not wantedType:match("number") and num % 1 ~= 0 then
+      -- Could be an error but since it wasn't checked before, let's just warn:
+      -- Some packages might have wrongly typed settings, for instance.
+      SU.warn("Casting an integer but got a float number " .. num)
+    end
+    return num
   else SU.error("Cannot cast to unrecognized type " .. wantedType)
   end
 end

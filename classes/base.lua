@@ -127,7 +127,7 @@ function class.declareSettings (_)
   })
   SILE.settings:declare({
     parameter = "current.hangIndent",
-    type = "integer or nil",
+    type = "measurement or nil",
     default = nil,
     help = "Size of hanging indent"
   })
