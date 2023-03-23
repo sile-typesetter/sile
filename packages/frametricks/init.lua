@@ -260,8 +260,8 @@ We just issued a \autodoc:command{\breakframevertical} command at the start of t
 As you can see, the current frame is called \code{\script{SILE.typesetter:typeset(SILE.typesetter.frame.id)}} and now begins at the start of the paragraph.
 
 Similarly, the \autodoc:command{\breakframehorizontal} command breaks the frame in two into a left and a right frame.
-The command takes an optional argument \autodoc:parameter{offset=<dimension>}, specifying where on the line the frame should be split.
-If it is not supplied, the frame is split at the current position in the line.
+The command takes an optional parameter \autodoc:parameter{offset=<dimension>}, specifying where on the line the frame should be split.
+If \autodoc:parameter{offset} is not supplied, the frame is split at the current position in the line.
 
 The command \autodoc:command{\shiftframeedge} allows you to reposition the current frame left or right.
 It takes \autodoc:parameter{left} and/or \autodoc:parameter{right} parameters, which can be positive or negative dimensions.
@@ -269,15 +269,16 @@ It should only be used at the top of a frame, as it reinitializes the typesetter
 
 Combining all of these commands, the \autodoc:command{\float} command breaks the current frame, creates a small frame to hold a floating object, flows text into the surrounding frame, and then, once text has descended past the floating object, moves the frame back into place again.
 It takes two optional parameters, \autodoc:parameter{bottomboundary=<dimension>} and/or \autodoc:parameter{rightboundary=<dimension>}, which open up additional space around the frame.
-At the start of this paragraph, I issued the command
 
-\begin[type=autodoc:codeblock]{raw}
-\float[bottomboundary=5pt]{\font[size=60pt]{C}}.
-\end{raw}
+% At the start of this paragraph, I issued the command
+%
+% \begin[type=autodoc:codeblock]{raw}
+% \float[bottomboundary=5pt]{\font[size=60pt]{C}}
+% \end{raw}
 
 To reiterate: we started playing around with frames like this in the early days of SILE and they have not really proved a good solution to the things we wanted to do with them.
 They’re great for arranging where content should live on the page, but messing about with them dynamically seems to create more problems than it solves.
-There’s probably a reason why InDesign and similar applications handle floats, drop caps, tables and so on inside the context of a content frame rather than by messing with the frames themselves.
+There’s probably a reason why InDesign and similar applications handle floats, drop caps, tables, and so on inside the context of a content frame rather than by messing with the frames themselves.
 If you feel tempted to play with \autodoc:package{frametricks}, there’s almost always a better way to achieve what you want without it.
 \end{document}
 ]]

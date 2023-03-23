@@ -123,7 +123,7 @@ package.documentation = [[
 \begin{document}
 The masters functionality is also itself an add-on package.
 It allows a class to define sets of frames and switch between them either temporarily or permanently.
-It defines the commands \autodoc:command{\define-master-template} (which is pattern on the \autodoc:command{\pagetemplate} function we will meet in chapter 8), \autodoc:command{\switch-master} and \autodoc:command{\switch-master-one-page}.
+It defines the commands \autodoc:command{\define-master-template} (which is patterned on the \autodoc:command{\pagetemplate} function we will meet in Chapter 8), \autodoc:command{\switch-master}, and \autodoc:command{\switch-master-one-page}.
 See \code{tests/masters.sil} for more about this package.
 \end{document}
 ]]

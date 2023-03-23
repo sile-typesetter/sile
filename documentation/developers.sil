@@ -20,7 +20,7 @@
 
 This book assumes that you’ve already read the SILE Book, and are now looking for further information about how SILE actually works.
 
-The SILE cli itself is generated from the \code{sile.in} file and only handles some of the executable lifecycle stuff.
+The SILE CLI itself is generated from the \code{sile.in} file and only handles some of the executable lifecycle stuff.
 The main core of SILE including most of the top level API is in \code{core/sile.lua}.
 This is also the file you would require in your own projects to get access to the SILE core as a library.
 It requires a lot of other things on its own, including some other file in \code{core}.
@@ -34,7 +34,7 @@ However it is certainly possible to mix and match many alternatives in a single 
 \chapter{From Input To PDF}
 Next we’ll give you a high-level overview of the process flow: what SILE does to get you from input to output.
 
-\section{SILE Startup}
+\section{SILE startup}
 
 \section{From input to AST}
 

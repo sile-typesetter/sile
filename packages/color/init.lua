@@ -25,7 +25,7 @@ The package provides a \autodoc:command{\color} command which takes one paramete
 
 The color specification is one of the following:
 \begin{itemize}
-\item{A RGB color in \code{#xxx} or \code{#xxxxxx} format, where \code{x} represents a hexadecimal digit, as often seen in HTML/CSS (\code{#000} is black, \code{#fff} is white, \code{#f00} is red and so on);}
+\item{A RGB color in \code{#xxx} or \code{#xxxxxx} format, where \code{x} represents a hexadecimal digit, as often seen in HTML/CSS (\code{#000} is black, \code{#fff} is white, \code{#f00} is red, and so on);}
 \item{A RGB color as a series of three numeric values between 0 and 255 (e.g. \code{0 0 139} is a dark blue) or as three percentages;}
 \item{A CMYK color as a series of four numeric values between 0 and 255 or as four percentages;}
 \item{A grayscale color as a numeric value between 0 and 255;}
@@ -34,7 +34,8 @@ The color specification is one of the following:
 
 So, for example, \color[color=red]{this text is typeset with \autodoc:command{\color[color=red]{…}}}.
 
-Here is a rule typeset with \autodoc:command{\color[color=#22dd33]}: \color[color=#ffdd33]{\hrule[width=120pt,height=0.5pt]} \end{document}
+Here is a rule typeset with \autodoc:command{\color[color=#22dd33]}: \color[color=#22dd33]{\hrule[width=120pt,height=0.5pt]}
+\end{document}
 ]]
 
 return package

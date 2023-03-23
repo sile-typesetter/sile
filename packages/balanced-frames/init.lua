@@ -95,7 +95,7 @@ end
 package.documentation = [[
 \begin{document}
 This package attempts to ensure that the main content frames on a page are balanced; that is, that they have the same height.
-In your frame definitions for the columns, you will need to ensure that they have the parameter \autodoc:parameter{balanced} set to a true value.
+In your frame definitions for the columns, you will need to ensure that they have the parameter \autodoc:parameter{balanced} set to \code{true}.
 See the example in \code{tests/balanced.sil}.
 
 The current algorithm does not work particularly well, and a better solution to the column problem is being developed.

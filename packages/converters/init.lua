@@ -111,13 +111,14 @@ The \autodoc:package{converters} package allows you to register additional handl
 That sounds a bit abstract, so it’s best explained by example.
 Suppose you have a GIF image that you would like to include in your document.
 You read the documentation for the \autodoc:package{image} package and you discover that sadly GIF images are not supported.
-What \autodoc:package{converters} does is allow you to teach SILE how to get the GIF format into something that \em{is} supported.
-We can use the ImageMagick toolkit to turn a GIF into a JPG, and JPGs are supported.
+The \autodoc:package{converters} package allows you to teach SILE how to get the GIF format into something that \em{is} supported.
+We can use the ImageMagick toolkit to turn a GIF into a JPEG, and JPEGs are supported directly by SILE.
 
 We do this by registering a converter with the \autodoc:command{\converters:register} command:
 
 \begin[type=autodoc:codeblock]{raw}
 \use[module=packages.converters]
+
 \converters:register[from=.gif,to=.jpg,command=convert $SOURCE $TARGET]
 \end{raw}
 
@@ -129,7 +130,7 @@ And now it just magically works:
 
 This will execute the command \code{convert hello.gif hello.jpg} and include the converted \code{hello.jpg} file.
 
-This trick also works for text file:
+This trick also works for text files:
 
 \begin[type=autodoc:codeblock]{raw}
 \converters:register[from=.md, to=.sil, command=pandoc -o $TARGET $SOURCE]

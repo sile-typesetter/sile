@@ -142,7 +142,7 @@ into:
 \par
 \end{examplefont}
 
-The chords can be styled by redefining the \autodoc:command{\chordmode:chordfont} command, and the offset between the chord name and text set with the \autodoc:setting{chordmode.offset} setting.
+The chords can be styled by redefining the \autodoc:command{\chordmode:chordfont} command, and the offset between the chord name and text adjusted with the \autodoc:setting{chordmode.offset} setting.
 \end{document}
 ]]
 

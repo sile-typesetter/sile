@@ -134,22 +134,22 @@ end
 
 package.documentation = [[
 \begin{document}
-The \code{book} class described in chapter 4 sets up left and right mirrored page masters; the \autodoc:package{twoside} package is responsible for swapping between the two left and right frames, running headers and so on.
-It's main function in mirroring master frames does not provide any user-serviceable parts.
-It does supply a couple user facing commands for convenience.
+The \code{book} class described in Chapter 4 sets up left and right mirrored page masters; the \autodoc:package{twoside} package is responsible for swapping between the two left and right frames, running headers, and so on.
+Its main function in mirroring master frames does not provide any user-serviceable parts.
+It does supply a few user-facing commands for convenience.
 
-The \autodoc:command{\open-double-page} ejects whatever page is currently being processed, then checks if it landed on an odd page.
-If so it does nothing, but if not it ejects another page to assure content starts on an odd page.
+The \autodoc:command{\open-double-page} ejects whatever page is currently being processed, then checks if it landed on an even page.
+If so, it ejects another page to assure content starts on an odd page.
 
 The \autodoc:command{\open-spread} is similar but a bit more tailored to use in book layouts.
-By default headers and folios will be suppressed automatically on any empty pages ejected, making them blank.
+By default, headers and folios will be suppressed automatically on any empty pages ejected, making them blank.
 It can also accept three parameters.
-The \autodoc:parameter{odd=false} parameter can be used to disable the opening page being odd, hence opening an even page spread.
-The \autodoc:parameter{double=false} parameter can be used to always output at least one empty  even page before the starting an odd page.
-The \autodoc:parameter{blank=false} parameter can be used to not suppress headers and folios on otherwise empty pages.
+The \autodoc:parameter{odd} parameter (default \code{true}) can be used to disable the opening page being odd, hence opening an even page spread.
+The \autodoc:parameter{double} parameter (default \code{true}) can be used to always output at least one empty even page before the starting an odd page.
+The \autodoc:parameter{blank} parameter (default \code{true}) can be used to not suppress headers and folios on otherwise empty pages.
 
 Lastly the \autodoc:command{\open-spread-eject} command can be overridden to customize the output of blank pages.
-By default it just runs \autodoc:command{\supereject}, but you could potentially add decorative content or other features in the otherwise dead space.
+By default it just runs \autodoc:command{\supereject}, but you could potentially add decorative content or other features in the otherwise empty space.
 \end{document}
 ]]
 
