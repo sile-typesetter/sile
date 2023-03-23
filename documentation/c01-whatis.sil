@@ -96,7 +96,8 @@ alter the behaviour of the SILE typesetter.
 
 For instance, one of the things that TeX can’t do particularly well is
 typesetting on a grid. This a must-have feature for anyone
-typesetting bibles and other complicated documents. Typesetting on a grid means that each line of text will
+typesetting bibles and other documents to be printed on thin paper.
+Typesetting on a grid means that each line of text will
 line up between the front and back of each piece of paper producing much less
 visual bleed-through when printed on thin paper. This is virtually impossible
 to accomplish in TeX. There are various hacks to try to make it happen, but
@@ -163,7 +164,7 @@ SILE.
 \section{Conclusion}
 
 SILE\footnote{In case you’re wondering, the author pronounces it
-\font[family=Gentium Plus]{/saɪəl/}, to rhyme with “trial.”} {}takes some textual
+\font[family=Gentium Plus]{/saɪəl/}, to rhyme with “trial”.} {}takes some textual
 instructions and turns them into PDF output. It has
 features inspired by TeX and InDesign, but seeks to be more flexible,
 extensible and programmable than either of them. It’s useful both for

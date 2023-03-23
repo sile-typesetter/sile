@@ -13,10 +13,10 @@ In addition, options such as paper size could be set; for example, \code{-O pape
 The class initalization for DocBoox isn’t too fancy; it just loads up a couple packages that will get used later.
 
 \begin{note}
-Much of the example code in this chapter is in SILE format using macros.
+Much of the example code in this chapter is in SIL format using macros.
 The actual \code{docbook} class currently uses Lua functions to specify these commands.
 The functionality is the same, but the Lua syntax is more flexible and recommended for most use cases.
-The SILE \code{\\define} macros shown here can still be used in a preamble file if desired.
+The SILE \autodoc:command{\define} macros shown here can still be used in a preamble file if desired.
 \end{note}
 
 Now we can start defining SILE commands to render XML elements.

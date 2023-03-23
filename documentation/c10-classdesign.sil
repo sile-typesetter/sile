@@ -247,7 +247,7 @@ The other way is to export functions that get added to the class itself and can 
 
 For examples check out the \code{tableofcontents} package for the hooks it sets, but also the \autodoc:command{\tocentry} command it registers that gets called manually in the \code{book} class.
 
-Let’s demonstrate roughly how the \code{tableofcontents} package works.
+Let’s demonstrate roughly how the \autodoc:package{tableofcontents} package works.
 We’ll be using the \code{infonodes} package to collect the information about which pages contain table of content items.
 
 First, we set up our infonodes by creating a command that can be called by sectioning commands.

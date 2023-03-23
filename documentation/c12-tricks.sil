@@ -164,7 +164,7 @@ end
 At the end of the document, we will use the
 emergency \code{chuck} method. Where \code{leaveHmode} means “call the
 page builder and see there’s enough material to build a page,” \code{chuck}
-means “you must get rid of everything on your queue \em{now.”} We add some infinitely
+means “you must get rid of everything on your queue \em{now}.” We add some infinitely
 tall glue to the other typesetter’s queue to help the process along:
 
 \begin{verbatim}
@@ -385,7 +385,7 @@ end
 on the default typesetter. If we wanted to make things cleaner, we could swap
 typesetters by assigning \code{discovery.innerTypesetter} to \code{SILE.typesetter}
 and then calling ordinary commands, rather than doing the settings and glue
-insertion “by hand.”}
+insertion “by hand”.}
 
 In the future it may make sense for there to be a standard \code{sidenotes}
 package in SILE, but it has been instructive to see a couple of “non-standard”

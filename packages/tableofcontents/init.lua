@@ -230,8 +230,7 @@ At the end of the document another hook function (\code{writeToc}) will write th
 The next time the document is built, any use of the \autodoc:command{\tableofcontents} (typically near the beginning of a document) will be able to read that index data and output the TOC.
 Because the toc entry and page data is not available until after rendering the document,
 the TOC will not render until at least the second pass.
-If by chance rendering the TOC itself changes the document pagination (e.g., the TOC spans more than one page) it might be necessary to run SILE three times to get accurate page numbers shown in the TOC.
-
+If by chance rendering the TOC itself changes the document pagination (e.g., the TOC spans more than one page) it will be necessary to run SILE a third time to get accurate page numbers shown in the TOC.
 
 The \autodoc:command{\tableofcontents} command accepts a \autodoc:parameter{depth} option to
 control the depth of the content added to the table.

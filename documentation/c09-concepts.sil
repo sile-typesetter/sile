@@ -88,7 +88,7 @@ output queue, the other new vertical content can be processed. At any point you
 can force the current queue of horizontal content (the node queue) to be shaped
 into lines and added to the vertical output queue by calling the function
 \code{SILE.typesetter:leaveHmode()}. This is handy when for writing custom
-functions, but it is a fairly low level control. (Tt is unlikely to be
+functions, but it is a fairly low level control. (It is unlikely to be
 useful while writing a document.) A related but higher level command,
 \code{\\par}, is more frequently used when writing a document and embedded in
 the content. The \code{\\par} command first calls

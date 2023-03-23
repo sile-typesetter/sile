@@ -180,7 +180,7 @@ Its main difference from the SILE syntax is that \code{\\mycommand\{arg1\}\{arg2
 If it’s more convenient, you can use these Unicode characters directly.
 The symbol shorthands are the same as in the TeX package \href[src=https://www.ctan.org/pkg/unicode-math]{\code{unicode-math}}.
 
-\code{\\\{formula\}} is a shorthand for \code{\\mrow\{formula\}}.
+\code{\{formula\}} is a shorthand for \code{\\mrow\{formula\}}.
 Since parentheses—among other glyphs—stretch vertically to the size of their englobing \code{mrow}, this is useful to typeset parentheses of different sizes on the same line:
 
 \begin[type=autodoc:codeblock]{raw}

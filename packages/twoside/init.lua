@@ -144,9 +144,9 @@ If so, it ejects another page to assure content starts on an odd page.
 The \autodoc:command{\open-spread} is similar but a bit more tailored to use in book layouts.
 By default, headers and folios will be suppressed automatically on any empty pages ejected, making them blank.
 It can also accept three parameters.
-The \autodoc:parameter{odd} parameter (default \code{false}) can be used to disable the opening page being odd, hence opening an even page spread.
-The \autodoc:parameter{double} parameter (default \code{false}) can be used to always output at least one empty  even page before the starting an odd page.
-The \autodoc:parameter{blank} parameter (default \code{false}) can be used to not suppress headers and folios on otherwise empty pages.
+The \autodoc:parameter{odd} parameter (default \code{true}) can be used to disable the opening page being odd, hence opening an even page spread.
+The \autodoc:parameter{double} parameter (default \code{true}) can be used to always output at least one empty even page before the starting an odd page.
+The \autodoc:parameter{blank} parameter (default \code{true}) can be used to not suppress headers and folios on otherwise empty pages.
 
 Lastly the \autodoc:command{\open-spread-eject} command can be overridden to customize the output of blank pages.
 By default it just runs \autodoc:command{\supereject}, but you could potentially add decorative content or other features in the otherwise empty space.
