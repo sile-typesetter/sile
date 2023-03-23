@@ -58,26 +58,39 @@ end
 -- (Similar to SU.contentToString(), but allows passing typeset
 -- objects to functions that need plain strings).
 local function _nodesToText (nodes)
+  -- A real interword space width depends on several settings (depending on variable
+  -- spaces being enabled or not, etc.), and the computation below takes that into
+  -- account.
+  local iwspc = SILE.shaper:measureSpace(SILE.font.loadDefaults({}))
+  local iwspcmin = (iwspc.length - iwspc.shrink):tonumber()
+
   local string = ""
   for i = 1, #nodes do
     local node = nodes[i]
     if node.is_nnode or node.is_unshaped then
       string = string .. node:toText()
-    elseif node.is_glue then
-      -- Not so sure about this one...
-      if node.width:tonumber() > 0 then
+    elseif node.is_glue or node.is_kern then
+      -- What we want to avoid is "small" glues or kerns to be expanded as full
+      -- spaces.
+      -- Comparing them to half of the smallest width of a possibly shrinkable
+      -- interword space is fairly fragile and empirical: the content could contain
+      -- font changes, so the comparison is wrong in the general case.
+      -- It's a simplistic approach. We cannot really be sure what a "space" meant
+      -- at the point where the kern or glue got absolutized.
+      if node.width:tonumber() > iwspcmin * 0.5 then
         string = string .. " "
       end
     elseif not (node.is_zerohbox or node.is_migrating) then
       -- Here, typically, the main case is an hbox.
-      -- Even if extracting its content could be possible in regular cases
-      -- (e.g. \raise), we cannot take a general decision, as it is a versatile
-      -- object (e.g. \rebox) and its outputYourself could moreover have been
-      -- redefine to do fancy things. Better warn and skip.
+      -- Even if extracting its content could be possible in some regular cases
+      -- we cannot take a general decision, as it is a versatile object  and its
+      -- outputYourself() method could moreover have been redefined to do fancy
+      -- things. Better warn and skip.
       SU.warn("Some content could not be converted to text: "..node)
     end
   end
-  return string
+  -- Trim leading and trailing spaces, and simplify internal spaces.
+  return pl.stringx.strip(string):gsub("%s%s+", " ")
 end
 
 if not SILE.scratch.pdf_destination_counter then
@@ -221,17 +234,16 @@ end
 package.documentation = [[
 \begin{document}
 The \autodoc:package{tableofcontents} package provides tools for class authors to
-create tables of contents. When you are writing sectioning commands such
+create tables of contents (TOCs). When you are writing sectioning commands such
 as \code{\\chapter} or \code{\\section}, your classes should call the
 \autodoc:command{\tocentry[level=<number>, number=<strings>]{<title>}}
 command to register a table of contents entry.
-At the end of each page the class will call a hook function (\code{moveTocNodes}) that collates the table of contents entries from that pages and logs which page they’re on.
+At the end of each page the class will call a hook function (\code{moveTocNodes}) that collates the table of contents entries from that pages and records which page they’re on.
 At the end of the document another hook function (\code{writeToc}) will write this data to a file.
 The next time the document is built, any use of the \autodoc:command{\tableofcontents} (typically near the beginning of a document) will be able to read that index data and output the TOC.
 Because the toc entry and page data is not available until after rendering the document,
 the TOC will not render until at least the second pass.
-If by chance rendering the TOC itself changes the document pagination (e.g. the TOC spans more than one page) it might be necessary to run SILE 3 times to get accurate page numbers shown in the TOC.
-
+If by chance rendering the TOC itself changes the document pagination (e.g., the TOC spans more than one page) it will be necessary to run SILE a third time to get accurate page numbers shown in the TOC.
 
 The \autodoc:command{\tableofcontents} command accepts a \autodoc:parameter{depth} option to
 control the depth of the content added to the table.
@@ -246,11 +258,11 @@ Class designers can also style the table of contents by overriding the
 following commands:
 
 \begin{itemize}
-\item{\autodoc:command{\tableofcontents:headerfont} - the font used for the header.}
+\item{\autodoc:command{\tableofcontents:headerfont}: The font used for the header.}
 \item{\autodoc:command{\tableofcontents:level1item}, \autodoc:command{\tableofcontents:level2item},
-      etc. - styling for entries.}
+      etc.: Styling for entries.}
 \item{\autodoc:command{\tableofcontents:level1number}, \autodoc:command{\tableofcontents:level2number},
-      etc. - deciding what to do with entry section number, if defined: by default, nothing (so they
+      etc.: Deciding what to do with entry section number, if defined: by default, nothing (so they
       do not show up in the table of contents).}
 \end{itemize}
 

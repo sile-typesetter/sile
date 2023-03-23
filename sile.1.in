@@ -55,7 +55,7 @@ May be specified more than once.
 .BR \-f ", " \-\-fontmanager= \fIvalue\fR
 Choose an alternative font manager.
 The font manager is responsible for discovering the locations on font files on the system given a font name.
-The default font manager is \fIfontconfig\fR on non-Mac systems and \fImacfonts\fR on OS X.
+The default font manager is \fIfontconfig\fR on non-macOS systems and \fImacfonts\fR on macOS.
 .TP
 .BR \-m ", " \-\-makedeps \fIfile\fR
 Generate a list of dependencies in Makefile format.

@@ -80,22 +80,22 @@ end
 
 package.documentation = [[
 \begin{document}
-The \autodoc:package{dropcaps} package allows you to format paragraphs with an 'initial capital' (also commonly referred as a 'drop cap'), typically one large capital letter used as a decorative element at the beginning of a paragraph.
+The \autodoc:package{dropcaps} package allows you to format paragraphs with an “initial capital” (also commonly referred as a “drop cap”), typically one large capital letter used as a decorative element at the beginning of a paragraph.
 
 It provides the \autodoc:command{\dropcap} command.
 The content passed will be the initial character(s).
-The primary option is \autodoc:parameter{lines}, an integer specifying the number of lines to span (defaults to 3).
-The scale of can be adjusted relative to the first line using the \autodoc:parameter{scale} option (defaults to 1.0).
-The \autodoc:parameter{join} is a boolean for whether to join the dropcap to the first line (defaults to false).
-If \autodoc:parameter{join} is true, the value of the \autodoc:parameter{standoff} option (defaults to 1spc) is applied to all but the first line.
-Optionally \autodoc:parameter{color} can be passed to change the typeface color, sometimes useful to offset the apparent weight of a large glyph.
+The primary option is \autodoc:parameter{lines}, an integer specifying the number of lines to span (defaults to \code{3}).
+The scale of the characters can be adjusted relative to the first line using the \autodoc:parameter{scale} option (defaults to \code{1.0}).
+The \autodoc:parameter{join} parameter is a boolean for whether to join the dropcap to the first line (defaults to \code{false}).
+If \autodoc:parameter{join} is \code{true}, the value of the \autodoc:parameter{standoff} option (defaults to \code{1spc}) is applied to all but the first line.
+Optionally \autodoc:parameter{color} can be passed to change the typeface color, which is sometimes useful to offset the apparent weight of a large glyph.
 To tweak the position of the dropcap, measurements may be passed to the \autodoc:parameter{raise} and \autodoc:parameter{shift} options.
 Other options passed to \autodoc:command{\dropcap} will be passed through to \autodoc:command{\font} when drawing the initial letter(s).
 This may be useful for passing OpenType options or other font preferences.
 
 \begin{note}
 One caveat is that the size of the initials is calculated using the default linespacing mechanism.
-If you are using an alternative method from the linespacing package, you might see strange results.
+If you are using an alternative method from the \autodoc:package{linespacing} package, you might see strange results.
 Set the \autodoc:setting{document.baselineskip} to approximate your effective leading value for best results.
 If that doesn't work set the size manually.
 Using \code{SILE.setCommandDefaults()} can be helpful for so you don't have to set the size every time.

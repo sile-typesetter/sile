@@ -2,15 +2,15 @@
 \chapter{SILE Packages}
 
 SILE comes with a number of packages which provide additional functionality.
-In fact, the actual “core” of SILE’s functionality is very small and very
+In fact, the actual “core” of SILE’s functionality is small and
 extensible, with most of the interesting features being provided by add-on
 packages. SILE packages are written in the Lua programming language, and can
 define new commands, change the way that the SILE system operates, or indeed
-do anything that it’s possible to do in Lua.
+do anything that is possible to do in Lua.
 
 As mentioned above, loading a package is done through the \code{\\script} command,
 which runs Lua code. By convention packages live in the \code{packages/} subdirectory
-of either your input file’s location, your current working directory or SILE’s
+of either your input file’s location, your current working directory, or SILE’s
 installation directory. For instance, we’ll soon be talking about the
 \code{grid} package, which normally can be found as
 \code{/usr/local/lib/sile/packages/grid/init.lua}. To load this, we’d say:
@@ -21,11 +21,11 @@ installation directory. For instance, we’ll soon be talking about the
 
 \note{\notehead{How SILE locates files} SILE searches for paths in a variety of
 directories: first, in the directory in which your input file is located,
-then the current wording directory; next, if the environment variable
+then the current working directory; next, if the environment variable
 \code{SILE_PATH} is set, it will look in that directory; then it will look in
 the standard installation directories \code{/usr/lib/sile} and
 \code{/usr/local/lib/sile}. Unlike TeX, it does not descend into subdirectories
-when looking for a file, and so if you have arranged your personal macro, class
+when looking for a file; if you have arranged your personal macro, class
 or package files into subdirectories, you will need to provide a full relative
 path to them.}
 
@@ -197,24 +197,24 @@ basic functionality to other packages and classes. Classes such as the
 \subsection{svg}
 \package-documentation{svg}
 
-\section{The Package Manager}
+\section{The package manager}
 
 The SILE installation includes a core collection of packages we hope are generally useful.
 But there’s more out there!
-SILE is able to use packages installed via the LuaRocks package manager.
+SILE can use packages installed via the LuaRocks package manager.
 It can also be configured to read packages from any directory of your choosing.
 
-A SILE compatible LuaRock simply installs the relevant class, package, language, i18n, or similar files in a \code{sile} directory.
+A SILE compatible LuaRock simply installs the relevant class, package, language, internationalization resources, or similar files in a \code{sile} directory.
 This directory could be in your system Lua directory, in your user directory, or any other location you specify.
 
 By default SILE will look for packages in:
 
-\begin{itemize}
-\item{The directory where the SILE source file is located,}
-\item{The current working directory,}
-\item{The default LUA search path,}
+\begin{enumerate}
+\item{The directory where the SILE source file is located.}
+\item{The current working directory.}
+\item{The default Lua search path.}
 \item{The directory where SILE is installed on the system.}
-\end{itemize}
+\end{enumerate}
 
 By default, LuaRocks will install packages to the Lua search path.
 
@@ -225,7 +225,7 @@ $ sile ...
 
 Depending on your system, this probably requires root permissions.
 If you either don’t have root permissions or don’t want to pollute your system’s root file system, you can also install as a user.
-To use packages installed as a user you will need to have LuaRocks add it’s user tree to your Lua search path before running SILE.
+To use packages installed as a user you will need to have LuaRocks add its user tree to your Lua search path before running SILE.
 
 \begin[type=autodoc:codeblock]{raw}
 $ luarocks --local install lilypond.sile
@@ -233,18 +233,18 @@ $ eval $(luarocks --local path)
 $ sile ...
 \end{raw}
 
-Of course you can add that eval statement to your shell profile to always include your user’s directory in your Lua path.
-You can also add your own entries to the top of the search path list by setting the \code{SILE_PATH} variable, for example:
+Of course, you can add that eval statement to your shell profile to always include your user directory in your Lua path.
+You can also add your own entries to the top of the search path list by setting the \code{SILE_PATH} variable. For example:
 
 \begin[type=autodoc:codeblock]{raw}
 $ export SILE_PATH="/path/to/my/library/"
 $ sile ...
 \end{raw}
 
-To write a package and publish to LuaRocks, see the package-template.sile repository.
+To write a package and publish to LuaRocks, see the \code{package-template.sile} repository.
 
-It’s worth noting that packages are not limited to just the package interface.
-They can include classes, languages, i18n resources, or anything else provided by SILE.
+Packages are not limited to just the package interface.
+They can include classes, languages, internationalization resources, or anything else provided by SILE.
 Also because external locations are searched before SILE itself, they can even override any core part of SILE itself.
 As such you should probably make sure you review what a package does before installing it!
 \end{document}

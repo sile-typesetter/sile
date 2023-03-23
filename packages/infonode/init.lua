@@ -17,7 +17,7 @@ _info.value = nil
 _info.width = SILE.length()
 
 function _info:__tostring ()
-  return "I<" .. self.category .. "|" .. self.value.. ">"
+  return "I<" .. self.category .. "|" .. tostring(self.value) .. ">"
 end
 
 function _info:outputYourself ()
@@ -72,7 +72,7 @@ package.documentation = [[
 
 While typesetting a document, SILE first breaks a paragraph into lines, then arranges lines into a page, and later outputs the page.
 In other words, while it is looking at the text of a paragraph, it is not clear what page the text will eventually end up on.
-This makes it difficult to produce indexes, tables of contents and so on where one needs to know the page number for a particular element.
+This makes it difficult to produce indexes, tables of contents, and so on, where one needs to know the page number for a particular element.
 
 To get around this problem, the \autodoc:package{infonode} package allows you to insert \em{information nodes} into the text stream; when a page is outputted, these nodes are collected into a list, and a class’s output routine can examine this list to determine which nodes fell on a particular page.
 \autodoc:package{infonode} provides the \autodoc:command{\info} command to put an information node into the text stream; it has two required parameters, \autodoc:parameter{category=<name>} and \autodoc:parameter{value=<any object>}.

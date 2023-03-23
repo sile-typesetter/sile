@@ -226,7 +226,7 @@ The \autodoc:package{features} package provides an interface to selecting the fe
 The features available will be specific to the font file; some fonts come with documentation explaining their supported features.
 Discussion of OpenType features is beyond the scope of this manual.
 
-These features can be turned on and off by passing ‘raw’ feature names to the \autodoc:command{\font} command like so:
+These features can be turned on and off by passing “raw” feature names to the \autodoc:command{\font} command like so:
 
 \begin[type=autodoc:codeblock]{raw}
 \font[features="+dlig,+hlig"]{...} % turn on discretionary and historic ligatures

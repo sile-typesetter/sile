@@ -76,23 +76,23 @@ In normal typesetting, SILE determines the spacing between lines of type accordi
 \begin{itemize}
 \item{SILE tries to insert space between two successive lines so that their baselines are separated by a fixed distance called the \code{baselineskip}.}
 \item{If this first rule would mean that the bottom and the top of the lines are less than two points apart, then they are forced to be two points apart.
-      (This distance is configurable, and called the \code{lineskip}).}
+      (This distance is configurable, and called the \code{lineskip}.)}
 \end{itemize}
 
-The second rule is designed to avoid the situation where the first line has a long descender (letters such as g, q, j, p, etc.) which abuts a high ascender on the second line. (k, l, capitals, etc.)
+The second rule is designed to avoid the situation where the first line has a long descender (letters such as g, q, j, p, etc.) which abuts a high ascender on the second line (k, l, capitals, etc.).
 
-In addition, the \code{baselineskip} contains a certain amount of ‘stretch’, so that the lines can expand if this would help with producing a page break at an optimal location, and similarly spacing between paragraphs can stretch or shrink.
+In addition, the \code{baselineskip} contains a certain amount of “stretch,” so that the lines can expand if this would help with producing a page break at an optimal location, and similarly spacing between paragraphs can stretch or shrink.
 
 The combination of all of these rules means that a line may begin at practically any point on the page.
 
 An alternative way of typesetting is to require that lines begin at fixed points on a regular grid.
-Some people prefer the ‘color’ of pages produced by grid typesetting, and the method is often used when typesetting on very thin paper as lining up the lines of type on both sides of a page ensures that ink does not bleed through from the back to the front.
+Some people prefer the “color” of pages produced by grid typesetting, and the method is often used when typesetting on very thin paper, as lining up the lines of type on both sides of a page ensures that ink does not bleed through from the back to the front.
 Compare the following examples: on the left, the lines are guaranteed to fall in the same places on the recto (front) and the verso (back) of the paper; on the right, no such guarantee is made.
 
 \img[src=documentation/grid-1.png,height=130]
 \img[src=documentation/grid-2.png,height=130]
 
-The \autodoc:package{grid} package alters the way that the SILE’s typesetter operates so that the two rules above do not apply; lines are always aligned on a fixed grid, and spaces between paragraphs etc. are adjusted to conform to the grid.
+The \autodoc:package{grid} package alters the operation of SILE’s typesetter so that the two rules above do not apply; lines are always aligned on a fixed grid, and spaces between paragraphs, etc., are adjusted to conform to the grid.
 Loading the package adds two new commands to SILE: \autodoc:command{\grid[spacing=<dimension>]} and \autodoc:command{\no-grid}.
 The first turns on grid typesetting for the remainder of the document; the second turns it off again.
 

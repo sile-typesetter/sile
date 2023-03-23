@@ -134,8 +134,8 @@ If you want to cite a particular page number, use \autodoc:command{\cite[page=22
 
 To produce a full reference, use \autodoc:command{\reference{<key>}}.
 
-Currently, the only supported bibliography style is Chicago referencing, but other styles should be easy to implement if there is interest.
-Check out \code{packages/bibtex/styles/chicago.lua} and adapt as necessary.
+Currently, the only supported bibliography style is Chicago referencing, but other styles should be easy to implement.
+Adapt \code{packages/bibtex/styles/chicago.lua} as necessary.
 \end{document}
 ]]
 

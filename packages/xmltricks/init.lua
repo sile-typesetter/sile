@@ -21,7 +21,7 @@ end
 
 package.documentation = [[
 \begin{document}
-In chapter 9, we’re going to use SILE to typeset existing XML documents.
+In Chapter 9, we’re going to use SILE to typeset existing XML documents.
 Most of the work of typesetting XML with SILE is creating processing expectations for particular XML tags.
 \autodoc:package{xmltricks} makes the process somewhat easier by providing commands to handle two common cases.
 

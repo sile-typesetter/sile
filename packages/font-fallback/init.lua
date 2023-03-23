@@ -42,7 +42,7 @@ end
 package.documentation = [[
 \begin{document}
 What happens when SILE is asked to typeset a character which is not in the current font?
-For instance, we are currently using the “Gentium” font, which covers a wide range of European scripts; however, it doesn’t contain any Japanese character.
+For instance, we are currently using the Gentium font, which covers a wide range of European scripts; however, it doesn’t contain any Japanese characters.
   So what if I ask SILE to typeset \code{abc \font[family=Noto Sans CJK JP]{あ}}?
 
 Many applications will find another font on the system containing the appropriate character and use that font instead.

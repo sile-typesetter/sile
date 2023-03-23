@@ -253,23 +253,23 @@ package.documentation = [[
 \begin{document}
 The \autodoc:package{rules} package provides several line-drawing commands.
 
-The \autodoc:command{\hrule} command draws a blob of ink of a given \autodoc:parameter{width} (length), \autodoc:parameter{height} (above the current baseline) and \autodoc:parameter{depth} (below the current baseline).
+The \autodoc:command{\hrule} command draws a blob of ink of a given \autodoc:parameter{width} (length), \autodoc:parameter{height} (above the current baseline), and \autodoc:parameter{depth} (below the current baseline).
 Such rules are horizontal boxes, placed along the baseline of a line of text and treated just like other text to be output.
 So, they can appear in the middle of a paragraph, like this:
 \hrule[width=20pt, height=0.5pt]
-(that one was generated with \autodoc:command{\hrule[width=20pt, height=0.5pt]}.)
+(That one was generated with \autodoc:command{\hrule[width=20pt, height=0.5pt]}.)
 
 The \autodoc:command{\underline} command \underline{underlines} its content.
 
 The \autodoc:command{\strikethrough} command \strikethrough{strikes} its content.
 
-\note{The position and thickness of the underlines and strikethroughs are based on then current font metrics, honoring the values defined by the type designer.}
+\note{The position and thickness of the underlines and strikethroughs are based on the metrics of the current font, honoring the values defined by the type designer.}
 
-The \autodoc:command{\hrulefill} inserts an infinite horizontal rubber, similar to an \autodoc:command{\hfill}, but —as its name implies— filled with a rule (that is, a solid line).
+The \autodoc:command{\hrulefill} inserts an infinite horizontal rubber, similar to an \autodoc:command{\hfill}, but—as its name implies—filled with a rule (that is, a solid line).
 By default, it stands on the baseline and has a thickness of 0.2pt, below the baseline.
 It supports optional parameters \autodoc:parameter{raise=<dimension>} and \autodoc:parameter{thickness=<dimension>} to adjust the position and thickness of the line, respectively.
 The former accepts a negative measurement, to lower the line.
-An alternative is to use the \autodoc:parameter{position} option, which can be set to \code{underline} or \code{strikethrough}.
+Alternatively, use the \autodoc:parameter{position} option, which can be set to \code{underline} or \code{strikethrough}.
 In that case, it honors the current font metrics and the line is drawn at the appropriate position and, by default, with the relevant thickness.
 You can still set a custom thickness with the \autodoc:parameter{thickness} parameter.
 

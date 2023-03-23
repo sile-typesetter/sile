@@ -39,7 +39,7 @@ jobs:
         run: |
           git fetch --prune --tags ||:
       - name: Setup ‘lua’
-        uses: leafo/gh-actions-lua@v9
+        uses: leafo/gh-actions-lua@v10
         with:
           luaVersion: ${{ matrix.luaVersion[0] }}
           luaCompileFlags: ${{ matrix.luaVersion[1] }}
