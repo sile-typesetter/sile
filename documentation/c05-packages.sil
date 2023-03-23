@@ -162,6 +162,9 @@ basic functionality to other packages and classes. Classes such as the
 \subsection{rebox}
 \package-documentation{rebox}
 
+\section{scalebox}
+\package-documentation{scalebox}
+
 \subsection{tableofcontents}
 \package-documentation{tableofcontents}
 
