@@ -97,7 +97,7 @@ end
 
 SILE.init()
 
-if SILE.masterFilename then
+if SILE.input.filenames and #SILE.input.filenames >= 1 then
 
   if SILE.masterDir:len() >= 1 then
     extendPaths(SILE.masterDir)
@@ -123,7 +123,7 @@ if SILE.masterFilename then
   end
 
   local main, err = xpcall(function()
-    return SILE.processFile(SILE.input.filename)
+    pl.tablex.imap(SILE.processFile, SILE.input.filenames)
   end, SILE.errorHandler)
 
   if not main then

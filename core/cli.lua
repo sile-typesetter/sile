@@ -15,7 +15,7 @@ cli.parseArguments = function ()
       changed to .pdf. Additional input or output formats can be handled by requiring a
       module that adds support for them first.
     ]])
-  cliargs:splat("INPUT", "input document, by default in SIL or XML format")
+  cliargs:splat("INPUTS", "input document(s), by default in SIL or XML format", nil, 999)
   cliargs:option("-b, --backend=VALUE", "choose an alternative output backend")
   cliargs:option("-c, --class=VALUE", "override default document class")
   cliargs:option("-d, --debug=VALUE", "show debug information for tagged aspects of SILE’s operation", {})
@@ -40,16 +40,28 @@ cli.parseArguments = function ()
     print(parse_err)
     os.exit(1)
   end
-  if opts.INPUT then
-    if opts.INPUT == "STDIO" then
-      opts.INPUT = "-"
+  if opts.INPUTS then
+    local has_input_filename = false
+    local set_master_filename = function (filename)
+      -- Turn slashes around in the event we get passed a path from a Windows shell
+      local normalized_filename = pl.path.normcase(filename)
+      -- Strip extension
+      SILE.masterFilename = pl.path.splitext(normalized_filename)
+      SILE.masterDir = pl.path.dirname(SILE.masterFilename)
+      has_input_filename = true
     end
-    SILE.input.filename = opts.INPUT
-    -- Turn slashes around in the event we get passed a path from a Windows shell
-    local filename = opts.INPUT:gsub("\\", "/")
-    -- Strip extension
-    SILE.masterFilename = string.match(filename, "(.+)%..-$") or filename
-    SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
+    pl.tablex.foreachi(opts.INPUTS, function (v, k)
+      if v == "STDIO" then
+        opts.INPUTS[k] = "-"
+      elseif not has_input_filename then
+        set_master_filename(v)
+      end
+    end)
+    if not has_input_filename and not opts.output then
+      SU.error("Unable to derive an output filename (perhaps because input is a STDIO stream).\n"..
+               "  Please use --output to set one explicitly.")
+    end
+    SILE.input.filenames = opts.INPUTS
   end
   if opts.backend then
     SILE.backend = opts.backend
