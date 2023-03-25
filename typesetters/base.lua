@@ -417,6 +417,7 @@ function typesetter:buildPage ()
     self:runHooks("noframebreak")
     return false
   end
+  SU.debug("pagebuilder", "Buildding page for", self.frame.id)
   self.state.lastPenalty = res
   self.frame.state.pageRestart = nil
   pageNodeList = self:runHooks("framebreak", pageNodeList)
@@ -425,25 +426,42 @@ function typesetter:buildPage ()
   return true
 end
 
-function typesetter.setVerticalGlue (_, pageNodeList, target)
+function typesetter:setVerticalGlue (pageNodeList, target)
   local glues = {}
   local gTotal = SILE.length()
   local totalHeight = SILE.length()
+
+  local pastTop = false
   for _, node in ipairs(pageNodeList) do
-    if not node.is_insertion then
-      totalHeight:___add(node.height)
-      totalHeight:___add(node.depth)
+    if not pastTop and not node.discardable and not node.explicit then
+      -- "Ignore discardable and explicit glues at the top of a frame."
+      -- See typesetter:outputLinesToPage()
+      -- Note the test here doesn't check is_vglue, so will skip other
+      -- discardable nodes (e.g. penalties), but it shouldn't matter
+      -- for the type of computing performed here.
+      pastTop = true
     end
-    if node.is_vglue then
-      table.insert(glues, node)
-      gTotal:___add(node.height)
+    if pastTop then
+      if not node.is_insertion then
+        totalHeight:___add(node.height)
+        totalHeight:___add(node.depth)
+      end
+      if node.is_vglue then
+        table.insert(glues, node)
+        gTotal:___add(node.height)
+      end
     end
   end
+
+  if totalHeight:tonumber() == 0 then
+   return SU.debug("pagebuilder", "No glue adjustment needed on empty page")
+  end
+
   local adjustment = target - totalHeight
   if adjustment:tonumber() > 0 then
     if adjustment > gTotal.stretch then
       if (adjustment - gTotal.stretch):tonumber() > SILE.settings:get("typesetter.underfulltolerance"):tonumber() then
-        SU.warn("Underfull frame: " .. adjustment .. " stretchiness required to fill but only " .. gTotal.stretch .. " available")
+        SU.warn("Underfull frame " .. self.frame.id .. ": " .. adjustment .. " stretchiness required to fill but only " .. gTotal.stretch .. " available")
       end
       adjustment = gTotal.stretch
     end
@@ -457,7 +475,7 @@ function typesetter.setVerticalGlue (_, pageNodeList, target)
     adjustment = 0 - adjustment
     if adjustment > gTotal.shrink then
       if (adjustment - gTotal.shrink):tonumber() > SILE.settings:get("typesetter.overfulltolerance"):tonumber() then
-        SU.warn("Overfull frame: " .. adjustment .. " shrinkability required to fit but only " .. gTotal.shrink .. " available")
+        SU.warn("Overfull frame " .. self.frame.id .. ": " .. adjustment .. " shrinkability required to fit but only " .. gTotal.shrink .. " available")
       end
       adjustment = gTotal.shrink
     end
@@ -578,16 +596,27 @@ end
 
 function typesetter:outputLinesToPage (lines)
   SU.debug("pagebuilder", "OUTPUTTING frame", self.frame.id)
+  -- It would have been nice to avoid storing this "pastTop" into a frame
+  -- state, to keep things less entangled. There are situations, though,
+  -- we will have left horizontal mode (triggering output), but will later
+  -- call typesetter:chuck() do deal with any remaining content, and we need
+  -- to know whether some content has been output already.
+  local pastTop = self.frame.state.totals.pastTop
   for _, line in ipairs(lines) do
+    -- Ignore discardable and explicit glues at the top of a frame:
     -- Annoyingly, explicit glue *should* disappear at the top of a page.
     -- if you don't want that, add an empty vbox or something.
-    if not self.frame.state.totals.pastTop and not line.discardable and not line.explicit then
-      self.frame.state.totals.pastTop = true
+    if not pastTop and not line.discardable and not line.explicit then
+      -- Note the test here doesn't check is_vglue, so will skip other
+      -- discardable nodes (e.g. penalties), but it shouldn't matter
+      -- for outputting.
+      pastTop = true
     end
-    if self.frame.state.totals.pastTop then
+    if pastTop then
       line:outputYourself(self, line)
     end
   end
+  self.frame.state.totals.pastTop = pastTop
 end
 
 function typesetter:leaveHmode (independent)
@@ -758,8 +787,11 @@ end
 
 function typesetter:chuck () -- emergency shipout everything
   self:leaveHmode(true)
-  self:outputLinesToPage(self.state.outputQueue)
-  self.state.outputQueue = {}
+  if (#self.state.outputQueue > 0) then
+    SU.debug("typesetter", "Emergency shipout", #self.state.outputQueue, "lines in frame", self.frame.id)
+    self:outputLinesToPage(self.state.outputQueue)
+    self.state.outputQueue = {}
+  end
 end
 
 return typesetter

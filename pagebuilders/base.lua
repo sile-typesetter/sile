@@ -75,7 +75,6 @@ function pagebuilder:findBestBreak (options)
     pi = 0
     if vbox.is_penalty then
       pi = vbox.penalty
-      -- print("PI "..pi)
     end
     if vbox.is_penalty and vbox.penalty < self.inf_bad
       or (vbox.is_vglue and i > 1 and not vboxlist[i-1].discardable) then
@@ -84,7 +83,6 @@ function pagebuilder:findBestBreak (options)
       if totalHeight.length.amount < target.length.amount then -- TeX #1039
         -- Account for infinite stretch?
         badness = SU.rateBadness(self.inf_bad, left.length.amount, totalHeight.stretch.amount)
-        -- print("Height == "..totalHeight.length, "target=="..target, "stretch=="..totalHeight.stretch)
       elseif left.length.amount < totalHeight.shrink.amount then badness = self.awful_bad
       else badness = SU.rateBadness(self.inf_bad, -left.length.amount, totalHeight.shrink.amount)
       end
@@ -102,7 +100,7 @@ function pagebuilder:findBestBreak (options)
       else
         restart = { totalHeight = totalHeight, i = i, started = started, target = target}
       end
-      -- print("Badness "..badness .." c = "..c)
+
       SU.debug("pagebuilder", "Badness:", c)
       if c == self.awful_bad or pi <= self.eject_penalty then
         SU.debug("pagebuilder", "outputting")
