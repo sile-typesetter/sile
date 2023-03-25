@@ -38,7 +38,8 @@ cli.parseArguments = function ()
   local opts, parse_err = cliargs:parse(_arg)
   if not opts and parse_err then
     print(parse_err)
-    os.exit(1)
+    local code = parse_err:match("^Usage:") and 0 or 1
+    os.exit(code)
   end
   if opts.INPUT then
     if opts.INPUT == "STDIO" then
