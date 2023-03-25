@@ -381,6 +381,29 @@ utilities.walkContent = function (content, action)
   end
 end
 
+--- Strip position, line and column recursively from a content tree.
+-- This can be used to remove position details where we do not want them,
+-- e.g. in table of contents entries (referring to the original content,
+-- regardless where it was exactly, for the purpose of checking whether
+-- the table of contents changed.)
+--
+utilities.stripContentPos = function (content)
+  if type(content) ~= "table" then
+    return content
+  end
+  local stripped = {}
+  for k, v in pairs(content) do
+    if type(v) == "table" then
+      v = SU.stripContentPos(v)
+    end
+    stripped[k] = v
+  end
+  if content.id or content.command then
+    stripped.pos, stripped.col, stripped.lno = nil, nil, nil
+  end
+  return stripped
+end
+
 utilities.rateBadness = function(inf_bad, shortfall, spring)
   if spring == 0 then return inf_bad end
   local bad = math.floor(100 * math.abs(shortfall / spring) ^ 3)

@@ -171,7 +171,7 @@ function package:registerCommands ()
     SILE.call("info", {
       category = "toc",
       value = {
-        label = content,
+        label = SU.stripContentPos(content),
         level = (options.level or 1),
         number = options.number,
         link = dest
