@@ -61,13 +61,17 @@ to be passed to the \code{\\font} command every time \code{\\left} and \code{\\r
 \begin{verbatim}
 
 function diglot:registerCommands()
-  SILE.registerCommand("leftfont", function(options, content)
+  plain.registerCommands(self)
+
+  self:registerCommand("leftfont", function(options, content)
     SILE.scratch.diglot.leftfont = options
   end, "Set the font for the left side")
 
-  SILE.registerCommand("rightfont", function(options, content)
+  self:registerCommand("rightfont", function(options, content)
     SILE.scratch.diglot.rightfont = options
   end, "Set the font for the right side")
+
+  -- Other commands will come here...
 end
 \end{verbatim}
 
@@ -79,17 +83,17 @@ We also want to turn off paragraph detection,
 as we will be handling the paragraphing manually using the \code{\\sync} command:
 
 \begin{verbatim}
-SILE.registerCommand("left", function(options, content)
-  SILE.settings:set("typesetter.parseppattern", -1)
-  SILE.typesetter = diglot.leftTypesetter;
-  SILE.call("font", SILE.scratch.diglot.leftfont, \{\})
-end, "Begin entering text on the left side")
+  self:registerCommand("left", function(options, content)
+    SILE.settings:set("typesetter.parseppattern", -1)
+    SILE.typesetter = diglot.leftTypesetter;
+    SILE.call("font", SILE.scratch.diglot.leftfont, \{\})
+  end, "Begin entering text on the left side")
 
-SILE.registerCommand("right", function(options, content)
-  SILE.settings:set("typesetter.parseppattern", -1)
-  SILE.typesetter = diglot.rightTypesetter;
-  SILE.call("font", SILE.scratch.diglot.rightfont, \{\})
-end, "Begin entering text on the right side")
+  self:registerCommand("right", function(options, content)
+    SILE.settings:set("typesetter.parseppattern", -1)
+    SILE.typesetter = diglot.rightTypesetter;
+    SILE.call("font", SILE.scratch.diglot.rightfont, \{\})
+  end, "Begin entering text on the right side")
 \end{verbatim}
 
 The meat of the \code{diglot} package comes in the \code{sync} command,
@@ -105,24 +109,28 @@ We can use this method to bundle up each typesetter’s output queue and measure
 but this achieves the same goal a bit more cleanly.)
 
 \begin{verbatim}
-SILE.registerCommand("sync", function()
-  local lVbox = SILE.pagebuilder:collateVboxes(diglot.leftTypesetter.state.outputQueue)
-  local rVbox = SILE.pagebuilder:collateVboxes(diglot.rightTypesetter.state.outputQueue)
-  if (rVbox.height > lVbox.height) then
-    diglot.leftTypesetter:pushVglue(\{ height = rVbox.height - lVbox.height \})
-  elseif (rVbox.height < lVbox.height) then
-    diglot.rightTypesetter:pushVglue(\{ height = lVbox.height - rVbox.height \})
-  end
+  self:registerCommand("sync", function()
+    local lVbox = SILE.pagebuilder:collateVboxes(
+      diglot.leftTypesetter.state.outputQueue
+    )
+    local rVbox = SILE.pagebuilder:collateVboxes(
+      diglot.rightTypesetter.state.outputQueue
+    )
+    if (rVbox.height > lVbox.height) then
+      diglot.leftTypesetter:pushVglue(\{ height = rVbox.height - lVbox.height \})
+    elseif (rVbox.height < lVbox.height) then
+      diglot.rightTypesetter:pushVglue(\{ height = lVbox.height - rVbox.height \})
+    end
 \end{verbatim}
 
 Next we end each paragraph—after adding the glue so that \code{parskips}
 do not get in the way—and go back to handling paragraphing as normal:
 
 \begin{verbatim}
-  diglot.rightTypesetter:leaveHmode();
-  diglot.leftTypesetter:leaveHmode();
-  SILE.settings:set("typesetter.parseppattern", "\\n\\n+")
-end)
+    diglot.rightTypesetter:leaveHmode();
+    diglot.leftTypesetter:leaveHmode();
+    SILE.settings:set("typesetter.parseppattern", "\\n\\n+")
+  end)
 \end{verbatim}
 
 Now everything is ready apart from the output routine. In the output routine

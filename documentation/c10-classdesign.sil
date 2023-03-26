@@ -161,8 +161,8 @@ investigate bits of state information, and so on. We’ll look briefly
 at some of the principles involved in those things here, and in the next
 chapters will run through some working examples.
 
-To define your own command at the Lua level, you use the \code{SILE.registerCommand} function.
-It takes three parameters: a command name,
+To define your own command at the Lua level, you overload the \code{registerCommands} class method,
+and within it, use the \code{self:registerCommand} function. It takes three parameters: a command name,
 a function to implement the command, and some help text.
 The signature of a function representing a SILE command is fixed:
 you need to take two parameters, \code{options} and \code{content}
@@ -178,10 +178,12 @@ the first parameter will contain the table \code{\{size = "12pt"\}} and the seco
 {
   "Hello ",
   {
-    attr = {},
+    options = {},
     id = "command",
-    pos = 8,
-    tag = "break"
+    pos = …,
+    col = …,
+    lno = …,
+    command = "break"
   },
   " world"
 }
@@ -197,11 +199,11 @@ as \examplefont{Hello (\code{http://...})}. First we need to render
 the content, and then we need to do something with the attribute:
 
 \begin[type=autodoc:codeblock]{raw}
-bringhurst.registerCommands = function (self)
+function bringhurst:registerCommands ()
 
   book.registerCommands(self)
 
-  SILE.registerCommand("link", function(options, content)
+  self:registerCommand("link", function(options, content)
     SILE.process(content)
     if (options["xl:href"]) then
       SILE.typesetter:typeset(" (")
@@ -254,7 +256,8 @@ First, we set up our infonodes by creating a command that can be called by secti
 In other words, \code{\\chapter}, \code{\\section}, etc., should call \code{\\tocentry} to store the page reference for this section.
 
 \begin[type=autodoc:codeblock]{raw}
-SILE.registerCommand("tocentry", function (options, content)
+self:registerCommand("tocentry", function (options, content)
+  -- (Simplified from the actual implementation.)
   SILE.call("info", {
     category = "toc",
     value = {
@@ -279,11 +282,13 @@ Here is a routine we can call at the end of each page to move the TOC nodes:
 SILE.scratch.tableofcontents = { }
 
 -- Gather the tocentries into a big document-wide TOC
-local moveNodes = function(self)
-  local n = SILE.scratch.info.thispage.toc
-  for i=1,#n do
-    n[i].pageno = class:formatCounter(SILE.scratch.counters.folio)
-    table.insert(SILE.scratch.tableofcontents, n[i])
+function package:moveTocNodes ()
+  local node = SILE.scratch.info.thispage.toc
+  if node then
+    for i = 1, #node do
+      node[i].pageno = self.packages.counters:formatCounter(SILE.scratch.counters.folio)
+      table.insert(SILE.scratch.tableofcontents, node[i])
+    end
   end
 end
 \end{raw}
@@ -295,32 +300,42 @@ table to disk. Here is a function to be called by the \code{finish} output
 routine:
 
 \begin[type=autodoc:codeblock]{raw}
-local writeToc = function (self)
-  local t = pl.pretty.write(SILE.scratch.tableofcontents)
-  saveFile(t, SILE.masterFilename .. '.toc')
+function package.writeToc (_)
+  -- (Simplified from the actual implementation.)
+  local tocdata = pl.pretty.write(SILE.scratch.tableofcontents)
+  local tocfile, err = io.open(SILE.masterFilename .. '.toc', "w")
+  if not tocfile then return SU.error(err) end
+  tocfile:write("return " .. tocdata)
+  tocfile:close()
 end
 \end{raw}
 
 Then the \code{\\tableofcontents} command reads that file if it is present, and typesets the TOC nodes appropriately:
 
 \begin[type=autodoc:codeblock]{raw}
-SILE.registerCommand("tableofcontents", function (options, content)
-  local toc = loadFile(SILE.masterFilename .. '.toc')
-  if not toc then
+self:registerCommand("tableofcontents", function (options, _)
+  -- (Simplified from the actual implementation.)
+  local toc = self:readToc()
+  if toc == false then
     SILE.call("tableofcontents:notocmessage")
     return
   end
   SILE.call("tableofcontents:header")
-  for i = 1,#toc do
+  for i = 1, #toc do
     local item = toc[i]
-    SILE.call("tableofcontents:item", {level = item.level, pageno = item.pageno}, item.label)
+    SILE.call("tableofcontents:item", {
+      level = item.level,
+      pageno = item.pageno,
+    }, item.label)
   end
 end)
 \end{raw}
 
 And the job is done.
 Well, nearly.
-The \code{tableofcontents} package now contains a couple of functions—\code{moveNodes} and \code{writeToc}—that need to be called at various points in the output routine of a class which uses this package.
+The \code{tableofcontents} package now contains a couple of methods—\code{moveTocNodes}
+and \code{writeToc}—that need to be called at various points in the output routine of a
+class which uses this package.
 How do we do that?
 
 \section{Exports}
