@@ -115,6 +115,7 @@ function settings:declare (spec)
   self:set(spec.parameter, spec.default, true)
 end
 
+--- Reset all settings to their default value.
 function settings:reset ()
   if not self then self = deprecator() end
   for k,_ in pairs(self.state) do
@@ -122,11 +123,17 @@ function settings:reset ()
   end
 end
 
+--- Restore all settings to the value they had in the top-level state,
+-- that is at the head of the settings stack (normally the document
+-- level).
 function settings:toplevelState ()
   if not self then self = deprecator() end
   if #self.stateQueue ~= 0 then
-    for k,_ in pairs(self.state) do
-      self:set(k, self.stateQueue[1][k])
+    for parameter, _ in pairs(self.state) do
+      -- Bypass self:set() as the latter performs some tests and a cast,
+      -- but the setting might not have been defined in the top level state
+      -- (in which case, assume the default value).
+      self.state[parameter] = self.stateQueue[1][parameter] or self.defaults[parameter]
     end
   end
 end
