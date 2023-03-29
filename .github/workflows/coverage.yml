@@ -2,6 +2,10 @@ name: Coverage
 
 on: [ push, pull_request ]
 
+concurrency:
+  group: ${{ github.workflow}}-${{ github.ref }}
+  cancel-in-progress: true
+
 # Coverage slows down tests *a lot*.
 # Also most of our regression tests use a dummy back end.
 # Here we use LuaJIT for speed and use the real backend.
@@ -10,6 +14,7 @@ jobs:
 
   coverage:
     runs-on: ubuntu-22.04
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v3

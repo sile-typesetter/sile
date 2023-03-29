@@ -2,6 +2,10 @@ name: Test
 
 on: [ push, pull_request ]
 
+concurrency:
+  group: ${{ github.workflow}}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   test:
@@ -16,6 +20,7 @@ jobs:
           - [ 'luajit', 'XCFLAGS=-fPIC' ]
           # - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
     runs-on: ubuntu-22.04
+    timeout-minutes: 6
     name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
       - name: Checkout
