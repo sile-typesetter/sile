@@ -4,76 +4,6 @@
 -- @module typesetters.base
 --
 
--- Settings common to any typesetter instance.
--- These shouldn't be re-declared and overwritten/reset in the typesetter
--- constructor (see issue https://github.com/sile-typesetter/sile/issues/1708).
--- On the other hand, it's fairly acceptable to have them made global:
--- Any derived typesetter, whatever its implementation, should likely provide
--- some logic for them (= widows, orphans, spacing, etc.)
-
-SILE.settings:declare({
-  parameter = "typesetter.widowpenalty",
-  type = "integer",
-  default = 3000,
-  help = "Penalty to be applied to widow lines (at the start of a paragraph)"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.parseppattern",
-  type = "string or integer",
-  default = "\r?\n[\r\n]+",
-  help = "Lua pattern used to separate paragraphs"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.obeyspaces",
-  type = "boolean or nil",
-  default = nil,
-  help = "Whether to ignore paragraph initial spaces"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.orphanpenalty",
-  type = "integer",
-  default = 3000,
-  help = "Penalty to be applied to orphan lines (at the end of a paragraph)"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.parfillskip",
-  type = "glue",
-  default = SILE.nodefactory.glue("0pt plus 10000pt"),
-  help = "Glue added at the end of a paragraph"
-})
-
-SILE.settings:declare({
-  parameter = "document.letterspaceglue",
-  type = "glue or nil",
-  default = nil,
-  help = "Glue added between tokens"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.underfulltolerance",
-  type = "length or nil",
-  default = SILE.length("1em"),
-  help = "Amount a page can be underfull without warning"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.overfulltolerance",
-  type = "length or nil",
-  default = SILE.length("5pt"),
-  help = "Amount a page can be overfull without warning"
-})
-
-SILE.settings:declare({
-  parameter = "typesetter.breakwidth",
-  type = "measurement or nil",
-  default = nil,
-  help = "Width to break lines at"
-})
-
 -- Typesetter base class
 
 local typesetter = pl.class()
@@ -117,6 +47,7 @@ function typesetter:init (frame)
 end
 
 function typesetter:_init (frame)
+  self:declareSettings()
   self.hooks = {}
   self.breadcrumbs = SU.breadcrumbs()
 
@@ -127,6 +58,80 @@ function typesetter:_init (frame)
   -- In case people use stdlib prototype syntax off of the instantiated typesetter...
   getmetatable(self).__call = self.init
   return self
+end
+
+function typesetter.declareSettings(_)
+
+  -- Settings common to any typesetter instance.
+  -- These shouldn't be re-declared and overwritten/reset in the typesetter
+  -- constructor (see issue https://github.com/sile-typesetter/sile/issues/1708).
+  -- On the other hand, it's fairly acceptable to have them made global:
+  -- Any derived typesetter, whatever its implementation, should likely provide
+  -- some logic for them (= widows, orphans, spacing, etc.)
+
+  SILE.settings:declare({
+    parameter = "typesetter.widowpenalty",
+    type = "integer",
+    default = 3000,
+    help = "Penalty to be applied to widow lines (at the start of a paragraph)"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.parseppattern",
+    type = "string or integer",
+    default = "\r?\n[\r\n]+",
+    help = "Lua pattern used to separate paragraphs"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.obeyspaces",
+    type = "boolean or nil",
+    default = nil,
+    help = "Whether to ignore paragraph initial spaces"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.orphanpenalty",
+    type = "integer",
+    default = 3000,
+    help = "Penalty to be applied to orphan lines (at the end of a paragraph)"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.parfillskip",
+    type = "glue",
+    default = SILE.nodefactory.glue("0pt plus 10000pt"),
+    help = "Glue added at the end of a paragraph"
+  })
+
+  SILE.settings:declare({
+    parameter = "document.letterspaceglue",
+    type = "glue or nil",
+    default = nil,
+    help = "Glue added between tokens"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.underfulltolerance",
+    type = "length or nil",
+    default = SILE.length("1em"),
+    help = "Amount a page can be underfull without warning"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.overfulltolerance",
+    type = "length or nil",
+    default = SILE.length("5pt"),
+    help = "Amount a page can be overfull without warning"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.breakwidth",
+    type = "measurement or nil",
+    default = nil,
+    help = "Width to break lines at"
+  })
+
 end
 
 function typesetter:initState ()
