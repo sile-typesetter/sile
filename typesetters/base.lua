@@ -1,3 +1,11 @@
+--- SILE typesetter (default/base) class.
+--
+-- @copyright License: MIT
+-- @module typesetters.base
+--
+
+-- Typesetter base class
+
 local typesetter = pl.class()
 typesetter.type = "typesetter"
 typesetter._name = "base"
@@ -39,6 +47,27 @@ function typesetter:init (frame)
 end
 
 function typesetter:_init (frame)
+  self:declareSettings()
+  self.hooks = {}
+  self.breadcrumbs = SU.breadcrumbs()
+
+  self.frame = nil
+  self.stateQueue = {}
+  self:initFrame(frame)
+  self:initState()
+  -- In case people use stdlib prototype syntax off of the instantiated typesetter...
+  getmetatable(self).__call = self.init
+  return self
+end
+
+function typesetter.declareSettings(_)
+
+  -- Settings common to any typesetter instance.
+  -- These shouldn't be re-declared and overwritten/reset in the typesetter
+  -- constructor (see issue https://github.com/sile-typesetter/sile/issues/1708).
+  -- On the other hand, it's fairly acceptable to have them made global:
+  -- Any derived typesetter, whatever its implementation, should likely provide
+  -- some logic for them (= widows, orphans, spacing, etc.)
 
   SILE.settings:declare({
     parameter = "typesetter.widowpenalty",
@@ -103,16 +132,6 @@ function typesetter:_init (frame)
     help = "Width to break lines at"
   })
 
-  self.hooks = {}
-  self.breadcrumbs = SU.breadcrumbs()
-
-  self.frame = nil
-  self.stateQueue = {}
-  self:initFrame(frame)
-  self:initState()
-  -- In case people use stdlib prototype syntax off of the instantiated typesetter...
-  getmetatable(self).__call = self.init
-  return self
 end
 
 function typesetter:initState ()
