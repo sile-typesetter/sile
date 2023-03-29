@@ -12,8 +12,11 @@ function package:registerCommands ()
   self:registerCommand("alternative", function (_, content)
     local alts = {}
     for _, fragment in ipairs(content) do
-      SILE.call("hbox", {}, { fragment })
-      table.insert(alts, table.remove(SILE.typesetter.state.nodes))
+      local hbox, hlist = SILE.typesetter:makeHbox({ fragment })
+      if #hlist > 0 then
+        SU.error("Forbidden migrating content in alternative")
+      end
+      table.insert(alts, hbox)
     end
     local alternative = SILE.nodefactory.alternative({
       options = alts,

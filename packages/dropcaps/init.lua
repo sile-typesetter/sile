@@ -13,10 +13,9 @@ local shapeHbox = function (options, content)
   -- Clear irrelevant values before passing to font
   options.lines, options.join, options.raise, options.shift, options.color, options.scale = nil, nil, nil, nil, nil, nil
   SILE.call("noindent")
-  local hbox = SILE.call("hbox", {}, function ()
+  local hbox = SILE.typesetter:makeHbox(function ()
     SILE.call("font", options, content)
   end)
-  table.remove(SILE.typesetter.state.nodes)
   return hbox
 end
 

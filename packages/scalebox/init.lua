@@ -13,9 +13,8 @@ function package:registerCommands ()
     SILE.outputter:_ensureInit()
     local pdf = require("justenoughlibtexpdf")
 
-    local hbox = SILE.call("hbox", {}, content)
-    table.remove(SILE.typesetter.state.nodes) -- Remove the box from queue
-    local xratio, yratio = SU.cast("number", options.xratio) or 1, SU.cast("number", options.yratio) or 1
+    local hbox, hlist = SILE.typesetter:makeHbox(content)
+    local xratio, yratio = SU.cast("number", options.xratio or 1), SU.cast("number", options.yratio or 1)
     if xratio == 0 or yratio == 0 then
       SU.error("Scaling ratio cannot be null")
     end
@@ -55,6 +54,7 @@ function package:registerCommands ()
         typesetter.frame:advanceWritingDirection(outputWidth)
       end
     })
+    SILE.typesetter:pushHlist(hlist)
   end, "Scale content by some horizontal and vertical ratios")
 
 end

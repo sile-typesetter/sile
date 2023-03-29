@@ -29,8 +29,7 @@ end
 function package:registerCommands ()
 
   self:registerCommand("ch", function (options, content)
-    local chordBox = SILE.call("hbox", {}, { options.name })
-    SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
+    local chordBox = SILE.typesetter:makeHbox({ options.name })
     local origWidth = chordBox.width
     chordBox.width = SILE.length()
     chordBox.height = SILE.settings:get("chordmode.lineheight")

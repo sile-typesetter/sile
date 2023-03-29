@@ -67,8 +67,7 @@ function package:registerCommands ()
   self:registerCommand("rotate", function(options, content)
     local angle = SU.required(options, "angle", "rotate command")
     local theta = -math.rad(angle)
-    local origbox = SILE.call("hbox", {}, content)
-    SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+    local origbox, hlist = SILE.typesetter:makeHbox(content)
     local h = origbox.height + origbox.depth
     local w = origbox.width.length
     local st = math.sin(theta)
@@ -101,6 +100,7 @@ function package:registerCommands ()
       depth = depth,
       outputYourself = outputRotatedHbox
     })
+    SILE.typesetter:pushHlist(hlist)
   end)
 
 end
