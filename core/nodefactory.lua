@@ -335,6 +335,12 @@ function nodefactory.discretionary:replacementHeight ()
   return self.replaceh
 end
 
+function nodefactory.discretionary:replacementDepth ()
+  if self.replaced then return self.replaced end
+  self.replaced = _maxnode(self.replacement, "depth")
+  return self.replaced
+end
+
 nodefactory.alternative = pl.class(nodefactory.hbox)
 
 nodefactory.alternative.type = "alternative"

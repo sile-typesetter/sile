@@ -817,6 +817,23 @@ function typesetter:makeHbox (content)
         d = attr.depth > d and attr.depth or d
         l = l + attr:lineContribution():absolute()
       end
+    elseif node.is_discretionary then
+      -- HACK https://github.com/sile-typesetter/sile/issues/583
+      -- Discretionary nodes have a null line contribution...
+      -- But if discretionary nodes occur inside an hbox, since the latter
+      -- is not line-broken, they will never be marked as 'used' and will
+      -- evaluate to the replacement content (if any)...
+      recentContribution[#recentContribution+1] = node
+      l = l + node:replacementWidth():absolute()
+      -- The replacement content may have ascenders and descenders...
+      local hdisc = node:replacementHeight():absolute()
+      local ddisc = node:replacementDepth():absolute()
+      h = hdisc > h and hdisc or h
+      d = ddisc > d and ddisc or d
+      -- By the way it's unclear how this is expected to work in TTB
+      -- writing direction. For other type of nodes, the line contribution
+      -- evaluates to the height rather than the width in TTB, but the
+      -- whole logic might then be dubious there too...
     else
       recentContribution[#recentContribution+1] = node
       l = l + node:lineContribution():absolute()
