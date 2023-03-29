@@ -149,9 +149,7 @@ function package:registerCommands ()
   self:registerCommand("underline", function (_, content)
     local underlinePosition, underlineThickness = getUnderlineParameters()
 
-    local hbox = SILE.call("hbox", {}, content)
-    table.remove(SILE.typesetter.state.nodes) -- steal it back...
-
+    local hbox, hlist = SILE.typesetter:makeHbox(content)
     -- Re-wrap the hbox in another hbox responsible for boxing it at output
     -- time, when we will know the line contribution and can compute the scaled width
     -- of the box, taking into account possible stretching and shrinking.
@@ -176,14 +174,13 @@ function package:registerCommands ()
         SILE.outputter:drawRule(oldX, Y - underlinePosition, newX - oldX, underlineThickness)
       end
     })
+    SILE.typesetter:pushHlist(hlist)
   end, "Underlines some content")
 
   self:registerCommand("strikethrough", function (_, content)
     local yStrikeoutPosition, yStrikeoutSize = getStrikethroughParameters()
 
-    local hbox = SILE.call("hbox", {}, content)
-    table.remove(SILE.typesetter.state.nodes) -- steal it back...
-
+    local hbox, hlist = SILE.typesetter:makeHbox(content)
     -- Re-wrap the hbox in another hbox responsible for boxing it at output
     -- time, when we will know the line contribution and can compute the scaled width
     -- of the box, taking into account possible stretching and shrinking.
@@ -205,6 +202,7 @@ function package:registerCommands ()
         SILE.outputter:drawRule(oldX, Y - yStrikeoutPosition - yStrikeoutSize / 2, newX - oldX, yStrikeoutSize)
       end
     })
+    SILE.typesetter:pushHlist(hlist)
   end, "Strikes out some content")
 
   self:registerCommand("boxaround", function (_, content)
@@ -212,9 +210,7 @@ function package:registerCommands ()
     -- Plan replacement with a better suited package.
     SU.deprecated("\\boxaround (undocumented)", "\\framebox (package)", "0.12.0")
 
-    local hbox = SILE.call("hbox", {}, content)
-    table.remove(SILE.typesetter.state.nodes) -- steal it back...
-
+    local hbox, hlist = SILE.typesetter:makeHbox(content)
     -- Re-wrap the hbox in another hbox responsible for boxing it at output
     -- time, when we will know the line contribution and can compute the scaled width
     -- of the box, taking into account possible stretching and shrinking.
@@ -245,6 +241,7 @@ function package:registerCommands ()
         SILE.outputter:drawRule(oldX + w - thickness, Y - h, thickness, h + d)
       end
     })
+    SILE.typesetter:pushHlist(hlist)
   end, "Draws a box around some content")
 
 end

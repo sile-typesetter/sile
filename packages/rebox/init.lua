@@ -6,8 +6,7 @@ package._name = "rebox"
 function package:registerCommands ()
 
   self:registerCommand("rebox", function (options, content)
-    local hbox = SILE.call("hbox", {}, content)
-    table.remove(SILE.typesetter.state.nodes) -- steal it back
+    local hbox, hlist = SILE.typesetter:makeHbox(content)
     if options.width then hbox.width = SILE.length(options.width) end
     if options.height then hbox.height = SILE.length(options.height) end
     if options.depth then hbox.depth = SILE.length(options.depth) end
@@ -16,7 +15,8 @@ function package:registerCommands ()
         typesetter.frame:advanceWritingDirection(node:scaledWidth(line))
       end
     end
-    table.insert(SILE.typesetter.state.nodes, hbox)
+    SILE.typesetter:pushHbox(hbox)
+    SILE.typesetter:pushHlist(hlist)
   end, "Place the output within a hbox of specified width, height, depth and visibility")
 
 end

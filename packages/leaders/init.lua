@@ -87,9 +87,10 @@ function package:registerCommands ()
 
   self:registerCommand("leaders", function(options, content)
     local width = options.width and SU.cast("glue", options.width) or SILE.nodefactory.hfillglue()
-    SILE.call("hbox", {}, content)
-    local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
-    SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+    local hbox, hlist = SILE.typesetter:makeHbox(content)
+    if #hlist > 0 then
+      SU.error("Forbidden migrating content in leaders")
+    end
     local l = leader({ width = width, value = hbox })
     SILE.typesetter:pushExplicitGlue(l)
   end)
