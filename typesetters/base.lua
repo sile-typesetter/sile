@@ -710,7 +710,7 @@ function typesetter:addrlskip (slice, margins, hangLeft, hangRight)
 end
 
 function typesetter:breakpointsToLines (breakpoints)
-  local linestart = 0
+  local linestart = 1
   local lines = {}
   local nodes = self.state.nodes
 
@@ -728,18 +728,23 @@ function typesetter:breakpointsToLines (breakpoints)
         end
       end
       if seenHbox == 0 then break end
-      local mrg = self:getMargins()
-      self:addrlskip(slice, mrg, point.left, point.right)
-      local ratio = self:computeLineRatio(point.width, slice)
-      -- TODO see bug 620
-      -- if math.abs(ratio) > 1 then SU.warn("Using ratio larger than 1" .. ratio) end
-      local thisLine = { ratio = ratio, nodes = slice }
-      lines[#lines+1] = thisLine
+
+      -- If the line ends with a discretionary, repeat it on the next line,
+      -- so as to account for a potential postbreak.
       if slice[#slice].is_discretionary then
         linestart = point.position
       else
         linestart = point.position + 1
       end
+
+      -- Then only we can add some extra margin glue...
+      local mrg = self:getMargins()
+      self:addrlskip(slice, mrg, point.left, point.right)
+
+      -- And compute the line...
+      local ratio = self:computeLineRatio(point.width, slice)
+      local thisLine = { ratio = ratio, nodes = slice }
+      lines[#lines+1] = thisLine
     end
   end
   --self.state.nodes = nodes.slice(linestart+1,nodes.length)
@@ -747,23 +752,29 @@ function typesetter:breakpointsToLines (breakpoints)
 end
 
 function typesetter.computeLineRatio (_, breakwidth, slice)
-  -- This somewhat wrong, see #1362.
-  -- This is a very partial workaround, at least made consistent with the
-  -- nnode outputYourself routine expectation (which is somewhat wrong too)
+  -- This somewhat wrong, see #1362 and #1528
+  -- This is a somewhat partial workaround, at least made consistent with
+  -- the nnode and discretionary outputYourself routines
+  -- (which are somewhat wrong too, or to put it otherwise, the whole
+  -- logic here, marking nodes without removing/replacing them, likely makes
+  -- things more complex than they should).
+  -- TODO Possibly consider a full rewrite/refactor.
   local naturalTotals = SILE.length()
 
+  -- Check if line is hyphenated:
+  -- Skip glues and margins, and check if it ends with a discretionary.
+  -- If so, account for a prebreak.
   local n = #slice
   while n > 1 do
     if slice[n].is_glue or slice[n].is_zero then
       if slice[n].value ~= "margin" then
-        naturalTotals:___sub(slice[n].width)
+       naturalTotals:___sub(slice[n].width)
       end
     elseif slice[n].is_discretionary then
       slice[n].used = true
       if slice[n].parent then
         slice[n].parent.hyphenated = true
       end
-      naturalTotals:___sub(slice[n]:replacementWidth())
       naturalTotals:___add(slice[n]:prebreakWidth())
       slice[n].height = slice[n]:prebreakHeight()
       break
@@ -790,8 +801,9 @@ function typesetter.computeLineRatio (_, breakwidth, slice)
       skipping = false
     elseif node.is_discretionary then
       skipping = false
-      if node.used then
-        naturalTotals:___add(node:replacementWidth())
+      local seen = node.parent and seenNodes[node.parent]
+      if not seen and not node.used then
+        naturalTotals:___add(node:replacementWidth():absolute())
         slice[i].height = slice[i]:replacementHeight():absolute()
       end
     elseif not skipping then
@@ -799,15 +811,22 @@ function typesetter.computeLineRatio (_, breakwidth, slice)
     end
   end
 
-  if slice[1].is_discretionary then
-    naturalTotals:___sub(slice[1]:replacementWidth())
-    naturalTotals:___add(slice[1]:postbreakWidth())
-    slice[1].height = slice[1]:postbreakHeight()
+  -- From the line start, skip glues and margins, and check if it then starts
+  -- with a used discretionary. If so, account for a postbreak.
+  n = 1
+  while n < #slice do
+    if slice[n].is_discretionary and slice[n].used then
+      naturalTotals:___add(slice[n]:postbreakWidth())
+      slice[n].height = slice[n]:postbreakHeight()
+      break
+    elseif not (slice[n].is_glue or slice[n].is_zero) then
+      break
+    end
+    n = n + 1
   end
+
   local _left = breakwidth:tonumber() - naturalTotals:tonumber()
   local ratio = _left / naturalTotals[_left < 0 and "shrink" or "stretch"]:tonumber()
-  -- Here a previous comment said: TODO: See bug 620
-  -- But the latter seems to suggest capping the ratio if greater than 1, which is wrong.
   ratio = math.max(ratio, -1)
   return ratio, naturalTotals
 end

@@ -113,23 +113,19 @@ local hyphenateNode = function (node)
   if #segments > 1 then
     local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options)
     local newnodes = {}
-    local leadingApostrophe, nextLeadingApostrophe
     for j, segment in ipairs(segments) do
+      local leadingApostrophe = nil
       if segment == "" then
         SU.dump{ j, segments }
         SU.error("No hyphenation segment should ever be empty", true)
       end
       if node.options.language == "tr" then
-        local nextSegment = segments[j+1]
-        leadingApostrophe, nextLeadingApostrophe = nextLeadingApostrophe, nextSegment and luautf8.match(nextSegment, "^['’]")
-        if j < #segments then
-          segments[j+1] = luautf8.gsub(nextSegment, "^['’]", "")
-        end
-        if leadingApostrophe then
-          local replacement = SILE.shaper:createNnodes(leadingApostrophe, node.options)
-          local newNode = SILE.nodefactory.discretionary({ prebreak = hyphen, replacement = replacement })
-          newNode.parent = node
-          table.insert(newnodes, newNode)
+        local hasNextApostrophe = j < #segments and luautf8.match(segments[j+1], "^['’]")
+        if hasNextApostrophe then
+          segments[j+1] = luautf8.gsub(segments[j+1], "^['’]", "")
+          local replacement = SILE.shaper:createNnodes(hasNextApostrophe, node.options)
+          leadingApostrophe = SILE.nodefactory.discretionary({ replacement = replacement, prebreak = hyphen })
+          leadingApostrophe.parent = node
         end
       end
       for _, newNode in ipairs(SILE.shaper:createNnodes(segment, node.options)) do
@@ -138,10 +134,14 @@ local hyphenateNode = function (node)
           table.insert(newnodes, newNode)
         end
       end
-      if j < #segments and not nextLeadingApostrophe then
-        local newNode = SILE.nodefactory.discretionary({ prebreak = hyphen })
-        newNode.parent = node
-        table.insert(newnodes, newNode)
+      if j < #segments then
+        if leadingApostrophe then
+          table.insert(newnodes, leadingApostrophe)
+        else
+          local newNode = SILE.nodefactory.discretionary({ prebreak = hyphen })
+          newNode.parent = node
+          table.insert(newnodes, newNode)
+        end
       end
     end
     node.children = newnodes
