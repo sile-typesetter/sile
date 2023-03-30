@@ -117,9 +117,9 @@ By default, text is assumed to be in English unless SILE is told otherwise.
 
 The final clever thing is that where fonts declare ligatures (where two or more letters are merged into one in order to make them visually more attractive), SILE automatically applies the ligature.
 So if you type \code{affluent fishing}, then, depending on your font, your output might look like:
-    ‘\examplefont{affluent fishing}.’
+    ‘\examplefont{affluent fishing}’.
 If you specifically want to break up the ligatures, insert empty groups (using the grouping characters \code{\{} and \code{\}}) in the middle of the possible ligatures:
-    \code{af\{\}f\{\}luent f\{\}ishing}: \examplefont{af{}f{}luent f{}ishing}.
+    \code{af\{\}f\{\}luent f\{\}ishing}: ‘\examplefont{af{}f{}luent f{}ishing}’.
 See the section on the \code{features} package for more information on how to control the display of ligatures and other font features.
 
 \section{Commands}
@@ -135,7 +135,7 @@ The \code{\\begin} command at the start of the document is an example of this.%
 \end{raw}
 
 The parameters to a command are enclosed in square brackets and take the form \code{\em{key}=\em{value}};
-    multiple parameters are separated by commas or semicolons, as in \code{[key1=value1,key2=value2,…]}
+    multiple parameters are separated by commas or semicolons, as in \code{[key1=value1,key2=value2,…]}.
 Spaces around the keys are not significant;
     we could equally write that as \code{[key1 = value1; key2 = value2; …]}.
 If you need to include a comma or semicolon within the value to a parameter, you can enclose the value in quotes:

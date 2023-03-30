@@ -212,7 +212,7 @@ On some systems such as macOS you may need to configure the location of the head
 \terminal{$ luarocks install luasec OPENSSL_DIR=...}
 
 Once you have these requirements in place, you should then be able to unpack the file that you downloaded from SILE’s home page, change to that directory,%
-    \footnote{If you downloaded a copy of the SILE source by cloning the git repository rather than downloading one of the release packages, you will also need to run \code{./bootstrap.sh} to setup the configure script at this point before continuing to the next step.}
+\footnote{If you downloaded a copy of the SILE source by cloning the git repository rather than downloading one of the release packages, you will also need to run \code{./bootstrap.sh} to setup the configure script at this point before continuing to the next step.}
     and configure the build environment.
 
 If you supplied all the Lua dependencies yourself, run:
