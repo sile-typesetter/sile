@@ -114,16 +114,16 @@ local hyphenateNode = function (node)
     local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options)
     local newnodes = {}
     for j, segment in ipairs(segments) do
-      local leadingApostrophe = nil
+      local leadingApostrophe
       if segment == "" then
-        SU.dump{ j, segments }
+        SU.dump({ j, segments })
         SU.error("No hyphenation segment should ever be empty", true)
       end
       if node.options.language == "tr" then
-        local hasNextApostrophe = j < #segments and luautf8.match(segments[j+1], "^['’]")
-        if hasNextApostrophe then
+        local nextApostrophe = j < #segments and luautf8.match(segments[j+1], "^['’]")
+        if nextApostrophe then
           segments[j+1] = luautf8.gsub(segments[j+1], "^['’]", "")
-          local replacement = SILE.shaper:createNnodes(hasNextApostrophe, node.options)
+          local replacement = SILE.shaper:createNnodes(nextApostrophe, node.options)
           leadingApostrophe = SILE.nodefactory.discretionary({ replacement = replacement, prebreak = hyphen })
           leadingApostrophe.parent = node
         end

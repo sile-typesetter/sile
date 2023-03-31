@@ -231,6 +231,7 @@ function nodefactory.nnode:outputYourself (typesetter, line)
     -- It's possible not to have a parent, e.g. N(word) without hyphenation points.
     -- Either that, or we have a hyphenated parent but are in the case we are
     -- outputting one of the elements e.g. N(out)D(-) [line break] N(put).
+    -- (ignoring the G(margin) nodes and potentially zerohbox nodes also on either side of the line break)
     for _, node in ipairs(self.nodes) do node:outputYourself(typesetter, line) end
   end
 end
@@ -301,7 +302,7 @@ function nodefactory.discretionary:outputYourself (typesetter, line)
   -- added in the queue and not coming from the hyphenator logic).
   -- Eiher that, or we have a hyphenate parent.
   if self.used then
-    -- This this the actual hyphenation point.
+    -- This is the actual hyphenation point.
     -- Skip margin glue and zero boxes.
     -- If we then reach our discretionary, it means its the first in the line,
     -- i.e. a postbreak. Otherwise, its a prebreak (near the end of the line,
