@@ -284,7 +284,9 @@ function SILE.processString (doc, format, filename, options)
     inputter = SILE.inputter
   else
     format = format or detectFormat(doc, filename)
-    io.stderr:write(("<%s> as %s\n"):format(SILE.currentlyProcessingFile, format))
+    if not SILE.quiet then
+      io.stderr:write(("<%s> as %s\n"):format(SILE.currentlyProcessingFile, format))
+    end
     inputter = SILE.inputters[format](options)
     -- If we did content detection *and* this is the master file, save the
     -- inputter for posterity and postambles
@@ -432,7 +434,9 @@ function SILE.finish ()
   SILE.documentState.documentClass:finish()
   SILE.font.finish()
   runEvals(SILE.input.evaluateAfters, "evaluate-after")
-  io.stderr:write("\n")
+  if not SILE.quiet then
+    io.stderr:write("\n")
+  end
 end
 
 -- Internal libraries that run core SILE functions on load

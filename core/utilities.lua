@@ -42,6 +42,7 @@ utilities.error = function(message, bug)
 end
 
 utilities.warn = function(message, bug)
+  if SILE.quiet then return end
   io.stderr:write("\n! " .. message)
   if SILE.traceback or bug then
     io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
@@ -105,6 +106,7 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
 end
 
 utilities.debug = function (category, ...)
+  if SILE.quiet then return end
   if utilities.debugging(category) then
     local inputs = table.pack(...)
     for i, input in ipairs(inputs) do
