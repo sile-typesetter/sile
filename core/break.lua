@@ -694,9 +694,13 @@ end
 
 function lineBreak:dumpActiveRing()
   local p = self.activeListHead
-  io.stderr:write("\n")
+  if not SILE.quiet then
+    io.stderr:write("\n")
+  end
   repeat
-    if p == self.r then io.stderr:write("-> ") else io.stderr:write("   ") end
+    if not SILE.quiet then
+      if p == self.r then io.stderr:write("-> ") else io.stderr:write("   ") end
+    end
     SU.debug("break", lineBreak:describeBreakNode(p))
     p = p.next
   until p == self.activeListHead

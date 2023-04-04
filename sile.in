@@ -82,7 +82,7 @@ io.stdout:setvbuf 'no'
 
 SILE.cli:parseArguments()
 
-if not os.getenv 'LUA_REPL_RLWRAP' then
+if not os.getenv 'LUA_REPL_RLWRAP' and not SILE.quiet then
   io.stderr:write(SILE.full_version .. '\n')
 end
 
@@ -109,7 +109,9 @@ if SILE.masterFilename then
 
   -- Deprecated, notice given in core.cli when argument used
   for _, path in ipairs(SILE.input.includes) do
-    io.stderr:write("Loading "..path.."\n")
+    if not SILE.quiet then
+      io.stderr:write("Loading "..path.."\n")
+    end
     local c = SILE.resolveFile(path, "classes")
     if c then
       SILE.processFile(c)

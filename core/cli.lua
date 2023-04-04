@@ -29,6 +29,7 @@ cli.parseArguments = function ()
   cliargs:option("-p, --preamble=FILE", "process SIL, XML, or other content before the input document", {})
   cliargs:option("-P, --postamble=FILE", "process SIL, XML, or other content after the input document", {})
   cliargs:option("-u, --use=MODULE[[PARAMETER=VALUE][,PARAMETER=VALUE]]", "load and initialize a module before processing input", {})
+  cliargs:flag("-q, --quiet", "suppress warnings and informational messages during processing")
   cliargs:flag("-t, --traceback", "display detailed location trace on errors and warnings")
   cliargs:flag("-h, --help", "display this help, then exit")
   cliargs:flag("-v, --version", "display version information, then exit", print_version)
@@ -122,6 +123,7 @@ cli.parseArguments = function ()
     return summary(...) .. "\n\nRun with --traceback for more detailed trace leading up to errors."
   end
   SILE.errorHandler = opts.traceback and trace or identity
+  SILE.quiet = opts.quiet
   SILE.traceback = opts.traceback
 end
 
