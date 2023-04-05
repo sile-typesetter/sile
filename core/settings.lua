@@ -143,6 +143,11 @@ function settings:toplevelState ()
 end
 
 function settings:get (parameter)
+  -- HACK FIXME https://github.com/sile-typesetter/sile/issues/1699
+  -- See comment on set() below.
+  if parameter == "current.parindent" then
+    return SILE.typesetter and SILE.typesetter.state.parindent
+  end
   if not parameter then self, parameter = deprecator(), self end
   if not self.declarations[parameter] then
     SU.error("Undefined setting '"..parameter.."'")
@@ -155,6 +160,30 @@ function settings:get (parameter)
 end
 
 function settings:set (parameter, value, makedefault, reset)
+  -- HACK FIXME https://github.com/sile-typesetter/sile/issues/1699
+  -- Anything dubbed current.xxx should likely NOT be a "setting" (subject
+  -- to being pushed/popped via temporary stacking) and actually has its
+  -- own lifecycle (e.g. reset for the next paragraph).
+  -- These should be rather typesetter states, or something to that extent
+  -- yet to clarify. Notably, current.parindent falls in that category,
+  -- BUT probably current.hangAfter and current.hangIndent too.
+  -- To avoid breaking too much code yet without being sure of the solution,
+  -- we implement a hack of sorts for current.parindent only.
+  -- Note moreover that current.parindent is currently probably a bad concept
+  -- anyway:
+  --   - It can be nil (= document.parindent applies)
+  --   - It can be a zero-glue (\noindent, ragged environments, etc.)
+  --   - It can be a valued glue set to document.parindent
+  --     (e.g. from \indent, and document.parindent thus applies)
+  --   - It could be another valued glue (uh, use case to ascertain)
+  -- What we would _likely_ only need to track is whether document.parindent
+  -- applies or not on the paragraph just composed afterwards...
+  if parameter == "current.parindent" then
+    if SILE.typesetter and not SILE.typesetter.state.hmodeOnly then
+      SILE.typesetter.state.parindent = SU.cast("glue or nil", value)
+    end
+    return
+  end
   if type(self) ~= "table" then self, parameter, value, makedefault, reset = deprecator(), self, parameter, value, makedefault end
   if not self.declarations[parameter] then
     SU.error("Undefined setting '"..parameter.."'")
