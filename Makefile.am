@@ -43,7 +43,7 @@ TESTPREVIEWS ?= $(addsuffix .pdf,$(basename $(filter-out $(_DISABLEDSRCS),$(_TES
 include $(wildcard Makefile-distfiles)
 
 MANUAL := documentation/sile.pdf
-SILE := $(PACKAGE_NAME)
+SILE := $(PACKAGE_NAME)-lua
 
 if MANUAL
 _MANUAL = $(MANUAL)
@@ -51,11 +51,11 @@ endif
 
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = core/features.lua core/version.lua $(LUAMODULES)
-dist_man_MANS = sile.1
+dist_man_MANS = sile-lua.1
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE lua-libraries/LICENSE-lunamark
-bin_SCRIPTS = sile
+bin_SCRIPTS = sile-lua
 EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += Makefile-distfiles
 EXTRA_DIST += build-aux/action-updater.js build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
@@ -220,7 +220,7 @@ luarocks-lint: $(LUAMODSPEC)
 luacheck:
 	$(LUACHECK) -j$(shell nproc) -q .
 
-busted: $(SILE) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
+busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'
 if SYSTEM_LUAROCKS
 	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
