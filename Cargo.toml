@@ -40,6 +40,11 @@ required-features = ["cli"]
   optional = true
   features = [ "derive" ]
 
+  [build-dependencies.vergen]
+  version = "7.4"
+  default-features = false
+  features = [ "build", "git" ]
+
 [features]
 default = ["cli", "bash", "elvish", "fish", "manpage", "powershell", "zsh"]
 completions = ["cli", "clap_complete"]

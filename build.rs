@@ -9,11 +9,22 @@ use clap_mangen::Man;
 use std::env;
 #[cfg(feature = "completions")]
 use std::{fs, path};
+use vergen::{vergen, Config};
 
 #[cfg(feature = "completions")]
 include!("src/cli.rs");
 
 fn main() {
+    let mut flags = Config::default();
+    if let Ok(val) = env::var("SILE_VERSION") {
+        *flags.git_mut().semver_mut() = false;
+        println!("cargo:rustc-env=VERGEN_GIT_SEMVER={val}")
+    };
+    if vergen(flags).is_err() {
+        let mut flags = Config::default();
+        *flags.git_mut().enabled_mut() = false;
+        vergen(flags).expect("Unable to generate the cargo keys!");
+    }
     #[cfg(feature = "manpage")]
     generate_manpage();
     #[cfg(feature = "completions")]
