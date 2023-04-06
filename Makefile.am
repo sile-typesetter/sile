@@ -43,7 +43,7 @@ TESTPREVIEWS ?= $(addsuffix .pdf,$(basename $(filter-out $(_DISABLEDSRCS),$(_TES
 include $(wildcard Makefile-distfiles)
 
 MANUAL := documentation/sile.pdf
-SILE := $(PACKAGE_NAME)-lua
+SILELUA := $(PACKAGE_NAME)-lua
 
 if MANUAL
 _MANUAL = $(MANUAL)
@@ -51,11 +51,14 @@ endif
 
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = core/features.lua core/version.lua $(LUAMODULES)
-dist_man_MANS = sile-lua.1
+dist_man_MANS = sile.1 sile-lua.1
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE lua-libraries/LICENSE-lunamark
 bin_SCRIPTS = sile-lua
+bin_PROGRAMS = sile
+sile_SOURCES = Cargo.toml build.rs src/bin/sile.rs src/lib.rs src/cli.rs
+EXTRA_sile_SOURCES = Cargo.lock .version
 EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += Makefile-distfiles
 EXTRA_DIST += build-aux/action-updater.js build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
@@ -70,6 +73,78 @@ CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(BUILT_SOURCES) $(DEPFILES) $(ACTU
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@
+
+if DEBUG_RELEASE
+CARGO_RELEASE_ARGS = --all-features
+else
+CARGO_RELEASE_ARGS = --release --locked --all-features
+endif
+
+CARGO_ENV = CARGO_TARGET_DIR=@abs_top_builddir@/target
+RUST_BIN = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/$(PACKAGE_NAME)
+_RUST_OUT = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/.cargo_out_dir
+COMPLETIONS_OUT_DIR = completions
+
+if ENABLE_BASH_COMPLETION
+bashcompletiondir = $(BASH_COMPLETION_DIR)
+nodist_bashcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME)
+CLEANFILES += $(nodist_bashcompletion_DATA)
+endif
+
+if ENABLE_FISH_COMPLETION
+fishcompletiondir = $(FISH_COMPLETION_DIR)
+nodist_fishcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish
+CLEANFILES += $(nodist_fishcompletion_DATA)
+endif
+
+if ENABLE_ZSH_COMPLETION
+zshcompletiondir = $(ZSH_COMPLETION_DIR)
+nodist_zshcompletion_DATA = $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME)
+CLEANFILES += $(nodist_zshcompletion_DATA)
+endif
+
+export SILE_VERSION = v$(VERSION)
+SILE := $(PACKAGE_NAME)$(EXEEXT)
+
+# Leave some tips for cargo to use so CLI knows where it is
+export CONFIGURE_PREFIX = $(prefix)/
+export CONFIGURE_DATADIR = $(datadir)/
+export CONFIGURE_BINDIR = $(bindir)/
+
+CARGO_VERBOSE = $(cargo_verbose_$(V))
+cargo_verbose_ = $(cargo_verbose_$(AM_DEFAULT_VERBOSITY))
+cargo_verbose_0 =
+cargo_verbose_1 = --verbose
+
+$(COMPLETIONS_OUT_DIR):
+	$(MKDIR_P) $@
+
+$(SILE): $(RUST_BIN)
+	$(INSTALL) $(RUST_BIN) $@
+
+$(PACKAGE_NAME).1: $(RUST_BIN)
+	$(INSTALL) -D $$(cat $(_RUST_OUT))/$@ $@
+
+$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME): $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
+	$(INSTALL) -D $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).bash $@
+
+$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).elv: $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
+	$(INSTALL) -D $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).elv $@
+
+$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish: $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
+	$(INSTALL) -D $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).fish $@
+
+$(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME).ps1: $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
+	$(INSTALL) -D $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME).ps1 $@
+
+$(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME): $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
+	$(INSTALL) -D $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME) $@
+
+$(_RUST_OUT) $(RUST_BIN): $(sile_SOURCES) $(EXTRA_sile_SOURCES)
+	cd $(top_srcdir)
+	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
+	$(CARGO_ENV) $(CARGO) build --quiet --message-format=json $(CARGO_RELEASE_ARGS) |
+		$(JQ) -sr 'map(select(.reason == "build-script-executed")) | last | .out_dir' > $(_RUST_OUT)
 
 _BRANCH_REF != $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:
 

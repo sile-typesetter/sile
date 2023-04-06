@@ -89,7 +89,8 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
 
     AX_FONT(Gentium Plus)
 
-    AC_PATH_PROG([PDFINFO], [pdfinfo])
+    AX_PROGVAR([pdfinfo])
+    AX_PROGVAR([jq])
 
     AC_MSG_CHECKING([for OS X])
     have_appkit=no
@@ -223,6 +224,49 @@ AM_COND_IF([DEBUG_RELEASE], [
     RUST_TARGET_SUBDIR=release
 ])
 AC_SUBST([RUST_TARGET_SUBDIR])
+
+AC_ARG_WITH([bash-completion-dir],
+    AS_HELP_STRING([--with-bash-completion-dir[=PATH]],
+        [Install the bash auto-completion script in this directory. @<:@default=yes@:>@]),
+        [],
+                        [with_bash_completion_dir=yes])
+if test "x$with_bash_completion_dir" = "xyes"; then
+        PKG_CHECK_MODULES([BASH_COMPLETION], [bash-completion >= 2.0],
+                          [BASH_COMPLETION_DIR="`pkg-config --define-variable=datadir=$datadir --variable=completionsdir bash-completion`"],
+                          [BASH_COMPLETION_DIR="$datadir/bash-completion/completions"])
+        else
+                BASH_COMPLETION_DIR="$with_bash_completion_dir"
+fi
+AC_SUBST([BASH_COMPLETION_DIR])
+AM_CONDITIONAL([ENABLE_BASH_COMPLETION],[test "x$with_bash_completion_dir" != "xno"])
+
+AC_ARG_WITH([fish-completion-dir],
+            AS_HELP_STRING([--with-fish-completion-dir[=PATH]],
+                           [Install the fish auto-completion script in this directory. @<:@default=yes@:>@]),
+                           [],
+                           [with_fish_completion_dir=yes])
+if test "x$with_fish_completion_dir" = "xyes"; then
+        PKG_CHECK_MODULES([FISH_COMPLETION], [fish >= 3.0],
+                          [FISH_COMPLETION_DIR="`pkg-config --define-variable=datadir=$datadir --variable=completionsdir fish`"],
+                          [FISH_COMPLETION_DIR="$datadir/fish/vendor_completions.d"])
+        else
+                FISH_COMPLETION_DIR="$with_fish_completion_dir"
+fi
+AC_SUBST([FISH_COMPLETION_DIR])
+AM_CONDITIONAL([ENABLE_FISH_COMPLETION],[test "x$with_fish_completion_dir" != "xno"])
+
+AC_ARG_WITH([zsh-completion-dir],
+            AS_HELP_STRING([--with-zsh-completion-dir[=PATH]],
+                           [Install the zsh auto-completion script in this directory. @<:@default=yes@:>@]),
+                           [],
+                           [with_zsh_completion_dir=yes])
+if test "x$with_zsh_completion_dir" = "xyes"; then
+        ZSH_COMPLETION_DIR="$datadir/zsh/site-functions"
+else
+        ZSH_COMPLETION_DIR="$with_zsh_completion_dir"
+fi
+AC_SUBST([ZSH_COMPLETION_DIR])
+AM_CONDITIONAL([ENABLE_ZSH_COMPLETION],[test "x$with_zsh_completion_dir" != "xno"])
 
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
