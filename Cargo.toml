@@ -25,6 +25,10 @@ required-features = ["cli"]
   optional = true
   features = [ "derive", "wrap_help" ]
 
+  [dependencies.mlua]
+  version = "0.8"
+  features = [ "lua54", "vendored" ]
+
 [build-dependencies]
 
   [build-dependencies.clap_complete]
