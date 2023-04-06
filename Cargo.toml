@@ -1,0 +1,16 @@
+[package]
+name = "sile"
+version = "0.14.8"
+edition = "2021"
+description = "Simon’s Improved Layout Engine"
+authors = [
+	"Simon Cozens",
+	"Caleb Maclennan <caleb@alerque.com>",
+	"Olivier Nicole",
+	"Didier Willis"
+]
+rust-version = "1.68"
+homepage = "https://sile-typesetter.org"
+license = "MIT"
+
+[dependencies]

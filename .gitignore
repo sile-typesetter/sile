@@ -87,3 +87,8 @@ core/version.lua
 
 # Nix symlink to builds
 /result
+
+
+# Added by cargo
+
+/target
