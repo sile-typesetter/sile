@@ -277,7 +277,7 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) 
 .PHONY: force
 force: ;
 
-PHONY_DEVELOPER_TARGETS = regressions test lint luarocks-lint luacheck busted coverage benchmark compare update_expecteds regression_previews docker docker-dep-check docker-ghcr-to-hub docker-build-push gource.webm
+PHONY_DEVELOPER_TARGETS = regressions test lint luarocks-lint luacheck rustfmt clippy cargo-test busted coverage benchmark compare update_expecteds regression_previews docker docker-dep-check docker-ghcr-to-hub docker-build-push gource.webm
 .PHONY: $(PHONY_DEVELOPER_TARGETS)
 
 if DEVELOPER
@@ -285,15 +285,26 @@ if DEVELOPER
 regressions: $(TESTSRCS) $(ACTUALS)
 	$(LOCALTESTFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
-test: regressions busted
+test: regressions busted cargo-test
 
-lint: luacheck luarocks-lint
+lint: luacheck luarocks-lint rustfmt clippy
 
 luarocks-lint: $(LUAMODSPEC)
 	$(LUAROCKS) lint $(LUAMODSPEC)
 
 luacheck:
 	$(LUACHECK) -j$(shell nproc) -q .
+
+rustfmt:
+	$(GIT) ls-files '*.rs' | $(XARGS) rustfmt --check
+
+clippy:
+	cd $(srcdir)
+	$(CARGO_ENV) $(CARGO) clippy -- -D warnings
+
+cargo-test: $(SILE)
+	cd $(srcdir)
+	$(CARGO_ENV) $(CARGO) test --locked
 
 busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'
