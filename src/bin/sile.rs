@@ -8,12 +8,20 @@ fn main() -> sile::Result<()> {
     let app = Cli::command().version(version);
     #[allow(unused_variables)]
     let matches = app.get_matches();
-    sile_lua()?;
+    sile()?;
     Ok(())
 }
 
-fn sile_lua() -> LuaResult<()> {
-    let lua = Lua::new();
-    lua.load("print('Hello, world!')").exec()?;
+fn sile() -> LuaResult<()> {
+    let lua = unsafe { Lua::unsafe_new() };
+    lua.load(
+        r#"
+        package.path = ";;./?.lua;./?/init.lua;./lua-libraries/?.lua;./lua-libraries/?/init.lua;./lua_modules/share/lua/5.4/?.lua;./lua_modules/share/lua/5.4/?/init.lua"
+        package.cpath = ";;./?.so;./lua_modules/lib/lua/5.4/?.so"
+        require("core.sile")
+        SU.dump(SILE)
+        "#,
+    )
+    .exec()?;
     Ok(())
 }
