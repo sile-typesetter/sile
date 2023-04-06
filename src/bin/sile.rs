@@ -18,8 +18,15 @@ fn sile() -> LuaResult<()> {
         r#"
         package.path = ";;./?.lua;./?/init.lua;./lua-libraries/?.lua;./lua-libraries/?/init.lua;./lua_modules/share/lua/5.4/?.lua;./lua_modules/share/lua/5.4/?/init.lua"
         package.cpath = ";;./?.so;./lua_modules/lib/lua/5.4/?.so"
-        require("core.sile")
-        SU.dump(SILE)
+        SILE = require("core.sile")
+        io.stderr:write(" [ Rust ]" .. SILE.full_version .. '\n')
+        SILE.init()
+        SILE.masterFilename = "tests/absmin"
+        SILE.masterDir = "tests"
+        SILE.input.filename = "tests/absmin.xml"
+        SILE.processFile(SILE.input.filename)
+        SILE.outputter:finish()
+        SILE.finish()
         "#,
     )
     .exec()?;
