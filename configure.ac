@@ -24,6 +24,12 @@ LT_INIT([dlopen])
 
 AC_CANONICAL_HOST
 
+AC_ARG_ENABLE(debug,
+            AS_HELP_STRING([--enable-debug],[Build Rust code with debugging information [default=no]]),
+            [debug_release=$enableval],
+            [debug_release=no])
+AM_CONDITIONAL([DEBUG_RELEASE], [test "x$debug_release" = "xyes"])
+
 AC_ARG_ENABLE([dependency-checks],
               AS_HELP_STRING([--disable-dependency-checks],
                              [Disable dependency checks]))
@@ -203,7 +209,20 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         AX_PROGVAR([perl])
     ])
 
+    AX_PROGVAR([cargo])
+    AX_PROGVAR([rustc])
+
 ])
+
+AC_MSG_CHECKING(whether to build Rust code with debugging information)
+AM_COND_IF([DEBUG_RELEASE], [
+    AC_MSG_RESULT(yes)
+    RUST_TARGET_SUBDIR=debug
+], [
+    AC_MSG_RESULT(no)
+    RUST_TARGET_SUBDIR=release
+])
+AC_SUBST([RUST_TARGET_SUBDIR])
 
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
