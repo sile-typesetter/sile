@@ -761,16 +761,23 @@ function typesetter.computeLineRatio (_, breakwidth, slice)
   -- TODO Possibly consider a full rewrite/refactor.
   local naturalTotals = SILE.length()
 
-  -- Check if line is hyphenated:
-  -- Skip glues and margins, and check if it ends with a discretionary.
-  -- If so, account for a prebreak.
+  -- From the line end, check if the line is hyphenated (to account for a prebreak)
+  -- or contains extraneous glues (e.g. to account for spaces to ignore).
   local n = #slice
   while n > 1 do
     if slice[n].is_glue or slice[n].is_zero then
+      -- Skip margin glues (they'll be accounted for in the loop below) and
+      -- zero boxes, so as to reach actual content...
       if slice[n].value ~= "margin" then
-       naturalTotals:___sub(slice[n].width)
+        -- ... but any other glue than a margin, at the end of a line, is actually
+        -- extraneous. It will however also be accounted for below, so substract
+        -- them to cancel their width. Typically, if a line break occurred at
+        -- a space, the latter is then at the end of the line now, and must be
+        -- ignored.
+        naturalTotals:___sub(slice[n].width)
       end
     elseif slice[n].is_discretionary then
+      -- Stop as we reached an hyphenation, and account for the prebreak.
       slice[n].used = true
       if slice[n].parent then
         slice[n].parent.hyphenated = true
@@ -779,6 +786,7 @@ function typesetter.computeLineRatio (_, breakwidth, slice)
       slice[n].height = slice[n]:prebreakHeight()
       break
     else
+      -- Stop as we reached actual content.
       break
     end
     n = n - 1
