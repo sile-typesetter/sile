@@ -416,21 +416,24 @@ function nodefactory.glue:outputYourself (typesetter, line)
   typesetter.frame:advanceWritingDirection(outputWidth)
 end
 
+-- A hfillglue is just a glue with infinite stretch.
+-- (Convenience so callers do not have to know what infinity is.)
 nodefactory.hfillglue = pl.class(nodefactory.glue)
 function nodefactory.hfillglue:_init (spec)
-  self.width = SILE.length(0, infinity)
   self:super(spec)
+  self.width = SILE.length(self.width.length, infinity, self.width.shrink)
 end
 
--- possible bug, deprecated constructor actually used vglue as base class for this
+-- A hssglue is just a glue with infinite stretch and shrink.
+-- (Convenience so callers do not have to know what infinity is.)
 nodefactory.hssglue = pl.class(nodefactory.glue)
 function nodefactory.hssglue:_init (spec)
-  self.width = SILE.length(0, infinity, infinity)
   self:super(spec)
+  self.width = SILE.length(self.width.length, infinity, infinity)
 end
 
 nodefactory.kern = pl.class(nodefactory.glue)
-nodefactory.kern.type = "kern"
+nodefactory.kern.type = "kern" -- Perhaps some smell here, see comment on vkern
 nodefactory.kern.discardable = false
 
 function nodefactory.kern:__tostring ()
@@ -464,18 +467,34 @@ function nodefactory.vglue:unbox ()
   return { self }
 end
 
+-- A vfillglue is just a vglue with infinite stretch.
+-- (Convenience so callers do not have to know what infinity is.)
 nodefactory.vfillglue = pl.class(nodefactory.vglue)
 function nodefactory.vfillglue:_init (spec)
-  self.height = SILE.length(0, infinity)
   self:super(spec)
+  self.height = SILE.length(self.width.length, infinity, self.width.shrink)
 end
 
+-- A vssglue is just a vglue with infinite stretch and shrink.
+-- (Convenience so callers do not have to know what infinity is.)
 nodefactory.vssglue = pl.class(nodefactory.vglue)
-nodefactory.vssglue.height = SILE.length(0, infinity, infinity)
+function nodefactory.vssglue:_init (spec)
+  self:super(spec)
+  self.height = SILE.length(self.width.length, infinity, infinity)
+end
 
 nodefactory.zerovglue = pl.class(nodefactory.vglue)
 
 nodefactory.vkern = pl.class(nodefactory.vglue)
+-- FIXME TODO
+-- Here we cannot do:
+--   nodefactory.vkern.type = "vkern"
+-- It cannot be typed as "vkern" as the pagebuilder doesn't check is_vkern.
+-- So it's just a vglue currrenty, marked as not discardable...
+-- But on the other hand, nodefactory.kern is typed "kern" and is not a glue...
+-- Frankly, the discardable/explicit flags and the types are too
+-- entangled and point towards a more general design issue.
+-- N.B. this vkern node is only used in the linespacing package so far.
 nodefactory.vkern.discardable = false
 
 function nodefactory.vkern:__tostring ()
