@@ -113,10 +113,6 @@ function class:registerCommands ()
       else
         SILE.call("show-multilevel-counter", { id = "sectioning" })
       end
-    else
-      -- https://github.com/sile-typesetter/sile/issues/1707
-      -- https://github.com/sile-typesetter/sile/issues/1751
-      SILE.call("hbox")
     end
   end)
 
