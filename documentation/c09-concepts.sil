@@ -37,7 +37,7 @@ casting a length to a measurement returns just the base measurement and discards
 casting a measurement to a length sets its stretch and shrink properties to zero.
 
 \begin[type=autodoc:codeblock]{raw}
-local l3 = SILE.length(SILE.measurement("10pt")) -- 10pt, without strech and shrink
+local l3 = SILE.length(SILE.measurement("10pt")) -- 10pt, without stretch and shrink
 local m3 = SILE.measurement(SILE.length("10pt plus 2pt minus 1pt")) -- 10pt
 \end{raw}
 
