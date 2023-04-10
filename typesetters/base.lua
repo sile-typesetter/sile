@@ -718,36 +718,44 @@ function typesetter:breakpointsToLines (breakpoints)
     local point = breakpoints[i]
     if point.position ~= 0 then
       local slice = {}
-      local seenHbox = 0
-      -- local toss = 1
+      local seenNonDiscardable = false
       for j = linestart, point.position do
         slice[#slice+1] = nodes[j]
         if nodes[j] then
-          -- toss = 0
-          if nodes[j].is_box or nodes[j].is_discretionary then seenHbox = 1 end
+          if not nodes[j].discardable then
+            seenNonDiscardable = true
+          end
         end
       end
-      if seenHbox == 0 then break end
-
-      -- If the line ends with a discretionary, repeat it on the next line,
-      -- so as to account for a potential postbreak.
-      if slice[#slice].is_discretionary then
-        linestart = point.position
-      else
+      if not seenNonDiscardable then
+        -- Slip lines containing only discardable nodes (e.g. glues).
+        SU.debug("typesetter", "Skipping a line containing only discardable nodes")
         linestart = point.position + 1
+      else
+        -- If the line ends with a discretionary, repeat it on the next line,
+        -- so as to account for a potential postbreak.
+        if slice[#slice].is_discretionary then
+          linestart = point.position
+        else
+          linestart = point.position + 1
+        end
+
+        -- Then only we can add some extra margin glue...
+        local mrg = self:getMargins()
+        self:addrlskip(slice, mrg, point.left, point.right)
+
+        -- And compute the line...
+        local ratio = self:computeLineRatio(point.width, slice)
+        local thisLine = { ratio = ratio, nodes = slice }
+        lines[#lines+1] = thisLine
       end
-
-      -- Then only we can add some extra margin glue...
-      local mrg = self:getMargins()
-      self:addrlskip(slice, mrg, point.left, point.right)
-
-      -- And compute the line...
-      local ratio = self:computeLineRatio(point.width, slice)
-      local thisLine = { ratio = ratio, nodes = slice }
-      lines[#lines+1] = thisLine
     end
   end
-  --self.state.nodes = nodes.slice(linestart+1,nodes.length)
+  if linestart < #nodes then
+    -- Abnormal, but warn so that one has a chance to check which bits
+    -- are misssing at output.
+    SU.warn("Internal typesetter error " .. (#nodes - linestart) .. " skipped nodes")
+  end
   return lines
 end
 

@@ -1,0 +1,19 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+Line1\break
+\break% Empty line are skipped
+Line2
+
+Line1\break
+\glue[width=1cm]\break% Lines with only discardable nodes are skipped
+Line2
+
+Line1\break
+\kern[width=1cm]\break% Non-discardable
+Line2
+
+Line1\break
+\hbox{}\break% Non-discardable
+Line2
+\end{document}
