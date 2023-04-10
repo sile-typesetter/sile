@@ -64,6 +64,11 @@ units["ft"] = {
   definition = "12in"
 }
 
+-- Picas are 1/6 inch, used in Docbook images
+units["pc"] = {
+  definition = "0.166666667in"
+}
+
 local checkPaperDefined = function ()
   if not SILE.documentState or not SILE.documentState.orgPaperSize then
     SU.error("A measurement tried to measure the paper size before the paper was defined", true)
