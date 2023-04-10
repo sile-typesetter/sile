@@ -1,116 +1,85 @@
 \begin{document}
 \chapter{What is SILE?}
+% Our chapters open on double page spreads. We want
+% chapter 1 to lead as "page 1" and we can't run this
+% earlier without messing up folios in the TOC.
+\set-counter[id=folio,value=1,display=arabic]
 
-SILE is a typesetting system. Its job is to produce beautiful printed
-documents from raw content. The best way to understand what SILE is and what it
-does is to compare it to other systems which you may have heard of.
+SILE is a typesetting system.
+Its job is to produce beautiful printed documents from raw content.
+The best way to understand what SILE is and what it does is to compare it to other systems which you may have heard of.
 
 \section{SILE versus Word}
 
-When most people produce printed documents using a computer, they usually use
-desktop oriented word processing software such as Microsoft Word, iWork Pages,
-or LibreOffice Writer. SILE is not a word processor; it is a typesetting
-system. There are several important differences.
+When most people produce printed documents using a computer, they usually use desktop oriented word processing software such as Microsoft Word, Apple Pages, or LibreOffice Writer.
+SILE is not a word processor;
+	it is a typesetting system.
+There are several important differences.
 
-The job of a word processor is to produce a document that looks exactly like
-what you type on the screen. By contrast, the job of a typesetting system is to
-take raw content and produce a document that looks as good as possible. The
-input for SILE is a text document that includes instructions about how the
-content should be laid out on a page. In order to obtain the typeset result,
-the input file must be \em{processed} to render the desired output.
+The job of a word processor is to produce a document that looks exactly like what you type on the screen.
+By contrast, the job of a typesetting system is to take raw content and produce a document that looks as good as possible.
+The input for SILE is a text document that includes instructions about how the content should be laid out on a page.
+In order to obtain the typeset result, the input file must be \em{processed} to render the desired output.
 
-Word processors often describe themselves as WYSIWYG: What You See Is What You
-Get. SILE is cheerfully \em{not} WYSIWYG. In fact, you don’t see what you get
-until you get it. Rather, SILE documents are prepared initially in a \em{text
-editor}—a piece of software which focuses on the text itself and not what it
-looks like—and then run through SILE in order to produce a PDF document.
+Word processors often describe themselves as WYSIWYG: What You See Is What You Get.
+SILE is cheerfully \em{not} WYSIWYG.
+In fact, you don’t see what you get until you get it.
+Rather, SILE documents are prepared initially in a \em{text editor}—a piece of software which focuses on the text itself and not what it looks like—and then run through SILE in order to produce a PDF document.
 
-For instance, most word processors are built roughly around the concept of a
-page with a central content area into which you type and style your content.
-The overall page layout is controlled by the page size and margins and more
-fine tuning is done by styling the content itself. You typically type
-continuously and when you hit the right margin, your cursor will automatically
-jump to the next line. In this way, the user interface shows you where the lines
-on the printed page will break.
+For instance, most word processors are built roughly around the concept of a page with a central content area into which you type and style your content.
+The overall page layout is controlled by the page size and margins and more fine tuning is done by styling the content itself.
+You typically type continuously and when you hit the right margin, your cursor will automatically jump to the next line.
+In this way, the user interface shows you where the lines on the printed page will break.
 
-In SILE the overall page layout is defined with a paper size and a series of
-one or more content frames. These frame descriptions provide the containers
-where content will later be typeset, including information about how it might
-flow from one frame to the next. Content is written separately, and SILE works
-out automatically how it best flows from frame to frame and from page to page.
-So when you are preparing content for SILE, you don’t know where the lines
-will break until after it has been processed. You may use your text editor to
-type and type and type as long a line as you like, and when SILE comes to
-process your instructions, it will consider your input (up to) three times
-over in order to work out how to best to break the lines to form a paragraph.
-For example, if after one pass it finds that it has ended two successive lines
-with a hyphenated word, it will go back and try again and see if it can find
-better layout.
+In SILE the overall page layout is defined with a paper size and a series of one or more content frames.
+These frame descriptions provide the containers where content will later be typeset, including information about how it might
+flow from one frame to the next.
+Content is written separately, and SILE works out automatically how it best flows from frame to frame and from page to page.
+So when you are preparing content for SILE, you don’t know where the lines will break until after it has been processed.
+You may use your text editor to type and type and type as long a line as you like, and when SILE comes to process your instructions, it will consider your input several times over in order to work out how to best to break the lines to form a paragraph.
+For example, if after one pass it finds that it has ended two successive lines with a hyphenated word, it will go back and try again and see if it can find better layout.
 
-The same idea applies to page breaks. When you type into a word processor, at
-some point you will spill over onto a new page. When preparing content for
-SILE, you keep typing, because the page breaks are determined after considering
-the layout of the whole document.
+The same idea applies to page breaks. When you type into a word processor, at some point you will spill over onto a new page.
+When preparing content for SILE, you keep typing, because the page breaks are determined after considering the layout of the whole document.
 
-In other words, SILE is a \em{language} for describing what you want to happen,
-and an interpreter that will make certain formatting decisions about the best
-way for those instructions to be turned into print.
+In other words, SILE is a \em{language} for describing what you want to happen, and an interpreter that will make certain formatting decisions about the best way for those instructions to be turned into print.
 
 \section{SILE versus TeX}
 
-“Ah,” some people will say, “that sounds very much like TeX!”\footnote{Except
-that, being TeX users, they will say “Ah, that sounds very much like
-T\glue[width=-.1667em]\lower[height=0.5ex]{E}\glue[width=-.125em]X!”} If you
-don’t know much about TeX or don’t care, you can probably skip this section.
+“Ah,” some people will say, “that sounds very much like TeX!”\footnote{Except that, being TeX users, they will say “Ah, that sounds very much like T\glue[width=-.1667em]\lower[height=0.5ex]{E}\glue[width=-.125em]X!”}
 
-And it’s true. SILE owes an awful lot of its heritage to TeX. It would be
-terribly immodest to claim that a little project like SILE was a worthy
-successor to the ancient and venerable creation of the Professor of the Art of
-Computer Programming, but… really, SILE is basically a modern rewrite of TeX.
+And it’s true.
+SILE owes an awful lot of its heritage to TeX.
+It would be terribly immodest to claim that a little project like SILE was a worthy successor to the ancient and venerable creation of the Professor of the Art of Computer Programming, but… really, SILE is basically a modern rewrite of TeX.
 
-TeX was one of the earliest typesetting systems, and had to make a lot of
-design decisions somewhat in a vacuum. Some of those design decisions have
-stood the test of time—TeX is still an extremely well-used typesetting system
-more than thirty years after its inception, which is a testament to its design
-and performance—but many others have not. In fact, most of the development of
-TeX since Knuth’s era has involved removing his early decisions and replacing
-them with technologies which have become the industry standard: we use
-TrueType fonts, not METAFONTs (\tt{xetex}); PDFs, not DVIs (\tt{pstex},
-\tt{pdftex}); Unicode, not 7-bit ASCII (\tt{xetex} again); markup languages
-and embedded programming languages, not macro languages (\tt{xmltex},
-\tt{luatex}). At this point, the parts of TeX that people actually \em{use}
-are 1) the box-and-glue model, 2) the hyphenation algorithm, and 3) the
-line-breaking algorithm.
+TeX was one of the earliest typesetting systems, and had to make a lot of design decisions somewhat in a vacuum.
+Some of those design decisions have stood the test of time—TeX is still an extremely well-used typesetting system more than forty years after its inception, which is a testament to its design and performance—but many others have not.
+In fact, most of the development of TeX since Knuth’s era has involved removing his early decisions and replacing them with technologies which have become the industry standard:
+	we use TrueType fonts, not METAFONTs (\tt{xetex});
+	PDFs, not DVIs (\tt{pstex}, \tt{pdftex});
+	Unicode, not 7-bit ASCII (\tt{xetex} again);
+	markup languages and embedded programming languages, not macro languages (\tt{xmltex}, \tt{luatex}).
+At this point, the parts of TeX that people actually \em{use} are (1) the box-and-glue model, (2) the hyphenation algorithm, and (3) the line-breaking algorithm.
 
-SILE follows exactly in TeX’s footsteps for each of these three areas that have
-stood the test of time; it contains a slavish port of the TeX line-breaking
-algorithm which has been tested to produce exactly the same output as TeX given
-equivalent input. But as SILE is itself written in an interpreted
-language,\footnote{And if the phrase \code{TeX capacity exceeded} is familiar
-to you, you should already be getting excited.} it is very easy to extend or
-alter the behaviour of the SILE typesetter.
+SILE follows exactly in TeX’s footsteps for each of these three areas that have stood the test of time;
+	it contains a slavish port of the TeX line-breaking algorithm which has been tested to produce exactly the same output as TeX given equivalent input.
+But as SILE is itself written in an interpreted language,\footnote{And if the phrase \code{TeX capacity exceeded} is familiar to you, you should already be getting excited.} it is very easy to extend or alter the behaviour of the SILE typesetter.
 
-For instance, one of the things that TeX can’t do particularly well is
-typesetting on a grid. This is something of a must-have feature for anyone
-typesetting bibles. Typesetting on a grid means that each line of text will
-line up between the front and back of each piece of paper producing much less
-visual bleed-through when printed on thin paper. This is virtually impossible
-to accomplish in TeX. There are various hacks to try to make it happen, but
-they’re all horrible. In SILE, you can alter the behaviour of the typesetter
-and write a very short add-on package to enable grid typesetting.
+For instance, one of the things that TeX can’t do particularly well is typesetting on a grid.
+This a must-have feature for anyone typesetting bibles and other documents to be printed on thin paper.
+Typesetting on a grid means that each line of text will line up between the front and back of each piece of paper producing much less visual bleed-through when printed on thin paper.
+This a fairly difficult task to accomplish in TeX.
+There are various solutions trying to address it, but they are complex and have limitations.
+In SILE, you can alter the behaviour of the typesetter and include a reasonably short add-on package to enable grid typesetting.
 
-Of course, nobody uses plain TeX—they all use LaTeX equivalents plus a huge
-repository of packages available from the CTAN. SILE does not benefit from the
-large ecosystem and community that has grown up around TeX; in that sense, TeX
-will remain streets ahead of SILE for some time to come. But in terms of
-\em{core capabilities}, SILE is already certainly equivalent to, if not
-somewhat more advanced than, TeX.
+In fact, almost nobody uses plain TeX—they all use LaTeX equivalents plus a huge repository of packages available from the The Comprehensive TeX Archive Network (CTAN) archive.
+SILE does not benefit from the large ecosystem and community that has grown up around TeX.\footnote{Nevertheless, SILE does have a small ecosystem of third-party packages—More on the topic later.}
+In that sense, TeX will remain ahead of SILE for some time to come.
+But in terms of \em{core capabilities}, SILE aims at being at least equivalent to TeX.
 
 \section{SILE versus InDesign}
 
-The other tool that people reach for when designing printed material on
-a computer is InDesign (or similar Desktop Publishing software, such as
-Scribus).
+The other tool that people reach for when designing printed material on a computer is Adobe InDesign (or similar desktop publishing software, such as Scribus).
 
 % Reduce bug reports about this buggy float with a hack-around
 % https://github.com/sile-typesetter/sile/issues/860
@@ -120,50 +89,31 @@ Scribus).
 
 \noindent
 \float[rightboundary=7pt,bottomboundary=10pt]{\img[src=documentation/fig1.png,width=140]}
-DTP software is similar to Word Processing Software in that they are
-both graphical and largely WYSIWYG, but the paradigm is different. The focus is
-usually less on preparing the content than on laying it out on the
-page--you click and drag to move areas of text and images around the screen.
+DTP software is similar to word processing software in that they are both graphical and largely WYSIWYG, but the paradigm is different.
+The focus is usually less on preparing the content than on laying it out on the page—you click and drag to move areas of text and images around the screen.
 
-InDesign is a complex, expensive, commercial publishing tool. SILE is a free,
-open source typesetting tool which is entirely text-based; you enter commands
-in a separate editing tool, save those commands into a file, and hand it to
-SILE for typesetting. And yet the two systems do have a number of common
-features.
+InDesign is a complex, expensive, commercial publishing tool.
+SILE is a free, open source typesetting tool which is entirely text-based;
+	you enter commands in a separate editing tool, save those commands into a file, and hand it to SILE for typesetting.
+And yet the two systems do have a number of common features.
 
-In InDesign, text is flowed into \em{frames} on the page. On the left, you can
-see an example of what a fairly typical InDesign layout might look like.
-SILE also uses the concept of frames to determine where text should appear on
-the page, and so it’s possible to use SILE to generate page layouts which are
-more flexible and more complex than that afforded by TeX.
+In InDesign, text is flowed into \em{frames} on the page.
+On the left, you can see an example of what a fairly typical InDesign layout might look like.
+SILE also uses the concept of frames to determine where text should appear on the page, and so it’s possible to use SILE to generate advanced and flexible page layouts.
 
 \smallskip
 
-Another thing which people use InDesign for is to turn structured data in XML
-format—catalogues, directories and the like—into print. The way you do this in
-InDesign is to declare what styling should apply to each XML element, and as
-the data is read in, InDesign formats the content according to the rules that
-you have declared.
+Another thing which people use InDesign for is to turn structured data in XML format—catalogues, directories and the like—into print.
+The way you do this in InDesign is to declare what styling should apply to each XML element, and as the data is read in, InDesign formats the content according to the rules that you have declared.
 
-You can do exactly the same thing in SILE, except you have a lot more control
-over how the XML elements get styled, because you can run any SILE command you
-like for a given element, including calling out to Lua code to style a piece of
-XML. Since SILE is a command-line filter, armed with appropriate styling
-instructions you can go from an XML file to a PDF in one shot. Which is quite
-nice.
+You can do the same thing in SILE, except you have a lot more control over how the XML elements get styled, because you can run any SILE command you like for a given element, including calling out to Lua code to style a piece of XML.
+Since SILE is a command-line filter, armed with appropriate styling instructions you can go from an XML file to a PDF in one shot.
 
-In the final chapters of this book, we’ll look at some extended examples of
-creating a \em{class file} for styling a complex XML document into a PDF with
-SILE.
+In the final chapters of this book, we’ll look at some extended examples of creating a \em{class file} for styling a complex XML document into a PDF with SILE.
 
 \section{Conclusion}
 
-SILE\footnote{In case you’re wondering, the author pronounces it
-\font[family=Gentium Plus]{/saɪəl/}, to rhyme with “trial”.} {}takes some textual
-instructions and turns them into PDF output. It has
-features inspired by TeX and InDesign, but seeks to be more flexible,
-extensible and programmable than either of them. It’s useful both for
-typesetting documents (such as this very documentation) written in the SILE
-language, and as a processing system for styling and outputting structured
-data.
+SILE\footnote{In case you’re wondering, the author pronounces it \font[family=Gentium Plus]{/saɪəl/}, to rhyme with “trial”.} takes some textual instructions and turns them into PDF output.
+It has features inspired by TeX and InDesign, but seeks to be more flexible, extensible and programmable than either of them.
+It’s useful both for typesetting documents (such as this very documentation) written in the SILE language, and as a processing system for styling and outputting structured data.
 \end{document}

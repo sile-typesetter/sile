@@ -2,7 +2,7 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	29.9059
 My 	27.9564
-Set font 	Libertinus Serif;10;400;Italic;normal;;LTR
+Set font 	Libertinus Serif;10;400;Italic;normal;;;LTR
 Mx 	5.8700
 Mx 	4.5700
 Mx 	5.0000
@@ -13,7 +13,7 @@ T	51 a=5.8700 66 a=4.5700 72 a=5.0000 72 a=5.0000 70 a=4.4700 69 a=5.0600	(Ragge
 Mx 	62.9459
 T	77 70 2385 w=13.0700	(left)
 Mx 	79.0159
-Set font 	Libertinus Serif;10;400;;normal;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR
 Mx 	2.6400
 Mx 	5.0400
 Mx 	3.6400
@@ -170,7 +170,7 @@ Mx 	5.4200
 T	72 a=5.0000 86 a=5.3100 67 a=4.9300 70 a=4.4700 83 a=3.7200 72 a=5.0000 83 a=3.7200 70 a=4.4700 79 a=5.4200	(gubergren)
 Mx 	14.8819
 My 	107.9564
-Set font 	Libertinus Serif;10;400;Italic;normal;;LTR
+Set font 	Libertinus Serif;10;400;Italic;normal;;;LTR
 Mx 	5.8700
 Mx 	4.5700
 Mx 	5.0000
@@ -181,7 +181,7 @@ T	51 a=5.8700 66 a=4.5700 72 a=5.0000 72 a=5.0000 70 a=4.4700 69 a=5.0600	(Ragge
 Mx 	47.9219
 T	83 74 72 73 85 w=19.9700	(right)
 Mx 	70.8919
-Set font 	Libertinus Serif;10;400;;normal;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR
 Mx 	2.6400
 Mx 	5.0400
 Mx 	3.6400
@@ -338,7 +338,7 @@ Mx 	5.4200
 T	72 a=5.0000 86 a=5.3100 67 a=4.9300 70 a=4.4700 83 a=3.7200 72 a=5.0000 83 a=3.7200 70 a=4.4700 79 a=5.4200	(gubergren)
 Mx 	16.9889
 My 	187.9564
-Set font 	Libertinus Serif;10;400;Italic;normal;;LTR
+Set font 	Libertinus Serif;10;400;Italic;normal;;;LTR
 Mx 	6.4600
 Mx 	4.4700
 Mx 	5.4200
@@ -349,7 +349,7 @@ Mx 	4.5400
 Mx 	5.0600
 T	36 a=6.4600 70 a=4.4700 79 a=5.4200 85 a=3.1600 70 a=4.4700 83 a=3.7200 70 a=4.4700 69 a=5.0600	(Centered)
 Mx 	57.2089
-Set font 	Libertinus Serif;10;400;;normal;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR
 Mx 	2.6400
 Mx 	5.0400
 Mx 	3.6400
@@ -505,7 +505,7 @@ Mx 	5.4200
 T	72 a=5.0000 86 a=5.3100 67 a=4.9300 70 a=4.4700 83 a=3.7200 72 a=5.0000 83 a=3.7200 70 a=4.4700 79 a=5.4200	(gubergren)
 Mx 	34.8819
 My 	255.9564
-Set font 	Libertinus Serif;10;400;Italic;normal;;LTR
+Set font 	Libertinus Serif;10;400;Italic;normal;;;LTR
 Mx 	3.2200
 Mx 	5.3100
 Mx 	3.9000
@@ -516,7 +516,7 @@ Mx 	4.5400
 Mx 	5.0600
 T	43 a=3.2200 86 a=5.3100 84 a=3.9000 85 a=3.1600 74 a=2.7100 2361 a=5.6000 70 a=4.4700 69 a=5.0600	(Justified)
 Mx 	72.4725
-Set font 	Libertinus Serif;10;400;;normal;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR
 Mx 	2.6400
 Mx 	5.0400
 Mx 	3.6400
@@ -672,7 +672,7 @@ Mx 	5.4200
 T	72 a=5.0000 86 a=5.3100 67 a=4.9300 70 a=4.4700 83 a=3.7200 72 a=5.0000 83 a=3.7200 70 a=4.4700 79 a=5.4200	(gubergren)
 Mx 	135.7259
 My 	323.9564
-Set font 	Libertinus Serif;10;400;Italic;normal;;LTR
+Set font 	Libertinus Serif;10;400;Italic;normal;;;LTR
 T	51 74 72 73 85 w=22.1200	(Right)
 Mx 	160.8459
 Mx 	4.5700
@@ -684,7 +684,7 @@ Mx 	4.5400
 Mx 	5.0600
 T	66 a=4.5700 77 a=2.6400 74 a=2.7100 72 a=5.0000 79 a=5.4200 70 a=4.4700 69 a=5.0600	(aligned)
 Mx 	193.7859
-Set font 	Libertinus Serif;10;400;;normal;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR
 Mx 	2.6400
 Mx 	5.0400
 Mx 	3.6400

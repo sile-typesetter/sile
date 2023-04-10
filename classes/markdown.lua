@@ -1,6 +1,10 @@
 -- You will need my lunamark fork from https://github.com/simoncozens/lunamark
 -- for the AST writer.
 
+local book = require("classes.book")
+local class = pl.class(book)
+class._name = "markdown"
+
 SILE.inputs.markdown = {
   order = 2,
   appropriate = function (fn, _)
@@ -18,47 +22,49 @@ SILE.inputs.markdown = {
   end
 }
 
-SILE.require("packages/url")
-SILE.require("packages/image")
-
-local book = SILE.require("book", "classes")
-local markdown = book { id = "markdown" }
-
-function markdown:init ()
-  return book.init(self)
+function class:_init (options)
+  book._init(self, options)
+  self:loadPackage("url")
+  self:loadPackage("image")
 end
 
-SILE.registerCommand("sect1", function (options, content)
-  SILE.call("chapter", options, content)
-end)
+function class:registerCommands ()
 
-SILE.registerCommand("sect2", function (options, content)
-  SILE.call("section", options, content)
-end)
+  book.registerCommands(self)
 
-SILE.registerCommand("sect3", function (options, content)
-  SILE.call("subsection", options, content)
-end)
+  self:registerCommand("sect1", function (options, content)
+    SILE.call("chapter", options, content)
+  end)
 
-SILE.registerCommand("emphasis", function (options, content)
-  SILE.call("em", options, content)
-end)
+  self:registerCommand("sect2", function (options, content)
+    SILE.call("section", options, content)
+  end)
 
-SILE.registerCommand("paragraph", function (_, content)
-  SILE.process(content)
-  SILE.call("par")
-end)
+  self:registerCommand("sect3", function (options, content)
+    SILE.call("subsection", options, content)
+  end)
 
-SILE.registerCommand("bulletlist", function (_, content)
-  SILE.process(content)
-end)
+  self:registerCommand("emphasis", function (options, content)
+    SILE.call("em", options, content)
+  end)
 
-SILE.registerCommand("link", function (_, content)
-    SILE.call("verbatim:font", {}, content)
-end)
+  self:registerCommand("paragraph", function (_, content)
+    SILE.process(content)
+    SILE.call("par")
+  end)
 
-SILE.registerCommand("image", function (_, content)
-  SILE.call("img", {src=content.src})
-end)
+  self:registerCommand("bulletlist", function (_, content)
+    SILE.process(content)
+  end)
 
-return markdown
+  self:registerCommand("link", function (_, content)
+      SILE.call("verbatim:font", {}, content)
+  end)
+
+  self:registerCommand("image", function (_, content)
+    SILE.call("img", {src=content.src})
+  end)
+
+end
+
+return class

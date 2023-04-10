@@ -1,0 +1,32 @@
+\begin[papersize=a6, class=book]{document}
+\use[module=packages.lists]
+\font[family=Libertinus Serif]% Default Gentium lacks the white circle.
+\nofolios
+\neverindent
+% Ensure migrating contents can contain their own lists without interaction.
+
+\begin{itemize}
+  \item{Level 1}
+  \begin{itemize}
+    \item{Level 2\footnote{In footnote...
+\begin{itemize}
+  \item{Level 1 Ft}
+  \begin{itemize}
+    \item{Level 2 Ft}
+    \begin{itemize}
+        \item{Level 3 Ft}
+    \end{itemize}
+    \item{Level 2 Ft}
+  \end{itemize}
+  \item{Level 1 Ft}
+\end{itemize}            
+}}
+    \begin{itemize}
+      \item{Level 3}
+    \end{itemize}
+    \item{Level 2}
+  \end{itemize}
+  \item{Level 1}
+\end{itemize}
+
+\end{document}

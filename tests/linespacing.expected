@@ -2,7 +2,7 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	34.8819
 My 	29.3524
-Set font 	Libertinus Serif;12;400;;normal;;LTR
+Set font 	Libertinus Serif;12;400;;normal;;;LTR
 T	52 78 66 77 77 w=27.1200	(Small)
 Mx 	65.6316
 Mx 	3.7920
@@ -12,7 +12,7 @@ Mx 	3.7920
 T	85 a=3.7920 70 a=5.3640 89 a=5.8800 85 a=3.7920	(text)
 Mx 	34.8819
 My 	47.3524
-Set font 	Libertinus Serif;15;400;;normal;;LTR
+Set font 	Libertinus Serif;15;400;;normal;;;LTR
 T	35 74 72 w=20.3850	(Big)
 Mx 	59.8035
 Mx 	4.7400
@@ -23,7 +23,7 @@ T	85 a=4.7400 70 a=6.7050 89 a=7.3500 85 a=4.7400	(text)
 T	2 w=4.3200	(!)
 Mx 	34.8819
 My 	71.3324
-Set font 	Libertinus Serif;30;400;;normal;;LTR
+Set font 	Libertinus Serif;30;400;;normal;;;LTR
 T	35 74 72 72 70 83 w=80.3400	(Bigger)
 Mx 	126.1835
 Mx 	9.4800
@@ -32,7 +32,7 @@ Mx 	14.7000
 Mx 	9.4800
 T	85 a=9.4800 70 a=13.4100 89 a=14.7000 85 a=9.4800	(text)
 Mx 	178.5243
-Set font 	Libertinus Serif;15;400;;normal;;LTR
+Set font 	Libertinus Serif;15;400;;normal;;;LTR
 Mx 	3.9600
 Mx 	7.5600
 Mx 	5.4600
@@ -68,7 +68,7 @@ My 	107.9424
 T	69 74 66 78 w=30.3600	(diam)
 Mx 	34.8819
 My 	122.3424
-Set font 	Libertinus Sans;12;600;;normal;;LTR
+Set font 	Libertinus Sans;12;600;;normal;;;LTR
 T	52 78 66 77 77 w=30.6960	(Small)
 Mx 	69.2068
 Mx 	4.2480
@@ -78,7 +78,7 @@ Mx 	4.2480
 T	85 a=4.2480 70 a=6.0960 89 a=6.4080 85 a=4.2480	(text)
 Mx 	34.8819
 My 	140.3424
-Set font 	Libertinus Sans;15;600;;normal;;LTR
+Set font 	Libertinus Sans;15;600;;normal;;;LTR
 T	35 74 72 w=23.2200	(Big)
 Mx 	62.6375
 Mx 	5.3100
@@ -89,7 +89,7 @@ T	85 a=5.3100 70 a=7.6200 89 a=8.0100 85 a=5.3100	(text)
 T	2 w=4.0500	(!)
 Mx 	34.8819
 My 	165.1924
-Set font 	Libertinus Sans;30;600;;normal;;LTR
+Set font 	Libertinus Sans;30;600;;normal;;;LTR
 T	35 74 72 72 70 83 w=91.1400	(Bigger)
 Mx 	137.1289
 Mx 	10.6200
@@ -98,7 +98,7 @@ Mx 	16.0200
 Mx 	10.6200
 T	85 a=10.6200 70 a=15.2400 89 a=16.0200 85 a=10.6200	(text)
 Mx 	194.9724
-Set font 	Libertinus Sans;15;600;;normal;;LTR
+Set font 	Libertinus Sans;15;600;;normal;;;LTR
 Mx 	4.5600
 Mx 	8.4900
 Mx 	6.1950

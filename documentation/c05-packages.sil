@@ -2,115 +2,113 @@
 \chapter{SILE Packages}
 
 SILE comes with a number of packages which provide additional functionality.
-In fact, the actual “core” of SILE’s functionality is very small and very
+In fact, the actual “core” of SILE’s functionality is small and
 extensible, with most of the interesting features being provided by add-on
 packages. SILE packages are written in the Lua programming language, and can
 define new commands, change the way that the SILE system operates, or indeed
-do anything that it’s possible to do in Lua.
+do anything that is possible to do in Lua.
 
 As mentioned above, loading a package is done through the \code{\\script} command,
 which runs Lua code. By convention packages live in the \code{packages/} subdirectory
-of either your input file’s location, your current working directory or SILE’s
+of either your input file’s location, your current working directory, or SILE’s
 installation directory. For instance, we’ll soon be talking about the
 \code{grid} package, which normally can be found as
-\code{/usr/local/lib/sile/packages/grid.lua}. To load this, we’d say:
+\code{/usr/local/lib/sile/packages/grid/init.lua}. To load this, we’d say:
 
-\begin{verbatim}
-\line
-\\script[src=packages/grid]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\use[module=packages.grid]
+\end{raw}
 
 \note{\notehead{How SILE locates files} SILE searches for paths in a variety of
 directories: first, in the directory in which your input file is located,
-then the current wording directory; next, if the environment variable
+then the current working directory; next, if the environment variable
 \code{SILE_PATH} is set, it will look in that directory; then it will look in
 the standard installation directories \code{/usr/lib/sile} and
 \code{/usr/local/lib/sile}. Unlike TeX, it does not descend into subdirectories
-when looking for a file, and so if you have arranged your personal macro, class
+when looking for a file; if you have arranged your personal macro, class
 or package files into subdirectories, you will need to provide a full relative
 path to them.}
 
 \section{image}
-\package-documentation[src=packages/image]
+\package-documentation{image}
 
 \section{folio}
-\package-documentation[src=packages/folio]
+\package-documentation{folio}
 
 \section{rules}
-\package-documentation[src=packages/rules]
+\package-documentation{rules}
 
 \section{color}
-\package-documentation[src=packages/color]
+\package-documentation{color}
 
 \section{background}
-\package-documentation[src=packages/background]
+\package-documentation{background}
 
 \section{rotate}
-\package-documentation[src=packages/rotate]
+\package-documentation{rotate}
 
 \section{features}
-\package-documentation[src=packages/features]
+\package-documentation{features}
 
 \section{unichar}
-\package-documentation[src=packages/unichar]
+\package-documentation{unichar}
 
 \section{bidi}
-\package-documentation[src=packages/bidi]
+\package-documentation{bidi}
 
 \section{pullquote}
-\package-documentation[src=packages/pullquote]
+\package-documentation{pullquote}
 
 \section{raiselower}
-\package-documentation[src=packages/raiselower]
+\package-documentation{raiselower}
 
 \section{grid}
-\package-documentation[src=packages/grid]
+\package-documentation{grid}
 
 \section{linespacing}
-\package-documentation[src=packages/linespacing]
+\package-documentation{linespacing}
 
 \section{verbatim}
-\package-documentation[src=packages/verbatim]
+\package-documentation{verbatim}
 
 \section{font-fallback}
-\package-documentation[src=packages/font-fallback]
+\package-documentation{font-fallback}
 
 \section{boustrophedon}
-\package-documentation[src=packages/boustrophedon]
+\package-documentation{boustrophedon}
 
 \section{chordmode}
-\package-documentation[src=packages/chordmode]
+\package-documentation{chordmode}
 
 \section{converters}
-\package-documentation[src=packages/converters]
+\package-documentation{converters}
 
 \section{cropmarks}
-\package-documentation[src=packages/cropmarks]
+\package-documentation{cropmarks}
 
 \section{date}
-\package-documentation[src=packages/date]
+\package-documentation{date}
 
 \section{debug}
-\package-documentation[src=packages/debug]
+\package-documentation{debug}
 
 \section{dropcaps}
-\package-documentation[src=packages/dropcaps]
+\package-documentation{dropcaps}
 
 \section{leaders}
-\package-documentation[src=packages/leaders]
+\package-documentation{leaders}
 
 \section{lorem}
-\package-documentation[src=packages/lorem]
+\package-documentation{lorem}
 
 \section{specimen}
-\package-documentation[src=packages/specimen]
+\package-documentation{specimen}
 
 \section{textcase}
-\package-documentation[src=packages/textcase]
+\package-documentation{textcase}
 
 \section{url}
-\package-documentation[src=packages/url]
+\package-documentation{url}
 
 \section{Packages usually used by other packages}
 
@@ -120,102 +118,136 @@ basic functionality to other packages and classes. Classes such as the
 \code{book} class compose functionality from different auxiliary packages.
 
 \subsection{footnotes}
-\package-documentation[src=packages/footnotes]
+\package-documentation{footnotes}
 
 \subsection{color-fonts}
-\package-documentation[src=packages/color-fonts]
+\package-documentation{color-fonts}
 
 \subsection{counters}
-\package-documentation[src=packages/counters]
+\package-documentation{counters}
 
 \subsection{pdf}
-\package-documentation[src=packages/pdf]
+\package-documentation{pdf}
 
 \subsection{ifattop}
-\package-documentation[src=packages/ifattop]
+\package-documentation{ifattop}
 
 \subsection{frametricks}
-\package-documentation[src=packages/frametricks]
+\package-documentation{frametricks}
 
 \subsection{insertions}
-\package-documentation[src=packages/insertions]
+\package-documentation{insertions}
 
 \subsection{twoside}
-\package-documentation[src=packages/twoside]
+\package-documentation{twoside}
 
 \subsection{masters}
-\package-documentation[src=packages/masters]
+\package-documentation{masters}
 
 \subsection{infonode}
-\package-documentation[src=packages/infonode]
+\package-documentation{infonode}
 
 \subsection{inputfilter}
-\package-documentation[src=packages/inputfilter]
+\package-documentation{inputfilter}
 
 \subsection{break-firstfit}
-\package-documentation[src=packages/break-firstfit]
+\package-documentation{break-firstfit}
 
 \subsection{chapterverse}
-\package-documentation[src=packages/chapterverse]
+\package-documentation{chapterverse}
 
 \subsection{parallel}
-\package-documentation[src=packages/parallel]
+\package-documentation{parallel}
 
 \subsection{rebox}
-\package-documentation[src=packages/rebox]
+\package-documentation{rebox}
+
+\subsection{scalebox}
+\package-documentation{scalebox}
 
 \subsection{tableofcontents}
-\package-documentation[src=packages/tableofcontents]
+\package-documentation{tableofcontents}
 
 \subsection{xmltricks}
-\package-documentation[src=packages/xmltricks]
+\package-documentation{xmltricks}
 
 \section{Experimental packages}
 
 \subsection{autodoc}
-\package-documentation[src=packages/autodoc]
+\package-documentation{autodoc}
 
 \subsection{balanced-frames}
-\package-documentation[src=packages/balanced-frames]
+\package-documentation{balanced-frames}
 
 \subsection{bibtex}
-\package-documentation[src=packages/bibtex]
+\package-documentation{bibtex}
 
 \subsection{gutenberg}
-\package-documentation[src=packages/gutenberg]
+\package-documentation{gutenberg}
 
 \subsection{indexer}
-\package-documentation[src=packages/indexer]
+\package-documentation{indexer}
+
+\subsection{lists}
+\package-documentation{lists}
 
 \subsection{math}
-\package-documentation[src=packages/math]
+\package-documentation{math}
 
 \subsection{pdfstructure}
-\package-documentation[src=packages/pdfstructure]
+\package-documentation{pdfstructure}
 
 \subsection{svg}
-\package-documentation[src=packages/svg]
+\package-documentation{svg}
 
-\section{The Package Manager}
+\section{The package manager}
 
-While your SILE installation will include a comprehensive collection
-of SILE packages, there’s more out there! SILE comes with a simple
-package manager which can help you to download and install new packages.
-The package manager is accessed from the SILE REPL, like so:
+The SILE installation includes a core collection of packages we hope are generally useful.
+But there’s more out there!
+SILE can use packages installed via the LuaRocks package manager.
+It can also be configured to read packages from any directory of your choosing.
 
-\begin{verbatim}
-\line
- $ sile
-\sileversion
-> installPackage("endnotes")
-Loading catalogue from https://raw.githubusercontent.com/simoncozens/sile-packages/master/packages.lua
-\line
-\end{verbatim}
+A SILE compatible LuaRock simply installs the relevant class, package, language, internationalization resources, or similar files in a \code{sile} directory.
+This directory could be in your system Lua directory, in your user directory, or any other location you specify.
 
-There will then follow a load of information which should end up with
-the \code{endnotes} package and all its dependencies being installed.
-SILE will also ensure that downloaded packages are added to the package
-search path. There’s currently no way to list or search the available
-packages. We’ll get there.
+By default SILE will look for packages in:
 
+\begin{enumerate}
+\item{The directory where the SILE source file is located.}
+\item{The current working directory.}
+\item{The default Lua search path.}
+\item{The directory where SILE is installed on the system.}
+\end{enumerate}
+
+By default, LuaRocks will install packages to the Lua search path.
+
+\begin[type=autodoc:codeblock]{raw}
+$ luarocks install lilypond.sile
+$ sile ...
+\end{raw}
+
+Depending on your system, this probably requires root permissions.
+If you either don’t have root permissions or don’t want to pollute your system’s root file system, you can also install as a user.
+To use packages installed as a user you will need to have LuaRocks add its user tree to your Lua search path before running SILE.
+
+\begin[type=autodoc:codeblock]{raw}
+$ luarocks --local install lilypond.sile
+$ eval $(luarocks --local path)
+$ sile ...
+\end{raw}
+
+Of course, you can add that eval statement to your shell profile to always include your user directory in your Lua path.
+You can also add your own entries to the top of the search path list by setting the \code{SILE_PATH} variable. For example:
+
+\begin[type=autodoc:codeblock]{raw}
+$ export SILE_PATH="/path/to/my/library/"
+$ sile ...
+\end{raw}
+
+To write a package and publish to LuaRocks, see the \code{package-template.sile} repository.
+
+Packages are not limited to just the package interface.
+They can include classes, languages, internationalization resources, or anything else provided by SILE.
+Also because external locations are searched before SILE itself, they can even override any core part of SILE itself.
+As such you should probably make sure you review what a package does before installing it!
 \end{document}

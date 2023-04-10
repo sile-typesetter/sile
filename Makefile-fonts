@@ -1,8 +1,15 @@
-.fonts:
+if FONT_DOWNLOAD_TOOLS
+
+.fonts: fonttooling
 	[ -h .fonts ] || mkdir -p $@
 
-.sources:
+.sources: fonttooling
 	[ -h .sources ] || mkdir -p $@
+
+.PHONY: fonttooling
+fonttooling:
+	$(if $(BSDTAR),,$(error Please set BSDTAR with path or `./configure --enable-developer`))
+	$(if $(CURL),,$(error Please set CURL with path or `./configure --enable-developer`))
 
 # Don't let make delete things we had to download
 .PRECIOUS: .fonts/% .sources/%
@@ -34,100 +41,111 @@ TESTFONTFILES += NotoSerifCJK-Regular.ttc
 TESTFONTFILES += SBL_Hbrw.ttf
 TESTFONTFILES += TwemojiMozilla.ttf
 
+if FONT_VARIATIONS
+TESTFONTFILES += Tourney[wdth,wght].ttf
+endif
+
+comma = ,
+varencode = $(subst $(comma),%2C,$(subst [,%5B,$(subst ],%5D,$(1))))
 notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 
 # Tell make how to download individual font files directly (when available)
 
 .fonts/Amiri%: | .fonts
-	curl -fsSL https://github.com/alif-type/amiri/raw/0.113/$(notdir $@) -o $@
+	$(CURL) -fsSL https://github.com/alif-type/amiri/raw/0.113/$(notdir $@) -o $@
 
 .fonts/Noto%.ttf: | .fonts
-	curl -fsSL https://raw.githubusercontent.com/googlefonts/noto-fonts/v20201206-phase3/hinted/ttf/$(call notobase,$@)/$(notdir $@) -o $@
+	$(CURL) -fsSL https://raw.githubusercontent.com/googlefonts/noto-fonts/v20201206-phase3/hinted/ttf/$(call notobase,$@)/$(notdir $@) -o $@
 
 .fonts/Noto%.ttc: | .fonts
-	curl -fsSL https://raw.githubusercontent.com/googlefonts/noto-cjk/v20201206-cjk/$(notdir $@) -o $@
+	$(CURL) -fsSL https://raw.githubusercontent.com/googlefonts/noto-cjk/v20201206-cjk/$(notdir $@) -o $@
 
 .fonts/SBL_Hbrw.ttf: | .fonts
-	curl -fsSL https://www.sbl-site.org/Fonts/$(notdir $@) -o $@
+	$(CURL) -fsSL https://www.sbl-site.org/Fonts/$(notdir $@) -o $@
 
 .fonts/Symbola.otf: | .fonts
-	curl -fsSL https://github.com/ChiefMikeK/ttf-symbola/raw/master/Symbola-13.otf -o $@
+	$(CURL) -fsSL https://github.com/ChiefMikeK/ttf-symbola/raw/master/Symbola-13.otf -o $@
+
+.fonts/Tourney%: | .fonts
+	$(CURL) -fsSL https://raw.githubusercontent.com/Etcetera-Type-Co/Tourney/643f1026ad6d41b4527f42cd93c776414fdd6503/fonts/variable/$(call varencode,$(notdir $@)) -o $@
 
 .fonts/TwemojiMozilla.ttf: | .fonts
-	curl -fsSL https://github.com/mozilla/twemoji-colr/releases/download/v0.5.1/$(notdir $@) -o $@
+	$(CURL) -fsSL https://github.com/mozilla/twemoji-colr/releases/download/v0.5.1/$(notdir $@) -o $@
 
 # Tell  make how to download font file bundles (when not downloadable individually)
 
 .sources/AwamiNastaliq-2.200.zip: | .sources
-	curl -fsSL https://software.sil.org/downloads/r/awami/$(notdir $@) -o $@
+	$(CURL) -fsSL https://software.sil.org/downloads/r/awami/$(notdir $@) -o $@
 
 .sources/CrimsonPro.zip: | .sources
-	curl -fsSL https://fonts.google.com/download?family=Crimson+Pro -o $@
+	$(CURL) -fsSL https://fonts.google.com/download?family=Crimson+Pro -o $@
 
 .sources/Cormorant_Install_v3.601.zip: | .sources
-	curl -fsSL https://github.com/CatharsisFonts/Cormorant/releases/download/v3.601/$(notdir $@) -o $@
+	$(CURL) -fsSL https://github.com/CatharsisFonts/Cormorant/releases/download/v3.601/$(notdir $@) -o $@
 
 .sources/GentiumBasic_1102.zip: | .sources
-	curl -fsSL https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
+	$(CURL) -fsSL https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
 
 .sources/GentiumPlus-5.000.zip: | .sources
-	curl -fsSL https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
+	$(CURL) -fsSL https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
 
 .sources/Hack-v3.003-ttf.tar.xz: | .sources
-	curl -fsSL https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
+	$(CURL) -fsSL https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
 
 .sources/LateefGR-1.200.zip: | .sources
-	curl -fsSL https://software.sil.org/downloads/r/lateef/$(notdir $@) -o $@
+	$(CURL) -fsSL https://software.sil.org/downloads/r/lateef/$(notdir $@) -o $@
 
 .sources/Libertinus-%.tar.xz: | .sources
-	curl -fsSL https://github.com/alerque/libertinus/releases/download/v$*/$(notdir $@) -o $@
+	$(CURL) -fsSL https://github.com/alerque/libertinus/releases/download/v$*/$(notdir $@) -o $@
 
 .sources/roboto-unhinted.zip: | .sources
-	curl -fsSL https://github.com/google/roboto/releases/download/v2.138/$(notdir $@) -o $@
+	$(CURL) -fsSL https://github.com/google/roboto/releases/download/v2.138/$(notdir $@) -o $@
 
 .sources/Symbola.zip: | .sources
-	curl -fsSL https://web.archive.org/web/20200617144517/https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
+	$(CURL) -fsSL https://web.archive.org/web/20200617144517/https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
 #	Canonical upstream server limits downloads which sometimes kills our CI runners
-#	curl -fsSL https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
+#	$(CURL) -fsSL https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/$(notdir $@) -o $@
 
 # Tell make how to extract individual files from bundles
 
 .fonts/AwamiNastaliq%: .sources/AwamiNastaliq-2.200.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
+	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@) && \
 	touch $@
 
 .fonts/Cormorant%: .sources/Cormorant_Install_v3.601.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 2 "$(basename $(<F))/1. TrueType Font Files/$(notdir $@)"
+	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 2 "$(basename $(<F))/1. TrueType Font Files/$(notdir $@)" && \
 	touch $@
 
 .fonts/CrimsonPro%: .sources/CrimsonPro.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 static/$(notdir $@)
+	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 1 static/$(notdir $@) && \
 	touch $@
 
 .fonts/GenB%: .sources/GentiumBasic_1102.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
+	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@) && \
 	touch $@
 
 .fonts/GentiumPlus%: .sources/GentiumPlus-5.000.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
+	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@) && \
 	touch $@
 
 .fonts/Hack%: .sources/Hack-v3.003-ttf.tar.xz | .fonts
-	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	$(BSDTAR) -x -f $< -C $(dir $@) $(notdir $@) && \
 	touch $@
 
 .fonts/Libertinus%: .sources/Libertinus-7.020.tar.xz | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 3 $(basename $(basename $(<F)))/static/OTF/$(notdir $@)
+	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 3 $(basename $(basename $(<F)))/static/OTF/$(notdir $@) && \
 	touch $@
 
 .fonts/LateefGR%: .sources/LateefGR-1.200.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@)
+	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@) && \
 	touch $@
 
 .fonts/Roboto%: .sources/roboto-unhinted.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	$(BSDTAR) -x -f $< -C $(dir $@) $(notdir $@) && \
 	touch $@
 
 .fonts/Symbola%: .sources/Symbola.zip | .fonts
-	bsdtar -x -f $< -C $(dir $@) $(notdir $@)
+	$(BSDTAR) -x -f $< -C $(dir $@) $(notdir $@) && \
 	touch $@
+
+endif

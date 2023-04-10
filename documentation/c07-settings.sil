@@ -7,8 +7,8 @@ subtle to a dramatic effect on the eventual document. External packages may
 declare their own settings, which are documented accordingly. Here we will
 run through the settings which are built into the SILE system itself.
 
-Settings in SILE are \em{namespaced} so that 1) the name of the setting gives you
-some kind of clue as to what area of the system it will affect, and 2) packages
+Settings in SILE are \em{namespaced} so that the name of the setting gives you
+some kind of clue as to what area of the system it will affect, and so that packages
 can define their own settings without worrying that they will be interfering
 with other packages or the SILE internals. Namespacing of settings takes the
 form \code{\em{area.name}}—so for instance, \autodoc:setting{typesetter.orphanpenalty} is
@@ -16,75 +16,63 @@ the setting which changes how the typesetter penalizes orphan (end-of-paragraph)
 lines.
 
 The interface to changing settings from within a SILE document is the
-\code{\\set} commmand. It takes several options, the most basic one being
-\em{parameter}, which expresses which setting is being changed. The \em{value}
+\autodoc:command{\set} command. It takes several options, the most basic one being
+\autodoc:parameter{parameter}, which expresses which setting is being changed. The \autodoc:parameter{value}
 option expresses the value to which the setting is being changed. As an
 example:
 
-\begin{verbatim}
-\line
-\\set[parameter=typesetter.orphanpenalty, value=250]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=typesetter.orphanpenalty, value=250]
+\end{raw}
 
-Two additional options are accepted. The \em{makedefault} option can added so
-that whatever value you set sticks as the new default. The \em{reset} can be
-used without a \em{value} option to reset whatever the current value is back to
-the default Note these two options are mutually exclusive.
+Two additional options are accepted. The \autodoc:parameter{makedefault} option can added so
+that whatever value you set sticks as the new default. The \autodoc:parameter{reset} can be
+used without a \autodoc:parameter{value} option to reset whatever the current value is back to
+the default. Note that these two options are mutually exclusive.
 
-\begin{verbatim}
-\line
-\\set[parameter=typesetter.orphanpenalty, value=250, makedefault=true]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=typesetter.orphanpenalty, value=250, makedefault=true]
+\end{raw}
 
 or:
 
-\begin{verbatim}
-\line
-\\set[parameter=typesetter.orphanpenalty, reset=true]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=typesetter.orphanpenalty, reset=true]
+\end{raw}
 
-If the \code{\\set} command is provided with any content, then the change of
+If the \autodoc:command{\set} command is provided with any content, then the change of
 setting is localised to the content of the argument. In other words, this code:
 
-\begin{verbatim}
-\line
-\\set[parameter=typesetter.orphanpenalty, value=250]\{\\lorem\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=typesetter.orphanpenalty, value=250]{\lorem}
+\end{raw}
 
-will change the orphan penalty to 250, typeset 50 words of dummy text, and then
+\noindent will change the orphan penalty to 250, typeset 50 words of dummy text, and then
 return the orphan penalty to its previous value.
 
 If you are working in Lua, you have two choices to work with. As with any
 registered command you can call it using \code{SILE.call()}. For example:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 SILE.call("set", { parameter = "typesetter.orphanpenalty", value = 250 })
-\line
-\end{verbatim}
+\end{raw}
 
 There is nothing wrong with this and it allows you to optionally pass content
 that is wrapped in those settings. However there is also a slightly lower level
-function that is more ideomatic of Lua code than SILE that uses positional
+function that is more idiomatic of Lua code than SILE that uses positional
 arguments instead of named options:
 
-\begin{verbatim}
-\line
-SILE.settings.set("typesetter.orphanpenalty", 250)
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+SILE.settings:set("typesetter.orphanpenalty", 250)
+\end{raw}
 
-The 3rd and 4th optional arguments are for \em{makedefault} and \em{reset}
+The third and fourth optional arguments are for \autodoc:parameter{makedefault} and \autodoc:parameter{reset}
 respectively.
 
 Now, let’s begin looking at what each of the built-in settings does, starting
 from the most obvious and moving towards the most subtle.
 
-\section{Spacing Settings}
+\section{Spacing settings}
 
 In our \code{\\note} example, we saw the setting \autodoc:setting{document.lskip}.
 This is a \em{glue} parameter which is added to the left side of every line.
@@ -100,25 +88,23 @@ normal margins, such as to indent a pull-quote. They can also be negative,
 pulling the effective margin outside of the current frame.
 
 \begin{note}
-\notehead{Glue} A \em{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means ‘space,’ but as well as signifying a length,
+\notehead{Glue} A \autodoc:parameter{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means “space,” but as well as signifying a length,
 it also has two additional optional components: \em{stretch} and \em{shrink},
 specified as \code{<dimension> plus <dimension> minus <dimension>}. The
-first dimension is the basic length; the stretch is the maximum length that
+first dimension is the basic length, the stretch is the maximum length that
 can be added to it, and the shrink is some length that can be taken away from it.
 For instance, \code{12pt plus 6pt minus 3pt} specifies a space that would
 ideally by 12 points, but can expand or contract from a minimum of 9 points to a maximum
 of 18 points.
 \end{note}
 
-Let’s think about how the \code{center}ing environment is implemented. First,
+Let’s think about how the \autodoc:environment{center} environment is implemented. First,
 we will add incredibly stretchable glue to the left and right margins, like so:
 
-\begin{verbatim}
-\line
-\\set[parameter=document.lskip,value=0pt plus 100000pt]
-\\set[parameter=document.rskip,value=0pt plus 100000pt]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=document.lskip,value=0pt plus 100000pt]
+\set[parameter=document.rskip,value=0pt plus 100000pt]
+\end{raw}
 
 This produces the following:
 
@@ -146,17 +132,18 @@ paragraphs.\par
 \set[parameter=document.spaceskip]%
 The indentation at the start of each paragraph is controlled by the
 setting \autodoc:setting{document.parindent}; this is a glue parameter, and by default it’s
-set to 20pt with no stretch and shrink. Actually, the amount added to the
+set to 20pt with no stretch and shrink. (In fact, the amount added to the
 start of the paragraph is \autodoc:setting{current.parindent}. After each paragraph,
 \autodoc:setting{current.parindent} is reset to the value of \autodoc:setting{document.parindent}. The
-\code{\\noindent} command works by setting \autodoc:setting{current.parindent} to zero.
+\autodoc:command{\noindent} command works by setting \autodoc:setting{current.parindent} to zero.)
 
 \medskip%
 \set[parameter=current.parindent,value=-20pt]%
 \set[parameter=document.lskip,value=20pt]%
-How would you make a paragraph like this with a ‘hanging’ indentation? We’ve
+How would you make a paragraph like this with a “hanging” indentation? We’ve
 set the \autodoc:setting{document.lskip} to 20 points, and the \autodoc:setting{current.parindent} to
-\em{minus} 20 points. (In other words, we called:\break\code{\\set[parameter=document.lskip,value=20pt]} and \code{\\set[parameter=current.parindent,\break{}value=-20pt]}.)
+\em{minus} 20 points. In other words, we called: \autodoc:command{\set[parameter=document.lskip,value=20pt]}
+and \autodoc:command{\set[parameter=current.parindent,value=-20pt]}.
 
 \medskip%
 \set[parameter=document.lskip,value=0pt]%
@@ -169,15 +156,16 @@ As we mentioned in the section on grid typesetting, the rules for spacing betwee
 \em{lines} within a paragraph is determined by two
 rules. Let’s reiterate those rules now in terms of settings:
 
-\noindent• SILE tries to insert space between two successive lines to make their
-baselines exactly \autodoc:setting{document.baselineskip} apart.
-
-\noindent• If this first rule would mean that the bottom and the top of the lines are less
-than \autodoc:setting{document.lineskip} apart, then they are forced to be
-\autodoc:setting{document.lineskip} apart.
+\begin{itemize}
+\item{SILE tries to insert space between two successive lines to make their
+      baselines exactly \autodoc:setting{document.baselineskip} apart.}
+\item{If this first rule would mean that the bottom and the top of the lines are
+      less than \autodoc:setting{document.lineskip} apart, then they are forced
+      to be \autodoc:setting{document.lineskip} apart.}
+\end{itemize}
 
 \note{This linebreaking method is fiddly, and book designers may prefer to
-work with the tools provided by the \code{linespacing} package.}
+work with the tools provided by the \autodoc:package{linespacing} package.}
 
 \subsection{Word spacing settings}
 
@@ -197,8 +185,8 @@ to vary based on context (otherwise known as “space kerning”). If you want
 to go back to the default (measuring the space character of the font),
 then you need to turn on \autodoc:setting{shaper.variablespaces} (set it to a
 true value) and also \em{unset} the setting \autodoc:setting{document.spaceskip}. To
-unset it, just call \code{\\set} with no \code{value} parameter:
-\code{\\set[parameter=document.spaceskip]}.
+unset it, just call \autodoc:command{\set} with no \autodoc:parameter{value} parameter:
+\autodoc:command{\set[parameter=document.spaceskip]}.
 
 \subsection{Letter spacing settings}
 
@@ -238,7 +226,7 @@ the \em{penalty} attached to breaking the page at one of these places is 150
 penalty points. This value can be any number up to \code{10000}, which means
 “never break at this point.”
 
-\set[parameter=typesetter.parfillskip,value=0pt]
+\begin[parameter=typesetter.parfillskip,value=0pt]{set}
 SILE automatically inserts a piece of massively stretchable
 glue at the end of each paragraph; without this, the justification algorithm
 would apply justification to the entire paragraph, including the last line,
@@ -246,20 +234,19 @@ and produce a fully justified paragraph. (Normally we want the last line of a ju
 left-aligned.)
 The size of this glue is defined in the setting
 \autodoc:setting{typesetter.parfillskip}. Its default value is \code{0pt plus 10000pt} but
-for this current paragraph, we have unset it.
+for this current paragraph, we have unset it.\par
+\end{set}
 
 Now we can finally complete our implementation of centering:
 
-\begin{verbatim}
-\line
-\\set[parameter=document.lskip,value=0pt plus 100000pt]
-\\set[parameter=document.rskip,value=0pt plus 100000pt]
-\\set[parameter=document.spaceskip,value=0.5en]
-\\set[parameter=current.parindent,value=0pt]
-\\set[parameter=document.parindent,value=0pt]
-\\set[parameter=typesetter.parfillskip,value=0pt]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=document.lskip,value=0pt plus 100000pt]
+\set[parameter=document.rskip,value=0pt plus 100000pt]
+\set[parameter=document.spaceskip,value=0.5en]
+\set[parameter=current.parindent,value=0pt]
+\set[parameter=document.parindent,value=0pt]
+\set[parameter=typesetter.parfillskip,value=0pt]
+\end{raw}
 
 \medskip
 \noindent\begin{examplefont}%
@@ -269,16 +256,14 @@ Now we can finally complete our implementation of centering:
 \set[parameter=current.parindent,value=0pt]%
 \set[parameter=typesetter.parfillskip,value=0pt]
 
-And this is (more or less) how the \code{center} environment is defined in
-the plain class: we make the margins able to expand but the spaces not able
+And this is (more or less) how the \autodoc:environment{center} environment is defined in
+the \code{plain} class: we make the margins able to expand but the spaces not able
 to expand; we turn off indenting at the start of the paragraph, and we turn
 off the filling glue at the end of the paragraph.
 \par
 \end{examplefont}
 
 \medskip
-
-\set[parameter=typesetter.parfillskip,value=0pt plus 10000pt]
 
 \section{Linebreaking settings}
 
@@ -288,32 +273,41 @@ been adapted as appropriate. Here is a quick run-down of the settings
 applicable to the line-breaking algorithm. You are expected to know what you
 are doing with these.
 
-\noindent• \autodoc:setting{linebreak.tolerance}: How bad a breakpoint is before it is rejected
-by the algorithm. (Default: 500)
-
-\noindent• \autodoc:setting{linebreak.parShape}: Whether to utilize a callback to \code{SILE.linebreak:parShape()} to get a customized shape for each line in a paragraph. (Default: false)
-
-\noindent• \autodoc:setting{linebreak.pretolerance}: If there are no breakpoints better than
-this, the paragraph is considered for hyphenation. (Default: 100)
-
-\noindent• \autodoc:setting{linebreak.hangIndent}: How far to indent initial line(s) of a paragraph. (Default: 0)
-
-\noindent• \autodoc:setting{linebreak.hangAfter}: An integer count of how many lines should have \autodoc:setting{linebreak.hangIndent} applied. (Default: nil)
-
-\noindent• \autodoc:setting{linebreak.adjdemerits}: Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space. (Default: 10000)
-
-\noindent• \autodoc:setting{linebreak.looseness}: How many lines the current paragraph should
-be made longer than normal. (Default: 0)
-
-\noindent• \autodoc:setting{linebreak.prevGraf}: The number of lines in the paragraph last added to the vertical list.
-
-\noindent• \autodoc:setting{linebreak.emergencyStretch}: Assumed extra stretchability in lines of a paragraph. (Default: 0)
-
-\noindent• \autodoc:setting{linebreak.linePenalty}: Penalty value associated with each line break. (Default: 10)
-
-\noindent• \autodoc:setting{linebreak.hyphenPenalty}: Penalty associated with break at a hyphen. (Default: 50)
-
-\noindent• \autodoc:setting{linebreak.doubleHyphenDemerits}: Penalty for consecutive lines ending with a hyphen. (Default: 10000)
+\begin{itemize}
+\item{\autodoc:setting{linebreak.tolerance}: How bad a breakpoint is before it is
+      rejected by the algorithm.
+      (Default: 500)}
+\item{\autodoc:setting{linebreak.parShape}: Whether to utilize a callback to
+      \code{SILE.linebreak:parShape()} to get a customized shape for each line in a paragraph.
+      (Default: false)}
+\item{\autodoc:setting{linebreak.pretolerance}: If there are no breakpoints better than
+      this, the paragraph is considered for hyphenation.
+      (Default: 100)}
+\item{\autodoc:setting{linebreak.hangIndent}: How far to indent initial line(s) of a paragraph.
+      (Default: 0)}
+\item{\autodoc:setting{linebreak.hangAfter}: An integer count of how many lines should have
+      \autodoc:setting{linebreak.hangIndent} applied.
+      (Default: nil)}
+\item{\autodoc:setting{linebreak.adjdemerits}: Additional demerits which are accumulated in the
+      course of paragraph building when two consecutive lines are visually incompatible. In these
+      cases, one line is built with much space for justification, and the other one with little space.
+      (Default: 10000)}
+\item{\autodoc:setting{linebreak.looseness}: How many lines the current paragraph should
+      be made longer than normal.
+      (Default: 0)}
+\item{\autodoc:setting{linebreak.prevGraf}: The number of lines in the paragraph last added to
+      the vertical list.}
+\item{\autodoc:setting{linebreak.emergencyStretch}: Assumed extra stretchability in lines of a
+      paragraph.
+      (Default: 0)}
+\item{\autodoc:setting{linebreak.linePenalty}: Penalty value associated with each line break.
+      (Default: 10)}
+\item{\autodoc:setting{linebreak.hyphenPenalty}: Penalty associated with break at a hyphen.
+      (Default: 50)}
+\item{\autodoc:setting{linebreak.doubleHyphenDemerits}: Penalty for consecutive lines ending
+      with a hyphen.
+      (Default: 10000)}
+\end{itemize}
 
 \section{Shaper settings}
 
@@ -327,22 +321,24 @@ engines instead of doing the shaping itself. SILE provides an interface
 engine in use. To get a list of the subshapers enabled in your build of
 Harfbuzz, run \code{sile --debug=versions} on any file:
 
-\begin{verbatim}
-\% $ ./sile --debug=versions hello.sil
-...
-Harfbuzz version: 2.4.0
-Shapers enabled: graphite2, ot, coretext, coretext_aat, fallback
-...
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+$ sile --debug=versions hello.sil
 
-If I wanted to test out the OS X’s CoreText shaper instead of using
+...
+
+Harfbuzz version: 2.4.0
+
+Shapers enabled: graphite2, ot, coretext, coretext_aat, fallback
+
+...
+\end{raw}
+
+If I wanted to test out the macOS CoreText shaper instead of using
 Graphite and Harfbuzz’s own OpenType shaper, I could set:
 
-\begin{verbatim}
-\line
-\\set[parameter=harfbuzz.subshapers,value=coretext]
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=harfbuzz.subshapers,value=coretext]
+\end{raw}
 
 This is one of those situations where for 99\% of people it isn’t useful
 at all but the other 1\% of people will really appreciate it: specifically,
@@ -356,22 +352,23 @@ Most of the time you will not be fiddling with these settings at the SILE layer,
 because complex layout commands are expected to be implemented in Lua. The
 following SILE functions access the settings system from inside Lua:
 
-\noindent• \code{SILE.settings.set(\em{<parameter>}, \em{value})}: sets a setting.
+\begin{itemize}
+\item{\code{SILE.settings:set(\em{<parameter>}, \em{value})}: sets a setting.
 
 \note{
-You should note that, while in the SILE layer, the \code{\\set} command does its
+You should note that, while in the SILE layer, the \autodoc:command{\set} command does its
 best to turn the textual description of a type into the appropriate Lua type
-for the value. \code{SILE.settings.set} does not do that; it expects the value
+for the value. \code{SILE.settings:set} does not do that; it expects the value
 to be of the appropriate type: lengths need to be a \code{SILE.length} object,
-glue must be \code{SILE.nodefactory.glue} and so on.}
+glue must be \code{SILE.nodefactory.glue} and so on.}}
 
-\noindent• \code{SILE.settings.get(\em{<parameter>})}: retrieves the current
-setting of the parameter.
-
-\noindent• \code{SILE.settings.temporarily(\em{function})}: Saves all settings,
-runs the function and then restores all settings afterwards.
-
-\noindent• \code{SILE.settings.declare(\em{<specification>})}: Declares a new
-setting. See the base settings in \code{settings.lua} for examples of how to
-call this. A class or package should namespace its settings with \code{<package>.<setting>}.
+\item{\code{SILE.settings:get(\em{<parameter>})}: retrieves the current
+      setting of the parameter.}
+\item{\code{SILE.settings:temporarily(\em{function})}: Saves all settings,
+      runs the function and then restores all settings afterwards.}
+\item{\code{SILE.settings:declare(\em{<specification>})}: Declares a new
+      setting. See the base settings in \code{settings.lua} for examples of how
+      to call this. A class or package should namespace its settings with
+      \code{<package>.<setting>}.}
+\end{itemize}
 \end{document}

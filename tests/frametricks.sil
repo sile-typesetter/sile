@@ -1,5 +1,6 @@
-\begin[papersize=129mm x 198mm]{document}% KNOWNBAD https://github.com/sile-typesetter/sile/issues/740
-\script[src=packages/frametricks]
+% KNOWNBAD https://github.com/sile-typesetter/sile/issues/740
+\begin[papersize=129mm x 198mm]{document}
+\use[module=packages.frametricks]
 \makecolumns[columns=2]
 \font[size=15pt]
 \set[parameter=document.baselineskip,value=3ex]

@@ -1,0 +1,7 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\font[family=Tourney,size=48pt]
+\font[variations="wght=150,wdth=120"]{Foo bar}\par
+\font[weight=750,variations=wdth=80]{Foo bar}
+\end{document}

@@ -2,7 +2,7 @@ Set paper size 	595.275597	841.8897729
 Begin page
 Mx 	49.7638
 My 	92.0945
-Set font 	Libertinus Serif;11;400;;normal;;LTR
+Set font 	Libertinus Serif;11;400;;normal;;;LTR
 T	39 74 83 84 85 w=20.1740	(First)
 Mx 	73.2640
 T	67 66 84 70 77 74 79 70 w=36.4210	(baseline)
@@ -58,10 +58,10 @@ T	71 a=3.4100 83 a=4.0920 66 a=5.0270 78 a=8.6900 70 a=4.9170	(frame)
 T	15 w=2.4200	(.)
 Mx 	49.7638
 My 	115.0785
-Set font 	Libertinus Serif;30;400;;normal;;LTR
+Set font 	Libertinus Serif;30;400;;normal;;;LTR
 T	45 w=15.8400	(L)
 Mx 	65.6038
-Set font 	Libertinus Serif;11;400;;normal;;LTR
+Set font 	Libertinus Serif;11;400;;normal;;;LTR
 Mx 	5.5440
 Mx 	4.0040
 Mx 	4.9170
@@ -86,10 +86,10 @@ Mx 	145.1392
 T	15 w=2.4200	(.)
 Mx 	49.7638
 My 	174.7785
-Set font 	Libertinus Serif;30;400;;normal;;LTR
+Set font 	Libertinus Serif;30;400;;normal;;;LTR
 T	45 w=15.8400	(L)
 Mx 	65.6038
-Set font 	Libertinus Serif;11;400;;normal;;LTR
+Set font 	Libertinus Serif;11;400;;normal;;;LTR
 Mx 	5.5440
 Mx 	4.0040
 Mx 	4.9170
@@ -114,7 +114,7 @@ Mx 	145.1392
 T	15 w=2.4200	(.)
 Mx 	49.7638
 My 	241.2785
-Set font 	Libertinus Serif;20;400;;normal;;LTR
+Set font 	Libertinus Serif;20;400;;normal;;;LTR
 Mx 	10.5600
 Mx 	10.0800
 Mx 	7.2800
@@ -198,10 +198,10 @@ Mx 	239.4650
 T	15 w=4.4000	(.)
 Mx 	49.7638
 My 	462.1785
-Set font 	Libertinus Serif;60;400;;normal;;LTR
+Set font 	Libertinus Serif;60;400;;normal;;;LTR
 T	45 82 w=61.8600	(Lq)
 Mx 	111.6238
-Set font 	Libertinus Serif;10;400;;normal;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR
 Mx 	5.0400
 Mx 	3.6400
 Mx 	4.4700
@@ -217,10 +217,10 @@ T	52 80 78 70 w=22.2600	(Some)
 Mx 	55.0767
 T	85 66 77 w=10.3700	(tal)
 Mx 	65.4467
-Set font 	Libertinus Serif;30;400;;normal;;LTR
+Set font 	Libertinus Serif;30;400;;normal;;;LTR
 T	77 w=7.9200	(l)
 Mx 	73.3667
-Set font 	Libertinus Serif;10;400;;normal;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR
 T	13 w=2.2000	(,)
 Mx 	78.6196
 T	73 74 72 73 w=18.4700	(high)
@@ -230,10 +230,10 @@ Mx 	139.9325
 T	15 w=2.2000	(.)
 Mx 	49.7638
 My 	588.7785
-Set font 	Libertinus Serif;60;400;;normal;;LTR
+Set font 	Libertinus Serif;60;400;;normal;;;LTR
 T	45 w=31.6800	(L)
 Mx 	81.4438
-Set font 	Libertinus Serif;10;400;;normal;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR
 Mx 	5.0400
 Mx 	3.6400
 Mx 	4.4700
@@ -249,10 +249,10 @@ T	52 80 78 70 w=22.2600	(Some)
 Mx 	55.0767
 T	85 66 77 w=10.3700	(tal)
 Mx 	65.4467
-Set font 	Libertinus Serif;30;400;;normal;;LTR
+Set font 	Libertinus Serif;30;400;;normal;;;LTR
 T	77 w=7.9200	(l)
 Mx 	73.3667
-Set font 	Libertinus Serif;10;400;;normal;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR
 T	13 w=2.2000	(,)
 Mx 	78.6196
 T	73 74 72 73 w=18.4700	(high)
@@ -262,7 +262,7 @@ Mx 	139.9325
 T	15 w=2.2000	(.)
 Mx 	49.7638
 My 	690.3485
-Set font 	Libertinus Serif;30;400;;normal;;LTR
+Set font 	Libertinus Serif;30;400;;normal;;;LTR
 Mx 	15.8400
 Mx 	15.1200
 Mx 	10.9200
@@ -270,7 +270,7 @@ Mx 	13.4100
 Mx 	23.7000
 T	45 a=15.8400 80 a=15.1200 83 a=11.1600 70 a=13.4100 78 a=23.7000	(Lorem)
 Mx 	132.1680
-Set font 	Libertinus Serif;10;400;;normal;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR
 T	74 81 84 86 78 w=25.0100	(ipsum)
 Mx 	160.5923
 T	69 80 77 80 83 w=21.5000	(dolor)
@@ -546,10 +546,10 @@ T	84 86 79 85 w=17.7900	(sunt)
 Mx 	111.1651
 T	74 79 w=8.1300	(in)
 Mx 	122.9089
-Set font 	Libertinus Serif;30;400;;normal;;LTR
+Set font 	Libertinus Serif;30;400;;normal;;;LTR
 T	68 86 77 81 66 w=65.9700	(culpa)
 Mx 	192.4927
-Set font 	Libertinus Serif;10;400;;normal;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR
 T	82 86 74 w=13.0500	(qui)
 Mx 	209.1565
 T	80 2363 68 74 66 w=24.8900	(officia)

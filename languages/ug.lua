@@ -8,7 +8,7 @@ SILE.languageSupport.loadLanguage("tr")
 
 local chardata = require("char-def")
 
-SILE.settings.declare({
+SILE.settings:declare({
   parameter = "languages.ug.hyphenoffset",
   help = "Space added between text and hyphen",
   type = "glue or nil",
@@ -119,7 +119,7 @@ end
 
 SILE.hyphenator.languages.ug = function(n)
   local latin = arabicToLatin(n.text)
-  if SU.debugging("uyghur") then io.write("Original: ", n.text.." -> "..latin.." -> ") end
+  SU.debug("uyghur", "Original:", n.text, "->", latin, "->")
   local state = n.options
   -- Make "Turkish" nodes
   local newoptions = pl.tablex.deepcopy(n.options)
@@ -129,16 +129,11 @@ SILE.hyphenator.languages.ug = function(n)
   end
   local items = SILE._hyphenate(SILE.hyphenators["lt"], latin)
   if #items == 1 then
-    if SU.debugging("uyghur") then print(latin .." No hyphenation points") end
-    return {n}
+    SU.debug("uyghur", latin, "No hyphenation points")
+    return { n }
   end
   -- Choose 1. Aim to split in middle.
-  if SU.debugging("uyghur") then
-    for i = 1,#items do
-      io.write(items[i].."/")
-    end
-    io.write(" -> ")
-  end
+  SU.debug("uyghur", function () return SU.concat(items, "/") .. " -> " end)
   local splitpoint = math.ceil(#items/2)
   local nitems = {"",""}
   for i=1,#items do
@@ -147,14 +142,14 @@ SILE.hyphenator.languages.ug = function(n)
     end
   end
   items = nitems
-  if SU.debugging("uyghur") then print(items[1] .."/" ..items[2].." ") end
+  SU.debug("uyghur", items[1], "/", items[2])
   state.language = "ug"
   items[1] = latinToArabic(items[1])
   items[2] = latinToArabic(items[2])
-  local hyphen = SILE.settings.get("font.hyphenchar")
+  local hyphen = SILE.settings:get("font.hyphenchar")
   local prebreak = SILE.shaper:createNnodes(items[1] .. (lastjoinable(items[1]) and zwj or ""), state)
-  if SILE.settings.get("languages.ug.hyphenoffset") then
-    local w = SILE.settings.get("languages.ug.hyphenoffset").width
+  if SILE.settings:get("languages.ug.hyphenoffset") then
+    local w = SILE.settings:get("languages.ug.hyphenoffset").width
     prebreak[#prebreak+1] = SILE.nodefactory.kern({ width = w })
   end
   local hnodes = SILE.shaper:createNnodes(hyphen, state)

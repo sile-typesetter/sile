@@ -2,7 +2,7 @@ Set paper size 	430.8661464	649.1338653
 Begin page
 Mx 	35.7619
 My 	82.8679
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	90 75 82 w=17.6074	(who)
 Mx 	57.5624
 T	76 86 w=6.5723	(is)
@@ -33,11 +33,11 @@ Mx 	71.4333
 T	17 w=2.2900	(.)
 Mx 	77.8603
 My 	92.8679
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	26 w=4.2231	(7)
 Mx 	82.0834
 My 	95.8679
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	37 88 87 w=14.2383	(But)
 Mx 	100.4587
 T	87 82 w=8.4717	(to)
@@ -85,11 +85,11 @@ Mx 	134.3140
 T	17 w=2.2900	(.)
 Mx 	138.9961
 My 	118.8679
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	27 w=4.2231	(8)
 Mx 	143.2192
 My 	121.8679
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	55 75 72 85 72 73 82 85 72 w=40.9424	(Therefore)
 Mx 	186.5537
 T	75 72 w=10.1367	(he)
@@ -140,15 +140,15 @@ Mx 	56.2209
 T	181 w=4.3604	(”)
 Mx 	60.5812
 My 	157.6892
-Set font 	Gentium Plus;6.81152;400;;normal;;LTR
+Set font 	Gentium Plus;6.81152;400;;normal;;;LTR
 T	68 w=3.1264	(a)
 Mx 	66.0279
 My 	157.8679
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	28 w=4.2231	(9)
 Mx 	70.2510
 My 	160.8679
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	49 82 90 w=18.5791	(Now)
 Mx 	91.1504
 T	87 75 76 86 w=15.5322	(this)
@@ -202,11 +202,11 @@ Mx 	170.1363
 T	34 w=4.3311	(?)
 Mx 	177.0869
 My 	183.8679
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	20 19 w=8.4463	(10)
 Mx 	185.5332
 My 	186.8679
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	43 72 w=11.1572	(He)
 Mx 	35.7619
 My 	199.8679
@@ -259,11 +259,11 @@ Mx 	128.2559
 T	17 w=2.2900	(.)
 Mx 	60.2438
 My 	236.8679
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	20 20 w=8.4463	(11)
 Mx 	68.6901
 My 	239.8679
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	43 72 w=11.1572	(He)
 Mx 	84.3292
 T	74 68 89 72 w=19.0186	(gave)
@@ -315,11 +315,11 @@ Mx 	103.2475
 T	86 75 72 83 75 72 85 71 86 w=42.4561	(shepherds)
 Mx 	145.7036
 My 	262.6892
-Set font 	Gentium Plus;6.81152;400;;normal;;LTR
+Set font 	Gentium Plus;6.81152;400;;normal;;;LTR
 T	69 w=3.4590	(b)
 Mx 	152.3186
 My 	265.8679
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	68 81 71 w=15.3076	(and)
 Mx 	170.7822
 T	87 72 68 70 75 w=22.5391	(teach)
@@ -332,14 +332,14 @@ Mx 	48.2033
 T	30 w=2.2900	(;)
 Mx 	53.1508
 My 	275.8679
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	20 21 w=8.4463	(12)
 Mx 	232.2713
 My 	79.8679
 T	20 26 w=8.4463	(17)
 Mx 	240.7176
 My 	82.8679
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	55 75 76 86 w=17.5977	(This)
 Mx 	260.9702
 T	44 w=2.9785	(I)
@@ -408,11 +408,11 @@ Mx 	294.1809
 T	15 w=2.2900	(,)
 Mx 	298.5914
 My 	117.3998
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	20 27 w=8.4463	(18)
 Mx 	307.0377
 My 	120.3998
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	69 72 76 81 74 w=22.8027	(being)
 Mx 	331.9609
 T	71 68 85 78 72 81 72 71 w=38.5840	(darkened)
@@ -427,11 +427,11 @@ Mx 	303.7048
 T	15 w=2.2900	(,)
 Mx 	229.6164
 My 	342.9318
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	21 24 w=8.4463	(25)
 Mx 	238.0627
 My 	345.9318
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	55 75 72 85 72 73 82 85 72 w=40.9424	(Therefore)
 Mx 	284.8455
 T	83 88 87 87 76 81 74 w=30.5859	(putting)
@@ -482,11 +482,11 @@ Mx 	242.2922
 T	17 w=2.2900	(.)
 Mx 	248.2558
 My 	380.4638
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	21 25 w=8.4463	(26)
 Mx 	256.7021
 My 	383.4638
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	180 w=4.3604	(“)
 Mx 	261.0624
 T	37 72 w=10.1172	(Be)
@@ -506,11 +506,11 @@ Mx 	363.2078
 T	181 w=4.3604	(”)
 Mx 	367.5682
 My 	380.2851
-Set font 	Gentium Plus;6.81152;400;;normal;;LTR
+Set font 	Gentium Plus;6.81152;400;;normal;;;LTR
 T	70 w=2.9767	(c)
 Mx 	209.6164
 My 	395.9744
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	39 82 81 183 87 w=22.2070	(Don’t)
 Mx 	237.1395
 T	79 72 87 w=10.7715	(let)
@@ -533,11 +533,11 @@ Mx 	234.1867
 T	15 w=2.2900	(,)
 Mx 	241.1531
 My 	405.4851
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	21 26 w=8.4463	(27)
 Mx 	249.5994
 My 	408.4851
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	68 81 71 w=15.3076	(and)
 Mx 	269.5834
 T	71 82 81 183 87 w=21.4795	(don’t)
@@ -556,11 +556,11 @@ Mx 	229.7873
 T	17 w=2.2900	(.)
 Mx 	237.7270
 My 	417.9957
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	21 27 w=8.4463	(28)
 Mx 	246.1733
 My 	420.9957
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	47 72 87 w=12.8223	(Let)
 Mx 	264.6453
 T	75 76 80 w=16.2598	(him)
@@ -644,11 +644,11 @@ Mx 	341.9156
 T	17 w=2.2900	(.)
 Mx 	349.2763
 My 	468.0383
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	21 28 w=8.4463	(29)
 Mx 	357.7226
 My 	471.0383
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	47 72 87 w=12.8223	(Let)
 Mx 	209.6164
 My 	483.5490
@@ -688,7 +688,7 @@ Mx 	367.1757
 T	16 w=3.3691	(-)
 Mx 	209.6164
 My 	517.8477
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	68 w=4.1309	(a)
 Mx 	213.7472
 T	17 w=2.0610	(.)
@@ -732,7 +732,7 @@ Mx 	270.3432
 T	23 w=4.2231	(4)
 Mx 	348.1149
 My 	30.3488
-Set font 	Gentium;10;400;;normal;;LTR
+Set font 	Gentium;10;400;;normal;;;LTR
 T	79 74 77 w=10.7700	(nil)
 Mx 	358.8849
 T	27 w=2.3600	(:)
@@ -740,7 +740,7 @@ Mx 	361.2449
 T	19 26 w=9.3000	(29)
 Mx 	200.8072
 My 	566.2816
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	20 w=4.6924	(1)
 New page
 Mx 	60.3213
@@ -785,11 +785,11 @@ Mx 	218.9597
 T	17 w=2.2900	(.)
 Mx 	60.3213
 My 	103.8679
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	22 19 w=8.4463	(30)
 Mx 	68.7675
 My 	106.8679
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	39 82 81 183 87 w=22.2070	(Don’t)
 Mx 	94.7078
 T	74 85 76 72 89 72 w=25.7178	(grieve)
@@ -831,11 +831,11 @@ Mx 	108.7490
 T	17 w=2.2900	(.)
 Mx 	113.2062
 My 	127.8679
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	22 20 w=8.4463	(31)
 Mx 	121.6525
 My 	130.8679
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	47 72 87 w=12.8223	(Let)
 Mx 	136.6420
 T	68 79 79 w=10.0098	(all)
@@ -885,17 +885,17 @@ Mx 	164.3501
 T	17 w=2.2900	(.)
 Mx 	169.2843
 My 	151.8679
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	22 21 w=8.4463	(32)
 Mx 	177.7306
 My 	154.8679
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	36 81 71 w=16.6699	(And)
 Mx 	197.0447
 T	69 72 w=9.6973	(be)
 Mx 	80.3213
 My 	30.3488
-Set font 	Gentium;10;400;;normal;;LTR
+Set font 	Gentium;10;400;;normal;;;LTR
 T	79 74 77 w=10.7700	(nil)
 Mx 	91.0913
 T	27 w=2.3600	(:)
@@ -903,7 +903,7 @@ Mx 	93.4513
 T	20 17 w=9.3000	(30)
 Mx 	225.3666
 My 	566.2328
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	21 w=4.6924	(2)
 End page
 Finish

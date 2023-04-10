@@ -1,5 +1,7 @@
-local plain = SILE.require("plain", "classes")
-local pecha = plain { id = "pecha" }
+local plain = require("classes.plain")
+
+local class = pl.class(plain)
+class._name = "pecha"
 
 local tibetanNumber = function (n)
   local out = ""
@@ -11,7 +13,7 @@ local tibetanNumber = function (n)
   return out
 end
 
-pecha.defaultFrameset = {
+class.defaultFrameset = {
   content = {
     left = "5%pw",
     right = "95%pw",
@@ -34,18 +36,24 @@ pecha.defaultFrameset = {
   }
 }
 
-function pecha:init()
+function class:_init(options)
+  plain._init(self, options)
   self:loadPackage("rotate")
-  return plain.init(self)
+  self:registerPostinit(function ()
+    SILE.call("language", { main = "bo" })
+    SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue())
+    SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+    SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+  end)
 end
 
-function pecha:endPage()
+function class:endPage()
   local folioframe = SILE.getFrame("folio")
   SILE.typesetNaturally(folioframe, function ()
-    SILE.settings.pushState()
+    SILE.settings:pushState()
     -- Restore the settings to the top of the queue, which should be the document #986
-    SILE.settings.toplevelState()
-    SILE.settings.set("typesetter.breakwidth", folioframe:height())
+    SILE.settings:toplevelState()
+    SILE.settings:set("typesetter.breakwidth", folioframe:height())
     SILE.typesetter:typeset(" ")
     SILE.call("vfill")
     SILE.call("pecha-folio-font")
@@ -54,25 +62,17 @@ function pecha:endPage()
     end)
     SILE.call("vfill")
     SILE.typesetter:leaveHmode()
-    SILE.settings.popState()
+    SILE.settings:popState()
   end)
   return plain.endPage(self)
 end
 
-function pecha:newPage()
+function class:newPage()
   SILE.outputter:newPage()
   SILE.outputter:debugFrame(SILE.getFrame("content"))
   return self:initialFrame()
 end
 
-function pecha:registerCommands()
-  plain.registerCommands(self)
-  SILE.call("language", { main = "bo" })
-  SILE.settings.set("document.lskip", SILE.nodefactory.hfillglue())
-  SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
-  SILE.settings.set("document.parindent", SILE.nodefactory.glue())
-end
-
-return pecha
+return class
 
 -- \right-running-head{\font[size=15pt]{\center{ཤེས་རབ་སྙིང་པོ་ }}}

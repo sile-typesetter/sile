@@ -39,14 +39,22 @@ local papersize = {
   c6 = { 323.1496098, 459.2126034 },
   c7 = { 229.6063017, 323.1496098 },
   c8 = { 161.5748049, 229.6063017 },
-  DL = { 311.81102699999997, 623.6220539999999 },
-  Comm10 = { 297, 684 },
-  Monarch = { 279, 540 },
-  archE = { 2592, 3456 },
-  archD = { 1728, 2592 },
-  archC = { 1296, 1728 },
-  archB = { 864, 1296 },
-  archA = { 648, 864 },
+  dl = { 311.81102699999997, 623.6220539999999 },
+  comm10 = { 297, 684 },
+  monarch = { 279, 540 },
+  ansia = { 612, 792 },
+  ansib = { 792, 1224 },
+  ansic = { 1224, 1584 },
+  ansid = { 1584, 2448 },
+  ansie = { 2448, 3168 },
+  arche = { 2592, 3456 },
+  arche2 = { 1872, 2736 },
+  arche3 = { 1944, 2808 },
+  arche1 = { 2160, 3024 },
+  archd = { 1728, 2592 },
+  archc = { 1296, 1728 },
+  archb = { 864, 1296 },
+  archa = { 648, 864 },
   flsa = { 612, 936 },
   flse = { 612, 936 },
   csheet = { 1224, 1584 },
@@ -58,19 +66,18 @@ setmetatable(papersize, {
     __call = function (self, size)
       local _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
       if x and y then
-        local a = { SILE.measurement(x):tonumber(), SILE.measurement(y):tonumber() }
-        return a
-      elseif self[size] then
-        return self[size]
+        return { SILE.measurement(x):tonumber(), SILE.measurement(y):tonumber() }
       else
-        SU.error("Unknown paper size "..size)
+        size = string.lower(size:gsub("[-%s]+", ""))
+        if self[size] then
+          return self[size]
+        end
       end
+      SU.error(string.format([[Unable to parse papersize '%s'.
+  Custom sizes may be entered with 'papersize=<measurement> x <measurement>'.
+  Predefined paper sizes include: %s]],
+  size, table.concat(pl.tablex.keys(papersize), ", ")))
     end
   })
-
-SILE.paperSizeParser = function (size)
-  -- SU.warn("SILE.paperSizeParser(...) is deprecated, use SILE.papersize(...) instead")
-  return papersize(size)
-end
 
 return papersize

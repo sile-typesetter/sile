@@ -64,8 +64,9 @@ local measurement = pl.class({
         if not parsed then SU.error("Could not parse measurement '"..amount.."'") end
         self.amount, self.unit = parsed.amount, parsed.unit
       end
-      if not SILE.units[self.unit] then SU.error("Unknown unit: " .. unit) end
-      self.relative = SILE.units[self.unit].relative
+      local _su = SILE.units[self.unit]
+      if not _su then SU.error("Unknown unit: " .. unit) end
+      self.relative = _su.relative
       if self.unit == "pt" then self._mutable = true end
     end,
 
@@ -79,12 +80,16 @@ local measurement = pl.class({
 
     tonumber = function (self)
       local def = SILE.units[self.unit]
-      local amount = def.converter and def.converter(self.amount) or self.amount * def.value
+      local amount = def.converter and def.converter(self.amount) or (self.amount * def.value)
       return amount
     end,
 
     __tostring = function (self)
       return self.amount .. self.unit
+    end,
+
+    __concat = function (a, b)
+      return tostring(a) .. tostring(b)
     end,
 
     __add = function (self, other)
@@ -180,21 +185,5 @@ local measurement = pl.class({
     end
 
   })
-
-
-SILE.toPoints = function (factor, unit)
-  SU.deprecated("SILE.toPoints", "SILE.measurement():tonumber", "0.10.0")
-  return measurement(factor, unit):tonumber()
-end
-
-SILE.toMeasurement = function (amount, unit)
-  SU.deprecated("SILE.toMeasurement", "SILE.measurement", "0.10.0")
-  return measurement(amount, unit)
-end
-
-SILE.toAbsoluteMeasurement = function (amount, unit)
-  SU.deprecated("SILE.toAbsoluteMeasurement", "SILE.measurement():absolute", "0.10.0")
-  return measurement(amount, unit):absolute()
-end
 
 return measurement

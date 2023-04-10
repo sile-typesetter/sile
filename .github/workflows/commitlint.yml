@@ -1,17 +1,17 @@
 name: Commitlint
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
 
   commitlint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Run ‘commitlint’ linter
-        uses: wagoid/commitlint-github-action@v4
+        uses: wagoid/commitlint-github-action@v5
         with:
           configFile: '.commitlintrc.yml'

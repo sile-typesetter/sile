@@ -2,7 +2,7 @@ Set paper size 	432	648
 Begin page
 Mx 	41.6000
 My 	39.6266
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	56 81 w=12.0557	(Un)
 Mx 	54.9770
 T	4 w=2.7197	(!)
@@ -65,20 +65,20 @@ T	12 w=3.1689	())
 Mx 	96.2242
 T	4 w=2.7197	(!)
 Mx 	101.6134
-Set font 	Gentium Plus;10;400;Italic;normal;;LTR
+Set font 	Gentium Plus;10;400;Italic;normal;;;LTR
 T	50 81 93 72 w=18.1104	(Onze)
 Mx 	121.0451
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	4 w=2.7197	(!)
 Mx 	126.4343
-Set font 	Gentium Plus;10;400;Italic;normal;;LTR
+Set font 	Gentium Plus;10;400;Italic;normal;;;LTR
 T	169 w=4.3066	(«)
 Mx 	132.8631
 T	39 82 88 93 72 w=22.3877	(Douze)
 Mx 	157.3730
 T	170 w=4.3066	(»)
 Mx 	163.0009
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	4 w=2.7197	(!)
 Mx 	41.6000
 My 	75.6266
@@ -188,13 +188,13 @@ T	12 w=3.1689	())
 Mx 	96.2242
 T	4 w=2.7197	(!)
 Mx 	101.6134
-Set font 	Gentium Plus;10;400;Italic;normal;;LTR
+Set font 	Gentium Plus;10;400;Italic;normal;;;LTR
 T	50 81 93 72 w=18.1104	(Onze)
 Mx 	121.0451
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	4 w=2.7197	(!)
 Mx 	126.4343
-Set font 	Gentium Plus;10;400;Italic;normal;;LTR
+Set font 	Gentium Plus;10;400;Italic;normal;;;LTR
 T	169 w=4.3066	(«)
 Mx 	132.8631
 T	39 w=5.4590	(D)
@@ -203,7 +203,7 @@ T	82 88 93 72 w=16.9287	(ouze)
 Mx 	157.3730
 T	170 w=4.3066	(»)
 Mx 	163.0009
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	4 w=2.7197	(!)
 Mx 	41.6000
 My 	135.6266

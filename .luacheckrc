@@ -16,20 +16,20 @@ exclude_files = {
   ".luarocks",
   ".install"
 }
-files["spec"] = {
+files["**/*_spec.lua"] = {
   std = "+busted"
 }
 globals = {
   "SILE",
   "SU",
-  "std",
   "luautf8",
   "pl",
+  "fluent",
   "SYSTEM_SILE_PATH",
-  "SHARED_LIB_EXT",
-  "ProFi"
+  "SHARED_LIB_EXT"
 }
 max_line_length = false
 ignore = {
-  "581"
+  "581" -- operator order warning doesn't account for custom table metamethods
 }
+-- vim: ft=lua

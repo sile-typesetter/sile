@@ -2,7 +2,7 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	44.7039
 My 	56.2336
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	47 82 85 72 80 w=26.4014	(Lorem)
 Mx 	74.6714
 T	76 83 86 88 80 w=25.2002	(ipsum)
@@ -92,11 +92,11 @@ My 	108.2336
 T	70 82 80 80 82 71 82 w=40.7227	(commodo)
 Mx 	65.4266
 My 	105.0548
-Set font 	Gentium Plus;6.81152;400;;normal;;LTR
+Set font 	Gentium Plus;6.81152;400;;normal;;;LTR
 T	20 w=3.1962	(1)
 Mx 	68.6228
 My 	108.2336
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	79 82 85 72 80 w=24.3506	(lorem)
 Mx 	95.6365
 T	76 83 86 88 80 w=25.2002	(ipsum)
@@ -116,7 +116,7 @@ Mx 	252.5994
 T	16 w=3.3691	(-)
 Mx 	24.7039
 My 	142.0692
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	20 w=4.2231	(1)
 Mx 	28.9271
 T	17 w=2.0610	(.)
@@ -560,7 +560,7 @@ T	70 82 81 86 72 70 87 72 87 88 72 85 w=47.8345	(consectetuer)
 New page
 Mx 	41.6693
 My 	56.2336
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	86 70 76 81 74 w=21.3379	(scing)
 Mx 	65.5005
 T	72 79 76 87 85 w=17.4414	(elitr)
@@ -591,7 +591,7 @@ Mx 	140.4843
 T	68 79 76 84 88 92 68 80 w=38.0127	(aliquyam)
 Mx 	41.6693
 My 	293.3571
-Set font 	Gentium Plus;9;400;;normal;;LTR
+Set font 	Gentium Plus;9;400;;normal;;;LTR
 T	68 71 76 83 76 86 70 76 81 74 w=37.6611	(adipiscing)
 Mx 	82.0910
 T	72 79 76 87 w=12.1333	(elit)

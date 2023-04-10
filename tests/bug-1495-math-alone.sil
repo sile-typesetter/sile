@@ -1,0 +1,8 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\use[module=packages.math]
+\math{x}
+\cr
+\math{y}
+\end{document}

@@ -1,10 +1,11 @@
-\begin[class=book,papersize=129mm x 198mm]{document}% KNOWNBAD
-\script[src=packages/color-fonts]
+% KNOWNBAD https://github.com/sile-typesetter/sile/issues/1261
+\begin[class=book,papersize=129mm x 198mm]{document}
+\use[module=packages.color-fonts]
 \bidi-on
 \font[filename=tests/TestCLR-Regular.ttf]
 a☺a
 
-a☺🏻a 
+a☺🏻a
 
-ع☺🏻ع 
+ع☺🏻ع
 \end{document}

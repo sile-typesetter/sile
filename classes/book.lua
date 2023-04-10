@@ -1,9 +1,9 @@
-local plain = SILE.require("plain", "classes")
-local book = plain { id = "book" }
+local plain = require("classes.plain")
 
-local counters = SILE.require("packages/counters").exports
+local class = pl.class(plain)
+class._name = "book"
 
-book.defaultFrameset = {
+class.defaultFrameset = {
   content = {
     left = "8.3%pw",
     right = "86%pw",
@@ -30,207 +30,229 @@ book.defaultFrameset = {
   }
 }
 
-function book:init ()
-  self:loadPackage("masters")
-  self:defineMaster({
+function class:_init (options)
+  plain._init(self, options)
+  self:loadPackage("counters")
+  self:loadPackage("masters", {{
       id = "right",
       firstContentFrame = self.firstContentFrame,
       frames = self.defaultFrameset
+    }})
+  self:loadPackage("twoside", {
+      oddPageMaster = "right",
+      evenPageMaster = "left"
     })
-  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-  self:mirrorMaster("right", "left")
   self:loadPackage("tableofcontents")
-  if not SILE.scratch.headers then SILE.scratch.headers = {} end
   self:loadPackage("footnotes", {
-    insertInto = "footnotes",
-    stealFrom = { "content" }
-  })
-  return plain.init(self)
+      insertInto = "footnotes",
+      stealFrom = { "content" }
+    })
+  if not SILE.scratch.headers then SILE.scratch.headers = {} end
 end
 
-book.newPage = function (self)
-  self:switchPage()
-  self:newPageInfo()
-  return plain.newPage(self)
-end
-
-book.finish = function (self)
-  local ret = plain.finish(self)
-  self:writeToc()
-  return ret
-end
-
-book.endPage = function (self)
-  self:moveTocNodes()
-  if (self:oddPage() and SILE.scratch.headers.right) then
-    SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
-      SILE.settings.toplevelState()
-      SILE.settings.set("current.parindent", SILE.nodefactory.glue())
-      SILE.settings.set("document.lskip", SILE.nodefactory.glue())
-      SILE.settings.set("document.rskip", SILE.nodefactory.glue())
-      -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
-      SILE.process(SILE.scratch.headers.right)
-      SILE.call("par")
-    end)
-  elseif (not(self:oddPage()) and SILE.scratch.headers.left) then
+function class:endPage ()
+  if not SILE.scratch.headers.skipthispage then
+    if self:oddPage() and SILE.scratch.headers.right then
       SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
-        SILE.settings.toplevelState()
-        SILE.settings.set("current.parindent", SILE.nodefactory.glue())
-        SILE.settings.set("document.lskip", SILE.nodefactory.glue())
-        SILE.settings.set("document.rskip", SILE.nodefactory.glue())
-          -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
+        SILE.settings:toplevelState()
+        SILE.settings:set("current.parindent", SILE.nodefactory.glue())
+        SILE.settings:set("document.lskip", SILE.nodefactory.glue())
+        SILE.settings:set("document.rskip", SILE.nodefactory.glue())
+        -- SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+        SILE.process(SILE.scratch.headers.right)
+        SILE.call("par")
+      end)
+    elseif not self:oddPage() and SILE.scratch.headers.left then
+      SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
+        SILE.settings:toplevelState()
+        SILE.settings:set("current.parindent", SILE.nodefactory.glue())
+        SILE.settings:set("document.lskip", SILE.nodefactory.glue())
+        SILE.settings:set("document.rskip", SILE.nodefactory.glue())
+        -- SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
         SILE.process(SILE.scratch.headers.left)
         SILE.call("par")
       end)
+    end
   end
+  SILE.scratch.headers.skipthispage = false
   return plain.endPage(self)
 end
 
-SILE.registerCommand("left-running-head", function (_, content)
-  local closure = SILE.settings.wrap()
-  SILE.scratch.headers.left = function () closure(content) end
-end, "Text to appear on the top of the left page")
-
-SILE.registerCommand("right-running-head", function (_, content)
-  local closure = SILE.settings.wrap()
-  SILE.scratch.headers.right = function () closure(content) end
-end, "Text to appear on the top of the right page")
-
-SILE.registerCommand("book:sectioning", function (options, content)
-  local level = SU.required(options, "level", "book:sectioning")
-  local number
-  if SU.boolean(options.numbering, true) then
-    SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
-    number = SILE.formatMultilevelCounter(counters.getMultilevelCounter("sectioning"))
-  end
-  if SU.boolean(options.toc, true) then
-    SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))
-  end
-  local lang = SILE.settings.get("document.language")
-  if SU.boolean(options.numbering, true) then
-    if options.prenumber then
-      if SILE.Commands[options.prenumber .. ":"  .. lang] then
-        options.prenumber = options.prenumber .. ":" .. lang
-      end
-      SILE.call(options.prenumber)
-    end
-    SILE.call("show-multilevel-counter", { id = "sectioning" })
-    if options.postnumber then
-      if SILE.Commands[options.postnumber .. ":" .. lang] then
-        options.postnumber = options.postnumber .. ":" .. lang
-      end
-      SILE.call(options.postnumber)
-    end
-  end
-end)
-
-book.registerCommands = function (_)
-  plain.registerCommands()
-SILE.doTexlike([[%
-\define[command=book:chapter:pre]{}%
-\define[command=book:chapter:post]{\par}%
-\define[command=book:section:post]{ }%
-\define[command=book:subsection:post]{ }%
-\define[command=book:left-running-head-font]{\font[size=9pt]}%
-\define[command=book:right-running-head-font]{\font[size=9pt,style=italic]}%
-]])
+function class:finish ()
+  local ret = plain.finish(self)
+  return ret
 end
 
-SILE.registerCommand("chapter", function (options, content)
-  SILE.call("open-double-page")
-  SILE.call("noindent")
-  SILE.scratch.headers.right = nil
-  SILE.call("set-counter", { id = "footnote", value = 1 })
-  SILE.call("book:chapterfont", {}, function ()
-    SILE.call("book:sectioning", {
-      numbering = options.numbering,
-      toc = options.toc,
-      level = 1,
-      prenumber = "book:chapter:pre",
-      postnumber = "book:chapter:post"
-    }, content)
-  end)
-  SILE.call("book:chapterfont", {}, content)
-  SILE.call("left-running-head", {}, function ()
-    SILE.settings.temporarily(function ()
-      SILE.call("book:left-running-head-font")
-      SILE.process(content)
-    end)
-  end)
-  SILE.call("bigskip")
-  SILE.call("nofoliothispage")
-end, "Begin a new chapter")
+function class:registerCommands ()
 
-SILE.registerCommand("section", function (options, content)
-  SILE.typesetter:leaveHmode()
-  SILE.call("goodbreak")
-  SILE.call("bigskip")
-  SILE.call("noindent")
-  SILE.call("book:sectionfont", {}, function ()
-    SILE.call("book:sectioning", {
-      numbering = options.numbering,
-      toc = options.toc,
-      level = 2,
-      postnumber = "book:section:post"
-    }, content)
-    SILE.process(content)
+  plain.registerCommands(self)
+
+  self:registerCommand("left-running-head", function (_, content)
+    local closure = SILE.settings:wrap()
+    SILE.scratch.headers.left = function () closure(content) end
+  end, "Text to appear on the top of the left page")
+
+  self:registerCommand("right-running-head", function (_, content)
+    local closure = SILE.settings:wrap()
+    SILE.scratch.headers.right = function () closure(content) end
+  end, "Text to appear on the top of the right page")
+
+  self:registerCommand("book:sectioning", function (options, content)
+    local level = SU.required(options, "level", "book:sectioning")
+    local number
+    if SU.boolean(options.numbering, true) then
+      SILE.call("increment-multilevel-counter", { id = "sectioning", level = level })
+      number = self.packages.counters:formatMultilevelCounter(self:getMultilevelCounter("sectioning"))
+    end
+    if SU.boolean(options.toc, true) then
+      SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))
+    end
+    if SU.boolean(options.numbering, true) then
+      if options.msg then
+        SILE.call("fluent", { number = number }, { options.msg })
+      else
+        SILE.call("show-multilevel-counter", { id = "sectioning" })
+      end
+    else
+      -- https://github.com/sile-typesetter/sile/issues/1707
+      -- https://github.com/sile-typesetter/sile/issues/1751
+      SILE.call("hbox")
+    end
   end)
-  if not SILE.scratch.counters.folio.off then
-    SILE.call("right-running-head", {}, function ()
-      SILE.call("book:right-running-head-font")
-      SILE.call("rightalign", {}, function ()
-        SILE.settings.temporarily(function ()
-          if SU.boolean(options.numbering, true) then
-            SILE.call("show-multilevel-counter", { id = "sectioning", level = 2 })
-            SILE.typesetter:typeset(" ")
-          end
-          SILE.process(content)
-        end)
+
+  self:registerCommand("book:chapter:post", function (_, _)
+    SILE.call("par")
+  end)
+
+  self:registerCommand("book:section:post", function (_, _)
+    SILE.process({ " " })
+  end)
+
+  self:registerCommand("book:subsection:post", function (_, _)
+    SILE.process({ " " })
+  end)
+
+  self:registerCommand("book:left-running-head-font", function (_, content)
+    SILE.call("font", { size = "9pt" }, content)
+  end)
+
+  self:registerCommand("book:right-running-head-font", function (_, content)
+    SILE.call("font", { size = "9pt", style = "Italic" }, content)
+  end)
+
+  self:registerCommand("chapter", function (options, content)
+    SILE.typesetter:leaveHmode()
+    SILE.call("open-spread", { double = false })
+    SILE.call("noindent")
+    SILE.scratch.headers.right = nil
+    SILE.call("set-counter", { id = "footnote", value = 1 })
+    SILE.call("book:chapterfont", {}, function ()
+      SILE.call("book:sectioning", {
+        numbering = options.numbering,
+        toc = options.toc,
+        level = 1,
+        msg = "book-chapter-title"
+      }, content)
+    end)
+    local lang = SILE.settings:get("document.language")
+    local postcmd = "book:chapter:post"
+    if SILE.Commands[postcmd .. ":" .. lang] then
+      postcmd = postcmd .. ":" .. lang
+    end
+    SILE.call(postcmd)
+    SILE.call("book:chapterfont", {}, content)
+    SILE.call("left-running-head", {}, function ()
+      SILE.settings:temporarily(function ()
+        SILE.call("book:left-running-head-font", {}, content)
       end)
     end)
-  end
-  SILE.call("novbreak")
-  SILE.call("bigskip")
-  SILE.call("novbreak")
-  SILE.typesetter:inhibitLeading()
-end, "Begin a new section")
+    SILE.call("bigskip")
+    SILE.call("nofoliothispage")
+  end, "Begin a new chapter")
 
-SILE.registerCommand("subsection", function (options, content)
-  SILE.typesetter:leaveHmode()
-  SILE.call("goodbreak")
-  SILE.call("noindent")
-  SILE.call("medskip")
-  SILE.call("book:subsectionfont", {}, function ()
-    SILE.call("book:sectioning", {
-          numbering = options.numbering,
-          toc = options.toc,
-          level = 3,
-          postnumber = "book:subsection:post"
-        }, content)
-    SILE.process(content)
-  end)
-  SILE.typesetter:leaveHmode()
-  SILE.call("novbreak")
-  SILE.call("medskip")
-  SILE.call("novbreak")
-  SILE.typesetter:inhibitLeading()
-end, "Begin a new subsection")
+  self:registerCommand("section", function (options, content)
+    SILE.typesetter:leaveHmode()
+    SILE.call("goodbreak")
+    SILE.call("bigskip")
+    SILE.call("noindent")
+    SILE.call("book:sectionfont", {}, function ()
+      SILE.call("book:sectioning", {
+        numbering = options.numbering,
+        toc = options.toc,
+        level = 2
+      }, content)
+      local lang = SILE.settings:get("document.language")
+      local postcmd = "book:section:post"
+      if SILE.Commands[postcmd .. ":" .. lang] then
+        postcmd = postcmd .. ":" .. lang
+      end
+      SILE.call(postcmd)
+      SILE.process(content)
+    end)
+    if not SILE.scratch.counters.folio.off then
+      SILE.call("right-running-head", {}, function ()
+        SILE.call("book:right-running-head-font", {}, function ()
+          SILE.call("rightalign", {}, function ()
+            SILE.settings:temporarily(function ()
+              if SU.boolean(options.numbering, true) then
+                SILE.call("show-multilevel-counter", { id = "sectioning", level = 2 })
+                SILE.typesetter:typeset(" ")
+              end
+              SILE.process(content)
+            end)
+          end)
+        end)
+      end)
+    end
+    SILE.call("novbreak")
+    SILE.call("bigskip")
+    SILE.call("novbreak")
+    SILE.typesetter:inhibitLeading()
+  end, "Begin a new section")
 
-SILE.registerCommand("book:chapterfont", function (_, content)
-  SILE.settings.temporarily(function ()
-    SILE.call("font", { weight = 800, size = "22pt" }, content)
-  end)
-end)
-SILE.registerCommand("book:sectionfont", function (_, content)
-  SILE.settings.temporarily(function ()
-    SILE.call("font", { weight = 800, size = "15pt" }, content)
-  end)
-end)
+  self:registerCommand("subsection", function (options, content)
+    SILE.typesetter:leaveHmode()
+    SILE.call("goodbreak")
+    SILE.call("noindent")
+    SILE.call("medskip")
+    SILE.call("book:subsectionfont", {}, function ()
+      SILE.call("book:sectioning", {
+            numbering = options.numbering,
+            toc = options.toc,
+            level = 3
+          }, content)
+      local lang = SILE.settings:get("document.language")
+      local postcmd = "book:subsection:post"
+      if SILE.Commands[postcmd .. ":" .. lang] then
+        postcmd = postcmd .. ":" .. lang
+      end
+      SILE.call(postcmd)
+      SILE.process(content)
+    end)
+    SILE.typesetter:leaveHmode()
+    SILE.call("novbreak")
+    SILE.call("medskip")
+    SILE.call("novbreak")
+    SILE.typesetter:inhibitLeading()
+  end, "Begin a new subsection")
 
-SILE.registerCommand("book:subsectionfont", function (_, content)
-  SILE.settings.temporarily(function ()
-    SILE.call("font", { weight = 800, size = "12pt" }, content)
+  self:registerCommand("book:chapterfont", function (_, content)
+    SILE.settings:temporarily(function ()
+      SILE.call("font", { weight = 800, size = "22pt" }, content)
+    end)
   end)
-end)
+  self:registerCommand("book:sectionfont", function (_, content)
+    SILE.settings:temporarily(function ()
+      SILE.call("font", { weight = 800, size = "15pt" }, content)
+    end)
+  end)
 
-return book
+  self:registerCommand("book:subsectionfont", function (_, content)
+    SILE.settings:temporarily(function ()
+      SILE.call("font", { weight = 800, size = "12pt" }, content)
+    end)
+  end)
+
+end
+
+return class

@@ -1,6 +1,6 @@
 \begin[papersize=a7]{document}
 \nofolios
-\script[src=packages/lorem]
+\use[module=packages.lorem]
 \begin{script}
 
 local testshape = {
@@ -12,9 +12,9 @@ local testshape = {
   { 50, nil, 50 },
 }
 
-SILE.settings.set("linebreak.tolerance", 2000)
-SILE.settings.set("document.parindent", 0)
-SILE.settings.set("linebreak.parShape", true)
+SILE.settings:set("linebreak.tolerance", 2000)
+SILE.settings:set("document.parindent", 0)
+SILE.settings:set("linebreak.parShape", true)
 
 SILE.linebreak.parShape = function (self, line)
   local shape = testshape[line]

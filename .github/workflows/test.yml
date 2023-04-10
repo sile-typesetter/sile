@@ -1,6 +1,10 @@
 name: Test
 
-on: [push, pull_request]
+on: [ push, pull_request ]
+
+concurrency:
+  group: ${{ github.workflow}}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
@@ -12,10 +16,11 @@ jobs:
           - [ '5.4', 'MYCFLAGS=-fPIC' ]
           - [ '5.3', 'MYCFLAGS=-fPIC' ]
           - [ '5.2', 'MYCFLAGS=-fPIC' ]
-          - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"']
+          - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"' ]
           - [ 'luajit', 'XCFLAGS=-fPIC' ]
-          - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
-    runs-on: ubuntu-20.04
+          # - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
+    runs-on: ubuntu-22.04
+    timeout-minutes: 6
     name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
       - name: Checkout
@@ -39,7 +44,7 @@ jobs:
         run: |
           git fetch --prune --tags ||:
       - name: Setup ‘lua’
-        uses: leafo/gh-actions-lua@v9
+        uses: leafo/gh-actions-lua@v10
         with:
           luaVersion: ${{ matrix.luaVersion[0] }}
           luaCompileFlags: ${{ matrix.luaVersion[1] }}
@@ -59,11 +64,17 @@ jobs:
           EOF
       - name: Install system dependencies
         run: |
-          sudo apt-get install libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
+          sudo apt-get update
+          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure --without-system-luarocks --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit --without-manual
+          ./configure \
+            --enable-developer LUACHECK=false \
+            --disable-font-variations \
+            --without-system-luarocks \
+            --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit \
+            --without-manual
       - name: Make
         run: |
           make

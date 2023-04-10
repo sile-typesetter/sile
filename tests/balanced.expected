@@ -2,7 +2,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.9764
 My 	44.7638
-Set font 	Linux Libertine O;10;400;;normal;;LTR
+Set font 	Linux Libertine O;10;400;;normal;;;LTR
 T	35 86 85	(But)
 Mx 	58.1169
 T	84 80	(so)
@@ -933,13 +933,13 @@ Mx 	258.1567
 T	1761	(”)
 Mx 	172.4768
 My 	387.3878
-Set font 	Linux Biolinum O;18;800;;normal;;LTR
+Set font 	Linux Biolinum O;18;800;;normal;;;LTR
 T	36 73 66 81 85 70 83	(Chapter)
 Mx 	238.6808
 T	20	(3)
 Mx 	40.9764
 My 	441.3313
-Set font 	Linux Libertine O;10;400;;normal;;LTR
+Set font 	Linux Libertine O;10;400;;normal;;;LTR
 T	2399 70 79	(Then)
 Mx 	63.5130
 T	43 70 84 86 84	(Jesus)

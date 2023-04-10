@@ -1,32 +1,50 @@
 \begin[class=book]{document}
 \include[src=documentation/macros.sil]
 \define[command=silehp]{\url{http://www.sile-typesetter.org/}}
-\define[command=sileversion]{\script{SILE.typesetter:typeset(SILE.full_version)}}
+\define[command=sileversion]{\lua{SILE.typesetter:typeset(SILE.full_version)}}
 \set[parameter=document.baselineskip,value=3ex]
+% Quite drastic value below, but for a fast-changing technical document with snippets of code,
+% and little resources for fine-checking and tuning, we prefer (possibly large) underfull lines
+% to ugly overfull ones:
+\set[parameter=linebreak.emergencyStretch,value=20%lw]
 \font[size=11pt,family=Gentium Book Basic]
 \nofolios
 \pdf:metadata[key=Title, value=The SILE Book]
 \pdf:metadata[key=Author, value=Simon Cozens]
 
+\begin{center}
 \begin[family=Roboto Condensed,weight=600,size=50pt]{font}
 \begin[parameter=document.baselineskip,value=1.5ex]{set}
-\begin{center}
 The\break
 \img[src=documentation/sile-logo.pdf,height=125pt]\break
 Book
 
-\font[size=12pt]{for SILE version \script{SILE.typesetter:typeset(SILE.version)}}
+\font[size=12pt]{for SILE version \lua{SILE.typesetter:typeset(SILE.version)}}
 \vfill
-\font[size=20pt]{Simon Cozens}
-\end{center}
+\vfill
 \end{set}
 \end{font}
+% Project members with notable docs contributions by order invited to GitHub org
+\begin[size=16pt,family=Gentium Book Basic]{font}
+\begin[parameter=document.baselineskip,value=3ex]{set}
+Simon Cozens\break
+Caleb Maclennan\break
+Olivier Nicole\break
+Didier Willis\break
+\em{& many more contributors...}
+\par
+\end{set}
+\end{font}
+\end{center}
 \set[parameter=document.parskip,value=4pt plus 1pt]
+\set[parameter=lists.parskip,value=2pt plus 1pt]
 
-\open-double-page
+\open-spread[double=false]
+\folios
+\set-counter[id=folio,value=1,display=roman]
 \tableofcontents
 
-\set-counter[id=folio,value=0]
+% Note we switch folios back to arabic numbering, but we can't do it until after the chapter 1 heading is output so it is in that file now.
 
 % Users' guide
 \include[src=documentation/c01-whatis.sil]
@@ -43,5 +61,4 @@ Book
 \include[src=documentation/c10-classdesign.sil]
 \include[src=documentation/c11-xmlproc.sil]
 \include[src=documentation/c12-tricks.sil]
-
 \end{document}

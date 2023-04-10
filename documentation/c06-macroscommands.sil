@@ -17,7 +17,7 @@ that you need to keep entering again and again.
 \define[command=SILE]{\font[family=Gentium Plus]{% Book Basic has no +smcp, but readers don't need to know, since we're only using Book Basic as a holdover from old SILE which did.
 S\lower[height=0.5ex]{I}L\kern[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}}
 For instance, let’s suppose that we want to design a nice little
-“bumpy road” logo for SILE. (Afficionados of T\kern[width=-.1667em]\lower[height=0.5ex]{E}\kern[width=-.125em]X and friends will be familar with the concept of
+“bumpy road” logo for SILE. (Afficionados of T\kern[width=-.1667em]\lower[height=0.5ex]{E}\kern[width=-.125em]X and friends will be familiar with the concept of
 bumpy road logos.) Our logo will look like this: \SILE. It’s not a great
 logo, but we’ll use it as \SILE’s logo for the purposes of this section.
 
@@ -29,14 +29,12 @@ amount, using the \code{features} package to choose a small capital ‘E’.
 
 In \SILE code, that looks like:
 
-\begin{verbatim}
-\line
-S\%
-\\lower[height=0.5ex]\{I\}\%
-L\%
-\\kern[width=-.2em]\\raise[height=0.6ex]\{\\font[features=+smcp]\{e\}\}\%
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+S%
+\lower[height=0.5ex]{I}%
+L%
+\kern[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}%
+\end{raw}
 
 (Don’t worry about the \code{\\kern} command for the moment; we’ll come back
 to that later. The \code{\%}’s prevent newlines from becoming spaces.)
@@ -57,16 +55,14 @@ called \em{macros}, and the process of pretending is called \em{macro expansion}
 You can define these kinds of macros within a SILE file itself. In this
 very file, we entered:
 
-\begin{verbatim}
-\line
-\\define[command=SILE]\{\%
-S\%
-\\lower[height=0.5ex]\{I\}\%
-L\%
-\\kern[width=-.2em]\\raise[height=0.6ex]\{\\font[features=+smcp]\{e\}\}\%
-\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\define[command=SILE]{%
+S%
+\lower[height=0.5ex]{I}%
+L%
+\kern[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}%
+}
+\end{raw}
 
 We are using the built-in SILE command \code{\\define}. \code{\\define} takes
 an option called \code{command}; its value is the name of the command we
@@ -87,25 +83,23 @@ When it comes to defining commands, commands defined by an XML-flavor file can
 actually have any name that you like—even if they are not accessible from
 XML-flavor! (You may define oddly-named commands in a XML-flavor SILE file
 and then use them in a TeX-flavor SILE file.) Commands defined in TeX-flavor
-obviously have to have names which are valid parameter values, or else they will
+must have names which are valid parameter values, or else they will
 not parse correctly either; parameter values happen to consist
-of any text up until the nearest comma, semicolon or closing square bracket.
+of any text up until the nearest comma, semicolon, or closing square bracket.
 \end{note}
 
 \section{Macro with content}
 
-Now let’s move on to the next level; sometimes you will want to create
+Now let’s move on to the next level. Sometimes you will want to create
 commands which are not simply replacements, but which have arguments of their
 own. As an example, let’s say we use the \code{color} package to turn a bit of
 text red \color[color=red]{like this}. The usual way to do that is to say
 
-\begin{verbatim}
-\line
-\\color[color=red]\{like this\}
-\line
-\end{verbatim}
+\begin[type=autodoc:codeblock]{raw}
+\color[color=red]{like this}
+\end{raw}
 
-However, we‘re not always going to want to be highlighting the words ‘\code{like this}’.
+However, we‘re not always going to want to be highlighting the words “\code{like this}”.
 We might want to be able to highlight other text instead. We need the ability
 to wrap the command \code{\\color\break{}[color=red]\{ ... \}} around our chosen content.
 In other words, we want to be able to define our own commands which take arguments.
@@ -113,24 +107,22 @@ In other words, we want to be able to define our own commands which take argumen
 The way we express this in SILE is with the \code{\\process} command. \code{\\process}
 is only valid within the context of a \code{\\define} command (you’ll mess everything
 up if you try using it somewhere else), and it
-basically means ‘do whatever you were planning to do with the arguments to this
-command.’ So if we want to a command which makes things red, we can say:
+basically means “do whatever you were planning to do with the arguments to this
+command.” So if we want to a command which makes things red, we can say:
 
-\begin{verbatim}
-\line
-\\define[command=red]\{\\color[color=red]\{\\process\}\}
+\begin[type=autodoc:codeblock]{raw}
+\define[command=red]{\color[color=red]{\process}}
 
 …
 
-Making things red is a \\red\{silly\} way to emphasise text.
-\line
-\end{verbatim}
+Making things red is a \red{silly} way to emphasise text.
+\end{raw}
 
 \begin{note}
 You can’t call \code{\\process} more than once within the same macro.
 
-In the definition of the \code{\\chapter} command, we want to 1) display the
-chapter name in a big bold font, and 2) use the chapter name as the left
+In the definition of the \code{\\chapter} command, we want to (1) display the
+chapter name in a big bold font, and (2) use the chapter name as the left
 running header. If you try writing the \code{\\chapter} command as a macro,
 you will get stuck—once you’ve \code{\\process}ed the chapter name to display
 it in bold, you won’t be able to process it again to set the running header.
@@ -140,7 +132,7 @@ way to implement your own commands is to write them in the Lua programming
 language, which is what happens for \code{\\chapter}. This is deliberate:
 the \code{\\define} command really is meant to be used just for simple
 things, because we believe that programming tasks should be done in a
-programming language. So don’t be afraid to write your own commands in Lua–it’s
+programming language. So don’t be afraid to write your own commands in Lua—it’s
 not too difficult, and if you’re creating any serious document format yourself
 (rather than processing a document using a class that someone else has written
 or adding minor formatting tweaks through customization hooks that classes
@@ -159,14 +151,13 @@ other commands.
 So it is possible even within the simple scope of macro processing to achieve
 quite a lot of automation.
 
-For instance, within this book, there have been a number of notes—italicized
+For instance, within this book, there have been a number of \em{notes}—italicized
 paragraphs between two heavy lines with a left margin. These have been typeset
 with the \code{\\note} command; this is not a built-in command but a macro
 specified within the \code{documentation/macros.sil} file included by this document.
 Here is one way to define \code{\\note}, in XML flavour:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 <define command="line">
   <par/><smallskip/><noindent/>
   <hrule width="450pt" height="0.3pt"/><par/>
@@ -188,8 +179,7 @@ Here is one way to define \code{\\note}, in XML flavour:
     <line/>
   </narrower>
 </define>
-\line
-\end{verbatim}
+\end{raw}
 
 The only command we have not yet met here is \code{\\set}, which we will now
 investigate.

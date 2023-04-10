@@ -1,4 +1,0 @@
-\begin[class=book,papersize=a5]{document}
-Not quoted\footnote{Not quoted}.
-\begin{quote}Quoted.\footnote{Quoted.}\end{quote}
-\end{document}

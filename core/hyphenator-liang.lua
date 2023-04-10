@@ -109,22 +109,38 @@ local hyphenateNode = function (node)
     return SILE.hyphenator.languages[node.language](node)
   end
   initHyphenator(node.language)
-  local breaks = SILE._hyphenate(SILE._hyphenators[node.language], node.text)
-  if #breaks > 1 then
+  local segments = SILE._hyphenate(SILE._hyphenators[node.language], node.text)
+  if #segments > 1 then
+    local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options)
     local newnodes = {}
-    for j, brk in ipairs(breaks) do
-      if not(brk == "") then
-        for _, newNode in ipairs(SILE.shaper:createNnodes(brk, node.options)) do
-          if newNode.is_nnode then
-            newNode.parent = node
-            table.insert(newnodes, newNode)
-          end
+    for j, segment in ipairs(segments) do
+      local leadingApostrophe
+      if segment == "" then
+        SU.dump({ j, segments })
+        SU.error("No hyphenation segment should ever be empty", true)
+      end
+      if node.options.language == "tr" then
+        local nextApostrophe = j < #segments and luautf8.match(segments[j+1], "^['’]")
+        if nextApostrophe then
+          segments[j+1] = luautf8.gsub(segments[j+1], "^['’]", "")
+          local replacement = SILE.shaper:createNnodes(nextApostrophe, node.options)
+          leadingApostrophe = SILE.nodefactory.discretionary({ replacement = replacement, prebreak = hyphen })
+          leadingApostrophe.parent = node
         end
-        if not (j == #breaks) then
-          local discretionary = SILE.nodefactory.discretionary({ prebreak = SILE.shaper:createNnodes(SILE.settings.get("font.hyphenchar"), node.options) })
-          discretionary.parent = node
-          table.insert(newnodes, discretionary)
-         --table.insert(newnodes, SILE.nodefactory.penalty({ value = SILE.settings.get("typesetter.hyphenpenalty") }))
+      end
+      for _, newNode in ipairs(SILE.shaper:createNnodes(segment, node.options)) do
+        if newNode.is_nnode then
+          newNode.parent = node
+          table.insert(newnodes, newNode)
+        end
+      end
+      if j < #segments then
+        if leadingApostrophe then
+          table.insert(newnodes, leadingApostrophe)
+        else
+          local newNode = SILE.nodefactory.discretionary({ prebreak = hyphen })
+          newNode.parent = node
+          table.insert(newnodes, newNode)
         end
       end
     end
@@ -139,7 +155,7 @@ end
 SILE.showHyphenationPoints = function (word, language)
   language = language or "en"
   initHyphenator(language)
-  return SU.concat(SILE._hyphenate(SILE._hyphenators[language], word), SILE.settings.get("font.hyphenchar"))
+  return SU.concat(SILE._hyphenate(SILE._hyphenators[language], word), SILE.settings:get("font.hyphenchar"))
 end
 
 SILE.hyphenate = function (nodelist)
@@ -156,7 +172,7 @@ SILE.hyphenate = function (nodelist)
 end
 
 SILE.registerCommand("hyphenator:add-exceptions", function (options, content)
-  local language = options.lang or SILE.settings.get("document.language") or "und"
+  local language = options.lang or SILE.settings:get("document.language") or "und"
   SILE.languageSupport.loadLanguage(language)
   initHyphenator(language)
   for token in SU.gtoke(content[1]) do
@@ -164,4 +180,4 @@ SILE.registerCommand("hyphenator:add-exceptions", function (options, content)
       registerException(SILE._hyphenators[language], token.string)
     end
   end
-end)
+end, nil, nil, true)

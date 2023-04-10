@@ -1,6 +1,7 @@
-\begin[papersize=a5]{document}% KNOWNBAD
+% KNOWNBAD https://github.com/sile-typesetter/sile/issues/105
+\begin[papersize=a5]{document}
 % Test leading comment and package lines
-\script[src=packages/color]
+\use[module=packages.color]
 
 \noindent Note: each sentence below should be in its own paragraph with no
 line breaks or words slammed together. All paragraphs (except this one) should

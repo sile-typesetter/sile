@@ -1,0 +1,10 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\define[command=ah]{\discretionary[prebreak=-, replacement=’]}
+
+(\hbox{Yasa\ah{}nın Tekrarı}) in hbox
+
+(Yasa\ah{}nın Tekrarı) not in hbox
+
+\end{document}

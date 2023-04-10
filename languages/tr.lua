@@ -1,8 +1,6 @@
 -- Quotes may be part of a word in Turkish
-SILE.nodeMakers.tr = pl.class({
-    _base = SILE.nodeMakers.unicode,
-    isWordType = { cm = true, qu = true },
-  })
+SILE.nodeMakers.tr = pl.class(SILE.nodeMakers.unicode)
+SILE.nodeMakers.tr.isWordType = { cm = true, qu = true }
 
 SILE.hyphenator.languages["tr"] = {}
 SILE.hyphenator.languages["tr"].patterns =
@@ -612,13 +610,80 @@ SILE.hyphenator.languages["tr"].patterns =
 -- a couple of consonant-clusters
 "tu4r4k",
 "m1t4rak",
+-- See https://github.com/sile-typesetter/sile/issues/355
+-- Allow hyphenation to apply before apostrophes (before per pattern rules but
+-- will be substututed later, allowing after breaks minright), but work around
+-- minleft not being applied mid-word by excluding all possible single letter
+-- candidates before apostrophes.
+"1'2",
+"1’2",
+"4a1'",
+"4a1’",
+"4â1'",
+"4â1’",
+"4b1'",
+"4b1’",
+"4c1'",
+"4c1’",
+"4ç1'",
+"4ç1’",
+"4d1'",
+"4d1’",
+"4e1'",
+"4e1’",
+"4f1'",
+"4f1’",
+"4g1'",
+"4g1’",
+"4ğ1'",
+"4ğ1’",
+"4h1'",
+"4h1’",
+"4j1'",
+"4j1’",
+"4k1'",
+"4k1’",
+"4ı1'",
+"4ı1’",
+"4i1'",
+"4i1’",
+"4î1'",
+"4î1’",
+"4l1'",
+"4l1’",
+"4m1'",
+"4m1’",
+"4n1'",
+"4n1’",
+"4o1'",
+"4o1’",
+"4ö1'",
+"4ö1’",
+"4p1'",
+"4p1’",
+"4r1'",
+"4r1’",
+"4s1'",
+"4s1’",
+"4ş1'",
+"4ş1’",
+"4t1'",
+"4t1’",
+"4u1'",
+"4u1’",
+"4ü1'",
+"4ü1’",
+"4û1'",
+"4û1’",
+"4v1'",
+"4v1’",
+"4y1'",
+"4y1’",
+"4z1'",
+"4z1’",
    }
 
 -- Internationalisation stuff
-SILE.doTexlike([[%
-\define[command=tableofcontents:title:tr]{İçindekiler}%
-\define[command=book:chapter:pre:tr]{Bölüm }%
-]])
 
 -- local sum_tens = function (val, loc, digits)
 --   local ten = string.sub(digits, loc+1, loc+1)
@@ -691,13 +756,10 @@ local tr_nums = function (num, ordinal)
 end
 
 SU.formatNumber.tr = {
-  string = function (num)
+  string = function (num, _)
     return tr_nums(num, false)
   end,
-  ordinal = function (num)
+  ['ordinal-string'] = function (num, _)
     return tr_nums(num, true)
-  end,
-  nth = function (num)
-    return num .. "."
   end
 }

@@ -4,7 +4,7 @@ Mx 	8.3906
 My 	11.9055
 Mx 	28.3906
 My 	454.9055
-Set font 	Gentium Plus;10;400;;normal;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR
 T	79 82 85 72 80 w=24.3506	(lorem)
 Mx 	56.5801
 T	76 83 86 88 80 w=25.2002	(ipsum)
@@ -200,7 +200,7 @@ T	68 70 70 88 86 68 80 w=35.1123	(accusam)
 Mx 	241.4595
 T	72 87 w=8.0615	(et)
 Mx 	252.9827
-My 	313.3487
+My 	43.4739
 T	55 75 76 86 w=17.5977	(This)
 Mx 	273.2242
 T	76 86 w=6.5723	(is)

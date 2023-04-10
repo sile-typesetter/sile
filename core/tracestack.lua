@@ -12,7 +12,7 @@ local traceStack = pl.class({
 
 traceStack.defaultFrame = pl.class({
 
-    location = function(self, relative)
+    location = function (self, relative)
       local str = ""
       if self.file and not relative then
         str = str .. self.file .. ":"
@@ -36,62 +36,68 @@ traceStack.defaultFrame = pl.class({
     end
   })
 
-traceStack.documentFrame = pl.class({
-    _base = traceStack.defaultFrame,
-    _init = function (self, file, sniff)
-      self.command = "document"
-      self.file = file
-      self.sniff = sniff
-    end,
-    __tostring = function (self)
-      return "<file> (" .. self.sniff .. ")"
-    end
-  })
+traceStack.documentFrame = pl.class(traceStack.defaultFrame)
 
-traceStack.commandFrame = pl.class({
-    _base = traceStack.defaultFrame,
-    _init = function (self, command, content, options)
-      self.command = command
-      self.file = content.file or SILE.currentlyProcessingFile
-      self.lno = content.lno
-      self.col = content.col
-      self.options = options or {}
-    end,
-    __tostring = function (self)
-      local opts = (pl.tablex.size(self.options) > 0 and tostring(self.options):gsub("^{", "["):gsub("}$", "]") or "")
-      return "\\" .. self.command .. opts
-    end
-  })
+local function oneline (str)
+  return str:gsub("\n", "␤"):gsub("\r", "␍"):gsub("\f", "␊"):gsub("\a", "␇"):gsub("\b", "␈"):gsub("\t", "␉"):gsub("\v", "␋")
+end
 
-traceStack.contentFrame = pl.class({
-    _base = traceStack.commandFrame,
-    _init = function (self, command, content)
-      self._base._init(self, command, content, content.options)
-    end
-  })
+function traceStack.documentFrame:_init (file, snippet)
+  self.command = "document"
+  self.file = file
+  self.snippet = snippet
+end
 
-traceStack.textFrame = pl.class({
-    _base = traceStack.defaultFrame,
-    _init = function (self, text)
-      self.text = text
-    end,
-    __tostring = function (self)
-      if self.text:len() > 20 then
-        self.text = luautf8.sub(self.text, 1, 18) .. "…"
-      end
-      self.text = self.text:gsub("\n", "␤"):gsub("\t", "␉"):gsub("\v", "␋")
-      return '"' .. self.text .. '"'
-    end
-  })
+function traceStack.documentFrame:__tostring ()
+  return "<snippet>:\n\t\t[[" .. oneline(self.snippet) .. "]]"
+end
 
-local function formatTraceLine(string)
+traceStack.commandFrame = pl.class(traceStack.defaultFrame)
+
+function traceStack.commandFrame:_init (command, content, options)
+  self.command = command
+  self.file = content.file or SILE.currentlyProcessingFile
+  self.lno = content.lno
+  self.col = content.col
+  self.options = options or {}
+end
+
+function traceStack.commandFrame:__tostring ()
+  local opts = pl.tablex.size(self.options) == 0 and "" or
+    pl.pretty.write(self.options, ""):gsub("^{", "["):gsub("}$", "]")
+  return "\\" .. tostring(self.command) .. opts
+end
+
+traceStack.contentFrame = pl.class(traceStack.commandFrame)
+
+function traceStack.contentFrame:_init (command, content)
+  self:super(command, content, content.options)
+end
+
+traceStack.textFrame = pl.class(traceStack.defaultFrame)
+
+function traceStack.textFrame:_init (text)
+  self.text = text
+end
+
+function traceStack.textFrame:__tostring ()
+  if self.text:len() > 20 then
+    self.text = luautf8.sub(self.text, 1, 18) .. "…"
+  end
+  self.text = oneline(self.text)
+  return '"' .. self.text .. '"'
+end
+
+local function formatTraceLine (string)
   local prefix = "\t"
   return prefix .. string .. "\n"
 end
 
 -- Push a document processing run (input method) onto the stack
-function traceStack:pushDocument(file, sniff, _)
-  local frame = traceStack.documentFrame(file, sniff)
+function traceStack:pushDocument(file, doc)
+  if type(doc) == "table" then doc = tostring(doc) end
+  local snippet = doc:sub(1, 100)
+  local frame = traceStack.documentFrame(file, snippet)
   return self:pushFrame(frame)
 end
 
@@ -139,7 +145,9 @@ local lastPushId = 0
 -- .col = number - column on the line
 -- .toStringHelper = function() that serializes extended information about the frame BESIDES location
 function traceStack:pushFrame(frame)
-  SU.debug("traceStack", string.rep(".", #self) .. "PUSH(" .. frame:location() .. ")")
+  SU.debug("traceStack", function ()
+    return string.rep(".", #self) .. "PUSH(" .. frame:location() .. ")"
+  end)
   self[#self + 1] = frame
   self.afterFrame = nil
   lastPushId = lastPushId + 1
@@ -165,7 +173,9 @@ function traceStack:pop(pushId)
     -- Correctly balanced: pop the frame
     self.afterFrame = popped
     self[#self] = nil
-    SU.debug("traceStack", string.rep(".", #self) .. "POP(" .. popped:location() .. ")")
+    SU.debug("traceStack", function ()
+      return string.rep(".", #self) .. "POP(" .. popped:location() .. ")"
+    end)
   end
 end
 

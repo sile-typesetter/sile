@@ -1,0 +1,21 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\use[module=packages.svg]
+% Test Case 001: Direct use of a raw SVG.
+\raw[type=svg, height=1em]{<?xml version="1.0"?>
+<svg viewBox="0 0 319.99756 192.49629"><path d="M 160.36936,64.6995 287.47181,192.49629 319.99756,160.32293 160.62175,0 0,159.07464 32.273754,191.50079 Z"/></svg>}
+
+% Test Case 002: Raw SVG from a macro, with re-use.
+\define[command=test:svg]{\raw[type=svg, height=1em]{<?xml version="1.0"?>
+<svg viewBox="0 0 319.99756 192.49629"><path d="M 160.36936,64.6995 287.47181,192.49629 319.99756,160.32293 160.62175,0 0,159.07464 32.273754,191.50079 Z"/></svg>}}
+
+\test:svg \test:svg
+
+% Test Case 003: Direct use of an raw plain text.
+\raw[type=text]{
+This is a plain text inline.
+  A bit like a true verbatim.
+\lets[do]{weird things}% Yeah!
+}
+\end{document}

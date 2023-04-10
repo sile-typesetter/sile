@@ -2,12 +2,12 @@
 \nofolios
 \begin{script}
 SILE.registerCommand("poetry", function(options, content)
-  SILE.settings.temporarily(function()
+  SILE.settings:temporarily(function()
     SILE.typesetter:leaveHmode()
-    SILE.settings.set("document.lskip", SILE.nodefactory.newGlue("1em"))
-    SILE.settings.set("document.rskip", SILE.nodefactory.hfillGlue)
-    SILE.settings.set("current.parindent", SILE.nodefactory.zeroGlue)
-    SILE.settings.set("document.parindent", SILE.nodefactory.zeroGlue)
+    SILE.settings:set("document.lskip", SILE.nodefactory.glue("1em"))
+    SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue())
+    SILE.settings:set("current.parindent", SILE.nodefactory.glue())
+    SILE.settings:set("document.parindent", SILE.nodefactory.glue())
     SILE.process(content)
     SILE.call("par")
   end)

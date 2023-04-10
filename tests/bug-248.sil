@@ -1,4 +1,5 @@
-\begin[papersize=a6]{document}% KNOWNBAD
+% KNOWNBAD https://github.com/sile-typesetter/sile/issues/248
+\begin[papersize=a6]{document}
 % The breakage here is so bad that it it produces an infinite loop when
 % using the libtexpdf backend (i.e. `make regression_previews`) and hence when
 % trying to get code coverage reports. It works (although not as expected)
@@ -6,8 +7,8 @@
 % The troublesome \makecolumns & \mergecolumns are commented out until
 % this stops killing the rest of our CI runners' work.
 % --------------
-\script[src=packages/frametricks]
-\script[src=packages/lorem]
+\use[module=packages.frametricks]
+\use[module=packages.lorem]
 \nofolios
 \font[family=Libertinus Serif,size=10pt]
 \set[parameter=document.baselineskip,value=1.3em]

@@ -1,0 +1,8 @@
+\begin[papersize=6in x 9in]{document}
+\nofolios
+\neverindent
+\language[main=fr]
+\font[size=50pt]
+
+\font[size=10pt]{Lorem ipsum : « dolor » ; sit ? amet !}
+\end{document}

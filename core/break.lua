@@ -1,19 +1,19 @@
-SILE.settings.declare({ parameter = "linebreak.parShape", type = "boolean", default = false,
+SILE.settings:declare({ parameter = "linebreak.parShape", type = "boolean", default = false,
   help = "If set to true, the paragraph shaping method is activated." })
-SILE.settings.declare({ parameter = "linebreak.tolerance", type = "integer or nil", default = 500 })
-SILE.settings.declare({ parameter = "linebreak.pretolerance", type = "integer or nil", default = 100 })
-SILE.settings.declare({ parameter = "linebreak.hangIndent", type = "measurement", default = 0 })
-SILE.settings.declare({ parameter = "linebreak.hangAfter", type = "integer or nil", default = nil })
-SILE.settings.declare({ parameter = "linebreak.adjdemerits", type = "integer", default = 10000,
+SILE.settings:declare({ parameter = "linebreak.tolerance", type = "integer or nil", default = 500 })
+SILE.settings:declare({ parameter = "linebreak.pretolerance", type = "integer or nil", default = 100 })
+SILE.settings:declare({ parameter = "linebreak.hangIndent", type = "measurement", default = 0 })
+SILE.settings:declare({ parameter = "linebreak.hangAfter", type = "integer or nil", default = nil })
+SILE.settings:declare({ parameter = "linebreak.adjdemerits", type = "integer", default = 10000,
   help = "Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space." })
-SILE.settings.declare({ parameter = "linebreak.looseness", type = "integer", default = 0 })
-SILE.settings.declare({ parameter = "linebreak.prevGraf", type = "integer", default = 0 })
-SILE.settings.declare({ parameter = "linebreak.emergencyStretch", type = "measurement", default = 0 })
-SILE.settings.declare({ parameter = "linebreak.doLastLineFit", type = "boolean", default = false }) -- unimplemented
-SILE.settings.declare({ parameter = "linebreak.linePenalty", type = "integer", default = 10 })
-SILE.settings.declare({ parameter = "linebreak.hyphenPenalty", type = "integer", default = 50 })
-SILE.settings.declare({ parameter = "linebreak.doubleHyphenDemerits", type = "integer", default = 10000 })
-SILE.settings.declare({ parameter = "linebreak.finalHyphenDemerits", type = "integer", default = 5000 })
+SILE.settings:declare({ parameter = "linebreak.looseness", type = "integer", default = 0 })
+SILE.settings:declare({ parameter = "linebreak.prevGraf", type = "integer", default = 0 })
+SILE.settings:declare({ parameter = "linebreak.emergencyStretch", type = "measurement", default = 0 })
+SILE.settings:declare({ parameter = "linebreak.doLastLineFit", type = "boolean", default = false }) -- unimplemented
+SILE.settings:declare({ parameter = "linebreak.linePenalty", type = "integer", default = 10 })
+SILE.settings:declare({ parameter = "linebreak.hyphenPenalty", type = "integer", default = 50 })
+SILE.settings:declare({ parameter = "linebreak.doubleHyphenDemerits", type = "integer", default = 10000 })
+SILE.settings:declare({ parameter = "linebreak.finalHyphenDemerits", type = "integer", default = 5000 })
 
 -- doubleHyphenDemerits
 -- hyphenPenalty
@@ -40,7 +40,7 @@ local lineBreak = {}
 ]]
 
 local param = function (key)
-  local value = SILE.settings.get("linebreak."..key)
+  local value = SILE.settings:get("linebreak."..key)
   return type(value) == "table" and value:absolute() or value
 end
 
@@ -55,8 +55,8 @@ function lineBreak:init()
   self.curActiveWidth = SILE.length()
   self.breakWidth = SILE.length()
   -- 853
-  local rskip = (SILE.settings.get("document.rskip") or SILE.nodefactory.glue()).width:absolute()
-  local lskip = (SILE.settings.get("document.lskip") or SILE.nodefactory.glue()).width:absolute()
+  local rskip = (SILE.settings:get("document.rskip") or SILE.nodefactory.glue()).width:absolute()
+  local lskip = (SILE.settings:get("document.lskip") or SILE.nodefactory.glue()).width:absolute()
   self.background = rskip + lskip
   -- 860
   self.bestInClass = {}
@@ -156,7 +156,7 @@ function lineBreak:tryBreak() -- 855
   if not node then pi = ejectPenalty; breakType = "hyphenated"
   elseif node.is_discretionary then breakType = "hyphenated"; pi = param("hyphenPenalty")
   else breakType = "unhyphenated"; pi = node.penalty or 0 end
-  if debugging then SU.debug("break", "Trying a "..breakType.." break p="..pi) end
+  if debugging then SU.debug("break", "Trying a ", breakType, "break p =", pi) end
   self.no_break_yet = true -- We have to store all this state crap in the object, or it's global variables all the way
   self.prev_prev_r = nil
   self.prev_r = self.activeListHead
@@ -166,9 +166,9 @@ function lineBreak:tryBreak() -- 855
   while true do
     while true do -- allows "break" to function as "continue"
       self.r = self.prev_r.next
-      if debugging then SU.debug("break", "We have moved the link  forward, ln is now "..(self.r.type == "delta" and "XX" or self.r.lineNumber)) end
+      if debugging then SU.debug("break", "We have moved the link  forward, ln is now", self.r.type == "delta" and "XX" or self.r.lineNumber) end
       if self.r.type == "delta" then -- 858
-        if debugging then SU.debug("break", " Adding delta node width of ".. tostring(self.r.width)) end
+        if debugging then SU.debug("break", " Adding delta node width of", self.r.width) end
         self.curActiveWidth:___add(self.r.width)
         self.prev_prev_r = self.prev_r
         self.prev_r = self.r
@@ -199,16 +199,16 @@ function lineBreak:tryBreak() -- 855
             self.lineWidth = self.firstWidth
           end
         end
-        if debugging then SU.debug("break", "line width = "..self.lineWidth) end
+        if debugging then SU.debug("break", "line width = " .. tostring(self.lineWidth)) end
       end
       if debugging then
-        SU.debug("break", " ---> (2) cuaw is ".. self.curActiveWidth)
-        SU.debug("break", " ---> aw is ".. self.activeWidth)
+        SU.debug("break", " ---> (2) cuaw is " .. tostring(self.curActiveWidth))
+        SU.debug("break", " ---> aw is " .. tostring(self.activeWidth))
       end
       self:considerDemerits(pi, breakType)
       if debugging then
-        SU.debug("break", " <--- cuaw is ".. self.curActiveWidth)
-        SU.debug("break", " <--- aw is ".. self.activeWidth)
+        SU.debug("break", " <--- cuaw is " .. tostring(self.curActiveWidth))
+        SU.debug("break", " <--- aw is " .. tostring(self.activeWidth))
       end
     end
   end
@@ -437,7 +437,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     self.prev_prev_r = self.prev_r
     self.prev_r = newDelta
   end
-  if (math.abs(self.adjdemerits) >= awful_bad - self.minimumDemerits) then
+  if math.abs(self.adjdemerits) >= (awful_bad - self.minimumDemerits) then
     self.minimumDemerits = awful_bad - 1
   else
     self.minimumDemerits = self.minimumDemerits + math.abs(self.adjdemerits)
@@ -496,7 +496,7 @@ function lineBreak:describeBreakNode(node)
   local after = self.nodes[node.curBreak+1]
   local from = node.prevBreak and node.prevBreak.curBreak or 1
   local to = node.curBreak
-  return "b "..from.."-"..to.." \""..(before and before:toText()).." | "..(after and after:toText()).."\" [".. node.totalDemerits..", "..node.fitness.."]"
+  return ("b %s-%s \"%s | %s\" [%s, %s]"):format(from, to, before and before:toText() or "", after and after:toText() or "", node.totalDemerits, node.fitness)
 end
 
 -- NOTE: this function is called many thousands of times even in single
@@ -612,7 +612,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       self:checkForLegalBreak(self.nodes[self.place])
       self.place = self.place + 1
     end
-    if self.place > #(self.nodes) then
+    if self.place > #self.nodes then
       if self:tryFinalBreak() then break end
     end
     -- (Not doing 891)
@@ -694,9 +694,13 @@ end
 
 function lineBreak:dumpActiveRing()
   local p = self.activeListHead
-  io.stderr:write("\n")
+  if not SILE.quiet then
+    io.stderr:write("\n")
+  end
   repeat
-    if p == self.r then io.stderr:write("-> ") else io.stderr:write("   ") end
+    if not SILE.quiet then
+      if p == self.r then io.stderr:write("-> ") else io.stderr:write("   ") end
+    end
     SU.debug("break", lineBreak:describeBreakNode(p))
     p = p.next
   until p == self.activeListHead

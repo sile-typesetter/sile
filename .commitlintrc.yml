@@ -25,17 +25,18 @@ rules:
     - azure
     - backends
     - build
-    - classes
     - cirrus
+    - classes
     - cli
     - core
     - debug
-    - docker
     - deps
+    - docker
     - fonts
     - frames
     - images
-    - inputs
+    - i18n
+    - inputters
     - installation
     - languages
     - manpage
@@ -43,15 +44,16 @@ rules:
     - math
     - measurements
     - nodes
-    - package-manager
+    - outputters
     - packages
+    - pagebuilders
     - pdf
     - readme
-    - settings
     - release
-    - shaper
+    - settings
+    - shapers
     - tooling
-    - typesetter
+    - typesetters
     - utilities
 help: |
   **Possible types**:

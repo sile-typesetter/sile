@@ -1,6 +1,6 @@
 \begin[papersize=a6]{document}
 \frame[id=folio,left=10pt,top=10pt,rotate=-15]
-\script[src=packages/rotate]
+\use[module=packages.rotate]
 \noindent
 \rotate[angle=90]{issue 913}
 

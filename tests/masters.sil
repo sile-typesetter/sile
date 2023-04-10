@@ -1,7 +1,7 @@
 \begin{document}
-\script[src=packages/masters]
-\script[src=packages/lorem]
-\script[src=packages/frametricks]
+\use[module=packages.masters]
+\use[module=packages.lorem]
+\use[module=packages.frametricks]
 \define-master-template[id=title,first-content-frame=t]{
 \frame[id=gutter,width=3%pw]
 \frame[id=t,next=l,left=5%pw,right=95%pw,top=3%ph,bottom=15%ph,next=l]
@@ -38,7 +38,11 @@
 
 \framebreak
 \lorem[words=50]\par
-\pagebreak
-\par
+% Commented out: this pagebreak was doing nothing before, because it was in horizontal mode (#543)
+% Wait, isn't there a \par. Yes, but pushback is occurring and messed up.
+% When fixed, we are now left with a pagebreak in vertical mode. It adds a blank page at the
+% end of the document. But what was the expectation here?
+%\pagebreak
+%\par
 
 \end{document}

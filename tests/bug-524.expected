@@ -1594,7 +1594,7 @@ Draw line	49.4079	600.4092	500.0000	0.5000
 Pop color
 Mx 	49.4079
 My 	105.9592
-Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
+Set font 	Noto Sans CJK JP;10;400;;normal;;;LTR
 T	29078 w=10.0000	(私)
 Mx 	59.5278
 T	1506 w=10.0000	(は)
@@ -1605,11 +1605,11 @@ Mx 	59.5278
 T	1506 w=10.0000	(は)
 Mx 	51.7739
 My 	129.9592
-Set font 	Noto Sans CJK JP;6;800;;normal;;LTR
+Set font 	Noto Sans CJK JP;6;800;;normal;;;LTR
 T	56 w=5.2680	(W)
 Mx 	49.4079
 My 	139.9592
-Set font 	Noto Sans CJK JP;10;400;;normal;;LTR
+Set font 	Noto Sans CJK JP;10;400;;normal;;;LTR
 T	29078 w=10.0000	(私)
 Mx 	59.4079
 T	1506 w=10.0000	(は)

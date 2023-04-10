@@ -1,9 +1,11 @@
-local plain = SILE.require("plain", "classes")
-local bible = plain { id = "bible" }
+local plain = require("classes.plain")
+
+local class = pl.class(plain)
+class._name = "bible"
 
 if not SILE.scratch.headers then SILE.scratch.headers = {} end
 
-bible.defaultFrameset = {
+class.defaultFrameset = {
   content = {
     left = "8.3%pw",
     right = "86%pw",
@@ -30,19 +32,23 @@ bible.defaultFrameset = {
   }
 }
 
-function bible:singleColumnMaster()
+function class:singleColumnMaster()
   self:defineMaster({
     id = "right",
     firstContentFrame = self.firstContentFrame,
     frames = self.defaultFrameset
   })
-  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-  self:mirrorMaster("right", "left")
-  self:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { "content" } })
+  self:loadPackage("twoside", {
+    oddPageMaster = "right",
+    evenPageMaster = "left"
+  })
+  self:loadPackage("footnotes", {
+    insertInto = "footnotes",
+    stealFrom = { "content" }
+  })
 end
 
-function bible:twoColumnMaster()
-  local gutterWidth = self.options.gutter or "3%pw"
+function class:twoColumnMaster()
   self.firstContentFrame = "contentA"
   self:defineMaster({
       id = "right",
@@ -74,7 +80,7 @@ function bible:twoColumnMaster()
         gutter = {
           left = "right(contentA)",
           right = "left(contentB)",
-          width = gutterWidth
+          width = self.options.gutter
         },
         folio = {
           left = "left(contentA)",
@@ -132,7 +138,7 @@ function bible:twoColumnMaster()
         gutter = {
           left = "right(contentA)",
           right = "left(contentB)",
-          width = gutterWidth
+          width = self.options.gutter
         },
         folio = {
           left = "left(contentA)",
@@ -166,52 +172,39 @@ function bible:twoColumnMaster()
 end
 
 local _twocolumns
-bible.options.twocolumns = function (g)
-  if g then _twocolumns = g end
-  return _twocolumns
-end
+local _gutterwidth
 
-function bible:init()
+function class:_init(options)
+  plain._init(self, options)
   self:loadPackage("masters")
   self:loadPackage("infonode")
   self:loadPackage("chapterverse")
-  if self.options.twocolumns() then
-    self:twoColumnMaster()
-    SILE.settings.set("linebreak.tolerance", 9000)
-  else
-    self:singleColumnMaster()
-  end
-  self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
-  self.pageTemplate = SILE.scratch.masters["right"]
-  return plain.init(self)
+  self:registerPostinit(function (self_)
+    if self_.options.twocolumns then
+      self_:twoColumnMaster()
+      SILE.settings:set("linebreak.tolerance", 9000)
+    else
+      self_:singleColumnMaster()
+    end
+  end)
 end
 
-bible.newPage = function (self)
-  self:switchPage()
-  self:newPageInfo()
-  return plain.newPage(self)
-end
-
-bible.finish = function (self)
-  return plain.finish(self)
-end
-
-bible.endPage = function (self)
+function class:endPage ()
   if (self:oddPage() and SILE.scratch.headers.right) then
     SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
-      SILE.settings.set("current.parindent", SILE.nodefactory.glue())
-      SILE.settings.set("document.lskip", SILE.nodefactory.glue())
-      SILE.settings.set("document.rskip", SILE.nodefactory.glue())
-      -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
+      SILE.settings:set("current.parindent", SILE.nodefactory.glue())
+      SILE.settings:set("document.lskip", SILE.nodefactory.glue())
+      SILE.settings:set("document.rskip", SILE.nodefactory.glue())
+      -- SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
       SILE.process(SILE.scratch.headers.right)
       SILE.call("par")
     end)
   elseif (not(self:oddPage()) and SILE.scratch.headers.left) then
       SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
-        SILE.settings.set("current.parindent", SILE.nodefactory.glue())
-        SILE.settings.set("document.lskip", SILE.nodefactory.glue())
-        SILE.settings.set("document.rskip", SILE.nodefactory.glue())
-          -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
+        SILE.settings:set("current.parindent", SILE.nodefactory.glue())
+        SILE.settings:set("document.lskip", SILE.nodefactory.glue())
+        SILE.settings:set("document.rskip", SILE.nodefactory.glue())
+          -- SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
         SILE.process(SILE.scratch.headers.left)
         SILE.call("par")
       end)
@@ -219,53 +212,81 @@ bible.endPage = function (self)
   return plain.endPage(self)
 end
 
-SILE.registerCommand("left-running-head", function (_, content)
-  local closure = SILE.settings.wrap()
-  SILE.scratch.headers.left = function () closure(content) end
-end, "Text to appear on the top of the left page")
+function class:declareOptions ()
+  plain.declareOptions(self)
+  self:declareOption("twocolumns", function(_, value)
+    if value then
+      _twocolumns = value
+    end
+    return _twocolumns
+  end)
+  self:declareOption("gutter", function(_, value)
+    if value then
+      _gutterwidth = value
+    end
+    return _gutterwidth
+  end)
+end
 
-SILE.registerCommand("right-running-head", function (_, content)
-  local closure = SILE.settings.wrap()
-  SILE.scratch.headers.right = function () closure(content) end
-end, "Text to appear on the top of the right page")
+function class:setOptions (options)
+  options.twocolumns = options.twocolumns or false
+  options.gutter = options.gutter or "3%pw"
+  plain.setOptions(self, options)
+end
 
-SILE.registerCommand("chapter", function (options, content)
-  local ch = options.id:match("%d+")
-  SILE.call("bible:chapter-head", options, {"Chapter " .. ch})
-  SILE.call("save-chapter-number", options, {options.id})
-  SILE.process(content)
-end)
+function class:registerCommands ()
 
-SILE.registerCommand("verse-number", function (options, content)
-  SILE.call("indent")
-  SILE.call("bible:verse-number", options, content)
-  SILE.call("save-verse-number", options, content)
-  SILE.call("left-running-head", {}, function ()
-    SILE.settings.temporarily(function ()
-      SILE.settings.set("document.lskip", SILE.nodefactory.glue())
-      SILE.settings.set("document.rskip", SILE.nodefactory.glue())
-      -- SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
-      SILE.call("font", { size = "10pt", family = "Gentium" }, function ()
-        SILE.call("first-reference")
-        SILE.call("hfill")
-        SILE.call("font", { style = "italic" }, SILE.scratch.theChapter)
+  plain.registerCommands(self)
+
+  self:registerCommand("left-running-head", function (_, content)
+    local closure = SILE.settings:wrap()
+    SILE.scratch.headers.left = function () closure(content) end
+  end, "Text to appear on the top of the left page")
+
+  self:registerCommand("right-running-head", function (_, content)
+    local closure = SILE.settings:wrap()
+    SILE.scratch.headers.right = function () closure(content) end
+  end, "Text to appear on the top of the right page")
+
+  self:registerCommand("chapter", function (options, content)
+    local ch = options.id:match("%d+")
+    SILE.call("bible:chapter-head", options, {"Chapter " .. ch})
+    SILE.call("save-chapter-number", options, {options.id})
+    SILE.process(content)
+  end)
+
+  self:registerCommand("verse-number", function (options, content)
+    SILE.call("indent")
+    SILE.call("bible:verse-number", options, content)
+    SILE.call("save-verse-number", options, content)
+    SILE.call("left-running-head", {}, function ()
+      SILE.settings:temporarily(function ()
+        SILE.settings:set("document.lskip", SILE.nodefactory.glue())
+        SILE.settings:set("document.rskip", SILE.nodefactory.glue())
+        -- SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+        SILE.call("font", { size = "10pt", family = "Gentium" }, function ()
+          SILE.call("first-reference")
+          SILE.call("hfill")
+          SILE.call("font", { style = "italic" }, SILE.scratch.theChapter)
+        end)
+        SILE.typesetter:leaveHmode()
       end)
-      SILE.typesetter:leaveHmode()
+    end)
+    SILE.call("right-running-head", {}, function ()
+      SILE.settings:temporarily(function ()
+        SILE.settings:set("document.lskip", SILE.nodefactory.glue())
+        SILE.settings:set("document.rskip", SILE.nodefactory.glue())
+        SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+        SILE.call("font", { size = "10pt", family = "Gentium" }, function ()
+          -- SILE.call("font", { style = "italic" }, SILE.scratch.theChapter)
+          SILE.call("hfill")
+          SILE.call("last-reference")
+        end)
+        SILE.typesetter:leaveHmode()
+      end)
     end)
   end)
-  SILE.call("right-running-head", {}, function ()
-    SILE.settings.temporarily(function ()
-      SILE.settings.set("document.lskip", SILE.nodefactory.glue())
-      SILE.settings.set("document.rskip", SILE.nodefactory.glue())
-      SILE.settings.set("typesetter.parfillskip", SILE.nodefactory.glue())
-      SILE.call("font", { size = "10pt", family = "Gentium" }, function ()
-        -- SILE.call("font", { style = "italic" }, SILE.scratch.theChapter)
-        SILE.call("hfill")
-        SILE.call("last-reference")
-      end)
-      SILE.typesetter:leaveHmode()
-    end)
-  end)
-end)
 
-return bible
+end
+
+return class

@@ -1,9 +1,7 @@
 \begin[papersize=a6,class=jbook]{document}
-\script[src=packages/frametricks]
-\language[main=ja]
+\use[module=packages.frametricks]
 \noindent
 \nofolios
-\font[family=Noto Sans CJK JP]
 よ
 \showframe
 \end{document}

@@ -1,4 +1,6 @@
 local bitshim = require("bitshim")
+local luautf8 = require("lua-utf8")
+
 local utilities = {}
 
 local epsilon = 1E-12
@@ -22,21 +24,31 @@ utilities.boolean = function (value, default)
   if value == "true" then return true end
   if value == "no" then preferbool(); return false end
   if value == "yes" then preferbool(); return true end
+  if value == nil then return default end
+  SU.error("Expecting a boolean value but got '" .. value .. "'")
   return default
 end
 
+local _skip_traceback_levels = 2
+
 utilities.error = function(message, bug)
+  _skip_traceback_levels = 3
   utilities.warn(message, bug)
+  _skip_traceback_levels = 2
   io.stderr:flush()
-  SILE.outputter:finish()
-  os.exit(1)
+  SILE.outputter:finish() -- Only really useful from the REPL but no harm in trying
+  SILE.scratch.caughterror = true
+  error(message, 2)
 end
 
 utilities.warn = function(message, bug)
+  if SILE.quiet then return end
   io.stderr:write("\n! " .. message)
   if SILE.traceback or bug then
     io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
-    io.stderr:write(debug.traceback(nil, 2) or "\t! debug.traceback() did not identify code location")
+    if _skip_traceback_levels == 2 then
+      io.stderr:write(debug.traceback("", _skip_traceback_levels) or "\t! debug.traceback() did not identify code location")
+    end
   else
     io.stderr:write(" at " .. SILE.traceStack:locationHead())
   end
@@ -44,7 +56,7 @@ utilities.warn = function(message, bug)
 end
 
 utilities.debugging = function (category)
-  return SILE.debugFlags.all or SILE.debugFlags[category]
+  return SILE.debugFlags.all and category ~= "profile" or SILE.debugFlags[category]
 end
 
 utilities.feq = function (lhs, rhs) -- Float point equal
@@ -84,7 +96,8 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
   -- Hence we fake it ‘till we make it, all deprecations internally are warings.
   local brackets = old:sub(1,1) == '\\' and "" or "()"
   local _semver = SILE.version and SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)") or warnat
-  local msg = (old .. brackets) .. " was deprecated in SILE v" .. warnat .. ". Please use " .. (new .. brackets) .. " instead. " .. (extra or "")
+  local _new = new and "Please use " .. (new .. brackets) .. " instead." or "Plase don't use it."
+  local msg = (old .. brackets) .. " was deprecated in SILE v" .. warnat .. ". " .. _new ..  (extra and "\n" .. extra .. "\n\n" or "")
   if errorat and _semver >= errorat then
     SU.error(msg)
   elseif warnat and _semver >= warnat then
@@ -93,15 +106,57 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
 end
 
 utilities.debug = function (category, ...)
+  if SILE.quiet then return end
   if utilities.debugging(category) then
     local inputs = table.pack(...)
     for i, input in ipairs(inputs) do
       if type(input) == "function" then
-        inputs[i] = input()
+        local status, output = pcall(input)
+        inputs[i] = status and output or SU.warn(("Output of %s debug function was an error: %s"):format(category, output))
       end
     end
-    io.stderr:write("\n["..category.."] ", utilities.concat(inputs, " "))
+    local message = utilities.concat(inputs, " ")
+    if message then io.stderr:write(("\n[%s] %s"):format(category, message)) end
   end
+end
+
+utilities.debugAST = function (ast, level)
+  if not ast then
+    SU.error("debugAST called with nil", true)
+  end
+  local out = string.rep("  ", 1+level)
+  if level == 0 then
+    SU.debug("ast", function ()
+      return "[" .. SILE.currentlyProcessingFile
+    end)
+  end
+  if type(ast) == "function" then
+    SU.debug("ast", function ()
+      return out .. tostring(ast)
+    end)
+  elseif type(ast) == "table" then
+    for _, content in ipairs(ast) do
+      if type(content) == "string" then
+        SU.debug("ast", function ()
+          return out .. "[" .. content .. "]"
+        end)
+      elseif type(content) == "table" then
+        if SILE.Commands[content.command] then
+          SU.debug("ast", function ()
+            return out .. "\\" .. content.command .. " " .. pl.pretty.write(content.options, "")
+          end)
+          if (#content>=1) then utilities.debugAST(content, level+1) end
+        elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
+          utilities.debugAST(content, level+1)
+        else
+          SU.debug("ast", function ()
+            return out .. "?\\" .. (content.command or content.id)
+          end)
+        end
+      end
+    end
+  end
+  if level == 0 then SU.debug("ast", "]") end
 end
 
 utilities.dump = function (...)
@@ -248,11 +303,6 @@ utilities.cast = function (wantedType, value)
   wantedType = string.lower(wantedType)
   if wantedType:match(actualType)     then return value
   elseif actualType == "nil" and wantedType:match("nil") then return nil
-  elseif wantedType:match("integer") or wantedType:match("number") then
-    if type(value) == "table" and type(value.tonumber) == "function" then
-      return value:tonumber()
-    end
-    return tonumber(value)
   elseif wantedType:match("length")      then return SILE.length(value)
   elseif wantedType:match("measurement") then return SILE.measurement(value)
   elseif wantedType:match("vglue")       then return SILE.nodefactory.vglue(value)
@@ -261,8 +311,33 @@ utilities.cast = function (wantedType, value)
   elseif actualType == "nil" then SU.error("Cannot cast nil to " .. wantedType)
   elseif wantedType:match("boolean")     then return SU.boolean(value)
   elseif wantedType:match("string")      then return tostring(value)
+  elseif wantedType:match("number") then
+    if type(value) == "table" and type(value.tonumber) == "function" then
+      return value:tonumber()
+    end
+    local num = tonumber(value)
+    if not num then SU.error("Cannot cast '" .. value .. "'' to " .. wantedType) end
+    return num
+  elseif wantedType:match("integer") then
+    local num
+    if type(value) == "table" and type(value.tonumber) == "function" then
+      num = value:tonumber()
+    else
+      num = tonumber(value)
+    end
+    if not num then SU.error("Cannot cast '" .. value .. "'' to " .. wantedType) end
+    if not wantedType:match("number") and num % 1 ~= 0 then
+      -- Could be an error but since it wasn't checked before, let's just warn:
+      -- Some packages might have wrongly typed settings, for instance.
+      SU.warn("Casting an integer but got a float number " .. num)
+    end
+    return num
   else SU.error("Cannot cast to unrecognized type " .. wantedType)
   end
+end
+
+utilities.hasContent = function(content)
+  return type(content) == "function" or type(content) == "table" and #content > 0
 end
 
 -- Flatten content trees into just the string components (allows passing
@@ -270,7 +345,14 @@ end
 utilities.contentToString = function (content)
   local string = ""
   for i = 1, #content do
-    if type(content[i]) == "string" then
+    if type(content[i]) == "table" and type(content[i][1]) == "string" then
+      string = string .. content[i][1]
+    elseif type(content[i]) == "string" then
+      -- Work around PEG parser returning env tags as content
+      -- TODO: refactor capture groups in PEG parser
+      if content.command == content[i] and content[i] == content[i+1] then
+        break
+      end
       string = string .. content[i]
     end
   end
@@ -299,6 +381,29 @@ utilities.walkContent = function (content, action)
   for i = 1, #content do
     utilities.walkContent(content[i], action)
   end
+end
+
+--- Strip position, line and column recursively from a content tree.
+-- This can be used to remove position details where we do not want them,
+-- e.g. in table of contents entries (referring to the original content,
+-- regardless where it was exactly, for the purpose of checking whether
+-- the table of contents changed.)
+--
+utilities.stripContentPos = function (content)
+  if type(content) ~= "table" then
+    return content
+  end
+  local stripped = {}
+  for k, v in pairs(content) do
+    if type(v) == "table" then
+      v = SU.stripContentPos(v)
+    end
+    stripped[k] = v
+  end
+  if content.id or content.command then
+    stripped.pos, stripped.col, stripped.lno = nil, nil, nil
+  end
+  return stripped
 end
 
 utilities.rateBadness = function(inf_bad, shortfall, spring)
@@ -396,29 +501,10 @@ utilities.utf16codes = function (ustr, endian)
 end
 
 utilities.splitUtf8 = function (str) -- Return an array of UTF8 strings each representing a Unicode char
-  local seq = 0
   local rv = {}
-  local val = -1
-  local this = ""
-  for i = 1, #str do
-    local c = string.byte(str, i)
-    if seq == 0 then
-      if val > -1 then
-        rv[1+#rv] = this
-        this = ""
-      end
-      seq = c < 0x80 and 1 or c < 0xE0 and 2 or c < 0xF0 and 3 or
-            c < 0xF8 and 4 or --c < 0xFC and 5 or c < 0xFE and 6 or
-          error("invalid UTF-8 character sequence")
-      val = bitshim.band(c, 2^(8-seq) - 1)
-      this = this .. str[i]
-    else
-      val = bitshim.bor(bitshim.lshift(val, 6), bitshim.band(c, 0x3F))
-      this = this .. str[i]
-    end
-    seq = seq - 1
+  for _, cp in luautf8.next, str do
+    table.insert(rv, luautf8.char(cp))
   end
-  rv[1+#rv] = this
   return rv
 end
 
@@ -498,60 +584,6 @@ end
 utilities.utf16be_to_utf8 = function (str) return utf16_to_utf8(str, "be") end
 utilities.utf16le_to_utf8 = function (str) return utf16_to_utf8(str, "le") end
 
-local icu = require("justenoughicu")
-
-local icuFormat = function (num, format)
-  local ok, result  = pcall(function() return icu.format_number(num, format) end)
-  return tostring(ok and result or num)
-end
-
--- Language specific number formatters add functions to this table,
--- see e.g. languages/tr.lua
-utilities.formatNumber = {
-  und = {
-
-    alpha = function (num)
-      local out = ""
-      local a = string.byte("a")
-      repeat
-        num = num - 1
-        out = string.char(num % 26 + a) .. out
-        num = (num - num % 26) / 26
-      until num < 1
-      return out
-    end
-
-  }
-}
-
-setmetatable (utilities.formatNumber, {
-    __call = function (self, num, format, case)
-      if math.abs(num) > 9223372036854775807 then
-        SU.warn("Integers larger than 64 bits do not reproduce properly in all formats")
-      end
-      if not case then
-        if format:match("^%l") then
-          case = "lower"
-        elseif format:match("^.%l") then
-          case = "title"
-        else
-          case = "upper"
-        end
-      end
-      local lang = format:match("[Rr][Oo][Mm][Aa][Nn]") and "la" or SILE.settings.get("document.language")
-      format = format:lower()
-      local result
-      if self[lang] and type(self[lang][format]) == "function" then
-        result = self[lang][format](num)
-      elseif type(self["und"][format]) == "function" then
-        result = self.und[format](num)
-      else
-        result = icuFormat(num, format)
-      end
-      return icu.case(result, lang, case)
-    end
-})
-
 utilities.breadcrumbs = function ()
   local breadcrumbs = {}
 
@@ -573,7 +605,8 @@ utilities.breadcrumbs = function ()
   end
 
   function breadcrumbs:parent (count)
-    return self[#self-(count or 1)]
+    -- Note LuaJIT does not support __len, so this has to work even when that metamethod doesn't fire...
+    return self[#SILE.traceStack-(count or 1)]
   end
 
   function breadcrumbs:contains (needle)
@@ -585,5 +618,9 @@ utilities.breadcrumbs = function ()
 
   return breadcrumbs
 end
+
+utilities.formatNumber = require("core.utilities-numbers")
+
+utilities.collatedSort = require("core.utilities-sorting")
 
 return utilities

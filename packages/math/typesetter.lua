@@ -1,21 +1,37 @@
 -- Interpret a MathML or TeX-like AST, typeset it and add it to the output.
-local b = require("packages/math/base-elements")
-local tex = require("packages/math/texlike")
-local syms = require("packages/math/unicode-symbols")
+local b = require("packages.math.base-elements")
+local syms = require("packages.math.unicode-symbols")
+
+-- Shorthands for atom types, used in the `atom` command option
+local atomTypeShort = {
+  ord = b.atomType.ordinary,
+  big = b.atomType.bigOperator,
+  bin = b.atomType.binaryOperator,
+  rel = b.atomType.relationalOperator,
+  open = b.atomType.openingSymbol,
+  close = b.atomType.closeSymbol,
+  punct = b.atomType.punctuationSymbol,
+  inner = b.atomType.inner,
+  over = b.atomType.overSymbol,
+  under = b.atomType.underSymbol,
+  accent = b.atomType.accentSymbol,
+  radical = b.atomType.radicalSymbol,
+  vcenter = b.atomType.vcenter
+}
 
 local ConvertMathML
 
-local function convertChildren(tree)
+local function convertChildren (tree)
   local mboxes = {}
   for _, n in ipairs(tree) do
-    local box = ConvertMathML(n)
+    local box = ConvertMathML(nil, n)
     if box then table.insert(mboxes, box) end
   end
   return mboxes
 end
 
 -- convert MathML into mbox
-function ConvertMathML(content)
+function ConvertMathML (_, content)
   if content == nil or content.command == nil then return nil end
   if content.command == 'math' or content.command == 'mathml' then -- toplevel
     return b.stackbox('V', convertChildren(content))
@@ -38,8 +54,14 @@ function ConvertMathML(content)
     local attributes = {}
     if syms.symbolDefaults[text] then
       for attribute,value in pairs(syms.symbolDefaults[text]) do
-        SU.debug("math", "attribute = "..attribute..", value = "..value)
         attributes[attribute] = value
+      end
+    end
+    if content.options.atom then
+      if not atomTypeShort[content.options.atom] then
+        SU.error("Unknown atom type " .. content.options.atom)
+      else
+        attributes.atom = atomTypeShort[content.options.atom]
       end
     end
     if type(text) ~= "string" then
@@ -59,9 +81,9 @@ function ConvertMathML(content)
     return b.text('number', {}, script, text)
   elseif content.command == "mspace" then
     return b.space(
-      SILE.length(content.options.width),
-      SILE.length(content.options.height),
-      SILE.length(content.options.depth))
+      content.options.width,
+      content.options.height,
+      content.options.depth)
   elseif content.command == 'msub' then
     local children = convertChildren(content)
     if #children ~= 2 then SU.error('Wrong number of children in msub') end
@@ -104,7 +126,7 @@ function ConvertMathML(content)
   end
 end
 
-local function handleMath(mbox, mode)
+local function handleMath (_, mbox, mode)
   if mode == 'display' then
     mbox.mode = b.mathMode.display
   elseif mode == 'text' then
@@ -112,41 +134,24 @@ local function handleMath(mbox, mode)
   else
     SU.error('Unknown math mode '..mode)
   end
-  mbox:styleDescendants()
 
+  SU.debug("math", function ()
+    return "Resulting mbox: " .. tostring(mbox)
+  end)
+  mbox:styleDescendants()
   mbox:shapeTree()
 
   if mode == "display" then
     SILE.typesetter:endline()
-    SILE.typesetter:pushExplicitVglue(SILE.settings.get("math.displayskip"))
+    SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
     SILE.call("center", {}, function()
       SILE.typesetter:pushHorizontal(mbox)
     end)
     SILE.typesetter:endline()
-    SILE.typesetter:pushExplicitVglue(SILE.settings.get("math.displayskip"))
+    SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
   else
     SILE.typesetter:pushHorizontal(mbox)
   end
 end
 
-SILE.registerCommand("mathml", function (options, content)
-  local mode = (options and options.mode) and options.mode or 'text'
-
-  local mbox
-  xpcall(function()
-      mbox = ConvertMathML(content, mbox)
-  end, function(err) print(err); print(debug.traceback()) end)
-
-  handleMath(mbox, mode)
-end)
-
-SILE.registerCommand("math", function(options, content)
-  local mode = (options and options.mode) and options.mode or "text"
-
-  local mbox
-  xpcall(function()
-    mbox = ConvertMathML(tex.compileToMathML({}, tex.convertTexlike(content)))
-  end, function(err) print(err); print(debug.traceback()) end)
-
-  handleMath(mbox, mode)
-end)
+return { ConvertMathML, handleMath }
