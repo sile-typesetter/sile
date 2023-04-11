@@ -10,6 +10,7 @@ exclude_files = {
   "benchmark-*",
   "compare-*",
   "sile-*",
+  "target",
   "lua_modules",
   "lua-libraries",
   ".lua",
