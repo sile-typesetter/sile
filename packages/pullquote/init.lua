@@ -45,6 +45,7 @@ function package:registerCommands ()
   end, "The font from which to pull the quotation marks.")
 
   self:registerCommand("pullquote", function (options, content)
+    SILE.typesetter:leaveHmode()
     local author = options.author or nil
     local scale = options.scale or 3
     local color = options.color or "#999999"
