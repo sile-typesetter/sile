@@ -20,7 +20,6 @@ jobs:
           - [ 'luajit', 'XCFLAGS=-fPIC' ]
           # - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
     runs-on: ubuntu-22.04
-    timeout-minutes: 6
     name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
       - name: Checkout
@@ -79,9 +78,11 @@ jobs:
         run: |
           make
       - name: Test Busted
+        timeout-minutes: ${{ runner.debug && 60 || 6 }}
         run: |
           make busted
       - name: Test Regressions
+        timeout-minutes: ${{ runner.debug && 60 || 6 }}
         run: |
           make regressions
       - name: Upload artifacts
