@@ -283,7 +283,7 @@ function typesetter:typeset (text)
 end
 
 function typesetter:initline ()
-  if self.state.hmodeOnly then return end
+  if self.state.hmodeOnly then return end -- https://github.com/sile-typesetter/sile/issues/1718
   if (#self.state.nodes == 0) then
     self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zerohbox()
     SILE.documentState.documentClass.newPar(self)
