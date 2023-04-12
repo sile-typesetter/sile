@@ -92,6 +92,7 @@ core/version.lua
 core/features.lua
 target/
 completions/
+core/pathsetup.lua
 
 # Nix symlink to builds
 result/

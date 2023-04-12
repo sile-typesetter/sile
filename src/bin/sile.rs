@@ -16,8 +16,8 @@ fn sile() -> LuaResult<()> {
     let lua = unsafe { Lua::unsafe_new() };
     lua.load(
         r#"
-        package.path = ";;./?.lua;./?/init.lua;./lua-libraries/?.lua;./lua-libraries/?/init.lua;./lua_modules/share/lua/5.4/?.lua;./lua_modules/share/lua/5.4/?/init.lua"
-        package.cpath = ";;./?.so;./lua_modules/lib/lua/5.4/?.so"
+        package.path = "./?.lua"
+        local executable, extendPaths = require("core.pathsetup")()
         SILE = require("core.sile")
         io.stderr:write(" [ Rust ]" .. SILE.full_version .. '\n')
         SILE.init()

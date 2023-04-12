@@ -4,7 +4,7 @@
 SYSTEM_SILE_PATH = "@SILE_PATH@"
 SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
 
-local executable, extendPaths = require("core.pathsetup")
+local executable, extendPaths = require("core.pathsetup")()
 
 -- This global is set here and *also* in the core library, since this
 -- effectively passes the same table they are interchangeable (for now).
