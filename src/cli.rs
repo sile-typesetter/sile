@@ -1,29 +1,64 @@
-use clap::Parser;
+use clap::{Parser, ValueEnum};
+use std::path::PathBuf;
 
-/// The SILE typesetter, Lua wrapped in Rust.
+/// The SILE typesetter reads a single input file, by default in either SIL or XML format, and
+/// processes it to generate a single output file, by default in PDF format. The output file will
+/// be written to the same name as the input file with the extension changed to .pdf. Additional
+/// input or output formats can be handled by requiring a module that adds support for them first.
 #[derive(Parser, Debug)]
 #[clap(author, bin_name = "sile")]
 pub struct Cli {
-    // cliargs:option("-b, --backend=VALUE", "choose an alternative output backend")
-    // cliargs:option("-c, --class=VALUE", "override default document class")
-    // cliargs:option("-d, --debug=VALUE", "show debug information for tagged aspects of SILE’s operation", {})
+    /// Input document, by default in SIL or XML format
+    pub input: String,
+
+    /// Choose an alternative output backend
+    #[clap(short, long, value_enum, default_value_t=Backend::Libtexpdf)]
+    pub backend: Backend,
+
+    /// Override default document class
+    #[clap(short, long)]
+    pub class: Option<String>,
+
+    /// Show debug information for tagged aspects of SILE’s operation
+    #[clap(short, long)]
+    pub debug: Option<Vec<String>>,
+
     /// Evaluate Lua expression before processing input
     #[clap(short, long)]
-    pub evaluate: Option<String>,
+    pub evaluate: Option<Vec<String>>,
 
     /// Evaluate Lua expression after processing input
     #[clap(short = 'E', long)]
-    pub evaluate_after: Option<String>,
+    pub evaluate_after: Option<Vec<String>>,
 
-    // cliargs:option("-E, --evaluate-after=VALUE", "", {})
-    // cliargs:option("-f, --fontmanager=VALUE", "choose an alternative font manager")
-    // cliargs:option("-I, --include=FILE", "deprecated, see --use, --preamble, or --postamble", {})
-    // cliargs:option("-m, --makedeps=FILE", "generate a list of dependencies in Makefile format")
-    // cliargs:option("-o, --output=FILE", "explicitly set output file name")
-    // cliargs:option("-O, --options=PARAMETER=VALUE[,PARAMETER=VALUE]", "set document class options", {})
-    // cliargs:option("-p, --preamble=FILE", "process SIL, XML, or other content before the input document", {})
-    // cliargs:option("-P, --postamble=FILE", "process SIL, XML, or other content after the input document", {})
-    // cliargs:option("-u, --use=MODULE[[PARAMETER=VALUE][,PARAMETER=VALUE]]", "load and initialize a module before processing input", {})
+    /// Choose an alternative font manager
+    #[clap(short, long, value_enum, default_value_t=FontManager::Fontconfig)]
+    pub fontmanager: FontManager,
+
+    /// Generate a list of dependencies in Makefile format
+    #[clap(short, long)]
+    pub makedeps: Option<PathBuf>,
+
+    /// Explicitly set output file name
+    #[clap(short, long)]
+    pub output: Option<PathBuf>,
+
+    /// Set document class options
+    #[clap(short = 'O', long)]
+    pub options: Option<Vec<String>>,
+
+    /// Process SIL, XML, or other content before the input document
+    #[clap(short, long)]
+    pub preamble: Option<Vec<PathBuf>>,
+
+    /// Process SIL, XML, or other content after the input document
+    #[clap(short = 'P', long)]
+    pub postamble: Option<Vec<PathBuf>>,
+
+    /// Load and initialize a module before processing input
+    #[clap(short, long)]
+    pub r#use: Option<Vec<String>>,
+
     /// Discard all non-error output messages
     #[clap(short, long)]
     pub quiet: bool,
@@ -31,4 +66,20 @@ pub struct Cli {
     /// Display detailed location trace on errors and warnings
     #[clap(short, long)]
     pub traceback: bool,
+}
+
+#[derive(ValueEnum, Debug, Clone)]
+pub enum Backend {
+    Libtexpdf,
+    Debug,
+    Text,
+    Dummy,
+    Cairo,
+    Podofo,
+}
+
+#[derive(ValueEnum, Debug, Clone)]
+pub enum FontManager {
+    Fontconfig,
+    Macfonts,
 }
