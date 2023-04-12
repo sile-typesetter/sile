@@ -76,6 +76,7 @@ tags
 Makefile-distfiles
 documentation/*.pdf
 gource.webm
+*.rockspec
 .fonts/*
 .sources/*
 /sile

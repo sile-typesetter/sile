@@ -15,13 +15,13 @@ task:
     fingerprint_script: cat Makefile-fonts
   luarocks_cache:
     folder: /usr/local/lib/luarocks
-    fingerprint_script: cat sile-dev-1.rockspec
+    fingerprint_script: cat sile.rockspec.in
   luarocks_lua_cache:
     folder: /usr/local/share/lua
-    fingerprint_script: cat sile-dev-1.rockspec
+    fingerprint_script: cat sile.rockspec.in
   luarocks_lib_cache:
     folder: /usr/local/lib/lua
-    fingerprint_script: cat sile-dev-1.rockspec
+    fingerprint_script: cat sile.rockspec.in
   dependencies_script:
     - pkg install -y autoconf automake fontconfig GentiumPlus git gmake harfbuzz libtool pkgconf png
     - pkg install -y lua54 lua54-lpeg lua54-luafilesystem lua54-luarocks lua54-luasec lua54-luasocket

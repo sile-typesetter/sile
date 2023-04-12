@@ -245,11 +245,15 @@ adl_RECURSIVE_EVAL(["${libdir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
 AC_SUBST([SILE_LIB_PATH])
 
+AC_SUBST([ROCKSPECWARNING], ["DO NOT EDIT! Modify template sile.rockspec.in"])
+AC_SUBST([ROCKREV], [1])
+
 AX_SUBST_MAN_DATE
 
 AC_CONFIG_FILES([build-aux/list-dist-files.sh], [chmod +x build-aux/list-dist-files.sh])
 AC_CONFIG_FILES([Makefile src/Makefile sile.1 core/features.lua core/version.lua])
 AC_CONFIG_FILES([sile tests/regressions.pl], [chmod +x sile tests/regressions.pl])
+AC_CONFIG_FILES([sile-dev-1.rockspec:sile.rockspec.in])
 
 AC_ARG_PROGRAM
 

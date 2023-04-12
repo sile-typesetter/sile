@@ -38,7 +38,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
+          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
       - name: Fetch tags
         run: |
           git fetch --prune --tags ||:
