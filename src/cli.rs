@@ -20,15 +20,16 @@ pub struct Cli {
     pub class: Option<String>,
 
     /// Show debug information for tagged aspects of SILE’s operation
-    #[clap(short, long)]
+    #[clap(short, long, value_name = "DEBUGFLAG[,DEBUGFLAG]")]
+    // TODO: switch to num_args(0..) to allow space separated inputs
     pub debug: Option<Vec<String>>,
 
     /// Evaluate Lua expression before processing input
-    #[clap(short, long)]
+    #[clap(short, long, value_name = "EXRPESION")]
     pub evaluate: Option<Vec<String>>,
 
     /// Evaluate Lua expression after processing input
-    #[clap(short = 'E', long)]
+    #[clap(short = 'E', long, value_name = "EXRPESION")]
     pub evaluate_after: Option<Vec<String>>,
 
     /// Choose an alternative font manager
@@ -36,11 +37,11 @@ pub struct Cli {
     pub fontmanager: FontManager,
 
     /// Generate a list of dependencies in Makefile format
-    #[clap(short, long)]
+    #[clap(short, long, value_name = "FILE")]
     pub makedeps: Option<PathBuf>,
 
     /// Explicitly set output file name
-    #[clap(short, long)]
+    #[clap(short, long, value_name = "FILE")]
     pub output: Option<PathBuf>,
 
     /// Set document class options
@@ -48,15 +49,19 @@ pub struct Cli {
     pub options: Option<Vec<String>>,
 
     /// Process SIL, XML, or other content before the input document
-    #[clap(short, long)]
+    #[clap(short, long, value_name = "FILE")]
     pub preamble: Option<Vec<PathBuf>>,
 
     /// Process SIL, XML, or other content after the input document
-    #[clap(short = 'P', long)]
+    #[clap(short = 'P', long, value_name = "FILE")]
     pub postamble: Option<Vec<PathBuf>>,
 
     /// Load and initialize a module before processing input
-    #[clap(short, long)]
+    #[clap(
+        short,
+        long,
+        value_name = "MODULE[[PARAMETER=VALUE[,PARAMETER=VALUE]]]"
+    )]
     pub r#use: Option<Vec<String>>,
 
     /// Discard all non-error output messages
