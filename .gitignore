@@ -78,24 +78,19 @@ documentation/*.pdf
 gource.webm
 .fonts/*
 .sources/*
-/sile-lua
+sile
+sile.1
+sile-lua
 sile-lua.1
-/.version
-/.version-prev
-/.tarball-version
-/.built-subdirs
+.version
+.version-prev
+.tarball-version
+.built-subdirs
 *.so
 core/version.lua
 core/features.lua
-/target
-/completions
-/sile
-/sile.1
+target/
+completions/
 
 # Nix symlink to builds
-/result
-
-
-# Added by cargo
-
-/target
+result/

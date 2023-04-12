@@ -201,11 +201,11 @@ The following commands are intended to be used between paragraphs and apply to p
 \item{\autodoc:command{\pagebreak} and \autodoc:command{\supereject} request a non-negotiable page break, and are more forceful variants of the previous commands, ensuring that a new page is opened even if there are remaining frames on the page.}
 \end{itemize}
 
-With \autodoc:command{\framebreak} and \autodoc:command{\pagebreak}, all vertical strechable elements%
+With \autodoc:command{\framebreak} and \autodoc:command{\pagebreak}, all vertical stretchable elements%
 \footnote{Vertical: Here, in this document in latin script.
     The more advanced topic of writing directions and foreign scripts is tackled later in this manual.}
     are expanded to fill up the remaining space as much as possible.
-The \autodoc:command{\eject} and \autodoc:command{\supereject} variants insert an infinite vertical stretch, so that all vertical strechable elements on the page stay at their natural size.
+The \autodoc:command{\eject} and \autodoc:command{\supereject} variants insert an infinite vertical stretch, so that all vertical stretchable elements on the page stay at their natural size.
 
 \section{Including other files and code}
 

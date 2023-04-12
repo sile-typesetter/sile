@@ -13,14 +13,13 @@ jobs:
       fail-fast: false
       matrix:
         luaVersion:
-          - [ '5.4.2', 'MYCFLAGS=-fPIC' ] # https://github.com/luarocks/luarocks/issues/1302
+          - [ '5.4', 'MYCFLAGS=-fPIC' ]
           - [ '5.3', 'MYCFLAGS=-fPIC' ]
           - [ '5.2', 'MYCFLAGS=-fPIC' ]
           - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"' ]
           - [ 'luajit', 'XCFLAGS=-fPIC' ]
           # - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
     runs-on: ubuntu-22.04
-    timeout-minutes: 6
     name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
       - name: Checkout
@@ -79,9 +78,11 @@ jobs:
         run: |
           make
       - name: Test Busted
+        timeout-minutes: ${{ runner.debug && 60 || 6 }}
         run: |
           make busted
       - name: Test Regressions
+        timeout-minutes: ${{ runner.debug && 60 || 6 }}
         run: |
           make regressions
       - name: Upload artifacts

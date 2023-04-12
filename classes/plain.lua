@@ -335,16 +335,7 @@ function class:registerCommands ()
 
   self:registerCommand("hbox", function (_, content)
     local hbox, hlist = SILE.typesetter:makeHbox(content)
-    -- HACK
-    -- Direct insertion in the typesetter node queue comes from
-    -- the original implementation.
-    -- It would likely be clearer to use: SILE.typesetter:pushHbox(hbox)
-    -- but the latter adds a zerohbox sometimes (on initline), so it will
-    -- break some non-regression test and possibly have some effect at
-    -- places... For now, therefore, keep that unchanged, but it should
-    -- be investigated.
-    table.insert(SILE.typesetter.state.nodes, hbox)
-
+    SILE.typesetter:pushHbox(hbox)
     if #hlist > 0 then
       SU.warn("Hbox has migrating content (ignored for now, but likely to break in future versions)")
       -- Ugly shim:

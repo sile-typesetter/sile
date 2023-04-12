@@ -283,6 +283,7 @@ function typesetter:typeset (text)
 end
 
 function typesetter:initline ()
+  if self.state.hmodeOnly then return end -- https://github.com/sile-typesetter/sile/issues/1718
   if (#self.state.nodes == 0) then
     self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zerohbox()
     SILE.documentState.documentClass.newPar(self)
@@ -718,36 +719,44 @@ function typesetter:breakpointsToLines (breakpoints)
     local point = breakpoints[i]
     if point.position ~= 0 then
       local slice = {}
-      local seenHbox = 0
-      -- local toss = 1
+      local seenNonDiscardable = false
       for j = linestart, point.position do
         slice[#slice+1] = nodes[j]
         if nodes[j] then
-          -- toss = 0
-          if nodes[j].is_box or nodes[j].is_discretionary then seenHbox = 1 end
+          if not nodes[j].discardable then
+            seenNonDiscardable = true
+          end
         end
       end
-      if seenHbox == 0 then break end
-
-      -- If the line ends with a discretionary, repeat it on the next line,
-      -- so as to account for a potential postbreak.
-      if slice[#slice].is_discretionary then
-        linestart = point.position
-      else
+      if not seenNonDiscardable then
+        -- Slip lines containing only discardable nodes (e.g. glues).
+        SU.debug("typesetter", "Skipping a line containing only discardable nodes")
         linestart = point.position + 1
+      else
+        -- If the line ends with a discretionary, repeat it on the next line,
+        -- so as to account for a potential postbreak.
+        if slice[#slice].is_discretionary then
+          linestart = point.position
+        else
+          linestart = point.position + 1
+        end
+
+        -- Then only we can add some extra margin glue...
+        local mrg = self:getMargins()
+        self:addrlskip(slice, mrg, point.left, point.right)
+
+        -- And compute the line...
+        local ratio = self:computeLineRatio(point.width, slice)
+        local thisLine = { ratio = ratio, nodes = slice }
+        lines[#lines+1] = thisLine
       end
-
-      -- Then only we can add some extra margin glue...
-      local mrg = self:getMargins()
-      self:addrlskip(slice, mrg, point.left, point.right)
-
-      -- And compute the line...
-      local ratio = self:computeLineRatio(point.width, slice)
-      local thisLine = { ratio = ratio, nodes = slice }
-      lines[#lines+1] = thisLine
     end
   end
-  --self.state.nodes = nodes.slice(linestart+1,nodes.length)
+  if linestart < #nodes then
+    -- Abnormal, but warn so that one has a chance to check which bits
+    -- are misssing at output.
+    SU.warn("Internal typesetter error " .. (#nodes - linestart) .. " skipped nodes")
+  end
   return lines
 end
 
@@ -761,16 +770,23 @@ function typesetter.computeLineRatio (_, breakwidth, slice)
   -- TODO Possibly consider a full rewrite/refactor.
   local naturalTotals = SILE.length()
 
-  -- Check if line is hyphenated:
-  -- Skip glues and margins, and check if it ends with a discretionary.
-  -- If so, account for a prebreak.
+  -- From the line end, check if the line is hyphenated (to account for a prebreak)
+  -- or contains extraneous glues (e.g. to account for spaces to ignore).
   local n = #slice
   while n > 1 do
     if slice[n].is_glue or slice[n].is_zero then
+      -- Skip margin glues (they'll be accounted for in the loop below) and
+      -- zero boxes, so as to reach actual content...
       if slice[n].value ~= "margin" then
-       naturalTotals:___sub(slice[n].width)
+        -- ... but any other glue than a margin, at the end of a line, is actually
+        -- extraneous. It will however also be accounted for below, so substract
+        -- them to cancel their width. Typically, if a line break occurred at
+        -- a space, the latter is then at the end of the line now, and must be
+        -- ignored.
+        naturalTotals:___sub(slice[n].width)
       end
     elseif slice[n].is_discretionary then
+      -- Stop as we reached an hyphenation, and account for the prebreak.
       slice[n].used = true
       if slice[n].parent then
         slice[n].parent.hyphenated = true
@@ -779,6 +795,7 @@ function typesetter.computeLineRatio (_, breakwidth, slice)
       slice[n].height = slice[n]:prebreakHeight()
       break
     else
+      -- Stop as we reached actual content.
       break
     end
     n = n - 1

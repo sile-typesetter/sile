@@ -14,7 +14,6 @@ jobs:
 
   coverage:
     runs-on: ubuntu-22.04
-    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -73,6 +72,7 @@ jobs:
         run: |
           make
       - name: Run all testing with coverage
+        timeout-minutes: ${{ runner.debug && 200 || 20 }}
         run: |
           make coverage
       - name: Report test coverage
