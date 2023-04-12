@@ -315,7 +315,7 @@ AC_SUBST([ROCKREV], [1])
 AX_SUBST_MAN_DATE
 
 AC_CONFIG_FILES([build-aux/list-dist-files.sh], [chmod +x build-aux/list-dist-files.sh])
-AC_CONFIG_FILES([Makefile src/Makefile sile-lua.1 core/features.lua core/version.lua])
+AC_CONFIG_FILES([Makefile src/Makefile sile-lua.1 core/features.lua core/pathsetup.lua core/version.lua])
 AC_CONFIG_FILES([sile-lua:sile.in tests/regressions.pl], [chmod +x sile-lua tests/regressions.pl])
 AC_CONFIG_FILES([sile-dev-1.rockspec:sile.rockspec.in])
 
