@@ -1,9 +1,5 @@
 #!@LUA@
 
--- globals used only in core/packagemanager, soon to be deprecated
-SYSTEM_SILE_PATH = "@SILE_PATH@"
-SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
-
 local executable = debug.getinfo(1, "S").source
 local luaversion = _VERSION:match("%d+%.%d+")
 

@@ -6,9 +6,7 @@
         "SU",
         "luautf8",
         "pl",
-        "fluent",
-        "SYSTEM_SILE_PATH",
-        "SHARED_LIB_EXT"
+        "fluent"
     ],
     "Lua.workspace.preloadFileSize": 5120,
     "Lua.workspace.checkThirdParty": false

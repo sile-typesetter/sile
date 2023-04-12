@@ -443,7 +443,6 @@ end
 SILE.settings = require("core.settings")()
 require("core.hyphenator-liang")
 require("core.languages")
-require("core.packagemanager")
 SILE.linebreak = require("core.break")
 require("core.frame")
 SILE.cli = require("core.cli")
@@ -451,7 +450,7 @@ SILE.repl = require("core.repl")
 SILE.font = require("core.font")
 
 -- For warnings and shims scheduled for removal that are easier to keep track
--- of when they are not spead across so many locations...
+-- of when they are not spread across so many locations...
 require("core/deprecations")
 
 return SILE
