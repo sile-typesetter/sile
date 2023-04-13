@@ -122,7 +122,7 @@ end
 
 function package:registerRawHandlers ()
 
-  self.class:registerRawHandler("autodoc:codeblock", function(options, content)
+  self:registerRawHandler("autodoc:codeblock", function(options, content)
     SILE.call("autodoc:codeblock", options, { content[1] }) -- Still issues with SU.contentToString() witb raw content
   end)
 
