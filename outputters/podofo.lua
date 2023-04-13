@@ -19,6 +19,7 @@ local podofoFaces = {}
 
 local outputter = pl.class(base)
 outputter._name = "podofo"
+outputter.extension = "pdf"
 
 function outputter._init (_)
   document = pdf.PdfMemDocument()
@@ -38,7 +39,7 @@ end
 
 function outputter:finish ()
   painter:FinishPage()
-  local fname = self:getOutputFilename("pdf")
+  local fname = self:getOutputFilename()
   document:Write(fname == "-" and "/dev/stdout" or fname)
 end
 
