@@ -51,6 +51,22 @@
         "type": "github"
       }
     },
+    "libtexpdf-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1662109873,
+        "narHash": "sha256-yThIb+D/m1xeJZESojRd3u4OugbWl7f2s8oJohspwZs=",
+        "owner": "sile-typesetter",
+        "repo": "libtexpdf",
+        "rev": "736a5e7530c13582ea704a061a358d0caa774916",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sile-typesetter",
+        "repo": "libtexpdf",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1674487464,
@@ -72,6 +88,7 @@
         "flake-compat": "flake-compat",
         "flake-utils": "flake-utils",
         "gitignore": "gitignore",
+        "libtexpdf-src": "libtexpdf-src",
         "nixpkgs": "nixpkgs"
       }
     }
