@@ -1,20 +1,301 @@
 \begin{document}
-\chapter{Designing Basic Class Files}
+\chapter{Designing Packages & Classes}
 
-Now we know how to define a frame layout for a single page, let’s try
-to define one for an entire document.
+This chapter describes how to implement your own add-on packages and classes in the Lua programming language, for you to extend the way that the SILE system operates, define new commands and page layouts, or indeed do anything that is possible to do in Lua.
 
-Document classes are Lua files, and live somewhere in the \code{classes/}
-subdirectory of either where your input file is located, your current working
-directory, or your SILE path (typically \code{/usr/local/share/sile}). We’re
-going to create a simple class file which merely changes the size of the
+The default formatting in SILE documents is usually determined by the class used by that document.
+This default look can be changed, and more functionalities can be added by means of a package.
+Sometimes it’s hard to make a decision when it comes to choose whether to write a package or a class, and the difference may seem subtle.
+The basic rule is that if your file contains commands that control the look of the \em{logical structure} of a given type of document, then it’s a class.
+Otherwise, if your file adds features that are independent of the document type, then it’s rather a package.\footnote{Obviously there’s nothing new here for seasoned (La)TeX users, but there’s no harm either stating it for a more general audience.}
+
+SILE relies on the Penlight Object-Oriented Programming (OOP) framework.
+Many components are therefore implemented as Penlight classes (here, in the usual OOP sense).
+Their use below is straightforward and is expected to be covered by examples, but you might also want to read more about it before you start.\footnote{See \href{https://lunarmodules.github.io/Penlight/libraries/pl.class.html}}
+
+\section{Designing a package}
+
+Packages live somewhere in the \code{packages/} subdirectory of either where your input file is located, your current working directory, or your SILE path (typically \code{/usr/local/share/sile}).
+
+\subsection{Implementing a bare package}
+
+A minimum working package inherits from the \autodoc:package{base} package.
+While it is possible to inherit from another existing package, let’s ignore this advanced use case in this primer.\footnote{Programmers will recognize the delegation over inheritance paradigm here.
+If you intend to develop a complete family of packages sharing several common methods, then of course you might be interested in first implementing all of these in a parent package, that your other packages will inherit.}
+
+We need to declare the name of our new package, override the package’s initialization method (that is, its class constructor) and possibly other methods as well, set a documentation string, and finally return our new package.
+
+While its presence is not mandatory, the documentation string usually comes in the form of an embedded SIL document, explaining the purpose of the package and possibly illustrating some of its features.
+It is extracted by the \autodoc:package{autodoc} package for presenting the package in a manual such as this one.
+We recommend writing it, when you feel ready to share your package with other users.
+
+Also note that the package’s initialization methods accepts an \code{options} table.
+It allows passing parameters when loading and instantiating that package.
+This is already a somewhat advance use case too, and we are not going to cover it here.
+
+This being said, let’s proceed as mentioned, and simply create a file \code{packages/mypkg/init.lua} with the following content.
+
+\begin[type=autodoc:codeblock]{raw}
+local base = require("packages.base")
+
+local package = pl.class(base)
+package._name = "mypkg"
+
+function package:_init (options)
+  -- Things you might want to do before the parent initialization.
+  base._init(self)
+  -- Things you might want to do after the parent initialization.
+end
+
+-- Additional methods will later come here.
+
+package.documentation = [[
+\begin{document}
+...
+\end{document}
+]]
+
+return package
+\end{raw}
+
+You have just written you very first package, and you can already use it in a document (for instance, loading it with \autodoc:command{\use[module=packages.mypkg]})…
+Although this package doesn’t do anything interesting yet.
+
+\subsection{Defining commands}
+
+To define your own command at the Lua level, you overload the \code{registerCommands} package method.
+
+\begin[type=autodoc:codeblock]{raw}
+function package:registerCommands ()
+  -- Our own commands come here
+end
+\end{raw}
+
+Within it, use the \code{self:registerCommand} function.
+It takes three parameters: a command name, a function to implement the command, and some help text.
+
+The signature of a function representing a SILE command is fixed:
+you need to take two parameters, \code{options} and \code{content}.\footnote{%
+Of course ou can name your parameters whatever you like, but these are the most common names.}
+Both of these parameters are Lua tables.
+The \code{options} parameter contains the command’s parameters as a key-value table, and the \code{content} parameter is an abstract syntax tree reflecting the input being currently processed.
+
+So in the case of \autodoc:command[check=false]{\mycommand[size=12pt]{Hello \break world}},
+the first parameter will contain the table \code{\{size = "12pt"\}} and the second parameter will contain the table:
+
+\begin[type=autodoc:codeblock]{raw}
+{
+  "Hello ",
+  {
+    options = {},
+    id = "command",
+    pos = …,
+    col = …,
+    lno = …,
+    command = "break"
+  },
+  " world"
+}
+\end{raw}
+
+Most commands will find themselves doing something with the \code{options} and/or calling \hbox{\code{SILE.process(content)}} to recursively process and render the argument.
+
+Here’s a very simple example: a \autodoc:command[check=false]{\link} command may take an \code{href} attribute.
+We want to render \autodoc:command[check=false]{\link[href=http://...]{Hello}} as \examplefont{Hello (\code{http://...})}.
+First we need to render the content, and then we need to do something with the attribute.
+We use the \code{SILE.typesetter:typeset} and \code{SILE.call} functions to output text and call other commands.
+
+\begin[type=autodoc:codeblock]{raw}
+  self:registerCommand("link", function(options, content)
+    SILE.process(content)
+    if (options.href) then
+      SILE.typesetter:typeset(" (")
+      SILE.call("code", {}, { options.href })
+      SILE.typesetter:typeset(")")
+    end
+  end)
+\end{raw}
+
+Now, let’s design a (naive) \autodoc:environment[check=false]{blockquote} environment implementing indented (and possibly nested) quotations.
+You do remember, right, that an environment in SILE is not much different from a command?
+So a command be it, without any option this time, but playing with vertical skip, measurements, glue, (temporary) left and right margin settings.
+(If these concepts elude you, consider re-reading the previous chapters where they are introduced.)
+
+\begin[type=autodoc:codeblock]{raw}
+  self:registerCommand("blockquote", function (_, content)
+    SILE.call("smallskip")
+    SILE.settings:temporarily(function ()
+      local indent = SILE.measurement("2em"):absolute()
+      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      SILE.settings:set("document.lskip",
+        SILE.nodefactory.glue(lskip.width + indent))
+      SILE.settings:set("document.rskip",
+        SILE.nodefactory.glue(rskip.width + indent))
+      SILE.process(content)
+      SILE.typesetter:leaveHmode() -- gather paragraphs now.
+    end)
+    SILE.call("smallskip")
+  end, "A naive blockquote environment")
+\end{raw}
+
+\subsection{Defining settings}
+
+To define your own settings at the Lua level, you overload the \code{declareSettings} package method; and within it, use the \code{SILE.settings:declare} function.
+It takes a setting specification as argument.
+
+In our custom quotation environment above, note that we hard-coded the indentation.
+Say you’d prefer allowing users to specify their preferred value here.
+You would have more than one way to achieve it.
+A command option is one of them, but you’d be right in thinking that a SILE setting might be more user-friendly and appropriate in this very case, so one could for instance do \autodoc:command{\set[parameter=mypkg.blockindent, value=2em]} to configure it globally (or within a given scope).
+Let’s do this. Change the line setting the indentation in your custom command…
+
+\begin[type=autodoc:codeblock]{raw}
+     local indent = SILE.settings:get("mypkg.blockindent"):absolute()
+\end{raw}
+
+… and declare the corresponding setting:
+
+\begin[type=autodoc:codeblock]{raw}
+function package:declareSettings ()
+  SILE.settings:declare({
+    parameter = "mypkg.blockindent",
+    type = "measurement",
+    default = SILE.measurement("2em"),
+    help = "Blockquote indentation"
+  })
+end
+\end{raw}
+
+\subsection{Defining raw handlers}
+
+“Raw handlers” allow packages to register new handlers (or callbacks) for use with the \autodoc:environment{raw} environment, which content is read as-is by SILE, without being interpretated.
+This is intended for advanced use cases where you may want to provide a way for users to embed arbitrary content (likely in another syntax), and you will provide the complete parsing and handling for it.\footnote{%
+This may be used to implement a “clever” verbatim environment.
+It is also used, for instance, by the \strong{markdown.sile} 3rd-party collection to embed Markdown or Djot content directly in a (SIL or XML) document.}
+
+You can define your own raw handlers at the Lua level.
+Overloading the \code{registerRawHandlers} package method; and within it, use the \code{self:registerRawHandler} function.
+It takes two parameters: a handler type name, and a function to implement the handler.
+The signature of the handler function is the same as for a SILE command.
+
+Here is a handler that just typesets the content as-is, for you to just get the idea.
+
+\begin[type=autodoc:codeblock]{raw}
+function package:registerRawHandlers ()
+  self:registerRawHandler("mypkg:noop", function(options, content)
+    -- contains everything within the raw environment as unparsed text.
+    local text = content[1]
+    SILE.typesetter:typeset(text)
+  end)
+end
+\end{raw}
+
+\subsection{Loading other packages}
+
+Above, when introducing the \code{_init} method, we left a few placeholder comments.
+Let’s you want to ensure the \autodoc:package{color} package is also loaded, so that the custom \autodoc:command[check=false]{\link} command you implemented can safely invoke it in a \code{SILE.call}.
+
+\begin[type=autodoc:codeblock]{raw}
+function package:_init ()
+  base._init(self)
+  -- Load some dependencies
+  self:loadPackage("color")
+end
+\end{raw}
+
+The \code{self:loadPackage} methods takes as argument a package name, and optionally packages options (as a table).
+
+\subsection{Registering class hooks}
+
+Some packages may provide additional functions that need to be automatically called at various points in the output routine of the document class.
+But let’s return to that topic later, when describing how to set up you own custom class.
+For now, we can conclude our primer on packages, as you should already have all the tools design great packages.
+
+\section{Designing a document class}
+
+Document classes live somewhere in the \code{classes/} subdirectory of either where your input file is located, your current working directory, or your SILE path (typically \code{/usr/local/share/sile}).
+
+\subsection{Implementing a bare class}
+
+A minimum working class inherits from the \strong{base} class.
+Most of the time, however, you will prefer inheriting at least from the \strong{plain} class, which already provides a lot of things users will expect, including most of the basic commands presented early in this manual.
+Let’s assume this is the case, and simply create a file \code{classes/myclass.lua} with the following content.
+
+\begin[type=autodoc:codeblock]{raw}
+local plain = require("classes.plain")
+
+local class = pl.class(plain)
+class._name = "myclass"
+
+function class:_init (options)
+  -- your stuff here (if you want it before the parent init)
+  plain._init(self, options) -- Note: passing options
+  -- your stuff here (if you want it after the parent init)
+end
+
+-- Additional methods will later come here.
+
+return class
+\end{raw}
+
+Note that it is very similar to what we previously did when designing a package.
+
+A notable difference is that \code{options} always need to be propagated to the parent in the initialization method. Not only can your document class implement its own additional options, you indeed also want standard options to be honored, such as the paper size, etc.
+In other methods that we will later override, we will also invoke the corresponding parent method, for it also to do its own things.
+
+That’s it. You have implemented a working bare bones class. The next step is to start adding or overriding class functions to do what you want.
+
+\subsection{Defining commands, settings, etc.}
+
+A document class can define commands, declare settings, register raw handlers and load additional packages at initialization.
+
+For all of these, the logic is exactly the same as for packages, so we are not repeating it here.
+
+\subsection{Defining class options}
+
+Your document class can also define specific options.
+To define your own class option, you overload the \code{declareOptions} class method; and within it, use the \code{self:declareOption} function.
+It takes two arguments, an option name and a function.
+The latter acts as a setter or getter, so a minimal code will usually look as follows.
+
+\begin[type=autodoc:codeblock]{raw}
+function class:declareOptions ()
+  base.declareOptions(self) -- Note: support parent class options
+
+  self:declareOption("myoption", function (_, value)
+    if value then
+      self.myoption = value
+      -- Possibly perform other processing when the value is set.
+    end
+    return self.myoption
+  end)
+end
+\end{raw}
+
+Would you also want this option to have a default value, then overload the \code{setOptions} method.
+In that case, do not forget invoking the superclass method, so that its own options are also properly initialized.
+
+\begin[type=autodoc:codeblock]{raw}
+function class:setOptions (options)
+  options.myoption = options.layout or "default"
+  base.setOptions(self, options) -- Note: set parent options
+end
+\end{raw}
+
+\subsection{Changing the default page layout}
+
+We earlier learnt how to define a frame layout for a single page, let’s try to define one for an entire document.
+We’re going to create a simple class file which merely changes the size of the
 margins and the typeblock. We’ll call it \code{bringhurst.lua}, because it
 replicates the layout of the Hartley & Marks edition of Robert Bringhurst’s
 \em{The Elements of Typographical Style}.
 
 We are designing a book-like class, and so we will inherit from SILE’s
-standard \code{book} class found in \code{classes/book.lua}.
-Let’s briefly have a look at \code{book.lua} to see how it works.
+standard \strong{book} class found in \code{classes/book.lua}.
+Let’s briefly have a look at \code{book.lua} to see how it works.\footnote{%
+Note that the official SILE classes have some extra tooling to handle legacy class models trying to inherit from them.
+You don’t need those deprecation shims in your own classes when following these examples.}
 First, a table is populated with a description of the default frameset.
 
 \begin[type=autodoc:codeblock]{raw}
@@ -47,20 +328,14 @@ book.defaultFrameset = {
 \end{raw}
 
 So there are four frames directly declared.
-The first is the content frame,
-which by SILE convention is called \code{content}.
+The first is the content frame, which by SILE convention is called \code{content}.
 Directly abutting the \code{content} frame at the bottom is the \code{footnotes} frame.
-The top of the typeblock and the bottom of the footnote frame have fixed positions,
-but the boundary between typeblock and footnote is variable.
-Initially the height of the footnotes is zero
-(and so the typeblock takes up the full height of the page)
-but as footnotes are inserted into the footnote frame its height will be adjusted;
-its bottom is fixed and therefore its top will be adjusted,
-and the bottom of the main typeblock frame will also be correspondingly adjusted.
-The folio frame (which holds the page number) lives below the footnotes,
-and the running headers live above the \code{content} frame.
+The top of the typeblock and the bottom of the footnote frame have fixed positions, but the boundary between typeblock and footnote is variable.
+Initially the height of the footnotes is zero (and so the typeblock takes up the full height of the page) but as footnotes are inserted into the footnote frame its height will be adjusted;
+its bottom is fixed and therefore its top will be adjusted, and the bottom of the main typeblock frame will also be correspondingly adjusted.
+The folio frame (which holds the page number) lives below the footnotes, and the running headers live above the \code{content} frame.
 
-Normally, as in the \code{plain} class and anything inheriting from it,
+Normally, as in the \strong{plain} class and anything inheriting from it,
 this would be enough to populate the pages’ frameset.
 Instead the \code{book} class includes its own extension to the class with a callback \code{_init()} function which loads the \code{masters} package and generates a master frameset using the default frameset defined above.
 
@@ -68,10 +343,10 @@ Instead the \code{book} class includes its own extension to the class with a cal
 function book:_init (options)
   self:loadPackage("masters")
   self:defineMaster({
-      id = "right",
-      firstContentFrame = self.firstContentFrame,
-      frames = self.defaultFrameset
-    })
+    id = "right",
+    firstContentFrame = self.firstContentFrame,
+    frames = self.defaultFrameset
+   })
   ...
   plain._init(self, options)
   return self
@@ -85,12 +360,9 @@ Next, we use the \code{twoside} package to mirror our right-page master into a l
   self:mirrorMaster("right", "left")
 \end{raw}
 
-The \code{book} class also loads the table of contents package which sets up commands for sectioning,
-and declares various things that need to be done at the start and end of each page.
-Since we will be inheriting from the book class,
-we will have all these definitions already available to us.
-All we need to do is set up our new class,
-and then define what is different about it.
+The \strong{book} class also loads the table of contents package which sets up commands for sectioning,and declares various things that need to be done at the start and end of each page.
+Since we will be inheriting from the book class, we will have all these definitions already available to us.
+All we need to do is set up our new class, and then define what is different about it.
 Here is how we set up the inheritance:
 
 \begin[type=autodoc:codeblock]{raw}
@@ -103,9 +375,7 @@ return bringhurst
 
 Now we need to define our frame masters.
 
-The LaTeX memoir classes’ \em{A Few Notes On Book Design} tells us that Bringhurst’s book has a spine margin one thirteenth of the page width,
-a top margin eight-fifths of the spine margin,
-and a front margin and bottom margin both sixteen-fifths of the spine margin.
+The LaTeX memoir classes’ \em{A Few Notes On Book Design} tells us that Bringhurst’s book has a spine margin one thirteenth of the page width, a top margin eight-fifths of the spine margin, and a front margin and bottom margin both sixteen-fifths of the spine margin.
 We can define this in SILE terms like so:
 
 \begin[type=autodoc:codeblock]{raw}
@@ -127,19 +397,15 @@ bringhurst.defaultFrameset = {
 }
 \end{raw}
 
-Note that we’ve deliberately copied the frame definitions for the folio and footnote frames from the \code{book} class,
-but if we had tried to reuse the \code{runningHead} frame definition it would have been too high
-because the typeblock is higher on the page than the standard \code{book} class,
-and the running heads are defined relative to them.
+Note that we’ve deliberately copied the frame definitions for the folio and footnote frames from the \strong{book} class, but if we had tried to reuse the \code{runningHead} frame definition it would have been too high because the typeblock is higher on the page than the standard \strong{book} class, and the running heads are defined relative to them.
 So, we needed to change the definition the running header frame to bring them down a bit lower.
 
-If all we want to do in our new class is to create a different page shape,
-this is all we need.
+If all we want to do in our new class is to create a different page shape, this is all we need.
 The \code{_init()} function inherited from the book class will take care of setting these frames up with mirrored masters.
 
-If we had wanted to load additional packages into our class as, say, the \code{bible} class does,
+If we had wanted to load additional packages into our class as, say, the \strong{bible} class does,
 we would need to define our own \code{_init()} function and call our parent class’s \code{_init()} function as well.
-For example to load the \code{infonode} package into our class, we could add this function:
+For example to load the \autodoc:package{infonode} package into our class, we could add this function:
 
 \begin[type=autodoc:codeblock]{raw}
 function bringhurst:_init(options)
@@ -149,84 +415,9 @@ function bringhurst:_init(options)
 end
 \end{raw}
 
-Note that the official SILE classes have some extra tooling to handle legacy class models trying to inherit from them.
-You don’t need those deprecation shims in your own classes when following these examples.
+\subsection{Modifying class output routines}
 
-\section{Defining commands}
-
-It’s usually the case that a class will want to do more than
-just change the page shape. A class will typically want to do some other things
-as well: define additional commands, alter the output routine, store and
-investigate bits of state information, and so on. We’ll look briefly
-at some of the principles involved in those things here, and in the next
-chapters will run through some working examples.
-
-To define your own command at the Lua level, you overload the \code{registerCommands} class method,
-and within it, use the \code{self:registerCommand} function. It takes three parameters: a command name,
-a function to implement the command, and some help text.
-The signature of a function representing a SILE command is fixed:
-you need to take two parameters, \code{options} and \code{content}
-(of course you can name your parameters whatever you like, but these are the most common names).
-Both of these parameters are Lua tables.
-The \code{options} parameter contains the command’s parameters or XML attributes as a key-value table,
-and the \code{content} parameter is an abstract syntax tree reflecting the input being currently processed.
-
-So in the case of \code{\\mycommand[size=12pt]\{Hello \\break world\}},
-the first parameter will contain the table \code{\{size = "12pt"\}} and the second parameter will contain the table:
-
-\begin[type=autodoc:codeblock]{raw}
-{
-  "Hello ",
-  {
-    options = {},
-    id = "command",
-    pos = …,
-    col = …,
-    lno = …,
-    command = "break"
-  },
-  " world"
-}
-\end{raw}
-
-Most commands will find themselves doing something with the \code{options}
-and/or calling \break\code{SILE.process(content)} to recursively process the
-argument. Here’s a very simple example: an XML \code{<link>} tag may take
-an XLink \code{xl:href} attribute\footnote{Yes, I know the document author
-might choose a different XML namespace to refer to XLink. Let’s keep things
-simple.}. We want to render \code{<link xl:href="http://...">\goodbreak{}Hello</link>}
-as \examplefont{Hello (\code{http://...})}. First we need to render
-the content, and then we need to do something with the attribute:
-
-\begin[type=autodoc:codeblock]{raw}
-function bringhurst:registerCommands ()
-
-  book.registerCommands(self)
-
-  self:registerCommand("link", function(options, content)
-    SILE.process(content)
-    if (options["xl:href"]) then
-      SILE.typesetter:typeset(" (")
-      SILE.call("code", {}, {options["xl:href"]})
-      SILE.typesetter:typeset(")")
-    end
-  end)
-
-end
-\end{raw}
-
-We use the usual \code{SILE.typesetter:typeset} and \code{SILE.call}
-functions to output text and call other commands.
-
-\note{If you do need to do something with a dimension, you can use \code{SILE.measurement()} to parse a basic length and
-\code{SILE.parseComplexFrameDimension} to parse a frame dimension,
-and, if necessary, the \code{:tonumber()} method of dimensions to turn them into numbers (in points).}
-
-\section{Output routines}
-
-As well as defining frames and packages,
-classes may also alter the way that SILE performs its output—for instance, what it should do at the start or end of a page, which controls things like swapping between different master frames,
-displaying page numbers, and so on.
+As well as defining frames and packages, classes may also alter the way that SILE performs its output—for instance, what it should do at the start or end of a page, which controls things like swapping between different master frames, displaying page numbers, and so on.
 
 The key methods for defining the \em{output routine} are:
 
@@ -235,25 +426,31 @@ The key methods for defining the \em{output routine} are:
       each paragraph.}
 \item{\code{newPage} and \code{endPage} are called at the start
       and end of each page.}
-\item{\code{init} and \code{finish} are called at the start and
-      end of the document.}
+\item{\code{finish} is called at the end of the document.}
 \end{itemize}
 
-Once again this is done in an object-oriented way,
-with derived classes overriding their superclass’ methods where necessary.
+Once again this is done in an object-oriented way, with derived classes overriding their superclass’ methods where necessary.
+
+\subsection{Interacting with class hooks}
 
 Some packages may provide functions that need to be run as part of the class output routines.
-One way packages can accomplish this is by registering hook functions that get run at known locations in the provided classes.
-Class authors may also provide their own hook locations for packages, or run any set of registered hooks in their own outputs.
-The other way is to export functions that get added to the class itself and can be run manually from the class.
+They can accomplish this is by registering hook functions that get run at known locations in the provided classes.
+In the default implementation, three hooks are provided:\footnote{%
+We will not cover it here, but class authors may also provide their own hook locations for packages, or run any set of registered hooks in their own outputs.}
 
-For examples check out the \code{tableofcontents} package for the hooks it sets, but also the \autodoc:command{\tocentry} command it registers that gets called manually in the \code{book} class.
+\begin{itemize}
+\item{The \code{newpage} hook is run at the start of each page.}
+\item{The \code{endpage} hook is run at the end of each page.}
+\item{The \code{finish} hook is called at the end of the document.}
+\end{itemize}
 
-Let’s demonstrate roughly how the \autodoc:package{tableofcontents} package works.
+For an example, we will check out the \autodoc:package{tableofcontents} package for the hooks it sets,
+but also the \autodoc:command[check=false]{\tocentry} command it registers that gets called manually in the \strong{book} class.
+Let’s demonstrate roughly how the that package works.
 We’ll be using the \code{infonodes} package to collect the information about which pages contain table of content items.
 
 First, we set up our infonodes by creating a command that can be called by sectioning commands.
-In other words, \code{\\chapter}, \code{\\section}, etc., should call \code{\\tocentry} to store the page reference for this section.
+In other words, \autodoc:command[check=false]{\chapter}, \autodoc:command[check=false]{\section}, etc., should call \autodoc:command[check=false]{\tocentry} to store the page reference for this section.
 
 \begin[type=autodoc:codeblock]{raw}
 self:registerCommand("tocentry", function (options, content)
@@ -267,14 +464,12 @@ self:registerCommand("tocentry", function (options, content)
 end)
 \end{raw}
 
-Infonodes work on a per-page basis, so if we want to save them throughout
-the whole document, at the end of each page we need to move them from the
-per-page table to our own
-table. In order to be useful, we also need to make sure we store their page numbers.
+Infonodes work on a per-page basis, so if we want to save them throughout the whole document, at the end of each page we need to move them from the per-page table to our own
+table.
+In order to be useful, we also need to make sure we store their page numbers.
 
-\note{SILE provides the \code{SILE.scratch} variable for you to store
-global information in. You should use a portion of this table namespaced to
-your class or package.}
+\note{SILE provides the \code{SILE.scratch} variable for you to store global information in.
+You should use a portion of this table namespaced to your class or package.}
 
 Here is a routine we can call at the end of each page to move the TOC nodes:
 
@@ -293,11 +488,9 @@ function package:moveTocNodes ()
 end
 \end{raw}
 
-We’re going to take the LaTeX approach of storing these items as a
-separate file, then loading them back in again when typesetting the TOC.
-So at the end of the document, we serialize the \code{SILE.scratch.tableofcontents}
-table to disk. Here is a function to be called by the \code{finish} output
-routine:
+We’re going to take the LaTeX approach of storing these items as a separate file, then loading them back in again when typesetting the TOC.
+So at the end of the document, we serialize the \code{SILE.scratch.tableofcontents} table to disk.
+Here is a function to be called by the \code{finish} output routine:
 
 \begin[type=autodoc:codeblock]{raw}
 function package.writeToc (_)
@@ -310,7 +503,7 @@ function package.writeToc (_)
 end
 \end{raw}
 
-Then the \code{\\tableofcontents} command reads that file if it is present, and typesets the TOC nodes appropriately:
+Then the \autodoc:command[check=false]{\tableofcontents} command reads that file if it is present, and typesets the TOC nodes appropriately:
 
 \begin[type=autodoc:codeblock]{raw}
 self:registerCommand("tableofcontents", function (options, _)
@@ -333,42 +526,25 @@ end)
 
 And the job is done.
 Well, nearly.
-The \code{tableofcontents} package now contains a couple of methods—\code{moveTocNodes}
-and \code{writeToc}—that need to be called at various points in the output routine of a
-class which uses this package.
+Our \autodoc:package{tableofcontents} package now contains a couple of methods—\code{moveTocNodes} and \code{writeToc}—that need to be called at various points in the output routine of a class which uses this package.
 How do we do that?
-
-\section{Exports}
-
-Packages which are primarily used for providing functionality to other classes and packages need a way of supplying these composable bits of functionality to the code which is going to use them.
-This is called the \em{export mechanism}.
-
-As well as defining commands, each package may also return a Lua table consisting of two entries,
-\code{init} and \code{exports}.
-
-The \code{init} function allows you to perform some initialization actions,
-optionally based on arguments supplied by the loading class.
-When the package is loaded with \code{class:loadPackage(package, args)},
-the initializer is called with two arguments, \code{class} and \code{args}.
-For instance, the \code{twoside} package receives information about the IDs of the main right and left master frames so that it can set up the code to switch masters on page change.
-In our case, we will want to ensure that the \code{infonode} package is loaded into our caller:
+We simply have to register these methods for them to be called at the intended points.
 
 \begin[type=autodoc:codeblock]{raw}
-return {
-  init = function (class)
-    class:loadPackage("infonode")
-  end,
+function package:_init ()
+  -- (Simplified from the actual implementation.)
+  base._init(self)
+  if not SILE.scratch.tableofcontents then
+    SILE.scratch.tableofcontents = {}
+  end
+  self:loadPackage("infonode")
+  ...
+  self.class:registerHook("endpage", self.moveTocNodes)
+  self.class:registerHook("finish", self.writeToc)
+end
 \end{raw}
 
-The other entry to be returned from the package is \code{exports},
-which contains names and functions to be mixed into the class namespace.
-In other words, after:
+This concludes our primer on document class design.
+A few details were’nt addressed, possibly, but you should now have all the tools at your disposal to create your own classes, or start digging into the standard classes and packages with the necessary understanding of their inner working.
 
-\begin[type=autodoc:codeblock]{raw}
-  exports = { writeToc = writeToc, moveTocNodes = moveNodes }
-}
-\end{raw}
-
-\noindent{}any class which loads \code{tableofcontents} can call \code{self:writeToc()} and \code{self:moveTocNodes()} (note that we renamed this function when exporting it).
-It is the class’s responsibility for calling these methods at the appropriate point in the output routine.
 \end{document}
