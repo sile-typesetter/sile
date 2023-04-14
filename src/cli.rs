@@ -9,7 +9,7 @@ use std::path::PathBuf;
 #[clap(author, bin_name = "sile")]
 pub struct Cli {
     /// Input document, by default in SIL or XML format
-    pub input: String,
+    pub input: PathBuf,
 
     /// Choose an alternative output backend
     #[clap(short, long, value_enum, default_value_t=Backend::Libtexpdf)]
