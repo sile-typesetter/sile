@@ -29,7 +29,7 @@ local makeDeps = {
     end
     local depfile, err = io.open(self.filename, "w")
     if not depfile then return SU.error(err) end
-    depfile:write(SILE.outputFilename .. ": " .. tostring(self._deps) .. "\n")
+    depfile:write(SILE.outputter:getOutputFilename() .. ": " .. tostring(self._deps) .. "\n")
     depfile:close()
   end
 }
