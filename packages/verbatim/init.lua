@@ -45,7 +45,7 @@ The \autodoc:package{verbatim} package is useful when quoting pieces of computer
 It changes SILE’s settings so that text is set ragged right, with no hyphenation, no indentation and regular spacing.
 It tells SILE to honor multiple spaces, and sets a monospaced font.
 
-\note{Despite the name, \autodoc:environment{verbatim} does not alter the way that SILE sees special characters.
+\autodoc:note{Despite the name, \autodoc:environment{verbatim} does not alter the way that SILE sees special characters.
 You still need to escape backslashes and braces: to produce a backslash, you need to write \code{\\\\}.}
 
 Here is some text set in the \autodoc:environment{verbatim} environment:

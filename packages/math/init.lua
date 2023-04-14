@@ -96,7 +96,7 @@ package.documentation = [[
 
 This package provides typesetting of formulas directly in a SILE document.
 
-\note{Mathematical typesetting in SILE is still in its infancy.
+\autodoc:note{Mathematical typesetting in SILE is still in its infancy.
 As such, it lacks some features and may contain bugs.
 Feedback and contributions are always welcome.}
 

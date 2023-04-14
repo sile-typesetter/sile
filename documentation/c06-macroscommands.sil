@@ -36,7 +36,7 @@ L%
 \kern[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}%
 \end{raw}
 
-(Don’t worry about the \code{\\kern} command for the moment; we’ll come back
+(Don’t worry about the \autodoc:command{\kern} command for the moment; we’ll come back
 to that later. The \code{\%}’s prevent newlines from becoming spaces.)
 
 We’ve used our logo four times already in this chapter, and we don‘t want to
@@ -64,12 +64,12 @@ L%
 }
 \end{raw}
 
-We are using the built-in SILE command \code{\\define}. \code{\\define} takes
-an option called \code{command}; its value is the name of the command we
-are defining. The content of the \code{\\define} command is a series of SILE instructions to
-be executed when the command is used.
+We are using the built-in SILE command \autodoc:command{\define}.
+\autodoc:command{\define} takes an option called \code{command};
+its value is the name of the command we are defining.
+The content of the \autodoc:command{\define} command is a series of SILE instructions to be executed when the command is used.
 
-\begin{note}
+\begin{autodoc:note}
 At this point it’s worth knowing the precise rules for allowable
 names of SILE commands.
 
@@ -86,7 +86,7 @@ and then use them in a TeX-flavor SILE file.) Commands defined in TeX-flavor
 must have names which are valid parameter values, or else they will
 not parse correctly either; parameter values happen to consist
 of any text up until the nearest comma, semicolon, or closing square bracket.
-\end{note}
+\end{autodoc:note}
 
 \section{Macro with content}
 
@@ -101,13 +101,11 @@ text red \color[color=red]{like this}. The usual way to do that is to say
 
 However, we‘re not always going to want to be highlighting the words “\code{like this}”.
 We might want to be able to highlight other text instead. We need the ability
-to wrap the command \code{\\color\break{}[color=red]\{ ... \}} around our chosen content.
+to wrap the command \autodoc:command{\color[color=red]{...}} around our chosen content.
 In other words, we want to be able to define our own commands which take arguments.
 
-The way we express this in SILE is with the \code{\\process} command. \code{\\process}
-is only valid within the context of a \code{\\define} command (you’ll mess everything
-up if you try using it somewhere else), and it
-basically means “do whatever you were planning to do with the arguments to this
+The way we express this in SILE is with the \autodoc:command{\process} command.
+\autodoc:command{\process} is only valid within the context of a \autodoc:command{\define} command (you’ll mess everything up if you try using it somewhere else), and it basically means “do whatever you were planning to do with the arguments to this
 command.” So if we want to a command which makes things red, we can say:
 
 \begin[type=autodoc:codeblock]{raw}
@@ -118,19 +116,19 @@ command.” So if we want to a command which makes things red, we can say:
 Making things red is a \red{silly} way to emphasise text.
 \end{raw}
 
-\begin{note}
-You can’t call \code{\\process} more than once within the same macro.
+\begin{autodoc:note}
+You can’t call \autodoc:command{\process} more than once within the same macro.
 
-In the definition of the \code{\\chapter} command, we want to (1) display the
+In the definition of the \autodoc:command{\chapter} command, we want to (1) display the
 chapter name in a big bold font, and (2) use the chapter name as the left
-running header. If you try writing the \code{\\chapter} command as a macro,
-you will get stuck—once you’ve \code{\\process}ed the chapter name to display
+running header. If you try writing the \autodoc:command{\chapter} command as a macro,
+you will get stuck—once you’ve \autodoc:command{\process}ed the chapter name to display
 it in bold, you won’t be able to process it again to set the running header.
 
-So the \code{\\chapter} command cannot be written as a simple macro. The other
+So the \autodoc:command{\chapter} command cannot be written as a simple macro. The other
 way to implement your own commands is to write them in the Lua programming
-language, which is what happens for \code{\\chapter}. This is deliberate:
-the \code{\\define} command really is meant to be used just for simple
+language, which is what happens for \autodoc:command{\chapter}. This is deliberate:
+the \autodoc:command{\define} command really is meant to be used just for simple
 things, because we believe that programming tasks should be done in a
 programming language. So don’t be afraid to write your own commands in Lua—it’s
 not too difficult, and if you’re creating any serious document format yourself
@@ -138,7 +136,7 @@ not too difficult, and if you’re creating any serious document format yourself
 or adding minor formatting tweaks through customization hooks that classes
 give you) you should expect to write it in Lua, as you’re almost certainly
 going to need to do so. We will see how to do this in later chapters.
-\end{note}
+\end{autodoc:note}
 
 \section{Nesting macros}
 
@@ -151,36 +149,22 @@ other commands.
 So it is possible even within the simple scope of macro processing to achieve
 quite a lot of automation.
 
-For instance, within this book, there have been a number of \em{notes}—italicized
-paragraphs between two heavy lines with a left margin. These have been typeset
-with the \code{\\note} command; this is not a built-in command but a macro
-specified within the \code{documentation/macros.sil} file included by this document.
-Here is one way to define \code{\\note}, in XML flavour:
+For instance, let’s build a macro that italicizes its content and wraps it in a narrower text block.
+Here is one way to define such a \code{<note>} macro, in XML flavour:
 
 \begin[type=autodoc:codeblock]{raw}
-<define command="line">
-  <par/><smallskip/><noindent/>
-  <hrule width="450pt" height="0.3pt"/><par/>
-  <novbreak/><smallskip/><novbreak/>
+<define command="narrower">
+<set parameter="document.lskip" value="24pt"><process/><par/></set>
 </define>
 
-<define command="narrower">
-  <set parameter="document.lskip" value="24pt"/>
-  <process/>
-  <set parameter="document.lskip" value="0pt"/>
-</end>
-
-<define command="notefont"><font style="italic" size="10pt"><process/></font></notefont>
+<define command="notefont">
+<font style="italic" size="10pt"><process/></font>
+</define>
 
 <define command="note">
-  <narrower>
-    <line/>
-    <notefont><process/></notefont>
-    <line/>
-  </narrower>
+<narrower><notefont><process/></notefont></narrower>
 </define>
 \end{raw}
 
-The only command we have not yet met here is \code{\\set}, which we will now
-investigate.
+The only command we have not yet met here is \autodoc:command{\set}, which we will now investigate.
 \end{document}

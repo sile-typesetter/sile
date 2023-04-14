@@ -55,10 +55,10 @@ It would be terribly immodest to claim that a little project like SILE was a wor
 TeX was one of the earliest typesetting systems, and had to make a lot of design decisions somewhat in a vacuum.
 Some of those design decisions have stood the test of time—TeX is still an extremely well-used typesetting system more than forty years after its inception, which is a testament to its design and performance—but many others have not.
 In fact, most of the development of TeX since Knuth’s era has involved removing his early decisions and replacing them with technologies which have become the industry standard:
-	we use TrueType fonts, not METAFONTs (\tt{xetex});
-	PDFs, not DVIs (\tt{pstex}, \tt{pdftex});
-	Unicode, not 7-bit ASCII (\tt{xetex} again);
-	markup languages and embedded programming languages, not macro languages (\tt{xmltex}, \tt{luatex}).
+	we use TrueType fonts, not METAFONTs (\code{xetex});
+	PDFs, not DVIs (\code{pstex}, \code{pdftex});
+	Unicode, not 7-bit ASCII (\code{xetex} again);
+	markup languages and embedded programming languages, not macro languages (\code{xmltex}, \code{luatex}).
 At this point, the parts of TeX that people actually \em{use} are (1) the box-and-glue model, (2) the hyphenation algorithm, and (3) the line-breaking algorithm.
 
 SILE follows exactly in TeX’s footsteps for each of these three areas that have stood the test of time;
