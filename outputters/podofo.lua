@@ -17,10 +17,10 @@ local lastkey
 
 local podofoFaces = {}
 
-local outputer = pl.class(base)
-outputer._name = "podofo"
+local outputter = pl.class(base)
+outputter._name = "podofo"
 
-function outputer._init (_)
+function outputter._init (_)
   document = pdf.PdfMemDocument()
   pagesize = pdf.PdfRect()
   pagesize:SetWidth(SILE.documentState.paperSize[1])
@@ -30,33 +30,33 @@ function outputer._init (_)
   painter:SetPage(page)
 end
 
-function outputer.newPage (_)
+function outputter.newPage (_)
   painter:FinishPage()
   page = document:CreatePage(pagesize)
   painter:SetPage(page)
 end
 
-function outputer:finish ()
+function outputter:finish ()
   painter:FinishPage()
   local fname = self:getOutputFilename("pdf")
   document:Write(fname == "-" and "/dev/stdout" or fname)
 end
 
-function outputer.getCursor (_)
+function outputter.getCursor (_)
   return cursorX, cursorY
 end
 
-function outputer.setCursor (_, x, y, relative)
+function outputter.setCursor (_, x, y, relative)
   local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
   cursorX = offset.x + x
   cursorY = offset.y + SILE.documentState.paperSize[2] - y
 end
 
-function outputer.setColor (_, color)
+function outputter.setColor (_, color)
   painter:SetColor(color.r, color.g, color.b)
 end
 
-function outputer:drawHbox (value, _)
+function outputter:drawHbox (value, _)
   local x, y = self:getCursor()
   if not value.glyphNames then return end
   for i = 1, #(value.glyphNames) do
@@ -64,7 +64,7 @@ function outputer:drawHbox (value, _)
   end
 end
 
-function outputer.setFont (_, options)
+function outputter.setFont (_, options)
   if SILE.font._key(options) == lastkey then return end
   lastkey = SILE.font._key(options)
   if not podofoFaces[lastkey] then
@@ -78,7 +78,7 @@ function outputer.setFont (_, options)
   SILE.fontCache[lastkey] = nil
 end
 
-function outputer.getImageSize (_, src)
+function outputter.getImageSize (_, src)
   local box_width, box_height, err = imagesize.imgsize(src)
   if not box_width then
     SU.error(err.." loading image")
@@ -86,13 +86,13 @@ function outputer.getImageSize (_, src)
   return box_width, box_height
 end
 
-function outputer.drawRule (_, x, y, width, depth)
+function outputter.drawRule (_, x, y, width, depth)
   painter:Rectangle(x, SILE.documentState.paperSize[2] - y, width, depth)
   painter:Close()
   painter:Fill()
 end
 
-function outputer:debugHbox (hbox, scaledWidth)
+function outputter:debugHbox (hbox, scaledWidth)
   painter:SetColor(0.9, 0.9, 0.9)
   painter:SetStrokeWidth(0.5)
   local x, y = self:getCursor()
@@ -103,4 +103,4 @@ function outputer:debugHbox (hbox, scaledWidth)
   --cr:move_to(x, y)
 end
 
-return outputer
+return outputter
