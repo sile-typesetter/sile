@@ -19,9 +19,10 @@ local sgs
 
 local outputter = pl.class(base)
 outputter._name = "cairo"
+outputter.extension = "pdf"
 
 function outputter:_init ()
-  local fname = self:getOutputFilename("pdf")
+  local fname = self:getOutputFilename()
   local surface = cairolgi.PdfSurface.create(fname == "-" and "/dev/stdout" or fname, SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
   cr = cairolgi.Context.create(surface)
   move = cr.move_to

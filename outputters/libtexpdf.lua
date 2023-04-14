@@ -20,6 +20,7 @@ local _font
 
 local outputter = pl.class(base)
 outputter._name = "libtexpdf"
+outputter.extension = "pdf"
 
 -- The outputter init can't actually initialize output (as logical as it might
 -- have seemed) because that requires a page size which we don't know yet.
@@ -28,7 +29,7 @@ outputter._name = "libtexpdf"
 function outputter:_ensureInit ()
   if not started then
     local w, h = SILE.documentState.paperSize[1], SILE.documentState.paperSize[2]
-    local fname = self:getOutputFilename("pdf")
+    local fname = self:getOutputFilename()
     pdf.init(fname == "-" and "/dev/stdout" or fname, w, h, SILE.full_version)
     pdf.beginpage()
     started = true
