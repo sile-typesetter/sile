@@ -239,7 +239,7 @@ So, for example, the following SILE code:
 produces:
 
 \fullrule
-\examplefont{
+\autodoc:example{
 \noindent{}2
 
 \noindent{}iii}

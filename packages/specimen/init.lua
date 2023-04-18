@@ -78,14 +78,14 @@ ACCENTOR DOWITCHER DOTTEREL
 \end{set-to-width}
 \end{raw}
 
-\begin{examplefont}
+\begin{autodoc:example}
 \begin[width=4cm]{set-to-width}
 CAPERCAILLIE
 LAMMERGEYER
 CASSOWARY
 ACCENTOR DOWITCHER DOTTEREL
 \end{set-to-width}
-\end{examplefont}
+\end{autodoc:example}
 \end{document}
 ]]
 

@@ -5,7 +5,7 @@
 We are finally at the bottom of our delve into SILE’s commands and settings.
 Here are the basic building blocks out of which all of the other operations in SILE are created.
 
-\note{At this point, it is expected that you are a class or package designer, and will be able to follow the details of how SILE implements these commands and features;
+\autodoc:note{At this point, it is expected that you are a class or package designer, and will be able to follow the details of how SILE implements these commands and features;
 we will also explain how to interact with these components at the Lua level.}
 
 \section{Measurements and lengths}
@@ -104,47 +104,47 @@ Commands} chapter, consider that example, repeated enough times to cause a
 linebreak, but with \autodoc:command{\glue}’s everywhere \autodoc:command{\kern}’s are used
 instead:
 
-\line
+\begin{autodoc:example}%
 \SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
 \SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
 \SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
-\SILEglue\color[color=#dd0000]{\SILEglue}\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
 \SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
 \SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
 \SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
 \SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
-\line
-
-Note the \SILEglue in \color[color=#dd0000]{red} is broken
+\end{autodoc:example}
+\par
+Note end of lines where \SILEglue is broken
 between its ‘L’ and ‘\raise[height=0.6ex]{\font[family=Gentium Plus,features=+smcp]{e}}’.
-Instead, if we typeset the same line using \code{\\kern}’s as we had
+Instead, if we typeset the same line using \autodoc:command{\kern}’s as we had
 originally:
 
-\line
+\begin{autodoc:example}%
 \SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
 \SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
 \SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
-\SILEkern\color[color=#dd0000]{\SILEkern}\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
 \SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
 \SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
 \SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
 \SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
-\line
+\end{autodoc:example}
 
 The line just continues on right off the page. Why this is a useful feature is
 more obvious if there are spaces between them:
 
-\line
+\begin{autodoc:example}%
 Glues:
 
-\SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \color[color=#dd0000]{\SILEglue} \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue
-\line
-
-\line
+\SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue
+\end{autodoc:example}
+\par
+\begin{autodoc:example}%
 Kerns:
 
-\SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \color[color=#dd0000]{\SILEkern} \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern
-\line
+\SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern
+\end{autodoc:example}
 
 \section{The typesetter}
 
@@ -227,8 +227,8 @@ and the page edge and other content regions, is controlled by defining the
 position of the frame or frames into which the content will be flowed.
 
 Normally those frames are defined by your document class, but you can actually
-create your own frames on a per-page basis using the \code{\\pagetemplate}
-and \code{\\frame} commands. There are very few situations in which you will
+create your own frames on a per-page basis using the \autodoc:command{\pagetemplate}
+and \autodoc:command{\frame} commands. There are very few situations in which you will
 actually want to do this, but if you can understand this, it will help you
 to understand how to define your own document classes.
 
@@ -243,11 +243,11 @@ determine how to put text onto that page.\footnote{You can use
 the \code{frametricks} package to get around this limitation—split the current
 frame and start fiddling around with the positions of the new frames that
 \code{frametricks} created for you.} How do we get to the start of a new
-page? Remember that the \code{\\eject} (another word for \code{\\break} in
+page? Remember that the \autodoc:command{\eject} (another word for \autodoc:command{\break} in
 vertical mode) only adds a penalty to the end of the output queue; page breaking
-is triggered when we leave horizontal mode, and the way to do that is \code{\\par}.
-So we start with \code{\\eject\\par} and then we will begin a \code{\\pagetemplate}.
-Within \code{\\pagetemplate} we need to tell SILE which frame to begin typesetting
+is triggered when we leave horizontal mode, and the way to do that is \autodoc:command{\par}.
+So we start with \autodoc:command{\eject\par} and then we will begin a \autodoc:command{\pagetemplate}.
+Within \autodoc:command{\pagetemplate} we need to tell SILE which frame to begin typesetting
 onto:
 
 \begin[type=autodoc:codeblock]{raw}
@@ -263,7 +263,7 @@ going to stipulate that the gutter width will be 3\% of the page width:
 \frame[id=gutter,width=3%pw]
 \end{raw}
 
-\begin{note}%
+\begin{autodoc:note}%
 Declarations of frame dimensions are like ordinary SILE \code{<dimension>}s,
 except with three additional features:
 
@@ -283,8 +283,7 @@ except with three additional features:
       you can use the shortcut \code{width=5\%pw} instead of \code{width=0.05 * width(page)}
       and \code{height=50\%ph} instead of \code{height=0.5 * height(page)}.}
 \end{itemize}
-
-\end{note}
+\end{autodoc:note}
 
 Next we declare the left and right column frames. The \code{book} class
 gives us some frames already, one of which, \code{content}, defines a typeblock

@@ -134,12 +134,12 @@ This package provides the \autodoc:environment{chordmode} environment, which tra
 
 into:
 
-\begin{examplefont}
+\begin{autodoc:example}
 \begin{chordmode}
   I’ve be<G>en a wild rover for many’s a <C>year
 \end{chordmode}
 \par
-\end{examplefont}
+\end{autodoc:example}
 
 The chords can be styled by redefining the \autodoc:command{\chordmode:chordfont} command, and the offset between the chord name and text adjusted with the \autodoc:setting{chordmode.offset} setting.
 \end{document}
