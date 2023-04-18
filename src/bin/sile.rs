@@ -10,11 +10,16 @@ fn main() -> sile::Result<()> {
     #[allow(unused_variables)]
     let matches = app.get_matches();
     let args = Cli::from_arg_matches(&matches).expect("Unable to parse arguments");
-    run_sile(args.input, args.debug, args.traceback)?;
+    run_sile(args.input, args.debug, args.quiet, args.traceback)?;
     Ok(())
 }
 
-fn run_sile(input: PathBuf, debug: Option<Vec<String>>, traceback: bool) -> sile::Result<()> {
+fn run_sile(
+    input: PathBuf,
+    debug: Option<Vec<String>>,
+    quiet: bool,
+    traceback: bool,
+) -> sile::Result<()> {
     let lua = unsafe { Lua::unsafe_new() };
     let sile: LuaTable = lua
         .load(
@@ -26,6 +31,7 @@ fn run_sile(input: PathBuf, debug: Option<Vec<String>>, traceback: bool) -> sile
         )
         .eval()?;
     sile.set("traceback", traceback)?;
+    sile.set("quiet", quiet)?;
     if let Some(flags) = debug {
         sile.set("debugFlags", flags)?;
     }
