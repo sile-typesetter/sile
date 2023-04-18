@@ -4,7 +4,7 @@
 SYSTEM_SILE_PATH = "@SILE_PATH@"
 SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
 
-local executable, extendPaths = require("core.pathsetup")()
+local executable = require("core.pathsetup")()
 
 -- This global is set here and *also* in the core library, since this
 -- effectively passes the same table they are interchangeable (for now).
@@ -29,11 +29,7 @@ end
 
 SILE.init()
 
-if SILE.masterFilename then
-
-  if SILE.masterDir:len() >= 1 then
-    extendPaths(SILE.masterDir)
-  end
+if SILE.input.filename and SILE.input.filename:len() > 0 then
 
   if SU.debugging("profile") then
     ProFi:start()

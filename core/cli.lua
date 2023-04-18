@@ -47,11 +47,6 @@ cli.parseArguments = function ()
       opts.INPUT = "-"
     end
     SILE.input.filename = opts.INPUT
-    -- Turn slashes around in the event we get passed a path from a Windows shell
-    local filename = opts.INPUT:gsub("\\", "/")
-    -- Strip extension
-    SILE.masterFilename = string.match(filename, "(.+)%..-$") or filename
-    SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
   end
   if opts.backend then
     SILE.backend = opts.backend

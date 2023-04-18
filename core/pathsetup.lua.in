@@ -68,6 +68,8 @@ else
   extendPaths(".")
 end
 
+_G.extendSilePath = extendPaths
+
 return function ()
-  return executable, extendPaths
+  return executable
 end

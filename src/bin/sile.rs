@@ -17,7 +17,7 @@ fn sile() -> LuaResult<()> {
     lua.load(
         r#"
         package.path = "./?.lua"
-        local executable, extendPaths = require("core.pathsetup")()
+        require("core.pathsetup")()
         SILE = require("core.sile")
         io.stderr:write(" [ Rust ]" .. SILE.full_version .. '\n')
         SILE.init()
