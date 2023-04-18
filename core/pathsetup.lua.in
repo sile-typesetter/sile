@@ -68,4 +68,6 @@ else
   extendPaths(".")
 end
 
-return executable, extendPaths
+_G.extendSilePath = extendPaths
+
+return executable
