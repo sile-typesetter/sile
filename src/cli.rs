@@ -1,4 +1,4 @@
-use clap::{Parser, ValueEnum};
+use clap::Parser;
 use std::path::PathBuf;
 
 /// The SILE typesetter reads a single input file, by default in either SIL or XML format, and
@@ -12,8 +12,8 @@ pub struct Cli {
     pub input: PathBuf,
 
     /// Choose an alternative output backend
-    #[clap(short, long, value_enum, default_value_t=Backend::Libtexpdf)]
-    pub backend: Backend,
+    #[clap(short, long, value_name = "BACKEND")]
+    pub backend: Option<String>,
 
     /// Override default document class
     #[clap(short, long)]
@@ -33,8 +33,8 @@ pub struct Cli {
     pub evaluate_after: Option<Vec<String>>,
 
     /// Choose an alternative font manager
-    #[clap(short, long, value_enum, default_value_t=FontManager::Fontconfig)]
-    pub fontmanager: FontManager,
+    #[clap(short, long, value_name = "FONTMANAGER")]
+    pub fontmanager: Option<String>,
 
     /// Generate a list of dependencies in Makefile format
     #[clap(short, long, value_name = "FILE")]
@@ -71,20 +71,4 @@ pub struct Cli {
     /// Display detailed location trace on errors and warnings
     #[clap(short, long)]
     pub traceback: bool,
-}
-
-#[derive(ValueEnum, Debug, Clone)]
-pub enum Backend {
-    Libtexpdf,
-    Debug,
-    Text,
-    Dummy,
-    Cairo,
-    Podofo,
-}
-
-#[derive(ValueEnum, Debug, Clone)]
-pub enum FontManager {
-    Fontconfig,
-    Macfonts,
 }

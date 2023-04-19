@@ -2,7 +2,7 @@ use clap::{CommandFactory, FromArgMatches};
 use mlua::prelude::*;
 use std::path::PathBuf;
 
-use sile::cli::{Backend, Cli, FontManager};
+use sile::cli::Cli;
 
 fn main() -> sile::Result<()> {
     let version = option_env!("VERGEN_GIT_SEMVER").unwrap_or_else(|| env!("VERGEN_BUILD_SEMVER"));
@@ -32,12 +32,12 @@ fn main() -> sile::Result<()> {
 
 fn run_sile(
     input: PathBuf,
-    backend: Backend,
+    backend: Option<String>,
     class: Option<String>,
     debug: Option<Vec<String>>,
     evaluate: Option<Vec<String>>,
     evaluate_after: Option<Vec<String>>,
-    fontmanager: FontManager,
+    fontmanager: Option<String>,
     makedeps: Option<PathBuf>,
     output: Option<PathBuf>,
     options: Option<Vec<String>>,
@@ -70,6 +70,12 @@ fn run_sile(
     }
     if let Some(expressions) = evaluate_after {
         sile_input.set("evaluateAfters", expressions)?;
+    }
+    if let Some(backend) = backend {
+        sile.set("backend", backend)?;
+    }
+    if let Some(fontmanager) = fontmanager {
+        sile.set("fontmanager", fontmanager)?;
     }
     if let Some(class) = class {
         sile_input.set("class", class)?;
