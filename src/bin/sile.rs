@@ -60,7 +60,10 @@ fn run_sile(
     sile.set("traceback", traceback)?;
     sile.set("quiet", quiet)?;
     if let Some(flags) = debug {
-        sile.set("debugFlags", flags)?;
+        let debug_flags: LuaTable = sile.get("debugFlags")?;
+        for flag in flags {
+            debug_flags.set(flag, true)?;
+        }
     }
     let full_version: String = sile.get("full_version")?;
     eprintln!("{full_version} [Rust]");
