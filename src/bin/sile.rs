@@ -2,7 +2,7 @@ use clap::{CommandFactory, FromArgMatches};
 use mlua::prelude::*;
 use std::path::PathBuf;
 
-use sile::cli::Cli;
+use sile::cli::{Backend, Cli, FontManager};
 
 fn main() -> sile::Result<()> {
     let version = option_env!("VERGEN_GIT_SEMVER").unwrap_or_else(|| env!("VERGEN_BUILD_SEMVER"));
@@ -10,13 +10,40 @@ fn main() -> sile::Result<()> {
     #[allow(unused_variables)]
     let matches = app.get_matches();
     let args = Cli::from_arg_matches(&matches).expect("Unable to parse arguments");
-    run_sile(args.input, args.debug, args.quiet, args.traceback)?;
+    run_sile(
+        args.input,
+        args.backend,
+        args.class,
+        args.debug,
+        args.evaluate,
+        args.evaluate_after,
+        args.fontmanager,
+        args.makedeps,
+        args.output,
+        args.options,
+        args.preamble,
+        args.postamble,
+        args.r#use,
+        args.quiet,
+        args.traceback,
+    )?;
     Ok(())
 }
 
 fn run_sile(
     input: PathBuf,
+    backend: Backend,
+    class: Option<String>,
     debug: Option<Vec<String>>,
+    evaluate: Option<Vec<String>>,
+    evaluate_after: Option<Vec<String>>,
+    fontmanager: FontManager,
+    makedeps: Option<PathBuf>,
+    output: Option<PathBuf>,
+    options: Option<Vec<String>>,
+    preamble: Option<Vec<PathBuf>>,
+    postamble: Option<Vec<PathBuf>>,
+    r#use: Option<Vec<String>>,
     quiet: bool,
     traceback: bool,
 ) -> sile::Result<()> {
@@ -43,12 +70,6 @@ fn run_sile(
     }
     if let Some(expressions) = evaluate_after {
         sile_input.set("evaluateAfters", expressions)?;
-    }
-    if let Some(backend) = backend {
-        sile.set("backend", backend)?;
-    }
-    if let Some(fontmanager) = fontmanager {
-        sile.set("fontmanager", fontmanager)?;
     }
     if let Some(class) = class {
         sile_input.set("class", class)?;
@@ -78,6 +99,14 @@ fn run_sile(
     let process_file: LuaFunction = sile.get("processFile")?;
     process_file.call::<LuaString, ()>(sile_input.get("filename")?)?;
     let finish: LuaFunction = sile.get("finish")?;
-    finish.call::<(), ()>(())?;
+    finish.call::<_, _>(())?;
     Ok(())
+}
+
+fn pb_to_st(path: &PathBuf) -> String {
+    path.clone().into_os_string().into_string().unwrap()
+}
+
+fn pbs_to_sts(paths: Vec<PathBuf>) -> Vec<String> {
+    paths.iter().map(|p| pb_to_st(p)).collect()
 }
