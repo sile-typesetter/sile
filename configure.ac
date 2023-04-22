@@ -249,7 +249,7 @@ AX_SUBST_MAN_DATE
 
 AC_CONFIG_FILES([build-aux/list-dist-files.sh], [chmod +x build-aux/list-dist-files.sh])
 AC_CONFIG_FILES([Makefile src/Makefile sile.1 core/features.lua core/version.lua])
-AC_CONFIG_FILES([sile tests/regressions.pl], [chmod +x sile tests/regressions.pl])
+AC_CONFIG_FILES([sile tests/regressions.pl sile-entry.zsh], [chmod +x sile tests/regressions.pl])
 
 AC_ARG_PROGRAM
 

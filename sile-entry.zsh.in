@@ -1,0 +1,12 @@
+#!@ZSH@
+
+# This entire entry point script is only necessary because GitHub
+# actions insists on checking out the project as a non-privileged user,
+# running Docker as root, and not allowing us to pass a user argument
+# to Docker. It might prove handy for users so they don't have to
+# manually pass their user ID at runtime.
+if [[ $(id -u) -ne $(@STAT@ -c '%u' .) ]]; then
+  exec setpriv --clear-groups $(@STAT@ -c '--euid %u --egid %g' .) $0 $@
+fi
+
+exec sile $@
