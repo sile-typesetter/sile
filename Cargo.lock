@@ -492,6 +492,7 @@ checksum = "3c04e8343c3daeec41f58990b9d77068df31209f2af111e059e9fe9646693065"
 name = "sile"
 version = "0.14.8"
 dependencies = [
+ "anyhow",
  "clap",
  "clap_complete",
  "clap_mangen",

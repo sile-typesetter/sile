@@ -20,6 +20,9 @@ required-features = ["cli"]
 
 [dependencies]
 
+  [dependencies.anyhow]
+  version = "1.0"
+
   [dependencies.clap]
   version = "4.2"
   optional = true
