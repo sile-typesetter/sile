@@ -57,7 +57,7 @@ dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE lua-libraries/LICENSE-lunamark
 bin_SCRIPTS = sile-lua
 bin_PROGRAMS = sile
-sile_SOURCES = Cargo.toml build.rs src/bin/sile.rs src/lib.rs src/cli.rs
+sile_SOURCES = Cargo.toml build-aux/build.rs src/bin/sile.rs src/lib.rs src/cli.rs
 EXTRA_sile_SOURCES = Cargo.lock .version
 EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += Makefile-distfiles
@@ -75,10 +75,17 @@ Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@
 
 if DEBUG_RELEASE
-CARGO_RELEASE_ARGS = --all-features
+CARGO_RELEASE_ARGS =
 else
-CARGO_RELEASE_ARGS = --release --locked --all-features
+CARGO_RELEASE_ARGS = --release --locked
 endif
+
+if LUAJIT
+MLUAVER = luajit
+else
+MLUAVER = lua$(LUA_SHORT_VERSION)
+endif
+CARGO_FEATURE_ARGS = --features $(MLUAVER)
 
 CARGO_ENV = CARGO_TARGET_DIR=@abs_top_builddir@/target
 RUST_BIN = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/$(PACKAGE_NAME)
@@ -142,8 +149,8 @@ $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME): $(RUST_BIN) | $(COMPLETIONS
 
 $(_RUST_OUT) $(RUST_BIN): $(sile_SOURCES) $(EXTRA_sile_SOURCES)
 	cd $(top_srcdir)
-	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
-	$(CARGO_ENV) $(CARGO) build --quiet --message-format=json $(CARGO_RELEASE_ARGS) |
+	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(CARGO_FEATURE_ARGS) $(CARGO_RELEASE_ARGS)
+	$(CARGO_ENV) $(CARGO) build --quiet --message-format=json $(CARGO_FEATURE_ARGS) $(CARGO_RELEASE_ARGS) |
 		$(JQ) -sr 'map(select(.reason == "build-script-executed")) | last | .out_dir' > $(_RUST_OUT)
 
 _BRANCH_REF != $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:
@@ -300,11 +307,11 @@ rustfmt:
 
 clippy:
 	cd $(srcdir)
-	$(CARGO_ENV) $(CARGO) clippy -- -D warnings
+	$(CARGO_ENV) $(CARGO) $(CARGO_VERBOSE) clippy $(CARGO_FEATURE_ARGS) -- -D warnings
 
 cargo-test: $(SILE)
 	cd $(srcdir)
-	$(CARGO_ENV) $(CARGO) test --locked
+	$(CARGO_ENV) $(CARGO) $(CARGO_VERBOSE) test $(CARGO_FEATURE_ARGS) --locked
 
 busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'

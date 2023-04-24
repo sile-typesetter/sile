@@ -12,7 +12,7 @@ use std::{fs, path};
 use vergen::{vergen, Config};
 
 #[cfg(feature = "completions")]
-include!("src/cli.rs");
+include!("../src/cli.rs");
 
 fn main() {
     let mut flags = Config::default();

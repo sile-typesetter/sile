@@ -12,7 +12,7 @@ authors = [
 rust-version = "1.68"
 homepage = "https://sile-typesetter.org"
 license = "MIT"
-build = "build.rs"
+build = "build-aux/build.rs"
 
 [[bin]]
 name = "sile"
@@ -30,7 +30,7 @@ required-features = ["cli"]
 
   [dependencies.mlua]
   version = "0.8"
-  features = [ "lua54", "vendored" ]
+  features = [ "vendored" ]
 
 [build-dependencies]
 
@@ -54,6 +54,11 @@ required-features = ["cli"]
 
 [features]
 default = ["cli", "bash", "elvish", "fish", "manpage", "powershell", "zsh"]
+lua54 = ["mlua/lua54"]
+lua53 = ["mlua/lua53"]
+lua52 = ["mlua/lua52"]
+lua51 = ["mlua/lua51"]
+luajit = ["mlua/luajit"]
 completions = ["cli", "clap_complete"]
 cli = ["clap"]
 bash = ["completions"]
