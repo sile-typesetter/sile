@@ -10,30 +10,15 @@ local executable = require("core.pathsetup")()
 -- effectively passes the same table they are interchangeable (for now).
 SILE = require("core.sile")
 
-io.stdout:setvbuf 'no'
-
 SILE.cli:parseArguments()
 
 if not os.getenv 'LUA_REPL_RLWRAP' and not SILE.quiet then
   io.stderr:write(SILE.full_version .. '\n')
 end
 
-local ProFi
-if SU.debugging("profile") then
-  ProFi = require("ProFi")
-end
-
-if SILE.makeDeps then
-  SILE.makeDeps:add(executable)
-end
-
 SILE.init()
 
 if SILE.input.filename and SILE.input.filename:len() > 0 then
-
-  if SU.debugging("profile") then
-    ProFi:start()
-  end
 
   -- Deprecated, notice given in core.cli when argument used
   for _, path in ipairs(SILE.input.includes) do
@@ -66,11 +51,6 @@ if SILE.input.filename and SILE.input.filename:len() > 0 then
   end
 
   SILE.finish()
-
-  if SU.debugging("profile") then
-    ProFi:stop()
-    ProFi:writeReport(SILE.masterFilename..'.profile.txt')
-  end
 
 else
   SILE.repl:enter()

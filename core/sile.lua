@@ -29,6 +29,9 @@ fluent = require("fluent")()
 -- Includes for _this_ scope
 local lfs = require("lfs")
 
+-- Developer tooling profiler
+local ProFi
+
 SILE.utilities = require("core.utilities")
 SU = SILE.utilities -- regrettable global alias
 
@@ -131,6 +134,14 @@ SILE.init = function ()
     SILE.outputter = SILE.outputters.dummy()
   end
   SILE.pagebuilder = SILE.pagebuilders.base()
+  io.stdout:setvbuf("no")
+  if SU.debugging("profile") then
+    ProFi = require("ProFi")
+    ProFi:start()
+  end
+  if SILE.makeDeps then
+    SILE.makeDeps:add(executable)
+  end
   runEvals(SILE.input.evaluates, "evaluate")
 end
 
@@ -448,6 +459,10 @@ function SILE.finish ()
   runEvals(SILE.input.evaluateAfters, "evaluate-after")
   if not SILE.quiet then
     io.stderr:write("\n")
+  end
+  if SU.debugging("profile") then
+    ProFi:stop()
+    ProFi:writeReport(SILE.masterFilename..'.profile.txt')
   end
   if SU.debugging("versions") then
     SILE.shaper:debugVersions()

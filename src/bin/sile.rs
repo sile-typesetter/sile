@@ -66,7 +66,6 @@ fn run_sile(
         }
     }
     let full_version: String = sile.get("full_version")?;
-    eprintln!("{full_version} [Rust]");
     let sile_input: LuaTable = sile.get("input")?;
     if let Some(expressions) = evaluate {
         sile_input.set("evaluates", expressions)?;
@@ -97,6 +96,9 @@ fn run_sile(
     }
     if let Some(modules) = r#use {
         sile_input.set("use", modules)?;
+    }
+    if !quiet {
+        eprintln!("{full_version} [Rust]");
     }
     let init: LuaFunction = sile.get("init")?;
     init.call::<_, _>(())?;
