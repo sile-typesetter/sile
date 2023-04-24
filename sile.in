@@ -6,22 +6,20 @@ SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
 
 -- At this point at run time we may or may not have anything useful in package.path,
 -- so require() isn't something we can rely on.
-local status, executable = pcall(dofile, "@SILE_PATH@/core/pathsetup.lua")
+local status = pcall(dofile, "@SILE_PATH@/core/pathsetup.lua")
 if not status then
-  executable = dofile("./core/pathsetup.lua")
+  dofile("./core/pathsetup.lua")
 end
 
 -- On FreeBSD, Lua's debug module doesn't give us info above the top of the stack.
 -- Since our detection is currently burried in a module it doesn't tell us the executable.
-if executable ~= "=[C]" then
-  executable = debug.getinfo(1, "S").source
+if _G.executablePath == "=[C]" then
+  _G.executablePath = debug.getinfo(1, "S").source
 end
 
 -- This global is set here and *also* in the core library, since this
 -- effectively passes the same table they are interchangeable (for now).
 SILE = require("core.sile")
-
-io.stdout:setvbuf 'no'
 
 SILE.cli:parseArguments()
 
@@ -29,22 +27,9 @@ if not os.getenv 'LUA_REPL_RLWRAP' and not SILE.quiet then
   io.stderr:write(SILE.full_version .. '\n')
 end
 
-local ProFi
-if SU.debugging("profile") then
-  ProFi = require("ProFi")
-end
-
-if SILE.makeDeps then
-  SILE.makeDeps:add(executable)
-end
-
 SILE.init()
 
 if SILE.input.filename and SILE.input.filename:len() > 0 then
-
-  if SU.debugging("profile") then
-    ProFi:start()
-  end
 
   -- Deprecated, notice given in core.cli when argument used
   for _, path in ipairs(SILE.input.includes) do
@@ -77,15 +62,6 @@ if SILE.input.filename and SILE.input.filename:len() > 0 then
   end
 
   SILE.finish()
-
-  if SU.debugging("profile") then
-    ProFi:stop()
-    ProFi:writeReport(SILE.masterFilename..'.profile.txt')
-  end
-
-  if SU.debugging("versions") then
-    SILE.shaper:debugVersions()
-  end
 
 else
   SILE.repl:enter()

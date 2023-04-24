@@ -27,6 +27,7 @@ globals = {
   "pl",
   "fluent",
   "extendSilePath",
+  "executablePath",
   "SYSTEM_SILE_PATH",
   "SHARED_LIB_EXT"
 }
