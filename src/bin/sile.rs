@@ -31,7 +31,7 @@ fn main() -> sile::Result<()> {
 }
 
 fn run_sile(
-    input: PathBuf,
+    input: Option<PathBuf>,
     backend: Option<String>,
     class: Option<String>,
     debug: Option<Vec<String>>,
@@ -98,17 +98,22 @@ fn run_sile(
     if let Some(modules) = r#use {
         sile_input.set("use", modules)?;
     }
-    let input_filename: LuaString = lua.create_string(&pb_to_st(&input))?;
-    if let Some(path) = output {
-        sile.set("outputFilename", pb_to_st(&path))?;
-    }
-    sile_input.set("filename", input_filename)?;
     let init: LuaFunction = sile.get("init")?;
     init.call::<_, _>(())?;
-    let process_file: LuaFunction = sile.get("processFile")?;
-    process_file.call::<LuaString, ()>(sile_input.get("filename")?)?;
-    let finish: LuaFunction = sile.get("finish")?;
-    finish.call::<_, _>(())?;
+    if let Some(input) = input {
+        let input_filename: LuaString = lua.create_string(&pb_to_st(&input))?;
+        if let Some(path) = output {
+            sile.set("outputFilename", pb_to_st(&path))?;
+        }
+        sile_input.set("filename", input_filename)?;
+        let process_file: LuaFunction = sile.get("processFile")?;
+        process_file.call::<LuaString, ()>(sile_input.get("filename")?)?;
+        let finish: LuaFunction = sile.get("finish")?;
+        finish.call::<_, _>(())?;
+    } else {
+        let repl: LuaTable = sile.get("repl")?;
+        repl.call_method::<_, _, _>("enter", ())?;
+    }
     Ok(())
 }
 

@@ -449,6 +449,9 @@ function SILE.finish ()
   if not SILE.quiet then
     io.stderr:write("\n")
   end
+  if SU.debugging("versions") then
+    SILE.shaper:debugVersions()
+  end
 end
 
 -- Internal libraries that run core SILE functions on load

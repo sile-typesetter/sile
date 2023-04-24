@@ -9,7 +9,7 @@ use std::path::PathBuf;
 #[clap(author, bin_name = "sile")]
 pub struct Cli {
     /// Input document, by default in SIL or XML format
-    pub input: PathBuf,
+    pub input: Option<PathBuf>,
 
     /// Choose an alternative output backend
     #[clap(short, long, value_name = "BACKEND")]

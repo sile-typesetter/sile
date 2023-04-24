@@ -72,10 +72,6 @@ if SILE.input.filename and SILE.input.filename:len() > 0 then
     ProFi:writeReport(SILE.masterFilename..'.profile.txt')
   end
 
-  if SU.debugging("versions") then
-    SILE.shaper:debugVersions()
-  end
-
 else
   SILE.repl:enter()
 end
