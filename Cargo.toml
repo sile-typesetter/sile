@@ -28,9 +28,12 @@ required-features = ["cli"]
   optional = true
   features = [ "derive", "wrap_help" ]
 
+  [dependencies.lazy_static]
+  version = "1.4"
+
   [dependencies.mlua]
   version = "0.8"
-  features = [ "vendored" ]
+  features = [ "macros", "vendored" ]
 
 [build-dependencies]
 
