@@ -60,7 +60,7 @@ EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += Makefile-distfiles
 EXTRA_DIST += build-aux/action-updater.js build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
-EXTRA_DIST += default.nix flake.nix flake.lock libtexpdf.git-rev shell.nix
+EXTRA_DIST += default.nix flake.nix flake.lock shell.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL)
 
@@ -84,9 +84,6 @@ _BRANCH_REF != $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:
 		./build-aux/git-version-gen "$(srcdir)/.tarball-version" > $@; \
 		cmp -s "$@" "$@-prev" || ( autoreconf configure.ac --force && build-aux/decore-automake.sh ); \
 	fi
-
-libtexpdf.git-rev: $(_BRANCH_REF)
-	$(GIT) submodule status -- libtexpdf | $(AWK) '{ print $$1 }' > $@
 
 dist-hook: $(MANUAL)
 	cd $(distdir)
@@ -130,8 +127,8 @@ sile-%.md: CHANGELOG.md
 update_libtexpdf:
 	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
 	$(GIT) submodule update --init --remote -- libtexpdf
-	$(GIT) submodule status -- libtexpdf | $(AWK) '{ print $$1 }' > libtexpdf.git-rev
-	$(GIT) add -- libtexpdf libtexpdf.git-rev
+	$(NIX) flake lock --override-input libtexpdf-src github:sile-typesetter/libtexpdf/$(shell $(GIT) submodule status -- libtexpdf | awk '{print $$1}')
+	$(GIT) add -- libtexpdf flake.lock
 	$(GIT) diff-index --quiet --cached HEAD || $(GIT) commit -m "chore(build): Pin latest libtexpdf library submodule"
 
 DEPDIR := .deps
