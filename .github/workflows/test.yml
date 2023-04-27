@@ -38,7 +38,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
+          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
       - name: Fetch tags
         run: |
           git fetch --prune --tags ||:
@@ -69,7 +69,7 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
-            --enable-developer LUACHECK=false \
+            --enable-developer LUACHECK=false NIX=false \
             --disable-font-variations \
             --without-system-luarocks \
             --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit \

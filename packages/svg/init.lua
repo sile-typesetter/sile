@@ -35,7 +35,7 @@ end
 
 function package:registerRawHandlers ()
 
-  self.class:registerRawHandler("svg", function(options, content)
+  self:registerRawHandler("svg", function(options, content)
     local svgdata = content[1]
     local width = options.width and SU.cast("measurement", options.width):absolute() or nil
     local height = options.height and SU.cast("measurement", options.height):absolute() or nil

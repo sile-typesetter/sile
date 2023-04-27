@@ -74,21 +74,17 @@ from the most obvious and moving towards the most subtle.
 
 \section{Spacing settings}
 
-In our \code{\\note} example, we saw the setting \autodoc:setting{document.lskip}.
-This is a \em{glue} parameter which is added to the left side of every line.
-Setting this to a positive length effectively increases the left margin of
-the text. Similarly, \autodoc:setting{document.rskip} adds some space to the right side of
-every line.
+The \autodoc:setting{document.lskip} and \autodoc:setting{document.rskip} settings are \em{glue} parameters which are added, respectively, to the left and right side of every line.
+Setting \autodoc:setting{document.lskip} to a positive length effectively increases the left margin of the text.
+Similarly, \autodoc:setting{document.rskip} adds some space to the right side of every line.
 
-Note that these skip settings are not the same as page margins. The
-\autodoc:setting{document.lskip} and \autodoc:setting{document.rskip} values are applied inside of the
-current frame and are relative to the edge of the frame, not to the edge of the
-page. They are best used for temporary adjustments to the margins relative to the
-normal margins, such as to indent a pull-quote. They can also be negative,
-pulling the effective margin outside of the current frame.
+Note that these skip settings are not the same as page margins.
+The \autodoc:setting{document.lskip} and \autodoc:setting{document.rskip} values are applied inside of the current frame and are relative to the edge of the frame, not to the edge of the page.
+They are best used for temporary adjustments to the margins relative to the normal margins, such as to indent a pull-quote.
+They can also be negative, pulling the effective margin outside of the current frame.
 
-\begin{note}
-\notehead{Glue} A \autodoc:parameter{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means “space,” but as well as signifying a length,
+\begin{autodoc:note}
+A \autodoc:parameter{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means “space,” but as well as signifying a length,
 it also has two additional optional components: \em{stretch} and \em{shrink},
 specified as \code{<dimension> plus <dimension> minus <dimension>}. The
 first dimension is the basic length, the stretch is the maximum length that
@@ -96,7 +92,7 @@ can be added to it, and the shrink is some length that can be taken away from it
 For instance, \code{12pt plus 6pt minus 3pt} specifies a space that would
 ideally by 12 points, but can expand or contract from a minimum of 9 points to a maximum
 of 18 points.
-\end{note}
+\end{autodoc:note}
 
 Let’s think about how the \autodoc:environment{center} environment is implemented. First,
 we will add incredibly stretchable glue to the left and right margins, like so:
@@ -109,7 +105,7 @@ we will add incredibly stretchable glue to the left and right margins, like so:
 This produces the following:
 
 \medskip%
-\begin{examplefont}%
+\begin{autodoc:example}%
 \set[parameter=document.lskip,value=0pt plus 500pt]% Lying for didactic purposes
 \set[parameter=document.rskip,value=0pt plus 500pt]
 \set[parameter=document.spaceskip,value=0.5en plus 120pt minus 0.3en]
@@ -124,7 +120,7 @@ end of each paragraph so that when the text is justified, the spacing of the
 last line is not stretched out of proportion. This makes the centering of the
 last line look a bit odd. We will deal with these three issues in the following
 paragraphs.\par
-\end{examplefont}
+\end{autodoc:example}
 \medskip
 
 \set[parameter=document.lskip,value=0pt]%
@@ -164,7 +160,7 @@ rules. Let’s reiterate those rules now in terms of settings:
       to be \autodoc:setting{document.lineskip} apart.}
 \end{itemize}
 
-\note{This linebreaking method is fiddly, and book designers may prefer to
+\autodoc:note{This linebreaking method is fiddly, and book designers may prefer to
 work with the tools provided by the \autodoc:package{linespacing} package.}
 
 \subsection{Word spacing settings}
@@ -172,11 +168,12 @@ work with the tools provided by the \autodoc:package{linespacing} package.}
 There are multiple ways of defining the space between words. By default,
 the space between words is determined by the width of the
 space character in the current font. To help with justifying the text, the
-spaces are shrinkable and stretchable. Specifically, if the width of a space in the current font settings is \code{<space>}, then the width of the space
-between words is \code{<shaper.spaceenlargementfactor> * <space> plus
-<shaper.spacestretchfactor> * <space> minus <shaper.spaceshrinkfactor> *
-<space>}. The default values of these settings make the space width
-\code{1.2 <space> plus 0.5 <space> minus 0.333 <space>}.
+spaces are shrinkable and stretchable.
+Specifically, if the width of a space in the current font settings is \code{⟨space⟩}, then the width of the space between words is
+  \autodoc:setting{shaper.spaceenlargementfactor} × \code{⟨space⟩}
+  \code{plus} \autodoc:setting{shaper.spacestretchfactor} × \code{⟨space⟩}
+  \code{minus} \autodoc:setting{shaper.spaceshrinkfactor} × \code{⟨space⟩}.
+The default values of these settings make the space width \code{1.2 ⟨space⟩ plus 0.5 ⟨space⟩ minus 0.333 ⟨space⟩}.
 
 If you want to set the word space width explicitly, you can set the
 \autodoc:setting{document.spaceskip} setting. You will also need to turn \em{off} the
@@ -249,7 +246,7 @@ Now we can finally complete our implementation of centering:
 \end{raw}
 
 \medskip
-\noindent\begin{examplefont}%
+\noindent\begin{autodoc:example}%
 \set[parameter=document.lskip,value=0pt plus 100000pt]%
 \set[parameter=document.rskip,value=0pt plus 100000pt]%
 \set[parameter=document.spaceskip,value=0.5en]%
@@ -261,7 +258,7 @@ the \code{plain} class: we make the margins able to expand but the spaces not ab
 to expand; we turn off indenting at the start of the paragraph, and we turn
 off the filling glue at the end of the paragraph.
 \par
-\end{examplefont}
+\end{autodoc:example}
 
 \medskip
 
@@ -353,22 +350,22 @@ because complex layout commands are expected to be implemented in Lua. The
 following SILE functions access the settings system from inside Lua:
 
 \begin{itemize}
-\item{\code{SILE.settings:set(\em{<parameter>}, \em{value})}: sets a setting.
+\item{\code{SILE.settings:set(\em{⟨parameter⟩}, \em{⟨value⟩})}: sets a setting.
 
-\note{
+\autodoc:note{%
 You should note that, while in the SILE layer, the \autodoc:command{\set} command does its
 best to turn the textual description of a type into the appropriate Lua type
 for the value. \code{SILE.settings:set} does not do that; it expects the value
 to be of the appropriate type: lengths need to be a \code{SILE.length} object,
 glue must be \code{SILE.nodefactory.glue} and so on.}}
 
-\item{\code{SILE.settings:get(\em{<parameter>})}: retrieves the current
+\item{\code{SILE.settings:get(\em{⟨parameter⟩})}: retrieves the current
       setting of the parameter.}
-\item{\code{SILE.settings:temporarily(\em{function})}: Saves all settings,
+\item{\code{SILE.settings:temporarily(\em{⟨function⟩})}: Saves all settings,
       runs the function and then restores all settings afterwards.}
-\item{\code{SILE.settings:declare(\em{<specification>})}: Declares a new
+\item{\code{SILE.settings:declare(\em{⟨specification⟩})}: Declares a new
       setting. See the base settings in \code{settings.lua} for examples of how
       to call this. A class or package should namespace its settings with
-      \code{<package>.<setting>}.}
+      \code{⟨package⟩.⟨setting⟩}.}
 \end{itemize}
 \end{document}

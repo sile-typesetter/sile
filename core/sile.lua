@@ -140,7 +140,7 @@ SILE.init = function ()
     ProFi:start()
   end
   if SILE.makeDeps then
-    SILE.makeDeps:add(executable)
+    SILE.makeDeps:add(_G.executablePath)
   end
   runEvals(SILE.input.evaluates, "evaluate")
 end
@@ -327,7 +327,7 @@ function SILE.processFile (filename, format, options)
       SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
     end
     if SILE.masterDir and SILE.masterDir:len() >= 1 then
-      extendSilePath(SILE.masterDir)
+      _G.extendSilePath(SILE.masterDir)
     end
     filename = SILE.resolveFile(filename)
     if not filename then

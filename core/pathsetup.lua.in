@@ -69,7 +69,4 @@ else
 end
 
 _G.extendSilePath = extendPaths
-
-return function ()
-  return executable
-end
+_G.executablePath = executable

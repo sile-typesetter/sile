@@ -64,7 +64,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\note{This package is only for class designers.}
+\autodoc:note{This package is only for class designers.}
 
 While typesetting a document, SILE first breaks a paragraph into lines, then arranges lines into a page, and later outputs the page.
 In other words, while it is looking at the text of a paragraph, it is not clear what page the text will eventually end up on.

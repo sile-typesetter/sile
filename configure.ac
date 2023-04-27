@@ -208,6 +208,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         AX_PROGVAR([busted])
         AX_PROGVAR([luacheck])
         AX_PROGVAR([luarocks])
+        AX_PROGVAR([nix])
         AX_PROGVAR([perl])
     ])
 

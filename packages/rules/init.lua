@@ -260,7 +260,7 @@ The \autodoc:command{\underline} command \underline{underlines} its content.
 
 The \autodoc:command{\strikethrough} command \strikethrough{strikes} its content.
 
-\note{The position and thickness of the underlines and strikethroughs are based on the metrics of the current font, honoring the values defined by the type designer.}
+\autodoc:note{The position and thickness of the underlines and strikethroughs are based on the metrics of the current font, honoring the values defined by the type designer.}
 
 The \autodoc:command{\hrulefill} inserts an infinite horizontal rubber, similar to an \autodoc:command{\hfill}, but—as its name implies—filled with a rule (that is, a solid line).
 By default, it stands on the baseline and has a thickness of 0.2pt, below the baseline.

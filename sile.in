@@ -4,7 +4,18 @@
 SYSTEM_SILE_PATH = "@SILE_PATH@"
 SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
 
-local executable = require("core.pathsetup")()
+-- At this point at run time we may or may not have anything useful in package.path,
+-- so require() isn't something we can rely on.
+local status = pcall(dofile, "@SILE_PATH@/core/pathsetup.lua")
+if not status then
+  dofile("./core/pathsetup.lua")
+end
+
+-- On FreeBSD, Lua's debug module doesn't give us info above the top of the stack.
+-- Since our detection is currently burried in a module it doesn't tell us the executable.
+if _G.executablePath == "=[C]" then
+  _G.executablePath = debug.getinfo(1, "S").source
+end
 
 -- This global is set here and *also* in the core library, since this
 -- effectively passes the same table they are interchangeable (for now).
