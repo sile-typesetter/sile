@@ -67,6 +67,9 @@ local getSpaceGlue = function(options, parameter)
     SILE.settings:set("font.filename", options.filename)
     sg = sg:absolute()
   end)
+  -- Track a subtype on that kern:
+  -- See automated italic correction at the typesetter level.
+  sg.subtype = "punctspace"
   return sg
 end
 
