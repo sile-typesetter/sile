@@ -6,7 +6,7 @@ use std::path::PathBuf;
 /// be written to the same name as the input file with the extension changed to .pdf. Additional
 /// input or output formats can be handled by requiring a module that adds support for them first.
 #[derive(Parser, Debug)]
-#[clap(author, bin_name = "sile")]
+#[clap(author, name = "SILE", bin_name = "sile")]
 pub struct Cli {
     /// Input document, by default in SIL or XML format
     pub input: Option<PathBuf>,

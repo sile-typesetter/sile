@@ -2,8 +2,8 @@ local cli = pl.class()
 
 cli.parseArguments = function ()
   local cliargs = require("cliargs")
-  local print_version = function()
-    print(SILE.full_version)
+  local print_version = function(flag)
+    print(flag == "V" and "SILE " .. SILE.version or SILE.full_version)
     os.exit(0)
   end
   cliargs:set_colsz(0, 120)
@@ -32,7 +32,7 @@ cli.parseArguments = function ()
   cliargs:flag("-q, --quiet", "suppress warnings and informational messages during processing")
   cliargs:flag("-t, --traceback", "display detailed location trace on errors and warnings")
   cliargs:flag("-h, --help", "display this help, then exit")
-  cliargs:flag("-v, --version", "display version information, then exit", print_version)
+  cliargs:flag("-V, --version", "display version information, then exit", print_version)
   -- Work around cliargs not processing - as an alias for STDIO streams:
   -- https://github.com/amireh/lua_cliargs/issues/67
   local _arg = pl.tablex.imap(luautf8.gsub, _G.arg, "^-$", "STDIO")

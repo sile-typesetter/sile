@@ -16,6 +16,25 @@ lazy_static! {
     pub static ref LUA_CPATH: &'static str = option_env!["LUA_CPATH"].unwrap_or_else(|| "");
 }
 
+pub fn version() -> crate::Result<String> {
+    let lua = unsafe { Lua::unsafe_new() };
+    let lua_path: LuaString = lua.create_string(&LUA_PATH.clone())?;
+    let lua_cpath: LuaString = lua.create_string(&LUA_CPATH.clone())?;
+    let sile_path: LuaString = lua.create_string(env!("SILE_PATH"))?;
+    let sile: LuaTable = lua
+        .load(chunk! {
+            package.path = $lua_path
+            package.cpath = $lua_cpath
+            local status = pcall(dofile, $sile_path .. "/core/pathsetup.lua")
+            if not status then
+                dofile("./core/pathsetup.lua")
+            end
+            return require("core.sile")
+        })
+        .eval()?;
+    Ok(sile.get("full_version")?)
+}
+
 pub fn run(
     input: Option<PathBuf>,
     backend: Option<String>,
