@@ -1,0 +1,60 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\font[size=16pt]
+\use[module=packages.math]
+% Italic correction.
+% The setting plays at paragraph level
+% Disabled:
+\set[parameter=typesetter.italicCorrection, value=false]
+− (\em{fluff}) ¡\em{fancyful proof}! [\em{puff}] \em{fluff}²
+
+% Enabled:
+\set[parameter=typesetter.italicCorrection, value=true]
++ (\em{fluff}) ¡\em{fancyful proof}! [\em{puff}]  \em{fluff}²
+
+% The setting also works in hbox-built content.
+% We want to be sure the hbox width is still properly computed
+% Hence the | marks.
+% Disabled:
+\set[parameter=typesetter.italicCorrection, value=false]
+− |\hbox{(\em{fluff}) ¡\em{fancyful proof}! [\em{puff}]}|
+
+% Enabled:
+\set[parameter=typesetter.italicCorrection, value=true]
++ |\hbox{(\em{fluff}) ¡\em{fancyful proof}! [\em{puff}]}|
+
+% Extra check with French exceptions.
+\language[main=fr]{%
+% Disabled:
+\set[parameter=typesetter.italicCorrection, value=false]
+− «\em{fluff}» \em{french proof}! (\em{fluff})
+
+% Enabled:
+\set[parameter=typesetter.italicCorrection, value=true]
++ «\em{fluff}» \em{french proof}! (\em{fluff})
+}
+
+% Repeated with another font
+\font[family=Cormorant Infant]
+\set[parameter=typesetter.italicCorrection, value=false]
+− (\em{fluff}) ¡\em{fancyful proof}! [\em{puff}] \em{fluff}²
+
+\set[parameter=typesetter.italicCorrection, value=true]
++ (\em{fluff}) ¡\em{fancyful proof}! [\em{puff}]  \em{fluff}²
+
+\set[parameter=typesetter.italicCorrection, value=false]
+− |\hbox{(\em{fluff}) ¡\em{fancyful proof}! [\em{puff}]}|
+
+\set[parameter=typesetter.italicCorrection, value=true]
++ |\hbox{(\em{fluff}) ¡\em{fancyful proof}! [\em{puff}]}|
+
+\language[main=fr]{%
+\set[parameter=typesetter.italicCorrection, value=false]
+− «\em{fluff}» \em{french proof}! (\em{fluff})
+
+\set[parameter=typesetter.italicCorrection, value=true]
++ «\em{fluff}» \em{french proof}! (\em{fluff})
+}
+
+\end{document}
