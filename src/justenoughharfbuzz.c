@@ -185,7 +185,7 @@ int shape (lua_State *L) {
     }
     glyph_info   = hb_buffer_get_glyph_infos(buf, &glyph_count);
     glyph_pos    = hb_buffer_get_glyph_positions(buf, &glyph_count);
-    lua_checkstack(L, glyph_count);
+    lua_checkstack(L, glyph_count*10);
     for (j = 0; j < glyph_count; ++j) {
       char namebuf[255];
       hb_glyph_extents_t extents = {0,0,0,0};
