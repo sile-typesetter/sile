@@ -3,3 +3,11 @@ rustflags = ["-C", "link-args=-rdynamic"]
 
 [target.x86_64-unknown-linux-gnu]
 rustflags = ["-C", "link-args=-rdynamic"]
+
+# Since autotools sets this and we are *not* forcing it here, this will not
+# affect release builds. It will affect `cargo run` and make it easier to test
+# locally since the Lua loader path will be relative to the current sources.
+# For debug builds it is assumed you configured `--without-system-luarocks`,
+# this convenience won't enable you to use system packages in debug builds.
+[env]
+SILE_PATH = { value = "", relative = true }
