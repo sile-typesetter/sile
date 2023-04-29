@@ -42,6 +42,10 @@
       {
         "filename": "package.json",
         "type": "json"
+      },
+      {
+        "filename": "Cargo.toml",
+        "updater": "build-aux/cargo-updater.js"
       }
     ],
     "infile": "CHANGELOG.md",
