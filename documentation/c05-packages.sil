@@ -8,12 +8,10 @@ packages. SILE packages are written in the Lua programming language, and can
 define new commands, change the way that the SILE system operates, or indeed
 do anything that is possible to do in Lua.
 
-As mentioned above, loading a package is done through the \code{\\script} command,
-which runs Lua code. By convention packages live in the \code{packages/} subdirectory
-of either your input file’s location, your current working directory, or SILE’s
-installation directory. For instance, we’ll soon be talking about the
-\code{grid} package, which normally can be found as
-\code{/usr/local/lib/sile/packages/grid/init.lua}. To load this, we’d say:
+Loading a package is done through the \code{\\use} command.
+By convention packages live in the \code{packages/} subdirectory of either your input file’s location, your current working directory, or SILE’s installation directory.
+For instance, we’ll soon be talking about the \autodoc:package{grid} package, which normally can be found as \code{/usr/local/lib/sile/packages/grid/init.lua}.
+To load this, we’d say:
 
 \begin[type=autodoc:codeblock]{raw}
 \use[module=packages.grid]
