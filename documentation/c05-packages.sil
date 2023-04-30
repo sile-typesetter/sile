@@ -28,8 +28,8 @@ By default SILE will look for packages in a variety of directories:
 \code{/usr/local/lib/sile}.}
 \end{enumerate}    
 
-Unlike TeX, it does not descend into subdirectories when looking for a file;
-if you have arranged your personal macro, class or package files into subdirectories,
+SILE does not descend into subdirectories when looking for a file.
+If you have arranged your personal class or package files into subdirectories,
 you will need to provide a full relative path to them.}
 
 \section{The SILE ecosystem}
