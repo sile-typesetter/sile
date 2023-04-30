@@ -39,7 +39,8 @@ But there’s more out there!
 As mentioned earlier in this manual, a number of third-party contributed collections of modules can be installed via the LuaRocks package manager.
 
 \autodoc:note{
-A non-authoritative list of third-party modules may be consulted at \url{https://luarocks.org/m/sile}.}
+A non-authoritative list of third-party modules may be consulted at \url{https://luarocks.org/m/sile}. To publish your own modules to LuaRocks, see the \code{package-template.sile} repository.
+}
 
 A SILE compatible LuaRock simply installs the relevant class, package, language, internationalization resources, or similar files in a \code{sile} directory.
 This directory could be in your system Lua directory, in your user directory, or any other location you specify.
@@ -69,14 +70,12 @@ $ export SILE_PATH="/path/to/my/library/"
 $ sile ...
 \end{raw}
 
-To write a package module and publish it to LuaRocks, see the \code{package-template.sile} repository.
-
-These modules are not limited to just packages.
-They can include classes, languages, internationalization resources, or anything else provided by SILE.
+Note that modules are not limited to just packages.
+They can include classes, languages, internationalization resources, or anything else provided by SILE.\footnote{%
 Also because external locations are searched before SILE itself, they can even override any core part of SILE itself.
-As such you should probably make sure you review what a package does before installing it!
+As such you should probably make sure you review what a package does before installing it!}
 
-\section{Core packages}
+\section{Standard packages}
 
 \section{image}
 \package-documentation{image}
