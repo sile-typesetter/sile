@@ -323,6 +323,7 @@ function typesetter:breakIntoLines (nodelist, breakWidth)
 end
 
 local function getLastShape(nodelist)
+  local hasGlue
   local last
   if nodelist then
     -- The node list may contain nnodes, penalties, kern and glue
@@ -339,12 +340,14 @@ local function getLastShape(nodelist)
         -- punctuations. In those case, we should not need italic correction.
         break
       end
+      if n.is_glue then hasGlue = true end
     end
   end
-  return last
+  return last, hasGlue
 end
 local function getFirstShape(nodelist)
   local first
+  local hasGlue
   if nodelist then
     -- The node list may contain nnodes, penalties, kern and glue
     -- We skip the latter, and retrieve the first shaped item.
@@ -360,9 +363,10 @@ local function getFirstShape(nodelist)
         -- punctuations. In those case, we should not need italic correction.
         break
       end
+      if n.is_glue then hasGlue = true end
     end
   end
-  return first
+  return first, hasGlue
 end
 
 local function fromItalicCorrection (precShape, curShape)
@@ -429,17 +433,26 @@ function typesetter.shapeAllNodes (_, nodelist, inplace)
 
       if SILE.settings:get("typesetter.italicCorrection") and prec then
         local itCorrOffset
+        local isGlue
         if isItalicLike(prec) and not isItalicLike(current) then
-          local precShape = getLastShape(precShapedNodes)
-          local curShape = getFirstShape(shapedNodes)
+          local precShape, precHasGlue = getLastShape(precShapedNodes)
+          local curShape, curHasGlue = getFirstShape(shapedNodes)
+          isGlue = precHasGlue or curHasGlue
           itCorrOffset = fromItalicCorrection(precShape, curShape)
         elseif not isItalicLike(prec) and isItalicLike(current) then
-          local precShape = getLastShape(precShapedNodes)
-          local curShape = getFirstShape(shapedNodes)
+          local precShape, precHasGlue = getLastShape(precShapedNodes)
+          local curShape, curHasGlue = getFirstShape(shapedNodes)
+          isGlue = precHasGlue or curHasGlue
           itCorrOffset = toItalicCorrection(precShape, curShape)
         end
-        if itCorrOffset then
-          newNodelist[#newNodelist+1] = SILE.nodefactory.kern({
+        if itCorrOffset and itCorrOffset ~= 0 then
+          -- If one of the node contains a glue (e.g. "a \em{proof} is..."),
+          -- line breaking may occur between them, so our correction shall be
+          -- a glue too.
+          -- Otherwise, the font change is considered to occur at a non-breaking
+          -- point (e.g. "\em{proof}!") and the correction shall be a kern.
+          local makeItCorrNode = isGlue and SILE.nodefactory.glue or SILE.nodefactory.kern
+          newNodelist[#newNodelist+1] = makeItCorrNode({
             width = SILE.length(itCorrOffset),
             subtype = "itcorr"
           })
@@ -1023,8 +1036,6 @@ function typesetter:makeHbox (content)
     local node = nodes[i]
     if node.is_migrating then
       migratingNodes[#migratingNodes+1] = node
-    elseif node.is_unshaped then
-      SU.error("DOH")
     elseif node.is_discretionary then
       -- HACK https://github.com/sile-typesetter/sile/issues/583
       -- Discretionary nodes have a null line contribution...

@@ -1,7 +1,7 @@
 \begin[papersize=a6]{document}
 \nofolios
 \neverindent
-\font[size=16pt]
+\font[size=15pt]
 \use[module=packages.math]
 % Italic correction.
 % The setting plays at paragraph level
@@ -35,6 +35,16 @@
 + «\em{fluff}» \em{french proof}! (\em{fluff})
 }
 
+% We want to insert the correction as a kern or glue depending on context,
+% so that line breaking may still occur where it should.
+% Disabled
+\set[parameter=typesetter.italicCorrection, value=false]
+− \em{fluff}! \em{fluff} fluff aaaaaaa aaaa aaaaaa \em{fluff} fluff
+
+% Enabled
+\set[parameter=typesetter.italicCorrection, value=true]
++ \em{fluff}! \em{fluff} fluff aaaaaaa aaaa aaaaaa \em{fluff} fluff 
+
 % Repeated with another font
 \font[family=Cormorant Infant]
 \set[parameter=typesetter.italicCorrection, value=false]
@@ -56,5 +66,11 @@
 \set[parameter=typesetter.italicCorrection, value=true]
 + «\em{fluff}» \em{french proof}! (\em{fluff})
 }
+
+\set[parameter=typesetter.italicCorrection, value=false]
+− \em{fluff}! \em{fluff} fluff aaaaaaa aaaa aaaaaa \em{fluff} fluff
+
+\set[parameter=typesetter.italicCorrection, value=true]
++ \em{fluff}! \em{fluff} fluff aaaaaaa aaaa aaaaaa \em{fluff} fluff
 
 \end{document}

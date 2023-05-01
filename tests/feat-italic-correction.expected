@@ -1,458 +1,567 @@
 Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	14.8819
-My 	33.4764
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	2149 w=6.5625	(−)
-Mx 	25.6818
-T	11 w=5.0703	(()
-Mx 	30.7521
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	739 88 747 w=24.8438	(fluff)
-Mx 	55.5958
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	12 w=5.0703	())
-Mx 	64.9035
-T	163 w=4.3516	(¡)
-Mx 	69.2551
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	73 68 81 70 92 73 88 79 w=49.0313	(fancyful)
-Mx 	122.1385
-T	83 85 82 82 73 w=31.0859	(proof)
-Mx 	153.2244
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	4 w=4.3516	(!)
-Mx 	161.8134
-T	62 w=4.9219	([)
-Mx 	166.7352
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	83 88 747 w=24.2578	(puff)
-Mx 	190.9930
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	64 w=4.9219	(])
-Mx 	200.1523
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	739 88 747 w=24.8438	(fluff)
-Mx 	224.9960
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	2011 w=5.2578	(²)
+My 	32.6951
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	2149 w=6.1523	(−)
+Mx 	25.0090
+T	11 w=4.7534	(()
+Mx 	29.7624
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	53.0534
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	12 w=4.7534	())
+Mx 	61.7816
+T	163 w=4.0796	(¡)
+Mx 	65.8612
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	73 68 81 70 92 73 88 79 w=45.9668	(fancyful)
+Mx 	115.4414
+T	83 85 82 82 73 w=29.1431	(proof)
+Mx 	144.5845
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	4 w=4.0796	(!)
+Mx 	152.6388
+T	62 w=4.6143	([)
+Mx 	157.2531
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	83 88 747 w=22.7417	(puff)
+Mx 	179.9948
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	64 w=4.6143	(])
+Mx 	188.5838
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	211.8748
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	2011 w=4.9292	(²)
 Mx 	14.8819
-My 	52.6764
-T	14 w=6.5625	(+)
-Mx 	25.6796
-T	11 w=5.0703	(()
-Mx 	31.2573
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	739 88 747 w=24.8438	(fluff)
-Mx 	58.7886
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	12 w=5.0703	())
-Mx 	68.0941
-T	163 w=4.3516	(¡)
-Mx 	73.2269
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	73 68 81 70 92 73 88 79 w=49.0313	(fancyful)
-Mx 	126.1084
-T	83 85 82 82 73 w=31.0859	(proof)
-Mx 	159.8111
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	4 w=4.3516	(!)
-Mx 	168.3979
-T	62 w=4.9219	([)
-Mx 	173.3511
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	83 88 747 w=24.2578	(puff)
-Mx 	200.2965
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	64 w=4.9219	(])
-Mx 	209.9932
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	739 88 747 w=24.8438	(fluff)
-Mx 	237.2433
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	2011 w=5.2578	(²)
+My 	50.6951
+T	14 w=6.1523	(+)
+Mx 	25.0071
+T	11 w=4.7534	(()
+Mx 	30.2362
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	56.0468
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	12 w=4.7534	())
+Mx 	64.7730
+T	163 w=4.0796	(¡)
+Mx 	69.5851
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	73 68 81 70 92 73 88 79 w=45.9668	(fancyful)
+Mx 	119.1635
+T	83 85 82 82 73 w=29.1431	(proof)
+Mx 	150.7598
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	4 w=4.0796	(!)
+Mx 	158.8123
+T	62 w=4.6143	([)
+Mx 	163.4560
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	83 88 747 w=22.7417	(puff)
+Mx 	188.7172
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	64 w=4.6143	(])
+Mx 	197.8102
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	223.3572
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	2011 w=4.9292	(²)
 Mx 	14.8819
-My 	71.8764
-T	2149 w=6.5625	(−)
-Mx 	25.6864
-T	95 w=3.9063	(|)
-Mx 	29.5927
-T	11 w=5.0703	(()
-Mx 	34.6630
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	739 88 747 w=24.8438	(fluff)
-Mx 	59.5067
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	12 w=5.0703	())
-Mx 	68.8191
-T	163 w=4.3516	(¡)
-Mx 	73.1707
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	73 68 81 70 92 73 88 79 w=49.0313	(fancyful)
-Mx 	126.0583
-T	83 85 82 82 73 w=31.0859	(proof)
-Mx 	157.1443
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	4 w=4.3516	(!)
-Mx 	165.7379
-T	62 w=4.9219	([)
-Mx 	170.6597
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	83 88 747 w=24.2578	(puff)
-Mx 	194.9176
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	64 w=4.9219	(])
-Mx 	199.8394
-T	95 w=3.9063	(|)
+My 	68.6951
+T	2149 w=6.1523	(−)
+Mx 	25.0131
+T	95 w=3.6621	(|)
+Mx 	28.6752
+T	11 w=4.7534	(()
+Mx 	33.4286
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	56.7196
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	12 w=4.7534	())
+Mx 	65.4519
+T	163 w=4.0796	(¡)
+Mx 	69.5315
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	73 68 81 70 92 73 88 79 w=45.9668	(fancyful)
+Mx 	119.1155
+T	83 85 82 82 73 w=29.1431	(proof)
+Mx 	148.2585
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	4 w=4.0796	(!)
+Mx 	156.3170
+T	62 w=4.6143	([)
+Mx 	160.9312
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	83 88 747 w=22.7417	(puff)
+Mx 	183.6729
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	64 w=4.6143	(])
+Mx 	188.2872
+T	95 w=3.6621	(|)
 Mx 	14.8819
-My 	91.0764
-T	14 w=6.5625	(+)
-Mx 	25.6848
-T	95 w=3.9063	(|)
-Mx 	29.5910
-T	11 w=5.0703	(()
-Mx 	35.1688
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	739 88 747 w=24.8438	(fluff)
-Mx 	62.7000
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	12 w=5.0703	())
-Mx 	72.0107
-T	163 w=4.3516	(¡)
-Mx 	77.1435
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	73 68 81 70 92 73 88 79 w=49.0313	(fancyful)
-Mx 	130.0297
-T	83 85 82 82 73 w=31.0859	(proof)
-Mx 	163.7324
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	4 w=4.3516	(!)
-Mx 	172.3244
-T	62 w=4.9219	([)
-Mx 	177.2777
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	83 88 747 w=24.2578	(puff)
-Mx 	204.2230
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	64 w=4.9219	(])
-Mx 	209.1449
-T	95 w=3.9063	(|)
+My 	86.6951
+T	14 w=6.1523	(+)
+Mx 	25.0117
+T	95 w=3.6621	(|)
+Mx 	28.6738
+T	11 w=4.7534	(()
+Mx 	33.9029
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	59.7134
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	12 w=4.7534	())
+Mx 	68.4443
+T	163 w=4.0796	(¡)
+Mx 	73.2563
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	73 68 81 70 92 73 88 79 w=45.9668	(fancyful)
+Mx 	122.8389
+T	83 85 82 82 73 w=29.1431	(proof)
+Mx 	154.4352
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	4 w=4.0796	(!)
+Mx 	162.4922
+T	62 w=4.6143	([)
+Mx 	167.1359
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	83 88 747 w=22.7417	(puff)
+Mx 	192.3972
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	64 w=4.6143	(])
+Mx 	197.0114
+T	95 w=3.6621	(|)
 Mx 	14.8819
-My 	110.2764
-T	2149 w=6.5625	(−)
-Mx 	25.6878
-T	169 w=7.7656	(«)
-Mx 	36.8405
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	739 88 747 w=24.8438	(fluff)
-Mx 	65.0713
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	170 w=7.7656	(»)
-Mx 	77.0803
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	73 85 72 81 70 75 w=38.3594	(french)
-Mx 	119.2974
-T	83 85 82 82 73 w=31.0859	(proof)
-Mx 	152.4974
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	4 w=4.3516	(!)
-Mx 	161.0923
-T	11 w=5.0703	(()
-Mx 	166.1626
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	739 88 747 w=24.8438	(fluff)
-Mx 	191.0064
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	12 w=5.0703	())
+My 	104.6951
+T	2149 w=6.1523	(−)
+Mx 	25.0143
+T	169 w=7.2803	(«)
+Mx 	35.4705
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	61.9375
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	170 w=7.2803	(»)
+Mx 	73.1978
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	73 85 72 81 70 75 w=35.9619	(french)
+Mx 	112.7779
+T	83 85 82 82 73 w=29.1431	(proof)
+Mx 	143.9029
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	4 w=4.0796	(!)
+Mx 	151.9626
+T	11 w=4.7534	(()
+Mx 	156.7160
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	180.0070
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	12 w=4.7534	())
 Mx 	14.8819
-My 	129.4764
-T	14 w=6.5625	(+)
-Mx 	25.6872
-T	169 w=7.7656	(«)
-Mx 	36.8398
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	739 88 747 w=24.8438	(fluff)
-Mx 	65.0704
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	170 w=7.7656	(»)
-Mx 	77.0515
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	73 85 72 81 70 75 w=38.3594	(french)
-Mx 	119.2680
-T	83 85 82 82 73 w=31.0859	(proof)
-Mx 	152.4680
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	4 w=4.3516	(!)
-Mx 	161.0624
-T	11 w=5.0703	(()
-Mx 	166.6401
-Set font 	Gentium Plus;16;400;Italic;normal;;;LTR
-T	739 88 747 w=24.8438	(fluff)
-Mx 	194.1714
-Set font 	Gentium Plus;16;400;;normal;;;LTR
-T	12 w=5.0703	())
+My 	122.6951
+T	14 w=6.1523	(+)
+Mx 	25.0138
+T	169 w=7.2803	(«)
+Mx 	35.4699
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	61.9367
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	170 w=7.2803	(»)
+Mx 	73.1709
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	73 85 72 81 70 75 w=35.9619	(french)
+Mx 	112.7506
+T	83 85 82 82 73 w=29.1431	(proof)
+Mx 	143.8756
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	4 w=4.0796	(!)
+Mx 	151.9347
+T	11 w=4.7534	(()
+Mx 	157.1638
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	182.9744
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	12 w=4.7534	())
 Mx 	14.8819
-My 	148.6764
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2531 w=6.3680	(−)
-Mx 	25.7546
-T	2403 w=4.9440	(()
-Mx 	30.6986
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	718 555 634 816 w=23.7280	(fluff)
-Mx 	54.4266
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2404 w=4.9440	())
-Mx 	63.8754
-T	2372 w=3.9520	(¡)
-Mx 	67.8274
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-Mx 	3.8880
-Mx 	6.9440
-Mx 	7.5360
-Mx 	5.5200
-Mx 	7.2000
-Mx 	4.1920
-Mx 	7.4400
-Mx 	3.7920
-T	680 a=3.8880 457 a=6.9440 567 a=7.4400 486 a=5.5200 665 a=6.9760 517 a=4.1920 634 a=7.4400 555 a=3.7920	(fancyful)
-Mx 	118.8441
-Mx 	6.5120
-Mx 	5.1520
-Mx 	6.3680
-Mx 	6.3680
-Mx 	4.1920
-T	604 a=6.5120 607 a=5.4400 577 a=6.3680 577 a=6.3680 517 a=4.1920	(proof)
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2371 w=3.9520	(!)
-Mx 	155.8928
-T	2407 w=4.3840	([)
-Mx 	160.2768
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	604 634 816 w=22.0960	(puff)
-Mx 	182.3728
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2408 w=4.3840	(])
-Mx 	191.2616
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	718 555 634 816 w=23.7280	(fluff)
-Mx 	214.9896
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2328 w=4.0160	(²)
+My 	140.6951
+T	2149 w=6.1523	(−)
+Mx 	27.4228
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	50.7138
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	4 w=4.0796	(!)
+Mx 	61.1819
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	90.8614
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	739 88 747 w=26.0083	(fluff)
+Mx 	123.2583
+T	68 68 68 68 68 68 68 w=48.1934	(aaaaaaa)
+Mx 	177.8402
+T	68 68 68 68 w=27.5391	(aaaa)
+Mx 	211.7678
+T	68 68 68 68 68 68 w=41.3086	(aaaaaa)
+Mx 	259.4649
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
 Mx 	14.8819
-My 	167.8764
-T	2530 w=6.3680	(+)
-Mx 	25.7524
-T	2403 w=4.9440	(()
-Mx 	31.4242
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	718 555 634 816 w=23.7280	(fluff)
-Mx 	57.2482
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2404 w=4.9440	())
-Mx 	66.6947
-T	2372 w=3.9520	(¡)
-Mx 	72.3427
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-Mx 	3.8880
-Mx 	6.9440
-Mx 	7.5360
-Mx 	5.5200
-Mx 	7.2000
-Mx 	4.1920
-Mx 	7.4400
-Mx 	3.7920
-T	680 a=3.8880 457 a=6.9440 567 a=7.4400 486 a=5.5200 665 a=6.9760 517 a=4.1920 634 a=7.4400 555 a=3.7920	(fancyful)
-Mx 	123.3573
-Mx 	6.5120
-Mx 	5.1520
-Mx 	6.3680
-Mx 	6.3680
-Mx 	4.1920
-T	604 a=6.5120 607 a=5.4400 577 a=6.3680 577 a=6.3680 517 a=4.1920	(proof)
-Mx 	153.7652
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2371 w=3.9520	(!)
-Mx 	162.2198
-T	2407 w=4.3840	([)
-Mx 	167.0311
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	604 634 816 w=22.0960	(puff)
-Mx 	191.2202
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2408 w=4.3840	(])
-Mx 	200.8283
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	718 555 634 816 w=23.7280	(fluff)
-Mx 	226.6523
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2328 w=4.0160	(²)
+My 	158.6951
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	739 88 747 w=26.0083	(fluff)
+My 	176.6951
+T	14 w=6.1523	(+)
+Mx 	26.4319
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	52.1762
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	4 w=4.0796	(!)
+Mx 	62.0234
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
+Mx 	93.5412
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	739 88 747 w=26.0083	(fluff)
+Mx 	125.2568
+T	68 68 68 68 68 68 68 w=48.1934	(aaaaaaa)
+Mx 	179.1574
+T	68 68 68 68 w=27.5391	(aaaa)
+Mx 	212.4037
+T	68 68 68 68 68 68 w=41.3086	(aaaaaa)
+Mx 	259.4649
+Set font 	Gentium Plus;15;400;Italic;normal;;;LTR
+T	739 88 747 w=23.2910	(fluff)
 Mx 	14.8819
-My 	187.0764
-T	2531 w=6.3680	(−)
-Mx 	25.7597
-T	2627 w=2.6880	(|)
-Mx 	28.4477
-T	2403 w=4.9440	(()
-Mx 	33.3917
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	718 555 634 816 w=23.7280	(fluff)
-Mx 	57.1197
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2404 w=4.9440	())
-Mx 	66.5734
-T	2372 w=3.9520	(¡)
-Mx 	70.5254
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-Mx 	3.8880
-Mx 	6.9440
-Mx 	7.5360
-Mx 	5.5200
-Mx 	7.2000
-Mx 	4.1920
-Mx 	7.4400
-Mx 	3.7920
-T	680 a=3.8880 457 a=6.9440 567 a=7.4400 486 a=5.5200 665 a=6.9760 517 a=4.1920 634 a=7.4400 555 a=3.7920	(fancyful)
-Mx 	121.5472
-Mx 	6.5120
-Mx 	5.1520
-Mx 	6.3680
-Mx 	6.3680
-Mx 	4.1920
-T	604 a=6.5120 607 a=5.4400 577 a=6.3680 577 a=6.3680 517 a=4.1920	(proof)
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2371 w=3.9520	(!)
-Mx 	158.6009
-T	2407 w=4.3840	([)
-Mx 	162.9849
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	604 634 816 w=22.0960	(puff)
-Mx 	185.0809
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2408 w=4.3840	(])
-Mx 	189.4649
-T	2627 w=2.6880	(|)
+My 	194.6951
+Set font 	Gentium Plus;15;400;;normal;;;LTR
+T	739 88 747 w=26.0083	(fluff)
+My 	212.6951
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2531 w=5.9700	(−)
+Mx 	25.0773
+T	2403 w=4.6350	(()
+Mx 	29.7123
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	51.9573
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2404 w=4.6350	())
+Mx 	60.8177
+T	2372 w=3.7050	(¡)
+Mx 	64.5227
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+Mx 	3.6450
+Mx 	6.5100
+Mx 	7.0650
+Mx 	5.1750
+Mx 	6.7500
+Mx 	3.9300
+Mx 	6.9750
+Mx 	3.5550
+T	680 a=3.6450 457 a=6.5100 567 a=6.9750 486 a=5.1750 665 a=6.5400 517 a=3.9300 634 a=6.9750 555 a=3.5550	(fancyful)
+Mx 	112.3532
+Mx 	6.1050
+Mx 	4.8300
+Mx 	5.9700
+Mx 	5.9700
+Mx 	3.9300
+T	604 a=6.1050 607 a=5.1000 577 a=5.9700 577 a=5.9700 517 a=3.9300	(proof)
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2371 w=3.7050	(!)
+Mx 	147.0886
+T	2407 w=4.1100	([)
+Mx 	151.1986
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	604 634 816 w=20.7150	(puff)
+Mx 	171.9136
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2408 w=4.1100	(])
+Mx 	180.2490
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	202.4940
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2328 w=3.7650	(²)
 Mx 	14.8819
-My 	206.2764
-T	2530 w=6.3680	(+)
-Mx 	25.7580
-T	2627 w=2.6880	(|)
-Mx 	28.4460
-T	2403 w=4.9440	(()
-Mx 	34.1177
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	718 555 634 816 w=23.7280	(fluff)
-Mx 	59.9417
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2404 w=4.9440	())
-Mx 	69.3938
-T	2372 w=3.9520	(¡)
-Mx 	75.0418
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-Mx 	3.8880
-Mx 	6.9440
-Mx 	7.5360
-Mx 	5.5200
-Mx 	7.2000
-Mx 	4.1920
-Mx 	7.4400
-Mx 	3.7920
-T	680 a=3.8880 457 a=6.9440 567 a=7.4400 486 a=5.5200 665 a=6.9760 517 a=4.1920 634 a=7.4400 555 a=3.7920	(fancyful)
-Mx 	126.0619
-Mx 	6.5120
-Mx 	5.1520
-Mx 	6.3680
-Mx 	6.3680
-Mx 	4.1920
-T	604 a=6.5120 607 a=5.4400 577 a=6.3680 577 a=6.3680 517 a=4.1920	(proof)
-Mx 	156.4699
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2371 w=3.9520	(!)
-Mx 	164.9300
-T	2407 w=4.3840	([)
-Mx 	169.7413
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	604 634 816 w=22.0960	(puff)
-Mx 	193.9304
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2408 w=4.3840	(])
-Mx 	198.3144
-T	2627 w=2.6880	(|)
+My 	230.6951
+T	2530 w=5.9700	(+)
+Mx 	25.0754
+T	2403 w=4.6350	(()
+Mx 	30.3927
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	54.6027
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2404 w=4.6350	())
+Mx 	63.4612
+T	2372 w=3.7050	(¡)
+Mx 	68.7562
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+Mx 	3.6450
+Mx 	6.5100
+Mx 	7.0650
+Mx 	5.1750
+Mx 	6.7500
+Mx 	3.9300
+Mx 	6.9750
+Mx 	3.5550
+T	680 a=3.6450 457 a=6.5100 567 a=6.9750 486 a=5.1750 665 a=6.5400 517 a=3.9300 634 a=6.9750 555 a=3.5550	(fancyful)
+Mx 	116.5847
+Mx 	6.1050
+Mx 	4.8300
+Mx 	5.9700
+Mx 	5.9700
+Mx 	3.9300
+T	604 a=6.1050 607 a=5.1000 577 a=5.9700 577 a=5.9700 517 a=3.9300	(proof)
+Mx 	145.0921
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2371 w=3.7050	(!)
+Mx 	153.0206
+T	2407 w=4.1100	([)
+Mx 	157.5312
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	604 634 816 w=20.7150	(puff)
+Mx 	180.2085
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2408 w=4.1100	(])
+Mx 	189.2185
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	213.4285
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2328 w=3.7650	(²)
 Mx 	14.8819
-My 	225.4764
-T	2531 w=6.3680	(−)
-Mx 	25.7604
-T	2441 w=7.2960	(«)
-Mx 	36.6559
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	718 555 634 816 w=23.7280	(fluff)
-Mx 	63.9835
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2442 w=7.2960	(»)
-Mx 	75.7900
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-Mx 	4.1920
-Mx 	5.1520
-Mx 	5.4880
-Mx 	7.5360
-Mx 	5.5200
-Mx 	7.1200
-T	517 a=4.1920 607 a=5.4400 498 a=5.4880 567 a=7.4400 486 a=5.5200 527 a=7.1200	(french)
-Mx 	115.3085
-Mx 	6.5120
-Mx 	5.1520
-Mx 	6.3680
-Mx 	6.3680
-Mx 	4.1920
-T	604 a=6.5120 607 a=5.4400 577 a=6.3680 577 a=6.3680 517 a=4.1920	(proof)
-Mx 	146.1469
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2371 w=3.9520	(!)
-Mx 	154.6094
-T	2403 w=4.9440	(()
-Mx 	159.5534
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	718 555 634 816 w=23.7280	(fluff)
-Mx 	183.2814
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2404 w=4.9440	())
+My 	248.6951
+T	2531 w=5.9700	(−)
+Mx 	25.0817
+T	2627 w=2.5200	(|)
+Mx 	27.6017
+T	2403 w=4.6350	(()
+Mx 	32.2367
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	54.4817
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2404 w=4.6350	())
+Mx 	63.3466
+T	2372 w=3.7050	(¡)
+Mx 	67.0516
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+Mx 	3.6450
+Mx 	6.5100
+Mx 	7.0650
+Mx 	5.1750
+Mx 	6.7500
+Mx 	3.9300
+Mx 	6.9750
+Mx 	3.5550
+T	680 a=3.6450 457 a=6.5100 567 a=6.9750 486 a=5.1750 665 a=6.5400 517 a=3.9300 634 a=6.9750 555 a=3.5550	(fancyful)
+Mx 	114.8864
+Mx 	6.1050
+Mx 	4.8300
+Mx 	5.9700
+Mx 	5.9700
+Mx 	3.9300
+T	604 a=6.1050 607 a=5.1000 577 a=5.9700 577 a=5.9700 517 a=3.9300	(proof)
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2371 w=3.7050	(!)
+Mx 	149.6263
+T	2407 w=4.1100	([)
+Mx 	153.7363
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	604 634 816 w=20.7150	(puff)
+Mx 	174.4513
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2408 w=4.1100	(])
+Mx 	178.5613
+T	2627 w=2.5200	(|)
 Mx 	14.8819
-My 	244.6764
-T	2530 w=6.3680	(+)
-Mx 	25.7599
-T	2441 w=7.2960	(«)
-Mx 	36.6553
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	718 555 634 816 w=23.7280	(fluff)
-Mx 	63.9827
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2442 w=7.2960	(»)
-Mx 	75.5482
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-Mx 	4.1920
-Mx 	5.1520
-Mx 	5.4880
-Mx 	7.5360
-Mx 	5.5200
-Mx 	7.1200
-T	517 a=4.1920 607 a=5.4400 498 a=5.4880 567 a=7.4400 486 a=5.5200 527 a=7.1200	(french)
-Mx 	115.0662
-Mx 	6.5120
-Mx 	5.1520
-Mx 	6.3680
-Mx 	6.3680
-Mx 	4.1920
-T	604 a=6.5120 607 a=5.4400 577 a=6.3680 577 a=6.3680 517 a=4.1920	(proof)
-Mx 	145.9046
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2371 w=3.9520	(!)
-Mx 	154.3666
-T	2403 w=4.9440	(()
-Mx 	160.0384
-Set font 	Cormorant Infant;16;400;Italic;normal;;;LTR
-T	718 555 634 816 w=23.7280	(fluff)
-Mx 	185.8624
-Set font 	Cormorant Infant;16;400;;normal;;;LTR
-T	2404 w=4.9440	())
+My 	266.6951
+T	2530 w=5.9700	(+)
+Mx 	25.0803
+T	2627 w=2.5200	(|)
+Mx 	27.6003
+T	2403 w=4.6350	(()
+Mx 	32.9175
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	57.1275
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2404 w=4.6350	())
+Mx 	65.9909
+T	2372 w=3.7050	(¡)
+Mx 	71.2859
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+Mx 	3.6450
+Mx 	6.5100
+Mx 	7.0650
+Mx 	5.1750
+Mx 	6.7500
+Mx 	3.9300
+Mx 	6.9750
+Mx 	3.5550
+T	680 a=3.6450 457 a=6.5100 567 a=6.9750 486 a=5.1750 665 a=6.5400 517 a=3.9300 634 a=6.9750 555 a=3.5550	(fancyful)
+Mx 	119.1193
+Mx 	6.1050
+Mx 	4.8300
+Mx 	5.9700
+Mx 	5.9700
+Mx 	3.9300
+T	604 a=6.1050 607 a=5.1000 577 a=5.9700 577 a=5.9700 517 a=3.9300	(proof)
+Mx 	147.6268
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2371 w=3.7050	(!)
+Mx 	155.5602
+T	2407 w=4.1100	([)
+Mx 	160.0708
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	604 634 816 w=20.7150	(puff)
+Mx 	182.7480
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2408 w=4.1100	(])
+Mx 	186.8580
+T	2627 w=2.5200	(|)
+Mx 	14.8819
+My 	284.6951
+T	2531 w=5.9700	(−)
+Mx 	25.0824
+T	2441 w=6.8400	(«)
+Mx 	35.2975
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	60.9177
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2442 w=6.8400	(»)
+Mx 	71.9882
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+Mx 	3.9300
+Mx 	4.8300
+Mx 	5.1450
+Mx 	7.0650
+Mx 	5.1750
+Mx 	6.6750
+T	517 a=3.9300 607 a=5.1000 498 a=5.1450 567 a=6.9750 486 a=5.1750 527 a=6.6750	(french)
+Mx 	109.0387
+Mx 	6.1050
+Mx 	4.8300
+Mx 	5.9700
+Mx 	5.9700
+Mx 	3.9300
+T	604 a=6.1050 607 a=5.1000 577 a=5.9700 577 a=5.9700 517 a=3.9300	(proof)
+Mx 	137.9497
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2371 w=3.7050	(!)
+Mx 	145.8851
+T	2403 w=4.6350	(()
+Mx 	150.5201
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	172.7651
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2404 w=4.6350	())
+Mx 	14.8819
+My 	302.6951
+T	2530 w=5.9700	(+)
+Mx 	25.0820
+T	2441 w=6.8400	(«)
+Mx 	35.2970
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	60.9170
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2442 w=6.8400	(»)
+Mx 	71.7616
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+Mx 	3.9300
+Mx 	4.8300
+Mx 	5.1450
+Mx 	7.0650
+Mx 	5.1750
+Mx 	6.6750
+T	517 a=3.9300 607 a=5.1000 498 a=5.1450 567 a=6.9750 486 a=5.1750 527 a=6.6750	(french)
+Mx 	108.8116
+Mx 	6.1050
+Mx 	4.8300
+Mx 	5.9700
+Mx 	5.9700
+Mx 	3.9300
+T	604 a=6.1050 607 a=5.1000 577 a=5.9700 577 a=5.9700 517 a=3.9300	(proof)
+Mx 	137.7226
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2371 w=3.7050	(!)
+Mx 	145.6577
+T	2403 w=4.6350	(()
+Mx 	150.9750
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	175.1850
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2404 w=4.6350	())
+Mx 	14.8819
+My 	320.6951
+T	2531 w=5.9700	(−)
+Mx 	26.7967
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	49.0417
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2371 w=3.7050	(!)
+Mx 	58.6916
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	86.8815
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	952 699 936 w=24.9000	(fluff)
+Mx 	117.7263
+T	522 522 522 522 522 522 522 w=51.4500	(aaaaaaa)
+Mx 	175.1212
+T	522 522 522 522 w=29.4000	(aaaa)
+Mx 	210.4660
+T	522 522 522 522 522 522 w=44.1000	(aaaaaa)
+Mx 	260.5109
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	14.8819
+My 	338.6951
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	952 699 936 w=24.9000	(fluff)
+My 	356.6951
+T	2530 w=5.9700	(+)
+Mx 	26.1564
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	50.1038
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	2371 w=3.7050	(!)
+Mx 	59.2925
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	88.9226
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	952 699 936 w=24.9000	(fluff)
+Mx 	119.2428
+T	522 522 522 522 522 522 522 w=51.4500	(aaaaaaa)
+Mx 	176.1129
+T	522 522 522 522 w=29.4000	(aaaa)
+Mx 	210.9330
+T	522 522 522 522 522 522 w=44.1000	(aaaaaa)
+Mx 	260.5109
+Set font 	Cormorant Infant;15;400;Italic;normal;;;LTR
+T	718 555 634 816 w=22.2450	(fluff)
+Mx 	14.8819
+My 	374.6951
+Set font 	Cormorant Infant;15;400;;normal;;;LTR
+T	952 699 936 w=24.9000	(fluff)
 End page
 Finish
