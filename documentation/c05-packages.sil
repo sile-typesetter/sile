@@ -77,92 +77,118 @@ Also because external locations are searched before SILE itself, they can even o
 As such you should probably make sure you review what a package does before installing it!}
 
 \use[module=packages.unichar]
-\define[command=xxx]{\font[family=Cormorant Infant]{\unichar{U+261E}} \em{\process}\par\noindent}
+\define[command=status:high]{\font[size=9pt]{\color[color=green]{\font[family=Symbola]{\unichar{U+25CF}} Good maturity}}\novbreak\noindent}
+\define[command=status:medium]{\font[size=9pt]{\color[color=olivedrab]{\font[family=Symbola]{\unichar{U+25CD}} Usable with limitations}}\novbreak\noindent}
+\define[command=status:low]{\font[size=9pt]{\color[color=darkslateblue]{\font[family=Symbola]{\unichar{U+25CB}} Experimental}}\novbreak\noindent}
 
 \section{Graphics}
 
 As well as processing text, SILE can also include images.
 
 \subsection{image}
+\status:high
 \package-documentation{image}
 
 \subsection{svg}
+\status:medium
 \package-documentation{svg}
 
 \subsection{converters}
+\status:medium
 \package-documentation{converters}
 
 \section{Text & Characters}
 
 \subsection{dropcaps}
+\status:high
 \package-documentation{dropcaps}
 
 \subsection{lorem}
+\status:high
 \package-documentation{lorem}
 
 \subsection{textcase}
+\status:high
 \package-documentation{textcase}
 
 \subsection{unichar}
+\status:high
 \package-documentation{unichar}
 
 \subsection{url}
+\status:medium
 \package-documentation{url}
 
 \subsection{gutenberg}
+\status:low
 \package-documentation{gutenberg}
 
 \section{Colors}
 
 \subsection{color}
+\status:medium
 \package-documentation{color}
 
 \subsection{background}
+\status:medium
 \package-documentation{background}
 
 \section{Fillers & Rules}
 
 \subsection{leaders}
+\status:high
 \package-documentation{leaders}
 
 \subsection{rules}
+\status:medium
 \package-documentation{rules}
 
 \section{Boxes & Effects}
 
 \subsection{raiselower}
+\status:high
 \package-documentation{raiselower}
 
 \subsection{rebox}
+\status:high
 \package-documentation{rebox}
 
 \subsection{rotate}
+\status:medium
 \package-documentation{rotate}
 
 \subsection{scalebox}
+\status:high
 \package-documentation{scalebox}
 
 \section{Mathematical formulas}
+\status:medium
 \package-documentation{math}
 
 \section{Specialized environments}
 
 \subsection{lists}
+\status:high
 \package-documentation{lists}
 
 \subsection{pullquote}
+\status:medium
 \package-documentation{pullquote}
 
 \subsection{verbatim}
+\status:medium
 \package-documentation{verbatim}
 
 \subsection{specimen}
+\status:high
 \package-documentation{specimen}
 
 \subsection{boustrophedon}
+\status:high
 \package-documentation{boustrophedon}
 
 \subsection{chordmode}
+\status:high
 \package-documentation{chordmode}
 
 \section{Advanced font features}
@@ -170,68 +196,87 @@ As well as processing text, SILE can also include images.
 The following packages leverage SILE’s font default handling and the \autodoc:command{\font} command with new capabilities.
 
 \subsection{features}
+\status:high
 \package-documentation{features}
 
 \subsection{font-fallback}
+\status:medium
 \package-documentation{font-fallback}
 
 \section{Advanced line-spacing}
 
 \subsection{grid}
+\status:medium
 \package-documentation{grid}
 
 \subsection{linespacing}
+\status:low
 \package-documentation{linespacing}
 
 \section{Document parts}
 
 \subsection{folio}
+\status:high
 \package-documentation{folio}
 
 \subsection{footnotes}
+\status:medium
 \package-documentation{footnotes}
 
 \subsection{tableofcontents}
+\status:medium
 \package-documentation{tableofcontents}
 
 \section{Bibliographies, indexes, etc.}
 
 \subsection{bibtex}
+\status:medium
 \package-documentation{bibtex}
 
 \subsection{indexer}
+\status:low
 \package-documentation{indexer}
 
 \section{Minor utilities}
 
 \subsection{date}
+\status:high
 \package-documentation{date}
 
 \subsection{debug}
+\status:high
 \package-documentation{debug}
 
 \subsection{ifattop}
+\status:low
 \package-documentation{ifattop}
 
 \section{Frames and page layouts}
 
 \subsection{cropmarks}
+\status:low
 \package-documentation{cropmarks}
 
 \subsection{frametricks}
+\status:low
 \package-documentation{frametricks}
 
 \subsection{twoside}
+\status:medium
 \package-documentation{twoside}
 
 \subsection{masters}
+\status:high
 \package-documentation{masters}
 
 \subsection{break-firstfit}
+\status:medium
 \package-documentation{break-firstfit}
 
 \subsection{balanced-frames}
+\status:low
 \package-documentation{balanced-frames}
+
 \section{Low-level internal packages}
 
 In addition, there are certain packages that you \em{probably} don’t need
@@ -240,41 +285,50 @@ basic functionality to other packages and classes. Classes such as the
 \code{book} class compose functionality from different auxiliary packages.
 
 \subsection{bidi}
+\status:high
 \package-documentation{bidi}
 
 \subsection{color-fonts}
+\status:high
 \package-documentation{color-fonts}
 
 \subsection{counters}
+\status:high
 \package-documentation{counters}
 
 \subsection{insertions}
+\status:medium
 \package-documentation{insertions}
 
 \subsection{infonode}
+\status:high
 \package-documentation{infonode}
 
 \subsection{inputfilter}
+\status:high
 \package-documentation{inputfilter}
 
 \subsection{chapterverse}
+\status:low
 \package-documentation{chapterverse}
 
 \subsection{parallel}
+\status:low
 \package-documentation{parallel}
 
 \subsection{autodoc}
+\status:high
 \package-documentation{autodoc}
 
 \subsection{pdf}
+\status:medium
 \package-documentation{pdf}
 
 \subsection{pdfstructure}
+\status:medium
 \package-documentation{pdfstructure}
 
 \section{Highly experimental packages}
-
-\autodoc:note{These packages are not ready for use in production and are subject to change without notice in future versions.}
 
 The following packages are not documented here:
 \autodoc:package{complex-spaces},
@@ -282,5 +336,7 @@ The following packages are not documented here:
 \autodoc:package{pandoc},
 \autodoc:package{simpletable},
 \autodoc:package{xmltricks}.
+
+\autodoc:note{These packages are not ready for use in production and are subject to change without notice in future versions.}
 
 \end{document}
