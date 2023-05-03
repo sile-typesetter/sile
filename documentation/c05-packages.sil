@@ -26,7 +26,7 @@ By default SILE will look for packages in a variety of directories:
 \item{The default Lua search path.}
 \item{The directories where SILE is installed on the system, \code{/usr/lib/sile} and
 \code{/usr/local/lib/sile}.}
-\end{enumerate}    
+\end{enumerate}
 
 SILE does not descend into subdirectories when looking for a file.
 If you have arranged your personal class or package files into subdirectories,
@@ -75,116 +75,150 @@ They can include classes, languages, internationalization resources, or anything
 Also because external locations are searched before SILE itself, they can even override any core part of SILE itself.
 As such you should probably make sure you review what a package does before installing it!}
 
-\section{Standard packages}
+\use[module=packages.unichar]
+\define[command=xxx]{\font[family=Cormorant Infant]{\unichar{U+261E}} \em{\process}\par\noindent}
 
-\section{image}
+\section{Graphics}
+
+As well as processing text, SILE can also include images.
+
+\subsection{image}
 \package-documentation{image}
 
-\section{folio}
-\package-documentation{folio}
+\subsection{svg}
+\package-documentation{svg}
 
-\section{rules}
-\package-documentation{rules}
-
-\section{color}
-\package-documentation{color}
-
-\section{background}
-\package-documentation{background}
-
-\section{rotate}
-\package-documentation{rotate}
-
-\section{features}
-\package-documentation{features}
-
-\section{unichar}
-\package-documentation{unichar}
-
-\section{bidi}
-\package-documentation{bidi}
-
-\section{pullquote}
-\package-documentation{pullquote}
-
-\section{raiselower}
-\package-documentation{raiselower}
-
-\section{grid}
-\package-documentation{grid}
-
-\section{linespacing}
-\package-documentation{linespacing}
-
-\section{verbatim}
-\package-documentation{verbatim}
-
-\section{font-fallback}
-\package-documentation{font-fallback}
-
-\section{boustrophedon}
-\package-documentation{boustrophedon}
-
-\section{chordmode}
-\package-documentation{chordmode}
-
-\section{converters}
+\subsection{converters}
 \package-documentation{converters}
 
-\section{cropmarks}
-\package-documentation{cropmarks}
+\section{Text & Characters}
 
-\section{date}
-\package-documentation{date}
-
-\section{debug}
-\package-documentation{debug}
-
-\section{dropcaps}
+\subsection{dropcaps}
 \package-documentation{dropcaps}
 
-\section{leaders}
-\package-documentation{leaders}
-
-\section{lorem}
+\subsection{lorem}
 \package-documentation{lorem}
 
-\section{specimen}
-\package-documentation{specimen}
-
-\section{textcase}
+\subsection{textcase}
 \package-documentation{textcase}
 
-\section{url}
+\subsection{unichar}
+\package-documentation{unichar}
+
+\subsection{url}
 \package-documentation{url}
 
-\section{Packages usually used by other packages}
+\subsection{gutenberg}
+\package-documentation{gutenberg}
 
-In addition, there are certain packages that you \em{probably} don’t need
-to use directly, as their main job is to provide more
-basic functionality to other packages and classes. Classes such as the
-\code{book} class compose functionality from different auxiliary packages.
+\section{Colors}
+
+\subsection{color}
+\package-documentation{color}
+
+\subsection{background}
+\package-documentation{background}
+
+\section{Fillers & Rules}
+
+\subsection{leaders}
+\package-documentation{leaders}
+
+\subsection{rules}
+\package-documentation{rules}
+
+\section{Boxes & Effects}
+
+\subsection{raiselower}
+\package-documentation{raiselower}
+
+\subsection{rebox}
+\package-documentation{rebox}
+
+\subsection{rotate}
+\package-documentation{rotate}
+
+\subsection{scalebox}
+\package-documentation{scalebox}
+
+\section{Mathematical formulas}
+\package-documentation{math}
+
+\section{Specialized environments}
+
+\subsection{lists}
+\package-documentation{lists}
+
+\subsection{pullquote}
+\package-documentation{pullquote}
+
+\subsection{verbatim}
+\package-documentation{verbatim}
+
+\subsection{specimen}
+\package-documentation{specimen}
+
+\subsection{boustrophedon}
+\package-documentation{boustrophedon}
+
+\subsection{chordmode}
+\package-documentation{chordmode}
+
+\section{Advanced font features}
+
+The following packages leverage SILE’s font default handling and the \autodoc:command{\font} command with new capabilities.
+
+\subsection{features}
+\package-documentation{features}
+
+\subsection{font-fallback}
+\package-documentation{font-fallback}
+
+\section{Advanced line-spacing}
+
+\subsection{grid}
+\package-documentation{grid}
+
+\subsection{linespacing}
+\package-documentation{linespacing}
+
+\section{Document parts}
+
+\subsection{folio}
+\package-documentation{folio}
 
 \subsection{footnotes}
 \package-documentation{footnotes}
 
-\subsection{color-fonts}
-\package-documentation{color-fonts}
+\subsection{tableofcontents}
+\package-documentation{tableofcontents}
 
-\subsection{counters}
-\package-documentation{counters}
+\section{Bibliographies, indexes, etc.}
 
-\subsection{pdf}
-\package-documentation{pdf}
+\subsection{bibtex}
+\package-documentation{bibtex}
+
+\subsection{indexer}
+\package-documentation{indexer}
+
+\section{Minor utilities}
+
+\subsection{date}
+\package-documentation{date}
+
+\subsection{debug}
+\package-documentation{debug}
 
 \subsection{ifattop}
 \package-documentation{ifattop}
 
+\section{Frames and page layouts}
+
+\subsection{cropmarks}
+\package-documentation{cropmarks}
+
 \subsection{frametricks}
 \package-documentation{frametricks}
-
-\subsection{insertions}
-\package-documentation{insertions}
 
 \subsection{twoside}
 \package-documentation{twoside}
@@ -192,14 +226,35 @@ basic functionality to other packages and classes. Classes such as the
 \subsection{masters}
 \package-documentation{masters}
 
+\subsection{break-firstfit}
+\package-documentation{break-firstfit}
+
+\subsection{balanced-frames}
+\package-documentation{balanced-frames}
+\section{Low-level internal packages}
+
+In addition, there are certain packages that you \em{probably} don’t need
+to use directly, as their main job is to provide more
+basic functionality to other packages and classes. Classes such as the
+\code{book} class compose functionality from different auxiliary packages.
+
+\subsection{bidi}
+\package-documentation{bidi}
+
+\subsection{color-fonts}
+\package-documentation{color-fonts}
+
+\subsection{counters}
+\package-documentation{counters}
+
+\subsection{insertions}
+\package-documentation{insertions}
+
 \subsection{infonode}
 \package-documentation{infonode}
 
 \subsection{inputfilter}
 \package-documentation{inputfilter}
-
-\subsection{break-firstfit}
-\package-documentation{break-firstfit}
 
 \subsection{chapterverse}
 \package-documentation{chapterverse}
@@ -207,45 +262,24 @@ basic functionality to other packages and classes. Classes such as the
 \subsection{parallel}
 \package-documentation{parallel}
 
-\subsection{rebox}
-\package-documentation{rebox}
-
-\subsection{scalebox}
-\package-documentation{scalebox}
-
-\subsection{tableofcontents}
-\package-documentation{tableofcontents}
-
-\subsection{xmltricks}
-\package-documentation{xmltricks}
-
-\section{Experimental packages}
-
 \subsection{autodoc}
 \package-documentation{autodoc}
 
-\subsection{balanced-frames}
-\package-documentation{balanced-frames}
-
-\subsection{bibtex}
-\package-documentation{bibtex}
-
-\subsection{gutenberg}
-\package-documentation{gutenberg}
-
-\subsection{indexer}
-\package-documentation{indexer}
-
-\subsection{lists}
-\package-documentation{lists}
-
-\subsection{math}
-\package-documentation{math}
+\subsection{pdf}
+\package-documentation{pdf}
 
 \subsection{pdfstructure}
 \package-documentation{pdfstructure}
 
-\subsection{svg}
-\package-documentation{svg}
+\section{Highly experimental packages}
+
+\autodoc:note{These packages are not ready for use in production and are subject to change without notice in future versions.}
+
+The following packages are not documented here:
+\autodoc:package{complex-spaces},
+\autodoc:package{pagebuilder-bestfit},
+\autodoc:package{pandoc},
+\autodoc:package{simpletable},
+\autodoc:package{xmltricks}.
 
 \end{document}

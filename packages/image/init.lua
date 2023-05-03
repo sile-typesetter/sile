@@ -39,8 +39,6 @@ end
 
 package.documentation = [[
 \begin{document}
-As well as processing text, SILE can also include images.
-
 Loading the \autodoc:package{image} package gives you the \autodoc:command{\img} command, fashioned after the HTML equivalent.
 It takes the following parameters: \autodoc:parameter{src=<file>} must be the path to an image file; you may also give \autodoc:parameter{height} and/or \autodoc:parameter{width} parameters to specify the output size of the image on the paper.
 If the size parameters are not given, then the image will be output at its “natural” size, honoring its resolution if available.
