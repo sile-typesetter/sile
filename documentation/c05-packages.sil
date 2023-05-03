@@ -3,13 +3,14 @@
 
 SILE comes with a number of standard packages which provide additional functionality.
 In fact, the actual “core” of SILE’s functionality is small and extensible, with most of the interesting features being provided by add-on packages.
+SILE ships with the core libraries plus a small collection of packages covering some common needs; more can be added from 3rd party sources.
 SILE packages are written in the Lua programming language, and can define new commands, change the way that the SILE system operates, or indeed do anything that is possible to do in Lua.
 
 \section{Loading a package}
 
 Loading a package is done through the \code{\\use} command.
 By convention packages live in a \code{packages/}
-For instance, we’ll soon be talking about the \autodoc:package{grid} package, which normally can be found as \code{/usr/local/lib/sile/packages/grid/init.lua}.
+For instance, we’ll soon be talking about the \autodoc:package{grid} package, which normally can be found as \code{sile/packages/grid/init.lua} in wherever your system installed the SILE resource files.
 To load this, we’d say:
 
 \begin[type=autodoc:codeblock]{raw}
