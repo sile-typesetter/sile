@@ -99,6 +99,8 @@ As well as processing text, SILE can also include images.
 
 \section{Text & Characters}
 
+This section covers a range of diffent topics from initial capitals to text transforms, through URL formatting.
+
 \subsection{dropcaps}
 \status:high
 \package-documentation{dropcaps}
@@ -125,6 +127,9 @@ As well as processing text, SILE can also include images.
 
 \section{Colors}
 
+Color perception is a complicated topic, depending on many factors.
+SILE currently provides a few packages for handling coloring, in a simple acceptation of the term.
+
 \subsection{color}
 \status:medium
 \package-documentation{color}
@@ -135,6 +140,8 @@ As well as processing text, SILE can also include images.
 
 \section{Fillers & Rules}
 
+Line-filling patterns or rules, rectangular blobs of inks... What else to say?
+
 \subsection{leaders}
 \status:high
 \package-documentation{leaders}
@@ -144,6 +151,8 @@ As well as processing text, SILE can also include images.
 \package-documentation{rules}
 
 \section{Boxes & Effects}
+
+You can manipulate boxed elements to achieve a variety of effects.
 
 \subsection{raiselower}
 \status:high
@@ -166,6 +175,9 @@ As well as processing text, SILE can also include images.
 \package-documentation{math}
 
 \section{Specialized environments}
+
+SILE’s standard set of packages provides a few high-level environment.
+Some are quite expected from a typesetting system, and other also possibly serve as an illustration for class and package designers, regarding how to use varying techniques.
 
 \subsection{lists}
 \status:high
@@ -205,6 +217,9 @@ The following packages leverage SILE’s font default handling and the \autodoc:
 
 \section{Advanced line-spacing}
 
+We will later document the default line-spacing algorithm used by SILE and the available settings that may be tuned.
+Still, some packages are proposed for \em{altering} that algorithm and may be useful in some contexts.
+
 \subsection{grid}
 \status:medium
 \package-documentation{grid}
@@ -214,6 +229,11 @@ The following packages leverage SILE’s font default handling and the \autodoc:
 \package-documentation{linespacing}
 
 \section{Document parts}
+
+You \em{probably} don’t need to load the auxiliary packages in this section directly.
+Their main job is to provide more basic functionality to other packages and classes.
+Classes compose functionality from different auxiliary packages.
+Nevertheless, these packages also provide several user-facing commands of interest.
 
 \subsection{folio}
 \status:high
@@ -227,7 +247,9 @@ The following packages leverage SILE’s font default handling and the \autodoc:
 \status:medium
 \package-documentation{tableofcontents}
 
-\section{Bibliographies, indexes, etc.}
+\section{Bibliographies & Indexes}
+
+This section is devoted to packages collating references, in a broad sense.
 
 \subsection{bibtex}
 \status:medium
@@ -237,7 +259,9 @@ The following packages leverage SILE’s font default handling and the \autodoc:
 \status:low
 \package-documentation{indexer}
 
-\section{Minor utilities}
+\section{Miscellaneous utilities}
+
+This section introduces packages that could not fit in another category.
 
 \subsection{date}
 \status:high
@@ -252,6 +276,9 @@ The following packages leverage SILE’s font default handling and the \autodoc:
 \package-documentation{ifattop}
 
 \section{Frames and page layouts}
+
+As we mentioned in the first chapter, SILE uses frames as an indication of where to put text onto
+the page.
 
 \subsection{cropmarks}
 \status:low
@@ -279,10 +306,7 @@ The following packages leverage SILE’s font default handling and the \autodoc:
 
 \section{Low-level internal packages}
 
-In addition, there are certain packages that you \em{probably} don’t need
-to use directly, as their main job is to provide more
-basic functionality to other packages and classes. Classes such as the
-\code{book} class compose functionality from different auxiliary packages.
+In addition, there are packages that you \em{very probably} don’t need to use directly when typesetting documents.
 
 \subsection{bidi}
 \status:high
