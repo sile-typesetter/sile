@@ -99,6 +99,7 @@ function package:registerCommands ()
   end)
 
   self:registerCommand("converters:check", function (options, _)
+    SU.deprecated("\\converters:check", nil, "0.14.10", "0.16.0")
     self:checkConverters(options.source)
   end)
 
@@ -125,7 +126,7 @@ We do this by registering a converter with the \autodoc:command{\converters:regi
 And now it just magically works:
 
 \begin[type=autodoc:codeblock]{raw}
-\img[src=hello.gif, width=50px]
+\img[src=hello.gif, width=50pt]
 \end{raw}
 
 This will execute the command \code{convert hello.gif hello.jpg} and include the converted \code{hello.jpg} file.
