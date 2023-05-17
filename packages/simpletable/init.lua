@@ -38,11 +38,14 @@ function package:_init (options)
     self:registerCommand(tdTag, function(_, content)
       local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
       local row = tbl[#tbl]
+      local hbox, hlist = SILE.typesetter:makeHbox(content)
       row[#row+1] = {
         content = content,
-        hbox = SILE.call("hbox", {}, content)
+        hbox = hbox
       }
-      SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
+      if #hlist > 0 then
+        SU.warn("Ignored migrating content in simpletable row (unsupported)")
+      end
     end)
 
     self:registerCommand(tableTag, function(_, content)

@@ -14,8 +14,7 @@ local typesetMark = function (open, setback, scale, color, mark)
           SILE.call("rebox", { width = setback, height = 0 }, { mark })
         else
           SILE.typesetter:pushGlue(SILE.nodefactory.hfillglue())
-          local hbox = SILE.call("hbox", {}, { mark })
-          table.remove(SILE.typesetter.state.nodes) -- steal it back
+          local hbox = SILE.typesetter:makeHbox({ mark }) -- for measuring
           SILE.typesetter:pushGlue({ width = setback - hbox.width })
           SILE.call("rebox", { width = hbox.width, height = 0 }, { mark })
           SILE.typesetter:pushGlue({ width = -setback })
@@ -46,6 +45,7 @@ function package:registerCommands ()
   end, "The font from which to pull the quotation marks.")
 
   self:registerCommand("pullquote", function (options, content)
+    SILE.typesetter:leaveHmode()
     local author = options.author or nil
     local scale = options.scale or 3
     local color = options.color or "#999999"

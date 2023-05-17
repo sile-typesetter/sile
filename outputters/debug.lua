@@ -24,6 +24,7 @@ end
 
 local outputter = pl.class(base)
 outputter._name = "debug"
+outputter.extension = "debug"
 
 -- The outputter init can't actually initialize output (as logical as it might
 -- have seemed) because that requires a page size which we don't know yet.
@@ -32,7 +33,7 @@ outputter._name = "debug"
 function outputter:_ensureInit ()
   if not started then
     started = true -- keep this before self:_writeline or it will be a race condition!
-    local fname = self:getOutputFilename("debug")
+    local fname = self:getOutputFilename()
     outfile = fname == "-" and io.stdout or io.open(fname, "w+")
     if SILE.documentState.paperSize then
       self:_writeline("Set paper size ", SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])

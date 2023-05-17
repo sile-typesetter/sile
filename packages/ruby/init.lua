@@ -65,14 +65,13 @@ function package:registerCommands ()
 
     checkIfSpacerNeeded(reading)
 
-    SILE.call("hbox", {}, function ()
+    local rubybox = SILE.call("hbox", {}, function ()
       SILE.settings:temporarily(function ()
         SILE.call("noindent")
         SILE.call("ruby:font")
         SILE.typesetter:typeset(reading)
       end)
     end)
-    local rubybox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
     rubybox.outputYourself = function (box, typesetter, line)
       local ox = typesetter.frame.state.cursorX
       local oy = typesetter.frame.state.cursorY
@@ -87,8 +86,7 @@ function package:registerCommands ()
       typesetter.frame.state.cursorY = oy
     end
     -- measure the content
-    SILE.call("hbox", {}, content)
-    local cbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
+    local cbox = SILE.call("hbox", {}, content)
     SU.debug("ruby", "base box is", cbox)
     SU.debug("ruby", "reading is", rubybox)
     if cbox:lineContribution() > rubybox:lineContribution() then

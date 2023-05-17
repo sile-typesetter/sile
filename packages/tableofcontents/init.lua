@@ -171,7 +171,7 @@ function package:registerCommands ()
     SILE.call("info", {
       category = "toc",
       value = {
-        label = content,
+        label = SU.stripContentPos(content),
         level = (options.level or 1),
         number = options.number,
         link = dest
@@ -235,7 +235,7 @@ package.documentation = [[
 \begin{document}
 The \autodoc:package{tableofcontents} package provides tools for class authors to
 create tables of contents (TOCs). When you are writing sectioning commands such
-as \code{\\chapter} or \code{\\section}, your classes should call the
+as \autodoc:command[check=false]{\chapter} or \autodoc:command[check=false]{\section}, your classes should call the
 \autodoc:command{\tocentry[level=<number>, number=<strings>]{<title>}}
 command to register a table of contents entry.
 At the end of each page the class will call a hook function (\code{moveTocNodes}) that collates the table of contents entries from that pages and records which page they’re on.

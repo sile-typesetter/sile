@@ -12,12 +12,12 @@ In addition, options such as paper size could be set; for example, \code{-O pape
 
 The class initalization for DocBoox isn’t too fancy; it just loads up a couple packages that will get used later.
 
-\begin{note}
+\begin{autodoc:note}
 Much of the example code in this chapter is in SIL format using macros.
 The actual \code{docbook} class currently uses Lua functions to specify these commands.
 The functionality is the same, but the Lua syntax is more flexible and recommended for most use cases.
 The SILE \autodoc:command{\define} macros shown here can still be used in a preamble file if desired.
-\end{note}
+\end{autodoc:note}
 
 Now we can start defining SILE commands to render XML elements.
 Most of these are fairly straightforward so we will not dwell on them too much.
@@ -56,15 +56,14 @@ What we will do to deal with this situation is provide a very simple definition 
 
 Let’s look at \code{<example>}, which has the added complexity of needing to keep track of an article number.
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 self:registerCommand("example", function(options,content)
-  SILE.call("increment-counter", \{id="Example"\})
+  SILE.call("increment-counter", {id="Example"})
   SILE.call("bigskip")
   SILE.call("docbook-line")
-  SILE.call("docbook-titling", \{\}, function()
+  SILE.call("docbook-titling", {}, function()
     SILE.typesetter:typeset("Example".." ".. class:formatCounter(SILE.scratch.counters.Example]))
-\end{verbatim}
+\end{raw}
 
 \code{\\docbook-line} is a command that we’ve defined in the \code{docbook.sil} macros file to draw a line across the width of the page to set off examples and so on.
 \code{\\docbook-titling} is a command similarly defined in \code{docbook.sil} which sets the default font for titling and headers. Once again, if someone wants to customize the look of the output we make it easier for them by giving them simple, compartmentalized commands to override.
@@ -72,39 +71,39 @@ self:registerCommand("example", function(options,content)
 So far so good, but how do we extract the \code{<title>} tag from the \code{content} abstract syntax tree?
 SILE does not provide XPath or CSS-style selectors to locate content form within the DOM tree;\footnote{Patches, as they say, are welcome.} instead there is a simple one-level function called \code{SILE.inputter:findInTree()} which looks for a particular tag or command name within the immediate children of the current tree:
 
-\begin{verbatim}
+\begin[type=autodoc:codeblock]{raw}
     local t = SILE.inputter:findInTree(content, "title")
     if t then
       SILE.typesetter:typeset(": ")
       SILE.process(t)
-\end{verbatim}
+\end{raw}
 
-We’ve output \examplefont{Example 123} so far, and now we need to say \examplefont{: \em{Title}}.
+We’ve output \autodoc:example{Example 123} so far, and now we need to say \autodoc:example{: \em{Title}}.
 But we also need to ensure that the \code{<title>} tag doesn’t get processed again when we process the content of the example:
 
-\begin{verbatim}
+\begin[type=autodoc:codeblock]{raw}
       docbook.wipe(t)
-\end{verbatim}
+\end{raw}
 
 \code{docbook.wipe} is a little helper function which nullifies the content of a Lua table:
 
-\begin{verbatim}
+\begin[type=autodoc:codeblock]{raw}
 function docbook.wipe(tbl)
   while((#tbl) > 0) do tbl[#tbl] = nil end
 end
-\end{verbatim}
+\end{raw}
 
 Let’s finish off the \code{<example>} example by skipping a bit between the title and the content, processing the content and drawing a final line across the page:
 
-\begin{verbatim}
+\begin[type=autodoc:codeblock]{raw}
     end
   end)
   SILE.call("smallskip")
   SILE.process(content)
   SILE.call("docbook-line")
   SILE.call("bigskip")
-\line
-\end{verbatim}
+end)
+\end{raw}
 
 It happens that the \code{<example>}, \code{<table>}, and \code{<figure>} tags are pretty equivalent: they produce numbered titles and then go on to process their content.
 So in reality we actually define an abstract \code{countedThing} method and define these commands in terms of that.
@@ -117,57 +116,55 @@ So in order to know what level we are currently on, we need a stack. We also nee
 For instance, with the expected section numbers and titles in XML comments:
 
 \begin{verbatim}
-  <section><title>A</title> : \examplefont{1. A}
-    <section><title>B</title>: \examplefont{1.1 B}
+  <section><title>A</title> : \autodoc:example{1. A}
+    <section><title>B</title>: \autodoc:example{1.1 B}
     </section>
-    <section><title>C</title>: \examplefont{1.2 C}
-      <section><title>D</title>: \examplefont{1.2.1 D}
+    <section><title>C</title>: \autodoc:example{1.2 C}
+      <section><title>D</title>: \autodoc:example{1.2.1 D}
       </section>
     </section>
-    <section><title>E</title>: \examplefont{1.3 E}
+    <section><title>E</title>: \autodoc:example{1.3 E}
   </section>
-  <section><title>F</title>: \examplefont{2. F}
+  <section><title>F</title>: \autodoc:example{2. F}
 \end{verbatim}
 
 So, we will keep two variables: the current level, and the counters for all of the levels so far.
 Each time we enter a \code{section}, we increase the current level counter:
 
-\begin{verbatim}
-\line
+\begin[type=autodoc:codeblock]{raw}
 self:registerCommand("section", function (options, content)
   SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel + 1
-\end{verbatim}
+\end{raw}
 
-We also increment the count at the current level, while at the same time wiping out any counts we have for levels above the current level (if we didn’t do that, then \examplefont{E} in our example above would be marked \examplefont{1.3.1}):
+We also increment the count at the current level, while at the same time wiping out any counts we have for levels above the current level (if we didn’t do that, then \autodoc:example{E} in our example above would be marked \autodoc:example{1.3.1}):
 
-\begin{verbatim}
+\begin[type=autodoc:codeblock]{raw}
   SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] =
     (SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] or 0) + 1
   while #(SILE.scratch.docbook.seccount) > SILE.scratch.docbook.seclevel do
     SILE.scratch.docbook.seccount[#(SILE.scratch.docbook.seccount)] = nil
   end
-\end{verbatim}
+\end{raw}
 
 Now we find the title, and prefix it by the concatenation of all the \code{seccount}s:
 
-\begin{verbatim}
+\begin[type=autodoc:codeblock]{raw}
   local title = SILE.inputter:findInTree(content, "title")
   local number = table.concat(SILE.scratch.docbook.seccount, '.')
   if title then
-    SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title",\{\},function()
+    SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title",{},function()
       SILE.typesetter:typeset(number.." ")
       SILE.process(title)
     end)
     docbook.wipe(title)
   end
-\end{verbatim}
+\end{raw}
 
 Finally we can process the content of the tag, and decrease the level count as we leave the \code{</section>} tag:
 
-\begin{verbatim}
+\begin[type=autodoc:codeblock]{raw}
   SILE.process(content)
   SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel - 1
 end)
-\line
-\end{verbatim}
+\end{raw}
 \end{document}

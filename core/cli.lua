@@ -29,6 +29,7 @@ cli.parseArguments = function ()
   cliargs:option("-p, --preamble=FILE", "process SIL, XML, or other content before the input document", {})
   cliargs:option("-P, --postamble=FILE", "process SIL, XML, or other content after the input document", {})
   cliargs:option("-u, --use=MODULE[[PARAMETER=VALUE][,PARAMETER=VALUE]]", "load and initialize a module before processing input", {})
+  cliargs:flag("-q, --quiet", "suppress warnings and informational messages during processing")
   cliargs:flag("-t, --traceback", "display detailed location trace on errors and warnings")
   cliargs:flag("-h, --help", "display this help, then exit")
   cliargs:flag("-v, --version", "display version information, then exit", print_version)
@@ -38,23 +39,16 @@ cli.parseArguments = function ()
   local opts, parse_err = cliargs:parse(_arg)
   if not opts and parse_err then
     print(parse_err)
-    os.exit(1)
+    local code = parse_err:match("^Usage:") and 0 or 1
+    os.exit(code)
   end
   if opts.INPUTS then
     local has_input_filename = false
-    local set_master_filename = function (filename)
-      -- Turn slashes around in the event we get passed a path from a Windows shell
-      local normalized_filename = pl.path.normcase(filename)
-      -- Strip extension
-      SILE.masterFilename = pl.path.splitext(normalized_filename)
-      SILE.masterDir = pl.path.dirname(SILE.masterFilename)
-      has_input_filename = true
-    end
     pl.tablex.foreachi(opts.INPUTS, function (v, k)
       if v == "STDIO" then
         opts.INPUTS[k] = "-"
       elseif not has_input_filename then
-        set_master_filename(v)
+        has_input_filename = true
       end
     end)
     if not has_input_filename and not opts.output then
@@ -133,6 +127,7 @@ cli.parseArguments = function ()
     return summary(...) .. "\n\nRun with --traceback for more detailed trace leading up to errors."
   end
   SILE.errorHandler = opts.traceback and trace or identity
+  SILE.quiet = opts.quiet
   SILE.traceback = opts.traceback
 end
 

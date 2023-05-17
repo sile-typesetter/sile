@@ -19,7 +19,7 @@ installation directory. For instance, we’ll soon be talking about the
 \use[module=packages.grid]
 \end{raw}
 
-\note{\notehead{How SILE locates files} SILE searches for paths in a variety of
+\autodoc:note{SILE searches for paths in a variety of
 directories: first, in the directory in which your input file is located,
 then the current working directory; next, if the environment variable
 \code{SILE_PATH} is set, it will look in that directory; then it will look in
@@ -162,7 +162,7 @@ basic functionality to other packages and classes. Classes such as the
 \subsection{rebox}
 \package-documentation{rebox}
 
-\section{scalebox}
+\subsection{scalebox}
 \package-documentation{scalebox}
 
 \subsection{tableofcontents}

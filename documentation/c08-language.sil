@@ -11,8 +11,8 @@ We want to make it easy for minority languages and scripts to implement their ow
 
 For SILE to know how to typeset text you will need to tell it what language your text is in!
 There are two ways to do this:
-as part of the \code{\\font[language=...]} command as detailed in Chapter 4,
-or by use of the \code{\\language[main=...]} command.
+as part of the \autodoc:command{\font[language=<code>]} command as detailed in Chapter 4,
+or by use of the \autodoc:command{\language[main=<code>]} command.
 Both of these expect an ISO639-1 language code such as \code{en} for English, \code{ar} for Arabic, and so on.
 
 Selecting a language by either method loads up the \em{language support} files for that language.
@@ -41,11 +41,11 @@ then in Urdu:
 \\font[family=LateefGR,language=urd]\{\font[family=LateefGR]{ه{}ه{}ه}\}.
 \end{autodoc:codeblock}
 
-\begin{examplefont}
+\begin{autodoc:example}
 Standard Arabic: \font[family=LateefGR,language=ar]{ههه};
 then in Sindi: \font[family=LateefGR,language=snd]{ههه};
 then in Urdu: \font[family=LateefGR,language=urd]{ههه}.
-\end{examplefont}
+\end{autodoc:example}
 \bidi-off
 
 \section{Direction}
@@ -71,7 +71,7 @@ direction joined by a hyphen.
 Each frame has its own writing direction. By default, this is \code{LTR-TTB}.
 Normally you would set the writing direction once, in the master frames of
 your document class. One easy way to do this in the \code{plain} document
-class is to pass the \code{direction=...} parameter to the
+class is to pass the \autodoc:parameter{direction} parameter to the
 \code{\\begin\{document\}} command. For example, Mongolian is written top
 to bottom with text lines moving from the left to the right of the page,
 so to create a Mongolian document, use:
@@ -84,7 +84,7 @@ so to create a Mongolian document, use:
 \end{raw}
 
 To change the writing direction for a single frame, use
-\code{\\thisframedirection[direction=...]}.
+\autodoc:command{\thisframedirection[direction=<dir>]}.
 
 SILE uses the Unicode bidirectional algorithm to handle texts written in
 mixed directionalities. See \url{https://sile-typesetter.org/examples/i18n.sil}
@@ -93,19 +93,19 @@ for an example which brings together multiple scripts and directionalities.
 \section{Hyphenation}
 
 SILE hyphenates words based on its current language. (Language is set using the
-\code{\\font} command above.) SILE comes with support for hyphenating a wide
+\autodoc:command{\font} command above.) SILE comes with support for hyphenating a wide
 variety of languages, and also aims to encode specific typesetting knowledge about
 languages.
 
-The default hyphen character is “-”, which can be tweaked by the \code{\\font}
-parameter \code{hyphenchar}. It accepts a Unicode character or Unicode codepoint
+The default hyphen character is “-”, which can be tweaked by the \autodoc:command{\font}
+parameter \autodoc:parameter{hyphenchar}. It accepts a Unicode character or Unicode codepoint
 in \code{[Uu]+<code>} or Hexadecimal \code{0[Xx]<code>} format—for instance,
-\code{\\font[family=Rachana,language=ml,hyphenchar=U+200C]}.
+\autodoc:command{\font[family=Rachana,language=ml,hyphenchar=U+200C]}.
 
 SILE comes with a special “language” called \code{und}, which has no hyphenation
 patterns available. If you switch to this language, text will not be hyphenated.
-The command \code{\\nohyphenation\{…\}} is provided as a shortcut for
-\code{\\font[language=und]\{…\}}.
+The command \autodoc:command{\nohyphenation{…}} is provided as a shortcut for
+\autodoc:command{\font[language=und]{…}}.
 
 The hyphenator uses the same algorithm as TeX and can use TeX hyphenation
 pattern files if they are converted to Lua format. To implement hyphenation
@@ -116,7 +116,7 @@ are available; if not, work through the resources at
 \section{Localization}
 
 A small handful of strings may be programatically added to documents depending on language, context, and options.
-For example by default in English the \code{book} class will prepend “Chapter ” before chapter numbers output by the \code{\\chapter} command.
+For example by default in English the \code{book} class will prepend “Chapter ” before chapter numbers output by the \autodoc:command{\chapter} command.
 These localized strings are managed internally using the Fluent localization system.%
 \footnote{See Project Fluent (\url{https://projectfluent.org}) for details on the data format and uses.}
 Some default localizations are provided for a handful of languages, but it is quite likely SILE will not (yet) have your language.

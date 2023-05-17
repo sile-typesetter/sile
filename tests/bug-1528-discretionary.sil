@@ -1,0 +1,64 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\language[main=en]
+% Test cases for discretionries with all options
+\set[parameter=shaper.spaceenlargementfactor, value=1]
+
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+day
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+day
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cult
+day.
+
+xxxxxxx di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+day
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+day
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+di\discretionary[prebreak=f-,postbreak=fi, replacement=ffi]cul\discretionary[prebreak=-]ty
+day
+
+\end{document}

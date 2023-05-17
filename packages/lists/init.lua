@@ -86,7 +86,7 @@ function package:doItem (options, content)
     SILE.call("par")
   end
 
-  local mark = SILE.call("hbox", {}, function ()
+  local mark = SILE.typesetter:makeHbox(function ()
     if enumStyle.display then
       if enumStyle.before then SILE.typesetter:typeset(enumStyle.before) end
       SILE.typesetter:typeset(self.class.packages.counters:formatCounter({
@@ -99,7 +99,6 @@ function package:doItem (options, content)
       SILE.typesetter:typeset(bullet)
     end
   end)
-  table.remove(SILE.typesetter.state.nodes) -- steal it back
 
   local stepback
   if enumStyle.display then

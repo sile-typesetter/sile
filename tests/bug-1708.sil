@@ -1,0 +1,12 @@
+\begin[papersize=a7,class=book]{document}
+\neverindent
+\nofolios
+\set[parameter=document.letterspaceglue, value=5pt]
+% Bug 1708: New typesetter instance (as e.g. done via a footnote)
+% shouldn't reset settings from the global scope.
+
+Lorem ipsum\footnote{test}
+
+Lorem ipsum% Should still have letterspacing at 5pt
+
+\end{document}

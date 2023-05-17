@@ -8,6 +8,7 @@ local started = false
 
 local outputter = pl.class(base)
 outputter._name = "text"
+outputter.extension = "txt"
 
 -- The outputter init can't actually initialize output (as logical as it might
 -- have seemed) because that requires a page size which we don't know yet.
@@ -15,7 +16,7 @@ outputter._name = "text"
 
 function outputter:_ensureInit ()
   if not outfile then
-    local fname = self:getOutputFilename("text")
+    local fname = self:getOutputFilename()
     outfile = fname == "-" and io.stdout or io.open(fname, "w+")
   end
 end

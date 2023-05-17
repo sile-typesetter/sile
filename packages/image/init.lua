@@ -13,18 +13,21 @@ function package:registerCommands ()
     local src = SILE.resolveFile(options.src) or SU.error("Couldn't find file "..options.src)
     local box_width, box_height, _, _ = SILE.outputter:getImageSize(src, pageno)
     local sx, sy = 1, 1
-    if width > 0 or height > 0 then
-      sx = width > 0 and box_width / width
-      sy = height > 0 and box_height / height
-      sx = sx or sy
-      sy = sy or sx
+    if width > 0 and height > 0 then
+      sx, sy = box_width / width, box_height / height
+    elseif width > 0 then
+      sx = box_width / width
+      sy = sx
+    elseif height > 0 then
+      sy = box_height / height
+      sx = sy
     end
 
     SILE.typesetter:pushHbox({
-      width= box_width / (sx),
-      height= box_height / (sy),
-      depth= 0,
-      value= src,
+      width = box_width / sx,
+      height = box_height / sy,
+      depth = 0,
+      value = src,
       outputYourself = function (node, typesetter, _)
         SILE.outputter:drawImage(node.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-node.height, node.width, node.height, pageno)
         typesetter.frame:advanceWritingDirection(node.width)

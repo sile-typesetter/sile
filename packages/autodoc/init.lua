@@ -13,6 +13,7 @@ local theme = {
   setting = "#42280e", -- some kind of dark brown
   bracketed = "#656565", -- some grey
   package = "#172557", -- saturated space blue
+  note = "#525257" -- some asphalt grey hue
 }
 
 local colorWrapper = function (ctype, content)
@@ -122,7 +123,7 @@ end
 
 function package:registerRawHandlers ()
 
-  self.class:registerRawHandler("autodoc:codeblock", function(options, content)
+  self:registerRawHandler("autodoc:codeblock", function(options, content)
     SILE.call("autodoc:codeblock", options, { content[1] }) -- Still issues with SU.contentToString() witb raw content
   end)
 
@@ -297,25 +298,78 @@ function package:registerCommands ()
   -- Homogenizing the appearance of blocks of code
 
   self:registerCommand("autodoc:codeblock", function(_, content)
-    SILE.call("verbatim", {}, function ()
-      SILE.call("autodoc:line")
-      SILE.call("novbreak")
-      SILE.process(content)
-      SILE.call("autodoc:line")
+      SILE.call("bigskip")
+      SILE.settings:temporarily(function()
+        -- Note: We avoid using the verbatim environment and simplify things a bit
+        -- (and try to better enforce novbreak points of insertion)
+        SILE.call("verbatim:font")
+        SILE.settings:set("typesetter.parseppattern", "\n")
+        SILE.settings:set("typesetter.obeyspaces", true)
+        SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+        SILE.settings:set("document.parskip", SILE.nodefactory.vglue("1pt"))
+        SILE.settings:set("document.baselineskip", SILE.nodefactory.glue("1.2em"))
+        SILE.settings:set("document.spaceskip", SILE.length("1spc"))
+        SILE.settings:set("shaper.variablespaces", false)
+        SILE.settings:set("document.language", "und")
+        SILE.call("autodoc:line")
+        SILE.call("novbreak")
+        SILE.process(content)
+        SILE.call("novbreak")
+        SILE.typesetter:leaveHmode()
     end)
+    SILE.call("novbreak")
+    SILE.call("autodoc:line")
+    SILE.call("smallskip")
   end, "Outputs its content as a standardized block of code")
 
   self:registerCommand("autodoc:line", function(_, _)
-    -- Loosely derived from the \line command from the original SILE manual...
-    SILE.call("novbreak")
-    SILE.call("skip", { height = "5pt" })
-    SILE.call("novbreak")
-    SILE.call("noindent")
-    SILE.call("hrule", { width = "100%lw", height = "0.3pt"})
-    SILE.call("par")
-    SILE.call("novbreak")
-    SILE.call("skip", { height = "5pt" })
-  end, "Ouputs a line used for surrounding code blocks")
+    SILE.call("fullrule", { thickness = "0.5pt" })
+  end, "Ouputs a line used for surrounding code blocks (somewhat internal)")
+
+  self:registerCommand("autodoc:example", function(_, content)
+    -- Loosely derived from the \examplefont command from the original SILE manual...
+    SILE.call("font", { family = "Cormorant Infant", size = "1.1em" }, content)
+  end, "Marks content as an example (possibly typeset in a distinct font, etc.)")
+
+  self:registerCommand("autodoc:note", function(_, content)
+    -- Replacing the \note command from the original SILE manual...
+    local linedimen = SILE.length("0.75em")
+    local linethickness = SILE.length("0.3pt")
+    local ls = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+    local p = SILE.settings:get("document.parindent")
+    local leftindent = (p.width:absolute() + ls.width:absolute()).length -- fixed part
+    local innerindent = SILE.measurement("1em"):absolute()
+    SILE.settings:temporarily(function ()
+      SILE.settings:set("document.lskip", leftindent)
+      SILE.settings:set("document.rskip", SILE.nodefactory.glue())
+
+      SILE.call("noindent")
+      colorWrapper("note", function ()
+        SILE.call("hrule", { width = linethickness, height = linethickness, depth = linedimen })
+        SILE.call("hrule", { width = 3 * linedimen, height = linethickness })
+        SILE.call("hfill")
+        SILE.call("hrule", { width = 3 * linedimen, height = linethickness })
+        SILE.call("hrule", { width = linethickness, height = linethickness, depth = linedimen })
+
+        SILE.call("novbreak")
+        SILE.settings:temporarily(function ()
+          SILE.settings:set("document.lskip", SILE.nodefactory.glue(leftindent + innerindent))
+          SILE.settings:set("document.rskip", SILE.nodefactory.glue(innerindent))
+          SILE.call("font", { size = "0.95em", style = "italic "}, content)
+          SILE.call("novbreak")
+        end)
+
+        SILE.call("noindent")
+        SILE.call("hrule", { width  = linethickness, depth = linethickness, height = linedimen })
+        SILE.call("hrule", { width  = 3 * linedimen, depth = linethickness })
+        SILE.call("hfill")
+        SILE.call("hrule", { width  = 3 * linedimen, depth = linethickness })
+        SILE.call("hrule", { width  = linethickness, depth = linethickness, height  = linedimen })
+        SILE.typesetter:leaveHmode()
+      end)
+    end)
+    SILE.call("smallskip")
+  end, "Outputs its content as a note in a specific boxed and indented block")
 
 end
 
@@ -357,6 +411,11 @@ This is not a true verbatim environment, and you still have to escape SILE’s s
 (unless calling commands is what you really intend doing there, obviously).
 For convenience, the package also provides a \code{raw} handler going by the same name, where you do not
 have to escape the special characters (backslashes, braces, percents).
+
+The \autodoc:command{\autodoc:example} marks its content as an example, possibly typeset in a different choice
+of font.
+
+The \autodoc:command{\autodoc:note} outputs its content as a note, in a dedicated framed and indented block.
 \end{document}
 ]]
 

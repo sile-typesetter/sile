@@ -2,6 +2,10 @@ name: Test
 
 on: [ push, pull_request ]
 
+concurrency:
+  group: ${{ github.workflow}}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   test:
@@ -9,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         luaVersion:
-          - [ '5.4.2', 'MYCFLAGS=-fPIC' ] # https://github.com/luarocks/luarocks/issues/1302
+          - [ '5.4', 'MYCFLAGS=-fPIC' ]
           - [ '5.3', 'MYCFLAGS=-fPIC' ]
           - [ '5.2', 'MYCFLAGS=-fPIC' ]
           - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"' ]
@@ -34,7 +38,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
+          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
       - name: Fetch tags
         run: |
           git fetch --prune --tags ||:
@@ -65,7 +69,7 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
-            --enable-developer LUACHECK=false \
+            --enable-developer LUACHECK=false NIX=false \
             --disable-font-variations \
             --without-system-luarocks \
             --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit \
@@ -74,9 +78,11 @@ jobs:
         run: |
           make
       - name: Test Busted
+        timeout-minutes: ${{ runner.debug && 60 || 6 }}
         run: |
           make busted
       - name: Test Regressions
+        timeout-minutes: ${{ runner.debug && 60 || 6 }}
         run: |
           make regressions
       - name: Upload artifacts

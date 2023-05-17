@@ -87,9 +87,10 @@ function package:registerCommands ()
 
   self:registerCommand("leaders", function(options, content)
     local width = options.width and SU.cast("glue", options.width) or SILE.nodefactory.hfillglue()
-    SILE.call("hbox", {}, content)
-    local hbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
-    SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+    local hbox, hlist = SILE.typesetter:makeHbox(content)
+    if #hlist > 0 then
+      SU.error("Forbidden migrating content in leaders")
+    end
     local l = leader({ width = width, value = hbox })
     SILE.typesetter:pushExplicitGlue(l)
   end)
@@ -119,9 +120,9 @@ It provides the \autodoc:command{\dotfill} command, which does this:
 A\dotfill{}B
 \end{raw}
 
-\begin{examplefont}
+\begin{autodoc:example}
 A\dotfill{}B\par
-\end{examplefont}
+\end{autodoc:example}
 
 It also provides the \autodoc:command{\leaders[width=<dimension>]{<content>}} command which allow you to define your own leaders.
 For example:
@@ -130,9 +131,9 @@ For example:
 A\leaders[width=40pt]{/\\}B
 \end{raw}
 
-\begin{examplefont}
+\begin{autodoc:example}
 A\leaders[width=40pt]{/\\}B\par
-\end{examplefont}
+\end{autodoc:example}
 
 If the width is omitted, the leaders extend as much as possible (as a \autodoc:command{\dotfill} or \autodoc:command{\hfill}).
 

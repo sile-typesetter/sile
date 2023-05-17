@@ -89,18 +89,17 @@ function package:registerCommands ()
       if SILE.typesetter.frame:writingDirection() ~= "TTB" or nodes[i].is_glue then
         SILE.typesetter:pushHorizontal(nodes[i])
       elseif nodes[i]:lineContribution():tonumber() > 0 then
-        SILE.call("hbox", {}, function ()
+        local hbox = SILE.call("hbox", {}, function ()
           SILE.typesetter:pushHorizontal(nodes[i])
         end)
-        local n = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
         -- Turn off all complex flags.
-        for j = 1,#(n.value) do
-          for k = 1,#(n.value[j].nodes) do
-            n.value[j].nodes[k].value.complex = false
+        for j = 1, #(hbox.value) do
+          for k = 1, #(hbox.value[j].nodes) do
+            hbox.value[j].nodes[k].value.complex = false
           end
         end
-        n.oldOutputYourself = n.outputYourself
-        n.outputYourself = outputLatinInTate
+        hbox.oldOutputYourself = hbox.outputYourself
+        hbox.outputYourself = outputLatinInTate
       end
     end
   end, "Typeset rotated Western text in vertical Japanese")
@@ -117,11 +116,10 @@ function package:registerCommands ()
       SILE.settings:set("document.language", "und")
       SILE.settings:set("font.direction", "LTR")
       SILE.call("rotate",{angle =-90}, function ()
-        SILE.call("hbox", {}, content)
-        local n = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
-        n.misfit = true
-        n.oldOutputYourself = n.outputYourself
-        n.outputYourself = outputTateChuYoko
+        local hbox = SILE.call("hbox", {}, content)
+        hbox.misfit = true
+        hbox.oldOutputYourself = hbox.outputYourself
+        hbox.outputYourself = outputTateChuYoko
       end)
 
     end)

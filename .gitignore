@@ -20,6 +20,8 @@ build-aux/ltsugar.m4
 build-aux/ltversion.m4
 build-aux/lt~obsolete.m4
 build-aux/missing
+build-aux/list-dist-files.sh
+tests/regressions.pl
 
 # Other autojunk
 .deps
@@ -74,6 +76,7 @@ tags
 Makefile-distfiles
 documentation/*.pdf
 gource.webm
+*.rockspec
 .fonts/*
 .sources/*
 /sile
@@ -84,6 +87,8 @@ sile.1
 /.built-subdirs
 *.so
 core/version.lua
+core/features.lua
+core/pathsetup.lua
 
 # Nix symlink to builds
 /result
