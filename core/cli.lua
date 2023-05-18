@@ -15,7 +15,7 @@ cli.parseArguments = function ()
       changed to .pdf. Additional input or output formats can be handled by requiring a
       module that adds support for them first.
     ]])
-  cliargs:splat("INPUT", "input document, by default in SIL or XML format")
+  cliargs:splat("INPUTS", "input document(s), by default in SIL or XML format", nil, 999)
   cliargs:option("-b, --backend=VALUE", "choose an alternative output backend")
   cliargs:option("-c, --class=VALUE", "override default document class")
   cliargs:option("-d, --debug=VALUE", "show debug information for tagged aspects of SILE’s operation", {})
@@ -42,11 +42,20 @@ cli.parseArguments = function ()
     local code = parse_err:match("^Usage:") and 0 or 1
     os.exit(code)
   end
-  if opts.INPUT then
-    if opts.INPUT == "STDIO" then
-      opts.INPUT = "-"
+  if opts.INPUTS then
+    local has_input_filename = false
+    pl.tablex.foreachi(opts.INPUTS, function (v, k)
+      if v == "STDIO" then
+        opts.INPUTS[k] = "-"
+      elseif not has_input_filename then
+        has_input_filename = true
+      end
+    end)
+    if not has_input_filename and not opts.output then
+      SU.error("Unable to derive an output filename (perhaps because input is a STDIO stream).\n"..
+               "  Please use --output to set one explicitly.")
     end
-    SILE.input.filename = opts.INPUT
+    SILE.input.filenames = opts.INPUTS
   end
   if opts.backend then
     SILE.backend = opts.backend

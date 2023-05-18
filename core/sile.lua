@@ -62,7 +62,7 @@ SILE.rawHandlers = {}
 -- needed for a user to use a SILE-as-a-library verion to produce documents
 -- programatically.
 SILE.input = {
-  filename = "",
+  filenames = {},
   evaluates = {},
   evaluateAfters = {},
   includes = {},
@@ -291,7 +291,7 @@ function SILE.processString (doc, format, filename, options)
   -- a specific inputter to use, use it at the exclusion of all content type
   -- detection
   local inputter
-  if filename and filename:gsub("STDIN", "-") == SILE.input.filename and SILE.inputter then
+  if filename and pl.path.splitext(pl.path.normcase(filename)) == SILE.masterFilename and SILE.inputter then
     inputter = SILE.inputter
   else
     format = format or detectFormat(doc, filename)
@@ -301,7 +301,7 @@ function SILE.processString (doc, format, filename, options)
     inputter = SILE.inputters[format](options)
     -- If we did content detection *and* this is the master file, save the
     -- inputter for posterity and postambles
-    if filename and filename:gsub("STDIN", "-") == SILE.input.filename then
+    if filename and pl.path.splitext(pl.path.normcase(filename)) == SILE.masterFilename then
       SILE.inputter = inputter
     end
   end
@@ -315,6 +315,7 @@ function SILE.processFile (filename, format, options)
   local doc
   if filename == "-" then
     filename = "STDIN"
+    SILE.masterFilename = "STDIN"
     doc = io.stdin:read("*a")
   else
     -- Turn slashes around in the event we get passed a path from a Windows shell
