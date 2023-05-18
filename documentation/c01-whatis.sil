@@ -115,5 +115,5 @@ In the final chapters of this book, we’ll look at some extended examples of cr
 
 SILE\footnote{In case you’re wondering, the author pronounces it \font[family=Gentium Plus]{/saɪəl/}, to rhyme with “trial”.} takes some textual instructions and turns them into PDF output.
 It has features inspired by TeX and InDesign, but seeks to be more flexible, extensible and programmable than either of them.
-It’s useful both for typesetting documents (such as this very documentation) written in the SILE language, and as a processing system for styling and outputting structured data.
+It’s useful for typesetting structured content whether they are documents written in the SIL input syntax (such as this very documentation), XML, or in some other structured data syntax that needs styling and outputting.
 \end{document}
