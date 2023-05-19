@@ -29,7 +29,7 @@ end
 
 SILE.init()
 
-if SILE.input.filename and SILE.input.filename:len() > 0 then
+if SILE.input.filenames and #SILE.input.filenames >= 1 then
 
   -- Deprecated, notice given in core.cli when argument used
   for _, path in ipairs(SILE.input.includes) do
@@ -49,7 +49,7 @@ if SILE.input.filename and SILE.input.filename:len() > 0 then
   end
 
   local main, err = xpcall(function()
-    return SILE.processFile(SILE.input.filename)
+    pl.tablex.imap(SILE.processFile, SILE.input.filenames)
   end, SILE.errorHandler)
 
   if not main then

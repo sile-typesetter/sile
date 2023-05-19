@@ -444,7 +444,7 @@ stack traceback:
 
 Sometimes it’s useful for you to try out Lua code within the SILE environment;
 	SILE contains a REPL (read-evaluate-print loop) for you to enter Lua code and print the results back to you.
-If you call SILE with no input file name, it enters the REPL:
+If you call SILE with no input file names, it enters the REPL:
 
 \begin{autodoc:codeblock}
 \sileversion
