@@ -15,7 +15,7 @@ fn main() -> sile::Result<()> {
     let matches = app.get_matches();
     let args = Cli::from_arg_matches(&matches).expect("Unable to parse arguments");
     sile::run(
-        args.input,
+        args.inputs,
         args.backend,
         args.class,
         args.debug,

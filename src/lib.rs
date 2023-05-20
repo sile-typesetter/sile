@@ -36,7 +36,7 @@ pub fn version() -> crate::Result<String> {
 }
 
 pub fn run(
-    input: Option<PathBuf>,
+    inputs: Option<Vec<PathBuf>>,
     backend: Option<String>,
     class: Option<String>,
     debug: Option<Vec<String>>,
@@ -65,6 +65,7 @@ pub fn run(
         .eval()?;
     sile.set("traceback", traceback)?;
     sile.set("quiet", quiet)?;
+    let mut has_input_filename = false;
     if let Some(flags) = debug {
         let debug_flags: LuaTable = sile.get("debugFlags")?;
         for flag in flags {
@@ -97,6 +98,10 @@ pub fn run(
     if let Some(path) = makedeps {
         sile_input.set("makedeps", pb_to_st(&path))?;
     }
+    if let Some(path) = output {
+        sile.set("outputFilename", pb_to_st(&path))?;
+        has_input_filename = true;
+    }
     if let Some(options) = options {
         sile_input.set("options", options)?;
     }
@@ -108,14 +113,26 @@ pub fn run(
     }
     let init: LuaFunction = sile.get("init")?;
     init.call::<_, _>(())?;
-    if let Some(input) = input {
-        let input_filename: LuaString = lua.create_string(&pb_to_st(&input))?;
-        if let Some(path) = output {
-            sile.set("outputFilename", pb_to_st(&path))?;
+    if let Some(inputs) = inputs {
+        let input_filenames: LuaTable = lua.create_table()?;
+        for input in inputs.iter() {
+            let path = &pb_to_st(input);
+            if !has_input_filename && path != "-" {
+                has_input_filename = true;
+            }
+            input_filenames.push(lua.create_string(path)?)?;
         }
-        sile_input.set("filename", input_filename)?;
+        if !has_input_filename {
+            panic!(
+                "\nUnable to derive an output filename (perhaps because input is a STDIO stream)\nPlease use --output to set one explicitly."
+            );
+        }
+        sile_input.set("filenames", input_filenames)?;
+        let input_filenames: LuaTable = sile_input.get("filenames")?;
         let process_file: LuaFunction = sile.get("processFile")?;
-        process_file.call::<LuaString, ()>(sile_input.get("filename")?)?;
+        for file in input_filenames.sequence_values::<LuaString>() {
+            process_file.call::<LuaString, ()>(file?)?;
+        }
         let finish: LuaFunction = sile.get("finish")?;
         finish.call::<_, _>(())?;
     } else {
