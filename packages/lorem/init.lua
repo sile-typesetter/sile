@@ -75,7 +75,8 @@ function package:registerCommands ()
 
   self:registerCommand("lorem", function (options, _)
     local words = tonumber(options.words) or 50
-    local counter = options.counter or false
+    local counter = SU.boolean(options.counter, false)
+
     local times = math.floor(words/nwords)
     words = words - times*nwords
     local pos = 0
@@ -84,6 +85,7 @@ function package:registerCommands ()
     end
     local text = string.rep(lorem, times) .. lorem:sub(1, pos)
     if counter then
+      SU.deprecated("\\lorem with counter", nil, "0.14.10", "0.16.0")
       local c = 0
       text = string.gsub(text, "(%s+)", function (_)
         c = c + 1
