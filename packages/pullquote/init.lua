@@ -78,8 +78,7 @@ end
 
 package.documentation = [[
 \begin{document}
-The \autodoc:environment{pullquote} environment formats longer quotations in an indented blockquote block with decorative quotation marks in the margins.
-
+The \autodoc:package{pullquote} package formats longer quotations in an indented blockquote block with decorative quotation marks in the margins.
 Here is some text set in a \autodoc:environment{pullquote} environment:
 
 \begin[author=Anatole France]{pullquote}%

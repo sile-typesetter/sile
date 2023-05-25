@@ -375,7 +375,7 @@ end
 
 package.documentation = [[
 \begin{document}
-This package extracts documentation information from other packages.
+The \autodoc:package{autodoc} package extracts documentation information from other packages.
 It’s used to construct the SILE manual.
 Keeping package documentation in the package itself keeps the documentation near the implementation, which (in theory) makes it easy for documentation and implementation to be in sync.
 
