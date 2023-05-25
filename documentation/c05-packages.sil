@@ -25,8 +25,7 @@ By default SILE will look for packages in a variety of directories:
 \item{The current working directory.}
 \item{The environment variable \code{SILE_PATH}, if defined.}
 \item{The default Lua search path.}
-\item{The directories where SILE is installed on the system, \code{/usr/lib/sile} and
-\code{/usr/local/lib/sile}.}
+\item{Various directories depending on where and how SILE is installed on your system.}
 \end{enumerate}
 
 SILE does not descend into subdirectories when looking for a file.
