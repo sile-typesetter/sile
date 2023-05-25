@@ -19,7 +19,7 @@ There are several important differences.
 The job of a word processor is to produce a document that looks exactly like what you type on the screen.
 By contrast, the job of a typesetting system is to take raw content and produce a document that looks as good as possible.
 The input for SILE is a text document that includes instructions about how the content should be laid out on a page.
-In order to obtain the typeset result, the input file must be \em{processed} to render the desired output.
+In order to obtain the typeset result, the input file(s) must be \em{processed} to render the desired output.
 
 Word processors often describe themselves as WYSIWYG: What You See Is What You Get.
 SILE is cheerfully \em{not} WYSIWYG.

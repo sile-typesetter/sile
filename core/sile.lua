@@ -29,6 +29,9 @@ fluent = require("fluent")()
 -- Includes for _this_ scope
 local lfs = require("lfs")
 
+-- Developer tooling profiler
+local ProFi
+
 SILE.utilities = require("core.utilities")
 SU = SILE.utilities -- regrettable global alias
 
@@ -59,7 +62,7 @@ SILE.rawHandlers = {}
 -- needed for a user to use a SILE-as-a-library verion to produce documents
 -- programatically.
 SILE.input = {
-  filename = "",
+  filenames = {},
   evaluates = {},
   evaluateAfters = {},
   includes = {},
@@ -131,6 +134,14 @@ SILE.init = function ()
     SILE.outputter = SILE.outputters.dummy()
   end
   SILE.pagebuilder = SILE.pagebuilders.base()
+  io.stdout:setvbuf("no")
+  if SU.debugging("profile") then
+    ProFi = require("ProFi")
+    ProFi:start()
+  end
+  if SILE.makeDeps then
+    SILE.makeDeps:add(_G.executablePath)
+  end
   runEvals(SILE.input.evaluates, "evaluate")
 end
 
@@ -280,7 +291,7 @@ function SILE.processString (doc, format, filename, options)
   -- a specific inputter to use, use it at the exclusion of all content type
   -- detection
   local inputter
-  if filename and filename:gsub("STDIN", "-") == SILE.input.filename and SILE.inputter then
+  if filename and pl.path.splitext(pl.path.normcase(filename)) == SILE.masterFilename and SILE.inputter then
     inputter = SILE.inputter
   else
     format = format or detectFormat(doc, filename)
@@ -290,7 +301,7 @@ function SILE.processString (doc, format, filename, options)
     inputter = SILE.inputters[format](options)
     -- If we did content detection *and* this is the master file, save the
     -- inputter for posterity and postambles
-    if filename and filename:gsub("STDIN", "-") == SILE.input.filename then
+    if filename and pl.path.splitext(pl.path.normcase(filename)) == SILE.masterFilename then
       SILE.inputter = inputter
     end
   end
@@ -304,8 +315,21 @@ function SILE.processFile (filename, format, options)
   local doc
   if filename == "-" then
     filename = "STDIN"
+    SILE.masterFilename = "STDIN"
     doc = io.stdin:read("*a")
   else
+    -- Turn slashes around in the event we get passed a path from a Windows shell
+    filename = filename:gsub("\\", "/")
+    if not SILE.masterFilename then
+      -- Strip extension
+      SILE.masterFilename = string.match(filename, "(.+)%..-$") or filename
+    end
+    if SILE.masterFilename and not SILE.masterDir then
+      SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
+    end
+    if SILE.masterDir and SILE.masterDir:len() >= 1 then
+      _G.extendSilePath(SILE.masterDir)
+    end
     filename = SILE.resolveFile(filename)
     if not filename then
       SU.error("Could not find file")
@@ -356,7 +380,7 @@ function SILE.resolveFile (filename, pathprefix)
   candidates[#candidates+1] = "?"
   -- Iterate through the directory of the master file, the SILE_PATH variable, and the current directory
   -- Check for prefixed paths first, then the plain path in that fails
-  if SILE.masterFilename then
+  if SILE.masterDir then
     for path in SU.gtoke(SILE.masterDir..";"..tostring(os.getenv("SILE_PATH")), ";") do
       if path.string and path.string ~= "nil" then
         if pathprefix then candidates[#candidates+1] = pl.path.join(path.string, pathprefix, "?") end
@@ -436,6 +460,13 @@ function SILE.finish ()
   runEvals(SILE.input.evaluateAfters, "evaluate-after")
   if not SILE.quiet then
     io.stderr:write("\n")
+  end
+  if SU.debugging("profile") then
+    ProFi:stop()
+    ProFi:writeReport(SILE.masterFilename..'.profile.txt')
+  end
+  if SU.debugging("versions") then
+    SILE.shaper:debugVersions()
   end
 end
 

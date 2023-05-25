@@ -76,6 +76,7 @@ tags
 Makefile-distfiles
 documentation/*.pdf
 gource.webm
+*.rockspec
 .fonts/*
 .sources/*
 /sile
@@ -87,6 +88,7 @@ sile.1
 *.so
 core/version.lua
 core/features.lua
+core/pathsetup.lua
 
 # Nix symlink to builds
 /result

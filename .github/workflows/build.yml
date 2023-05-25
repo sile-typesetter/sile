@@ -27,7 +27,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
       - name: Fetch tags
         run: |
           git fetch --prune --tags ||:

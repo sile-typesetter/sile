@@ -15,7 +15,7 @@ Their use below is straightforward and is expected to be covered by examples, bu
 
 \section{Designing a package}
 
-Packages live somewhere in the \code{packages/} subdirectory of either where your input file is located, your current working directory, or your SILE path.
+Packages live somewhere in the \code{packages/} subdirectory of either where your first input file is located, your current working directory, or your SILE path.
 
 \subsection{Implementing a bare package}
 
