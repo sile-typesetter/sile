@@ -27,6 +27,8 @@ For comparisons of editors see \url{https://alternativeto.net/category/developer
 \section{A basic SILE document}
 
 Once you have an editor, it’s time to consider a SILE input file.
+There are several different input formats that could be used including SIL and XML.
+For the purpose of this documentation we'll mostly use the SIL input format, but all examples translate 1-to-1 to XML.
 To begin with, here’s the most basic SILE file of all:
 
 \begin[type=autodoc:codeblock]{raw}
