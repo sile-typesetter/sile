@@ -219,7 +219,7 @@ DEPDIR := .deps
 REGRESSIONSCRIPT := ./tests/regressions.pl
 LOCALTESTFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
-BUSTEDFLAGS ?= $(and $(SILE_COVERAGE),-c)
+BUSTEDFLAGS ?=
 
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
 EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(TESTEXPECTS))
@@ -324,7 +324,7 @@ endif
 	$(LOCALTESTFONTS) $(BUSTED) --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" $(BUSTEDFLAGS) .
 
 coverage: export SILE_COVERAGE=1
-coverage: BUSTEDFLAGS = -c
+coverage: BUSTEDFLAGS += -c
 coverage: regression_previews busted
 
 HEADSHA ?= HEAD
