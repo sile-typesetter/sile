@@ -39,6 +39,8 @@ jobs:
           path: |
             lua_modules
           key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
       - name: Fetch tags
         run: |
           git fetch --prune --tags ||:
@@ -47,6 +49,8 @@ jobs:
         with:
           luaVersion: ${{ matrix.luaVersion[0] }}
           luaCompileFlags: ${{ matrix.luaVersion[1] }}
+      - name: Setup ‘cargo’
+        uses: actions-rs/toolchain@v1
       - name: Setup ‘luarocks’
         uses: leafo/gh-actions-luarocks@v4
       - name: Prep system Lua for use
@@ -85,6 +89,10 @@ jobs:
         timeout-minutes: ${{ runner.debug && 60 || 6 }}
         run: |
           make regressions
+      - name: Test Cargo
+        timeout-minutes: ${{ runner.debug && 60 || 6 }}
+        run: |
+          make cargo-test
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
