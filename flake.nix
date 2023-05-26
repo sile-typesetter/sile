@@ -107,11 +107,20 @@
         # Don't build the manual as it's time consuming, and it requires fonts
         # that are not available in the sandbox due to internet connection
         # missing.
-        configureFlags = pkgs.lib.lists.remove "--with-manual" oldAttr.configureFlags;
+        configureFlags = [
+          "PDFINFO=false"
+        ] ++ (
+          pkgs.lib.lists.remove "--with-manual" oldAttr.configureFlags
+        );
         nativeBuildInputs = oldAttr.nativeBuildInputs ++ [
           pkgs.autoreconfHook
         ];
         buildInputs = [
+          # Build inputs added since release in nixpkgs
+          pkgs.cargo
+          pkgs.jq
+          pkgs.rustc
+        ] ++ [
           # Add here inputs needed for development, and not for Nixpkgs' build.
           pkgs.libarchive
           pkgs.perl
