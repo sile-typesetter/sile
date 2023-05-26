@@ -321,7 +321,8 @@ else
 	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.$(SHARED_LIB_EXT))
 	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
 endif
-	$(LOCALTESTFONTS) $(BUSTED) --cpath="$${packagecpath[*]};;" --lpath="$${packagepath[*]};;" $(BUSTEDFLAGS) .
+# Note: use of --lua causes this to be passed back through a shell loosing one layer of quoting. Drop single quotes if removing.
+	$(LOCALTESTFONTS) $(BUSTED) --lua=$(LUA) --cpath="'$${packagecpath[*]};;'" --lpath="'$${packagepath[*]};;'" $(BUSTEDFLAGS) .
 
 coverage: export SILE_COVERAGE=1
 coverage: BUSTEDFLAGS += -c
