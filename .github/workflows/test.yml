@@ -72,7 +72,7 @@ jobs:
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure \
+          ./configure PDFINFO=false \
             --enable-developer LUACHECK=false NIX=false \
             --disable-font-variations \
             --without-system-luarocks \
