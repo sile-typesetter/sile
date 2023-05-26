@@ -35,6 +35,10 @@ pub fn version() -> crate::Result<String> {
     Ok(sile.get("full_version")?)
 }
 
+// Yes I know this should be taking a struct, probably 1 with what ends up being SILE.input and one
+// with other stuff the CLI may inject, but I'm playing with what a minimum/maximum set of
+// parameters would look like here while maintaining compatiblitiy with the Lua CLI.
+#[allow(clippy::too_many_arguments)]
 pub fn run(
     inputs: Option<Vec<PathBuf>>,
     backend: Option<String>,
@@ -90,16 +94,16 @@ pub fn run(
         sile_input.set("class", class)?;
     }
     if let Some(paths) = preamble {
-        sile_input.set("preambles", pbs_to_sts(paths))?;
+        sile_input.set("preambles", paths_to_strings(paths))?;
     }
     if let Some(paths) = postamble {
-        sile_input.set("postamble", pbs_to_sts(paths))?;
+        sile_input.set("postamble", paths_to_strings(paths))?;
     }
     if let Some(path) = makedeps {
-        sile_input.set("makedeps", pb_to_st(&path))?;
+        sile_input.set("makedeps", path_to_string(&path))?;
     }
     if let Some(path) = output {
-        sile.set("outputFilename", pb_to_st(&path))?;
+        sile.set("outputFilename", path_to_string(&path))?;
         has_input_filename = true;
     }
     if let Some(options) = options {
@@ -116,7 +120,7 @@ pub fn run(
     if let Some(inputs) = inputs {
         let input_filenames: LuaTable = lua.create_table()?;
         for input in inputs.iter() {
-            let path = &pb_to_st(input);
+            let path = &path_to_string(input);
             if !has_input_filename && path != "-" {
                 has_input_filename = true;
             }
@@ -142,10 +146,10 @@ pub fn run(
     Ok(())
 }
 
-fn pb_to_st(path: &PathBuf) -> String {
+fn path_to_string(path: &PathBuf) -> String {
     path.clone().into_os_string().into_string().unwrap()
 }
 
-fn pbs_to_sts(paths: Vec<PathBuf>) -> Vec<String> {
-    paths.iter().map(pb_to_st).collect()
+fn paths_to_strings(paths: Vec<PathBuf>) -> Vec<String> {
+    paths.iter().map(path_to_string).collect()
 }
