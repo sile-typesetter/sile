@@ -2,7 +2,7 @@ task:
   name: Cirrus CI (FreeBSD)
   freebsd_instance:
     matrix:
-      - image_family: freebsd-13-0
+      - image_family: freebsd-13-2
       - image_family: freebsd-12-3
   env:
     MAKEFLAGS: -j$(nproc) -Otarget
@@ -24,9 +24,7 @@ task:
     fingerprint_script: cat sile.rockspec.in
   dependencies_script:
     - pkg install -y autoconf automake fontconfig GentiumPlus git gmake harfbuzz libtool pkgconf png
-    - pkg install -y lua54 lua54-lpeg lua54-luafilesystem lua54-luarocks lua54-luasec lua54-luasocket
-      # lua54-luaexpat exists but seems boken on 13.0, system doesn't have expat 2.4+ so 1.5.x isn't an option either
-    - luarocks54 install luaexpat 1.4.1
+    - pkg install -y lua54 lua54-luaexpat lua54-lpeg lua54-luafilesystem lua54-luarocks lua54-luasec lua54-luasocket
     - luarocks54 install cassowary
     - luarocks54 install cldr
     - luarocks54 install compat53
