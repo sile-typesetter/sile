@@ -254,7 +254,7 @@ Now we can finally complete our implementation of centering:
 \set[parameter=typesetter.parfillskip,value=0pt]
 
 And this is (more or less) how the \autodoc:environment{center} environment is defined in
-the \code{plain} class: we make the margins able to expand but the spaces not able
+the \autodoc:class{plain} class: we make the margins able to expand but the spaces not able
 to expand; we turn off indenting at the start of the paragraph, and we turn
 off the filling glue at the end of the paragraph.
 \par

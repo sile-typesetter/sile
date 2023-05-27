@@ -196,7 +196,7 @@ SILE.typesetter:pushVglue({ height = l })
 Adding boxes yourself is a little more complicated, because boxes need to
 know how to display themselves on the page. To facilitate this, they normally
 store a \code{value} and an \code{outputYourself} member function. For instance,
-the \code{image} package does something very simple: it adds a horizontal
+the \autodoc:package{image} package does something very simple: it adds a horizontal
 box to the node queue which knows the width and height of the image, the source,
 and instructions to the output engine to display the image:
 
@@ -240,9 +240,9 @@ where the frames should be physically placed on the page.
 Here is how we will go about it. We need to start with a page break, because
 SILE will not appreciate you changing the page layout after it’s started to
 determine how to put text onto that page.\footnote{You can use
-the \code{frametricks} package to get around this limitation—split the current
+the \autodoc:package{frametricks} package to get around this limitation—split the current
 frame and start fiddling around with the positions of the new frames that
-\code{frametricks} created for you.} How do we get to the start of a new
+\autodoc:package{frametricks} created for you.} How do we get to the start of a new
 page? Remember that the \autodoc:command{\eject} (another word for \autodoc:command{\break} in
 vertical mode) only adds a penalty to the end of the output queue; page breaking
 is triggered when we leave horizontal mode, and the way to do that is \autodoc:command{\par}.
@@ -285,7 +285,7 @@ except with three additional features:
 \end{itemize}
 \end{autodoc:note}
 
-Next we declare the left and right column frames. The \code{book} class
+Next we declare the left and right column frames. The \autodoc:class{book} class
 gives us some frames already, one of which, \code{content}, defines a typeblock
 with a decent size and positioning on the page.
 We will use the boundaries of this frame to declare our columns: the left

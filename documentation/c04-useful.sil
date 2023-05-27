@@ -83,7 +83,7 @@ The full list of attributes to the \autodoc:command{\font} command are:
 
 It’s quite fiddly to be always changing font specifications manually;
     later we’ll see some ways to automate the process.
-SILE’s \code{plain} class notably provides the \autodoc:command{\em{…}} command as a shortcut for \autodoc:command{\font[style=italic]{…}}, and the \autodoc:command{\strong{…}} command as a a shortcut for \autodoc:command{\font[weight=700]{…}}.
+SILE’s \autodoc:class{plain} class notably provides the \autodoc:command{\em{…}} command as a shortcut for \autodoc:command{\font[style=italic]{…}}, and the \autodoc:command{\strong{…}} command as a a shortcut for \autodoc:command{\font[weight=700]{…}}.
 
 Note for parameters that accept multiple values, values may be separated with commas.
 Be sure to wrap the value in quotes so the commas don't get parsed as new parameters.
@@ -94,22 +94,22 @@ For example \autodoc:command{\font[variations="wght=150,wdth=122"]} can be used 
 \section{Document structure}
 
 SILE provides a number of different \em{class}es of document (similar to LaTeX classes).
-By default, you get the \code{plain} class, which has very little support for structured documents.
-There is also the \code{book} class, which adds support for right and left page masters, running headers, footnotes, and chapter, section and subsection headings.
+By default, you get the \autodoc:class{plain} class, which has very little support for structured documents.
+There is also the \autodoc:class{book} class, which adds support for right and left page masters, running headers, footnotes, and chapter, section and subsection headings.
 
-To use the commands in this section, you will need to request the \code{book} class by specifying, in your \code{\\begin\{document\}} command, the \autodoc:parameter{class=book} parameter;
+To use the commands in this section, you will need to request the \autodoc:class{book} class by specifying, in your \code{\\begin\{document\}} command, the \autodoc:parameter{class=book} parameter;
     for example, the document you are currently reading begins with the command \code{\\begin[class=book]\{document\}}.
 
 \subsection{Chapters and sections}
 
-If you choose the book class, you can divide your document into different sections using the commands \autodoc:command{\chapter{…}}, \autodoc:command{\section{…}}, and \autodoc:command{\subsection{…}}.
+If you choose the \autodoc:class{book} class, you can divide your document into different sections using the commands \autodoc:command{\chapter{…}}, \autodoc:command{\section{…}}, and \autodoc:command{\subsection{…}}.
 The argument to each command is the name of the chapter or section, respectively.
 Chapters will be opened on a new right-hand page, and the chapter name will form the left running header.
 Additionally, the section name and number will form the right running header.
 
 \begin{autodoc:note}
 Chapters, sections and subsections will be automatically numbered starting from 1.
-To alter the numbering, see the documentation for the \code{counters} package in the next chapter.
+To alter the numbering, see the documentation for the \autodoc:package{counters} package in the next chapter.
 To produce an unnumbered chapter, provide the parameter \autodoc:parameter{numbering=false}.
 \end{autodoc:note}
 
@@ -168,7 +168,7 @@ This paragraph is centered on the page.
 
 SILE automatically determines line and page breaks.
 In later chapters we will introduce some \em{settings} which can be used to tweak this process.
-However, SILE’s \code{plain} class also provides some commands to help the process on its way.
+However, SILE’s \autodoc:class{plain} class also provides some commands to help the process on its way.
 
 The following four commands can be used to control line breaks (when used \em{within} a paragraph), as well as page breaks (when used \em{between} paragraphs):%
 \footnote{The names are similar to those used in (La)TeX, but their semantics differ slightly.}
