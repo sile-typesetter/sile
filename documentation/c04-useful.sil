@@ -122,7 +122,7 @@ Footnotes can be added to a book with the \autodoc:command{\footnote{…}} comma
 The argument to the command will be set as a footnote at the bottom of the page.
 Footnotes are automatically numbered from 1 at the start of each chapter.
 
-\section{Indentation and spacing}
+\section{Paragraph indentation}
 
 Paragraphs in SILE normally begin with an indentation (by default, 20 points in width).
 To turn this off, you can use the \autodoc:command{\noindent} command at the start of a paragraph.
@@ -131,15 +131,39 @@ A \autodoc:command{\noindent} can be cancelled by following it with an \autodoc:
 You can completely turn off indentation for the whole of the document by changing its size to zero.
 We’ll see how to change the size of the indentation in the settings chapter, but the easiest way to set it to zero for the whole of the document (rather than for just one paragraph) is to issue the command \autodoc:command{\neverindent}.
 
+\section{Horizontal spacing}
+
+There are also commands to increase the horizontal space in a line;
+    from the smallest to the largest, \autodoc:command{\thinspace} (1/6th of an em), \autodoc:command{\enspace} (1 en), \autodoc:command{\quad} (1 em), and \autodoc:command{\qquad} (2em).
+
+If you want to add a very long stretchy space, you can use the command \autodoc:command{\hfill}.
+Doing this in conjunction with a line break will cause the line before the break to be flush left, like this.\cr{}The command \autodoc:command{\cr} is a shortcut for \autodoc:command{\hfill\break}.
+
+\section{Vertical spacing}
+
 To increase the vertical space between paragraphs or other elements, the commands \autodoc:command{\smallskip}, \autodoc:command{\medskip} and \autodoc:command{\bigskip} are available to add a 3pt, 6pt, and 12pt gap, respectively.
 There will be a \autodoc:command{\bigskip} after this paragraph.
 
 \bigskip%
-There are also commands to increase the horizontal space in a line;
-    from the smallest to the largest, \autodoc:command{\thinspace} (1/6th of an em), \autodoc:command{\enspace} (1 en), \autodoc:command{\quad} (1 em), and \autodoc:command{\quad} (2em).
+Besides this predefined skips, you can also use \autodoc:command{\skip[height=<dimension>]} to add a vertical space of a given height.
 
-If you want to add a very long stretchy space, you can use the command \autodoc:command{\hfill}.
-Doing this in conjunction with a line break will cause the line before the break to be flush left, like this.\cr{}The command \autodoc:command{\cr} is a shortcut for \autodoc:command{\hfill\break}.
+If you want to add a very long stretchy vertical space, you can use the command \autodoc:command{\vfill}.
+
+When playing with vertical spaces, there is however a few additional considerations to take into account.
+Without entering into the details, they are usually ignored at the beginning of a frame.
+Would you want to enforce them there, you therefore need to have some initial content.
+An empty \autodoc:command{\hbox} can do the trick.
+Additionally, there are cases where SILE automaticall inserts a \autodoc:command{\vfill} command at the end of a frame, so you may need to ensure you terminated a paragraph and introduced your own frame break in order to avoid it.
+The following example illustrates both techniques.
+
+\begin[type=autodoc:codeblock]{raw}
+\hbox{}% This is an empty initial line
+\skip[height=2cm]
+A paragraph around 2 centimeters below the top of the frame.
+\vfill
+A paragraph pushed at the bottom of the frame.\par
+\break
+\end{raw}
 
 \section{Text alignment}
 
