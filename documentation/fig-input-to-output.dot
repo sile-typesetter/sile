@@ -1,0 +1,39 @@
+digraph G {
+  rankdir="LR";
+  margin=0.25;
+  fontname = "Libertinus Sans";
+  node [fontname = "Libertinus Sans"];
+
+  edge [arrowhead="vee"];
+
+  input [shape=note, style=filled, fillcolor=aliceblue, label="Input\nfile"]
+  output [shape=note, style=filled, fillcolor=aliceblue, label="Output\nfile"]
+  inputter [shape=component, style=filled, fillcolor=darkolivegreen2]
+  outputter [shape=component, style=filled, fillcolor=darkolivegreen2]
+
+  input -> inputter
+
+  subgraph cluster_0 {
+    style=rounded;
+    color=grey;
+    margin=12
+    node [style=filled, fillcolor=linen];
+
+    label = "Processing & Typesetting";
+
+    command[label="Command\nprocessing", shape=box]
+    typesetter[label="Typesetter", shape=box]
+    paragraphing[label="Hyphenation\n&\nLine breaking", shape=box]
+    pagebreaking[label="Page\nbreaking", shape=box]
+    frame[label="Frame\nabstraction", shape=box]
+
+    command -> typesetter
+    typesetter -> frame  [arrowhead=none]
+    typesetter -> paragraphing
+    paragraphing -> pagebreaking
+  }
+
+  inputter -> command
+  pagebreaking -> outputter
+  outputter -> output
+}
