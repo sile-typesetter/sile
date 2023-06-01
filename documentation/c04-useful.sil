@@ -83,7 +83,7 @@ The full list of attributes to the \autodoc:command{\font} command are:
 
 It’s quite fiddly to be always changing font specifications manually;
     later we’ll see some ways to automate the process.
-SILE’s \code{plain} class notably provides the \autodoc:command{\em{…}} command as a shortcut for \autodoc:command{\font[style=italic]{…}}, and the \autodoc:command{\strong{…}} command as a a shortcut for \autodoc:command{\font[weight=700]{…}}.
+SILE’s \autodoc:class{plain} class notably provides the \autodoc:command{\em{…}} command as a shortcut for \autodoc:command{\font[style=italic]{…}}, and the \autodoc:command{\strong{…}} command as a a shortcut for \autodoc:command{\font[weight=700]{…}}.
 
 Note for parameters that accept multiple values, values may be separated with commas.
 Be sure to wrap the value in quotes so the commas don't get parsed as new parameters.
@@ -94,22 +94,22 @@ For example \autodoc:command{\font[variations="wght=150,wdth=122"]} can be used 
 \section{Document structure}
 
 SILE provides a number of different \em{class}es of document (similar to LaTeX classes).
-By default, you get the \code{plain} class, which has very little support for structured documents.
-There is also the \code{book} class, which adds support for right and left page masters, running headers, footnotes, and chapter, section and subsection headings.
+By default, you get the \autodoc:class{plain} class, which has very little support for structured documents.
+There is also the \autodoc:class{book} class, which adds support for right and left page masters, running headers, footnotes, and chapter, section and subsection headings.
 
-To use the commands in this section, you will need to request the \code{book} class by specifying, in your \code{\\begin\{document\}} command, the \autodoc:parameter{class=book} parameter;
+To use the commands in this section, you will need to request the \autodoc:class{book} class by specifying, in your \code{\\begin\{document\}} command, the \autodoc:parameter{class=book} parameter;
     for example, the document you are currently reading begins with the command \code{\\begin[class=book]\{document\}}.
 
 \subsection{Chapters and sections}
 
-If you choose the book class, you can divide your document into different sections using the commands \autodoc:command{\chapter{…}}, \autodoc:command{\section{…}}, and \autodoc:command{\subsection{…}}.
+If you choose the \autodoc:class{book} class, you can divide your document into different sections using the commands \autodoc:command{\chapter{…}}, \autodoc:command{\section{…}}, and \autodoc:command{\subsection{…}}.
 The argument to each command is the name of the chapter or section, respectively.
 Chapters will be opened on a new right-hand page, and the chapter name will form the left running header.
 Additionally, the section name and number will form the right running header.
 
 \begin{autodoc:note}
 Chapters, sections and subsections will be automatically numbered starting from 1.
-To alter the numbering, see the documentation for the \code{counters} package in the next chapter.
+To alter the numbering, see the documentation for the \autodoc:package{counters} package in the next chapter.
 To produce an unnumbered chapter, provide the parameter \autodoc:parameter{numbering=false}.
 \end{autodoc:note}
 
@@ -122,7 +122,7 @@ Footnotes can be added to a book with the \autodoc:command{\footnote{…}} comma
 The argument to the command will be set as a footnote at the bottom of the page.
 Footnotes are automatically numbered from 1 at the start of each chapter.
 
-\section{Indentation and spacing}
+\section{Paragraph indentation}
 
 Paragraphs in SILE normally begin with an indentation (by default, 20 points in width).
 To turn this off, you can use the \autodoc:command{\noindent} command at the start of a paragraph.
@@ -131,15 +131,39 @@ A \autodoc:command{\noindent} can be cancelled by following it with an \autodoc:
 You can completely turn off indentation for the whole of the document by changing its size to zero.
 We’ll see how to change the size of the indentation in the settings chapter, but the easiest way to set it to zero for the whole of the document (rather than for just one paragraph) is to issue the command \autodoc:command{\neverindent}.
 
+\section{Horizontal spacing}
+
+There are also commands to increase the horizontal space in a line;
+    from the smallest to the largest, \autodoc:command{\thinspace} (1/6th of an em), \autodoc:command{\enspace} (1 en), \autodoc:command{\quad} (1 em), and \autodoc:command{\qquad} (2em).
+
+If you want to add a very long stretchy space, you can use the command \autodoc:command{\hfill}.
+Doing this in conjunction with a line break will cause the line before the break to be flush left, like this.\cr{}The command \autodoc:command{\cr} is a shortcut for \autodoc:command{\hfill\break}.
+
+\section{Vertical spacing}
+
 To increase the vertical space between paragraphs or other elements, the commands \autodoc:command{\smallskip}, \autodoc:command{\medskip} and \autodoc:command{\bigskip} are available to add a 3pt, 6pt, and 12pt gap, respectively.
 There will be a \autodoc:command{\bigskip} after this paragraph.
 
 \bigskip%
-There are also commands to increase the horizontal space in a line;
-    from the smallest to the largest, \autodoc:command{\thinspace} (1/6th of an em), \autodoc:command{\enspace} (1 en), \autodoc:command{\quad} (1 em), and \autodoc:command{\quad} (2em).
+Besides this predefined skips, you can also use \autodoc:command{\skip[height=<dimension>]} to add a vertical space of a given height.
 
-If you want to add a very long stretchy space, you can use the command \autodoc:command{\hfill}.
-Doing this in conjunction with a line break will cause the line before the break to be flush left, like this.\cr{}The command \autodoc:command{\cr} is a shortcut for \autodoc:command{\hfill\break}.
+If you want to add a very long stretchy vertical space, you can use the command \autodoc:command{\vfill}.
+
+When playing with vertical spaces, there is however a few additional considerations to take into account.
+Without entering into the details, they are usually ignored at the beginning of a frame.
+Would you want to enforce them there, you therefore need to have some initial content.
+An empty \autodoc:command{\hbox} can do the trick.
+Additionally, there are cases where SILE automaticall inserts a \autodoc:command{\vfill} command at the end of a frame, so you may need to ensure you terminated a paragraph and introduced your own frame break in order to avoid it.
+The following example illustrates both techniques.
+
+\begin[type=autodoc:codeblock]{raw}
+\hbox{}% This is an empty initial line
+\skip[height=2cm]
+A paragraph around 2 centimeters below the top of the frame.
+\vfill
+A paragraph pushed at the bottom of the frame.\par
+\break
+\end{raw}
 
 \section{Text alignment}
 
@@ -168,7 +192,7 @@ This paragraph is centered on the page.
 
 SILE automatically determines line and page breaks.
 In later chapters we will introduce some \em{settings} which can be used to tweak this process.
-However, SILE’s \code{plain} class also provides some commands to help the process on its way.
+However, SILE’s \autodoc:class{plain} class also provides some commands to help the process on its way.
 
 The following four commands can be used to control line breaks (when used \em{within} a paragraph), as well as page breaks (when used \em{between} paragraphs):%
 \footnote{The names are similar to those used in (La)TeX, but their semantics differ slightly.}
