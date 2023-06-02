@@ -231,7 +231,8 @@ check: selfcheck
 selfcheck: | $(SILE) $(_BUILT_SUBDIRS)
 	output=$$(mktemp -t selfcheck-XXXXXX.pdf)
 	trap 'rm -f $$output' EXIT HUP TERM
-	echo "<sile>foo</sile>" | ./$(SILE) -o $$output -
+	export SILE_PATH
+	echo "<sile>foo</sile>" | SILE_PATH=$(PWD) ./$(SILE) -o $$output -
 	$(PDFINFO) $$output | $(GREP) "SILE v$(VERSION)"
 
 .PHONY: docs
@@ -241,7 +242,8 @@ docs: $(MANUAL)
 # garantee the TOC is up to date, simplify when #230 is fixed.
 hastoc = [ -f $(subst .pdf,.toc,$@) ] && echo true || echo false
 pages = $(PDFINFO) $@ | $(AWK) '$$1 == "Pages:" {print $$2}' || echo 0
-silepass = $(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) $< -o $@ && pg0=$${pg} pg=$$($(pages)) || false
+localsile = $(LOCALTESTFONTS) SILE_PATH=$(PWD) ./$(SILE) $(SILEFLAGS)
+silepass = $(localsile) $< -o $@ && pg0=$${pg} pg=$$($(pages)) || false
 define runsile =
 	set -e
 	pg=$$($(pages)) hadtoc=$$($(hastoc))
@@ -350,27 +352,27 @@ time-%.json: benchmark-%/time.json
 update_expecteds: $(EXPECTEDS)
 
 tests/%.expected: tests/%.sil $$(patterndeps)
-	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
+	$(localsile) -b debug $< -o $@
 
 tests/%.expected: tests/%.xml $$(patterndeps)
-	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
+	$(localsile) -b debug $< -o $@
 
 tests/%.expected: tests/%.nil $$(patterndeps)
-	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
+	$(localsile) -b debug $< -o $@
 
 regression_previews: $(TESTPREVIEWS)
 
 tests/%.actual: tests/%.sil $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
-	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
+	$(localsile) -b debug $< -o $@
 
 tests/%.actual: tests/%.xml $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
-	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
+	$(localsile) -b debug $< -o $@
 
 tests/%.actual: tests/%.nil $$(patterndeps)
 	-$(if $(CLEAN),rm -f $@,:)
-	$(LOCALTESTFONTS) ./$(SILE) $(SILEFLAGS) -b debug $< -o $@
+	$(localsile) -b debug $< -o $@
 
 DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(MANUAL))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
