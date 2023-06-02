@@ -70,7 +70,7 @@ direction joined by a hyphen.
 
 Each frame has its own writing direction. By default, this is \code{LTR-TTB}.
 Normally you would set the writing direction once, in the master frames of
-your document class. One easy way to do this in the \code{plain} document
+your document class. One easy way to do this in the \autodoc:class{plain} document
 class is to pass the \autodoc:parameter{direction} parameter to the
 \code{\\begin\{document\}} command. For example, Mongolian is written top
 to bottom with text lines moving from the left to the right of the page,
@@ -116,7 +116,7 @@ are available; if not, work through the resources at
 \section{Localization}
 
 A small handful of strings may be programatically added to documents depending on language, context, and options.
-For example by default in English the \code{book} class will prepend “Chapter ” before chapter numbers output by the \autodoc:command{\chapter} command.
+For example by default in English the \autodoc:class{book} class will prepend “Chapter ” before chapter numbers output by the \autodoc:command{\chapter} command.
 These localized strings are managed internally using the Fluent localization system.%
 \footnote{See Project Fluent (\url{https://projectfluent.org}) for details on the data format and uses.}
 Some default localizations are provided for a handful of languages, but it is quite likely SILE will not (yet) have your language.
@@ -202,8 +202,8 @@ correct space. The size of these spaces is determined by
 
 SILE aims to conform with the W3G document “Requirements for Japanese Text Layout”\footnote{\url{https://www.w3.org/TR/jlreq/}} which describes the typographic conventions for Japanese (and also Chinese) text.
 Breaking rules \em{(kinzoku shori)} and intercharacter spacing is fully supported on selecting the Japanese language.
-The easiest way to set up the other elements of Japanese typesetting such as the \em{hanmen} grid and optional vertical typesetting support is by using the \code{jplain} or \code{jbook} classes.
-For other languages with similar layout requirements, more generic \code{tplain} and \code{tbook} classes are available that setup the layout elements without also setting the default language and font to Japanese specific values.
+The easiest way to set up the other elements of Japanese typesetting such as the \em{hanmen} grid and optional vertical typesetting support is by using the \autodoc:class{jplain} or \autodoc:class{jbook} classes.
+For other languages with similar layout requirements, more generic \autodoc:class{tplain} and \autodoc:class{tbook} classes are available that setup the layout elements without also setting the default language and font to Japanese specific values.
 These are also good condidates to use as base classes and extend for more language-specific classes.
 
 \package-documentation{hanmenkyoshi}

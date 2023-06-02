@@ -142,7 +142,7 @@ So if you type \code{affluent fishing}, then, depending on your font, your outpu
     ‘\autodoc:example{affluent fishing}’.
 If you specifically want to break up the ligatures, insert empty groups (using the grouping characters \code{\{} and \code{\}}) in the middle of the possible ligatures:
     \code{af\{\}f\{\}luent f\{\}ishing}: ‘\autodoc:example{af{}f{}luent f{}ishing}’.
-See the section on the \code{features} package for more information on how to control the display of ligatures and other font features.
+See the section on the \autodoc:package{features} package for more information on how to control the display of ligatures and other font features.
 
 \section{Commands}
 

@@ -310,7 +310,7 @@ You can use \code{--output -} to write the output directly to the system IO stre
 
 In \url{https://sile-typesetter.org/examples/docbook.xml}, you will find a typical DocBook 5.0 article.
 Normally turning DocBook to print involves a complicated dance of XSLT processors, format object processors, and/or strange LaTeX packages.
-But SILE can read XML files directly, and comes with a \code{docbook} class, which tells SILE how to render (admittedly, a subset of) the DocBook tags onto a page.
+But SILE can read XML files directly, and comes with a \autodoc:class{docbook} class, which tells SILE how to render (admittedly, a subset of) the DocBook tags onto a page.
 
 Hence, turning \code{docbook.xml} into \code{docbook.pdf} is as simple as:
 
@@ -322,9 +322,9 @@ Loading docbook
 \end{terminal}
 
 The \code{-c} flag sets the default class, a necessary step because DocBook XML files do not come wrapped in a tag that specifies a SILE class.
-The \code{docbook} class will provide the commands necessary to process the tags typically found in DocBook files.
+The \autodoc:class{docbook} class will provide the commands necessary to process the tags typically found in DocBook files.
 
-In Chapter 9, we’ll look at how the \code{docbook} class works, and how you can define processing expectations for other XML formats.
+In Chapter 9, we’ll look at how the \autodoc:class{docbook} class works, and how you can define processing expectations for other XML formats.
 
 \section{Running SILE remotely as a CI job}
 

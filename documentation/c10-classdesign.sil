@@ -218,8 +218,8 @@ Document classes live somewhere in the \code{classes/} subdirectory of either wh
 
 \subsection{Implementing a bare class}
 
-A minimum working class inherits from the \strong{base} class.
-Most of the time, however, you will prefer inheriting at least from the \strong{plain} class, which already provides a lot of things users will expect, including most of the basic commands presented early in this manual.
+A minimum working class inherits from the \autodoc:class{base} class.
+Most of the time, however, you will prefer inheriting at least from the \autodoc:class{plain} class, which already provides a lot of things users will expect, including most of the basic commands presented early in this manual.
 Let’s assume this is the case, and simply create a file \code{classes/myclass.lua} with the following content.
 
 \begin[type=autodoc:codeblock]{raw}
@@ -292,7 +292,7 @@ replicates the layout of the Hartley & Marks edition of Robert Bringhurst’s
 \em{The Elements of Typographical Style}.
 
 We are designing a book-like class, and so we will inherit from SILE’s
-standard \strong{book} class found in \code{classes/book.lua}.
+standard \autodoc:class{book} class found in \code{classes/book.lua}.
 Let’s briefly have a look at \code{book.lua} to see how it works.\footnote{%
 Note that the official SILE classes have some extra tooling to handle legacy class models trying to inherit from them.
 You don’t need those deprecation shims in your own classes when following these examples.}
@@ -335,9 +335,9 @@ Initially the height of the footnotes is zero (and so the typeblock takes up the
 its bottom is fixed and therefore its top will be adjusted, and the bottom of the main typeblock frame will also be correspondingly adjusted.
 The folio frame (which holds the page number) lives below the footnotes, and the running headers live above the \code{content} frame.
 
-Normally, as in the \strong{plain} class and anything inheriting from it,
+Normally, as in the \autodoc:class{plain} class and anything inheriting from it,
 this would be enough to populate the pages’ frameset.
-Instead the \code{book} class includes its own extension to the class with a callback \code{_init()} function which loads the \code{masters} package and generates a master frameset using the default frameset defined above.
+Instead the \autodoc:class{book} class includes its own extension to the class with a callback \code{_init()} function which loads the \autodoc:package{masters} package and generates a master frameset using the default frameset defined above.
 
 \begin[type=autodoc:codeblock]{raw}
 function book:_init (options)
@@ -353,14 +353,14 @@ function book:_init (options)
 end
 \end{raw}
 
-Next, we use the \code{twoside} package to mirror our right-page master into a left-page master:
+Next, we use the \autodoc:package{twoside} package to mirror our right-page master into a left-page master:
 
 \begin[type=autodoc:codeblock]{raw}
   self:loadPackage("twoside", { oddPageMaster = "right", evenPageMaster = "left" })
   self:mirrorMaster("right", "left")
 \end{raw}
 
-The \strong{book} class also loads the table of contents package which sets up commands for sectioning,and declares various things that need to be done at the start and end of each page.
+The \autodoc:class{book} class also loads the table of contents package which sets up commands for sectioning,and declares various things that need to be done at the start and end of each page.
 Since we will be inheriting from the book class, we will have all these definitions already available to us.
 All we need to do is set up our new class, and then define what is different about it.
 Here is how we set up the inheritance:
@@ -397,13 +397,13 @@ bringhurst.defaultFrameset = {
 }
 \end{raw}
 
-Note that we’ve deliberately copied the frame definitions for the folio and footnote frames from the \strong{book} class, but if we had tried to reuse the \code{runningHead} frame definition it would have been too high because the typeblock is higher on the page than the standard \strong{book} class, and the running heads are defined relative to them.
+Note that we’ve deliberately copied the frame definitions for the folio and footnote frames from the \autodoc:class{book} class, but if we had tried to reuse the \code{runningHead} frame definition it would have been too high because the typeblock is higher on the page than the standard \autodoc:class{book} class, and the running heads are defined relative to them.
 So, we needed to change the definition the running header frame to bring them down a bit lower.
 
 If all we want to do in our new class is to create a different page shape, this is all we need.
-The \code{_init()} function inherited from the book class will take care of setting these frames up with mirrored masters.
+The \code{_init()} function inherited from \autodoc:class{book} class will take care of setting these frames up with mirrored masters.
 
-If we had wanted to load additional packages into our class as, say, the \strong{bible} class does,
+If we had wanted to load additional packages into our class as, say, the \autodoc:class{bible} class does,
 we would need to define our own \code{_init()} function and call our parent class’s \code{_init()} function as well.
 For example to load the \autodoc:package{infonode} package into our class, we could add this function:
 
@@ -445,9 +445,9 @@ We will not cover it here, but class authors may also provide their own hook loc
 \end{itemize}
 
 For an example, we will check out the \autodoc:package{tableofcontents} package for the hooks it sets,
-but also the \autodoc:command[check=false]{\tocentry} command it registers that gets called manually in the \strong{book} class.
+but also the \autodoc:command[check=false]{\tocentry} command it registers that gets called manually in the \autodoc:class{book} class.
 Let’s demonstrate roughly how the that package works.
-We’ll be using the \code{infonodes} package to collect the information about which pages contain table of content items.
+We’ll be using the \autodoc:package{infonode} package to collect the information about which pages contain table of content items.
 
 First, we set up our infonodes by creating a command that can be called by sectioning commands.
 In other words, \autodoc:command[check=false]{\chapter}, \autodoc:command[check=false]{\section}, etc., should call \autodoc:command[check=false]{\tocentry} to store the page reference for this section.

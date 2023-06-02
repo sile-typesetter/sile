@@ -13,7 +13,8 @@ local theme = {
   setting = "#42280e", -- some kind of dark brown
   bracketed = "#656565", -- some grey
   package = "#172557", -- saturated space blue
-  note = "#525257" -- some asphalt grey hue
+  note = "#525257", -- some asphalt grey hue
+  class = "#6a2c54" -- some dark shaded magenta
 }
 
 local colorWrapper = function (ctype, content)
@@ -170,6 +171,12 @@ function package:registerCommands ()
     end)
   end)
 
+  self:registerCommand("autodoc:class:style", function (_, content)
+    SILE.call("font", { weight = 700 }, function()
+      colorWrapper("class", content)
+    end)
+  end)
+
   self:registerCommand("autodoc:code:style", function (options, content)
     -- options.type is used to distinguish the type of code element and style
     -- it accordingly: "ast", "setting", "environment" shall select the font
@@ -293,7 +300,19 @@ function package:registerCommands ()
     -- We cannot really check package name to exist!
 
     SILE.call("autodoc:package:style", {}, { name })
-  end, "Outputs a package name in code, checking its validity.")
+  end, "Outputs a package name.")
+
+  -- Documenting a class name
+
+  self:registerCommand("autodoc:class", function (_, content)
+    if type(content) ~= "table" then SU.error("Expected a table content") end
+    if #content ~= 1 then SU.error("Expected a single element") end
+    local name = type(content[1] == "string") and content[1]
+    if not name then SU.error("Unexpected class name") end
+    -- We cannot really check class name to exist!
+
+    SILE.call("autodoc:class:style", {}, { name })
+  end, "Outputs a class name.")
 
   -- Homogenizing the appearance of blocks of code
 
@@ -409,13 +428,12 @@ The \autodoc:command{\autodoc:parameter} commands takes either a parameter name,
 The \autodoc:environment{autodoc:codeblock} environment allows typesetting a block of code in a consistent way.
 This is not a true verbatim environment, and you still have to escape SILE’s special characters within it
 (unless calling commands is what you really intend doing there, obviously).
-For convenience, the package also provides a \code{raw} handler going by the same name, where you do not
-have to escape the special characters (backslashes, braces, percents).
+For convenience, the package also provides a \code{raw} handler going by the same name, where you do not have to escape the special characters (backslashes, braces, percents).
 
-The \autodoc:command{\autodoc:example} marks its content as an example, possibly typeset in a different choice
-of font.
+The \autodoc:command{\autodoc:example} marks its content as an example, possibly typeset in a different choice of font.
 
 The \autodoc:command{\autodoc:note} outputs its content as a note, in a dedicated framed and indented block.
+The \autodoc:command{\autodoc:package} and \autodoc:command{\autodoc:class} commands are used to format a package and class name.
 \end{document}
 ]]
 
