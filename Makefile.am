@@ -228,7 +228,7 @@ ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
 check: selfcheck
 
 .PHONY: selfcheck
-selfcheck: | $(_BUILT_SUBDIRS)
+selfcheck: | $(SILE) $(_BUILT_SUBDIRS)
 	output=$$(mktemp -t selfcheck-XXXXXX.pdf)
 	trap 'rm -f $$output' EXIT HUP TERM
 	echo "<sile>foo</sile>" | ./$(SILE) -o $$output -
@@ -269,7 +269,7 @@ $(_SUBDIR_TELLS):
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 #	$(error Running `make install`, `make dist`, or other end-game targets before `make all` unspported.)
 
-patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(SILE) $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
 
 %.pdf: %.sil $$(patterndeps)
 	$(runsile)
