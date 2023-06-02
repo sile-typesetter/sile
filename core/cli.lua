@@ -42,7 +42,7 @@ cli.parseArguments = function ()
     local code = parse_err:match("^Usage:") and 0 or 1
     os.exit(code)
   end
-  if opts.INPUTS then
+  if opts.INPUTS and #opts.INPUTS > 0 then
     local has_input_filename = false
     pl.tablex.foreachi(opts.INPUTS, function (v, k)
       if v == "STDIO" then
