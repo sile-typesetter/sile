@@ -16,6 +16,8 @@ function package:_init ()
       return value * SILE.settings:get("math.font.size") / 18
     end
   })
+  self:loadPackage("counters")
+  SILE.scratch.counters.equation = { value = 0, display = "arabic" }
 end
 
 function package.declareSettings (_)
