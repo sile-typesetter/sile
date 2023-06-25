@@ -864,15 +864,6 @@ end
 -- is responsible of doing it, if the hbox is built for anything
 -- else than e.g. measuring it. Likewise, the call has to decide
 -- what to do with the migrating content.
-local _rtl_pre_post = function (box, atypesetter, line)
-  local advance = function () atypesetter.frame:advanceWritingDirection(box:scaledWidth(line)) end
-  if atypesetter.frame:writingDirection() == "RTL" then
-    advance()
-    return function () end
-  else
-    return advance
-  end
-end
 function typesetter:makeHbox (content)
   local recentContribution = {}
   local migratingNodes = {}
@@ -936,7 +927,6 @@ function typesetter:makeHbox (content)
       depth = d,
       value = recentContribution,
       outputYourself = function (box, atypesetter, line)
-        local _post = _rtl_pre_post(box, atypesetter, line)
         local ox = atypesetter.frame.state.cursorX
         local oy = atypesetter.frame.state.cursorY
         SILE.outputter:setCursor(atypesetter.frame.state.cursorX, atypesetter.frame.state.cursorY)
@@ -945,7 +935,7 @@ function typesetter:makeHbox (content)
         end
         atypesetter.frame.state.cursorX = ox
         atypesetter.frame.state.cursorY = oy
-        _post()
+        atypesetter.frame:advanceWritingDirection(box:scaledWidth(line))
         SU.debug("hboxes", function ()
           SILE.outputter:debugHbox(box, box:scaledWidth(line))
           return "Drew debug outline around hbox"
