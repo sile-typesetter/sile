@@ -84,10 +84,9 @@ jobs:
         run: |
           git fetch --prune --tags ||:
       - name: Install Nix
-        uses: cachix/install-nix-action@v22
-        with:
-          extra_nix_config: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+        uses: DeterminateSystems/nix-installer-action@v4
+      - name: Cache Nix dependencies
+        uses: DeterminateSystems/magic-nix-cache-action@v2
       - name: Setup developer environment
         run: |
           nix develop --command ./bootstrap.sh
