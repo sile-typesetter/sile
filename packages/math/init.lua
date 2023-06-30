@@ -17,7 +17,6 @@ function package:_init ()
     end
   })
   self:loadPackage("counters")
-  SILE.scratch.counters.equation = { value = 0, display = "arabic" }
 end
 
 function package.declareSettings (_)
