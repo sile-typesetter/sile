@@ -3,7 +3,7 @@ name: Test
 on: [ push, pull_request ]
 
 concurrency:
-  group: ${{ github.workflow}}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -39,9 +39,6 @@ jobs:
           path: |
             lua_modules
           key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
-      - name: Fetch tags
-        run: |
-          git fetch --prune --tags ||:
       - name: Setup ‘lua’
         uses: leafo/gh-actions-lua@v10
         with:

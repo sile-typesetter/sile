@@ -3,7 +3,7 @@ name: Build
 on: [ push, pull_request ]
 
 concurrency:
-  group: ${{ github.workflow}}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -28,9 +28,6 @@ jobs:
           path: |
             lua_modules
           key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
-      - name: Fetch tags
-        run: |
-          git fetch --prune --tags ||:
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -80,9 +77,6 @@ jobs:
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
-      - name: Fetch tags
-        run: |
-          git fetch --prune --tags ||:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v4
       - name: Cache Nix dependencies
