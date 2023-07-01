@@ -23,7 +23,7 @@
     "@commitlint/config-conventional": "^17.4.4",
     "@commitlint/prompt": "^17.5.0",
     "commitizen": "^4.3.0",
-    "conventional-changelog-cli": "^2.2.2",
+    "conventional-changelog-cli": "^3.0.0",
     "husky": "^8.0.3",
     "standard-version": "^9.5.0",
     "yaml": "^2.2.1"
