@@ -72,8 +72,8 @@ A VCS package is also available as [sile-git][aur-sile-git] to build from the la
 #### Fedora
 
 A [COPR][copr] repository is available for Fedora users with packages of SILE
-and all the necessary dependencies including fonts.
-Fedora 36 and Fedora 37 are supported.
+and all the necessary dependencies.
+Fedora 38 and later are supported.
 There is work in progress to get the packages added to the official Fedora repository.
 
 ```console
