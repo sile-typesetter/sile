@@ -82,6 +82,12 @@ function package:registerCommands ()
     self:handleMath(mbox, mode, counter)
   end)
 
+  self:registerCommand("math-counterstyle", function (options, _)
+    SILE.typesetter:typeset("(")
+    SILE.call("show-counter", { id=options.id })
+    SILE.typesetter:typeset(")")
+  end)
+
 end
 
 package.documentation = [[
