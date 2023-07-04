@@ -88,6 +88,10 @@ function package:registerCommands ()
     SILE.typesetter:typeset(")")
   end)
 
+  self:registerCommand("equation", function (_, content)
+    SILE.call("math", {mode="display", counter="equation"}, content)
+  end)
+
 end
 
 package.documentation = [[
@@ -362,6 +366,8 @@ The default numbering format is '(xx)', but this style may be overriden by defin
 \begin[type=autodoc:codeblock]{raw}
 \define[command=math-counterstyle]{(\show-counter[id="equation"])}
 \end{raw}
+
+There is also a \code{\\equation{...}}, that is an alias to \code{\\math[mode=display,counter=equation]{...}}
 
 \paragraph{Missing features}
 This package still lacks support for some mathematical constructs, but hopefully we’ll get there.
