@@ -353,6 +353,16 @@ Finally, here is a little secret. This notation:
 
 \noindent In other words, the notation using \code{&} and \code{\\\\} is only a syntactic sugar for a two-dimensional array constructed with braces.
 
+\paragraph{Equations numbering}
+Equations can be numbered in display mode adding the options \code{numbering} and \code{counter}.
+When \code{numbering=true}, the equations are numbered using a default "equation" counter.
+A different counter may be set by using the option \code{counter=id}, and this setting will also enable numbering. 
+The default numbering format is '(xx)', but this style may be overriden by defining a custom math-counterstyle function, e.g.
+
+\begin[type=autodoc:codeblock]{raw}
+\define[command=math-counterstyle]{(\show-counter[id="equation"])}
+\end{raw}
+
 \paragraph{Missing features}
 This package still lacks support for some mathematical constructs, but hopefully we’ll get there.
 Among unsupported constructs are: decorating symbols with so-called accents, such as arrows or hats, “over” or “under” braces, and line breaking inside a formula.
