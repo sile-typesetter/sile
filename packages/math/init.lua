@@ -68,16 +68,18 @@ function package:registerCommands ()
     xpcall(function()
       mbox = self:ConvertMathML(content, mbox)
     end, function(err) print(err); print(debug.traceback()) end)
-    self:handleMath(mbox, mode)
+    self:handleMath(mbox, mode, nil)
   end)
 
   self:registerCommand("math", function (options, content)
     local mode = (options and options.mode) and options.mode or "text"
     local mbox
+    local counter = (options and options.numbered) and "equation"
+    counter = (options and options.counter) and options.counter or counter
     xpcall(function()
       mbox = self:ConvertMathML(self:compileToMathML({}, self:convertTexlike(content)))
     end, function(err) print(err); print(debug.traceback()) end)
-    self:handleMath(mbox, mode)
+    self:handleMath(mbox, mode, counter)
   end)
 
 end
