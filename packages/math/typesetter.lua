@@ -126,10 +126,8 @@ function ConvertMathML (_, content)
   end
 end
 
-local function handleMath (_, mbox, mode)
+local function handleMath (_, mbox, mode, counter)
   if mode == 'display' then
-    mbox.mode = b.mathMode.display
-  elseif mode == 'numbered' then
     mbox.mode = b.mathMode.display
   elseif mode == 'text' then
     mbox.mode = b.mathMode.textCramped
@@ -146,21 +144,15 @@ local function handleMath (_, mbox, mode)
   if mode == "display" then
     SILE.typesetter:endline()
     SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
-    SILE.call("center", {}, function()
-      SILE.typesetter:pushHorizontal(mbox)
-    end)
-    SILE.typesetter:endline()
-    SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
-  elseif mode == "numbered" then
-    SILE.typesetter:endline()
-    SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
     SILE.typesetter:pushGlue(SILE.nodefactory.hfillglue())
     SILE.typesetter:pushHorizontal(mbox)
     SILE.typesetter:pushGlue(SILE.nodefactory.hfillglue())
-    SILE.call("increment-counter", { id="equation" })
-    SILE.typesetter:typeset("(")
-    SILE.call("show-counter", { id="equation" })
-    SILE.typesetter:typeset(")")
+    if counter then
+      SILE.call("increment-counter", { id=counter } )
+      SILE.call("math-counterstyle", { id=counter } )
+    else
+      SILE.call("hbox")
+    end
     SILE.typesetter:endline()
     SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
   else
