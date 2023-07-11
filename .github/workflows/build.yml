@@ -55,7 +55,7 @@ jobs:
           path: sile-${{ env.VERSION }}.zip
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.repository == 'sile-typesetter/sile' && startsWith(github.ref, 'refs/tags/v')
         with:
           body_path: sile-${{ env.VERSION }}.md
           files: |
