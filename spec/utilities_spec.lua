@@ -15,6 +15,9 @@ describe("SILE.utilities", function()
 
   describe("formatNumber", function ()
 
+    local icu = require("justenoughicu")
+    local icu73plus = tostring(icu.version()) >= "73.0"
+
     SILE.documentState = { documentClass = { state = { } } }
     SILE.typesetter = SILE.typesetters.base(SILE.newFrame({ id = "dummy" }))
 
@@ -104,7 +107,8 @@ describe("SILE.utilities", function()
       end)
 
       it("should format ordinal numbers", function ()
-        assert.is.equal("1 984.", -- N.B. Contains a non-breaking space
+        local expectation = icu73plus and "1 984" or "1 984."
+        assert.is.equal(expectation, -- N.B. Contains a non-breaking space
                         SU.formatNumber(1984, { style = "ordinal" }))
       end)
     end)
@@ -122,7 +126,8 @@ describe("SILE.utilities", function()
       end)
 
       it("should format ordinal numbers", function ()
-        assert.is.equal("١٬٩٨٤.", SU.formatNumber(1984, { style = "ordinal" }))
+        local expectation = icu73plus and "١٬٩٨٤" or "١٬٩٨٤."
+        assert.is.equal(expectation, SU.formatNumber(1984, { style = "ordinal" }))
       end)
     end)
 
