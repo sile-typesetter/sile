@@ -39,7 +39,7 @@ function outputter:getOutputFilename ()
   if SILE.outputFilename then
     fname = SILE.outputFilename
   elseif SILE.masterFilename then
-    fname = SILE.masterFilename
+    fname = pl.path.splitext(SILE.masterFilename)
     if self.extension then
       fname = fname .. "." .. self.extension
     end

@@ -291,7 +291,7 @@ function SILE.processString (doc, format, filename, options)
   -- a specific inputter to use, use it at the exclusion of all content type
   -- detection
   local inputter
-  if filename and pl.path.splitext(pl.path.normcase(filename)) == SILE.masterFilename and SILE.inputter then
+  if filename and pl.path.normcase(pl.path.normpath(filename)) == pl.path.normcase(SILE.masterFilename) and SILE.inputter then
     inputter = SILE.inputter
   else
     format = format or detectFormat(doc, filename)
@@ -301,7 +301,7 @@ function SILE.processString (doc, format, filename, options)
     inputter = SILE.inputters[format](options)
     -- If we did content detection *and* this is the master file, save the
     -- inputter for posterity and postambles
-    if filename and pl.path.splitext(pl.path.normcase(filename)) == SILE.masterFilename then
+    if filename and pl.path.normcase(filename) == SILE.masterFilename then
       SILE.inputter = inputter
     end
   end
@@ -321,11 +321,10 @@ function SILE.processFile (filename, format, options)
     -- Turn slashes around in the event we get passed a path from a Windows shell
     filename = filename:gsub("\\", "/")
     if not SILE.masterFilename then
-      -- Strip extension
-      SILE.masterFilename = string.match(filename, "(.+)%..-$") or filename
+      SILE.masterFilename = pl.path.normpath(filename)
     end
     if SILE.masterFilename and not SILE.masterDir then
-      SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
+      SILE.masterDir = pl.path.dirname(SILE.masterFilename)
     end
     if SILE.masterDir and SILE.masterDir:len() >= 1 then
       _G.extendSilePath(SILE.masterDir)
@@ -463,7 +462,7 @@ function SILE.finish ()
   end
   if SU.debugging("profile") then
     ProFi:stop()
-    ProFi:writeReport(SILE.masterFilename..'.profile.txt')
+    ProFi:writeReport(pl.path.splitext(SILE.masterFilename) .. '.profile.txt')
   end
   if SU.debugging("versions") then
     SILE.shaper:debugVersions()
