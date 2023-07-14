@@ -173,4 +173,25 @@ In the preceding sections, we explained how to implement a simple input handler,
 The other default methods from the base inputter class still apply.
 In particular, options passed to the \autodoc:command{\include} commands are passed onto our inputter instance and are available in \code{self.options}.
 
+\section{Designing an output handler}
+
+Outputters usually live somewhere in the \code{outputters/} subdirectory of either where your first input file is located, your current working directory, or your SILE path.
+
+All ouput handlers inherit from a \autodoc:package{base} outputter.
+It is an abstract class, providing just one concrete method, and defining a bunch of methods that any actual outputter has to override for the specifics of its target format.
+
+We first need to declare the name of our new outputter, as well as the default file extension for the output file, which will be appended to the base name of the main input file if the user does not provide an explicit output file name on their command line.
+
+\begin[type=autodoc:codeblock]{raw}
+local outputter = pl.class(base)
+outputter._name = "myformat"
+outputter.extension = "ext"
+\end{raw}
+
+And then, we have to provide an implementation for all the low-level output methods for a variety of things (cursor position, page switches, text and image handling, etc.)
+
+We are not going to enter into the details here.
+First, there are quite a lot of methods to take care of.
+Moreover, the API is not fully stable here, as needs for other output formats beyond those provided in the core distribution may call for different strategies.
+Still, you might want to study the \strong{libtexpdf} outputter, by far the most complete in terms of features, which is the standard way to generate a PDF, as it names implies, using a PDF library extracted from the TeX ecosystem and adapted to SILE’s need.
 \end{document}
