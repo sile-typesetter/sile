@@ -95,8 +95,8 @@ local splitNodeAtPos = function (n, splitstart, p)
   end
 end
 
-local splitNodelistIntoBidiRuns = function (typesetter)
-  local nl = typesetter.state.nodes
+local splitNodelistIntoBidiRuns = function (nl, typesetter)
+  if not nl then nl = typesetter.state.nodes end
   if #nl == 0 then return nl end
   local owners, text = nodeListToText(nl)
   local base_level = typesetter.frame:writingDirection() == "RTL" and 1 or 0
@@ -149,26 +149,33 @@ local splitNodelistIntoBidiRuns = function (typesetter)
   return nl
 end
 
-local bidiBoxupNodes = function (typesetter)
+local bidiBoxUpNodes = function (typesetter)
   local allDone = true
   for i = 1, #typesetter.state.nodes do
     if not typesetter.state.nodes[i].bidiDone then allDone = false end
   end
   if allDone then return typesetter:nobidi_boxUpNodes() end
-  local newNodeList = splitNodelistIntoBidiRuns(typesetter)
+  local newNodeList = splitNodelistIntoBidiRuns(nil, typesetter)
   typesetter:shapeAllNodes(newNodeList)
   typesetter.state.nodes = newNodeList
   local vboxlist = typesetter:nobidi_boxUpNodes()
   -- Scan for out-of-direction material
   for i = 1, #vboxlist do
     local v = vboxlist[i]
-    if v.is_vbox then package.reorder(nil, v, typesetter) end
+    if v.is_vbox then v.nodes = package.reorder(nil, v.nodes, typesetter) end
   end
   return vboxlist
 end
 
-function package.reorder (_, n, typesetter)
-  local nl = n.nodes
+-- We run UBA on hboxes here since they are not handled in bidiBoxUpNodes
+local bidiMakeHbox = function (typesetter, content)
+  local hbox, hlist = typesetter:nobidi_makeHbox(content)
+  hbox.value = splitNodelistIntoBidiRuns(hbox.value, typesetter)
+  hbox.value = package.reorder(nil, hbox.value, typesetter)
+  return hbox, hlist
+end
+
+function package.reorder (_, nl, typesetter)
   -- local newNl = {}
   -- local matrix = {}
   local levels = {}
@@ -229,23 +236,28 @@ function package.reorder (_, n, typesetter)
     nl[i].bidiDone = true
     -- rv[i] = nl[i]
   end
-  n.nodes = SU.compress(rv)
+  nl = SU.compress(rv)
+  return nl
 end
 
 function package:bidiEnableTypesetter (typesetter)
-  if typesetter.nobidi_boxUpNodes and self.class._initialized then
+  if typesetter.nobidi_boxUpNodes and typesetter.nobidi_makeHbox and self.class._initialized then
     return SU.warn("BiDi already enabled, nothing to turn on")
   end
   typesetter.nobidi_boxUpNodes = typesetter.boxUpNodes
-  typesetter.boxUpNodes = bidiBoxupNodes
+  typesetter.boxUpNodes = bidiBoxUpNodes
+  typesetter.nobidi_makeHbox = typesetter.makeHbox
+  typesetter.makeHbox = bidiMakeHbox
 end
 
 function package:bidiDisableTypesetter (typesetter)
-  if not typesetter.nobidi_boxUpNodes and self.class._initialized then
+  if not typesetter.nobidi_boxUpNodes and not typesetter.nobidi_makeHbox and self.class._initialized then
     return SU.warn("BiDi not enabled, nothing to turn off")
   end
   typesetter.boxUpNodes = typesetter.nobidi_boxUpNodes
   typesetter.nobidi_boxUpNodes = nil
+  typesetter.makeHbox = typesetter.nobidi_makeHbox
+  typesetter.nobidi_makeHbox = nil
 end
 
 function package:_init ()
