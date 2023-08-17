@@ -31,7 +31,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.3-dev libpng-dev lua5.3 lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+          sudo apt-get install fonts-sil-gentiumplus graphviz libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.3-dev libpng-dev lua5.3 lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
       - name: Configure
         run: |
           ./bootstrap.sh
