@@ -1,5 +1,6 @@
 local bitshim = require("bitshim")
 local luautf8 = require("lua-utf8")
+local semver = require("semver")
 
 local utilities = {}
 
@@ -89,18 +90,19 @@ utilities.gtoke = function (string, pattern)
 end
 
 utilities.deprecated = function (old, new, warnat, errorat, extra)
+  warnat, errorat = semver(warnat or 0), semver(errorat or 0)
+  local current = SILE.version and semver(SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)")) or warnat
   -- SILE.version is defined *after* most of SILE loads. It’s available at
   -- runtime but not useful if we encounter deprecated code in core code. Users
   -- will never encounter this failure, but as a developer it’s hard to test a
   -- deprecation when core code refactoring is an all-or-nothing proposition.
   -- Hence we fake it ‘till we make it, all deprecations internally are warings.
   local brackets = old:sub(1,1) == '\\' and "" or "()"
-  local _semver = SILE.version and SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)") or warnat
   local _new = new and "Please use " .. (new .. brackets) .. " instead." or "Plase don't use it."
-  local msg = (old .. brackets) .. " was deprecated in SILE v" .. warnat .. ". " .. _new ..  (extra and "\n" .. extra .. "\n\n" or "")
-  if errorat and _semver >= errorat then
+  local msg = (old .. brackets) .. " was deprecated in SILE v" .. tostring(warnat) .. ". " .. _new ..  (extra and "\n" .. extra .. "\n\n" or "")
+  if errorat and current >= errorat then
     SU.error(msg)
-  elseif warnat and _semver >= warnat then
+  elseif warnat and current >= warnat then
     SU.warn(msg)
   end
 end
