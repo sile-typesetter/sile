@@ -85,6 +85,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
 
     AM_COND_IF([MANUAL], [
                 AC_PATH_PROG([DOT], [dot])
+                AC_PATH_PROG([GS], [gs])
                 ])
     AC_PATH_PROG([PDFINFO], [pdfinfo])
 

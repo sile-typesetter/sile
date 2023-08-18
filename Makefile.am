@@ -202,7 +202,8 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) 
 	$(runsile)
 
 %.pdf: %.dot
-	$(DOT) -Tpdf $< -o $@
+	$(DOT) -Tpdf $< -o $@.gs
+	$(GS) -q -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -o $@ $@.gs
 
 .PHONY: force
 force: ;
