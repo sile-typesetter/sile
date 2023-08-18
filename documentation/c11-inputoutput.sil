@@ -9,13 +9,13 @@ The actual rendering relies on an “output backend” to generate a result in t
 
 The standard distribution includes “inputters” (as we call them in brief) for the SIL language and its XML flavor,\footnote{%
 Actually, SILE preloads \em{three} inputters: SIL, XML, and also one for Lua scripts.
-} but SILE is not tied to supporting these formats \em{only.}
+} but SILE is not tied to supporting \em{only} these formats.
 Adding another input format is just a matter of implementing the corresponding inputter.
 This is exactly what third party modules adding “native” support for Markdown, Djot, and other markup languages achieve.
 This chapter will give you a high-level overview of the process.
 
-As of “outputter” backends, most users are likely interested in the one responsible for PDF output.
-The standard distribution includes a few other backends: text-only output, debug output (mostly used internally by non-regression tests), and a few experimental ones.
+As for “outputter” backends, most users are likely interested in the one responsible for PDF output.
+The standard distribution includes a few other backends: text-only output, debug output (mostly used internally for regression testing), and a few experimental ones.
 
 \section{Designing an input handler}
 
@@ -27,7 +27,7 @@ A minimum working inputter inherits from the \autodoc:package{base} inputter.
 We need to declare the name of our new inputter, its priority order, and (at least) two methods.
 
 When a file or string is processed and its format is not explicitly provided, SILE looks for the first inputter claiming to know this format.
-Inputters are sorted according to their priority order, an integer value.
+Potential inputters are queried sequentially according to their priority order, an integer value.
 For instance,
 \begin{itemize}
 \item{The XML inputter has a priority of 2.}
@@ -36,7 +36,7 @@ For instance,
 
 In this tutorial example, we are going to use a priority of 2.
 Please note that depending on your input format and the way it can be analyzed in order to determine whether a given content is in that format, this value might not be appropriate.
-At one point, you will have to consider in which order the various inputters need to be evaluated.
+At some point, you will have to consider where in the sequence your  inputter needs to be evaluated.
 
 We will return to the topic later below.
 For now, let’s start with a file \code{inputters/myformat.lua} with the following content.
@@ -54,14 +54,15 @@ function inputter.appropriate (round, filename, _)
 end
 
 function inputter:parse (doc)
-  -- We will later change it.
+  local tree = {}
+  -- Later we will work on parsing the input document into an AST tree
   return tree
 end
 
 return inputter
 \end{raw}
 
-You have written you very first inputter, or more precisely the minimal \em{boilerplate} code for it.
+You have written you very first inputter, or more precisely minimal \em{boilerplate} code for one.
 One possible way to use it would be to load it from command line, before processing some file in the supported format:
 
 \begin[type=autodoc:codeblock]{raw}
@@ -69,28 +70,28 @@ sile -u inputters.myformat somefile.xy
 \end{raw}
 
 However, this will not work yet.
-We must to do a few real things now.
+We must code up a few real functions now.
 
 \subsection{Content appropriation}
 
 What we first need is to tell SILE how to choose our inputter when it is given a file in our input format.
-The \code{appropriate()} method of our inputter is reponsible for providing the corresponding logic. It is a static method (so it does not have a \code{self} argument),
-and it takes up to three arguments:
+The \code{appropriate()} method of our inputter is reponsible for providing the corresponding logic.
+It is a static method (so it does not have a \code{self} argument), and it takes up to three arguments:
 \begin{itemize}
 \item{the round, an integer between 1 and 3.}
 \item{the file name if we are processing a file (so \code{nil} in case we are processing some string directly, for instance via a raw command handler).}
 \item{the textual content (of the file or string being processed).}
 \end{itemize}
-
 It is expected to return a boolean value, \code{true} if this handler is appropriate and \code{false} otherwise.
 
 Earlier, we said that inputters were checked in their priority order.
 This was not fully complete.
-Let’s add another piece to our puzzle: Inputters are actually checked orderly indeed, but three times:
+Let’s add another piece to our puzzle: Inputters are actually checked orderly indeed, but three times.
+This allows for quick compatiblitity checks to supercede resource-intensive ones.
 \begin{itemize}
 \item{Round 1 expects the file name to be checked: for instance, we could base our decision on recognized file extensions.}
-\item{Round 2 expects the content string to be checked: for instance, we could base our decision on some “magic” sequence of characters occurring early in the document (or any other content inspection strategy).}
-\item{Round 3 expects the content to successfully be parsed.}
+\item{Round 2 expects some portion of the content string to be checked: for instance, we could base our decision on sniffing for some sequence of characters expected to occurr early in the document (or any other content inspection strategy).}
+\item{Round 3 expects the entire content to be successfully parsed.}
 \end{itemize}
 
 For instance, say you are designing an inputter for HTML.
@@ -111,16 +112,16 @@ end
 \end{raw}
 
 Here, to keep the example simple, we decided not to implement round 3, which would require an actual HTML parser capable of intercepting syntax errors.
-This is clearly outside the aim of this tutorial.\footnote{The third round is also the most “expensive” in terms of computing, so clever optimizations might be needed here, but we are not going to consider the topic here.}
-You should nevertheless now have the basics for understanding how existing inputters are supposed to perform format detection.
+This is clearly outside the aim of this tutorial.%
+\footnote{The third round is also the most “expensive” in terms of computing, so clever optimizations like caching the results of fully parsing the content may be called for here, but we are not going to consider the topic now.}
+You should nevertheless have a basic understanding of how inputters are supposed to perform format detection.
 
 \subsection{Content parsing}
 
-Once SILE finds an inputter appropriating the content, it invokes its \code{parse()} method.
-Eventually, you need to return a SILE document tree.
-So this is where your task really takes off.
-You have to parse the document, build a SILE abstract syntax tree and wrap it into a document.
-The general structure will likely look as follows, but the details strongly depend on the input language you are going to support.
+Once SILE finds an inputter appropriate for the content, it invokes its \code{parse()} method.
+The parser is expected to return a SILE document tree, so this is where your task really takes off.
+You have to parse the document, build a SILE abstract syntax tree, and wrap it into a document.
+The general structure will likely look as follows, but the details heavily depend on the input language you are going to support.
 
 \begin[type=autodoc:codeblock]{raw}
 function inputter:parse (doc)
@@ -135,7 +136,7 @@ end
 \end{raw}
 
 For the sake of a better illustration, we are going to pretend that our input format uses square brackets to mark italics.
-Say it is all about it, and let us go for a naive and very low-level solution.
+Lets say our plain text input format is just all about italics or not, and let us go for a naive and very low-level solution.
 
 \begin[type=autodoc:codeblock]{raw}
 function inputter:parse (doc)
@@ -163,13 +164,13 @@ function inputter:parse (doc)
 end
 \end{raw}
 
-Of course, real input formats need more than that, such as parsing a complex grammar with LPEG or other tools.
+Of course, real input formats will need more than that, perhaps parsing a complex grammar with LPEG or other tools.
 SILE also provides some helpers to facilitate AST-related operations.
 Again, we just kept it as simple as possible here, so as to describe the concepts and the general workflow and get you started.
 
 \subsection{Inputter options}
 
-In the preceding sections, we explained how to implement a simple input handler, with just a few methods being overridden.
+In the preceding sections, we explained how to implement a simple input handler with just a few methods being overridden.
 The other default methods from the base inputter class still apply.
 In particular, options passed to the \autodoc:command{\include} commands are passed onto our inputter instance and are available in \code{self.options}.
 
