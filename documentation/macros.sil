@@ -17,7 +17,6 @@
 \use[module=packages.simpletable]
 % Autodoc-related shims
 \define[command=examplefont]{\autodoc:example{\process}}
-\define[command=note]{\autodoc:note{\process}}
 % Document fonts
 \define[command=sectionsfont]{\font[weight=600,family=Roboto Condensed]{\process}}
 \define[command=tableofcontents:headerfont]{\font[weight=600,size=22pt,family=Roboto Condensed]{\process}}
@@ -29,7 +28,7 @@
 % Custom commands
 \define[command=terminal]{\verbatim{\set[parameter=document.lskip,value=36pt]\process\smallskip}}
 \define[command=changed]{
-\note{\strong{The material in this section has changed significantly since the previous release of SILE.}}
+\autodoc:note{\strong{The material in this section has changed significantly since the previous release of SILE.}}
 }
 \define[command=sup]{\raise[height=0.6ex]{\font[size=0.8em]{\process}}}
 \end{document}

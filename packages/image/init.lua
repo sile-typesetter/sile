@@ -45,9 +45,9 @@ If the size parameters are not given, then the image will be output at its “na
 The command also supports a \autodoc:parameter{page=<number>} option, to specify the selected page in formats supporting
 several pages (such as PDF).
 
-\begin{note}
+\begin{autodoc:note}
 With the libtexpdf backend (the default), the images can be in JPEG, PNG, EPS, or PDF formats.
-\end{note}
+\end{autodoc:note}
 
 Here is a 200x243 pixel image output with \autodoc:command{\img[src=documentation/gutenberg.png]}.
 The image has a claimed resolution of 100 pixels per inch, so ends up being two inches (144pt) wide on the page:\par

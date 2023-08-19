@@ -92,13 +92,13 @@ To tweak the position of the dropcap, measurements may be passed to the \autodoc
 Other options passed to \autodoc:command{\dropcap} will be passed through to \autodoc:command{\font} when drawing the initial letter(s).
 This may be useful for passing OpenType options or other font preferences.
 
-\begin{note}
+\begin{autodoc:note}
 One caveat is that the size of the initials is calculated using the default linespacing mechanism.
 If you are using an alternative method from the \autodoc:package{linespacing} package, you might see strange results.
 Set the \autodoc:setting{document.baselineskip} to approximate your effective leading value for best results.
 If that doesn't work set the size manually.
 Using \code{SILE.setCommandDefaults()} can be helpful for so you don't have to set the size every time.
-\end{note}
+\end{autodoc:note}
 \end{document}
 ]]
 

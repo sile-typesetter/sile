@@ -468,7 +468,7 @@ Infonodes work on a per-page basis, so if we want to save them throughout the wh
 table.
 In order to be useful, we also need to make sure we store their page numbers.
 
-\note{SILE provides the \code{SILE.scratch} variable for you to store global information in.
+\autodoc:note{SILE provides the \code{SILE.scratch} variable for you to store global information in.
 You should use a portion of this table namespaced to your class or package.}
 
 Here is a routine we can call at the end of each page to move the TOC nodes:
