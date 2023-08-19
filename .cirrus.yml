@@ -40,7 +40,6 @@ task:
     - luarocks54 install luarepl
     - luarocks54 install luautf8
     - luarocks54 install penlight
-    - luarocks54 install semver
     - luarocks54 install vstruct
   bootstrap_script:
     - git fetch --prune --tags ||:

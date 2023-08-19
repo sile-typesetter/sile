@@ -58,7 +58,6 @@
         luasocket
         luautf8
         penlight
-        semver
         vstruct
         # lua packages needed for testing
         busted
