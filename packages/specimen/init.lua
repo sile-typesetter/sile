@@ -49,6 +49,7 @@ function package:registerCommands ()
         local w = 0
         for j= 1,#tokens do w = w + tokens[j].width end
         local ratio = width.length / w
+        SILE.call("noindent")
         SILE.call("font", {size = fontOptions.size * ratio}, function()
           SILE.process({line.string})
           SILE.call("par")

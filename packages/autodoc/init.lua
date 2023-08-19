@@ -14,7 +14,8 @@ local theme = {
   bracketed = "#656565", -- some grey
   package = "#172557", -- saturated space blue
   note = "#525257", -- some asphalt grey hue
-  class = "#6a2c54" -- some dark shaded magenta
+  class = "#6a2c54", -- some dark shaded magenta
+  codeblock = "#303040" -- dark grey with a hint of blue
 }
 
 local colorWrapper = function (ctype, content)
@@ -333,15 +334,19 @@ function package:registerCommands ()
         SILE.settings:set("shaper.variablespaces", false)
         SILE.settings:set("document.language", "und")
         SILE.typesetter:leaveHmode()
-        SILE.call("color", { color = "#303040" }, function ()
+        colorWrapper("codeblock", function ()
           SILE.call("bigskip")
-          SILE.call("autodoc:line")
+          colorWrapper("note", function ()
+            SILE.call("autodoc:line")
+          end)
           SILE.typesetter:pushVglue(-0.6*ex)
           SILE.call("novbreak")
           SILE.process(content)
           SILE.call("novbreak")
           SILE.typesetter:pushVglue(1.4*ex)
-          SILE.call("autodoc:line")
+          colorWrapper("note", function ()
+            SILE.call("autodoc:line")
+          end)
           SILE.call("smallskip")
         end)
     end)
@@ -368,7 +373,7 @@ function package:registerCommands ()
     local innerindent = SILE.measurement("1em"):absolute()
     SILE.settings:temporarily(function ()
       SILE.settings:set("document.lskip", leftindent)
-      SILE.settings:set("document.rskip", SILE.nodefactory.glue())
+      SILE.settings:set("document.rskip", leftindent)
 
       SILE.call("noindent")
       colorWrapper("note", function ()
@@ -378,10 +383,11 @@ function package:registerCommands ()
         SILE.call("hrule", { width = 3 * linedimen, height = linethickness })
         SILE.call("hrule", { width = linethickness, height = linethickness, depth = linedimen })
 
+        SILE.call("noindent")
         SILE.call("novbreak")
         SILE.settings:temporarily(function ()
           SILE.settings:set("document.lskip", SILE.nodefactory.glue(leftindent + innerindent))
-          SILE.settings:set("document.rskip", SILE.nodefactory.glue(innerindent))
+          SILE.settings:set("document.rskip", SILE.nodefactory.glue(leftindent + innerindent))
           SILE.call("font", { size = "0.95em", style = "italic "}, content)
           SILE.call("novbreak")
         end)
