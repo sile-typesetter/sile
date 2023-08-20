@@ -38,8 +38,8 @@ function outputter:getOutputFilename ()
   local fname
   if SILE.outputFilename then
     fname = SILE.outputFilename
-  elseif SILE.masterFilename then
-    fname = pl.path.splitext(SILE.masterFilename)
+  elseif SILE.input.filenames[1] then
+    fname = pl.path.splitext(SILE.input.filenames[1])
     if self.extension then
       fname = fname .. "." .. self.extension
     end

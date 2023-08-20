@@ -25,7 +25,7 @@ local makeDeps = {
   write = function (self)
     self:add_modules()
     if type(self.filename) ~= "string" then
-      self.filename = pl.path.splitext(SILE.masterFilename) .. ".d"
+      self.filename = pl.path.splitext(SILE.input.filenames[1]) .. ".d"
     end
     local depfile, err = io.open(self.filename, "w")
     if not depfile then return SU.error(err) end
