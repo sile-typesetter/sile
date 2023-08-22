@@ -301,7 +301,7 @@ function SILE.processString (doc, format, filename, options)
     inputter = SILE.inputters[format](options)
     -- If we did content detection *and* this is the master file, save the
     -- inputter for posterity and postambles
-    if filename and pl.path.normcase(filename) == pl.path.normcase(SILE.input.filenames[1]) then
+    if filename and pl.path.normcase(filename) == pl.path.normcase(SILE.input.filenames[1]:gsub("^-$", "STDIN")) then
       SILE.inputter = inputter
     end
   end
