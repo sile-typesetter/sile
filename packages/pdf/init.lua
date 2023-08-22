@@ -1,21 +1,12 @@
+--
+-- This package and its commands are perhaps ill-named:
+-- Exception made of the pdf:literal command below, the concepts of links
+-- (anchor, target), bookmarks, and metadata are not specific to PDF.
+--
 local base = require("packages.base")
 
 local package = pl.class(base)
 package._name = "pdf"
-
-local pdf
-
-local function validate_date (date)
-  return string.match(date, [[^D:%d+%s*-%s*%d%d%s*'%s*%d%d%s*'?$]]) ~= nil
-end
-
-function package:_init ()
-  base._init(self)
-  pdf = require("justenoughlibtexpdf")
-  if SILE.outputter._name ~= "libtexpdf" then
-    SU.error("pdf package requires libtexpdf backend")
-  end
-end
 
 function package:registerCommands ()
 
@@ -36,29 +27,26 @@ function package:registerCommands ()
   self:registerCommand("pdf:bookmark", function (options, _)
     local dest = SU.required(options, "dest", "pdf:bookmark")
     local title = SU.required(options, "title", "pdf:bookmark")
-    local level = options.level or 1
-    -- Added UTF8 to UTF16-BE conversion
-    -- For annotations and bookmarks, text strings must be encoded using
-    -- either PDFDocEncoding or UTF16-BE with a leading byte-order marker.
-    -- As PDFDocEncoding supports only limited character repertoire for
-    -- European languages, we use UTF-16BE for internationalization.
-    local ustr = SU.utf8_to_utf16be_hexencoded(title)
-    if type(SILE.outputter._ensureInit) == "function" then
-      SILE.outputter:_ensureInit()
-    end
+    local level = SU.cast("integer", options.level or 1)
     SILE.typesetter:pushHbox({
       value = nil,
       height = SILE.measurement(0),
       width = SILE.measurement(0),
       depth = SILE.measurement(0),
       outputYourself = function ()
-        local d = "<</Title<" .. ustr .. ">/A<</S/GoTo/D(" .. dest .. ")>>>>"
-        pdf.bookmark(d, level)
+        SILE.outputter:setBookmark(dest, title, level)
       end
     })
   end)
 
   self:registerCommand("pdf:literal", function (_, content)
+    -- NOTE: This method is used by the pdfstructure package and should
+    -- probably be moved elsewhere, so there's no attempt here to delegate
+    -- the low-level libtexpdf call to te outputter.
+    if SILE.outputter._name ~= "libtexpdf" then
+      SU.error("pdf package requires libtexpdf backend")
+    end
+    local pdf = require("justenoughlibtexpdf")
     if type(SILE.outputter._ensureInit) == "function" then
       SILE.outputter:_ensureInit()
     end
@@ -122,32 +110,7 @@ function package:registerCommands ()
     end
     local value = SU.required(options, "value", "pdf:metadata")
 
-    if key == "Trapped" then
-      SU.warn("Skipping special metadata key \\Trapped")
-      return
-    end
-
-    if key == "ModDate" or key == "CreationDate" then
-      if not validate_date(value) then
-        SU.warn("Invalid date: " .. value)
-        return
-      end
-    else
-      -- see comment in pdf:bookmark
-      value = SU.utf8_to_utf16be(value)
-    end
-    if type(SILE.outputter._ensureInit) == "function" then
-      SILE.outputter:_ensureInit()
-    end
-    SILE.typesetter:pushHbox({
-      value = nil,
-      height = SILE.measurement(0),
-      width = SILE.measurement(0),
-      depth = SILE.measurement(0),
-      outputYourself = function (_, _, _)
-        pdf.metadata(key, value)
-      end
-    })
+    SILE.outputter:setMetadata(key, value)
   end)
 
 end

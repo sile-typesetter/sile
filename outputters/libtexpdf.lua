@@ -342,4 +342,41 @@ function outputter.leaveLinkTarget (_, x0, y0, x1, y1, dest, opts)
     trueXCoord(x1), trueYCoord(y1 + opts.borderoffset))
 end
 
+-- Bookmarks and metadata
+
+local function validate_date (date)
+  return string.match(date, [[^D:%d+%s*-%s*%d%d%s*'%s*%d%d%s*'?$]]) ~= nil
+end
+
+function outputter:setMetadata (key, value)
+  if key == "Trapped" then
+    SU.warn("Skipping special metadata key \\Trapped")
+    return
+  end
+
+  if key == "ModDate" or key == "CreationDate" then
+    if not validate_date(value) then
+      SU.warn("Invalid date: " .. value)
+      return
+    end
+  else
+    -- see comment in on bookmark
+    value = SU.utf8_to_utf16be(value)
+  end
+  self:_ensureInit()
+  pdf.metadata(key, value)
+end
+
+function outputter:setBookmark (dest, title, level)
+    -- Added UTF8 to UTF16-BE conversion
+    -- For annotations and bookmarks, text strings must be encoded using
+    -- either PDFDocEncoding or UTF16-BE with a leading byte-order marker.
+    -- As PDFDocEncoding supports only limited character repertoire for
+    -- European languages, we use UTF-16BE for internationalization.
+    local ustr = SU.utf8_to_utf16be_hexencoded(title)
+    local d = "<</Title<" .. ustr .. ">/A<</S/GoTo/D(" .. dest .. ")>>>>"
+    self:_ensureInit()
+    pdf.bookmark(d, level)
+end
+
 return outputter
