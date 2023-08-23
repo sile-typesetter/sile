@@ -5,6 +5,15 @@ describe("SILE.utilities", function()
     assert.is.truthy(SU)
   end)
 
+  describe("deprecated", function ()
+    it("should compute errors based on semver", function()
+      SILE.version = "v0.1.10.r4-h5d5dd3b"
+      SU.warn = function () end
+      assert.has.errors(function() SU.deprecated("foo", "bar", "0.1.9", "0.1.9") end)
+      assert.has_no.errors(function() SU.deprecated("foo", "bar", "0.1.11", "0.1.11") end)
+    end)
+  end)
+
   describe("utf8_to_utf16be_hexencoded ", function()
     it("should hex encode input", function()
       local str = "foo"
@@ -14,6 +23,9 @@ describe("SILE.utilities", function()
   end)
 
   describe("formatNumber", function ()
+
+    local icu = require("justenoughicu")
+    local icu73plus = tostring(icu.version()) >= "73.0"
 
     SILE.documentState = { documentClass = { state = { } } }
     SILE.typesetter = SILE.typesetters.base(SILE.newFrame({ id = "dummy" }))
@@ -104,7 +116,8 @@ describe("SILE.utilities", function()
       end)
 
       it("should format ordinal numbers", function ()
-        assert.is.equal("1 984.", -- N.B. Contains a non-breaking space
+        local expectation = icu73plus and "1 984" or "1 984."
+        assert.is.equal(expectation, -- N.B. Contains a non-breaking space
                         SU.formatNumber(1984, { style = "ordinal" }))
       end)
     end)
@@ -122,7 +135,8 @@ describe("SILE.utilities", function()
       end)
 
       it("should format ordinal numbers", function ()
-        assert.is.equal("١٬٩٨٤.", SU.formatNumber(1984, { style = "ordinal" }))
+        local expectation = icu73plus and "١٬٩٨٤" or "١٬٩٨٤."
+        assert.is.equal(expectation, SU.formatNumber(1984, { style = "ordinal" }))
       end)
     end)
 

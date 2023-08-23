@@ -37,7 +37,7 @@ end
 
 Next we create two new typesetters, one for each column, and we tell each one how to find the other:
 
-\begin{verbatim}
+\begin[type=autodoc:codeblock]{raw}
 function diglot:_init (options)
   self.leftTypesetter = SILE.typesetters.base()
   self.rightTypesetter = SILE.typesetters.base()
@@ -45,7 +45,7 @@ function diglot:_init (options)
   self.leftTypesetter.other = self.rightTypesetter
   return plain._init(self)
 end
-\end{verbatim}
+\end{raw}
 
 Each column needs its own font, so we provide commands to store this information.
 The \autodoc:command[check=false]{\leftfont} and \autodoc:command[check=false]{\rightfont} macros simply store their options to be passed to the \autodoc:command[check=false]{\font} command every time \autodoc:command[check=false]{\left} and \autodoc:command[check=false]{\right} are called.

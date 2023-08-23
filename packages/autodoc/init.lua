@@ -14,7 +14,8 @@ local theme = {
   bracketed = "#656565", -- some grey
   package = "#172557", -- saturated space blue
   note = "#525257", -- some asphalt grey hue
-  class = "#6a2c54" -- some dark shaded magenta
+  class = "#6a2c54", -- some dark shaded magenta
+  codeblock = "#303040" -- dark grey with a hint of blue
 }
 
 local colorWrapper = function (ctype, content)
@@ -317,32 +318,44 @@ function package:registerCommands ()
   -- Homogenizing the appearance of blocks of code
 
   self:registerCommand("autodoc:codeblock", function(_, content)
-      SILE.call("bigskip")
       SILE.settings:temporarily(function()
         -- Note: We avoid using the verbatim environment and simplify things a bit
         -- (and try to better enforce novbreak points of insertion)
         SILE.call("verbatim:font")
+        -- Rather than absolutizing 4 different values, just do it once and cache it
+        local ex = SILE.measurement("1ex"):absolute()
+        SILE.typesetter:leaveHmode()
         SILE.settings:set("typesetter.parseppattern", "\n")
         SILE.settings:set("typesetter.obeyspaces", true)
         SILE.settings:set("document.parindent", SILE.nodefactory.glue())
-        SILE.settings:set("document.parskip", SILE.nodefactory.vglue("1pt"))
-        SILE.settings:set("document.baselineskip", SILE.nodefactory.glue("1.2em"))
+        SILE.settings:set("document.parskip", SILE.nodefactory.vglue(0.3*ex))
+        SILE.settings:set("document.baselineskip", SILE.nodefactory.glue(2.3*ex))
         SILE.settings:set("document.spaceskip", SILE.length("1spc"))
         SILE.settings:set("shaper.variablespaces", false)
         SILE.settings:set("document.language", "und")
-        SILE.call("autodoc:line")
-        SILE.call("novbreak")
-        SILE.process(content)
-        SILE.call("novbreak")
         SILE.typesetter:leaveHmode()
+        colorWrapper("codeblock", function ()
+          SILE.call("bigskip")
+          colorWrapper("note", function ()
+            SILE.call("autodoc:line")
+          end)
+          SILE.typesetter:pushVglue(-0.6*ex)
+          SILE.call("novbreak")
+          SILE.process(content)
+          SILE.call("novbreak")
+          SILE.typesetter:pushVglue(1.4*ex)
+          colorWrapper("note", function ()
+            SILE.call("autodoc:line")
+          end)
+          SILE.call("smallskip")
+        end)
     end)
-    SILE.call("novbreak")
-    SILE.call("autodoc:line")
-    SILE.call("smallskip")
   end, "Outputs its content as a standardized block of code")
 
   self:registerCommand("autodoc:line", function(_, _)
+    SILE.call("novbreak")
     SILE.call("fullrule", { thickness = "0.5pt" })
+    SILE.call("novbreak")
   end, "Ouputs a line used for surrounding code blocks (somewhat internal)")
 
   self:registerCommand("autodoc:example", function(_, content)
@@ -360,7 +373,7 @@ function package:registerCommands ()
     local innerindent = SILE.measurement("1em"):absolute()
     SILE.settings:temporarily(function ()
       SILE.settings:set("document.lskip", leftindent)
-      SILE.settings:set("document.rskip", SILE.nodefactory.glue())
+      SILE.settings:set("document.rskip", leftindent)
 
       SILE.call("noindent")
       colorWrapper("note", function ()
@@ -370,10 +383,11 @@ function package:registerCommands ()
         SILE.call("hrule", { width = 3 * linedimen, height = linethickness })
         SILE.call("hrule", { width = linethickness, height = linethickness, depth = linedimen })
 
+        SILE.call("noindent")
         SILE.call("novbreak")
         SILE.settings:temporarily(function ()
           SILE.settings:set("document.lskip", SILE.nodefactory.glue(leftindent + innerindent))
-          SILE.settings:set("document.rskip", SILE.nodefactory.glue(innerindent))
+          SILE.settings:set("document.rskip", SILE.nodefactory.glue(leftindent + innerindent))
           SILE.call("font", { size = "0.95em", style = "italic "}, content)
           SILE.call("novbreak")
         end)
