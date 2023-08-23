@@ -34,6 +34,12 @@ function outputter.debugFrame (_, _, _) end
 
 function outputter.debugHbox (_, _, _) end
 
+function outputter.linkAnchor (_, _, _) end
+
+function outputter.enterLinkTarget (_, _, _) end
+
+function outputter.leaveLinkTarget (_, _, _, _, _, _, _) end
+
 function outputter:getOutputFilename ()
   local fname
   if SILE.outputFilename then

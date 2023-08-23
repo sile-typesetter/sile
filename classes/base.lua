@@ -80,8 +80,28 @@ end
 function class:setOptions (options)
   options = options or {}
   options.papersize = options.papersize or "a4"
+  options.bleed = options.bleed or "0"
   for option, value in pairs(options) do
     self.options[option] = value
+  end
+
+  if not SILE.documentState.sheetSize then
+    SILE.documentState.sheetSize = {
+      SILE.documentState.paperSize[1],
+      SILE.documentState.paperSize[2]
+    }
+  end
+  if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1]
+      or SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] then
+    SU.error("Sheet size shall not be smaller than the paper size")
+  end
+  if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1] + SILE.documentState.bleed then
+    SU.debug("frames", "Sheet size width augmented to take page bleed into account")
+    SILE.documentState.sheetSize[1] = SILE.documentState.paperSize[1] + SILE.documentState.bleed
+  end
+  if SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] + SILE.documentState.bleed then
+    SU.debug("frames", "Sheet size height augmented to take page bleed into account")
+    SILE.documentState.sheetSize[2] = SILE.documentState.paperSize[2] + SILE.documentState.bleed
   end
 end
 
@@ -115,6 +135,20 @@ function class:declareOptions ()
       })
     end
     return self.papersize
+  end)
+  self:declareOption("sheetsize", function (_, size)
+    if size then
+      self.sheetsize = size
+      SILE.documentState.sheetSize = SILE.papersize(size)
+    end
+    return self.sheetsize
+  end)
+  self:declareOption("bleed", function (_, dimen)
+    if dimen then
+      self.bleed = dimen
+      SILE.documentState.bleed = SU.cast("measurement", dimen):tonumber()
+    end
+    return self.bleed
   end)
 end
 
