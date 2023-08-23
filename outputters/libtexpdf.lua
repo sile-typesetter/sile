@@ -22,20 +22,21 @@ local outputter = pl.class(base)
 outputter._name = "libtexpdf"
 outputter.extension = "pdf"
 
--- Sometimes setCoord is called before the outputter has ensure initialization!
+-- N.B. Sometimes setCoord is called before the outputter has ensured initialization.
+-- This ok for coordinates manipulation, at these points we know the page size.
 local deltaX
 local deltaY
 local function trueXCoord (x)
   if not deltaX then
-    deltaX = SILE.documentState.sheetSize[1] - SILE.documentState.paperSize[1]
+    deltaX = (SILE.documentState.sheetSize[1] - SILE.documentState.paperSize[1]) / 2
   end
-  return x + deltaX / 2
+  return x + deltaX
 end
 local function trueYCoord (y)
   if not deltaY then
-    deltaY = SILE.documentState.sheetSize[2] - SILE.documentState.paperSize[2]
+    deltaY = (SILE.documentState.sheetSize[2] - SILE.documentState.paperSize[2]) / 2
   end
-  return y + deltaY / 2
+  return y + deltaY
 end
 
 -- The outputter init can't actually initialize output (as logical as it might
@@ -368,15 +369,15 @@ function outputter:setMetadata (key, value)
 end
 
 function outputter:setBookmark (dest, title, level)
-    -- Added UTF8 to UTF16-BE conversion
-    -- For annotations and bookmarks, text strings must be encoded using
-    -- either PDFDocEncoding or UTF16-BE with a leading byte-order marker.
-    -- As PDFDocEncoding supports only limited character repertoire for
-    -- European languages, we use UTF-16BE for internationalization.
-    local ustr = SU.utf8_to_utf16be_hexencoded(title)
-    local d = "<</Title<" .. ustr .. ">/A<</S/GoTo/D(" .. dest .. ")>>>>"
-    self:_ensureInit()
-    pdf.bookmark(d, level)
+  -- Added UTF8 to UTF16-BE conversion
+  -- For annotations and bookmarks, text strings must be encoded using
+  -- either PDFDocEncoding or UTF16-BE with a leading byte-order marker.
+  -- As PDFDocEncoding supports only limited character repertoire for
+  -- European languages, we use UTF-16BE for internationalization.
+  local ustr = SU.utf8_to_utf16be_hexencoded(title)
+  local d = "<</Title<" .. ustr .. ">/A<</S/GoTo/D(" .. dest .. ")>>>>"
+  self:_ensureInit()
+  pdf.bookmark(d, level)
 end
 
 return outputter

@@ -28,7 +28,7 @@ local function outputMarks ()
       if SILE.Commands["crop:header"] then
         -- Deprecation shim:
         -- If user redefined this command, still use it with a warning...
-        SU.deprecated("crop:header", "cropmarks:header", "0.14.0", "0.16.0")
+        SU.deprecated("crop:header", "cropmarks:header", "0.15.0", "0.16.0")
         SILE.call("crop:header")
       else
         SILE.call("cropmarks:header")
@@ -66,9 +66,7 @@ function package:registerCommands ()
   end)
 
   self:registerCommand("cropmarks:setup", function (_, _)
-    self.class:registerHook("endpage", function (_)
-      outputMarks()
-    end )
+    self.class:registerHook("endpage", outputMarks)
   end)
 
   self:registerCommand("crop:setup", function (_, _)

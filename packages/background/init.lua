@@ -3,11 +3,12 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "background"
 
-local outputBackground = function (background)
+local background = {}
+
+local outputBackground = function ()
   local pagea = SILE.getFrame("page")
   local offset = SILE.documentState.bleed / 2
   if type(background.bg) == "string" then
-    -- FIXME
     SILE.outputter:drawImage(background.bg,
       pagea:left() - offset, pagea:top() - offset,
       pagea:width() + 2 * offset, pagea:height() + 2 * offset)
@@ -23,13 +24,9 @@ local outputBackground = function (background)
   end
 end
 
-SILE.scratch.background = SILE.scratch.background or {}
-
 function package:_init ()
   base._init(self)
-  self.class:registerHook("newpage", function (_)
-    outputBackground(SILE.scratch.background)
-  end )
+  self.class:registerHook("newpage", outputBackground)
 end
 
 function package:registerCommands ()
@@ -37,18 +34,18 @@ function package:registerCommands ()
   self:registerCommand("background", function (options, _)
     if SU.boolean(options.disable, false) then
       -- This option is certainly better than enforcing a white color.
-      SILE.scratch.background.bg = nil
+      background.bg = nil
       return
     end
 
     local allpages = SU.boolean(options.allpages, true)
-    SILE.scratch.background.allpages = allpages
+    background.allpages = allpages
     local color = options.color and SILE.color(options.color)
     local src = options.src
     if src then
-      SILE.scratch.background.bg = src and SILE.resolveFile(src) or SU.error("Couldn't find file "..src)
+      background.bg = src and SILE.resolveFile(src) or SU.error("Couldn't find file "..src)
     elseif color then
-      SILE.scratch.background.bg = color
+      background.bg = color
     else
       SU.error("background requires a color or an image src parameter")
     end
