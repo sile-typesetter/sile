@@ -1,0 +1,47 @@
+digraph G {
+  rankdir = "LR";
+  margin = 0.25;
+  fontname = "Gentium Book Basic";
+
+  node [fontname = "Gentium Book Basic"];
+  edge [arrowhead = "vee"];
+
+  inputfiles [shape = note, style = filled, fillcolor = aliceblue, label = "Input\nfile(s)"]
+  outputfile [shape = note, style = filled, fillcolor = aliceblue, label = "Output\nfile"]
+  inputter [shape = component, style = filled, fillcolor = darkolivegreen2]
+  command [label = "Command\nprocessing", shape = box]
+  typesetter [label = "Typesetter", shape = box]
+  paragraphing [label = "Shaping,\nHyphenation,\nLine breaking,\nEtc.", shape = box]
+  pagebreaking [label = "Page\nbreaking", shape = box]
+  frame [label = "Frame\nabstraction", shape = box]
+  outputter [shape = component, style = filled, fillcolor = darkolivegreen2]
+
+  subgraph input {
+    rank = same;
+    inputfiles -> inputter
+  }
+
+  subgraph process {
+    cluster = true;
+    style = rounded;
+    color = grey;
+    margin = 18;
+    node [style = filled, fillcolor = linen];
+
+    label = "Processing & Typesetting";
+
+    command -> typesetter
+    typesetter -> frame  [arrowhead = none]
+    typesetter -> paragraphing
+    frame -> pagebreaking [arrowhead = none]
+    paragraphing -> pagebreaking
+  }
+
+  inputter -> command [label = "AST\nnodes"]
+  pagebreaking -> outputter [label = "drawing\nfunctions"]
+
+  subgraph output {
+    rank = same;
+    outputter -> outputfile
+  }
+}

@@ -5,6 +5,15 @@ describe("SILE.utilities", function()
     assert.is.truthy(SU)
   end)
 
+  describe("deprecated", function ()
+    it("should compute errors based on semver", function()
+      SILE.version = "v0.1.10.r4-h5d5dd3b"
+      SU.warn = function () end
+      assert.has.errors(function() SU.deprecated("foo", "bar", "0.1.9", "0.1.9") end)
+      assert.has_no.errors(function() SU.deprecated("foo", "bar", "0.1.11", "0.1.11") end)
+    end)
+  end)
+
   describe("utf8_to_utf16be_hexencoded ", function()
     it("should hex encode input", function()
       local str = "foo"

@@ -1,5 +1,4 @@
 \begin[class=book]{document}
-\include[src=documentation/macros.sil]
 \chapter{The Nitty Gritty}
 
 We are finally at the bottom of our delve into SILE’s commands and settings.

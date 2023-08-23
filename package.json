@@ -1,6 +1,6 @@
 {
   "name": "sile",
-  "version": "0.14.10",
+  "version": "0.14.11",
   "description": "The SILE Typesetter",
   "main": "sile",
   "scripts": {
@@ -19,14 +19,14 @@
   },
   "homepage": "https://sile-typesetter.org",
   "devDependencies": {
-    "@commitlint/cli": "^17.6.6",
-    "@commitlint/config-conventional": "^17.6.6",
-    "@commitlint/prompt": "^17.6.6",
-    "commitizen": "^4.3.0",
-    "conventional-changelog-cli": "^3.0.0",
-    "husky": "^8.0.3",
-    "standard-version": "^9.5.0",
-    "yaml": "^2.3.1"
+    "@commitlint/cli": "^17.6",
+    "@commitlint/config-conventional": "^17.6",
+    "@commitlint/prompt": "^17.6",
+    "commitizen": "^4.3",
+    "conventional-changelog-cli": "^3.0",
+    "husky": "^8.0",
+    "standard-version": "^9.5",
+    "yaml": "^2.3"
   },
   "config": {
     "commitizen": {

@@ -42,12 +42,17 @@ TESTPREVIEWS ?= $(addsuffix .pdf,$(basename $(filter-out $(_DISABLEDSRCS),$(_TES
 # BUILT_SOURCES and EXTRA_DIST) this doesn't induce a race.
 include $(wildcard Makefile-distfiles)
 
+FIGURES = documentation/fig-input-to-output.pdf
+
 MANUAL := documentation/sile.pdf
 SILELUA := $(PACKAGE_NAME)-lua
 
 if MANUAL
 _MANUAL = $(MANUAL)
+
 endif
+
+$(MANUAL): $(FIGURES)
 
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = core/features.lua core/version.lua $(LUAMODULES)
@@ -67,7 +72,7 @@ EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/d
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
 EXTRA_DIST += default.nix flake.nix flake.lock shell.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
-EXTRA_DIST += $(MANUAL)
+EXTRA_DIST += $(MANUAL) $(FIGURES)
 
 BUILT_SOURCES = .version core/features.lua core/pathsetup.lua core/version.lua Makefile-distfiles
 
@@ -281,6 +286,10 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(SILE) $(DEPDIRS) $(LUAM
 
 %.pdf: %.nil $$(patterndeps)
 	$(runsile)
+
+%.pdf: %.dot
+	$(DOT) -Tpdf $< -o $@.gs
+	$(GS) -q -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -o $@ $@.gs
 
 .PHONY: force
 force: ;

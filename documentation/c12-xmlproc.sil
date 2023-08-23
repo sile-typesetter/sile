@@ -115,7 +115,7 @@ DocBook sectioning is a little different to the SILE \autodoc:class{book} class.
 So in order to know what level we are currently on, we need a stack. We also need to keep track of what section number we are on at \em{each} level.
 For instance, with the expected section numbers and titles in XML comments:
 
-\begin{verbatim}
+\begin[type=autodoc:codeblock]{raw}
   <section><title>A</title> : \autodoc:example{1. A}
     <section><title>B</title>: \autodoc:example{1.1 B}
     </section>
@@ -126,7 +126,7 @@ For instance, with the expected section numbers and titles in XML comments:
     <section><title>E</title>: \autodoc:example{1.3 E}
   </section>
   <section><title>F</title>: \autodoc:example{2. F}
-\end{verbatim}
+\end{raw}
 
 So, we will keep two variables: the current level, and the counters for all of the levels so far.
 Each time we enter a \code{section}, we increase the current level counter:

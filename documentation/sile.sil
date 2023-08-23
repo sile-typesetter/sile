@@ -60,6 +60,7 @@ Didier Willis\break
 % Developers' guide
 \include[src=documentation/c09-concepts.sil]
 \include[src=documentation/c10-classdesign.sil]
-\include[src=documentation/c11-xmlproc.sil]
-\include[src=documentation/c12-tricks.sil]
+\include[src=documentation/c11-inputoutput.sil]
+\include[src=documentation/c12-xmlproc.sil]
+\include[src=documentation/c13-tricks.sil]
 \end{document}

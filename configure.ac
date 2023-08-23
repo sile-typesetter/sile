@@ -92,6 +92,10 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     AX_PROGVAR([pdfinfo])
     AX_PROGVAR([jq])
     AX_PROGVAR([xargs])
+    AM_COND_IF([MANUAL], [
+                AX_PROGVAR([dot])
+                AX_PROGVAR([gs])
+                ])
 
     AC_MSG_CHECKING([for OS X])
     have_appkit=no
