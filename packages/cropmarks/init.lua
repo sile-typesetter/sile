@@ -7,7 +7,7 @@ local outcounter = 1
 
 local function outputMarks ()
   local page = SILE.getFrame("page")
-  -- Length of cromark bars
+  -- Length of crop mark bars
   local cropsz = 20
   -- Ensure the crop marks stay outside the bleed area
   local offset = math.max(10, SILE.documentState.bleed / 2)

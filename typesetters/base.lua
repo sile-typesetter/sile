@@ -940,14 +940,12 @@ function typesetter:makeHbox (content)
         local ox = atypesetter.frame.state.cursorX
         local oy = atypesetter.frame.state.cursorY
         SILE.outputter:setCursor(atypesetter.frame.state.cursorX, atypesetter.frame.state.cursorY)
-        -- BEGIN SILEX FIX DEBUG
         SU.debug("hboxes", function ()
-          -- setCursor also invoked by the internal hboxes etc.
+          -- setCursor is also invoked by the internal (wrapped) hboxes etc.
           -- so we must show our debug box before outputting its content.
           SILE.outputter:debugHbox(box, box:scaledWidth(line))
           return "Drew debug outline around hbox"
         end)
-        -- END SILEX FIX DEBUG
         for _, node in ipairs(box.value) do
           node:outputYourself(atypesetter, line)
         end

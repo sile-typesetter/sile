@@ -47,6 +47,8 @@ function outputter:_ensureInit ()
   if not started then
     local w, h = SILE.documentState.sheetSize[1], SILE.documentState.sheetSize[2]
     local fname = self:getOutputFilename()
+    -- Ideally we could want to set the PDF CropBox, BleedBox, TrimBox...
+    -- Our wrapper only manages the MediaBox at this point.
     pdf.init(fname == "-" and "/dev/stdout" or fname, w, h, SILE.full_version)
     pdf.beginpage()
     started = true
