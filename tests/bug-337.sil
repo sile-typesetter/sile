@@ -1,4 +1,5 @@
 \begin[papersize=a7,class=book]{document}
+\use[module=packages.color]
 \script[src=inc.bug-337]
 \define[command=crop:header]{tests/bug-337.sil}
 \crop:setup[papersize=a6]
