@@ -61,6 +61,25 @@ Once some of the basic document properties have been set up using these fixed si
 For example, once the paper size is set, percentage of page width (\code{\%pw}) and height(\code{\%ph}) become valid units.
 In Chapter 4 we will meet more of these relative units, and in Chapter 7 we will meet some other ways of specifying lengths to make them stretchable or shrinkable.
 
+When preparing a book for press printing, you may be asked by the professional printer to output the document on a larger sheet than your target paper, and to reserve a trim area around it.
+This trick is often called “full bleed printing”.
+Your document will be printed on an oversized sheet that will then be mechanically cut down to the target size.
+You can specify the expected “trim” (or “bleed”) dimension, to be distributed evenly on all sides
+of the document:
+
+\code{papersize=\em{<paper size>}, bleed=\em{<measurement>}}.
+
+For instance, a US trade book with an extra 0.125 inch bleed area can be specified by \code{papersize=6in x 9in, bleed=0.25in}.
+The output paper size is then 6.25 per 9.25 inches, with the actual 6 per 9 inches inner content centered.
+
+Some packages, such as \autodoc:package{background} and \autodoc:package{cropmarks}, ensure their content extends over the trim area and thus indeed “bleeds” off the sides of the page, so that artifacts such as blank lines are avoided when the sheets are cut, would they be trimmed slightly differently for some assembling or technical reasons.
+
+Finally, there is also the case when the actual paper sheets available to you are larger than your target paper size, and yet you would want the output document to show properly centered:
+
+\code{papersize=\em{<paper size>}, sheetsize=\em{<actual paper size>}}.
+
+For instance, \code{papersize=6in x 9in, sheetsize=a4} produces an A4-dimensioned document, but with you content formatted as a 6 per 9 inches US trade book. You may, obviously, combine these options and also specify a bleed area.
+
 \section{Ordinary text}
 
 On the whole, ordinary text isn’t particularly interesting—it’s just typeset.
