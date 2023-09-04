@@ -56,6 +56,11 @@ utilities.warn = function (message, isbug)
   io.stderr:write("\n")
 end
 
+utilities.msg = function (message)
+  if SILE.quiet then return end
+  io.stderr:write("\n! " .. message .. "\n")
+end
+
 utilities.debugging = function (category)
   return SILE.debugFlags.all and category ~= "profile" or SILE.debugFlags[category]
 end
