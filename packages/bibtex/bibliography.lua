@@ -69,7 +69,7 @@ local function namesplit(str)
 end
 
 local sep_and_not_tie = '%-'
-local sep_chars = sep_and_not_tie .. '%~'
+local sep_chars = sep_and_not_tie .. '% '
 
 local parse_name
 do
@@ -238,10 +238,10 @@ do
             -- <possibly adjust [[sep]] and [[ssep]] according to token position and size>=
             if not string.find(sep, sep_char) then
               if i == lim-1 then
-                sep, ssep = '~', '~'
+                sep, ssep = ' ', ' '
               elseif i == start + 1 then
-                sep  = string.len(shortname)  < 3 and '~' or ' '
-                ssep = string.len(longname) < 3 and '~' or ' '
+                sep  = string.len(shortname)  < 3 and ' ' or ' '
+                ssep = string.len(longname) < 3 and ' ' or ' '
               else
                 sep, ssep = ' ', ' '
               end
