@@ -200,7 +200,9 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   dependency = dependency:gsub(".lua$", "")
   local status, lib
   if pathprefix then
-    status, lib = pcall(require, pl.path.join(pathprefix, dependency))
+    -- Note this is not a *path*, it is a module identifier:
+    -- https://github.com/sile-typesetter/sile/issues/1861
+    status, lib = pcall(require, pl.stringx.join('.', { pathprefix, dependency }))
   end
   if not status then
     local prefixederror = lib
