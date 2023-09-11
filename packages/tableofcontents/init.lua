@@ -117,7 +117,7 @@ function package:registerCommands ()
   self:registerCommand("tableofcontents", function (options, _)
     local depth = SU.cast("integer", options.depth or 3)
     local linking = SU.boolean(options.linking, true)
-    local toc_used = true
+    toc_used = true
     local toc = self:readToc()
     if toc == false then
       SILE.call("tableofcontents:notocmessage")
