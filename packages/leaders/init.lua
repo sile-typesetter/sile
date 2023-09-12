@@ -120,9 +120,9 @@ It provides the \autodoc:command{\dotfill} command, which does this:
 A\dotfill{}B
 \end{raw}
 
-\begin{examplefont}
+\begin{autodoc:example}
 A\dotfill{}B\par
-\end{examplefont}
+\end{autodoc:example}
 
 It also provides the \autodoc:command{\leaders[width=<dimension>]{<content>}} command which allow you to define your own leaders.
 For example:
@@ -131,9 +131,9 @@ For example:
 A\leaders[width=40pt]{/\\}B
 \end{raw}
 
-\begin{examplefont}
+\begin{autodoc:example}
 A\leaders[width=40pt]{/\\}B\par
-\end{examplefont}
+\end{autodoc:example}
 
 If the width is omitted, the leaders extend as much as possible (as a \autodoc:command{\dotfill} or \autodoc:command{\hfill}).
 

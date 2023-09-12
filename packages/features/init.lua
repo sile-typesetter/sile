@@ -218,11 +218,11 @@ end
 
 package.documentation = [[
 \begin{document}
-As mentioned in Chapter 3, SILE automatically applies ligatures defined by the fonts that you use.
+SILE automatically applies ligatures defined by the fonts that you use.
 These ligatures are defined by tables of \em{features} within the font file.
 As well as ligatures (multiple glyphs displayed as a single glyph), the features tables also declare other glyph substitutions.
 
-The \autodoc:package{features} package provides an interface to selecting the features that you want SILE to apply to a font.
+The standard \autodoc:command{\font} command provides an interface to selecting the features that you want SILE to apply to a font.
 The features available will be specific to the font file; some fonts come with documentation explaining their supported features.
 Discussion of OpenType features is beyond the scope of this manual.
 
@@ -233,7 +233,8 @@ These features can be turned on and off by passing “raw” feature names to th
 \end{raw}
 
 However, this is unwieldy and requires memorizing the feature codes.
-\autodoc:package{features} provides two commands, \autodoc:command{\add-font-feature} and \autodoc:command{\remove-font-feature}, which make it easier to access OpenType features.
+
+The \autodoc:package{features} package provides two commands, \autodoc:command{\add-font-feature} and \autodoc:command{\remove-font-feature}, which make it easier to access OpenType features.
 The interface is patterned on the TeX package \code{fontspec}; for full documentation of the OpenType features supported, see the documentation for that package.\footnote{\code{http://texdoc.net/texmf-dist/doc/latex/fontspec/fontspec.pdf}}
 
 Here is how you would turn on discretionary and historic ligatures with the \autodoc:package{features} package:

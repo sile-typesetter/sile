@@ -75,7 +75,7 @@ Now we can say:
 
 and SILE will produce:
 
-\examplefont{あば x 😼 Hello world. あ}
+\autodoc:example{あば x 😼 Hello world. あ}
 
 \font:remove-fallback
 \font:remove-fallback

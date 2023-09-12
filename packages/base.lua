@@ -44,6 +44,9 @@ function package.registerCommands (_) end
 function package:registerCommand (name, func, help, pack)
   self.class:registerCommand(name, func, help, pack)
 end
+function package:registerRawHandler (format, callback)
+  self.class:registerRawHandler(format, callback)
+end
 
 -- Using this rather than doing the work directly will give us a way to
 -- un-export them if we ever need to unload modules and revert functions

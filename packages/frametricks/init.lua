@@ -233,7 +233,6 @@ end
 
 package.documentation = [[
 \begin{document}
-As we mentioned in the first chapter, SILE uses frames as an indication of where to put text onto the page.
 The \autodoc:package{frametricks} package assists package authors by providing a number of commands to manipulate frames.
 
 The most immediately useful is \autodoc:command{\showframe}.

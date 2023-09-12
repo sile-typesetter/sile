@@ -490,6 +490,11 @@ int icu_compare(lua_State *L) {
   //     UCollationResult result = ucol_strcollIter(collation, &s1iter, &s2iter, &status);
 }
 
+int icu_version(lua_State *L) {
+  lua_pushstring(L, U_ICU_VERSION);
+  return 1;
+}
+
 #if !defined LUA_VERSION_NUM
 /* Lua 5.0 */
 #define luaL_Reg luaL_reg
@@ -522,6 +527,7 @@ static const struct luaL_Reg lib_table [] = {
   {"collation_create", icu_collation_create},
   {"collation_destroy", icu_collation_destroy},
   {"compare", icu_compare},
+  {"version", icu_version},
   {NULL, NULL}
 };
 

@@ -74,7 +74,7 @@ end
 package.documentation = [[
 \begin{document}
 The \autodoc:package{chapterverse} package is designed as a helper package for book classes which deal with versified content such as scriptures.
-It provides commands which will generally be called by the higher-level \code{\\verse} and \code{\\chapter} (or moral equivalent) commands of the classes which handle this kind of content:
+It provides commands which will generally be called by the higher-level \autodoc:command[check=false]{\verse} and \autodoc:command[check=false]{\chapter} (or moral equivalent) commands of the classes which handle this kind of content:
 
 \begin{itemize}
 \item{\autodoc:command{\save-book-title} takes its argument and squirrels it away as the current book name.}

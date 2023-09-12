@@ -6,7 +6,9 @@
         "SU",
         "luautf8",
         "pl",
-        "fluent"
+        "fluent",
+        "executablePath",
+        "extendSilePath"
     ],
     "Lua.workspace.preloadFileSize": 5120,
     "Lua.workspace.checkThirdParty": false

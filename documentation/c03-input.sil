@@ -1,7 +1,29 @@
 \begin{document}
-\chapter{SILE’s Input Language}
+\chapter{SILE’s Input}
 
-Let’s now go back and reconsider the first SILE file we saw:
+First, we need to clear some air.
+In our own earlier documentation we gave the impression the primary way to feed content into SILE was a propriatry language.
+This was \em{never} really true since XML was always fully supported as an alternative.
+It is even less true now that 3rd party plugins can add their own input formats.
+
+Hence this chanpter has been renamed.
+The original chapter title was "SILE’s Input Language", as if there was only one.
+The truth is there \em{is} an input syntax we call "SIL", but even that is perhaps best thought of as a structured data systax rather than a unique language.
+The input strings \code{\\em\{foo\}} in SIL input syntax is 100\% equivalent to \code{<em>foo</em>} in XML input syntax.
+The SIL input syntax is provided as an easier to type alternative than XML which can be a bit verbose and tedious to work with by hand.
+On the other hand if you're handling data written by some other program, XML might be a much better solution.
+
+3rd party packages can also add their own input formats.
+The stipulation is that an inputter parses some content and returns an AST with content tags and options recognized by SILE.
+Markdown, Djot, and others have packages available that provide inputters, allowing them to be first class input candidates.
+Many others like Dockbook and TEI are just XML with a special tag schema.
+SILE can be extended to cover any tag schema.
+
+With that in mind, lets go back and reconsider the first SILE file we saw that was in SIL input syntax.
+
+\section{The SIL flavor}
+
+In the Getting Started chapter we looked at this document:
 
 \begin[type=autodoc:codeblock]{raw}
 \begin{document}
@@ -43,13 +65,13 @@ In Chapter 4 we will meet more of these relative units, and in Chapter 7 we will
 
 On the whole, ordinary text isn’t particularly interesting—it’s just typeset.
 
-\begin{note}
+\begin{autodoc:note}
 TeX users may have an expectation that SILE will do certain things with ordinary text as well.
 For instance, if you place two straight-backquotes into a TeX document (like this: \code{``}) then TeX will magically turn that into a double opening quote (“).
 SILE won’t do this.
 If you want a double opening quote, you have to ask for one.
 Similarly, en- and em-dashes have to be input as actual Unicode characters for en- and em-dashes, rather than the pseudo-ligatures such as \code{--} or \code{---} that TeX later transforms to the Unicode characters.
-\end{note}
+\end{autodoc:note}
 
 There are only a few bits of cleverness that happen around ordinary text.
 
@@ -74,22 +96,22 @@ culpa qui officia deserunt mollit anim id est laborum.
 In the context of this document, you’ll get:
 
 \begin[language=la]{font}
-\begin{examplefont}
+\begin{autodoc:example}
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
 incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
 nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
 fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
 culpa qui officia deserunt mollit anim id est laborum.\par
-\end{examplefont}
+\end{autodoc:example}
 \end{font}
 
 In other words, a line break is converted to a space.
 
-\begin{note}
+\begin{autodoc:note}
 Sometimes this conversion is not what you want.
 If you don’t want single line breaks to be converted to a space, use a comment character \code{\%} at the end of a line to suppress the additional whitespace.
-\end{note}
+\end{autodoc:note}
 
 When you want to end a paragraph, you need to input two line breaks in a row, like this:
 
@@ -117,10 +139,10 @@ By default, text is assumed to be in English unless SILE is told otherwise.
 
 The final clever thing is that where fonts declare ligatures (where two or more letters are merged into one in order to make them visually more attractive), SILE automatically applies the ligature.
 So if you type \code{affluent fishing}, then, depending on your font, your output might look like:
-    ‘\examplefont{affluent fishing}’.
+    ‘\autodoc:example{affluent fishing}’.
 If you specifically want to break up the ligatures, insert empty groups (using the grouping characters \code{\{} and \code{\}}) in the middle of the possible ligatures:
-    \code{af\{\}f\{\}luent f\{\}ishing}: ‘\examplefont{af{}f{}luent f{}ishing}’.
-See the section on the \code{features} package for more information on how to control the display of ligatures and other font features.
+    \code{af\{\}f\{\}luent f\{\}ishing}: ‘\autodoc:example{af{}f{}luent f{}ishing}’.
+See the section on the \autodoc:package{features} package for more information on how to control the display of ligatures and other font features.
 
 \section{Commands}
 
@@ -146,7 +168,7 @@ The optional argument (of which there can only be at most one) is enclosed in cu
         This won’t work; in SILE, the braces are always mandatory.}
 Because the argument is optional, there is a difference between this:
     \code{\\command\{args\}} (which is interpreted as a command with argument \code{args}) and this:
-    \code{\\command \{args\}} (which is interpreted as a command with no arguments, followed by the word \command{args} in a new group).
+    \code{\\command \{args\}} (which is interpreted as a command with no arguments, followed by the word \code{args} in a new group).
 
 Here are a few more examples of SILE commands:
 
@@ -161,10 +183,10 @@ Here are a few more examples of SILE commands:
 \end{raw}%
 \section{Environments}
 
-Commands like \code{\\chapter} (to start a chapter) and \code{\\em} (to emphasise text by making it italic) are normally used to enclose a relatively small piece of text—a few lines at most.
+Commands like \autodoc:command{\chapter} (to start a chapter) and \autodoc:command{\em} (to emphasise text by making it italic) are normally used to enclose a relatively small piece of text—a few lines at most.
 Where you want to enclose a larger piece of the document, you can use an \em{environment}.
 An environment begins with \code{\\begin\{\em{name}\}} and encloses all the text up until the corresponding \code{\\end\{\em{name}\}}.
-We’ve already seen an example: the \code{document} environment, which must enclose the \em{entire} document.
+We’ve already seen an example: the \autodoc:environment[check=false]{document} environment, which must enclose the \em{entire} document.
 
 Here is a secret: there is absolutely no difference between a command and an environment.
 As an example, the following two forms are equivalent:
@@ -181,8 +203,8 @@ However, in some cases the environment form of the command will be easier to rea
 
 \section{The XML flavor}
 
-While we’re on the subject of alternative forms, SILE can actually process its input in a completely different file format.
-What we’ve seen so far has been SILE’s “TeX-like flavor,” but it can also directly read and process XML files.
+As mentioned at the start of the chapter, SILE can actually process its input in a completely different file format.
+What we’ve seen so far has been SILE’s “TeX-like” SIL syntax flavor, but it can also directly read and process XML files.
 (If it isn’t well-formed XML, then SILE will get very upset.)
 
 Any XML tags within the input file will then be regarded as SILE commands, and tag attributes are interpreted as command parameters.
@@ -203,7 +225,7 @@ The example above, in XML flavor, would look like this:
 <font family="Times" size="10pt">Hi there!</font>
 \end{raw}
 
-We don’t expect humans to write their documents in SILE’s XML flavor—the TeX-like SILE flavor is much better for that—but having an XML flavor allows for computers to deal with SILE a lot more easily.
+We don’t expect humans to write their documents in SILE’s XML flavor—the TeX-like SIL flavor is much better for that—but having an XML flavor allows for computers to deal with SILE a lot more easily.
 One could create graphical user interfaces to edit SILE documents, or convert other XML formats to SILE.
 
 However, there is an even smarter way of processing XML with SILE.

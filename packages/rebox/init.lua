@@ -34,11 +34,11 @@ Hello \rebox[width=0pt]{world}overprint.
 Look I’m not \rebox[phantom=true]{here}!
 \end{raw}
 
-\begin{examplefont}
+\begin{autodoc:example}
 Hello \rebox[width=0pt]{world}overprint.
 
 Look I’m not \rebox[phantom=true]{here}!
-\end{examplefont}
+\end{autodoc:example}
 \end{document}
 ]]
 

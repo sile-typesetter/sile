@@ -19,7 +19,7 @@ There are several important differences.
 The job of a word processor is to produce a document that looks exactly like what you type on the screen.
 By contrast, the job of a typesetting system is to take raw content and produce a document that looks as good as possible.
 The input for SILE is a text document that includes instructions about how the content should be laid out on a page.
-In order to obtain the typeset result, the input file must be \em{processed} to render the desired output.
+In order to obtain the typeset result, the input file(s) must be \em{processed} to render the desired output.
 
 Word processors often describe themselves as WYSIWYG: What You See Is What You Get.
 SILE is cheerfully \em{not} WYSIWYG.
@@ -55,10 +55,10 @@ It would be terribly immodest to claim that a little project like SILE was a wor
 TeX was one of the earliest typesetting systems, and had to make a lot of design decisions somewhat in a vacuum.
 Some of those design decisions have stood the test of time—TeX is still an extremely well-used typesetting system more than forty years after its inception, which is a testament to its design and performance—but many others have not.
 In fact, most of the development of TeX since Knuth’s era has involved removing his early decisions and replacing them with technologies which have become the industry standard:
-	we use TrueType fonts, not METAFONTs (\tt{xetex});
-	PDFs, not DVIs (\tt{pstex}, \tt{pdftex});
-	Unicode, not 7-bit ASCII (\tt{xetex} again);
-	markup languages and embedded programming languages, not macro languages (\tt{xmltex}, \tt{luatex}).
+	we use TrueType fonts, not METAFONTs (\code{xetex});
+	PDFs, not DVIs (\code{pstex}, \code{pdftex});
+	Unicode, not 7-bit ASCII (\code{xetex} again);
+	markup languages and embedded programming languages, not macro languages (\code{xmltex}, \code{luatex}).
 At this point, the parts of TeX that people actually \em{use} are (1) the box-and-glue model, (2) the hyphenation algorithm, and (3) the line-breaking algorithm.
 
 SILE follows exactly in TeX’s footsteps for each of these three areas that have stood the test of time;
@@ -115,5 +115,5 @@ In the final chapters of this book, we’ll look at some extended examples of cr
 
 SILE\footnote{In case you’re wondering, the author pronounces it \font[family=Gentium Plus]{/saɪəl/}, to rhyme with “trial”.} takes some textual instructions and turns them into PDF output.
 It has features inspired by TeX and InDesign, but seeks to be more flexible, extensible and programmable than either of them.
-It’s useful both for typesetting documents (such as this very documentation) written in the SILE language, and as a processing system for styling and outputting structured data.
+It’s useful for typesetting structured content whether they are documents written in the SIL input syntax (such as this very documentation), XML, or in some other structured data syntax that needs styling and outputting.
 \end{document}

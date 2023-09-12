@@ -6,7 +6,7 @@ We’re going to organise our tour of SILE by usage:
 
 \section{Fonts}
 
-The most basic command for altering the look of the text is the \code{\\font} command.
+The most basic command for altering the look of the text is the \autodoc:command{\font} command.
 It takes two forms:
 
 \begin{itemize}
@@ -32,7 +32,7 @@ Still big text!
 
 \noindent{}produces:
 
-\begin{examplefont}%
+\begin{autodoc:example}%
 Small text
 
 \font[size=15pt]%
@@ -41,7 +41,7 @@ Big text!
 \font[size=30pt]{Bigger text}
 
 {}Still big text!
-\end{examplefont}
+\end{autodoc:example}
 
 \par
 
@@ -58,7 +58,7 @@ There are also dimensions which are defined as a percentage of the size of the c
 You can specify lengths in terms of the current paragraph skip (\code{ps}) and baseline skip (\code{bs}), which will make sense later on.
 Additional units are available relative to the largest or smallest value of either axis (\code{\%pmax}, \code{\%pmin}, \code{\%fmax}, \code{\%fmin}).
 
-The full list of attributes to the \code{\\font} command are:
+The full list of attributes to the \autodoc:command{\font} command are:
 
 \begin{itemize}
 \item{\autodoc:parameter{size}: As above.}
@@ -83,7 +83,7 @@ The full list of attributes to the \code{\\font} command are:
 
 It’s quite fiddly to be always changing font specifications manually;
     later we’ll see some ways to automate the process.
-SILE’s \code{plain} class notably provides the \autodoc:command{\em{…}} command as a shortcut for \autodoc:command{\font[style=italic]{…}}, and the \autodoc:command{\strong{…}} command as a a shortcut for \autodoc:command{\font[weight=700]{…}}.
+SILE’s \autodoc:class{plain} class notably provides the \autodoc:command{\em{…}} command as a shortcut for \autodoc:command{\font[style=italic]{…}}, and the \autodoc:command{\strong{…}} command as a a shortcut for \autodoc:command{\font[weight=700]{…}}.
 
 Note for parameters that accept multiple values, values may be separated with commas.
 Be sure to wrap the value in quotes so the commas don't get parsed as new parameters.
@@ -94,52 +94,76 @@ For example \autodoc:command{\font[variations="wght=150,wdth=122"]} can be used 
 \section{Document structure}
 
 SILE provides a number of different \em{class}es of document (similar to LaTeX classes).
-By default, you get the \code{plain} class, which has very little support for structured documents.
-There is also the \code{book} class, which adds support for right and left page masters, running headers, footnotes, and chapter, section and subsection headings.
+By default, you get the \autodoc:class{plain} class, which has very little support for structured documents.
+There is also the \autodoc:class{book} class, which adds support for right and left page masters, running headers, footnotes, and chapter, section and subsection headings.
 
-To use the commands in this section, you will need to request the \code{book} class by specifying in your \code{\\begin\{document\}} command ‘\code{[class=book]}’;
+To use the commands in this section, you will need to request the \autodoc:class{book} class by specifying, in your \code{\\begin\{document\}} command, the \autodoc:parameter{class=book} parameter;
     for example, the document you are currently reading begins with the command \code{\\begin[class=book]\{document\}}.
 
 \subsection{Chapters and sections}
 
-If you choose the book class, you can divide your document into different sections using the commands \code{\\chapter\{…\}}, \code{\\section\{…\}}, and \code{\\subsection\{…\}}.
+If you choose the \autodoc:class{book} class, you can divide your document into different sections using the commands \autodoc:command{\chapter{…}}, \autodoc:command{\section{…}}, and \autodoc:command{\subsection{…}}.
 The argument to each command is the name of the chapter or section, respectively.
 Chapters will be opened on a new right-hand page, and the chapter name will form the left running header.
 Additionally, the section name and number will form the right running header.
 
-\begin{note}
+\begin{autodoc:note}
 Chapters, sections and subsections will be automatically numbered starting from 1.
-To alter the numbering, see the documentation for the \code{counters} package in the next chapter.
-To produce an unnumbered chapter, provide the parameter \code{[numbering=false]}.
-\end{note}
+To alter the numbering, see the documentation for the \autodoc:package{counters} package in the next chapter.
+To produce an unnumbered chapter, provide the parameter \autodoc:parameter{numbering=false}.
+\end{autodoc:note}
 
-This subsection begins with the command \code{\\subsection\{Chapters and Sections\}.}
+This subsection begins with the command \autodoc:command{\subsection{Chapters and Sections}}.
 
 \subsection{Footnotes}
 
-Footnotes can be added to a book with the \code{\\footnote\{…\}} command.%
-\footnote{Like this: \code{\\footnote\{Like this.\}}}
+Footnotes can be added to a book with the \autodoc:command{\footnote{…}} command.%
+\footnote{Like this: \autodoc:command{\footnote{Like this.}}}
 The argument to the command will be set as a footnote at the bottom of the page.
 Footnotes are automatically numbered from 1 at the start of each chapter.
 
-\section{Indentation and spacing}
+\section{Paragraph indentation}
 
 Paragraphs in SILE normally begin with an indentation (by default, 20 points in width).
-To turn this off, you can use the \code{\\noindent} command at the start of a paragraph.
-(This current paragraph doesn’t need to call \code{\\noindent} because \code{\\section} and \code{\\chapter} automatically call it for the text following the heading.)
-A \code{\\noindent} can be cancelled by following it with an \code{\\indent}.
+To turn this off, you can use the \autodoc:command{\noindent} command at the start of a paragraph.
+(This current paragraph doesn’t need to call \autodoc:command{\noindent} because \autodoc:command{\section} and \autodoc:command{\chapter} automatically call it for the text following the heading.)
+A \autodoc:command{\noindent} can be cancelled by following it with an \autodoc:command{\indent}.
 You can completely turn off indentation for the whole of the document by changing its size to zero.
-We’ll see how to change the size of the indentation in the settings chapter, but the easiest way to set it to zero for the whole of the document (rather than for just one paragraph) is to issue the command \code{\\neverindent}.
+We’ll see how to change the size of the indentation in the settings chapter, but the easiest way to set it to zero for the whole of the document (rather than for just one paragraph) is to issue the command \autodoc:command{\neverindent}.
 
-To increase the vertical space between paragraphs or other elements, the commands \code{\\smallskip}, \code{\\medskip} and \code{\\bigskip} are available to add a 3pt, 6pt, and 12pt gap, respectively.
-There will be a \code{\\bigskip} after this paragraph.
+\section{Horizontal spacing}
+
+There are also commands to increase the horizontal space in a line;
+    from the smallest to the largest, \autodoc:command{\thinspace} (1/6th of an em), \autodoc:command{\enspace} (1 en), \autodoc:command{\quad} (1 em), and \autodoc:command{\qquad} (2em).
+
+If you want to add a very long stretchy space, you can use the command \autodoc:command{\hfill}.
+Doing this in conjunction with a line break will cause the line before the break to be flush left, like this.\cr{}The command \autodoc:command{\cr} is a shortcut for \autodoc:command{\hfill\break}.
+
+\section{Vertical spacing}
+
+To increase the vertical space between paragraphs or other elements, the commands \autodoc:command{\smallskip}, \autodoc:command{\medskip} and \autodoc:command{\bigskip} are available to add a 3pt, 6pt, and 12pt gap, respectively.
+There will be a \autodoc:command{\bigskip} after this paragraph.
 
 \bigskip%
-There are also commands to increase the horizontal space in a line;
-    from the smallest to the largest, \code{\\thinspace} (1/6th of an em), \code{\\enspace} (1 en), \code{\\quad} (1 em), and \code{\\qquad} (2em).
+Besides this predefined skips, you can also use \autodoc:command{\skip[height=<dimension>]} to add a vertical space of a given height.
 
-If you want to add a very long stretchy space, you can use the command \code{\\hfill}.
-Doing this in conjunction with a line break will cause the line before the break to be flush left, like this.\cr{}The command \code{\\cr} is a shortcut for \code{\\hfill\\break}.
+If you want to add a very long stretchy vertical space, you can use the command \autodoc:command{\vfill}.
+
+When playing with vertical spaces, there is however a few additional considerations to take into account.
+Without entering into the details, they are usually ignored at the beginning of a frame.
+Would you want to enforce them there, you therefore need to have some initial content.
+An empty \autodoc:command{\hbox} can do the trick.
+Additionally, there are cases where SILE automaticall inserts a \autodoc:command{\vfill} command at the end of a frame, so you may need to ensure you terminated a paragraph and introduced your own frame break in order to avoid it.
+The following example illustrates both techniques.
+
+\begin[type=autodoc:codeblock]{raw}
+\hbox{}% This is an empty initial line
+\skip[height=2cm]
+A paragraph around 2 centimeters below the top of the frame.
+\vfill
+A paragraph pushed at the bottom of the frame.\par
+\break
+\end{raw}
 
 \section{Text alignment}
 
@@ -150,18 +174,17 @@ SILE normally fully-justifies text—that is, it tries to alter the spacing betw
     this may involve some of the words jutting slightly out into the margin.}
 An alternative to full justification is ragged right margin formatting, where the spacing between words is constant but the right hand side of the paragraph may not line up.
 Ragged right is often used for children’s books and for frames with narrow columns such as newspapers.
-To use ragged right formatting, enclose your text in a \code{\\begin\break\{raggedright\}} environment.
+To use ragged right formatting, enclose your text in a \autodoc:environment{raggedright} environment.
 This paragraph is set ragged right.
 \end{raggedright}
 
 \begin{raggedleft}
-Similarly, there is a \code{raggedleft} environment, in which the right-hand margin of the paragraph is fixed, but the left-hand margin is allowed to vary.
+Similarly, there is a \autodoc:environment{raggedleft} environment, in which the right-hand margin of the paragraph is fixed, but the left-hand margin is allowed to vary.
 This paragraph is set ragged left.\par
 \end{raggedleft}
 
 \begin{center}
-You can center a paragraph of text by wrapping it in the \code{center} environment.
-(\code{\\begin\{center\} … \\end\{center\}}).
+You can center a paragraph of text by wrapping it in the \autodoc:environment{center} environment.
 This paragraph is centered on the page.
 \end{center}
 
@@ -169,7 +192,7 @@ This paragraph is centered on the page.
 
 SILE automatically determines line and page breaks.
 In later chapters we will introduce some \em{settings} which can be used to tweak this process.
-However, SILE’s \code{plain} class also provides some commands to help the process on its way.
+However, SILE’s \autodoc:class{plain} class also provides some commands to help the process on its way.
 
 The following four commands can be used to control line breaks (when used \em{within} a paragraph), as well as page breaks (when used \em{between} paragraphs):%
 \footnote{The names are similar to those used in (La)TeX, but their semantics differ slightly.}
@@ -213,8 +236,8 @@ To make it easier for you to author a large document, you can break your SILE do
 For instance, you may wish to put each chapter into a separate file, or you may wish to develop a file of user-defined commands (see Chapter 6) and keep this separate from the main body of the document.
 You will then need the ability to include one SILE file from another.
 
-This ability is provided by the \code{\\include} command.
-It takes one mandatory parameter, \code{src=\em{<path>}}, which represents the path to the file.
+This ability is provided by the \autodoc:command{\include} command.
+It takes one mandatory parameter, \autodoc:parameter{src=<path>}, which represents the path to the file.
 So for instance, you may wish to write a thesis like this:
 
 \begin[type=autodoc:codeblock]{raw}
@@ -228,9 +251,9 @@ So for instance, you may wish to write a thesis like this:
 \end{document}
 \end{raw}
 
-\code{\\include}s may be nested: file A can include file B which includes file C.
+\autodoc:command{\include}s may be nested: file A can include file B which includes file C.
 
-The contents of an included file should be put in a \code{\\sile} tag (or \code{<sile>} if the file is in XML flavour), like so:
+The contents of an included file should be put in a \autodoc:environment{sile} environment (or a \code{<sile>} tag if the file is in XML flavour), like so:
 
 \begin[type=autodoc:codeblock]{raw}
 \begin{sile}
@@ -265,7 +288,7 @@ For example:
 
 produces the following output:
 
-\begin{examplefont}
+\begin{autodoc:example}
 \begin{script}
   SILE.call("indent");SILE.typesetter:leaveHmode()
   for i=1,10 do
@@ -274,7 +297,7 @@ produces the following output:
     SILE.call("smallskip")
   end
 \end{script}
-\end{examplefont}
+\end{autodoc:example}
 
 There is one notable caveat when embedding Lua code documents written with the TeX-flavor markup.
 Since SILE has to first parse the TeX markup to find the start and end of such script commands \em{without} understanding what’s in between, it is strictly necessary that no end tags appear inside the Lua code.

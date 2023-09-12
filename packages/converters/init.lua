@@ -59,11 +59,12 @@ function package.register (_, sourceExt, targetExt, command)
 end
 
 function package.checkConverters (_, source)
+  local resolvedSrc = SILE.resolveFile(source) or SU.error("Couldn't find file " .. source)
   for _, converter in ipairs(SILE.scratch.converters) do
     local extLen = string.len(converter.sourceExt)
-    if ((string.len(source) > extLen) and
-        (string.sub(source, -extLen) == converter.sourceExt)) then
-      return applyConverter(source, converter)
+    if ((string.len(resolvedSrc) > extLen) and
+        (string.sub(resolvedSrc, -extLen) == converter.sourceExt)) then
+      return applyConverter(resolvedSrc, converter)
     end
   end
   return source -- No conversion needed.
@@ -75,17 +76,23 @@ function package:_init ()
     SILE.scratch.converters = {}
   end
   extendCommand("include", function (options, content, original)
-    local result = self:checkConverters(options.src)
-    if not result then
+    local source = SU.required(options, "src", "include (converters)")
+    local result = self:checkConverters(source)
+    if result then
       options["src"] = result
       original(options, content)
+    else
+      SU.error("Conversion failure for include '" .. source ..'"')
     end
   end)
   extendCommand("img", function (options, content, original)
-    local result = self:checkConverters(options.src)
-    if not result then
+    local source = SU.required(options, "src", "img (converters)")
+    local result = self:checkConverters(source)
+    if result then
       options["src"] = result
       original(options, content)
+    else
+      SU.error("Conversion failure for image '" .. source ..'"')
     end
   end)
   self:deprecatedExport("register", self.register)
@@ -99,6 +106,7 @@ function package:registerCommands ()
   end)
 
   self:registerCommand("converters:check", function (options, _)
+    SU.deprecated("\\converters:check", nil, "0.14.10", "0.16.0")
     self:checkConverters(options.source)
   end)
 
@@ -125,7 +133,7 @@ We do this by registering a converter with the \autodoc:command{\converters:regi
 And now it just magically works:
 
 \begin[type=autodoc:codeblock]{raw}
-\img[src=hello.gif, width=50px]
+\img[src=hello.gif, width=50pt]
 \end{raw}
 
 This will execute the command \code{convert hello.gif hello.jpg} and include the converted \code{hello.jpg} file.
