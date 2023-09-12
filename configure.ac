@@ -158,15 +158,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         fi
     ])
 
-    case $host_os in
-        msys)
-            LUA_VERSION=5.3 # By fiat. This is obviously not good.
-            ;;
-        *)
-            AX_PROG_LUA([5.1])
-            ;;
-    esac
-
+    AX_PROG_LUA([5.1])
     AX_LUA_HEADERS
     AX_LUA_LIBS
 
