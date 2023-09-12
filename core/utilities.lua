@@ -32,9 +32,9 @@ end
 
 local _skip_traceback_levels = 2
 
-utilities.error = function(message, bug)
+utilities.error = function (message, isbug)
   _skip_traceback_levels = 3
-  utilities.warn(message, bug)
+  utilities.warn(message, isbug)
   _skip_traceback_levels = 2
   io.stderr:flush()
   SILE.outputter:finish() -- Only really useful from the REPL but no harm in trying
@@ -42,10 +42,10 @@ utilities.error = function(message, bug)
   error(message, 2)
 end
 
-utilities.warn = function(message, bug)
+utilities.warn = function (message, isbug)
   if SILE.quiet then return end
   io.stderr:write("\n! " .. message)
-  if SILE.traceback or bug then
+  if SILE.traceback or isbug then
     io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
     if _skip_traceback_levels == 2 then
       io.stderr:write(debug.traceback("", _skip_traceback_levels) or "\t! debug.traceback() did not identify code location")
@@ -54,6 +54,11 @@ utilities.warn = function(message, bug)
     io.stderr:write(" at " .. SILE.traceStack:locationHead())
   end
   io.stderr:write("\n")
+end
+
+utilities.msg = function (message)
+  if SILE.quiet then return end
+  io.stderr:write("\n! " .. message .. "\n")
 end
 
 utilities.debugging = function (category)
