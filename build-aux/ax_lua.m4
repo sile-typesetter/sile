@@ -9,8 +9,8 @@ AC_DEFUN([AX_PROG_LUA],
 
   dnl Find a Lua interpreter.
   AM_COND_IF([LUAJIT],
-	  [_ax_lua_interpreter_list="luajit luajit-2.1.0-beta3 luajit-2.0.5 luajit-2.0.4 luajit-2.0.3"],
-	  [_ax_lua_interpreter_list="lua lua5.4 lua54 lua5.3 lua53 lua5.2 lua52 lua5.1 lua51 lua5.0 lua50"])
+    [_ax_lua_interpreter_list="luajit luajit-2.1.0-beta3 luajit-2.0.5 luajit-2.0.4 luajit-2.0.3"],
+    [_ax_lua_interpreter_list="lua lua5.4 lua54 lua5.3 lua53 lua5.2 lua52 lua5.1 lua51 lua5.0 lua50"])
 
   m4_if([$1], [],
   [ dnl No version check is needed. Find any Lua interpreter.
@@ -71,21 +71,21 @@ AC_DEFUN([AX_PROG_LUA],
     m4_default([$4], [AC_MSG_ERROR([cannot find suitable Lua interpreter])])
   ],
   [ dnl Query Lua for its version number.
-	AC_CACHE_CHECK([for $ax_display_LUA version], [ax_cv_lua_version],
-		[ ax_cv_lua_version=`$LUA -e 'print(_VERSION:match "(%d+%.%d+)")'` ])
-	AS_IF([test "x$ax_cv_lua_version" = 'x'],
-		[AC_MSG_ERROR([invalid Lua version number])])
-	AC_SUBST([LUA_VERSION], [$ax_cv_lua_version])
-	AC_SUBST([LUA_SHORT_VERSION], [`echo "$LUA_VERSION" | $SED 's|\.||'`])
+    AC_CACHE_CHECK([for $ax_display_LUA version], [ax_cv_lua_version],
+      [ ax_cv_lua_version=`$LUA -e 'print(_VERSION:match "(%d+%.%d+)")'` ])
+    AS_IF([test "x$ax_cv_lua_version" = 'x'],
+      [AC_MSG_ERROR([invalid Lua version number])])
+    AC_SUBST([LUA_VERSION], [$ax_cv_lua_version])
+    AC_SUBST([LUA_SHORT_VERSION], [`echo "$LUA_VERSION" | $SED 's|\.||'`])
 
-	AM_COND_IF([LUAJIT], [
-		AC_CACHE_CHECK([for $ax_display_LUA jit version], [ax_cv_luajit_version],
-			[ ax_cv_luajit_version=`$LUA -e 'print(jit and jit.version:match "(%d+%..+)")'` ])
-		AS_IF([test "x$ax_cv_luajit_version" = 'x'],
-			[AC_MSG_ERROR([invalid Lua version number])])
-		AC_SUBST([LUAJIT_VERSION], [$ax_cv_luajit_version])
-		AC_SUBST([LUAJIT_SHORT_VERSION], [`echo "$LUAJIT_VERSION" | $SED 's|\.|§|;s|\..*||;s|§|.|'`])
-	])
+    AM_COND_IF([LUAJIT], [
+      AC_CACHE_CHECK([for $ax_display_LUA jit version], [ax_cv_luajit_version],
+        [ ax_cv_luajit_version=`$LUA -e 'print(jit and jit.version:match "(%d+%..+)")'` ])
+      AS_IF([test "x$ax_cv_luajit_version" = 'x'],
+        [AC_MSG_ERROR([invalid Lua version number])])
+      AC_SUBST([LUAJIT_VERSION], [$ax_cv_luajit_version])
+      AC_SUBST([LUAJIT_SHORT_VERSION], [`echo "$LUAJIT_VERSION" | $SED 's|\.|§|;s|\..*||;s|§|.|'`])
+    ])
 
     dnl The following check is not supported:
     dnl At times (like when building shared libraries) you may want to know
@@ -196,12 +196,12 @@ AC_DEFUN([_AX_LUA_CHK_VER],
 AC_DEFUN([_AX_LUAJIT_CHK_VER],
 [
   AS_IF([$1 2>/dev/null -e '
-		function norm (v)
-		  i,j=v:match "(%d+)%.(%d+)" if i then return 100 * i + j end
-		end
-		v, toobig=norm (jit.version), norm "$3" or math.huge
-		os.exit ((v >= norm ("$2") and v < toobig) and 0 or 1)'],
-	[$4], [$5])
+    function norm (v)
+    i,j=v:match "(%d+)%.(%d+)" if i then return 100 * i + j end
+    end
+    v, toobig=norm (jit.version), norm "$3" or math.huge
+    os.exit ((v >= norm ("$2") and v < toobig) and 0 or 1)'],
+    [$4], [$5])
 ])
 
 
@@ -246,8 +246,8 @@ AC_DEFUN([AX_LUA_HEADERS],
 
   dnl  Some default directories to search.
   AM_COND_IF([LUAJIT],
-	  [_ax_lua_include_list="/usr/include/luajit-$LUAJIT_VERSION /usr/include/luajit-$LUAJIT_SHORT_VERSION /usr/local/include/luajit-$LUAJIT_VERSION /usr/local/include/luajit-$LUAJIT_SHORT_VERSION"],
-	  [_ax_lua_include_list="/usr/include/lua$LUA_VERSION /usr/include/lua/$LUA_VERSION /usr/include/lua$LUA_SHORT_VERSION /usr/local/include/lua$LUA_VERSION /usr/local/include/lua-$LUA_VERSION /usr/local/include/lua/$LUA_VERSION /usr/local/include/lua$LUA_SHORT_VERSION"])
+    [_ax_lua_include_list="/usr/include/luajit-$LUAJIT_VERSION /usr/include/luajit-$LUAJIT_SHORT_VERSION /usr/local/include/luajit-$LUAJIT_VERSION /usr/local/include/luajit-$LUAJIT_SHORT_VERSION"],
+    [_ax_lua_include_list="/usr/include/lua$LUA_VERSION /usr/include/lua/$LUA_VERSION /usr/include/lua$LUA_SHORT_VERSION /usr/local/include/lua$LUA_VERSION /usr/local/include/lua-$LUA_VERSION /usr/local/include/lua/$LUA_VERSION /usr/local/include/lua$LUA_SHORT_VERSION"])
 
   dnl Try to find the headers.
   _ax_lua_saved_cppflags=$CPPFLAGS
@@ -258,12 +258,12 @@ AC_DEFUN([AX_LUA_HEADERS],
 
   dnl Try some other directories if LUA_INCLUDE was not set.
   AS_IF([test "x$LUA_INCLUDE" = 'x' &&
-		 test "x$ac_cv_header_lua_h" != "xyes" ||
-		 test "x$with_luajit" = "xyes" &&
-		 test "x$ac_cv_header_luajit_h" != 'xyes'],
-    [ dnl Try some common include paths.
-	for _ax_include_path in $_ax_lua_include_list; do
-        test ! -d "$_ax_include_path" && continue
+      test "x$ac_cv_header_lua_h" != "xyes" ||
+      test "x$with_luajit" = "xyes" &&
+      test "x$ac_cv_header_luajit_h" != 'xyes'],
+      [ dnl Try some common include paths.
+      for _ax_include_path in $_ax_lua_include_list; do
+      test ! -d "$_ax_include_path" && continue
 
         AC_MSG_CHECKING([for Lua headers in])
         AC_MSG_RESULT([$_ax_include_path])
@@ -277,7 +277,7 @@ AC_DEFUN([AX_LUA_HEADERS],
         _ax_lua_saved_cppflags=$CPPFLAGS
         CPPFLAGS="$CPPFLAGS -I$_ax_include_path"
         AC_CHECK_HEADERS([lua.h lualib.h lauxlib.h luaconf.h])
-		AM_COND_IF([LUAJIT], [AC_CHECK_HEADERS([luajit.h])])
+        AM_COND_IF([LUAJIT], [AC_CHECK_HEADERS([luajit.h])])
         CPPFLAGS=$_ax_lua_saved_cppflags
 
         AS_IF([test "x$ac_cv_header_lua_h" = 'xyes'],
@@ -397,18 +397,18 @@ AC_DEFUN([AX_LUA_LIBS],
     dnl Try to find the Lua libs.
     _ax_lua_saved_libs=$LIBS
     LIBS="$LIBS $LUA_LIB"
-	AM_COND_IF([LUAJIT],
-			[AC_SEARCH_LIBS([lua_load],
-				[luajit$LUA_VERSION luajit$LUA_SHORT_VERSION luajit-$LUA_VERSION luajit-$LUA_SHORT_VERSION luajit],
-				[_ax_found_lua_libs='yes'],
-				[_ax_found_lua_libs='no'],
-				[$_ax_lua_extra_libs])],
-			[AC_SEARCH_LIBS([lua_load],
-				[lua$LUA_VERSION lua$LUA_SHORT_VERSION lua-$LUA_VERSION lua-$LUA_SHORT_VERSION lua],
-				[_ax_found_lua_libs='yes'],
-				[_ax_found_lua_libs='no'],
-				[$_ax_lua_extra_libs])])
-	LIBS=$_ax_lua_saved_libs
+    AM_COND_IF([LUAJIT],
+        [AC_SEARCH_LIBS([lua_load],
+          [luajit$LUA_VERSION luajit$LUA_SHORT_VERSION luajit-$LUA_VERSION luajit-$LUA_SHORT_VERSION luajit],
+          [_ax_found_lua_libs='yes'],
+          [_ax_found_lua_libs='no'],
+          [$_ax_lua_extra_libs])],
+        [AC_SEARCH_LIBS([lua_load],
+          [lua$LUA_VERSION lua$LUA_SHORT_VERSION lua-$LUA_VERSION lua-$LUA_SHORT_VERSION lua],
+          [_ax_found_lua_libs='yes'],
+          [_ax_found_lua_libs='no'],
+          [$_ax_lua_extra_libs])])
+    LIBS=$_ax_lua_saved_libs
 
     AS_IF([test "x$ac_cv_search_lua_load" != 'xno' &&
            test "x$ac_cv_search_lua_load" != 'xnone required'],
