@@ -73,7 +73,7 @@ AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
 AC_SUBST([SYSTEM_LUAROCKS])
 
 AC_ARG_WITH([luajit],
-            AS_HELP_STRING([--with-luajit],
+            AS_HELP_STRING([--without-luajit],
                            [Prefer LuaJIT over PUC Lua, even if the latter is newer]))
 AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" != "xno"])
 
