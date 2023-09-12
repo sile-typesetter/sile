@@ -27,9 +27,7 @@ globals = {
   "pl",
   "fluent",
   "executablePath",
-  "extendSilePath",
-  "SYSTEM_SILE_PATH",
-  "SHARED_LIB_EXT"
+  "extendSilePath"
 }
 max_line_length = false
 ignore = {
