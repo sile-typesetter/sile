@@ -146,12 +146,10 @@ local function handleMath (_, mbox, mode, counter)
     SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
     SILE.typesetter:pushGlue(SILE.nodefactory.hfillglue())
     SILE.typesetter:pushHorizontal(mbox)
-    SILE.typesetter:pushGlue(SILE.nodefactory.hfillglue())
+    SILE.typesetter:pushExplicitGlue(SILE.nodefactory.hfillglue())
     if counter then
       SILE.call("increment-counter", { id=counter } )
-      SILE.call("math-counterstyle", { id=counter } )
-    else
-      SILE.call("hbox")
+      SILE.call("math:numberingstyle", { id=counter } )
     end
     SILE.typesetter:endline()
     SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
