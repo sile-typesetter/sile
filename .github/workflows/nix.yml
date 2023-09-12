@@ -2,23 +2,23 @@ name: Run Flake
 
 on: [ push, pull_request ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   nix-flake:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Fetch tags
-        run: |
-          git fetch --prune --tags ||:
       - name: Install Nix
-        uses: cachix/install-nix-action@v20
-        with:
-          extra_nix_config: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+        uses: DeterminateSystems/nix-installer-action@v4
+      - name: Cache Nix dependencies
+        uses: DeterminateSystems/magic-nix-cache-action@v2
       # Upstream package sometimes has flags set that disable flake checking
       - name: Setup test env
         run: |

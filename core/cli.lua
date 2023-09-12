@@ -2,8 +2,8 @@ local cli = pl.class()
 
 cli.parseArguments = function ()
   local cliargs = require("cliargs")
-  local print_version = function()
-    print(SILE.full_version)
+  local print_version = function(flag)
+    print(flag == "V" and "SILE " .. SILE.version or SILE.full_version)
     os.exit(0)
   end
   cliargs:set_colsz(0, 120)
@@ -15,7 +15,7 @@ cli.parseArguments = function ()
       changed to .pdf. Additional input or output formats can be handled by requiring a
       module that adds support for them first.
     ]])
-  cliargs:splat("INPUT", "input document, by default in SIL or XML format")
+  cliargs:splat("INPUTS", "input document(s), by default in SIL or XML format", nil, 999)
   cliargs:option("-b, --backend=VALUE", "choose an alternative output backend")
   cliargs:option("-c, --class=VALUE", "override default document class")
   cliargs:option("-d, --debug=VALUE", "show debug information for tagged aspects of SILE’s operation", {})
@@ -29,9 +29,10 @@ cli.parseArguments = function ()
   cliargs:option("-p, --preamble=FILE", "process SIL, XML, or other content before the input document", {})
   cliargs:option("-P, --postamble=FILE", "process SIL, XML, or other content after the input document", {})
   cliargs:option("-u, --use=MODULE[[PARAMETER=VALUE][,PARAMETER=VALUE]]", "load and initialize a module before processing input", {})
+  cliargs:flag("-q, --quiet", "suppress warnings and informational messages during processing")
   cliargs:flag("-t, --traceback", "display detailed location trace on errors and warnings")
   cliargs:flag("-h, --help", "display this help, then exit")
-  cliargs:flag("-v, --version", "display version information, then exit", print_version)
+  cliargs:flag("-V, --version", "display version information, then exit", print_version)
   -- Work around cliargs not processing - as an alias for STDIO streams:
   -- https://github.com/amireh/lua_cliargs/issues/67
   local _arg = pl.tablex.imap(luautf8.gsub, _G.arg, "^-$", "STDIO")
@@ -41,16 +42,20 @@ cli.parseArguments = function ()
     local code = parse_err:match("^Usage:") and 0 or 1
     os.exit(code)
   end
-  if opts.INPUT then
-    if opts.INPUT == "STDIO" then
-      opts.INPUT = "-"
+  if opts.INPUTS and #opts.INPUTS > 0 then
+    local has_input_filename = false
+    pl.tablex.foreachi(opts.INPUTS, function (v, k)
+      if v == "STDIO" then
+        opts.INPUTS[k] = "-"
+      elseif not has_input_filename then
+        has_input_filename = true
+      end
+    end)
+    if not has_input_filename and not opts.output then
+      SU.error("Unable to derive an output filename (perhaps because input is a STDIO stream).\n"..
+               "  Please use --output to set one explicitly.")
     end
-    SILE.input.filename = opts.INPUT
-    -- Turn slashes around in the event we get passed a path from a Windows shell
-    local filename = opts.INPUT:gsub("\\", "/")
-    -- Strip extension
-    SILE.masterFilename = string.match(filename, "(.+)%..-$") or filename
-    SILE.masterDir = SILE.masterFilename:match("(.-)[^%/]+$")
+    SILE.input.filenames = opts.INPUTS
   end
   if opts.backend then
     SILE.backend = opts.backend
@@ -122,6 +127,7 @@ cli.parseArguments = function ()
     return summary(...) .. "\n\nRun with --traceback for more detailed trace leading up to errors."
   end
   SILE.errorHandler = opts.traceback and trace or identity
+  SILE.quiet = opts.quiet
   SILE.traceback = opts.traceback
 end
 

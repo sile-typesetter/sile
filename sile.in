@@ -4,112 +4,38 @@
 SYSTEM_SILE_PATH = "@SILE_PATH@"
 SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
 
-local executable = debug.getinfo(1, "S").source
-local luaversion = _VERSION:match("%d+%.%d+")
-
--- Normalize possibly dirty Lua path formatting shortcut: /./ → /
--- Even leafo/gh-actions-luarocks takes this shortcut which inhibits duplicate cleanup
-package.path = package.path:gsub("/%./", "/")
-package.cpath = package.cpath:gsub("/%./", "/")
-
-local function prepend_and_dedup (segment, path)
-  local escaped = segment:gsub('[%-%.%+%[%]%(%)%$%^%%%?%*]','%%%1') -- copied from pl.utils.escape() which we can't load yet
-  local striped = path:gsub(("^%s"):format(escaped), ""):gsub((";%s"):format(escaped), "")
-  return ("%s;%s"):format(segment, striped)
+-- At this point at run time we may or may not have anything useful in package.path,
+-- so require() isn't something we can rely on.
+local status = pcall(dofile, "@SILE_PATH@/core/pathsetup.lua")
+if not status then
+  dofile("./core/pathsetup.lua")
 end
 
-local function prependPath (path)
-  package.path  = prepend_and_dedup(path .. "/?/init.lua", package.path)
-  package.path  = prepend_and_dedup(path .. "/?.lua", package.path)
-end
-
-local function prependCPath (path)
-  package.cpath = prepend_and_dedup(path .. "/?.@SHARED_LIB_EXT@", package.cpath)
-end
-
-local function extendPaths (path, ours)
-  prependCPath(path)
-  prependPath(path)
-  if ours then
-    prependPath(path .. "/lua-libraries")
-    if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
-      prependCPath(path .. "/lua_modules/lib/lua/" .. luaversion)
-      prependPath(path .. "/lua_modules/share/lua/" .. luaversion)
-    end
-  else
-    prependCPath(path .. "/sile")
-    prependPath(path .. "/sile")
-  end
-end
-
--- Facilitate loading SILE classes & packages from system LuaRocks
--- Also weed out CWD relative paths, we add them in a different order later
-local luapath = {}
-local extpath = {}
-for path in package.path:gmatch("[^;]+") do
-  table.insert(extpath, tostring(path:gsub("%?", "sile/?")))
-  table.insert(luapath, path)
-end
-package.path = table.concat(luapath, ";")
-
-extendPaths("@SILE_PATH@", true)
-extendPaths("@SILE_LIB_PATH@", true)
-
-package.path = table.concat(extpath, ";") .. ";" .. package.path
-
-local pathvar = os.getenv("SILE_PATH")
-if pathvar then
-  for path in string.gmatch(pathvar, "[^;]+") do
-    if not path:match("^./") and path:len() >= 1 then
-      extendPaths(path)
-    end
-  end
-end
-
-local cwd = executable:gsub("(.*)(/.*)", "%1")
-if cwd:match("^@") then -- Consider "ours" for the sake of Nix Flake
-  extendPaths(".", true)
-else
-  if cwd ~= "./" then extendPaths(cwd) end
-  extendPaths(".")
+-- On FreeBSD, Lua's debug module doesn't give us info above the top of the stack.
+-- Since our detection is currently burried in a module it doesn't tell us the executable.
+if _G.executablePath == "=[C]" then
+  _G.executablePath = debug.getinfo(1, "S").source
 end
 
 -- This global is set here and *also* in the core library, since this
 -- effectively passes the same table they are interchangeable (for now).
 SILE = require("core.sile")
 
-io.stdout:setvbuf 'no'
-
 SILE.cli:parseArguments()
 
-if not os.getenv 'LUA_REPL_RLWRAP' then
+if not os.getenv 'LUA_REPL_RLWRAP' and not SILE.quiet then
   io.stderr:write(SILE.full_version .. '\n')
-end
-
-local ProFi
-if SU.debugging("profile") then
-  ProFi = require("ProFi")
-end
-
-if SILE.makeDeps then
-  SILE.makeDeps:add(executable)
 end
 
 SILE.init()
 
-if SILE.masterFilename then
-
-  if SILE.masterDir:len() >= 1 then
-    extendPaths(SILE.masterDir)
-  end
-
-  if SU.debugging("profile") then
-    ProFi:start()
-  end
+if SILE.input.filenames and #SILE.input.filenames >= 1 then
 
   -- Deprecated, notice given in core.cli when argument used
   for _, path in ipairs(SILE.input.includes) do
-    io.stderr:write("Loading "..path.."\n")
+    if not SILE.quiet then
+      io.stderr:write("Loading "..path.."\n")
+    end
     local c = SILE.resolveFile(path, "classes")
     if c then
       SILE.processFile(c)
@@ -123,7 +49,7 @@ if SILE.masterFilename then
   end
 
   local main, err = xpcall(function()
-    return SILE.processFile(SILE.input.filename)
+    pl.tablex.imap(SILE.processFile, SILE.input.filenames)
   end, SILE.errorHandler)
 
   if not main then
@@ -136,15 +62,6 @@ if SILE.masterFilename then
   end
 
   SILE.finish()
-
-  if SU.debugging("profile") then
-    ProFi:stop()
-    ProFi:writeReport(SILE.masterFilename..'.profile.txt')
-  end
-
-  if SU.debugging("versions") then
-    SILE.shaper:debugVersions()
-  end
 
 else
   SILE.repl:enter()

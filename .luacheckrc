@@ -10,6 +10,7 @@ exclude_files = {
   "benchmark-*",
   "compare-*",
   "sile-*",
+  "target",
   "lua_modules",
   "lua-libraries",
   ".lua",
@@ -25,6 +26,8 @@ globals = {
   "luautf8",
   "pl",
   "fluent",
+  "executablePath",
+  "extendSilePath",
   "SYSTEM_SILE_PATH",
   "SHARED_LIB_EXT"
 }

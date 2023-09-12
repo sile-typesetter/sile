@@ -26,7 +26,7 @@ SILE.settings:declare({
   parameter = "languages.fr.colonspace",
   type = "kern",
   default = SILE.nodefactory.kern(spaces.colonspace),
-  help = "The amount of space before a colon, theoretically a non-breakable, shrinkable, strechable inter-word space"
+  help = "The amount of space before a colon, theoretically a non-breakable, shrinkable, stretchable inter-word space"
 })
 
 SILE.settings:declare({

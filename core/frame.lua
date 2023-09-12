@@ -49,7 +49,7 @@ SILE.framePrototype = pl.class({
 
     -- This gets called by us in typesetter before we start to use the frame
     init = function (self, typesetter)
-      self.state = { totals = { height = SILE.measurement(0), pastTop = false } }
+      self.state = { totals = { height = SILE.measurement(0) } }
       self:enter(typesetter)
       self:newLine(typesetter)
       if self:pageAdvanceDirection() == "TTB" then

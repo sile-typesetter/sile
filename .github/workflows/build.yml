@@ -2,13 +2,17 @@ name: Build
 
 on: [ push, pull_request ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   build-ubuntu:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Cache test fonts
@@ -23,18 +27,16 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
-      - name: Fetch tags
-        run: |
-          git fetch --prune --tags ||:
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.3-dev libpng-dev lua5.3 lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+          sudo apt-get install cargo fonts-sil-gentiumplus ghostscript graphviz jq libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libluajit-5.1-dev libpng-dev luajit lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure \
+          ./configure PDFINFO=false \
+            --with-luajit \
             --disable-font-variations \
             --without-system-luarocks \
             --with-manual
@@ -54,7 +56,7 @@ jobs:
           path: sile-${{ env.VERSION }}.zip
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.repository == 'sile-typesetter/sile' && startsWith(github.ref, 'refs/tags/v')
         with:
           body_path: sile-${{ env.VERSION }}.md
           files: |
@@ -66,7 +68,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Cache test fonts
@@ -76,14 +78,10 @@ jobs:
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
-      - name: Fetch tags
-        run: |
-          git fetch --prune --tags ||:
       - name: Install Nix
-        uses: cachix/install-nix-action@v20
-        with:
-          extra_nix_config: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+        uses: DeterminateSystems/nix-installer-action@v4
+      - name: Cache Nix dependencies
+        uses: DeterminateSystems/magic-nix-cache-action@v2
       - name: Setup developer environment
         run: |
           nix develop --command ./bootstrap.sh

@@ -1,0 +1,13 @@
+\begin[class=plain,papersize=a7]{document}
+\nofolios
+% Both "bar" entries should have parindent applied
+\noindent
+\em{foo}
+
+bar
+
+\noindent
+foo
+
+bar
+\end{document}

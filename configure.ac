@@ -24,6 +24,12 @@ LT_INIT([dlopen])
 
 AC_CANONICAL_HOST
 
+AC_ARG_ENABLE(debug,
+            AS_HELP_STRING([--enable-debug],[Build Rust code with debugging information [default=no]]),
+            [debug_release=$enableval],
+            [debug_release=no])
+AM_CONDITIONAL([DEBUG_RELEASE], [test "x$debug_release" = "xyes"])
+
 AC_ARG_ENABLE([dependency-checks],
               AS_HELP_STRING([--disable-dependency-checks],
                              [Disable dependency checks]))
@@ -83,7 +89,13 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
 
     AX_FONT(Gentium Plus)
 
-    AC_PATH_PROG([PDFINFO], [pdfinfo])
+    AX_PROGVAR([pdfinfo])
+    AX_PROGVAR([jq])
+    AX_PROGVAR([xargs])
+    AM_COND_IF([MANUAL], [
+                AX_PROGVAR([dot])
+                AX_PROGVAR([gs])
+                ])
 
     AC_MSG_CHECKING([for OS X])
     have_appkit=no
@@ -199,10 +211,67 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         AX_PROGVAR([busted])
         AX_PROGVAR([luacheck])
         AX_PROGVAR([luarocks])
+        AX_PROGVAR([nix])
         AX_PROGVAR([perl])
     ])
 
+    AX_PROGVAR([cargo])
+    AX_PROGVAR([rustc])
+
 ])
+
+AC_MSG_CHECKING(whether to build Rust code with debugging information)
+AM_COND_IF([DEBUG_RELEASE], [
+    AC_MSG_RESULT(yes)
+    RUST_TARGET_SUBDIR=debug
+], [
+    AC_MSG_RESULT(no)
+    RUST_TARGET_SUBDIR=release
+])
+AC_SUBST([RUST_TARGET_SUBDIR])
+
+AC_ARG_WITH([bash-completion-dir],
+    AS_HELP_STRING([--with-bash-completion-dir[=PATH]],
+        [Install the bash auto-completion script in this directory. @<:@default=yes@:>@]),
+        [],
+                        [with_bash_completion_dir=yes])
+if test "x$with_bash_completion_dir" = "xyes"; then
+        PKG_CHECK_MODULES([BASH_COMPLETION], [bash-completion >= 2.0],
+                          [BASH_COMPLETION_DIR="`pkg-config --define-variable=datadir=$datadir --variable=completionsdir bash-completion`"],
+                          [BASH_COMPLETION_DIR="$datadir/bash-completion/completions"])
+        else
+                BASH_COMPLETION_DIR="$with_bash_completion_dir"
+fi
+AC_SUBST([BASH_COMPLETION_DIR])
+AM_CONDITIONAL([ENABLE_BASH_COMPLETION],[test "x$with_bash_completion_dir" != "xno"])
+
+AC_ARG_WITH([fish-completion-dir],
+            AS_HELP_STRING([--with-fish-completion-dir[=PATH]],
+                           [Install the fish auto-completion script in this directory. @<:@default=yes@:>@]),
+                           [],
+                           [with_fish_completion_dir=yes])
+if test "x$with_fish_completion_dir" = "xyes"; then
+        PKG_CHECK_MODULES([FISH_COMPLETION], [fish >= 3.0],
+                          [FISH_COMPLETION_DIR="`pkg-config --define-variable=datadir=$datadir --variable=completionsdir fish`"],
+                          [FISH_COMPLETION_DIR="$datadir/fish/vendor_completions.d"])
+        else
+                FISH_COMPLETION_DIR="$with_fish_completion_dir"
+fi
+AC_SUBST([FISH_COMPLETION_DIR])
+AM_CONDITIONAL([ENABLE_FISH_COMPLETION],[test "x$with_fish_completion_dir" != "xno"])
+
+AC_ARG_WITH([zsh-completion-dir],
+            AS_HELP_STRING([--with-zsh-completion-dir[=PATH]],
+                           [Install the zsh auto-completion script in this directory. @<:@default=yes@:>@]),
+                           [],
+                           [with_zsh_completion_dir=yes])
+if test "x$with_zsh_completion_dir" = "xyes"; then
+        ZSH_COMPLETION_DIR="$datadir/zsh/site-functions"
+else
+        ZSH_COMPLETION_DIR="$with_zsh_completion_dir"
+fi
+AC_SUBST([ZSH_COMPLETION_DIR])
+AM_CONDITIONAL([ENABLE_ZSH_COMPLETION],[test "x$with_zsh_completion_dir" != "xno"])
 
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
@@ -236,19 +305,30 @@ AC_SUBST([LUAROCKSARGS])
 
 AX_SUBST_TRANSFORMED_PACKAGE_NAME
 
-adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])
-AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
+# Avoid need for `--datarootdir=$(cd ..; pwd)` hack to run locally for
+# tests/manual build when developer mode is enabled
+AM_COND_IF([DEVELOPER], [
+        AC_DEFINE_UNQUOTED([SILE_PATH],["$(pwd)"],[Path for SILE packages and classes])
+    ],[
+        adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])
+        AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
+])
+
 AC_SUBST([SILE_PATH])
 
 adl_RECURSIVE_EVAL(["${libdir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
 AC_SUBST([SILE_LIB_PATH])
 
+AC_SUBST([ROCKSPECWARNING], ["DO NOT EDIT! Modify template sile.rockspec.in"])
+AC_SUBST([ROCKREV], [1])
+
 AX_SUBST_MAN_DATE
 
 AC_CONFIG_FILES([build-aux/list-dist-files.sh], [chmod +x build-aux/list-dist-files.sh])
-AC_CONFIG_FILES([Makefile src/Makefile sile.1 core/features.lua core/version.lua])
-AC_CONFIG_FILES([sile tests/regressions.pl], [chmod +x sile tests/regressions.pl])
+AC_CONFIG_FILES([Makefile src/Makefile sile-lua.1 core/features.lua core/pathsetup.lua core/version.lua])
+AC_CONFIG_FILES([sile-lua:sile.in tests/regressions.pl], [chmod +x sile-lua tests/regressions.pl])
+AC_CONFIG_FILES([sile-dev-1.rockspec:sile.rockspec.in])
 
 AC_ARG_PROGRAM
 

@@ -63,6 +63,11 @@ end
 function package:_init (options)
   base._init(self, options)
   SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
+  if type(options.frames) ~= "table" then
+    SU.error([[Package parallel must be initialized with a set of appropriately named frames.
+This package is usually intended to be loaded from some supporting class or
+from another package, responsible for correct initialization.]])
+  end
   for frame, typesetter in pairs(options.frames) do
     typesetterPool[frame] = SILE.typesetters.base(SILE.getFrame(typesetter))
     typesetterPool[frame].id = typesetter

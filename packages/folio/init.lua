@@ -10,7 +10,9 @@ end
 function package:outputFolio (frame)
   if not frame then frame = "folio" end
   local folio = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
-  io.stderr:write("[" .. folio .. "] ")
+  if not SILE.quiet then
+    io.stderr:write("[" .. folio .. "] ")
+  end
   if SILE.scratch.counters.folio.off then
     if SILE.scratch.counters.folio.off == 2 then
       SILE.scratch.counters.folio.off = false
@@ -76,7 +78,7 @@ end
 
 package.documentation= [[
 \begin{document}
-The \autodoc:package{folio} package (which is automatically loaded by the \code{plain} class, and therefore by nearly every SILE class) controls the output of folios—the old-time typesetter word for page numbers.
+The \autodoc:package{folio} package (which is automatically loaded by the \autodoc:class{plain} class, and therefore by nearly every SILE class) controls the output of folios—the old-time typesetter word for page numbers.
 
 It provides four commands to users:
 

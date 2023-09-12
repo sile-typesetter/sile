@@ -19,6 +19,12 @@ function class:_init (options)
   self:loadPackage("rules")
   self:loadPackage("verbatim")
   self:loadPackage("footnotes")
+  -- SILE sensibly does not define a pixels unit because it has no meaning in its frame of reference. However the
+  -- Docbook standard requires them and even defaults to them for bare numbers, even while warning against their use.
+  -- Here we define a px arbitrarily to be the equivilent point unit if output was 300 DPI.
+  SILE.units.px = {
+    definition = "0.24pt"
+  }
 end
 
 function class.push (t, val)
@@ -354,14 +360,17 @@ class.registerCommands = function (self)
     countedThing("Figure", options, content)
   end)
 
-  self:registerCommand("imagedata", function (options, _)
-    local width = SILE.parseComplexFrameDimension(options.width or "100%pw") or 0
-    SILE.call("img", {
-      src = options.fileref,
-      width = width / 2
-    })
-  end)
+  local function docmook_measurement (value)
+    SU.dump(value)
+    value = value:gsub("(%d)$", "%1px") -- bare numbers are pixels, not points
+    value = value:gsub("(%%)$", "%1lw") -- percentages are relative to viewport
+    return SU.cast("measurement", value)
+  end
 
+  self:registerCommand("imagedata", function (options, _)
+    local width = options.width and docmook_measurement(options.width)
+    SILE.call("img", { src = options.fileref, width = width })
+  end)
 
   self:registerCommand("itemizedlist", function (_, content)
     self.push("list", {type = "itemized"})

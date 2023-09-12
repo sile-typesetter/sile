@@ -430,19 +430,16 @@ function class:registerCommands ()
   self:registerCommand("discretionary", function (options, _)
     local discretionary = SILE.nodefactory.discretionary({})
     if options.prebreak then
-      SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.prebreak) end)
-      discretionary.prebreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
-      SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+      local hbox = SILE.typesetter:makeHbox({ options.prebreak })
+      discretionary.prebreak = { hbox }
     end
     if options.postbreak then
-      SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.postbreak) end)
-      discretionary.postbreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
-      SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+      local hbox = SILE.typesetter:makeHbox({ options.postbreak })
+      discretionary.postbreak = { hbox }
     end
     if options.replacement then
-      SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.replacement) end)
-      discretionary.replacement = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
-      SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+      local hbox = SILE.typesetter:makeHbox({ options.replacement })
+      discretionary.replacement = { hbox }
     end
     table.insert(SILE.typesetter.state.nodes, discretionary)
   end, "Inserts a discretionary node.")
@@ -578,9 +575,9 @@ function class:finish ()
   end
   SILE.typesetter:runHooks("pageend") -- normally run by the typesetter
   self:endPage()
-    if SILE.typesetter then
-      assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
-    end
+  if SILE.typesetter then
+    assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
+  end
   SILE.outputter:finish()
   self:runHooks("finish")
 end

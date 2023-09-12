@@ -8,6 +8,13 @@
     url = "github:hercules-ci/gitignore.nix";
     inputs.nixpkgs.follows = "nixpkgs";
   };
+  # TODO: Should this be replaced with libtexpdf package from nixpkgs? or
+  # should we keep it that way, so that it'd be easy to test new versions
+  # of libtexpdf when developing?
+  inputs.libtexpdf-src = {
+    url = "github:sile-typesetter/libtexpdf";
+    flake = false;
+  };
 
   # https://nixos.wiki/wiki/Flakes#Using_flakes_project_from_a_legacy_Nix
   inputs.flake-compat = {
@@ -20,18 +27,12 @@
     , flake-utils
     , flake-compat
     , gitignore
+    , libtexpdf-src
   }:
   flake-utils.lib.eachDefaultSystem (system:
     let
       pkgs = import nixpkgs {
         inherit system;
-      };
-      # TODO: Should this be replaced with libtexpdf package from nixpkgs? or
-      # should we keep it that way, so that it'd be easy to test new versions
-      # of libtexpdf when developing?
-      libtexpdf-src = builtins.fetchGit {
-        url = "https://github.com/sile-typesetter/libtexpdf";
-        rev = "${(pkgs.lib.fileContents "${self}/libtexpdf.git-rev")}";
       };
       inherit (gitignore.lib) gitignoreSource;
       # https://discourse.nixos.org/t/passing-git-commit-hash-and-tag-to-build-with-flakes/11355/2
@@ -105,11 +106,20 @@
         # Don't build the manual as it's time consuming, and it requires fonts
         # that are not available in the sandbox due to internet connection
         # missing.
-        configureFlags = pkgs.lib.lists.remove "--with-manual" oldAttr.configureFlags;
+        configureFlags = [
+          "PDFINFO=false"
+        ] ++ (
+          pkgs.lib.lists.remove "--with-manual" oldAttr.configureFlags
+        );
         nativeBuildInputs = oldAttr.nativeBuildInputs ++ [
           pkgs.autoreconfHook
         ];
         buildInputs = [
+          # Build inputs added since release in nixpkgs
+          pkgs.cargo
+          pkgs.jq
+          pkgs.rustc
+        ] ++ [
           # Add here inputs needed for development, and not for Nixpkgs' build.
           pkgs.libarchive
           pkgs.perl

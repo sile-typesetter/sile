@@ -113,7 +113,11 @@ function package:registerCommands ()
         pdf.begin_annotation()
       end
     })
-    local hbox = SILE.call("hbox", {}, content) -- hack
+
+    local hbox, hlist = SILE.typesetter:makeHbox(content) -- hack
+    SILE.typesetter:pushHbox(hbox)
+    SILE.typesetter:pushHlist(hlist)
+
     SILE.typesetter:pushHbox({
       value = nil,
       height = SILE.measurement(0),

@@ -11,8 +11,8 @@ We want to make it easy for minority languages and scripts to implement their ow
 
 For SILE to know how to typeset text you will need to tell it what language your text is in!
 There are two ways to do this:
-as part of the \code{\\font[language=...]} command as detailed in Chapter 4,
-or by use of the \code{\\language[main=...]} command.
+as part of the \autodoc:command{\font[language=<code>]} command as detailed in Chapter 4,
+or by use of the \autodoc:command{\language[main=<code>]} command.
 Both of these expect an ISO639-1 language code such as \code{en} for English, \code{ar} for Arabic, and so on.
 
 Selecting a language by either method loads up the \em{language support} files for that language.
@@ -41,40 +41,28 @@ then in Urdu:
 \\font[family=LateefGR,language=urd]\{\font[family=LateefGR]{ه{}ه{}ه}\}.
 \end{autodoc:codeblock}
 
-\begin{examplefont}
+\begin{autodoc:example}
 Standard Arabic: \font[family=LateefGR,language=ar]{ههه};
 then in Sindi: \font[family=LateefGR,language=snd]{ههه};
 then in Urdu: \font[family=LateefGR,language=urd]{ههه}.
-\end{examplefont}
+\end{autodoc:example}
 \bidi-off
 
 \section{Direction}
 
-SILE is written to be \em{direction-agnostic,} which means that it has
-no fixed idea about which way text should flow on a page. Latin scripts
-are generally written left-to-right with individual lines starting from
-the top of the page and advancing towards the bottom. Japanese can be
-written in the same way, but traditionally is typeset down the page with
-lines of text moving from the right of the page to the left.
+SILE is written to be \em{direction-agnostic,} which means that it has no fixed idea about which way text should flow on a page.
+Latin scripts are generally written left-to-right with individual lines starting from the top of the page and advancing towards the bottom.
+Japanese can be written in the same way, but traditionally is typeset down the page with lines of text moving from the right of the page to the left.
 
-To describe this, SILE uses the concept of a \em{writing direction,}
-which denotes the way each individual line appears on the page—left
-to right for Latin scripts, right to left for Arabic, Hebrew and so on,
-top to bottom for traditional Japanese—and a \em{page advance direction,}
-which denotes the way the lines “stack up”. Each of these directions can
-take one of four values: \code{LTR}, \code{RTL}, \code{TTB}, or \code{BTT}.
-A \em{direction specification} is made up of either a writing direction
-(\code{LTR} or \code{RTL}), in which case the page advance direction is
-understood to be \code{TTB}, or a writing direction and a page advance
-direction joined by a hyphen.
+To describe this, SILE uses the concept of a \em{writing direction,} which denotes the way each individual line appears on the page—left to right for Latin scripts, right to left for Arabic, Hebrew and so on, top to bottom for traditional Japanese—and a \em{page advance direction,} which denotes the way the lines “stack up”.
+Each of these directions can take one of four values: \code{LTR}, \code{RTL}, \code{TTB}, or \code{BTT}.
+A \em{direction specification} is made up of either a writing direction (\code{LTR} or \code{RTL}), in which case the page advance direction is understood to be \code{TTB}, or a writing direction and a page advance direction joined by a hyphen.
 
-Each frame has its own writing direction. By default, this is \code{LTR-TTB}.
-Normally you would set the writing direction once, in the master frames of
-your document class. One easy way to do this in the \code{plain} document
-class is to pass the \code{direction=...} parameter to the
-\code{\\begin\{document\}} command. For example, Mongolian is written top
-to bottom with text lines moving from the left to the right of the page,
-so to create a Mongolian document, use:
+Each frame has its own writing direction.
+By default, this is \code{LTR-TTB}.
+Normally you would set the writing direction once, in the master frames of your document class.
+One easy way to do this in the \autodoc:class{plain} document class is to pass the \autodoc:parameter{direction} parameter to the \code{\\begin\{document\}} command.
+For example, Mongolian is written top to bottom with text lines moving from the left to the right of the page, so to create a Mongolian document, use:
 
 \begin[type=autodoc:codeblock]{raw}
 \begin[direction=TTB-LTR]{document}
@@ -83,40 +71,32 @@ so to create a Mongolian document, use:
 \end{document}
 \end{raw}
 
-To change the writing direction for a single frame, use
-\code{\\thisframedirection[direction=...]}.
+To change the writing direction for a single frame, use \autodoc:command{\thisframedirection[direction=<dir>]}.
 
-SILE uses the Unicode bidirectional algorithm to handle texts written in
-mixed directionalities. See \url{https://sile-typesetter.org/examples/i18n.sil}
-for an example which brings together multiple scripts and directionalities.
+SILE uses the Unicode bidirectional algorithm to handle texts written in mixed directionalities.
+See \url{https://sile-typesetter.org/examples/i18n.sil} for an example which brings together multiple scripts and directionalities.
 
 \section{Hyphenation}
 
-SILE hyphenates words based on its current language. (Language is set using the
-\code{\\font} command above.) SILE comes with support for hyphenating a wide
-variety of languages, and also aims to encode specific typesetting knowledge about
+SILE hyphenates words based on its current language.
+(Language is set using the \autodoc:command{\font} command above.)
+SILE comes with support for hyphenating a wide variety of languages, and also aims to encode specific typesetting knowledge about
 languages.
 
-The default hyphen character is “-”, which can be tweaked by the \code{\\font}
-parameter \code{hyphenchar}. It accepts a Unicode character or Unicode codepoint
-in \code{[Uu]+<code>} or Hexadecimal \code{0[Xx]<code>} format—for instance,
-\code{\\font[family=Rachana,language=ml,hyphenchar=U+200C]}.
+The default hyphen character is “-”, which can be tweaked by the \autodoc:command{\font} parameter \autodoc:parameter{hyphenchar}.
+It accepts a Unicode character or Unicode codepoint in \code{[Uu]+<code>} or Hexadecimal \code{0[Xx]<code>} format—for instance, \autodoc:command{\font[family=Rachana,language=ml,hyphenchar=U+200C]}.
 
-SILE comes with a special “language” called \code{und}, which has no hyphenation
-patterns available. If you switch to this language, text will not be hyphenated.
-The command \code{\\nohyphenation\{…\}} is provided as a shortcut for
-\code{\\font[language=und]\{…\}}.
+SILE comes with a special “language” called \code{und}, which has no hyphenation patterns available.
+If you switch to this language, text will not be hyphenated.
+The command \autodoc:command{\nohyphenation{…}} is provided as a shortcut for \autodoc:command{\font[language=und]{…}}.
 
-The hyphenator uses the same algorithm as TeX and can use TeX hyphenation
-pattern files if they are converted to Lua format. To implement hyphenation
-for a new language, first check to see if TeX hyphenation dictionaries
-are available; if not, work through the resources at
-\url{http://tug.org/docs/liang/}.
+The hyphenator uses the same algorithm as TeX and can use TeX hyphenation pattern files if they are converted to Lua format.
+To implement hyphenation for a new language, first check to see if TeX hyphenation dictionaries are available; if not, work through the resources at \url{http://tug.org/docs/liang/}.
 
 \section{Localization}
 
 A small handful of strings may be programatically added to documents depending on language, context, and options.
-For example by default in English the \code{book} class will prepend “Chapter ” before chapter numbers output by the \code{\\chapter} command.
+For example by default in English the \autodoc:class{book} class will prepend “Chapter ” before chapter numbers output by the \autodoc:command{\chapter} command.
 These localized strings are managed internally using the Fluent localization system.%
 \footnote{See Project Fluent (\url{https://projectfluent.org}) for details on the data format and uses.}
 Some default localizations are provided for a handful of languages, but it is quite likely SILE will not (yet) have your language.
@@ -148,17 +128,15 @@ A particularly common string to override might be the table of contents heading:
 
 \section{Support for specific languages}
 
-The following section shows some of the support features that SILE provides
-for specific languages apart from hyphenation and language-specific glyph
+The following section shows some of the support features that SILE provides for specific languages apart from hyphenation and language-specific glyph
 selection:
 
 \subsection{Amharic}
 
-SILE inserts word break opportunities after Ethiopic word spaces and full
-stops. Amharic can be typeset in two styles: with space surrounding
-punctuation or space after punctuation. You can set the setting
-\autodoc:setting[check=false]{languages.am.justification} to either \code{left}
-or \code{centered} to control which style is used. The default is \code{left}.
+SILE inserts word break opportunities after Ethiopic word spaces and full stops.
+Amharic can be typeset in two styles: with space surrounding punctuation or space after punctuation.
+You can set the setting \autodoc:setting[check=false]{languages.am.justification} to either \code{left} or \code{centered} to control which style is used.
+The default is \code{left}.
 
 \begin{autodoc:codeblock}
 \\font[family=Noto Sans Ethiopic,language=am]
@@ -189,21 +167,19 @@ on how to typeset this, you have options:
 
 \subsection{French}
 
-In French typesetting, there is normally a non-breakable space between text
-and “high” punctuation (a thin fixed space before question marks, exclamation
-marks, and semicolons, and an inter-word space before colons), and also spaces
-within “guillemets” (quotation marks). SILE will automatically apply the
-correct space. The size of these spaces is determined by
-\autodoc:setting[check=false]{languages.fr.thinspace},
-\autodoc:setting[check=false]{languages.fr.colonspace} and
-\autodoc:setting[check=false]{languages.fr.guillspace}.
+In French typesetting, there is normally a non-breakable space between text and “high” punctuation (a thin fixed space before question marks, exclamation marks, and semicolons, and an inter-word space before colons), and also spaces within “guillemets” (quotation marks).
+SILE will automatically apply the correct space.
+The size of these spaces is determined by
+	\autodoc:setting[check=false]{languages.fr.thinspace},
+	\autodoc:setting[check=false]{languages.fr.colonspace} and
+	\autodoc:setting[check=false]{languages.fr.guillspace}.
 
 \subsection{Japanese / Chinese}
 
 SILE aims to conform with the W3G document “Requirements for Japanese Text Layout”\footnote{\url{https://www.w3.org/TR/jlreq/}} which describes the typographic conventions for Japanese (and also Chinese) text.
 Breaking rules \em{(kinzoku shori)} and intercharacter spacing is fully supported on selecting the Japanese language.
-The easiest way to set up the other elements of Japanese typesetting such as the \em{hanmen} grid and optional vertical typesetting support is by using the \code{jplain} or \code{jbook} classes.
-For other languages with similar layout requirements, more generic \code{tplain} and \code{tbook} classes are available that setup the layout elements without also setting the default language and font to Japanese specific values.
+The easiest way to set up the other elements of Japanese typesetting such as the \em{hanmen} grid and optional vertical typesetting support is by using the \autodoc:class{jplain} or \autodoc:class{jbook} classes.
+For other languages with similar layout requirements, more generic \autodoc:class{tplain} and \autodoc:class{tbook} classes are available that setup the layout elements without also setting the default language and font to Japanese specific values.
 These are also good condidates to use as base classes and extend for more language-specific classes.
 
 \package-documentation{hanmenkyoshi}
@@ -218,10 +194,7 @@ SILE implements syllable-based line breaking for Burmese and Javanese text.
 
 \subsection{Uyghur}
 
-Uyghur is the only Arabic script based language which uses hyphenation,
-and SILE supports hyphenation. Because Arabic fonts aren’t normally designed
-with hyphenation in mind, you may need to tweak some settings to ensure that
-Uyghur is typeset correctly. As well as choosing the \code{hyphenchar} (see
-the hyphenation section above), the setting \autodoc:setting[check=false]{languages.ug.hyphenoffset}
-inserts a space between the text and the hyphen.
+Uyghur is the only Arabic script based language which uses hyphenation, and SILE supports hyphenation.
+Because Arabic fonts aren’t normally designed with hyphenation in mind, you may need to tweak some settings to ensure that Uyghur is typeset correctly.
+As well as choosing the \code{hyphenchar} (see the hyphenation section above), the setting \autodoc:setting[check=false]{languages.ug.hyphenoffset} inserts a space between the text and the hyphen.
 \end{document}

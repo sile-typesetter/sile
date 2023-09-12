@@ -18,30 +18,28 @@ function package.declareSettings (_)
     help = "Vertical offset between the chord name and the text."
   })
 
-  SILE.settings:declare({
-    parameter = "chordmode.lineheight",
-    type = "length",
-    default = SILE.length("4mm"),
-    help = "Length of the chord name line."
-  })
 end
 
 function package:registerCommands ()
 
   self:registerCommand("ch", function (options, content)
-    local chordBox = SILE.call("hbox", {}, { options.name })
-    SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
+    local chordBox = SILE.typesetter:makeHbox(function ()
+      SILE.call("chordmode:chordfont", {}, { options.name })
+    end)
     local origWidth = chordBox.width
     chordBox.width = SILE.length()
-    chordBox.height = SILE.settings:get("chordmode.lineheight")
+
     SILE.call("raise", { height = SILE.settings:get("chordmode.offset") }, function ()
-      SILE.call("chordmode:chordfont", {}, function ()
-        SILE.typesetter:pushHbox(chordBox)
-      end)
+      SILE.typesetter:pushHbox(chordBox)
     end)
+
     local lyricBox = SILE.call("hbox", {}, content)
     if lyricBox.width < origWidth then
       lyricBox.width = origWidth + SILE.length("0.5em"):absolute()
+    end
+    local chordLineHeight = chordBox.height + SILE.settings:get("chordmode.offset"):absolute()
+    if chordLineHeight > lyricBox.height then
+      lyricBox.height = chordLineHeight
     end
   end, "Insert a chord name above the text")
 
@@ -135,12 +133,12 @@ This package provides the \autodoc:environment{chordmode} environment, which tra
 
 into:
 
-\begin{examplefont}
+\begin{autodoc:example}
 \begin{chordmode}
   I’ve be<G>en a wild rover for many’s a <C>year
 \end{chordmode}
 \par
-\end{examplefont}
+\end{autodoc:example}
 
 The chords can be styled by redefining the \autodoc:command{\chordmode:chordfont} command, and the offset between the chord name and text adjusted with the \autodoc:setting{chordmode.offset} setting.
 \end{document}

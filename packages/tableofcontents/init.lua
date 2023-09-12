@@ -7,6 +7,8 @@ if not SILE.scratch._tableofcontents then
   SILE.scratch._tableofcontents = {}
 end
 
+local toc_used = false
+
 function package:moveTocNodes ()
   local node = SILE.scratch.info.thispage.toc
   if node then
@@ -19,13 +21,13 @@ end
 
 function package.writeToc (_)
   local tocdata = pl.pretty.write(SILE.scratch.tableofcontents)
-  local tocfile, err = io.open(SILE.masterFilename .. '.toc', "w")
+  local tocfile, err = io.open(pl.path.splitext(SILE.input.filenames[1]) .. '.toc', "w")
   if not tocfile then return SU.error(err) end
   tocfile:write("return " .. tocdata)
   tocfile:close()
 
-  if not pl.tablex.deepcompare(SILE.scratch.tableofcontents, SILE.scratch._tableofcontents) then
-    io.stderr:write("\n! Warning: table of contents has changed, please rerun SILE to update it.")
+  if toc_used and not pl.tablex.deepcompare(SILE.scratch.tableofcontents, SILE.scratch._tableofcontents) then
+    SU.msg("Notice: the table of contents has changed, please rerun SILE to update it.")
   end
 end
 
@@ -34,7 +36,7 @@ function package.readToc (_)
     -- already loaded
     return SILE.scratch._tableofcontents
   end
-  local tocfile, _ = io.open(SILE.masterFilename .. '.toc')
+  local tocfile, _ = io.open(pl.path.splitext(SILE.input.filenames[1]) .. '.toc')
   if not tocfile then
     return false -- No TOC yet
   end
@@ -115,6 +117,7 @@ function package:registerCommands ()
   self:registerCommand("tableofcontents", function (options, _)
     local depth = SU.cast("integer", options.depth or 3)
     local linking = SU.boolean(options.linking, true)
+    toc_used = true
     local toc = self:readToc()
     if toc == false then
       SILE.call("tableofcontents:notocmessage")
@@ -235,7 +238,7 @@ package.documentation = [[
 \begin{document}
 The \autodoc:package{tableofcontents} package provides tools for class authors to
 create tables of contents (TOCs). When you are writing sectioning commands such
-as \code{\\chapter} or \code{\\section}, your classes should call the
+as \autodoc:command[check=false]{\chapter} or \autodoc:command[check=false]{\section}, your classes should call the
 \autodoc:command{\tocentry[level=<number>, number=<strings>]{<title>}}
 command to register a table of contents entry.
 At the end of each page the class will call a hook function (\code{moveTocNodes}) that collates the table of contents entries from that pages and records which page they’re on.

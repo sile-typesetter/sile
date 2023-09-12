@@ -2,6 +2,10 @@ name: Test
 
 on: [ push, pull_request ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   test:
@@ -9,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         luaVersion:
-          - [ '5.4.2', 'MYCFLAGS=-fPIC' ] # https://github.com/luarocks/luarocks/issues/1302
+          - [ '5.4', 'MYCFLAGS=-fPIC' ]
           - [ '5.3', 'MYCFLAGS=-fPIC' ]
           - [ '5.2', 'MYCFLAGS=-fPIC' ]
           - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"' ]
@@ -19,7 +23,7 @@ jobs:
     name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Cache test fonts
@@ -34,15 +38,16 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
-      - name: Fetch tags
-        run: |
-          git fetch --prune --tags ||:
+          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
       - name: Setup ‘lua’
         uses: leafo/gh-actions-lua@v10
         with:
           luaVersion: ${{ matrix.luaVersion[0] }}
           luaCompileFlags: ${{ matrix.luaVersion[1] }}
+      - name: Setup ‘cargo’
+        uses: actions-rs/toolchain@v1
       - name: Setup ‘luarocks’
         uses: leafo/gh-actions-luarocks@v4
       - name: Prep system Lua for use
@@ -64,8 +69,8 @@ jobs:
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure \
-            --enable-developer LUACHECK=false \
+          ./configure PDFINFO=false \
+            --enable-developer LUACHECK=false NIX=false \
             --disable-font-variations \
             --without-system-luarocks \
             --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit \
@@ -74,11 +79,17 @@ jobs:
         run: |
           make
       - name: Test Busted
+        timeout-minutes: ${{ runner.debug && 60 || 6 }}
         run: |
           make busted
       - name: Test Regressions
+        timeout-minutes: ${{ runner.debug && 60 || 6 }}
         run: |
           make regressions
+      - name: Test Cargo
+        timeout-minutes: ${{ runner.debug && 60 || 6 }}
+        run: |
+          make cargo-test
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:

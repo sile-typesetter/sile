@@ -84,19 +84,15 @@ end
 package.documentation = [[
 \begin{document}
 \use[module=packages.math]
-
 \set[parameter=math.font.family, value=Libertinus Math]
 \set[parameter=math.font.size, value=11]
-
 % Default verbatim font (Hack) is missing a few math symbols
 \use[module=packages.font-fallback]
 \font:add-fallback[family=Symbola]
-
 \define[command=paragraph]{\smallskip\em{\process.}\novbreak\par}
+The \autodoc:package{math} package provides typesetting of formulas directly in a SILE document.
 
-This package provides typesetting of formulas directly in a SILE document.
-
-\note{Mathematical typesetting in SILE is still in its infancy.
+\autodoc:note{Mathematical typesetting in SILE is still in its infancy.
 As such, it lacks some features and may contain bugs.
 Feedback and contributions are always welcome.}
 
