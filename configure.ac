@@ -158,15 +158,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         fi
     ])
 
-    case $host_os in
-        msys)
-            LUA_VERSION=5.3 # By fiat. This is obviously not good.
-            ;;
-        *)
-            AX_PROG_LUA([5.1])
-            ;;
-    esac
-
+    AX_PROG_LUA([5.1])
     AX_LUA_HEADERS
     AX_LUA_LIBS
 
@@ -308,16 +300,23 @@ AX_SUBST_TRANSFORMED_PACKAGE_NAME
 # Avoid need for `--datarootdir=$(cd ..; pwd)` hack to run locally for
 # tests/manual build when developer mode is enabled
 AM_COND_IF([DEVELOPER], [
-        AC_DEFINE_UNQUOTED([SILE_PATH],["$(pwd)"],[Path for SILE packages and classes])
+        adl_RECURSIVE_EVAL(["$(pwd)"], [SILE_PATH])
+        AC_DEFINE_UNQUOTED([SILE_PATH], ["${SILE_PATH}"], [Path for SILE packages and classes])
+        adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.path)')"], [LUA_PATH])
+        AC_DEFINE_UNQUOTED([LUA_PATH], ["${LUA_PATH}"],[System Lua package path])
+        adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.cpath)')"], [LUA_CPATH])
+        AC_DEFINE_UNQUOTED([LUA_CPATH], ["${LUA_CPATH}"], [System Lua package cpath])
     ],[
         adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])
-        AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
+        AC_DEFINE_UNQUOTED([SILE_PATH], ["${SILE_PATH}"], [Path for SILE packages and classes])
 ])
 
 AC_SUBST([SILE_PATH])
+AC_SUBST([LUA_PATH])
+AC_SUBST([LUA_CPATH])
 
 adl_RECURSIVE_EVAL(["${libdir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_LIB_PATH])
-AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
+AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"], [Path for SILE libraries])
 AC_SUBST([SILE_LIB_PATH])
 
 AC_SUBST([ROCKSPECWARNING], ["DO NOT EDIT! Modify template sile.rockspec.in"])
