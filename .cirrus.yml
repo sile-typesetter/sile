@@ -30,7 +30,6 @@ task:
     - luarocks54 install cassowary
     - luarocks54 install cldr
     - luarocks54 install compat53
-    - luarocks54 install cosmo
     - luarocks54 install fluent
     - luarocks54 install linenoise
     - luarocks54 install loadkit

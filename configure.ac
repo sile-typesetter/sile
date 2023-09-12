@@ -168,7 +168,6 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
             AX_LUA_MODULE([compat53], [compat53])
         )
-        AX_LUA_MODULE([cosmo], [cosmo])
         AX_LUA_MODULE([cldr], [cldr])
         AX_LUA_MODULE([fluent], [fluent])
         AX_LUA_MODULE([linenoise], [linenoise])
