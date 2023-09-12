@@ -1,6 +1,6 @@
 use mlua::chunk;
 use mlua::prelude::*;
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
 #[cfg(feature = "cli")]
 pub mod cli;
 
@@ -8,7 +8,11 @@ pub type Result<T> = anyhow::Result<T>;
 
 pub fn version() -> crate::Result<String> {
     let lua = unsafe { Lua::unsafe_new() };
-    let sile_path: LuaString = lua.create_string(env!("SILE_PATH"))?;
+    let sile_path = match env::var("SILE_PATH") {
+        Ok(val) => val,
+        Err(_) => env!("SILE_PATH").to_string(),
+    };
+    let sile_path: LuaString = lua.create_string(&sile_path)?;
     let sile: LuaTable = lua
         .load(chunk! {
             local status = pcall(dofile, $sile_path .. "/core/pathsetup.lua")
@@ -43,7 +47,11 @@ pub fn run(
     traceback: bool,
 ) -> crate::Result<()> {
     let lua = unsafe { Lua::unsafe_new() };
-    let sile_path: LuaString = lua.create_string(env!("SILE_PATH"))?;
+    let sile_path = match env::var("SILE_PATH") {
+        Ok(val) => val,
+        Err(_) => env!("SILE_PATH").to_string(),
+    };
+    let sile_path: LuaString = lua.create_string(&sile_path)?;
     let sile: LuaTable = lua
         .load(chunk! {
             local status = pcall(dofile, $sile_path .. "/core/pathsetup.lua")
