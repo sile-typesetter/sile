@@ -308,16 +308,17 @@ AX_SUBST_TRANSFORMED_PACKAGE_NAME
 # Avoid need for `--datarootdir=$(cd ..; pwd)` hack to run locally for
 # tests/manual build when developer mode is enabled
 AM_COND_IF([DEVELOPER], [
-        AC_DEFINE_UNQUOTED([SILE_PATH],["$(pwd)"],[Path for SILE packages and classes])
+        adl_RECURSIVE_EVAL(["$(pwd)"], [SILE_PATH])
+        AC_DEFINE_UNQUOTED([SILE_PATH], ["${SILE_PATH}"], [Path for SILE packages and classes])
     ],[
         adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])
-        AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
+        AC_DEFINE_UNQUOTED([SILE_PATH], ["${SILE_PATH}"], [Path for SILE packages and classes])
 ])
 
 AC_SUBST([SILE_PATH])
 
 adl_RECURSIVE_EVAL(["${libdir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_LIB_PATH])
-AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
+AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"], [Path for SILE libraries])
 AC_SUBST([SILE_LIB_PATH])
 
 AC_SUBST([ROCKSPECWARNING], ["DO NOT EDIT! Modify template sile.rockspec.in"])
