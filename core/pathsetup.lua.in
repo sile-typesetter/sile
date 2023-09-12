@@ -1,3 +1,9 @@
+-- Allow autoconf to setup system lua paths at compile time, not run time (only used in developer mode)
+if "@LUA_PATH@" ~= "" then
+  package.path = "@LUA_PATH@"
+  package.cpath = "@LUA_CPATH@"
+end
+
 local executable = debug.getinfo(3, "S").source
 local luaversion = _VERSION:match("%d+%.%d+")
 

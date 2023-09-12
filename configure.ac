@@ -310,12 +310,18 @@ AX_SUBST_TRANSFORMED_PACKAGE_NAME
 AM_COND_IF([DEVELOPER], [
         adl_RECURSIVE_EVAL(["$(pwd)"], [SILE_PATH])
         AC_DEFINE_UNQUOTED([SILE_PATH], ["${SILE_PATH}"], [Path for SILE packages and classes])
+        adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.path)')"], [LUA_PATH])
+        AC_DEFINE_UNQUOTED([LUA_PATH], ["${LUA_PATH}"],[System Lua package path])
+        adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.cpath)')"], [LUA_CPATH])
+        AC_DEFINE_UNQUOTED([LUA_CPATH], ["${LUA_CPATH}"], [System Lua package cpath])
     ],[
         adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])
         AC_DEFINE_UNQUOTED([SILE_PATH], ["${SILE_PATH}"], [Path for SILE packages and classes])
 ])
 
 AC_SUBST([SILE_PATH])
+AC_SUBST([LUA_PATH])
+AC_SUBST([LUA_CPATH])
 
 adl_RECURSIVE_EVAL(["${libdir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"], [Path for SILE libraries])
