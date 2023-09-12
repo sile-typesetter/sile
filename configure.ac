@@ -74,8 +74,8 @@ AC_SUBST([SYSTEM_LUAROCKS])
 
 AC_ARG_WITH([luajit],
             AS_HELP_STRING([--with-luajit],
-                           [Run under LuaJIT instead of Lua]))
-AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" = "xyes"])
+                           [Prefer LuaJIT over PUC Lua, even if the latter is newer]))
+AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" != "xno"])
 
 AC_ARG_WITH([manual],
             AS_HELP_STRING([--with-manual],
