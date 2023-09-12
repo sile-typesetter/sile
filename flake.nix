@@ -43,7 +43,6 @@
       luaEnv = pkgs.lua5_3.withPackages(ps: with ps; [
         cassowary
         cldr
-        cosmo
         fluent
         linenoise
         loadkit
