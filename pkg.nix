@@ -102,6 +102,8 @@ in stdenv.mkDerivation (finalAttrs: {
     # TODO: Explain this flag
     "PDFINFO=false"
     #"--with-manual" In Nixpkgs we add this flag, here its not important enough
+  ] ++ lib.optionals lua.pkgs.isLuaJIT [
+    "--with-luajit"
   ];
 
   postPatch = ''

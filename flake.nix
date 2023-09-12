@@ -85,7 +85,18 @@
           ];
         };
       };
-      packages.sile = sile;
+      packages = {
+        sile-lua5_2 = sile;
+        sile-lua5_3 = sile.override {
+          lua = pkgs.lua5_3;
+        };
+        sile-lua5_4 = sile.override {
+          lua = pkgs.lua5_4;
+        };
+        sile-luajit = sile.override {
+          lua = pkgs.luajit;
+        };
+      };
       defaultPackage = sile;
       apps = rec {
         default = sile;
