@@ -79,16 +79,20 @@ gource.webm
 *.rockspec
 .fonts/*
 .sources/*
-/sile
+sile
 sile.1
-/.version
-/.version-prev
-/.tarball-version
-/.built-subdirs
+sile-lua
+sile-lua.1
+.version
+.version-prev
+.tarball-version
+.built-subdirs
 *.so
 core/version.lua
 core/features.lua
+target/
+completions/
 core/pathsetup.lua
 
 # Nix symlink to builds
-/result
+result/

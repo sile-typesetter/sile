@@ -55,7 +55,7 @@ local pathvar = os.getenv("SILE_PATH")
 if pathvar then
   for path in string.gmatch(pathvar, "[^;]+") do
     if not path:match("^./") and path:len() >= 1 then
-      extendPaths(path)
+      extendPaths(path, true)
     end
   end
 end

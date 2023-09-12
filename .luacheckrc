@@ -26,8 +26,8 @@ globals = {
   "luautf8",
   "pl",
   "fluent",
-  "extendSilePath",
   "executablePath",
+  "extendSilePath",
   "SYSTEM_SILE_PATH",
   "SHARED_LIB_EXT"
 }
