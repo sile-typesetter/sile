@@ -6,6 +6,7 @@ AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subd
 AM_SILENT_RULES([yes])
 
 AX_GIT_VERSION
+AX_TRANSFORM_PACKAGE_NAME
 
 AM_CONDITIONAL([IS_SDIST], [test ! -e .gitignore])
 
@@ -295,8 +296,6 @@ case $host_os in
 esac
 AC_SUBST([SHARED_LIB_EXT])
 AC_SUBST([LUAROCKSARGS])
-
-AX_SUBST_TRANSFORMED_PACKAGE_NAME
 
 # Avoid need for `--datarootdir=$(cd ..; pwd)` hack to run locally for
 # tests/manual build when developer mode is enabled
