@@ -57,7 +57,7 @@ bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
 dist_man_MANS = sile.1 sile-lua.1
 sile_SOURCES = Cargo.toml build-aux/build.rs src/bin/sile.rs src/lib.rs src/cli.rs
-EXTRA_sile_SOURCES = Cargo.lock .version
+EXTRA_sile_SOURCES = Cargo.lock
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = core/features.lua core/pathsetup.lua core/version.lua $(LUAMODULES)
 dist_doc_DATA = README.md CHANGELOG.md
@@ -71,9 +71,11 @@ EXTRA_DIST += default.nix flake.nix flake.lock shell.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL) $(FIGURES)
 
-BUILT_SOURCES = .version core/features.lua core/pathsetup.lua core/version.lua Makefile-distfiles
+BUILT_SOURCES = core/features.lua core/pathsetup.lua core/version.lua Makefile-distfiles
 
-CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(BUILT_SOURCES) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS) .version-prev
+CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(BUILT_SOURCES) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS)
+
+include $(top_srcdir)/build-aux/git_version.am
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@
@@ -161,23 +163,12 @@ $(_RUST_OUT) $(RUST_BIN): $(sile_SOURCES) $(EXTRA_sile_SOURCES)
 	$(CARGO_ENV) $(CARGO) build --quiet --message-format=json $(CARGO_FEATURE_ARGS) $(CARGO_RELEASE_ARGS) |
 		$(JQ) -sr 'map(select(.reason == "build-script-executed")) | last | .out_dir' > $(_RUST_OUT)
 
-_BRANCH_REF != $(AWK) '{print ".git/" $$2}' .git/HEAD 2>/dev/null ||:
+dist-hook: $(MANUAL) dist-hook-distfiles
 
-.version: $(_BRANCH_REF)
-	@if [ -e "$(srcdir)/.tarball-version" ]; then \
-		printf "$(VERSION)" > $@; \
-	else \
-		touch "$@-prev"; \
-		if [ -e "$@" ]; then \
-			cp "$@" "$@-prev"; \
-		fi; \
-		./build-aux/git-version-gen "$(srcdir)/.tarball-version" > $@; \
-		cmp -s "$@" "$@-prev" || ( autoreconf configure.ac --force && build-aux/decore-automake.sh ); \
-	fi
+.PHONY: dist-hook-distfiles
 
-dist-hook: $(MANUAL)
+dist-hook-distfiles:
 	cd $(distdir)
-	printf "$(VERSION)" > .tarball-version
 	$(SED) -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
 	$(top_srcdir)/build-aux/decore-automake.sh
 	$(SED) -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in

@@ -5,6 +5,8 @@ AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
+AX_GIT_VERSION
+
 AM_CONDITIONAL([IS_SDIST], [test ! -e .gitignore])
 
 # Checks for programs.
@@ -14,9 +16,6 @@ AC_PROG_OBJC
 AC_PROG_AWK
 AC_PROG_GREP
 AC_PROG_SED
-
-AX_PROGVAR([cmp])
-AX_PROGVAR([git])
 AX_PROGVAR([find])
 
 LT_PREREQ([2.2])
@@ -201,6 +200,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     ])
 
     AM_COND_IF([DEVELOPER], [
+        AX_PROGVAR([git])
         AX_PROGVAR([busted])
         AX_PROGVAR([luacheck])
         AX_PROGVAR([luarocks])
