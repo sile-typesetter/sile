@@ -35,7 +35,7 @@ jobs:
       - name: Configure
         run: |
           ./bootstrap.sh
-          ./configure PDFINFO=false \
+          ./configure \
             --with-luajit \
             --disable-font-variations \
             --without-system-luarocks \
