@@ -55,9 +55,9 @@ $(MANUAL): $(FIGURES)
 
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
-dist_man_MANS = sile.1 sile-lua.1
-sile_SOURCES = Cargo.toml build-aux/build.rs src/bin/sile.rs src/lib.rs src/cli.rs
-EXTRA_sile_SOURCES = Cargo.lock
+dist_man_MANS = sile-lua.1
+sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
+EXTRA_sile_SOURCES =
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = core/features.lua core/pathsetup.lua core/version.lua $(LUAMODULES)
 dist_doc_DATA = README.md CHANGELOG.md
@@ -73,18 +73,13 @@ EXTRA_DIST += $(MANUAL) $(FIGURES)
 
 BUILT_SOURCES = core/features.lua core/pathsetup.lua core/version.lua Makefile-distfiles
 
-CLEANFILES = $(bin_SCRIPTS) $(dist_man_MANS) $(BUILT_SOURCES) $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS)
+CLEANFILES = $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS)
 
 include $(top_srcdir)/build-aux/git_version.am
+include $(top_srcdir)/build-aux/rust_boilerplate.am
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@
-
-if DEBUG_RELEASE
-CARGO_RELEASE_ARGS =
-else
-CARGO_RELEASE_ARGS = --release --locked
-endif
 
 if LUAJIT
 MLUAVER = luajit
@@ -97,76 +92,9 @@ DEPDIR := .deps
 LOCALFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
 
-CARGO_ENV = CARGO_TARGET_DIR=@abs_top_builddir@/target
-RUST_BIN = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/$(PACKAGE_NAME)
-_RUST_OUT = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/.cargo_out_dir
-COMPLETIONS_OUT_DIR = completions
-
-if ENABLE_BASH_COMPLETION
-bashcompletiondir = $(BASH_COMPLETION_DIR)
-nodist_bashcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME)
-CLEANFILES += $(nodist_bashcompletion_DATA)
-endif
-
-if ENABLE_FISH_COMPLETION
-fishcompletiondir = $(FISH_COMPLETION_DIR)
-nodist_fishcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish
-CLEANFILES += $(nodist_fishcompletion_DATA)
-endif
-
-if ENABLE_ZSH_COMPLETION
-zshcompletiondir = $(ZSH_COMPLETION_DIR)
-nodist_zshcompletion_DATA = $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME)
-CLEANFILES += $(nodist_zshcompletion_DATA)
-endif
-
-export SILE_VERSION = v$(VERSION)
-SILE := $(PACKAGE_NAME)$(EXEEXT)
-
-# Leave some tips for cargo to use so CLI knows where it is
-export CONFIGURE_PREFIX = $(prefix)/
-export CONFIGURE_DATADIR = $(datadir)/
-export CONFIGURE_BINDIR = $(bindir)/
-
-CARGO_VERBOSE = $(cargo_verbose_$(V))
-cargo_verbose_ = $(cargo_verbose_$(AM_DEFAULT_VERBOSITY))
-cargo_verbose_0 =
-cargo_verbose_1 = --verbose
-
-$(COMPLETIONS_OUT_DIR):
-	$(MKDIR_P) $@
-
-$(SILE): $(RUST_BIN)
-	$(INSTALL) $(RUST_BIN) $@
-
-$(PACKAGE_NAME).1: $(RUST_BIN)
-	$(INSTALL) -m644 $$(cat $(_RUST_OUT))/$@ $@
-
-$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME): $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
-	$(INSTALL) -m755 $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).bash $@
-
-$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).elv: $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
-	$(INSTALL) -m755 $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).elv $@
-
-$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish: $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
-	$(INSTALL) -m755 $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).fish $@
-
-$(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME).ps1: $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
-	$(INSTALL) -m755 $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME).ps1 $@
-
-$(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME): $(RUST_BIN) | $(COMPLETIONS_OUT_DIR)
-	$(INSTALL) -m755 $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME) $@
-
-$(_RUST_OUT) $(RUST_BIN): $(sile_SOURCES) $(EXTRA_sile_SOURCES)
-	cd $(top_srcdir)
-	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(CARGO_FEATURE_ARGS) $(CARGO_RELEASE_ARGS)
-	$(CARGO_ENV) $(CARGO) build --quiet --message-format=json $(CARGO_FEATURE_ARGS) $(CARGO_RELEASE_ARGS) |
-		$(JQ) -sr 'map(select(.reason == "build-script-executed")) | last | .out_dir' > $(_RUST_OUT)
-
 dist-hook: $(MANUAL) dist-hook-distfiles
 
 .PHONY: dist-hook-distfiles
-
 dist-hook-distfiles:
 	cd $(distdir)
 	$(SED) -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
@@ -245,7 +173,7 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS
 .PHONY: force
 force: ;
 
-PHONY_DEVELOPER_TARGETS = regressions test lint luarocks-lint luacheck rustfmt clippy cargo-test busted coverage benchmark compare update_expecteds regression_previews docker docker-dep-check docker-ghcr-to-hub docker-build-push gource.webm
+PHONY_DEVELOPER_TARGETS = regressions test lint luarocks-lint luacheck busted coverage benchmark compare update_expecteds regression_previews docker docker-dep-check docker-ghcr-to-hub docker-build-push gource.webm
 .PHONY: $(PHONY_DEVELOPER_TARGETS)
 
 if DEVELOPER
@@ -291,26 +219,15 @@ BUSTEDFLAGS ?=
 regressions: $(TESTSRCS) $(ACTUALS)
 	$(LOCALFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
-test: regressions busted cargo-test
+test: regressions busted
 
-lint: luacheck luarocks-lint rustfmt clippy
+lint: luacheck luarocks-lint
 
 luarocks-lint: $(LUAMODSPEC)
 	$(LUAROCKS) lint $(LUAMODSPEC)
 
 luacheck:
 	$(LUACHECK) -j$(shell nproc) -q .
-
-rustfmt:
-	$(GIT) ls-files '*.rs' | $(XARGS) rustfmt --check
-
-clippy:
-	cd $(srcdir)
-	$(CARGO_ENV) $(CARGO) $(CARGO_VERBOSE) clippy $(CARGO_FEATURE_ARGS) -- -D warnings
-
-cargo-test: $(SILE)
-	cd $(srcdir)
-	$(CARGO_ENV) $(CARGO) $(CARGO_VERBOSE) test $(CARGO_FEATURE_ARGS) --locked
 
 busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'

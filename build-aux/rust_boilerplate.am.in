@@ -1,0 +1,107 @@
+export VERSION_FROM_AUTOTOOLS = v$(VERSION)
+
+@PACKAGE_VAR@_SOURCES += Cargo.toml build-aux/build.rs
+EXTRA_@PACKAGE_VAR@_SOURCES += Cargo.lock .version
+dist_man_MANS += @PACKAGE_NAME@.1
+
+CLEANFILES += $(bin_PROGRAMS) $(BUILT_SOURCES) $(dist_man_MANS)
+
+CARGO_RELEASE_ARGS =
+if !DEBUG_RELEASE
+CARGO_RELEASE_ARGS += --release --locked
+endif
+
+CARGO_ENV = CARGO_TARGET_DIR=@abs_top_builddir@/target
+CARGO_BIN = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/$(PACKAGE_NAME)
+_RUST_OUT = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/.cargo_out_dir
+COMPLETIONS_OUT_DIR = completions
+
+@PACKAGE_NAME@$(EXEEXT): $(CARGO_BIN)
+	$(INSTALL) $< $@
+
+if ENABLE_BASH_COMPLETION
+bashcompletiondir = $(BASH_COMPLETION_DIR)
+nodist_bashcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME)
+CLEANFILES += $(nodist_bashcompletion_DATA)
+endif
+
+if ENABLE_FISH_COMPLETION
+fishcompletiondir = $(FISH_COMPLETION_DIR)
+nodist_fishcompletion_DATA = $(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish
+CLEANFILES += $(nodist_fishcompletion_DATA)
+endif
+
+if ENABLE_ZSH_COMPLETION
+zshcompletiondir = $(ZSH_COMPLETION_DIR)
+nodist_zshcompletion_DATA = $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME)
+CLEANFILES += $(nodist_zshcompletion_DATA)
+endif
+
+# Leave some tips for cargo to use so CLI knows where it is
+export CONFIGURE_PREFIX = $(prefix)/
+export CONFIGURE_DATADIR = $(datadir)/
+export CONFIGURE_BINDIR = $(bindir)/
+
+CARGO_VERBOSE = $(cargo_verbose_$(V))
+cargo_verbose_ = $(cargo_verbose_$(AM_DEFAULT_VERBOSITY))
+cargo_verbose_0 =
+cargo_verbose_1 = --verbose
+
+$(COMPLETIONS_OUT_DIR):
+	$(MKDIR_P) $@
+
+$(PACKAGE_NAME).1: $(CARGO_BIN)
+	$(INSTALL) -m644 $$(cat $(_RUST_OUT))/$@ $@
+
+$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME): $(CARGO_BIN) | $(COMPLETIONS_OUT_DIR)
+	$(INSTALL) -m755 $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).bash $@
+
+$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).elv: $(CARGO_BIN) | $(COMPLETIONS_OUT_DIR)
+	$(INSTALL) -m755 $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).elv $@
+
+$(COMPLETIONS_OUT_DIR)/$(TRANSFORMED_PACKAGE_NAME).fish: $(CARGO_BIN) | $(COMPLETIONS_OUT_DIR)
+	$(INSTALL) -m755 $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/$(PACKAGE_NAME).fish $@
+
+$(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME).ps1: $(CARGO_BIN) | $(COMPLETIONS_OUT_DIR)
+	$(INSTALL) -m755 $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME).ps1 $@
+
+$(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME): $(CARGO_BIN) | $(COMPLETIONS_OUT_DIR)
+	$(INSTALL) -m755 $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME) $@
+
+$(_RUST_OUT) $(CARGO_BIN): $(sile_SOURCES) $(EXTRA_sile_SOURCES)
+	cd $(top_srcdir)
+	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(CARGO_FEATURE_ARGS) $(CARGO_RELEASE_ARGS)
+	$(CARGO_ENV) $(CARGO) build --quiet --message-format=json $(CARGO_FEATURE_ARGS) $(CARGO_RELEASE_ARGS) |
+		$(JQ) -sr 'map(select(.reason == "build-script-executed")) | last | .out_dir' > $(_RUST_OUT)
+
+RUST_DEVELOPER_TARGETS = cargo-test clippy installcheck-local-version rustfmt
+.PHONY: $(RUST_DEVELOPER_TARGETS)
+
+if DEVELOPER
+
+test: cargo-test
+lint: rustfmt clippy
+clean-local: clean-cargo
+check-local: cargo-test
+
+rustfmt:
+	$(GIT) ls-files '*.rs' | $(XARGS) $(RUSTFMT) --check
+
+clippy:
+	cd $(srcdir)
+	$(CARGO_ENV) $(CARGO) $(CARGO_VERBOSE) clippy $(CARGO_FEATURE_ARGS) -- -D warnings
+
+clean-cargo:
+	cd $(top_srcdir)
+	$(CARGO_ENV) $(CARGO) $(CARGO_VERBOSE) clean
+
+cargo-test: $(PACKAGE_NAME)$(EXEEXT)
+	cd $(srcdir)
+	$(CARGO_ENV) $(CARGO) $(CARGO_VERBOSE) test $(CARGO_FEATURE_ARGS) --locked
+
+else !DEVELOPER
+
+$(RUST_DEVELOPER_TARGETS):
+	@: $(error "Please reconfigure using --enable-developer to use developer tooling")
+
+endif !DEVELOPER
