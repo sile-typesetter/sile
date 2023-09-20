@@ -10,7 +10,7 @@ pub fn version() -> crate::Result<String> {
     let lua = unsafe { Lua::unsafe_new() };
     let sile_path = match env::var("SILE_PATH") {
         Ok(val) => val,
-        Err(_) => env!("SILE_PATH").to_string(),
+        Err(_) => env!("CONFIGURE_DATADIR").to_string(),
     };
     let sile_path: LuaString = lua.create_string(&sile_path)?;
     let sile: LuaTable = lua
@@ -49,7 +49,7 @@ pub fn run(
     let lua = unsafe { Lua::unsafe_new() };
     let sile_path = match env::var("SILE_PATH") {
         Ok(val) => val,
-        Err(_) => env!("SILE_PATH").to_string(),
+        Err(_) => env!("CONFIGURE_DATADIR").to_string(),
     };
     let sile_path: LuaString = lua.create_string(&sile_path)?;
     let sile: LuaTable = lua
