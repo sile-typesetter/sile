@@ -15,6 +15,10 @@ max_line_length = 120
 indent_style = space
 indent_size = 4
 
-[makefile*]
+[*.m4]
+indent_style = space
+indent_size = 8
+
+[{Makefile*,*.mk,*.mk.in]
 indent_style = tab
 indent_size = 4

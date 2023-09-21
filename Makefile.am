@@ -75,7 +75,7 @@ BUILT_SOURCES = core/features.lua core/pathsetup.lua core/version.lua Makefile-d
 
 CLEANFILES = $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS)
 
-include $(top_srcdir)/build-aux/rust_boilerplate.am
+include $(top_srcdir)/build-aux/rust_boilerplate.mk
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@

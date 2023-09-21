@@ -42,6 +42,6 @@ AC_DEFUN_ONCE([AX_RUST_BOILERPLATE], [
         ])
         AC_SUBST([RUST_TARGET_SUBDIR])
 
-        AC_CONFIG_FILES([build-aux/rust_boilerplate.am])
+        AC_CONFIG_FILES([build-aux/rust_boilerplate.mk])
 
 ])

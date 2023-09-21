@@ -15,8 +15,8 @@ CARGO_ENV = CARGO_TARGET_DIR=@abs_top_builddir@/target
 CARGO_BIN = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/$(PACKAGE_NAME)
 _RUST_OUT = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/.cargo_out_dir
 
-include $(top_srcdir)/build-aux/git_version.am
-include $(top_srcdir)/build-aux/shell_completion_dirs.am
+include $(top_srcdir)/build-aux/git_version.mk
+include $(top_srcdir)/build-aux/shell_completion_dirs.mk
 
 @PACKAGE_NAME@$(EXEEXT): $(CARGO_BIN)
 	$(INSTALL) $< $@
@@ -89,3 +89,5 @@ $(RUST_DEVELOPER_TARGETS):
 	@: $(error "Please reconfigure using --enable-developer to use developer tooling")
 
 endif !DEVELOPER
+
+# vim: ft=automake

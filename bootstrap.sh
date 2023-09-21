@@ -40,7 +40,7 @@ fi
 # use AC_SUBST to setup project specific build options. We need to pre-seed
 # a file to avoid a file not found error on first run. The configure process
 # will rebuild this and also re-include it into the final Makefile.
-touch build-aux/rust_boilerplate.am
+touch build-aux/rust_boilerplate.mk
 
 autoreconf --install
 
