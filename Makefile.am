@@ -10,8 +10,8 @@ if SYSTEM_LIBTEXPDF
 SUBDIRS += libtexpdf
 endif
 
-licensedir = $(datarootdir)/licenses/$(TRANSFORMED_PACKAGE_NAME)
 docdir = $(datarootdir)/doc/$(TRANSFORMED_PACKAGE_NAME)
+licensedir = $(datarootdir)/licenses/$(TRANSFORMED_PACKAGE_NAME)
 datadir = $(datarootdir)/$(TRANSFORMED_PACKAGE_NAME)
 pkgdatadir = $(datadir)
 
@@ -62,7 +62,7 @@ nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = core/features.lua core/pathsetup.lua core/version.lua $(LUAMODULES)
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
-dist_license_DATA = LICENSE
+dist_license_DATA = LICENSE.md
 EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += Makefile-distfiles
 EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
