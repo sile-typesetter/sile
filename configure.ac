@@ -1,5 +1,5 @@
 AC_PREREQ([2.69])
-AC_INIT([sile], [m4_esyscmd(build-aux/git-version-gen .tarball-version)], [simon@simon-cozens.org])
+AC_INIT([sile], [m4_esyscmd(build-aux/git-version-gen .tarball-version)], [caleb@alerque.com])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
@@ -86,6 +86,7 @@ AM_CONDITIONAL([FONT_DOWNLOAD_TOOLS], [test -z ${DEVELOPER_TRUE} || (test -z ${M
 AC_SUBST([FONT_DOWNLOAD_TOOLS])
 
 AM_COND_IF([DEPENDENCY_CHECKS], [
+    AC_MSG_NOTICE([checking for SILE specific build dependencies])
 
     AX_FONT(Gentium Plus)
 
@@ -329,7 +330,8 @@ AX_SUBST_MAN_DATE
 
 AC_CONFIG_FILES([build-aux/list-dist-files.sh], [chmod +x build-aux/list-dist-files.sh])
 AC_CONFIG_FILES([Makefile src/Makefile sile-lua.1 core/features.lua core/pathsetup.lua core/version.lua])
-AC_CONFIG_FILES([sile-lua:sile.in tests/regressions.pl], [chmod +x sile-lua tests/regressions.pl])
+AC_CONFIG_FILES([sile-lua:sile.in], [chmod +x sile-lua])
+AC_CONFIG_FILES([tests/regressions.pl], [chmod +x tests/regressions.pl])
 AC_CONFIG_FILES([sile-dev-1.rockspec:sile.rockspec.in])
 
 AC_ARG_PROGRAM
