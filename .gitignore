@@ -65,7 +65,6 @@ node_modules
 lua_modules
 lua_modules_dist
 package-lock.json
-yarn.lock
 
 # Editor entrails
 .vscode/
