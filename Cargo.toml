@@ -2,6 +2,7 @@
 name = "sile"
 version = "0.14.8"
 edition = "2021"
+rust-version = "1.71.0"
 description = "Simon’s Improved Layout Engine"
 authors = [
   "Simon Cozens",
@@ -9,7 +10,6 @@ authors = [
   "Olivier Nicole",
   "Didier Willis"
 ]
-rust-version = "1.68"
 homepage = "https://sile-typesetter.org"
 license = "MIT"
 build = "build-aux/build.rs"
