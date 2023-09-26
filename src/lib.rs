@@ -22,7 +22,9 @@ pub fn version() -> crate::Result<String> {
             return require("core.sile")
         })
         .eval()?;
-    Ok(sile.get("full_version")?)
+    let mut full_version: String = sile.get("full_version")?;
+    full_version.push_str(" [Rust]");
+    Ok(full_version)
 }
 
 // Yes I know this should be taking a struct, probably 1 with what ends up being SILE.input and one
@@ -61,6 +63,9 @@ pub fn run(
             return require("core.sile")
         })
         .eval()?;
+    let mut full_version: String = sile.get("full_version")?;
+    full_version.push_str(" [Rust]");
+    sile.set("full_version", full_version)?;
     sile.set("traceback", traceback)?;
     sile.set("quiet", quiet)?;
     let mut has_input_filename = false;
@@ -107,7 +112,7 @@ pub fn run(
         sile_input.set("use", modules)?;
     }
     if !quiet {
-        eprintln!("{full_version} [Rust]");
+        eprintln!("{full_version}");
     }
     let init: LuaFunction = sile.get("init")?;
     init.call::<_, _>(())?;

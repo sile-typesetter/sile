@@ -9,7 +9,6 @@ fn main() -> sile::Result<()> {
         .strip_prefix("SILE ")
         .unwrap_or("")
         .to_string();
-    let long_version = format!("{} [Rust]", long_version);
     let app = Cli::command().version(version).long_version(long_version);
     #[allow(unused_variables)]
     let matches = app.get_matches();
