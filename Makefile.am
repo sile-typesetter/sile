@@ -6,7 +6,7 @@ ACLOCAL_AMFLAGS = -I build-aux
 .DELETE_ON_ERROR:
 
 SUBDIRS = justenough
-if SYSTEM_LIBTEXPDF
+if !SYSTEM_LIBTEXPDF
 SUBDIRS += libtexpdf
 endif
 
@@ -152,7 +152,6 @@ $(_BUILT_SUBDIRS): $(_SUBDIR_TELLS)
 
 $(_SUBDIR_TELLS):
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
-#	$(error Running `make install`, `make dist`, or other end-game targets before `make all` unspported.)
 
 patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
 
