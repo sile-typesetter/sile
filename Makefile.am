@@ -5,7 +5,7 @@ ACLOCAL_AMFLAGS = -I build-aux
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
-SUBDIRS = src
+SUBDIRS = justenough
 if SYSTEM_LIBTEXPDF
 SUBDIRS += libtexpdf
 endif
