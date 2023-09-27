@@ -1,9 +1,12 @@
 AC_PREREQ([2.69])
-AC_INIT([sile], [m4_esyscmd(build-aux/git-version-gen .tarball-version)], [simon@simon-cozens.org])
+AC_INIT([sile], [m4_esyscmd(build-aux/git-version-gen .tarball-version)], [caleb@alerque.com])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
+
+AX_GIT_VERSION
+AX_TRANSFORM_PACKAGE_NAME
 
 AM_CONDITIONAL([IS_SDIST], [test ! -e .gitignore])
 
@@ -14,9 +17,6 @@ AC_PROG_OBJC
 AC_PROG_AWK
 AC_PROG_GREP
 AC_PROG_SED
-
-AX_PROGVAR([cmp])
-AX_PROGVAR([git])
 AX_PROGVAR([find])
 
 LT_PREREQ([2.2])
@@ -24,11 +24,7 @@ LT_INIT([dlopen])
 
 AC_CANONICAL_HOST
 
-AC_ARG_ENABLE(debug,
-            AS_HELP_STRING([--enable-debug],[Build Rust code with debugging information [default=no]]),
-            [debug_release=$enableval],
-            [debug_release=no])
-AM_CONDITIONAL([DEBUG_RELEASE], [test "x$debug_release" = "xyes"])
+AX_RUST_BOILERPLATE
 
 AC_ARG_ENABLE([dependency-checks],
               AS_HELP_STRING([--disable-dependency-checks],
@@ -86,6 +82,7 @@ AM_CONDITIONAL([FONT_DOWNLOAD_TOOLS], [test -z ${DEVELOPER_TRUE} || (test -z ${M
 AC_SUBST([FONT_DOWNLOAD_TOOLS])
 
 AM_COND_IF([DEPENDENCY_CHECKS], [
+    AC_MSG_NOTICE([checking for SILE specific build dependencies])
 
     AX_FONT(Gentium Plus)
 
@@ -200,6 +197,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     ])
 
     AM_COND_IF([DEVELOPER], [
+        AX_PROGVAR([git])
         AX_PROGVAR([busted])
         AX_PROGVAR([luacheck])
         AX_PROGVAR([luarocks])
@@ -207,63 +205,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         AX_PROGVAR([perl])
     ])
 
-    AX_PROGVAR([cargo])
-    AX_PROGVAR([rustc])
-
 ])
-
-AC_MSG_CHECKING(whether to build Rust code with debugging information)
-AM_COND_IF([DEBUG_RELEASE], [
-    AC_MSG_RESULT(yes)
-    RUST_TARGET_SUBDIR=debug
-], [
-    AC_MSG_RESULT(no)
-    RUST_TARGET_SUBDIR=release
-])
-AC_SUBST([RUST_TARGET_SUBDIR])
-
-AC_ARG_WITH([bash-completion-dir],
-    AS_HELP_STRING([--with-bash-completion-dir[=PATH]],
-        [Install the bash auto-completion script in this directory. @<:@default=yes@:>@]),
-        [],
-                        [with_bash_completion_dir=yes])
-if test "x$with_bash_completion_dir" = "xyes"; then
-        PKG_CHECK_MODULES([BASH_COMPLETION], [bash-completion >= 2.0],
-                          [BASH_COMPLETION_DIR="`pkg-config --define-variable=datadir=$datadir --variable=completionsdir bash-completion`"],
-                          [BASH_COMPLETION_DIR="$datadir/bash-completion/completions"])
-        else
-                BASH_COMPLETION_DIR="$with_bash_completion_dir"
-fi
-AC_SUBST([BASH_COMPLETION_DIR])
-AM_CONDITIONAL([ENABLE_BASH_COMPLETION],[test "x$with_bash_completion_dir" != "xno"])
-
-AC_ARG_WITH([fish-completion-dir],
-            AS_HELP_STRING([--with-fish-completion-dir[=PATH]],
-                           [Install the fish auto-completion script in this directory. @<:@default=yes@:>@]),
-                           [],
-                           [with_fish_completion_dir=yes])
-if test "x$with_fish_completion_dir" = "xyes"; then
-        PKG_CHECK_MODULES([FISH_COMPLETION], [fish >= 3.0],
-                          [FISH_COMPLETION_DIR="`pkg-config --define-variable=datadir=$datadir --variable=completionsdir fish`"],
-                          [FISH_COMPLETION_DIR="$datadir/fish/vendor_completions.d"])
-        else
-                FISH_COMPLETION_DIR="$with_fish_completion_dir"
-fi
-AC_SUBST([FISH_COMPLETION_DIR])
-AM_CONDITIONAL([ENABLE_FISH_COMPLETION],[test "x$with_fish_completion_dir" != "xno"])
-
-AC_ARG_WITH([zsh-completion-dir],
-            AS_HELP_STRING([--with-zsh-completion-dir[=PATH]],
-                           [Install the zsh auto-completion script in this directory. @<:@default=yes@:>@]),
-                           [],
-                           [with_zsh_completion_dir=yes])
-if test "x$with_zsh_completion_dir" = "xyes"; then
-        ZSH_COMPLETION_DIR="$datadir/zsh/site-functions"
-else
-        ZSH_COMPLETION_DIR="$with_zsh_completion_dir"
-fi
-AC_SUBST([ZSH_COMPLETION_DIR])
-AM_CONDITIONAL([ENABLE_ZSH_COMPLETION],[test "x$with_zsh_completion_dir" != "xno"])
 
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
@@ -294,8 +236,6 @@ case $host_os in
 esac
 AC_SUBST([SHARED_LIB_EXT])
 AC_SUBST([LUAROCKSARGS])
-
-AX_SUBST_TRANSFORMED_PACKAGE_NAME
 
 # Avoid need for `--datarootdir=$(cd ..; pwd)` hack to run locally for
 # tests/manual build when developer mode is enabled
@@ -328,8 +268,9 @@ AC_SUBST([ROCKREV], [1])
 AX_SUBST_MAN_DATE
 
 AC_CONFIG_FILES([build-aux/list-dist-files.sh], [chmod +x build-aux/list-dist-files.sh])
-AC_CONFIG_FILES([Makefile src/Makefile sile-lua.1 core/features.lua core/pathsetup.lua core/version.lua])
-AC_CONFIG_FILES([sile-lua:sile.in tests/regressions.pl], [chmod +x sile-lua tests/regressions.pl])
+AC_CONFIG_FILES([Makefile justenough/Makefile sile-lua.1 core/features.lua core/pathsetup.lua core/version.lua])
+AC_CONFIG_FILES([sile-lua:sile.in], [chmod +x sile-lua])
+AC_CONFIG_FILES([tests/regressions.pl], [chmod +x tests/regressions.pl])
 AC_CONFIG_FILES([sile-dev-1.rockspec:sile.rockspec.in])
 
 AC_ARG_PROGRAM

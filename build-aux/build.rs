@@ -16,7 +16,7 @@ include!("../src/cli.rs");
 
 fn main() {
     let mut flags = Config::default();
-    if let Ok(val) = env::var("SILE_VERSION") {
+    if let Ok(val) = env::var("VERSION_FROM_AUTOTOOLS") {
         *flags.git_mut().semver_mut() = false;
         println!("cargo:rustc-env=VERGEN_GIT_SEMVER={val}")
     };

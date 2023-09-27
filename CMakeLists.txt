@@ -136,7 +136,7 @@ if (WIN32)
 
 endif()
 
-add_library(justenoughlibtexpdf SHARED src/justenoughlibtexpdf.c src/imagebbox.c)
+add_library(justenoughlibtexpdf SHARED justenough/justenoughlibtexpdf.c justenough/imagebbox.c)
 add_dependencies(justenoughlibtexpdf libtexpdf lua)
 target_include_directories(justenoughlibtexpdf PUBLIC
   "${CMAKE_SOURCE_DIR}"
@@ -149,7 +149,7 @@ target_link_libraries(justenoughlibtexpdf PUBLIC libtexpdf lua51.lib)
 target_link_options(justenoughlibtexpdf PUBLIC /EXPORT:luaopen_justenoughlibtexpdf)
 
 
-add_library(justenoughharfbuzz SHARED src/justenoughharfbuzz.c src/hb-utils.c src/hb-utils.h)
+add_library(justenoughharfbuzz SHARED justenough/justenoughharfbuzz.c justenough/hb-utils.c justenough/hb-utils.h)
 add_dependencies(justenoughharfbuzz harfbuzz lua)
 target_include_directories(justenoughharfbuzz PUBLIC
   "${TMP_INSTALL_DIR}/include"
@@ -162,7 +162,7 @@ target_compile_definitions(justenoughharfbuzz PUBLIC HAVE_HARFBUZZ_SUBSET)
 target_link_libraries(justenoughharfbuzz PUBLIC harfbuzz.lib harfbuzz-subset.lib lua51.lib)
 target_link_options(justenoughharfbuzz PUBLIC /EXPORT:luaopen_justenoughharfbuzz)
 
-add_library(justenoughicu SHARED src/justenoughicu.c)
+add_library(justenoughicu SHARED justenough/justenoughicu.c)
 add_dependencies(justenoughicu icu lua)
 target_include_directories(justenoughicu PUBLIC
   "${TMP_INSTALL_DIR}/include"
@@ -173,7 +173,7 @@ target_link_directories(justenoughicu PUBLIC
 target_link_libraries(justenoughicu PUBLIC icuio.lib icuin.lib icuuc.lib icudt.lib lua51.lib)
 target_link_options(justenoughicu PUBLIC /EXPORT:luaopen_justenoughicu)
 
-add_library(justenoughfontconfig SHARED src/justenoughfontconfig.c)
+add_library(justenoughfontconfig SHARED justenough/justenoughfontconfig.c)
 add_dependencies(justenoughfontconfig fontconfig)
 target_include_directories(justenoughfontconfig PUBLIC
   "${TMP_INSTALL_DIR}/include"
@@ -184,7 +184,7 @@ target_link_directories(justenoughfontconfig PUBLIC
 target_link_libraries(justenoughfontconfig PUBLIC fontconfig-static.lib lua51.lib expat.lib freetype.lib libpng16_static.lib zlibstatic.lib)
 target_link_options(justenoughfontconfig PUBLIC /EXPORT:luaopen_justenoughfontconfig)
 
-add_library(fontmetrics SHARED src/fontmetrics.c src/hb-utils.c src/hb-utils.h)
+add_library(fontmetrics SHARED justenough/fontmetrics.c justenough/hb-utils.c justenough/hb-utils.h)
 add_dependencies(fontmetrics harfbuzz lua)
 target_include_directories(fontmetrics PUBLIC
   "${TMP_INSTALL_DIR}/include"
@@ -196,7 +196,7 @@ target_link_directories(fontmetrics PUBLIC
 target_link_libraries(fontmetrics PUBLIC harfbuzz.lib lua51.lib)
 target_link_options(fontmetrics PUBLIC /EXPORT:luaopen_fontmetrics)
 
-add_library(svg SHARED src/svg.c)
+add_library(svg SHARED justenough/svg.c)
 add_dependencies(svg lua)
 target_include_directories(svg PUBLIC
   "${TMP_INSTALL_DIR}/include"

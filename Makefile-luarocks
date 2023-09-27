@@ -17,7 +17,4 @@ $(LUAMODLOCK): lua_modules $(LUAMODSPEC)
 	$(genrockslock) > $@
 else
 LUAMODLOCK :=
-LUA_PATH := $(shell $(LUA) -e 'print(package.path)')
-LUA_CPATH := $(shell $(LUA) -e 'print(package.cpath)')
-export LUA_PATH LUA_CPATH
 endif
