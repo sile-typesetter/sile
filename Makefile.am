@@ -89,6 +89,7 @@ CARGO_FEATURE_ARGS = --features $(MLUAVER)
 
 DEPDIR := .deps
 LOCALFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
+LOCALPATHS := SILE_PATH="$(PWD);libtexpdf/.libs;justenough/.libs"
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
 
 dist-hook: $(MANUAL) dist-hook-distfiles
@@ -114,8 +115,7 @@ check: selfcheck
 selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS)
 	output=$$(mktemp -t selfcheck-XXXXXX.pdf)
 	trap 'rm -f $$output' EXIT HUP TERM
-	export SILE_PATH
-	echo "<sile>foo</sile>" | SILE_PATH=$(PWD) ./$(bin_PROGRAMS) -o $$output -
+	echo "<sile>foo</sile>" | $(LOCALPATHS) ./$(bin_PROGRAMS) -o $$output -
 	$(PDFINFO) $$output | $(GREP) "SILE v$(VERSION)"
 
 .PHONY: docs
@@ -125,7 +125,7 @@ docs: $(MANUAL)
 # garantee the TOC is up to date, simplify when #230 is fixed.
 hastoc = [ -f $(subst .pdf,.toc,$@) ] && echo true || echo false
 pages = $(PDFINFO) $@ | $(AWK) '$$1 == "Pages:" {print $$2}' || echo 0
-localsile = $(LOCALFONTS) SILE_PATH=$(PWD) ./$(bin_PROGRAMS) $(SILEFLAGS)
+localsile = $(LOCALFONTS) $(LOCALPATHS) ./$(bin_PROGRAMS) $(SILEFLAGS)
 silepass = $(localsile) $< -o $@ && pg0=$${pg} pg=$$($(pages)) || false
 define runsile =
 	set -e
