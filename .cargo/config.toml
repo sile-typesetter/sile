@@ -5,10 +5,12 @@ rustflags = ["-C", "link-args=-rdynamic"]
 rustflags = ["-C", "link-args=-rdynamic"]
 
 # Since autotools sets these and we are *not* forcing them here, this will not
-# affect release builds. It will affect `cargo run` and make it easier to test
-# locally since the Lua loader path will be relative to the current sources.
+# affect release builds. It will affect `cargo run`, `cargo clippy` and others
+# making it easier to test locally since the Lua loader path and other
+# resources will be relative to the current sources.
 [env]
 SILE_PATH = { value = "", relative = true }
+CONFIGURE_DATADIR = { value = "", relative = true }
 
 [target.'cfg(all())']
 rustflags = [
