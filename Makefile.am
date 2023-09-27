@@ -5,10 +5,11 @@ ACLOCAL_AMFLAGS = -I build-aux
 .SECONDEXPANSION:
 .DELETE_ON_ERROR:
 
-SUBDIRS = justenough
+SUBDIRS =
 if !SYSTEM_LIBTEXPDF
 SUBDIRS += libtexpdf
 endif
+SUBDIRS += justenough .
 
 docdir = $(datarootdir)/doc/$(TRANSFORMED_PACKAGE_NAME)
 licensedir = $(datarootdir)/licenses/$(TRANSFORMED_PACKAGE_NAME)
