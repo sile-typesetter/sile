@@ -229,15 +229,14 @@ luacheck:
 
 busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'
-if SYSTEM_LUAROCKS
-	packagecpath=(./{,core/}?.$(SHARED_LIB_EXT))
 	packagepath=(./{,lua-libraries/}?{,/init}.lua)
-else
-	packagecpath=(./{,core/,lua_modules/lib/lua/$(LUA_VERSION)/}?.$(SHARED_LIB_EXT))
-	packagepath=(./{,lua_modules/share/lua/$(LUA_VERSION)/,lua-libraries/}?{,/init}.lua)
+	packagecpath=(./{,core/,{libtexpdf,justenough}/.libs/}?.$(SHARED_LIB_EXT))
+if !SYSTEM_LUAROCKS
+	packagepath+=(./lua_modules/share/lua/$(LUA_VERSION)/?{,/init}.lua)
+	packagecpath+=(./lua_modules/lib/lua/$(LUA_VERSION)/?.$(SHARED_LIB_EXT))
 endif
 # Note: use of --lua causes this to be passed back through a shell loosing one layer of quoting. Drop single quotes if removing.
-	$(LOCALFONTS) $(BUSTED) --lua=$(LUA) --cpath="'$${packagecpath[*]};;'" --lpath="'$${packagepath[*]};;'" $(BUSTEDFLAGS) .
+	$(LOCALFONTS) $(BUSTED) --lua=$(LUA) --lpath="'$${packagepath[*]};;'" --cpath="'$${packagecpath[*]};;'" $(BUSTEDFLAGS) .
 
 coverage: export SILE_COVERAGE=1
 coverage: BUSTEDFLAGS += -c
