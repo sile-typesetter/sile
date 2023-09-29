@@ -575,8 +575,8 @@ function class:finish ()
   end
   SILE.typesetter:runHooks("pageend") -- normally run by the typesetter
   self:endPage()
-  if SILE.typesetter then
-    assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
+  if SILE.typesetter and not SILE.typesetter:isQueueEmpty() then
+    SU.error("Queues are not empty as expected after ending last page", true)
   end
   SILE.outputter:finish()
   self:runHooks("finish")
