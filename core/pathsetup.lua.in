@@ -36,10 +36,8 @@ local function extendPaths (path, ours)
       prependCPath(path .. "/justenough/.libs")
     end
     prependPath(path .. "/lua-libraries")
-    if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
-      prependCPath(path .. "/lua_modules/lib/lua/" .. luaversion)
-      prependPath(path .. "/lua_modules/share/lua/" .. luaversion)
-    end
+    prependCPath(path .. "/lib/lua/" .. luaversion)
+    prependPath(path .. "/share/lua/" .. luaversion)
   else
     prependCPath(path .. "/sile")
     prependPath(path .. "/sile")
@@ -58,6 +56,9 @@ package.path = table.concat(luapath, ";")
 
 extendPaths("@SILE_PATH@", true)
 extendPaths("@SILE_LIB_PATH@", true)
+if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
+  extendPaths("@SILE_PATH@/lua_modules")
+end
 
 package.path = table.concat(extpath, ";") .. ";" .. package.path
 
