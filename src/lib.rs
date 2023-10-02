@@ -117,7 +117,18 @@ pub fn run(
         sile_input.set("options", options)?;
     }
     if let Some(modules) = uses {
-        sile_input.set("uses", modules)?;
+        // let parser_bits: LuaTable = sile.get("parserBits")?;
+        // let cliuse: LuaAnyUserData = parser_bits.get("cliuse")?;
+        // sile_input.get("uses")?;
+        for module in modules.iter() {
+            let module = lua.create_string(module)?;
+            lua.load(chunk! {
+                local spec = SILE.parserBits.cliuse:match($module);
+                table.insert(SILE.input.uses, spec)
+            })
+            .eval()?;
+            // let spec = cliuse.call_function::<_, _, _>("match", module);
+        }
     }
     if !quiet {
         eprintln!("{full_version}");
@@ -139,6 +150,14 @@ pub fn run(
             );
         }
         sile_input.set("filenames", input_filenames)?;
+        let input_uses: LuaTable = sile_input.get("uses")?;
+        let r#use: LuaFunction = sile.get("use")?;
+        for spec in input_uses.sequence_values::<LuaTable>() {
+            let spec = spec?;
+            let module: LuaString = spec.get("module")?;
+            let options: LuaTable = spec.get("options")?;
+            r#use.call::<(LuaString, LuaTable), _>((module, options))?;
+        }
         let input_filenames: LuaTable = sile_input.get("filenames")?;
         let process_file: LuaFunction = sile.get("processFile")?;
         for file in input_filenames.sequence_values::<LuaString>() {
