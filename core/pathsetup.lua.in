@@ -4,11 +4,6 @@ if "@LUA_PATH@" ~= "" then
   package.cpath = "@LUA_CPATH@"
 end
 
-if "@DEVELOPER_FALSE@" ~= "" then
-  package.cpath = package.cpath .. ";./libtexpdf/.libs/?.so"
-  package.cpath = package.cpath .. ";./justenough/.libs/?.so"
-  end
-
 local executable = debug.getinfo(3, "S").source
 local luaversion = _VERSION:match("%d+%.%d+")
 
@@ -36,6 +31,10 @@ local function extendPaths (path, ours)
   prependCPath(path)
   prependPath(path)
   if ours then
+    if "@DEVELOPER_FALSE@" ~= "" then -- see ./configure --(en|dis)able-developer
+      prependCPath(path .. "/libtexpdf/.libs")
+      prependCPath(path .. "/justenough/.libs")
+    end
     prependPath(path .. "/lua-libraries")
     if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
       prependCPath(path .. "/lua_modules/lib/lua/" .. luaversion)
