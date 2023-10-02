@@ -15,7 +15,11 @@ pub fn version() -> crate::Result<String> {
     let sile_path: LuaString = lua.create_string(&sile_path)?;
     let sile: LuaTable = lua
         .load(chunk! {
-            local status = pcall(dofile, $sile_path .. "/core/pathsetup.lua")
+            local status
+            for path in string.gmatch($sile_path, "[^;]+") do
+                status = pcall(dofile, path .. "/core/pathsetup.lua")
+                if status then break end
+            end
             if not status then
                 dofile("./core/pathsetup.lua")
             end
@@ -56,7 +60,11 @@ pub fn run(
     let sile_path: LuaString = lua.create_string(&sile_path)?;
     let sile: LuaTable = lua
         .load(chunk! {
-            local status = pcall(dofile, $sile_path .. "/core/pathsetup.lua")
+            local status
+            for path in string.gmatch($sile_path, "[^;]+") do
+                status = pcall(dofile, path .. "/core/pathsetup.lua")
+                if status then break end
+            end
             if not status then
                 dofile("./core/pathsetup.lua")
             end
