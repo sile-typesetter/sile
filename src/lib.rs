@@ -39,16 +39,16 @@ pub fn run(
     inputs: Option<Vec<PathBuf>>,
     backend: Option<String>,
     class: Option<String>,
-    debug: Option<Vec<String>>,
-    evaluate: Option<Vec<String>>,
-    evaluate_after: Option<Vec<String>>,
+    debugs: Option<Vec<String>>,
+    evaluates: Option<Vec<String>>,
+    evaluate_afters: Option<Vec<String>>,
     fontmanager: Option<String>,
     makedeps: Option<PathBuf>,
     output: Option<PathBuf>,
     options: Option<Vec<String>>,
-    preamble: Option<Vec<PathBuf>>,
-    postamble: Option<Vec<PathBuf>>,
-    r#use: Option<Vec<String>>,
+    preambles: Option<Vec<PathBuf>>,
+    postambles: Option<Vec<PathBuf>>,
+    uses: Option<Vec<String>>,
     quiet: bool,
     traceback: bool,
 ) -> crate::Result<()> {
@@ -77,7 +77,7 @@ pub fn run(
     sile.set("traceback", traceback)?;
     sile.set("quiet", quiet)?;
     let mut has_input_filename = false;
-    if let Some(flags) = debug {
+    if let Some(flags) = debugs {
         let debug_flags: LuaTable = sile.get("debugFlags")?;
         for flag in flags {
             debug_flags.set(flag, true)?;
@@ -85,10 +85,10 @@ pub fn run(
     }
     let full_version: String = sile.get("full_version")?;
     let sile_input: LuaTable = sile.get("input")?;
-    if let Some(expressions) = evaluate {
+    if let Some(expressions) = evaluates {
         sile_input.set("evaluates", expressions)?;
     }
-    if let Some(expressions) = evaluate_after {
+    if let Some(expressions) = evaluate_afters {
         sile_input.set("evaluateAfters", expressions)?;
     }
     if let Some(backend) = backend {
@@ -100,11 +100,11 @@ pub fn run(
     if let Some(class) = class {
         sile_input.set("class", class)?;
     }
-    if let Some(paths) = preamble {
+    if let Some(paths) = preambles {
         sile_input.set("preambles", paths_to_strings(paths))?;
     }
-    if let Some(paths) = postamble {
-        sile_input.set("postamble", paths_to_strings(paths))?;
+    if let Some(paths) = postambles {
+        sile_input.set("postambles", paths_to_strings(paths))?;
     }
     if let Some(path) = makedeps {
         sile_input.set("makedeps", path_to_string(&path))?;
@@ -116,8 +116,8 @@ pub fn run(
     if let Some(options) = options {
         sile_input.set("options", options)?;
     }
-    if let Some(modules) = r#use {
-        sile_input.set("use", modules)?;
+    if let Some(modules) = uses {
+        sile_input.set("uses", modules)?;
     }
     if !quiet {
         eprintln!("{full_version}");

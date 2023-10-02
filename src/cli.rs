@@ -9,7 +9,7 @@ use std::path::PathBuf;
 #[clap(author, name = "SILE", bin_name = "sile")]
 pub struct Cli {
     /// Input document, by default in SIL or XML format
-    pub inputs: Option<Vec<PathBuf>>,
+    pub input: Option<Vec<PathBuf>>,
 
     /// Choose an alternative output backend
     #[clap(short, long, value_name = "BACKEND")]
@@ -46,7 +46,7 @@ pub struct Cli {
 
     /// Set document class options
     #[clap(short = 'O', long)]
-    pub options: Option<Vec<String>>,
+    pub option: Option<Vec<String>>,
 
     /// Process SIL, XML, or other content before the input document
     #[clap(short, long, value_name = "FILE")]
