@@ -29,7 +29,6 @@ let
   luaEnv = lua.withPackages(ps: with ps; [
     cassowary
     cldr
-    cosmo
     fluent
     linenoise
     loadkit
@@ -84,7 +83,7 @@ in stdenv.mkDerivation (finalAttrs: {
   # derivation). `nix-update` and `nixpkgs-update` should be able to catch that
   # hash and update it as well when performing updates.
   cargoDeps = rustPlatform.importCargoLock {
-    lockFile = ./Cargo.lock;
+    lockFile = ../Cargo.lock;
   };
 
   buildInputs = [
@@ -98,16 +97,26 @@ in stdenv.mkDerivation (finalAttrs: {
   ];
 
   configureFlags = [
+    # Nix will supply all the Lua dependencies, so stop the build system from
+    # bundling vendored copies of them.
     "--with-system-luarocks"
-    # TODO: Explain this flag
+    # The automake check target uses pdfinfo to confirm the output of a test
+    # run, and uses autotools to discover it. This flake build eschews that
+    # test because it is run from the source directory but the binary is
+    # already built with system paths, so it can't be checked under Nix until
+    # after install. After install the Makefile isn't available of course, so
+    # we have our own copy of it with a hard coded path to `pdfinfo`. By
+    # specifying some binary here we skip the configure time test for
+    # `pdfinfo`, by using `false` we make sure that if it is expected during
+    # build time we would fail to build since we only provide it at test time.
     "PDFINFO=false"
     #"--with-manual" In Nixpkgs we add this flag, here its not important enough
-  ] ++ lib.optionals lua.pkgs.isLuaJIT [
-    "--with-luajit"
+  ] ++ lib.optionals (!lua.pkgs.isLuaJIT) [
+    "--without-luajit"
   ];
 
   postPatch = ''
-    patchShebangs build-aux/*.sh
+    patchShebangs build-aux/*.sh build-aux/git-version-gen
   '' + lib.optionalString stdenv.isDarwin ''
     sed -i -e 's|@import AppKit;|#import <AppKit/AppKit.h>|' src/macfonts.m
   '';
@@ -121,6 +130,14 @@ in stdenv.mkDerivation (finalAttrs: {
   };
 
   enableParallelBuilding = true;
+
+  # Autoconf wants to check that Makefile imports are valid files even before
+  # it potentially generates said files from substitution templates. The
+  # upstream project uses a bootstrap.sh to create this. Since we skip that, we
+  # have to fix this race condition ourselves.
+  postUnpack = ''
+    touch source/build-aux/rust_boilerplate.mk
+  '';
 
   preBuild = lib.optionalString stdenv.cc.isClang ''
     substituteInPlace libtexpdf/dpxutil.c \
