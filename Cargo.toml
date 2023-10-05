@@ -24,7 +24,7 @@ required-features = ["cli"]
   version = "1.0"
 
   [dependencies.clap]
-  version = "4.2"
+  version = "4.4"
   optional = true
   features = [ "derive", "string", "wrap_help" ]
 
@@ -35,7 +35,7 @@ required-features = ["cli"]
 [build-dependencies]
 
   [build-dependencies.clap_complete]
-  version = "4.2"
+  version = "4.4"
   optional = true
 
   [build-dependencies.clap_mangen]
@@ -43,7 +43,7 @@ required-features = ["cli"]
   optional = true
 
   [build-dependencies.clap]
-  version = "4.0"
+  version = "4.4"
   optional = true
   features = [ "derive" ]
 
