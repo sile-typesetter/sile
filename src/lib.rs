@@ -167,7 +167,7 @@ pub fn run(
         finish.call::<_, _>(())?;
     } else {
         let repl: LuaTable = sile.get("repl")?;
-        repl.call_method::<_, _, _>("enter", ())?;
+        repl.call_method::<_, _>("enter", ())?;
     }
     Ok(())
 }
