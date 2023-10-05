@@ -4,13 +4,13 @@ rustflags = ["-C", "link-args=-rdynamic"]
 [target.x86_64-unknown-linux-gnu]
 rustflags = ["-C", "link-args=-rdynamic"]
 
-# Since autotools sets this and we are *not* forcing it here, this will not
-# affect release builds. It will affect `cargo run` and make it easier to test
-# locally since the Lua loader path will be relative to the current sources.
-# For debug builds it is assumed you configured `--without-system-luarocks`,
-# this convenience won't enable you to use system packages in debug builds.
+# Since autotools sets these and we are *not* forcing them here, this will not
+# affect release builds. It will affect `cargo run`, `cargo clippy` and others
+# making it easier to test locally since the Lua loader path and other
+# resources will be relative to the current sources.
 [env]
 SILE_PATH = { value = "", relative = true }
+CONFIGURE_DATADIR = { value = "", relative = true }
 
 [target.'cfg(all())']
 rustflags = [
@@ -18,6 +18,6 @@ rustflags = [
   # This is a workaround to configure lints for the entire workspace, pending the ability to configure this via TOML.
   # See: `https://github.com/rust-lang/cargo/issues/5034`
   #      `https://github.com/EmbarkStudios/rust-ecosystem/issues/22#issuecomment-947011395`
-  "-Aclippy::clone_double_ref",
+  "-Asuspicious_double_ref_op",
   "-Aclippy::ptr_arg",
 ]

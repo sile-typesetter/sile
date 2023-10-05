@@ -2,6 +2,7 @@
 name = "sile"
 version = "0.14.8"
 edition = "2021"
+rust-version = "1.71.0"
 description = "Simon’s Improved Layout Engine"
 authors = [
   "Simon Cozens",
@@ -9,7 +10,6 @@ authors = [
   "Olivier Nicole",
   "Didier Willis"
 ]
-rust-version = "1.68"
 homepage = "https://sile-typesetter.org"
 license = "MIT"
 build = "build-aux/build.rs"
@@ -24,21 +24,18 @@ required-features = ["cli"]
   version = "1.0"
 
   [dependencies.clap]
-  version = "4.2"
+  version = "4.4"
   optional = true
   features = [ "derive", "string", "wrap_help" ]
 
-  [dependencies.lazy_static]
-  version = "1.4"
-
   [dependencies.mlua]
-  version = "0.8"
+  version = "0.9"
   features = [ "macros", "vendored" ]
 
 [build-dependencies]
 
   [build-dependencies.clap_complete]
-  version = "4.2"
+  version = "4.4"
   optional = true
 
   [build-dependencies.clap_mangen]
@@ -46,14 +43,14 @@ required-features = ["cli"]
   optional = true
 
   [build-dependencies.clap]
-  version = "4.0"
+  version = "4.4"
   optional = true
   features = [ "derive" ]
 
   [build-dependencies.vergen]
-  version = "7.4"
+  version = "8.2"
   default-features = false
-  features = [ "build", "git" ]
+  features = [ "build", "cargo", "git", "gitoxide" ]
 
 [features]
 default = ["cli", "bash", "elvish", "fish", "manpage", "powershell", "zsh"]

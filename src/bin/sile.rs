@@ -1,21 +1,21 @@
 use clap::{CommandFactory, FromArgMatches};
 
 use sile::cli::Cli;
+use sile::Result;
 
-fn main() -> sile::Result<()> {
-    let version = option_env!("VERGEN_GIT_SEMVER").unwrap_or_else(|| env!("VERGEN_BUILD_SEMVER"));
+fn main() -> Result<()> {
+    let version = option_env!("VERGEN_GIT_DESCRIBE").unwrap_or_else(|| env!("CARGO_PKG_VERSION"));
     let version = version.replacen('-', ".r", 1);
     let long_version = sile::version()?
         .strip_prefix("SILE ")
         .unwrap_or("")
         .to_string();
-    let long_version = format!("{} [Rust]", long_version);
     let app = Cli::command().version(version).long_version(long_version);
     #[allow(unused_variables)]
     let matches = app.get_matches();
     let args = Cli::from_arg_matches(&matches).expect("Unable to parse arguments");
     sile::run(
-        args.inputs,
+        args.input,
         args.backend,
         args.class,
         args.debug,
@@ -24,7 +24,7 @@ fn main() -> sile::Result<()> {
         args.fontmanager,
         args.makedeps,
         args.output,
-        args.options,
+        args.option,
         args.preamble,
         args.postamble,
         args.r#use,

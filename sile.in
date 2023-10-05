@@ -16,6 +16,7 @@ end
 -- This global is set here and *also* in the core library, since this
 -- effectively passes the same table they are interchangeable (for now).
 SILE = require("core.sile")
+SILE.full_version = SILE.full_version .. " [Lua]"
 
 SILE.cli:parseArguments()
 

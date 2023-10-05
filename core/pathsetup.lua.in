@@ -1,3 +1,9 @@
+-- Allow autoconf to setup system lua paths at compile time, not run time (only used in developer mode)
+if "@LUA_PATH@" ~= "" then
+  package.path = "@LUA_PATH@"
+  package.cpath = "@LUA_CPATH@"
+end
+
 local executable = debug.getinfo(3, "S").source
 local luaversion = _VERSION:match("%d+%.%d+")
 
@@ -25,11 +31,13 @@ local function extendPaths (path, ours)
   prependCPath(path)
   prependPath(path)
   if ours then
-    prependPath(path .. "/lua-libraries")
-    if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
-      prependCPath(path .. "/lua_modules/lib/lua/" .. luaversion)
-      prependPath(path .. "/lua_modules/share/lua/" .. luaversion)
+    if "@DEVELOPER_FALSE@" ~= "" then -- see ./configure --(en|dis)able-developer
+      prependCPath(path .. "/libtexpdf/.libs")
+      prependCPath(path .. "/justenough/.libs")
     end
+    prependPath(path .. "/lua-libraries")
+    prependCPath(path .. "/lib/lua/" .. luaversion)
+    prependPath(path .. "/share/lua/" .. luaversion)
   else
     prependCPath(path .. "/sile")
     prependPath(path .. "/sile")
@@ -48,6 +56,9 @@ package.path = table.concat(luapath, ";")
 
 extendPaths("@SILE_PATH@", true)
 extendPaths("@SILE_LIB_PATH@", true)
+if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
+  extendPaths("@SILE_PATH@/lua_modules")
+end
 
 package.path = table.concat(extpath, ";") .. ";" .. package.path
 
@@ -66,6 +77,7 @@ if cwd:match("^@") then -- Consider "ours" for the sake of Nix Flake
 else
   if cwd ~= "./" then extendPaths(cwd) end
   extendPaths(".")
+  extendPaths("./lua_modules")
 end
 
 _G.extendSilePath = extendPaths
