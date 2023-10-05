@@ -77,6 +77,7 @@ if cwd:match("^@") then -- Consider "ours" for the sake of Nix Flake
 else
   if cwd ~= "./" then extendPaths(cwd) end
   extendPaths(".")
+  extendPaths("./lua_modules")
 end
 
 _G.extendSilePath = extendPaths
