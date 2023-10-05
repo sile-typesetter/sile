@@ -6,25 +6,24 @@ use clap_complete::generator::generate_to;
 use clap_complete::shells::{Bash, Elvish, Fish, PowerShell, Zsh};
 #[cfg(feature = "manpage")]
 use clap_mangen::Man;
-use std::env;
+use std::{collections, env};
 #[cfg(feature = "completions")]
 use std::{fs, path};
-use vergen::{vergen, Config};
+use vergen::EmitBuilder;
 
 #[cfg(feature = "completions")]
 include!("../src/cli.rs");
 
 fn main() {
-    let mut flags = Config::default();
+    let mut builder = EmitBuilder::builder();
+    // If passed a version from automake, use that instead of vergen's formatting
     if let Ok(val) = env::var("VERSION_FROM_AUTOTOOLS") {
-        *flags.git_mut().semver_mut() = false;
-        println!("cargo:rustc-env=VERGEN_GIT_SEMVER={val}")
+        println!("cargo:rustc-env=VERGEN_GIT_DESCRIBE={val}")
+    } else {
+        builder = *builder.git_describe(true, true, None);
     };
-    if vergen(flags).is_err() {
-        let mut flags = Config::default();
-        *flags.git_mut().enabled_mut() = false;
-        vergen(flags).expect("Unable to generate the cargo keys!");
-    }
+    builder.emit().expect("Unable to generate the cargo keys!");
+    pass_on_configure_details();
     #[cfg(feature = "manpage")]
     generate_manpage();
     #[cfg(feature = "completions")]
@@ -83,4 +82,17 @@ fn generate_shell_completions() {
     #[cfg(feature = "zsh")]
     generate_to(Zsh, &mut app, bin_name, &completions_dir)
         .expect("Unable to generate zsh completions");
+}
+
+/// Pass through some variables set by autoconf/automake about where we're installed to cargo for
+/// use in finding resources at runtime
+fn pass_on_configure_details() {
+    let mut autoconf_vars = collections::HashMap::new();
+    autoconf_vars.insert("CONFIGURE_PREFIX", String::from("./"));
+    autoconf_vars.insert("CONFIGURE_BINDIR", String::from("./"));
+    autoconf_vars.insert("CONFIGURE_DATADIR", String::from("./"));
+    for (var, default) in autoconf_vars {
+        let val = env::var(var).unwrap_or(default);
+        println!("cargo:rustc-env={var}={val}");
+    }
 }

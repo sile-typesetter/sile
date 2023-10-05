@@ -48,9 +48,9 @@ required-features = ["cli"]
   features = [ "derive" ]
 
   [build-dependencies.vergen]
-  version = "7.4"
+  version = "8.2"
   default-features = false
-  features = [ "build", "git" ]
+  features = [ "build", "cargo", "git", "gitoxide" ]
 
 [features]
 default = ["cli", "bash", "elvish", "fish", "manpage", "powershell", "zsh"]
