@@ -9,11 +9,11 @@ cli.parseArguments = function ()
   cliargs:set_colsz(0, 120)
   cliargs:set_name("sile")
   cliargs:set_description([[
-      The SILE typesetter reads a single input file, by default in either SIL or XML format,
-      and processes it to generate a single output file, by default in PDF format. The
-      output file will be written to the same name as the input file with the extension
-      changed to .pdf. Additional input or output formats can be handled by requiring a
-      module that adds support for them first.
+      The SILE typesetter reads an input file(s), by default in either SIL or XML format, and
+      processes them to generate an output file, by default in PDF format. The output will be written
+      to a file with the same name as the first input file with the extension changed to .pdf unless
+      the `--output` argument is used. Additional input or output formats can be handled by loading
+      a module with the `--use` argument to add support for them first.
     ]])
   cliargs:splat("INPUTS", "input document(s), by default in SIL or XML format", nil, 999)
   cliargs:option("-b, --backend=VALUE", "choose an alternative output backend")
