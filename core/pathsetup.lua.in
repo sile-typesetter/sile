@@ -27,17 +27,19 @@ local function prependCPath (path)
   package.cpath = prepend_and_dedup(path .. "/?.@SHARED_LIB_EXT@", package.cpath)
 end
 
-local function extendPaths (path, ours)
+local function extendPaths (path, luarocks_tree)
   prependCPath(path)
   prependPath(path)
-  if ours then
+  if luarocks_tree then
     if "@DEVELOPER_FALSE@" ~= "" then -- see ./configure --(en|dis)able-developer
       prependCPath(path .. "/libtexpdf/.libs")
       prependCPath(path .. "/justenough/.libs")
     end
     prependPath(path .. "/lua-libraries")
     prependCPath(path .. "/lib/lua/" .. luaversion)
+    prependCPath(path .. "/lib/lua/" .. luaversion .. "/sile")
     prependPath(path .. "/share/lua/" .. luaversion)
+    prependPath(path .. "/share/lua/" .. luaversion .. "/sile")
   else
     prependCPath(path .. "/sile")
     prependPath(path .. "/sile")
@@ -57,7 +59,7 @@ package.path = table.concat(luapath, ";")
 extendPaths("@SILE_PATH@", true)
 extendPaths("@SILE_LIB_PATH@", true)
 if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
-  extendPaths("@SILE_PATH@/lua_modules")
+  extendPaths("@SILE_PATH@/lua_modules", true)
 end
 
 package.path = table.concat(extpath, ";") .. ";" .. package.path
@@ -72,12 +74,12 @@ if pathvar then
 end
 
 local cwd = executable:gsub("(.*)(/.*)", "%1")
-if cwd:match("^@") then -- Consider "ours" for the sake of Nix Flake
+if cwd:match("^@") then -- Nix Flake root path
   extendPaths(".", true)
 else
   if cwd ~= "./" then extendPaths(cwd) end
   extendPaths(".")
-  extendPaths("./lua_modules")
+  extendPaths("./lua_modules", true)
 end
 
 _G.extendSilePath = extendPaths
