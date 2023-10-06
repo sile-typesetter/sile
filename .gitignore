@@ -95,4 +95,7 @@ completions/
 core/pathsetup.lua
 
 # Nix symlink to builds
-result/
+result
+result-man
+result-doc
+result-dev
