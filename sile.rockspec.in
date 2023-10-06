@@ -5,7 +5,7 @@ version = "dev-@ROCKREV@"
 
 source = {
    url = "git+https://github.com/sile-typesetter/sile.git",
-   branch = "master"
+   branch = "develop"
 }
 
 description = {
