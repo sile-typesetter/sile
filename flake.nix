@@ -97,7 +97,7 @@
           lua = pkgs.luajit;
         };
       };
-      defaultPackage = sile;
+      defaultPackage = packages.sile-luajit;
       apps = rec {
         default = sile;
         sile = {
