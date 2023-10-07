@@ -82,6 +82,8 @@
             pkgs.luarocks
             # For commitlint git hook
             pkgs.yarn
+            # For npx
+            pkgs.nodejs
           ];
         };
       };
