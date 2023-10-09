@@ -24,7 +24,7 @@ function package:_init (options)
   trTag = SU.required(options, "trTag", "setting up table class")
   tdTag = SU.required(options, "tdTag", "setting up table class")
 
-  -- This is a post init calback instead of the usual early command registration
+  -- This is a post init callback instead of the usual early command registration
   -- method using our package loader because we don't know what commands to register
   -- until we've been instantiated.
   self.class:registerPostinit(function (_)

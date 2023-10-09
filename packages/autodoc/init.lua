@@ -356,7 +356,7 @@ function package:registerCommands ()
     SILE.call("novbreak")
     SILE.call("fullrule", { thickness = "0.5pt" })
     SILE.call("novbreak")
-  end, "Ouputs a line used for surrounding code blocks (somewhat internal)")
+  end, "Outputs a line used for surrounding code blocks (somewhat internal)")
 
   self:registerCommand("autodoc:example", function(_, content)
     -- Loosely derived from the \examplefont command from the original SILE manual...

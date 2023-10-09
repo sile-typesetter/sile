@@ -255,7 +255,7 @@ end
 getmetatable(nodefactory.unshaped).__index = function (_, _)
   -- if k == "width" then SU.error("Can't get width of unshaped node", true) end
   -- TODO: No idea why porting to proper Penlight classes this ^^^^^^ started
-  -- killing everything. Perhaps becaus this function started working and would
+  -- killing everything. Perhaps because this function started working and would
   -- actually need to return rawget(self, k) or something?
 end
 
