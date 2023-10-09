@@ -75,7 +75,7 @@ We must code up a few real functions now.
 \subsection{Content appropriation}
 
 What we first need is to tell SILE how to choose our inputter when it is given a file in our input format.
-The \code{appropriate()} method of our inputter is reponsible for providing the corresponding logic.
+The \code{appropriate()} method of our inputter is responsible for providing the corresponding logic.
 It is a static method (so it does not have a \code{self} argument), and it takes up to three arguments:
 \begin{itemize}
 \item{the round, an integer between 1 and 3.}
@@ -87,10 +87,10 @@ It is expected to return a boolean value, \code{true} if this handler is appropr
 Earlier, we said that inputters were checked in their priority order.
 This was not fully complete.
 Let’s add another piece to our puzzle: Inputters are actually checked orderly indeed, but three times.
-This allows for quick compatiblitity checks to supercede resource-intensive ones.
+This allows for quick compatiblitity checks to supersede resource-intensive ones.
 \begin{itemize}
 \item{Round 1 expects the file name to be checked: for instance, we could base our decision on recognized file extensions.}
-\item{Round 2 expects some portion of the content string to be checked: for instance, we could base our decision on sniffing for some sequence of characters expected to occurr early in the document (or any other content inspection strategy).}
+\item{Round 2 expects some portion of the content string to be checked: for instance, we could base our decision on sniffing for some sequence of characters expected to occur early in the document (or any other content inspection strategy).}
 \item{Round 3 expects the entire content to be successfully parsed.}
 \end{itemize}
 
@@ -178,7 +178,7 @@ In particular, options passed to the \autodoc:command{\include} commands are pas
 
 Outputters usually live somewhere in the \code{outputters/} subdirectory of either where your first input file is located, your current working directory, or your SILE path.
 
-All ouput handlers inherit from a \autodoc:package{base} outputter.
+All output handlers inherit from a \autodoc:package{base} outputter.
 It is an abstract class, providing just one concrete method, and defining a bunch of methods that any actual outputter has to override for the specifics of its target format.
 
 We first need to declare the name of our new outputter, as well as the default file extension for the output file, which will be appended to the base name of the main input file if the user does not provide an explicit output file name on their command line.

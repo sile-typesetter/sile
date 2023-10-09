@@ -25,7 +25,7 @@ Language support may include:
 \item{frame advance and writing direction}
 \item{spacing}
 \item{choice of glyphs within a font}
-\item{localization of programatically inserted strings}
+\item{localization of programmatically inserted strings}
 \end{itemize}
 
 For example, Sindhi and Urdu users will expect the Arabic letter \em{heh} (\font[family=LateefGR]{ه}) to combine with other letters in different ways to standard Arabic shaping.
@@ -95,7 +95,7 @@ To implement hyphenation for a new language, first check to see if TeX hyphenati
 
 \section{Localization}
 
-A small handful of strings may be programatically added to documents depending on language, context, and options.
+A small handful of strings may be programmatically added to documents depending on language, context, and options.
 For example by default in English the \autodoc:class{book} class will prepend “Chapter ” before chapter numbers output by the \autodoc:command{\chapter} command.
 These localized strings are managed internally using the Fluent localization system.%
 \footnote{See Project Fluent (\url{https://projectfluent.org}) for details on the data format and uses.}
@@ -180,7 +180,7 @@ SILE aims to conform with the W3G document “Requirements for Japanese Text Lay
 Breaking rules \em{(kinzoku shori)} and intercharacter spacing is fully supported on selecting the Japanese language.
 The easiest way to set up the other elements of Japanese typesetting such as the \em{hanmen} grid and optional vertical typesetting support is by using the \autodoc:class{jplain} or \autodoc:class{jbook} classes.
 For other languages with similar layout requirements, more generic \autodoc:class{tplain} and \autodoc:class{tbook} classes are available that setup the layout elements without also setting the default language and font to Japanese specific values.
-These are also good condidates to use as base classes and extend for more language-specific classes.
+These are also good candidates to use as base classes and extend for more language-specific classes.
 
 \package-documentation{hanmenkyoshi}
 
