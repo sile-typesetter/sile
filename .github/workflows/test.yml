@@ -18,7 +18,7 @@ jobs:
           - [ '5.2' ]
           - [ '5.1' ]
           - [ 'luajit' ]
-          # - [ 'luajit-openresty' ]
+          - [ 'luajit-openresty' ]
     runs-on: ubuntu-22.04
     name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
