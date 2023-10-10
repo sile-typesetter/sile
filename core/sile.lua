@@ -59,8 +59,8 @@ SILE.documentState = {}
 SILE.rawHandlers = {}
 
 -- User input values, currently from CLI options, potentially all the inuts
--- needed for a user to use a SILE-as-a-library verion to produce documents
--- programatically.
+-- needed for a user to use a SILE-as-a-library version to produce documents
+-- programmatically.
 SILE.input = {
   filenames = {},
   evaluates = {},
@@ -97,7 +97,7 @@ SILE.nodefactory = require("core.nodefactory")
 
 -- NOTE:
 -- See remainaing internal libraries loaded at the end of this file because
--- they run core SILE functions on load istead of waiting to be called (or
+-- they run core SILE functions on load instead of waiting to be called (or
 -- depend on others that do).
 
 local function runEvals (evals, arg)
