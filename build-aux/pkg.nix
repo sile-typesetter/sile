@@ -139,11 +139,6 @@ in stdenv.mkDerivation (finalAttrs: {
     touch source/build-aux/rust_boilerplate.mk
   '';
 
-  preBuild = lib.optionalString stdenv.cc.isClang ''
-    substituteInPlace libtexpdf/dpxutil.c \
-      --replace "ASSERT(ht && ht->table && iter);" "ASSERT(ht && iter);"
-  '';
-
   # remove forbidden references to $TMPDIR
   preFixup = lib.optionalString stdenv.isLinux ''
     for f in "$out"/bin/*; do

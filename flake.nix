@@ -82,6 +82,8 @@
             pkgs.luarocks
             # For commitlint git hook
             pkgs.yarn
+            # For npx
+            pkgs.nodejs
           ];
         };
       };
@@ -95,6 +97,11 @@
         };
         sile-luajit = sile.override {
           lua = pkgs.luajit;
+        };
+        sile-clang = sile.override {
+          lua = pkgs.luajit;
+          # Use the same clang version as Nixpkgs' rust clang stdenv
+          stdenv = pkgs.rustc.llvmPackages.stdenv;
         };
       };
       defaultPackage = packages.sile-luajit;
