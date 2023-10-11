@@ -16,7 +16,7 @@ build = "build-aux/build.rs"
 
 [[bin]]
 name = "sile"
-required-features = ["cli"]
+required-features = [ "cli" ]
 
 [dependencies]
 
@@ -53,20 +53,20 @@ required-features = ["cli"]
   features = [ "build", "cargo", "git", "gitoxide" ]
 
 [features]
-default = ["cli", "bash", "elvish", "fish", "manpage", "powershell", "zsh"]
-lua54 = ["mlua/lua54"]
-lua53 = ["mlua/lua53"]
-lua52 = ["mlua/lua52"]
-lua51 = ["mlua/lua51"]
-luajit = ["mlua/luajit"]
-completions = ["cli", "clap_complete"]
-cli = ["clap"]
-bash = ["completions"]
-elvish = ["completions"]
-fish = ["completions"]
-manpage = ["clap_mangen"]
-powershell = ["completions"]
-zsh = ["completions"]
+default = [ "cli", "bash", "elvish", "fish", "manpage", "powershell", "zsh" ]
+lua54 = [ "mlua/lua54" ]
+lua53 = [ "mlua/lua53" ]
+lua52 = [ "mlua/lua52" ]
+lua51 = [ "mlua/lua51" ]
+luajit = [ "mlua/luajit" ]
+completions = [ "cli", "clap_complete" ]
+cli = [ "clap" ]
+bash = [ "completions" ]
+elvish = [ "completions" ]
+fish = [ "completions" ]
+manpage = [ "clap_mangen" ]
+powershell = [ "completions" ]
+zsh = [ "completions" ]
 
 [profile.release]
 lto = true
