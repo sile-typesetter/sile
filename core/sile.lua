@@ -330,10 +330,7 @@ function SILE.processFile (filename, format, options)
     if SILE.masterDir and SILE.masterDir:len() >= 1 then
       _G.extendSilePath(SILE.masterDir)
     end
-    filename = SILE.resolveFile(filename)
-    if not filename then
-      SU.error("Could not find file")
-    end
+    filename = SILE.resolveFile(filename) or SU.error("Could not find file")
     local mode = lfs.attributes(filename).mode
     if mode ~= "file" and mode ~= "named pipe" then
       SU.error(filename.." isn't a file or named pipe, it's a ".. mode .."!")
@@ -393,8 +390,8 @@ function SILE.resolveFile (filename, pathprefix)
   local resolved, err = package.searchpath(filename, path, "/")
   if resolved then
     if SILE.makeDeps then SILE.makeDeps:add(resolved) end
-  else
-    SU.warn(("Unable to find file '%s': %s"):format(filename, err))
+  elseif SU.debugging("paths") then
+    SU.debug("paths", ("Unable to find file '%s': %s"):format(filename, err))
   end
   return resolved
 end
