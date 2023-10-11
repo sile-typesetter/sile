@@ -71,7 +71,6 @@ jobs:
           ./configure \
             --enable-developer LUACHECK=false NIX=false \
             --disable-font-variations \
-            --without-system-luarocks \
             --with${{ !startsWith(matrix.luaVersion, 'luajit') && 'out' || '' }}-luajit \
             --without-manual
       - name: Make

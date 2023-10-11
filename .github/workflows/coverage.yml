@@ -62,8 +62,6 @@ jobs:
           ./configure \
             --enable-developer LUACHECK=false NIX=false \
             --disable-font-variations \
-            --without-system-luarocks \
-            --with-luajit \
             --without-manual
       - name: Make
         run: |
