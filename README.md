@@ -329,8 +329,6 @@ There's also an [FAQ][faq] available.
 Please report bugs and send patches and pull requests at the [github repository][github].
 For questions and discussion, please join the [mailing list][list-en].
 
-日本語利用者は[メーリングリスト][list-ja]に参加してください。
-
 ## License Terms
 
 SILE is distributed under the [MIT licence][license].
@@ -358,7 +356,6 @@ SILE is distributed under the [MIT licence][license].
   [brew]: http://brew.sh
   [brewfonts]: https://github.com/Homebrew/homebrew-cask-fonts
   [list-en]: https://groups.google.com/d/forum/sile-users
-  [list-ja]: https://groups.google.com/d/forum/sile-users-ja
   [nix]: https://nixos.org/nix
   [nix-flakes]: https://nixos.wiki/wiki/Flakes#Installing_flakes
   [ports]: http://ports.su/print/sile

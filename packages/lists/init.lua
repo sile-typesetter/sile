@@ -102,7 +102,7 @@ function package:doItem (options, content)
 
   local stepback
   if enumStyle.display then
-    -- The positionning is quite tentative... LaTeX would right justify the
+    -- The positioning is quite tentative... LaTeX would right justify the
     -- number (at least for roman numerals), i.e.
     --   i. Text
     --  ii. Text

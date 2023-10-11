@@ -39,12 +39,12 @@ end)
 ---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
 local parseBibtex = function (fn)
-  fn = SILE.resolveFile(fn)
-  local fh,e = io.open(fn)
-  if e then SU.error("Error reading bibliography file "..e) end
+  fn = SILE.resolveFile(fn) or SU.error("Unable to resolve Bibtex file "..fn)
+  local fh, e = io.open(fn)
+  if e then SU.error("Error reading bibliography file: "..e) end
   local doc = fh:read("*all")
   local t = epnf.parsestring(bibtexparser, doc)
-  if not(t) or not(t[1]) or t.id ~= "document" then
+  if not t or not t[1] or t.id ~= "document" then
     SU.error("Error parsing bibtex")
   end
   local entries = {}

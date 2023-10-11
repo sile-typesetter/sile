@@ -8,7 +8,7 @@ It is even less true now that 3rd party plugins can add their own input formats.
 
 Hence this chanpter has been renamed.
 The original chapter title was "SILE’s Input Language", as if there was only one.
-The truth is there \em{is} an input syntax we call "SIL", but even that is perhaps best thought of as a structured data systax rather than a unique language.
+The truth is there \em{is} an input syntax we call "SIL", but even that is perhaps best thought of as a structured data syntax rather than a unique language.
 The input strings \code{\\em\{foo\}} in SIL input syntax is 100\% equivalent to \code{<em>foo</em>} in XML input syntax.
 The SIL input syntax is provided as an easier to type alternative than XML which can be a bit verbose and tedious to work with by hand.
 On the other hand if you're handling data written by some other program, XML might be a much better solution.

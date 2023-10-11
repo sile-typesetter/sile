@@ -311,7 +311,7 @@ int icu_collation_create(lua_State *L) {
   int numericOrdering = UCOL_ON; // N.B. default is UCOL_OFF
   int backwards = UCOL_OFF; // So-called 'french collation', default is UCOL_OFF
   // NOT IMPLEMENTED: maxVariable punct / maxVariable space
-  //     This affects 'alternate handling' with espect to spaces and/or punctuations
+  //     This affects 'alternate handling' with expect to spaces and/or punctuations
   //     I never used it and I'm lazy - assume default is ok...
   int caseFirst = UCOL_OFF; // n.B. default is UCOL_OFF
   int caseLevel = UCOL_OFF; // n.B. default is UCOL_OFF

@@ -10,7 +10,7 @@ Since DocDook itself doesn’t specify anything about presentation such as paper
 When you use the \code{-c docbook} command line option to SILE, SILE will use the \autodoc:class{docbook} class in spite of any document declaration.
 In addition, options such as paper size could be set; for example, \code{-O papersize=legal}.
 
-The class initalization for DocBoox isn’t too fancy; it just loads up a couple packages that will get used later.
+The class initialization for DocBoox isn’t too fancy; it just loads up a couple packages that will get used later.
 
 \begin{autodoc:note}
 Much of the example code in this chapter is in SIL format using macros.
