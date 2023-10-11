@@ -185,12 +185,12 @@ int shape (lua_State *L) {
     }
     glyph_info   = hb_buffer_get_glyph_infos(buf, &glyph_count);
     glyph_pos    = hb_buffer_get_glyph_positions(buf, &glyph_count);
-    lua_checkstack(L, glyph_count*10);
     for (j = 0; j < glyph_count; ++j) {
       char namebuf[255];
       hb_glyph_extents_t extents = {0,0,0,0};
       hb_font_get_glyph_extents(hbFont, glyph_info[j].codepoint, &extents);
 
+      lua_checkstack(L, 3);
       lua_newtable(L);
       lua_pushstring(L, "name");
       hb_font_get_glyph_name( hbFont, glyph_info[j].codepoint, namebuf, 255 );
@@ -206,21 +206,25 @@ int shape (lua_State *L) {
       baseline, and we should use that and take out this condition. */
       if (direction != HB_DIRECTION_TTB) {
         if (glyph_pos[j].x_offset) {
+          lua_checkstack(L, 2);
           lua_pushstring(L, "x_offset");
           lua_pushnumber(L, glyph_pos[j].x_offset * point_size / upem);
           lua_settable(L, -3);
         }
 
         if (glyph_pos[j].y_offset) {
+          lua_checkstack(L, 2);
           lua_pushstring(L, "y_offset");
           lua_pushnumber(L, glyph_pos[j].y_offset * point_size / upem);
           lua_settable(L, -3);
         }
       }
 
+      lua_checkstack(L, 2);
       lua_pushstring(L, "gid");
       lua_pushinteger(L, glyph_info[j].codepoint);
       lua_settable(L, -3);
+      lua_checkstack(L, 2);
       lua_pushstring(L, "index");
       lua_pushinteger(L, glyph_info[j].cluster);
       lua_settable(L, -3);
@@ -240,17 +244,21 @@ int shape (lua_State *L) {
         width = glyphAdvance;
         glyphAdvance = height;
       }
+      lua_checkstack(L, 2);
       lua_pushstring(L, "glyphAdvance");
       lua_pushnumber(L, glyphAdvance);
       lua_settable(L, -3);
 
+      lua_checkstack(L, 2);
       lua_pushstring(L, "width");
       lua_pushnumber(L, width);
       lua_settable(L, -3);
 
+      lua_checkstack(L, 2);
       lua_pushstring(L, "height");
       lua_pushnumber(L, height);
       lua_settable(L, -3);
+      lua_checkstack(L, 2);
       lua_pushstring(L, "depth");
       lua_pushnumber(L, -tHeight - height);
       lua_settable(L, -3);
