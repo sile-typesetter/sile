@@ -393,8 +393,8 @@ function SILE.resolveFile (filename, pathprefix)
   local resolved, err = package.searchpath(filename, path, "/")
   if resolved then
     if SILE.makeDeps then SILE.makeDeps:add(resolved) end
-  else
-    SU.warn(("Unable to find file '%s': %s"):format(filename, err))
+  elseif SU.debugging("paths") then
+    SU.debug("paths", ("Unable to find file '%s': %s"):format(filename, err))
   end
   return resolved
 end
