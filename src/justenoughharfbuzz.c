@@ -145,9 +145,9 @@ int shape (lua_State *L) {
     double point_size = luaL_checknumber(L, 6);
     const char * featurestring = luaL_checkstring(L, 7);
     char * shaper_list_string = luaL_checkstring(L, 8);
-    char ** shaper_list = NULL;
+    const char * const* shaper_list = NULL;
     if (strlen(shaper_list_string) > 0) {
-      shaper_list = scan_shaper_list(shaper_list_string);
+      shaper_list = (const char * const*)scan_shaper_list(shaper_list_string);
     }
 
     hb_direction_t direction;
