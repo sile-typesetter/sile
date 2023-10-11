@@ -28,10 +28,14 @@ jobs:
           path: |
             lua_modules
           key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install cargo fonts-sil-gentiumplus ghostscript graphviz jq libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libluajit-5.1-dev libpng-dev luajit lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+          sudo apt-get install fonts-sil-gentiumplus ghostscript graphviz jq libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libluajit-5.1-dev libpng-dev luajit lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+      - name: Setup ‘cargo’
+        uses: actions-rs/toolchain@v1
       - name: Configure
         run: |
           ./bootstrap.sh
