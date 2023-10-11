@@ -68,6 +68,12 @@ AC_ARG_WITH([system-luarocks],
 AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
 AC_SUBST([SYSTEM_LUAROCKS])
 
+AC_ARG_WITH([system-lua-sources],
+            AS_HELP_STRING([--with-system-lua-sources],
+                           [Don’t compile against vendored Lua sources, use system headers]))
+AM_CONDITIONAL([SYSTEM_LUA_SOURCES], [test "x$with_system_lua_sources" = "xyes"])
+AC_SUBST([SYSTEM_LUA_SOURCES])
+
 AC_ARG_WITH([luajit],
             AS_HELP_STRING([--without-luajit],
                            [Prefer LuaJIT over PUC Lua, even if the latter is newer]))

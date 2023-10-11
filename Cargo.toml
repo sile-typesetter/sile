@@ -30,7 +30,7 @@ required-features = [ "cli" ]
 
   [dependencies.mlua]
   version = "0.9"
-  features = [ "macros", "vendored" ]
+  features = [ "macros" ]
 
 [build-dependencies]
 
@@ -59,6 +59,7 @@ lua53 = [ "mlua/lua53" ]
 lua52 = [ "mlua/lua52" ]
 lua51 = [ "mlua/lua51" ]
 luajit = [ "mlua/luajit" ]
+vendored = [ "mlua/vendored" ]
 completions = [ "cli", "clap_complete" ]
 cli = [ "clap" ]
 bash = [ "completions" ]

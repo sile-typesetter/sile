@@ -99,6 +99,7 @@ in stdenv.mkDerivation (finalAttrs: {
   configureFlags = [
     # Nix will supply all the Lua dependencies, so stop the build system from
     # bundling vendored copies of them.
+    "--with-system-lua-sources"
     "--with-system-luarocks"
     # The automake check target uses pdfinfo to confirm the output of a test
     # run, and uses autotools to discover it. This flake build eschews that

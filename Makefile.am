@@ -88,6 +88,10 @@ MLUAVER = lua$(LUA_SHORT_VERSION)
 endif
 CARGO_FEATURE_ARGS = --features $(MLUAVER)
 
+if !SYSTEM_LUA_SOURCES
+CARGO_FEATURE_ARGS += --features vendored
+endif
+
 DEPDIR := .deps
 LOCALFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 LOCALPATHS := SILE_PATH="$(PWD);libtexpdf/.libs;justenough/.libs"
