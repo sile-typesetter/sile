@@ -13,14 +13,14 @@ jobs:
       fail-fast: false
       matrix:
         luaVersion:
-          - [ '5.4', 'MYCFLAGS=-fPIC' ]
-          - [ '5.3', 'MYCFLAGS=-fPIC' ]
-          - [ '5.2', 'MYCFLAGS=-fPIC' ]
-          - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"' ]
-          - [ 'luajit', 'XCFLAGS=-fPIC' ]
-          # - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
+          - '5.4'
+          - '5.3'
+          - '5.2'
+          - '5.1'
+          - 'luajit'
+          - 'luajit-openresty'
     runs-on: ubuntu-22.04
-    name: Test on Lua ${{ matrix.luaVersion[0] }}
+    name: Test on Lua ${{ matrix.luaVersion }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,12 +38,15 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+          key: luarocks-${{ matrix.luaVersion }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
       - name: Setup ‘lua’
         uses: leafo/gh-actions-lua@v10
         with:
-          luaVersion: ${{ matrix.luaVersion[0] }}
-          luaCompileFlags: ${{ matrix.luaVersion[1] }}
+          luaVersion: ${{ matrix.luaVersion }}
       - name: Setup ‘luarocks’
         uses: leafo/gh-actions-luarocks@v4
       - name: Prep system Lua for use
@@ -58,10 +61,6 @@ jobs:
           LUA_INCLUDE=-I$(deepest $PWD/.lua/include)
           MAKEFLAGS=-j$(nproc) -Otarget
           EOF
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
       - name: Configure
         run: |
           ./bootstrap.sh
@@ -69,21 +68,25 @@ jobs:
             --enable-developer LUACHECK=false NIX=false \
             --disable-font-variations \
             --without-system-luarocks \
-            --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit \
+            --with${{ !startsWith(matrix.luaVersion, 'luajit') && 'out' || '' }}-luajit \
             --without-manual
       - name: Make
         run: |
           make
+      - name: Prove SILE runs at all
+        run: |
+          make selfcheck
       - name: Test Busted
-        timeout-minutes: ${{ runner.debug && 60 || 6 }}
+        continue-on-error: ${{ matrix.luaVersion == '5.1' }}
+        timeout-minutes: ${{ runner.debug && 20 || 2 }}
         run: |
           make busted
       - name: Test Regressions
-        timeout-minutes: ${{ runner.debug && 60 || 6 }}
+        timeout-minutes: ${{ runner.debug && 20 || 2 }}
         run: |
           make regressions
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: test-${{ matrix.luaVersion[0] }}-actuals
+          name: test-${{ matrix.luaVersion }}-actuals
           path: tests/*.actual

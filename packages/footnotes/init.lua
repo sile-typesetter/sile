@@ -73,7 +73,7 @@ function package:registerCommands ()
     -- Apply the font before boxing, so relative baselineskip applies #1027
     local material
     SILE.call("footnote:font", {}, function ()
-        material = SILE.call("vbox", {}, function ()
+      material = SILE.call("vbox", {}, function ()
         SILE.call("footnote:atstart", options)
         SILE.call("footnote:counter", options)
         SILE.process(content)
