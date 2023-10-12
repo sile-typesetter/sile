@@ -176,35 +176,33 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS
 .PHONY: force
 force: ;
 
-PHONY_DEVELOPER_TARGETS = regressions test lint luarocks-lint luacheck busted coverage benchmark compare update_expecteds regression_previews docker docker-dep-check docker-ghcr-to-hub docker-build-push gource.webm
+PHONY_DEVELOPER_TARGETS = benchmark busted compare coverage docker docker-build-push \
+	docker-dep-check docker-ghcr-to-hub gource.webm lint luacheck luarocks-lint \
+	prerelease regression_previews regressions release release-preview tagrelease \
+	test update_expecteds update_libtexpdf
 .PHONY: $(PHONY_DEVELOPER_TARGETS)
 
 if DEVELOPER
 
 RELTYPE ?=
 
-.PHONY: tagrelease
 tagrelease:
 	test -z $$($(GIT) tag --points-at HEAD) || exit 0 # end if we are already on a release tag
 	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
 	$(GIT) diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
 	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
-.PHONY: prerelease
 prerelease: test docs update_libtexpdf
 
-.PHONY: release-preview
 release-preview:
 	npm run release -- --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
 
-.PHONY: release
 release: tagrelease
 
 sile-%.md: CHANGELOG.md
 	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' CHANGELOG.md | \
 		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
-.PHONY: update_libtexpdf
 update_libtexpdf:
 	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
 	$(GIT) submodule update --init --remote -- libtexpdf

@@ -1,3 +1,5 @@
+.PHONY: fonttooling
+
 if FONT_DOWNLOAD_TOOLS
 
 .fonts: fonttooling
@@ -6,7 +8,6 @@ if FONT_DOWNLOAD_TOOLS
 .sources: fonttooling
 	[ -h .sources ] || mkdir -p $@
 
-.PHONY: fonttooling
 fonttooling:
 	$(if $(BSDTAR),,$(error Please set BSDTAR with path or `./configure --enable-developer`))
 	$(if $(CURL),,$(error Please set CURL with path or `./configure --enable-developer`))
