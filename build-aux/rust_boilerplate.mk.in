@@ -58,7 +58,7 @@ $(_RUST_OUT) $(CARGO_BIN): $(sile_SOURCES) $(EXTRA_sile_SOURCES)
 	$(CARGO_ENV) $(CARGO) build --quiet --message-format=json $(CARGO_FEATURE_ARGS) $(CARGO_RELEASE_ARGS) |
 		$(JQ) -sr 'map(select(.reason == "build-script-executed")) | last | .out_dir' > $(_RUST_OUT)
 
-RUST_DEVELOPER_TARGETS = cargo-test clippy installcheck-local-version rustfmt
+RUST_DEVELOPER_TARGETS = cargo-test clippy rustfmt
 .PHONY: $(RUST_DEVELOPER_TARGETS)
 
 if DEVELOPER

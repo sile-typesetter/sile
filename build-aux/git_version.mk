@@ -25,9 +25,6 @@ check-git-version: $(PACKAGE_NAME)$(EXEEXT) | .version
 	$(GREP) -Fx '$(VERSION)' $|
 	./$< --version | $(GREP) -Ff $|
 
-installcheck-local-version:
-	./$(TRANSFORMED_PACKAGE_NAME)$(EXEEXT) --version
-
 dist-hook: dist-tarball-version
 
 .PHONY: dist-tarball-version
