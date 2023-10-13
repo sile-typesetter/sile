@@ -9,32 +9,32 @@ class.pageTemplate = { frames = {}, firstContentFrame = nil }
 class.defaultFrameset = {}
 class.firstContentFrame = "page"
 class.options = setmetatable({}, {
-  _opts = {},
-  __newindex = function(self, key, value)
-    local opts = getmetatable(self)._opts
-    if type(opts[key]) == "function" then
-      opts[key](class, value)
-    elseif type(value) == "function" then
-      opts[key] = value
-    elseif type(key) == "number" then
-      return nil
-    else
-      SU.error("Attempted to set an undeclared class option '" .. key .. "'")
+    _opts = {},
+    __newindex = function (self, key, value)
+      local opts = getmetatable(self)._opts
+      if type(opts[key]) == "function" then
+        opts[key](class, value)
+      elseif type(value) == "function" then
+        opts[key] = value
+      elseif type(key) == "number" then
+        return nil
+      else
+        SU.error("Attempted to set an undeclared class option '" .. key .. "'")
+      end
+    end,
+    __index = function (self, key)
+      if key == "super" then return nil end
+      if type(key) == "number" then return nil end
+      local opt = getmetatable(self)._opts[key]
+      if type(opt) == "function" then
+        return opt(class)
+      elseif opt then
+        return opt
+      else
+        SU.error("Attempted to get an undeclared class option '" .. key .. "'")
+      end
     end
-  end,
-  __index = function(self, key)
-    if key == "super" then return nil end
-    if type(key) == "number" then return nil end
-    local opt = getmetatable(self)._opts[key]
-    if type(opt) == "function" then
-      return opt(class)
-    elseif opt then
-      return opt
-    else
-      SU.error("Attempted to get an undeclared class option '" .. key .. "'")
-    end
-  end
-})
+  })
 class.hooks = {
   newpage = {},
   endpage = {},
@@ -43,7 +43,7 @@ class.hooks = {
 
 class.packages = {}
 
-function class:_init(options)
+function class:_init (options)
   SILE.scratch.half_initialized_class = self
   if self == options then options = {} end
   SILE.languageSupport.loadLanguage('und') -- preload for unlocalized fallbacks
@@ -53,22 +53,22 @@ function class:_init(options)
   self:registerCommands()
   self:setOptions(options)
   self:declareFrames(self.defaultFrameset)
-  self:registerPostinit(function(self_)
-    if type(self.firstContentFrame) == "string" then
-      self_.pageTemplate.firstContentFrame = self_.pageTemplate.frames[self_.firstContentFrame]
-    end
-    local frame = self_:initialFrame()
-    SILE.typesetter = SILE.typesetters.base(frame)
-    SILE.typesetter:registerPageEndHook(function()
-      SU.debug("frames", function()
-        for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
-        return "Drew debug outlines around frames"
+  self:registerPostinit(function (self_)
+      if type(self.firstContentFrame) == "string" then
+        self_.pageTemplate.firstContentFrame = self_.pageTemplate.frames[self_.firstContentFrame]
+      end
+      local frame = self_:initialFrame()
+      SILE.typesetter = SILE.typesetters.base(frame)
+      SILE.typesetter:registerPageEndHook(function ()
+        SU.debug("frames", function ()
+          for _, v in pairs(SILE.frames) do SILE.outputter:debugFrame(v) end
+          return "Drew debug outlines around frames"
+        end)
       end)
     end)
-  end)
 end
 
-function class:_post_init()
+function class:_post_init ()
   self._initialized = true
   for i, func in ipairs(self.deferredInit) do
     func(self)
@@ -77,28 +77,22 @@ function class:_post_init()
   SILE.scratch.half_initialized_class = nil
 end
 
-function class:setOptions(options)
+function class:setOptions (options)
   options = options or {}
-  options.orientation = options.orientation or "portrait"
-
-  if not self.options.orientation then
-    self.options.orientation = options.orientation
-  end
-
+  self.options.orientation = options.orientation or "portrait"
   options.papersize = options.papersize or "a4"
-
   for option, value in pairs(options) do
     self.options[option] = value
   end
 end
 
-function class:declareOption(option, setter)
+function class:declareOption (option, setter)
   rawset(getmetatable(self.options)._opts, option, nil)
   self.options[option] = setter
 end
 
-function class:declareOptions()
-  self:declareOption("class", function(_, name)
+function class:declareOptions ()
+  self:declareOption("class", function (_, name)
     if name then
       if self._legacy then
         self._name = name
@@ -108,7 +102,6 @@ function class:declareOptions()
     end
     return self._name
   end)
-
   self:declareOption("orientation", function(_, orientation)
     if orientation == "landscape" then
       self.orientation = true
@@ -118,11 +111,10 @@ function class:declareOptions()
     SILE.documentState.orientation = self.orientation
     return self.orientation
   end)
-
-  self:declareOption("papersize", function(_, size)
+  self:declareOption("papersize", function (_, size)
     if size then
       self.papersize = size
-      SILE.documentState.paperSize = SILE.papersize(size, self.options.orientation)
+      SILE.documentState.paperSize = SILE.papersize(size)
       SILE.documentState.orgPaperSize = SILE.documentState.paperSize
       SILE.newFrame({
         id = "page",
@@ -136,7 +128,7 @@ function class:declareOptions()
   end)
 end
 
-function class.declareSettings(_)
+function class.declareSettings (_)
   SILE.settings:declare({
     parameter = "current.parindent",
     type = "glue or nil",
@@ -157,16 +149,16 @@ function class.declareSettings(_)
   })
 end
 
-function class:loadPackage(packname, options)
+function class:loadPackage (packname, options)
   local pack = require(("packages.%s"):format(packname))
   if type(pack) == "table" and pack.type == "package" then -- new package
     self.packages[pack._name] = pack(options)
-  else                                                     -- legacy package
+  else -- legacy package
     self:initPackage(pack, options)
   end
 end
 
-function class:initPackage(pack, options)
+function class:initPackage (pack, options)
   SU.deprecated("class:initPackage(options)", "package(options)", "0.14.0", "0.16.0", [[
   This package appears to be a legacy format package. It returns a table
   an expects SILE to guess a bit about what to do. New packages inherit
@@ -189,21 +181,21 @@ function class:initPackage(pack, options)
   end
 end
 
-function class:registerLegacyPostinit(func, options)
+function class:registerLegacyPostinit (func, options)
   if self._initialized then return func(self, options) end
-  table.insert(self.deferredLegacyInit, function(_)
-    func(self, options)
-  end)
+  table.insert(self.deferredLegacyInit, function (_)
+      func(self, options)
+    end)
 end
 
-function class:registerPostinit(func, options)
+function class:registerPostinit (func, options)
   if self._initialized then return func(self, options) end
-  table.insert(self.deferredInit, function(_)
-    func(self, options)
-  end)
+  table.insert(self.deferredInit, function (_)
+      func(self, options)
+    end)
 end
 
-function class:registerHook(category, func)
+function class:registerHook (category, func)
   for _, func_ in ipairs(self.hooks[category]) do
     if func_ == func then
       return
@@ -219,14 +211,14 @@ function class:registerHook(category, func)
   table.insert(self.hooks[category], func)
 end
 
-function class:runHooks(category, options)
+function class:runHooks (category, options)
   for _, func in ipairs(self.hooks[category]) do
     SU.debug("classhooks", "Running hook from", category, options and "with options " .. #options)
     func(self, options)
   end
 end
 
-function class.registerCommand(_, name, func, help, pack)
+function class.registerCommand (_, name, func, help, pack)
   SILE.Commands[name] = func
   if not pack then
     local where = debug.getinfo(2).source
@@ -239,21 +231,23 @@ function class.registerCommand(_, name, func, help, pack)
   }
 end
 
-function class.registerRawHandler(_, format, callback)
+function class.registerRawHandler (_, format, callback)
   SILE.rawHandlers[format] = callback
 end
 
-function class:registerRawHandlers()
-  self:registerRawHandler("text", function(_, content)
+function class:registerRawHandlers ()
+
+  self:registerRawHandler("text", function (_, content)
     SILE.settings:temporarily(function()
       SILE.settings:set("typesetter.parseppattern", "\n")
       SILE.settings:set("typesetter.obeyspaces", true)
       SILE.typesetter:typeset(content[1])
     end)
   end)
+
 end
 
-local function packOptions(options)
+local function packOptions (options)
   local relevant = pl.tablex.copy(options)
   relevant.src = nil
   relevant.format = nil
@@ -262,7 +256,8 @@ local function packOptions(options)
   return relevant
 end
 
-function class:registerCommands()
+function class:registerCommands ()
+
   local function replaceProcessBy(replacement, tree)
     if type(tree) ~= "table" then return tree end
     local ret = pl.tablex.deepcopy(tree)
@@ -276,7 +271,7 @@ function class:registerCommands()
     end
   end
 
-  self:registerCommand("define", function(options, content)
+  self:registerCommand("define", function (options, content)
     SU.required(options, "command", "defining command")
     if type(content) == "function" then
       -- A macro defined as a function can take no argument, so we register
@@ -286,7 +281,7 @@ function class:registerCommands()
     elseif options.command == "process" then
       SU.warn("Did you mean to re-definine the `\\process` macro? That probably won't go well.")
     end
-    self:registerCommand(options["command"], function(_, inner_content)
+    self:registerCommand(options["command"], function (_, inner_content)
       SU.debug("macros", "Processing macro \\" .. options["command"])
       local macroArg
       if type(inner_content) == "function" then
@@ -309,7 +304,7 @@ function class:registerCommands()
   end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
   -- A utility function that allows SILE.call() to be used as a noop wrapper.
-  self:registerCommand("noop", function(_, content)
+  self:registerCommand("noop", function (_, content)
     SILE.process(content)
   end)
 
@@ -318,21 +313,21 @@ function class:registerCommands()
   -- actually handled by SILE.inputter:classInit() before we get here, so these
   -- are just pass through functions. Theoretically, this could be a useful
   -- point to hook into-especially for included documents.
-  self:registerCommand("document", function(_, content)
+  self:registerCommand("document", function (_, content)
     SILE.process(content)
   end)
-  self:registerCommand("sile", function(_, content)
+  self:registerCommand("sile", function (_, content)
     SILE.process(content)
   end)
 
-  self:registerCommand("comment", function(_, _)
+  self:registerCommand("comment", function (_, _)
   end, "Ignores any text within this command's body.")
 
-  self:registerCommand("process", function()
+  self:registerCommand("process", function ()
     SU.error("Encountered unsubstituted \\process.")
   end, "Within a macro definition, processes the contents of the macro body.")
 
-  self:registerCommand("script", function(options, content)
+  self:registerCommand("script", function (options, content)
     local packopts = packOptions(options)
     if SU.hasContent(content) then
       return SILE.processString(content[1], options.format or "lua", nil, packopts)
@@ -344,7 +339,7 @@ function class:registerCommands()
     end
   end, "Runs lua code. The code may be supplied either inline or using src=...")
 
-  self:registerCommand("include", function(options, content)
+  self:registerCommand("include", function (options, content)
     local packopts = packOptions(options)
     if SU.hasContent(content) then
       local doc = SU.contentToString(content)
@@ -356,7 +351,7 @@ function class:registerCommands()
     end
   end, "Includes a content file for processing.")
 
-  self:registerCommand("lua", function(options, content)
+  self:registerCommand("lua", function (options, content)
     local packopts = packOptions(options)
     if SU.hasContent(content) then
       local doc = SU.contentToString(content)
@@ -369,10 +364,9 @@ function class:registerCommands()
     else
       SU.error("\\lua function requires inline content or a src file path or a require module name")
     end
-  end,
-    "Run Lua code. The code may be supplied either inline, using require=... for a Lua module, or using src=... for a file path")
+  end, "Run Lua code. The code may be supplied either inline, using require=... for a Lua module, or using src=... for a file path")
 
-  self:registerCommand("sil", function(options, content)
+  self:registerCommand("sil", function (options, content)
     local packopts = packOptions(options)
     if SU.hasContent(content) then
       local doc = SU.contentToString(content)
@@ -384,7 +378,7 @@ function class:registerCommands()
     end
   end, "Process sil content. The content may be supplied either inline or using src=...")
 
-  self:registerCommand("xml", function(options, content)
+  self:registerCommand("xml", function (options, content)
     local packopts = packOptions(options)
     if SU.hasContent(content) then
       local doc = SU.contentToString(content)
@@ -396,32 +390,30 @@ function class:registerCommands()
     end
   end, "Process xml content. The content may be supplied either inline or using src=...")
 
-  self:registerCommand("use", function(options, content)
+  self:registerCommand("use", function (options, content)
     local packopts = packOptions(options)
     if content[1] and string.len(content[1]) > 0 then
       local doc = SU.contentToString(content)
       SILE.processString(doc, "lua", nil, packopts)
     else
       if options.src then
-        SU.warn(
-        "Use of 'src' with \\use is discouraged because some of it's path handling\n  will eventually be deprecated. Use 'module' instead when possible.")
+        SU.warn("Use of 'src' with \\use is discouraged because some of it's path handling\n  will eventually be deprecated. Use 'module' instead when possible.")
         SILE.processFile(options.src, "lua", packopts)
       else
         local module = SU.required(options, "module", "use")
         SILE.use(module, packopts)
       end
     end
-  end,
-    "Load and initialize a SILE module (can be a package, a shaper, a typesetter, or whatever). Use module=... to specif what to load or include module code inline.")
+  end, "Load and initialize a SILE module (can be a package, a shaper, a typesetter, or whatever). Use module=... to specif what to load or include module code inline.")
 
-  self:registerCommand("raw", function(options, content)
+  self:registerCommand("raw", function (options, content)
     local rawtype = SU.required(options, "type", "raw")
     local handler = SILE.rawHandlers[rawtype]
-    if not handler then SU.error("No inline handler for '" .. rawtype .. "'") end
+    if not handler then SU.error("No inline handler for '"..rawtype.."'") end
     handler(options, content)
   end, "Invoke a raw passthrough handler")
 
-  self:registerCommand("pagetemplate", function(options, content)
+  self:registerCommand("pagetemplate", function (options, content)
     SILE.typesetter:pushState()
     SILE.documentState.thisPageTemplate = { frames = {} }
     SILE.process(content)
@@ -430,11 +422,11 @@ function class:registerCommands()
     SILE.typesetter:popState()
   end, "Defines a new page template for the current page and sets the typesetter to use it.")
 
-  self:registerCommand("frame", function(options, _)
+  self:registerCommand("frame", function (options, _)
     SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(options)
   end, "Declares (or re-declares) a frame on this page.")
 
-  self:registerCommand("penalty", function(options, _)
+  self:registerCommand("penalty", function (options, _)
     if SU.boolean(options.vertical, false) and not SILE.typesetter:vmode() then
       SILE.typesetter:leaveHmode()
     end
@@ -445,7 +437,7 @@ function class:registerCommands()
     end
   end, "Inserts a penalty node. Option is penalty= for the size of the penalty.")
 
-  self:registerCommand("discretionary", function(options, _)
+  self:registerCommand("discretionary", function (options, _)
     local discretionary = SILE.nodefactory.discretionary({})
     if options.prebreak then
       local hbox = SILE.typesetter:makeHbox({ options.prebreak })
@@ -462,17 +454,17 @@ function class:registerCommands()
     table.insert(SILE.typesetter.state.nodes, discretionary)
   end, "Inserts a discretionary node.")
 
-  self:registerCommand("glue", function(options, _)
+  self:registerCommand("glue", function (options, _)
     local width = SU.cast("length", options.width):absolute()
     SILE.typesetter:pushGlue(width)
   end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-  self:registerCommand("kern", function(options, _)
+  self:registerCommand("kern", function (options, _)
     local width = SU.cast("length", options.width):absolute()
     SILE.typesetter:pushHorizontal(SILE.nodefactory.kern(width))
   end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-  self:registerCommand("skip", function(options, _)
+  self:registerCommand("skip", function (options, _)
     options.discardable = SU.boolean(options.discardable, false)
     options.height = SILE.length(options.height):absolute()
     SILE.typesetter:leaveHmode()
@@ -483,12 +475,13 @@ function class:registerCommands()
     end
   end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
-  self:registerCommand("par", function(_, _)
+  self:registerCommand("par", function (_, _)
     SILE.typesetter:endline()
   end, "Ends the current paragraph.")
+
 end
 
-function class:initialFrame()
+function class:initialFrame ()
   SILE.documentState.thisPageTemplate = pl.tablex.deepcopy(self.pageTemplate)
   SILE.frames = { page = SILE.frames.page }
   for k, v in pairs(SILE.documentState.thisPageTemplate.frames) do
@@ -501,7 +494,7 @@ function class:initialFrame()
   return SILE.documentState.thisPageTemplate.firstContentFrame
 end
 
-function class:declareFrame(id, spec)
+function class:declareFrame (id, spec)
   spec.id = id
   if spec.solve then
     self.pageTemplate.frames[id] = spec
@@ -519,14 +512,14 @@ function class:declareFrame(id, spec)
   -- })
 end
 
-function class:declareFrames(specs)
+function class:declareFrames (specs)
   if specs then
     for k, v in pairs(specs) do self:declareFrame(k, v) end
   end
 end
 
 -- WARNING: not called as class method
-function class.newPar(typesetter)
+function class.newPar (typesetter)
   local parindent = SILE.settings:get("current.parindent") or SILE.settings:get("document.parindent")
   -- See https://github.com/sile-typesetter/sile/issues/1361
   -- The parindent *cannot* be pushed non-absolutized, as it may be evaluated
@@ -552,7 +545,7 @@ function class.newPar(typesetter)
 end
 
 -- WARNING: not called as class method
-function class.endPar(typesetter)
+function class.endPar (typesetter)
   typesetter:pushVglue(SILE.settings:get("document.parskip"))
   if SILE.settings:get("current.hangIndent") then
     SILE.settings:set("current.hangIndent", nil)
@@ -564,14 +557,14 @@ function class.endPar(typesetter)
   end
 end
 
-function class:newPage()
+function class:newPage ()
   SILE.outputter:newPage()
   self:runHooks("newpage")
   -- Any other output-routiney things will be done here by inheritors
   return self:initialFrame()
 end
 
-function class:endPage()
+function class:endPage ()
   SILE.typesetter.frame:leave(SILE.typesetter)
   self:runHooks("endpage")
   -- I'm trying to call up a new frame here, don't cause a page break in the current one
@@ -579,7 +572,7 @@ function class:endPage()
   -- Any other output-routiney things will be done here by inheritors
 end
 
-function class:finish()
+function class:finish ()
   SILE.inputter:postamble()
   SILE.call("vfill")
   while not SILE.typesetter:isQueueEmpty() do
