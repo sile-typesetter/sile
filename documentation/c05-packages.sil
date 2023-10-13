@@ -98,7 +98,7 @@ As well as processing text, SILE can also include images.
 
 \section{Text & Characters}
 
-This section covers a range of diffent topics from initial capitals to text transforms, through URL formatting.
+This section covers a range of different topics from initial capitals to text transforms, through URL formatting.
 
 \subsection{dropcaps}
 \status:high

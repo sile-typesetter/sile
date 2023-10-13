@@ -101,7 +101,7 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
   -- runtime but not useful if we encounter deprecated code in core code. Users
   -- will never encounter this failure, but as a developer it’s hard to test a
   -- deprecation when core code refactoring is an all-or-nothing proposition.
-  -- Hence we fake it ‘till we make it, all deprecations internally are warings.
+  -- Hence we fake it ‘till we make it, all deprecations internally are warnings.
   local brackets = old:sub(1,1) == '\\' and "" or "()"
   local _new = new and "Please use " .. (new .. brackets) .. " instead." or "Plase don't use it."
   local msg = (old .. brackets) .. " was deprecated in SILE v" .. tostring(warnat) .. ". " .. _new ..  (extra and "\n" .. extra .. "\n\n" or "")
