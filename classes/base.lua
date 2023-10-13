@@ -8,7 +8,6 @@ class.deferredInit = {}
 class.pageTemplate = { frames = {}, firstContentFrame = nil }
 class.defaultFrameset = {}
 class.firstContentFrame = "page"
-
 class.options = setmetatable({}, {
   _opts = {},
   __newindex = function(self, key, value)
@@ -24,12 +23,8 @@ class.options = setmetatable({}, {
     end
   end,
   __index = function(self, key)
-    if key == "super" then
-      return nil
-    end
-    if type(key) == "number" then
-      return nil
-    end
+    if key == "super" then return nil end
+    if type(key) == "number" then return nil end
     local opt = getmetatable(self)._opts[key]
     if type(opt) == "function" then
       return opt(class)
@@ -40,8 +35,6 @@ class.options = setmetatable({}, {
     end
   end
 })
-
-
 class.hooks = {
   newpage = {},
   endpage = {},
@@ -117,10 +110,12 @@ function class:declareOptions()
   end)
 
   self:declareOption("orientation", function(_, orientation)
-    if orientation then
-      self.orientation = orientation
-      SILE.documentState.orientation = orientation
+    if orientation == "landscape" then
+      self.orientation = true
+    elseif orientation == "portrait" then
+      self.orientation = false
     end
+    SILE.documentState.orientation = self.orientation
     return self.orientation
   end)
 
@@ -362,19 +357,19 @@ function class:registerCommands()
   end, "Includes a content file for processing.")
 
   self:registerCommand("lua", function(options, content)
-      local packopts = packOptions(options)
-      if SU.hasContent(content) then
-        local doc = SU.contentToString(content)
-        return SILE.processString(doc, "lua", nil, packopts)
-      elseif options.src then
-        return SILE.processFile(options.src, "lua", packopts)
-      elseif options.require then
-        local module = SU.required(options, "require", "lua")
-        return require(module)
-      else
-        SU.error("\\lua function requires inline content or a src file path or a require module name")
-      end
-    end,
+    local packopts = packOptions(options)
+    if SU.hasContent(content) then
+      local doc = SU.contentToString(content)
+      return SILE.processString(doc, "lua", nil, packopts)
+    elseif options.src then
+      return SILE.processFile(options.src, "lua", packopts)
+    elseif options.require then
+      local module = SU.required(options, "require", "lua")
+      return require(module)
+    else
+      SU.error("\\lua function requires inline content or a src file path or a require module name")
+    end
+  end,
     "Run Lua code. The code may be supplied either inline, using require=... for a Lua module, or using src=... for a file path")
 
   self:registerCommand("sil", function(options, content)
@@ -402,21 +397,21 @@ function class:registerCommands()
   end, "Process xml content. The content may be supplied either inline or using src=...")
 
   self:registerCommand("use", function(options, content)
-      local packopts = packOptions(options)
-      if content[1] and string.len(content[1]) > 0 then
-        local doc = SU.contentToString(content)
-        SILE.processString(doc, "lua", nil, packopts)
+    local packopts = packOptions(options)
+    if content[1] and string.len(content[1]) > 0 then
+      local doc = SU.contentToString(content)
+      SILE.processString(doc, "lua", nil, packopts)
+    else
+      if options.src then
+        SU.warn(
+        "Use of 'src' with \\use is discouraged because some of it's path handling\n  will eventually be deprecated. Use 'module' instead when possible.")
+        SILE.processFile(options.src, "lua", packopts)
       else
-        if options.src then
-          SU.warn(
-            "Use of 'src' with \\use is discouraged because some of it's path handling\n  will eventually be deprecated. Use 'module' instead when possible.")
-          SILE.processFile(options.src, "lua", packopts)
-        else
-          local module = SU.required(options, "module", "use")
-          SILE.use(module, packopts)
-        end
+        local module = SU.required(options, "module", "use")
+        SILE.use(module, packopts)
       end
-    end,
+    end
+  end,
     "Load and initialize a SILE module (can be a package, a shaper, a typesetter, or whatever). Use module=... to specif what to load or include module code inline.")
 
   self:registerCommand("raw", function(options, content)

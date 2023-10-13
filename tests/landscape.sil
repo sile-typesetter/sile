@@ -1,8 +1,4 @@
-\document[orientation=landscape,papersize=a5]{
-%\use[module=packages.frametricks]
-%\showframe[id=all]
-
+\begin[orientation=landscape,papersize=a5]{document}
 \use[module=packages.lorem]
 \lorem[words=1000]
-
-}
+\end{document}

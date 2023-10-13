@@ -63,14 +63,14 @@ local papersize = {
 }
 
 setmetatable(papersize, {
-  __call = function(self, size, orientation)
+  __call = function(self, size, landscape)
     local _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
     if x and y then
       return { SILE.measurement(x):tonumber(), SILE.measurement(y):tonumber() }
     else
       size = string.lower(size:gsub("[-%s]+", ""))
       if self[size] then
-        if orientation == "landscape" then
+        if landscape then
           self[size][1], self[size][2] = self[size][2], self[size][1]
           return self[size]
         else
