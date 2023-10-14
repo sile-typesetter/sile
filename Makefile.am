@@ -151,7 +151,11 @@ _DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTF
 # TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
 # these subdirs don't do crazy things like copying files outside of their own trees!
 _BUILT_SUBDIRS = .built-subdirs
-_SUBDIR_TELLS = justenoughfontconfig.so justenoughharfbuzz.so justenoughicu.so justenoughlibtexpdf.so libtexpdf/.libs/libtexpdf.so.0.0.0
+_SUBDIR_TELLS = justenough/.libs/justenoughfontconfig.so \
+				justenough/.libs/justenoughharfbuzz.so \
+				justenough/.libs/justenoughicu.so \
+				justenough/.libs/justenoughlibtexpdf.so \
+				libtexpdf/.libs/libtexpdf.so.0.0.0
 $(_BUILT_SUBDIRS): $(_SUBDIR_TELLS)
 	touch $@
 
