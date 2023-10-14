@@ -114,6 +114,10 @@ dist: sile-$(VERSION).pdf sile-$(VERSION).md
 sile-$(VERSION).pdf: $(MANUAL)
 	cp $(MANUAL) $@
 
+sile-%.md: CHANGELOG.md
+	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' CHANGELOG.md | \
+		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
+
 check: selfcheck
 
 .PHONY: selfcheck
@@ -202,10 +206,6 @@ release-preview:
 	npm run release -- --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
 
 release: tagrelease
-
-sile-%.md: CHANGELOG.md
-	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' CHANGELOG.md | \
-		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
 update_libtexpdf:
 	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
