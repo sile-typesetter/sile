@@ -54,6 +54,10 @@ lto = true
   version = "0.9"
   features = [ "macros" ]
 
+  [dependencies.rust-embed]
+  version = "8.0"
+  optional = true
+
 [build-dependencies]
 
   [build-dependencies.clap_complete]
