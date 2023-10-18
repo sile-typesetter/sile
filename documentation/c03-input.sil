@@ -66,7 +66,7 @@ In Chapter 4 we will meet more of these relative units, and in Chapter 7 we will
 The orientation of the page is defined as "portrait" by default, but if you want to set it as landscape there is an option for that:
 
 \begin[type=autodoc:codeblock]{raw}
-\begin[orientation=landscape]{document}
+\begin[landscape=true]{document}
 \end{raw}
 
 \section{Ordinary text}
