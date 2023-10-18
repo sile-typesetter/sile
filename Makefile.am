@@ -54,13 +54,19 @@ endif
 
 $(MANUAL): $(FIGURES)
 
+BUILT_LUA_SOURCES = core/features.lua core/pathsetup.lua core/version.lua
+
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
 dist_man_MANS = sile-lua.1
 sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
 EXTRA_sile_SOURCES =
+if EMBEDED_RESOURCES
+export EMBEDED_LUA_RESOURCES = $(SILEDATA) $(LUALIBRARIES) $(BUILT_LUA_SOURCES) $(LUAMODULES)
+else
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
-nobase_nodist_pkgdata_DATA = core/features.lua core/pathsetup.lua core/version.lua $(LUAMODULES)
+nobase_nodist_pkgdata_DATA = $(BUILT_LUA_SOURCES) $(LUAMODULES)
+endif
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE.md
@@ -72,7 +78,7 @@ EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL) $(FIGURES)
 
-BUILT_SOURCES = core/features.lua core/pathsetup.lua core/version.lua Makefile-distfiles
+BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
 
 CLEANFILES = $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS)
 
@@ -90,6 +96,10 @@ CARGO_FEATURE_ARGS = --features $(MLUAVER)
 
 if !SYSTEM_LUA_SOURCES
 CARGO_FEATURE_ARGS += --features vendored
+endif
+
+if EMBEDED_RESOURCES
+CARGO_FEATURE_ARGS += --features embed
 endif
 
 DEPDIR := .deps
