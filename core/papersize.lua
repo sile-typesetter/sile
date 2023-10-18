@@ -63,26 +63,24 @@ local papersize = {
 }
 
 setmetatable(papersize, {
-  __call = function(self, size, landscape)
-    local _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
-    if x and y then
-      return { SILE.measurement(x):tonumber(), SILE.measurement(y):tonumber() }
-    else
-      size = string.lower(size:gsub("[-%s]+", ""))
-      if self[size] then
-        if landscape then
-          self[size][1], self[size][2] = self[size][2], self[size][1]
-          return self[size]
-        else
+    __call = function (self, size, landscape)
+      local _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
+      if x and y then
+        return { SILE.measurement(x):tonumber(), SILE.measurement(y):tonumber() }
+      else
+        size = string.lower(size:gsub("[-%s]+", ""))
+        if self[size] then
+          if landscape then
+            self[size][1], self[size][2] = self[size][2], self[size][1]
+          end
           return self[size]
         end
       end
-    end
-    SU.error(string.format([[Unable to parse papersize '%s'.
+      SU.error(string.format([[Unable to parse papersize '%s'.
   Custom sizes may be entered with 'papersize=<measurement> x <measurement>'.
   Predefined paper sizes include: %s]],
-      size, table.concat(pl.tablex.keys(papersize), ", ")))
-  end
-})
+  size, table.concat(pl.tablex.keys(papersize), ", ")))
+    end
+  })
 
 return papersize

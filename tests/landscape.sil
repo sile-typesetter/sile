@@ -1,4 +1,2 @@
-\begin[orientation=landscape,papersize=a5]{document}
-\use[module=packages.lorem]
-\lorem[words=1000]
+\begin[landscape=true]{document}
 \end{document}

@@ -79,7 +79,7 @@ end
 
 function class:setOptions (options)
   options = options or {}
-  self.options.orientation = options.orientation or "portrait"
+  self.options.landscape = options.landscape or false
   options.papersize = options.papersize or "a4"
   for option, value in pairs(options) do
     self.options[option] = value
@@ -102,19 +102,17 @@ function class:declareOptions ()
     end
     return self._name
   end)
-  self:declareOption("orientation", function(_, orientation)
-    if orientation == "landscape" then
-      self.orientation = true
-    elseif orientation == "portrait" then
-      self.orientation = false
+  self:declareOption("landscape", function(_, landscape)
+    if landscape then
+      self.landscape = landscape
     end
-    SILE.documentState.orientation = self.orientation
-    return self.orientation
+    SILE.documentState.landscape = self.landscape
+    return self.landscape
   end)
   self:declareOption("papersize", function (_, size)
     if size then
       self.papersize = size
-      SILE.documentState.paperSize = SILE.papersize(size)
+      SILE.documentState.paperSize = SILE.papersize(size, self.options.landscape)
       SILE.documentState.orgPaperSize = SILE.documentState.paperSize
       SILE.newFrame({
         id = "page",
