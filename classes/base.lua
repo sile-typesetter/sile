@@ -79,7 +79,7 @@ end
 
 function class:setOptions (options)
   options = options or {}
-  self.options.landscape = options.landscape or false
+  self.options.landscape = SU.boolean(options.landscape, false)
   options.papersize = options.papersize or "a4"
   for option, value in pairs(options) do
     self.options[option] = value
@@ -103,10 +103,10 @@ function class:declareOptions ()
     return self._name
   end)
   self:declareOption("landscape", function(_, landscape)
-    if landscape then
-      self.landscape = landscape
+      if landscape then
+        self.landscape = SU.boolean(landscape, false)
+        SILE.documentState.landscape = self.landscape
     end
-    SILE.documentState.landscape = self.landscape
     return self.landscape
   end)
   self:declareOption("papersize", function (_, size)
