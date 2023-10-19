@@ -70,7 +70,7 @@ setmetatable(papersize, {
       else
         size = string.lower(size:gsub("[-%s]+", ""))
         if self[size] then
-          if SU.boolean(landscape) then
+          if landscape then
             self[size][1], self[size][2] = self[size][2], self[size][1]
           end
           return self[size]
