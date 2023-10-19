@@ -58,6 +58,7 @@ lto = true
   [dependencies.rust-embed]
   version = "8.0"
   optional = true
+  features = [ "include-exclude" ]
 
 [build-dependencies]
 

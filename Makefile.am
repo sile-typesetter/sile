@@ -59,11 +59,9 @@ BUILT_LUA_SOURCES = core/features.lua core/pathsetup.lua core/version.lua
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
 dist_man_MANS = sile-lua.1
-sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
+sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs src/embed.rs src/embed-includes.rs
 EXTRA_sile_SOURCES =
-if EMBEDED_RESOURCES
-export EMBEDED_LUA_RESOURCES = $(SILEDATA) $(LUALIBRARIES) $(BUILT_LUA_SOURCES) $(LUAMODULES)
-else
+if !EMBEDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = $(BUILT_LUA_SOURCES) $(LUAMODULES)
 endif
@@ -78,7 +76,7 @@ EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL) $(FIGURES)
 
-BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
+BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles src/embed-includes.rs src/embed.rs
 
 CLEANFILES = $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS)
 
@@ -86,6 +84,22 @@ include $(top_srcdir)/build-aux/rust_boilerplate.mk
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@
+
+if EMBEDED_RESOURCES
+export EMBEDED_LUA_RESOURCES = $(SILEDATA) $(LUALIBRARIES) $(BUILT_LUA_SOURCES) $(LUAMODULES)
+
+src/embed-includes.rs: Makefile-distfiles
+	cat << EOF | sed -e '/^$$/d' > $@
+	$(foreach FILE,$(EMBEDED_LUA_RESOURCES),#[include = "$(FILE)"]
+	)
+	EOF
+
+src/embed.rs: src/embed.rs.in src/embed-includes.rs
+	$(SED) \
+		-e '/@INCLUDE_EMDED_INCLUDES@/r $(word 2,$^)' \
+		-e '/@INCLUDE_EMDED_INCLUDES@/d' \
+		$< > $@
+endif EMBEDED_RESOURCES
 
 if LUAJIT
 MLUAVER = luajit

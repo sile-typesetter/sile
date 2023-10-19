@@ -1,8 +1,14 @@
+// rust-embed include attributes have issues with lots of matches...
+#![recursion_limit = "2048"]
+
 use mlua::chunk;
 use mlua::prelude::*;
 use std::{env, path::PathBuf};
 #[cfg(feature = "cli")]
 pub mod cli;
+
+#[cfg(feature = "embed")]
+pub mod embed;
 
 pub type Result<T> = anyhow::Result<T>;
 
@@ -53,6 +59,7 @@ pub fn run(
     traceback: bool,
 ) -> crate::Result<()> {
     let lua = unsafe { Lua::unsafe_new() };
+    crate::embed::gmod(&lua);
     let sile_path = match env::var("SILE_PATH") {
         Ok(val) => val,
         Err(_) => env!("CONFIGURE_DATADIR").to_string(),

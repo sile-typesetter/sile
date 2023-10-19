@@ -1,0 +1,40 @@
+use mlua::prelude::*;
+use rust_embed::RustEmbed;
+use std::str;
+
+/// Embed everything that would otherwise be installed to datadir
+#[derive(RustEmbed)]
+#[folder = "."]
+// @INCLUDE_EMDED_INCLUDES@ -- this marker line gets replaced by a list of includes
+#[exclude = "*"]
+pub struct SileModules;
+
+pub fn gmod (lua: &Lua) {
+  let package: LuaTable = lua.globals().get("package").unwrap();
+
+  let loaders: LuaValue = package.get("loaders").unwrap();
+  if let LuaValue::Table(loaders) = loaders {
+    dbg!(loaders.clone());
+
+    loaders.push(LuaFunction::wrap(|lua, path: String| {
+      dbg!(path.clone());
+      let embeded = SileModules::get(&path);
+      match embeded {
+	Some(module) => {
+	  return LuaFunction::wrap(move |lua, ()| {
+	    let data = str::from_utf8(module.data.as_ref()).expect("Embeded content is not valid UTF-8");
+	    lua.create_string(data)
+	  }).into_lua(lua)
+	},
+	None => format!("Module {path} is not embeded in Rust binary").into_lua(lua)
+      }
+    })).unwrap();
+
+    lua.load(r#"print("fizzle", require("core.version"))"#).exec().unwrap();
+  }
+
+  let searchers: LuaValue = package.get("searchers").unwrap();
+  if let LuaValue::Table(searchers) = searchers {
+    dbg!(searchers);
+  }
+}
