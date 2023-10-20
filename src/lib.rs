@@ -12,27 +12,45 @@ pub mod embed;
 
 pub type Result<T> = anyhow::Result<T>;
 
-pub fn version() -> crate::Result<String> {
+pub fn start_luavm() -> crate::Result<Lua> {
     let lua = unsafe { Lua::unsafe_new() };
+    #[cfg(feature = "embed")]
+    crate::embed::inject_embeded_loader(&lua);
+    inject_paths(&lua);
+    inject_version(&lua);
+    Ok(lua)
+}
+
+pub fn inject_paths(lua: &Lua) {
     let sile_path = match env::var("SILE_PATH") {
         Ok(val) => val,
         Err(_) => env!("CONFIGURE_DATADIR").to_string(),
     };
-    let sile_path: LuaString = lua.create_string(&sile_path)?;
-    let sile: LuaTable = lua
-        .load(chunk! {
-            local status
-            for path in string.gmatch($sile_path, "[^;]+") do
-                status = pcall(dofile, path .. "/core/pathsetup.lua")
-                if status then break end
-            end
-            if not status then
-                dofile("./core/pathsetup.lua")
-            end
-            return require("core.sile")
-        })
-        .eval()?;
-    let mut full_version: String = sile.get("full_version")?;
+    let sile_path: LuaString = lua.create_string(&sile_path).unwrap();
+    lua.load(chunk! {
+        local status
+        for path in string.gmatch($sile_path, "[^;]+") do
+            status = pcall(dofile, path .. "/core/pathsetup.lua")
+            if status then break end
+        end
+        if not status then
+            dofile("./core/pathsetup.lua")
+        end
+    })
+    .exec()
+    .unwrap();
+}
+
+pub fn inject_version(lua: &Lua) {
+    let sile: LuaTable = lua.globals().get("SILE").unwrap();
+    let mut full_version: String = sile.get("full_version").unwrap();
+    full_version.push_str(" [Rust]");
+}
+
+pub fn version() -> crate::Result<String> {
+    let lua = start_luavm()?;
+    let sile: LuaTable = lua.globals().get("SILE").unwrap();
+    let mut full_version: String = sile.get("full_version").unwrap();
     full_version.push_str(" [Rust]");
     Ok(full_version)
 }
@@ -58,29 +76,8 @@ pub fn run(
     quiet: bool,
     traceback: bool,
 ) -> crate::Result<()> {
-    let lua = unsafe { Lua::unsafe_new() };
-    crate::embed::gmod(&lua);
-    let sile_path = match env::var("SILE_PATH") {
-        Ok(val) => val,
-        Err(_) => env!("CONFIGURE_DATADIR").to_string(),
-    };
-    let sile_path: LuaString = lua.create_string(&sile_path)?;
-    let sile: LuaTable = lua
-        .load(chunk! {
-            local status
-            for path in string.gmatch($sile_path, "[^;]+") do
-                status = pcall(dofile, path .. "/core/pathsetup.lua")
-                if status then break end
-            end
-            if not status then
-                dofile("./core/pathsetup.lua")
-            end
-            return require("core.sile")
-        })
-        .eval()?;
-    let mut full_version: String = sile.get("full_version")?;
-    full_version.push_str(" [Rust]");
-    sile.set("full_version", full_version)?;
+    let lua = start_luavm()?;
+    let sile: LuaTable = lua.globals().get("SILE")?;
     sile.set("traceback", traceback)?;
     sile.set("quiet", quiet)?;
     let mut has_input_filename = false;

@@ -9,16 +9,16 @@ use std::str;
 #[exclude = "*"]
 pub struct SileModules;
 
-pub fn gmod (lua: &Lua) {
+pub fn inject_embeded_loader (lua: &Lua) {
   let package: LuaTable = lua.globals().get("package").unwrap();
 
   let loaders: LuaValue = package.get("loaders").unwrap();
   if let LuaValue::Table(loaders) = loaders {
     dbg!(loaders.clone());
 
-    loaders.push(LuaFunction::wrap(|lua, path: String| {
-      dbg!(path.clone());
-      let embeded = SileModules::get(&path);
+    loaders.push(LuaFunction::wrap(|lua, module: String| {
+      dbg!(module.clone());
+      let embeded = SileModules::get(&module);
       match embeded {
 	Some(module) => {
 	  return LuaFunction::wrap(move |lua, ()| {
@@ -26,11 +26,13 @@ pub fn gmod (lua: &Lua) {
 	    lua.create_string(data)
 	  }).into_lua(lua)
 	},
-	None => format!("Module {path} is not embeded in Rust binary").into_lua(lua)
+	None => format!("Module {module} is not embeded in Rust binary").into_lua(lua)
       }
     })).unwrap();
 
-    lua.load(r#"print("fizzle", require("core.version"))"#).exec().unwrap();
+    dbg!(loaders.clone());
+
+    lua.load(r#"print("fizzle", require("core/version.lua"))"#).exec().unwrap();
   }
 
   let searchers: LuaValue = package.get("searchers").unwrap();
