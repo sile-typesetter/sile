@@ -17,6 +17,7 @@ pub fn start_luavm() -> crate::Result<Lua> {
     #[cfg(feature = "embed")]
     crate::embed::inject_embeded_loader(&lua);
     inject_paths(&lua);
+    load_sile(&lua);
     inject_version(&lua);
     Ok(lua)
 }
@@ -45,6 +46,12 @@ pub fn inject_version(lua: &Lua) {
     let sile: LuaTable = lua.globals().get("SILE").unwrap();
     let mut full_version: String = sile.get("full_version").unwrap();
     full_version.push_str(" [Rust]");
+}
+
+pub fn load_sile(lua: &Lua) {
+    let entry: LuaString = lua.create_string("core.sile").unwrap();
+    let r#require: LuaFunction = lua.globals().get("require").unwrap();
+    r#require.call::<LuaString, ()>(entry).unwrap();
 }
 
 pub fn version() -> crate::Result<String> {

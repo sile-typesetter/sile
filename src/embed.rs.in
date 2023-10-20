@@ -1,5 +1,6 @@
+use mlua::chunk;
 use mlua::prelude::*;
-use rust_embed::RustEmbed;
+use rust_embed::{RustEmbed, EmbeddedFile};
 use std::str;
 
 /// Embed everything that would otherwise be installed to datadir
@@ -11,32 +12,49 @@ pub struct SileModules;
 
 pub fn inject_embeded_loader (lua: &Lua) {
   let package: LuaTable = lua.globals().get("package").unwrap();
-
-  let loaders: LuaValue = package.get("loaders").unwrap();
-  if let LuaValue::Table(loaders) = loaders {
-    dbg!(loaders.clone());
-
-    loaders.push(LuaFunction::wrap(|lua, module: String| {
-      dbg!(module.clone());
-      let embeded = SileModules::get(&module);
-      match embeded {
-	Some(module) => {
-	  return LuaFunction::wrap(move |lua, ()| {
-	    let data = str::from_utf8(module.data.as_ref()).expect("Embeded content is not valid UTF-8");
-	    lua.create_string(data)
-	  }).into_lua(lua)
-	},
-	None => format!("Module {module} is not embeded in Rust binary").into_lua(lua)
+  let loaders: LuaTable = match package.get("loaders").unwrap() {
+    LuaValue::Table(loaders) => loaders,
+    LuaValue::Nil => {
+      let loaders: LuaTable = package.get("searchers").unwrap();
+      loaders
+    },
+    _ => panic!("Unable to find approprate interface to inject embeded loader"),
+  };
+  loaders.push(LuaFunction::wrap(|lua, module: String| {
+    let luaversion: LuaString = lua.load(chunk! {
+      return _VERSION:match("%d+%.%d+")
+    }).eval().unwrap();
+    let luaversion: &str = luaversion.to_str().unwrap();
+    let mut package_epath: Vec<&str> = vec![
+      "?/init.lua",
+      "?.lua",
+      "lua-libraries/?.lua"
+    ];
+    let path = format!("lua_modules/lib/lua/{}/?/init.lua", luaversion);
+    package_epath.push(&path);
+    let path = format!("lua_modules/lib/lua/{}/?.lua", luaversion);
+    package_epath.push(&path);
+    let path = format!("lua_modules/share/lua/{}/?/init.lua", luaversion);
+    package_epath.push(&path);
+    let path = format!("lua_modules/share/lua/{}/?.lua", luaversion);
+    package_epath.push(&path);
+    let mut resource_option: Option<EmbeddedFile> = None;
+    for pattern in &package_epath {
+      let path = pattern.replace('?', &module);
+      let embeded = SileModules::get(&path);
+      if embeded.is_some() {
+	resource_option = embeded;
+	break;
       }
-    })).unwrap();
-
-    dbg!(loaders.clone());
-
-    lua.load(r#"print("fizzle", require("core/version.lua"))"#).exec().unwrap();
-  }
-
-  let searchers: LuaValue = package.get("searchers").unwrap();
-  if let LuaValue::Table(searchers) = searchers {
-    dbg!(searchers);
-  }
+    }
+    match resource_option {
+      Some(module) => {
+	return LuaFunction::wrap(move |lua, ()| {
+	  let data = str::from_utf8(module.data.as_ref()).expect("Embeded content is not valid UTF-8");
+	  lua.load(data).call::<_, LuaValue>(())
+	}).into_lua(lua)
+      },
+      None => format!("Module {module} is not embeded in Rust binary").into_lua(lua)
+    }
+  })).unwrap();
 }
