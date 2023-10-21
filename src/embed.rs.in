@@ -3,6 +3,13 @@ use mlua::prelude::*;
 use rust_embed::{RustEmbed, EmbeddedFile};
 use std::str;
 
+/// Embed C modules
+#[derive(RustEmbed)]
+#[folder = "./justenough/.libs/"]
+#[include = "*.so"]
+#[exclude = "*"]
+pub struct SileCModules;
+
 /// Embed everything that would otherwise be installed to datadir
 #[derive(RustEmbed)]
 #[folder = "."]
@@ -20,6 +27,18 @@ pub fn inject_embeded_loader (lua: &Lua) {
     },
     _ => panic!("Unable to find approprate interface to inject embeded loader"),
   };
+  loaders.push(LuaFunction::wrap(|lua, module: String| {
+    let embeded = SileCModules::get(&module);
+    match embeded {
+      Some(module) => {
+	return LuaFunction::wrap(move |lua, ()| {
+	  let data = module.data.as_ref();
+	  lua.create_string(data)
+	}).into_lua(lua)
+      },
+      None => format!("C Module '{module}' is not embeded in Rust binary").into_lua(lua)
+    }
+  })).unwrap();
   loaders.push(LuaFunction::wrap(|lua, module: String| {
     let module_path = module.replace('.', "/");
     let luaversion: LuaString = lua.load(chunk! {

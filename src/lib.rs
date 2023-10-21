@@ -26,11 +26,7 @@ pub fn start_luavm() -> crate::Result<Lua> {
 
 pub fn inject_paths(lua: &Lua) {
     #[cfg(feature = "embed")]
-    lua.load(chunk! {
-        require("core.pathsetup")
-    })
-    .exec()
-    .unwrap();
+    lua.load(r#"require("core.pathsetup")"#).exec().unwrap();
     #[cfg(not(feature = "embed"))]
     {
         let sile_path = match env::var("SILE_PATH") {
