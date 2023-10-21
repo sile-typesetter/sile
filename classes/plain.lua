@@ -310,9 +310,13 @@ function class:registerCommands ()
     SILE.settings:set("linebreak.tolerance", 10000)
   end)
 
-  self:registerCommand("center", function (_, content)
+  self:registerCommand("center", function (options, content)
     if #SILE.typesetter.state.nodes ~= 0 then
       SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
+    end
+    if SU.boolean(options.vertical) then
+      SILE.call("hbox")
+      SILE.call("vfill")
     end
     SILE.settings:temporarily(function()
       SILE.settings:set("current.parindent", 0)
