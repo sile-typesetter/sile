@@ -3,7 +3,9 @@
 
 use mlua::chunk;
 use mlua::prelude::*;
-use std::{env, path::PathBuf};
+#[cfg(not(feature = "embed"))]
+use std::env;
+use std::path::PathBuf;
 #[cfg(feature = "cli")]
 pub mod cli;
 
@@ -23,23 +25,32 @@ pub fn start_luavm() -> crate::Result<Lua> {
 }
 
 pub fn inject_paths(lua: &Lua) {
-    let sile_path = match env::var("SILE_PATH") {
-        Ok(val) => val,
-        Err(_) => env!("CONFIGURE_DATADIR").to_string(),
-    };
-    let sile_path: LuaString = lua.create_string(&sile_path).unwrap();
+    #[cfg(feature = "embed")]
     lua.load(chunk! {
-        local status
-        for path in string.gmatch($sile_path, "[^;]+") do
-            status = pcall(dofile, path .. "/core/pathsetup.lua")
-            if status then break end
-        end
-        if not status then
-            dofile("./core/pathsetup.lua")
-        end
+        require("core.pathsetup")
     })
     .exec()
     .unwrap();
+    #[cfg(not(feature = "embed"))]
+    {
+        let sile_path = match env::var("SILE_PATH") {
+            Ok(val) => val,
+            Err(_) => env!("CONFIGURE_DATADIR").to_string(),
+        };
+        let sile_path: LuaString = lua.create_string(&sile_path).unwrap();
+        lua.load(chunk! {
+            local status
+            for path in string.gmatch($sile_path, "[^;]+") do
+                status = pcall(dofile, path .. "/core/pathsetup.lua")
+                if status then break end
+            end
+            if not status then
+                dofile("./core/pathsetup.lua")
+            end
+        })
+        .exec()
+        .unwrap();
+    }
 }
 
 pub fn inject_version(lua: &Lua) {

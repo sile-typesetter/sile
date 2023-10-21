@@ -21,6 +21,7 @@ pub fn inject_embeded_loader (lua: &Lua) {
     _ => panic!("Unable to find approprate interface to inject embeded loader"),
   };
   loaders.push(LuaFunction::wrap(|lua, module: String| {
+    let module_path = module.replace('.', "/");
     let luaversion: LuaString = lua.load(chunk! {
       return _VERSION:match("%d+%.%d+")
     }).eval().unwrap();
@@ -40,7 +41,7 @@ pub fn inject_embeded_loader (lua: &Lua) {
     package_epath.push(&path);
     let mut resource_option: Option<EmbeddedFile> = None;
     for pattern in &package_epath {
-      let path = pattern.replace('?', &module);
+      let path = pattern.replace('?', &module_path);
       let embeded = SileModules::get(&path);
       if embeded.is_some() {
 	resource_option = embeded;
@@ -54,7 +55,7 @@ pub fn inject_embeded_loader (lua: &Lua) {
 	  lua.load(data).call::<_, LuaValue>(())
 	}).into_lua(lua)
       },
-      None => format!("Module {module} is not embeded in Rust binary").into_lua(lua)
+      None => format!("Module '{module}' is not embeded in Rust binary").into_lua(lua)
     }
   })).unwrap();
 }
