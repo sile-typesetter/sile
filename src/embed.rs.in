@@ -3,13 +3,6 @@ use mlua::prelude::*;
 use rust_embed::{RustEmbed, EmbeddedFile};
 use std::str;
 
-/// Embed C modules
-#[derive(RustEmbed)]
-#[folder = "./justenough/.libs/"]
-#[include = "*.so"]
-#[exclude = "*"]
-pub struct SileCModules;
-
 /// Embed everything that would otherwise be installed to datadir
 #[derive(RustEmbed)]
 #[folder = "."]
@@ -17,6 +10,20 @@ pub struct SileCModules;
 #[exclude = "*"]
 pub struct SileModules;
 
+// Link Lua loader functions from C modules that Lua would otherwise be loading externally that
+// we've linked into the CLI binary. Linking happens in build-aux/build.rs.
+extern "C-unwind" {
+  fn luaopen_fontmetrics(lua: *mut mlua::lua_State) -> i32;
+  fn luaopen_justenoughfontconfig(lua: *mut mlua::lua_State) -> i32;
+  fn luaopen_justenoughharfbuzz(lua: *mut mlua::lua_State) -> i32;
+  fn luaopen_justenoughicu(lua: *mut mlua::lua_State) -> i32;
+  fn luaopen_justenoughlibtexpdf(lua: *mut mlua::lua_State) -> i32;
+  fn luaopen_svg(lua: *mut mlua::lua_State) -> i32;
+}
+
+/// Register a Lua function in the loaders/searchers table to return C modules linked into the CLI
+/// binary and another to return embeded Lua resources as Lua modules. See discussion in mlua:
+/// https://github.com/khvzak/mlua/discussions/322
 pub fn inject_embeded_loader (lua: &Lua) {
   let package: LuaTable = lua.globals().get("package").unwrap();
   let loaders: LuaTable = match package.get("loaders").unwrap() {
@@ -28,15 +35,50 @@ pub fn inject_embeded_loader (lua: &Lua) {
     _ => panic!("Unable to find approprate interface to inject embeded loader"),
   };
   loaders.push(LuaFunction::wrap(|lua, module: String| {
-    let embeded = SileCModules::get(&module);
-    match embeded {
-      Some(module) => {
-	return LuaFunction::wrap(move |lua, ()| {
-	  let data = module.data.as_ref();
-	  lua.create_string(data)
+    match module.as_str() {
+      "fontmetrics" => {
+	LuaFunction::wrap(move |lua, ()| {
+	  let loader = unsafe { lua.create_c_function(luaopen_fontmetrics).unwrap() };
+	  let module: LuaTable = loader.call(()).unwrap();
+	  Ok(module)
 	}).into_lua(lua)
       },
-      None => format!("C Module '{module}' is not embeded in Rust binary").into_lua(lua)
+      "justenoughfontconfig" => {
+	LuaFunction::wrap(move |lua, ()| {
+	  let loader = unsafe { lua.create_c_function(luaopen_justenoughfontconfig).unwrap() };
+	  let module: LuaTable = loader.call(()).unwrap();
+	  Ok(module)
+	}).into_lua(lua)
+      },
+      "justenoughharfbuzz" => {
+	LuaFunction::wrap(move |lua, ()| {
+	  let loader = unsafe { lua.create_c_function(luaopen_justenoughharfbuzz).unwrap() };
+	  let module: LuaTable = loader.call(()).unwrap();
+	  Ok(module)
+	}).into_lua(lua)
+      },
+      "justenoughicu" => {
+	LuaFunction::wrap(move |lua, ()| {
+	  let loader = unsafe { lua.create_c_function(luaopen_justenoughicu).unwrap() };
+	  let module: LuaTable = loader.call(()).unwrap();
+	  Ok(module)
+	}).into_lua(lua)
+      },
+      "justenoughlibtexpdf" => {
+	LuaFunction::wrap(move |lua, ()| {
+	  let loader = unsafe { lua.create_c_function(luaopen_justenoughlibtexpdf).unwrap() };
+	  let module: LuaTable = loader.call(()).unwrap();
+	  Ok(module)
+	}).into_lua(lua)
+      },
+      "svg" => {
+	LuaFunction::wrap(move |lua, ()| {
+	  let loader = unsafe { lua.create_c_function(luaopen_svg).unwrap() };
+	  let module: LuaTable = loader.call(()).unwrap();
+	  Ok(module)
+	}).into_lua(lua)
+      },
+      _ => format!("C Module '{module}' is not linked in Rust binary").into_lua(lua)
     }
   })).unwrap();
   loaders.push(LuaFunction::wrap(|lua, module: String| {

@@ -6,9 +6,11 @@ use clap_complete::generator::generate_to;
 use clap_complete::shells::{Bash, Elvish, Fish, PowerShell, Zsh};
 #[cfg(feature = "manpage")]
 use clap_mangen::Man;
-use std::{collections, env};
 #[cfg(feature = "completions")]
-use std::{fs, path};
+use std::fs;
+#[cfg(any(feature = "embed", feature = "completions"))]
+use std::path::Path;
+use std::{collections, env};
 use vergen::EmitBuilder;
 
 #[cfg(feature = "completions")]
@@ -28,6 +30,30 @@ fn main() {
     generate_manpage();
     #[cfg(feature = "completions")]
     generate_shell_completions();
+    #[cfg(feature = "embed")]
+    {
+        let dir = env::var("CARGO_MANIFEST_DIR").unwrap();
+        println!(
+            "cargo:rustc-link-search=native={}",
+            Path::new(&dir).join("justenough").join(".libs").display()
+        );
+        println!("cargo:rustc-link-arg=-l:fontmetrics.a");
+        println!("cargo:rustc-link-arg=-l:justenoughfontconfig.a");
+        println!("cargo:rustc-link-arg=-l:justenoughharfbuzz.a");
+        println!("cargo:rustc-link-arg=-l:justenoughicu.a");
+        println!("cargo:rustc-link-arg=-l:justenoughlibtexpdf.a");
+        println!("cargo:rustc-link-arg=-l:svg.a");
+        println!("cargo:rustc-link-arg=-lharfbuzz");
+        println!("cargo:rustc-link-arg=-lharfbuzz-subset");
+        println!("cargo:rustc-link-arg=-lfontconfig");
+        println!("cargo:rustc-link-arg=-licui18n");
+        println!("cargo:rustc-link-arg=-licuuc");
+        println!(
+            "cargo:rustc-link-search=native={}",
+            Path::new(&dir).join("libtexpdf").join(".libs").display()
+        );
+        println!("cargo:rustc-link-arg=-ltexpdf");
+    }
 }
 
 /// Generate man page
@@ -37,7 +63,7 @@ fn generate_manpage() {
         None => return,
         Some(out_dir) => out_dir,
     };
-    let manpage_dir = path::Path::new(&out_dir);
+    let manpage_dir = Path::new(&out_dir);
     fs::create_dir_all(manpage_dir).expect("Unable to create directory for generated manpages");
     let app = Cli::command();
     let bin_name: &str = app
@@ -59,7 +85,7 @@ fn generate_shell_completions() {
         None => return,
         Some(out_dir) => out_dir,
     };
-    let completions_dir = path::Path::new(&out_dir).join("completions");
+    let completions_dir = Path::new(&out_dir).join("completions");
     fs::create_dir_all(&completions_dir)
         .expect("Could not create directory in which to place completions");
     let app = Cli::command();

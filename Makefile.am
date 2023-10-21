@@ -59,7 +59,7 @@ BUILT_LUA_SOURCES = core/features.lua core/pathsetup.lua core/version.lua
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
 dist_man_MANS = sile-lua.1
-sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs src/embed.rs src/embed-includes.rs
+sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
 EXTRA_sile_SOURCES =
 if !EMBEDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
@@ -76,7 +76,7 @@ EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL) $(FIGURES)
 
-BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles src/embed-includes.rs src/embed.rs
+BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
 
 CLEANFILES = $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS)
 
@@ -86,6 +86,9 @@ Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@
 
 if EMBEDED_RESOURCES
+sile_SOURCES += src/embed.rs src/embed-includes.rs
+BUILT_SOURCES += src/embed.rs src/embed-includes.rs
+
 export EMBEDED_LUA_RESOURCES = $(SILEDATA) $(LUALIBRARIES) $(BUILT_LUA_SOURCES) $(LUAMODULES)
 
 src/embed-includes.rs: Makefile-distfiles
@@ -113,7 +116,7 @@ CARGO_FEATURE_ARGS += --features vendored
 endif
 
 if EMBEDED_RESOURCES
-CARGO_FEATURE_ARGS += --features embed
+CARGO_FEATURE_ARGS += --features static
 endif
 
 DEPDIR := .deps
