@@ -174,7 +174,18 @@ function package:registerCommands ()
   end, "Breaks the current frame in two vertically at the current location or at a point <offset> below the current location")
 
   self:registerCommand("makecolumns", function (options, _)
+    local aligned = {}
+    options.columns = options.columns or 2
+    for key in pairs(SILE.frames) do
+      -- this must be checked before makecolumns() call, since the function changes the right() value of content
+      if SILE.getFrame(key):right() == SILE.getFrame("content"):right() and key ~= "content" then
+         table.insert(aligned, key)
+      end
+    end
     makecolumns(options)
+    for _, frame in ipairs(aligned) do
+      SILE.getFrame(frame):constrain("right", SILE.getFrame("content_col"..options.columns-1):right())
+    end
   end, "Split the current frame into multiple columns")
 
   self:registerCommand("breakframehorizontal", function (options, _)
