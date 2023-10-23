@@ -79,8 +79,12 @@ end
 
 function class:setOptions (options)
   options = options or {}
+  -- Classes that add options with dependencies should explicitly handle them, then exempt them from furthur processing.
+  -- The landscape option is handled explicitly before papersize, then the "rest" of options that are not interdependent.
   self.options.landscape = SU.boolean(options.landscape, false)
-  options.papersize = options.papersize or "a4"
+  options.landscape = nil
+  self.options.papersize = options.papersize or "a4"
+  options.papersize = nil
   for option, value in pairs(options) do
     self.options[option] = value
   end
@@ -103,9 +107,8 @@ function class:declareOptions ()
     return self._name
   end)
   self:declareOption("landscape", function(_, landscape)
-      if landscape then
-        self.landscape = SU.boolean(landscape, false)
-        SILE.documentState.landscape = self.landscape
+    if landscape then
+      self.landscape = landscape
     end
     return self.landscape
   end)
