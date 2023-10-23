@@ -61,6 +61,14 @@ Once some of the basic document properties have been set up using these fixed si
 For example, once the paper size is set, percentage of page width (\code{\%pw}) and height(\code{\%ph}) become valid units.
 In Chapter 4 we will meet more of these relative units, and in Chapter 7 we will meet some other ways of specifying lengths to make them stretchable or shrinkable.
 
+\subsection{Setting orientation as landscape}
+
+The orientation of the page is defined as "portrait" by default, but if you want to set it as landscape there is an option for that:
+
+\begin[type=autodoc:codeblock]{raw}
+\begin[landscape=true]{document}
+\end{raw}
+
 \section{Ordinary text}
 
 On the whole, ordinary text isn’t particularly interesting—it’s just typeset.
