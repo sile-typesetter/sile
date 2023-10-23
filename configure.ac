@@ -234,7 +234,14 @@ AC_SUBST([LUAROCKSARGS])
 
 AX_SUBST_TRANSFORMED_PACKAGE_NAME
 
-adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])
+# Avoid need for `--datarootdir=$(cd ..; pwd)` hack to run locally for
+# tests/manual build when developer mode is enabled
+AM_COND_IF([DEVELOPER], [
+    adl_RECURSIVE_EVAL(["$(pwd)"], [SILE_PATH])
+    datarootdir="$(cd ..; pwd)"
+],[
+    adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])
+])
 AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
 AC_SUBST([SILE_PATH])
 
