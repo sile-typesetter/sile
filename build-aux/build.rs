@@ -8,7 +8,7 @@ use clap_complete::shells::{Bash, Elvish, Fish, PowerShell, Zsh};
 use clap_mangen::Man;
 #[cfg(feature = "completions")]
 use std::fs;
-#[cfg(any(feature = "embed", feature = "completions"))]
+#[cfg(any(feature = "static", feature = "completions"))]
 use std::path::Path;
 use std::{collections, env};
 use vergen::EmitBuilder;
@@ -30,7 +30,7 @@ fn main() {
     generate_manpage();
     #[cfg(feature = "completions")]
     generate_shell_completions();
-    #[cfg(feature = "embed")]
+    #[cfg(feature = "static")]
     {
         let dir = env::var("CARGO_MANIFEST_DIR").unwrap();
         println!(

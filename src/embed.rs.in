@@ -6,8 +6,26 @@ use std::str;
 /// Embed everything that would otherwise be installed to datadir
 #[derive(RustEmbed)]
 #[folder = "."]
+#[exclude = ".*"]
+#[exclude = "*~"]
+#[exclude = "*.in"]
+#[exclude = "Make*"]
+#[exclude = "autom4te.cache/*"]
+#[exclude = "build-aux/*"]
+#[exclude = "cmake/*"]
+#[exclude = "completions/*"]
+#[exclude = "documentation/*"]
+#[exclude = "justenough/*"]
+#[exclude = "libtexpdf/*"]
+#[exclude = "libtexpdf/*"]
+#[exclude = "libtool"]
+#[exclude = "node_modules/*"]
+#[exclude = "rust-toolchain"]
+#[exclude = "sile*"]
+#[exclude = "src/*"]
+#[exclude = "target/*"]
+#[exclude = "tests/*"]
 // @INCLUDE_EMDED_INCLUDES@ -- this marker line gets replaced by a list of includes
-#[exclude = "*"]
 pub struct SileModules;
 
 // Link Lua loader functions from C modules that Lua would otherwise be loading externally that

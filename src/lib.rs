@@ -3,20 +3,20 @@
 
 use mlua::chunk;
 use mlua::prelude::*;
-#[cfg(not(feature = "embed"))]
+#[cfg(not(feature = "static"))]
 use std::env;
 use std::path::PathBuf;
 #[cfg(feature = "cli")]
 pub mod cli;
 
-#[cfg(feature = "embed")]
+#[cfg(feature = "static")]
 pub mod embed;
 
 pub type Result<T> = anyhow::Result<T>;
 
 pub fn start_luavm() -> crate::Result<Lua> {
     let lua = unsafe { Lua::unsafe_new() };
-    #[cfg(feature = "embed")]
+    #[cfg(feature = "static")]
     crate::embed::inject_embeded_loader(&lua);
     inject_paths(&lua);
     load_sile(&lua);
@@ -25,9 +25,9 @@ pub fn start_luavm() -> crate::Result<Lua> {
 }
 
 pub fn inject_paths(lua: &Lua) {
-    #[cfg(feature = "embed")]
+    #[cfg(feature = "static")]
     lua.load(r#"require("core.pathsetup")"#).exec().unwrap();
-    #[cfg(not(feature = "embed"))]
+    #[cfg(not(feature = "static"))]
     {
         let sile_path = match env::var("SILE_PATH") {
             Ok(val) => val,
