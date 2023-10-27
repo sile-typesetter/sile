@@ -7,7 +7,7 @@
 #include "hb-utils.h"
 
 
-int get_typographic_extents (lua_State *L) {
+int fm_get_typographic_extents (lua_State *L) {
   double upem;
   double ascender;
   double descender;
@@ -35,7 +35,7 @@ int get_typographic_extents (lua_State *L) {
 }
 
 
-int glyphwidth (lua_State* L) {
+int fm_glyphwidth (lua_State* L) {
   size_t font_l;
   unsigned int gid = luaL_checknumber(L, 1);
   hb_font_t* hbFont = get_hb_font(L, 2);
@@ -69,8 +69,8 @@ void luaL_setfuncs_fontmetrics (lua_State *L, const luaL_Reg *l, int nup) {
 #endif
 
 static const struct luaL_Reg lib_table [] = {
-  {"get_typographic_extents", get_typographic_extents},
-  {"glyphwidth", glyphwidth},
+  {"get_typographic_extents", fm_get_typographic_extents},
+  {"glyphwidth", fm_glyphwidth},
   {NULL, NULL}
 };
 

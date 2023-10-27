@@ -53,6 +53,7 @@ fn main() {
             Path::new(&dir).join("libtexpdf").join(".libs").display()
         );
         println!("cargo:rustc-link-arg=-ltexpdf");
+        println!("cargo:rustc-link-arg=-lm");
     }
 }
 

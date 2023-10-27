@@ -148,5 +148,3 @@ hb_font_t* get_hb_font(lua_State *L, int index) {
 
   return font;
 }
-
-

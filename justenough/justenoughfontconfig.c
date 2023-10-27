@@ -9,7 +9,7 @@
 
 #include "silewin32.h"
 
-int face_from_options(lua_State* L) {
+int je_face_from_options(lua_State* L) {
   FcChar8 * font_path, * fullname, * familyname;
   FcPattern* p;
   FcPattern* matched;
@@ -180,7 +180,7 @@ void luaL_setfuncs_fontconfig (lua_State *L, const luaL_Reg *l, int nup) {
 #endif
 
 static const struct luaL_Reg lib_table [] = {
-  {"_face", face_from_options},
+  {"_face", je_face_from_options},
   {NULL, NULL}
 };
 
@@ -189,4 +189,3 @@ int luaopen_justenoughfontconfig (lua_State *L) {
   luaL_setfuncs_fontconfig(L, lib_table, 0);
   return 1;
 }
-

@@ -119,7 +119,7 @@ getFileNameFromCTFont(CTFontRef ctFontRef, uint32_t *index)
 }
 
 
-int face_from_options(lua_State* L) {
+int je_face_from_options(lua_State* L) {
   uint32_t index = 0;
   const char *family = "Gentium";
   char * font_path;
@@ -204,7 +204,7 @@ int face_from_options(lua_State* L) {
 
 
 static const struct luaL_Reg lib_table [] = {
-  {"_face", face_from_options},
+  {"_face", je_face_from_options},
   {NULL, NULL}
 };
 
