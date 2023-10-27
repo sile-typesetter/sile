@@ -37,23 +37,27 @@ fn main() {
             "cargo:rustc-link-search=native={}",
             Path::new(&dir).join("justenough").join(".libs").display()
         );
+        println!(
+            "cargo:rustc-link-search=native={}",
+            Path::new(&dir).join("libtexpdf").join(".libs").display()
+        );
         println!("cargo:rustc-link-arg=-l:fontmetrics.a");
         println!("cargo:rustc-link-arg=-l:justenoughfontconfig.a");
         println!("cargo:rustc-link-arg=-l:justenoughharfbuzz.a");
         println!("cargo:rustc-link-arg=-l:justenoughicu.a");
         println!("cargo:rustc-link-arg=-l:justenoughlibtexpdf.a");
         println!("cargo:rustc-link-arg=-l:svg.a");
-        println!("cargo:rustc-link-arg=-lharfbuzz");
-        println!("cargo:rustc-link-arg=-lharfbuzz-subset");
-        println!("cargo:rustc-link-arg=-lfontconfig");
-        println!("cargo:rustc-link-arg=-licui18n");
-        println!("cargo:rustc-link-arg=-licuuc");
-        println!(
-            "cargo:rustc-link-search=native={}",
-            Path::new(&dir).join("libtexpdf").join(".libs").display()
-        );
-        println!("cargo:rustc-link-arg=-ltexpdf");
-        println!("cargo:rustc-link-arg=-lm");
+        println!("cargo:rustc-link-arg=-l:libtexpdf.a");
+
+        // These are automatically linked by Cargo, but sadly *previous* to our links above
+        println!("cargo:rustc-link-arg=-lharfbuzz"); // needed by justenoughharfbuzz
+        println!("cargo:rustc-link-arg=-lharfbuzz-subset"); // needed by justenoughharfbuzz
+        println!("cargo:rustc-link-arg=-lfontconfig"); // needed by justenoughfontconfig
+        println!("cargo:rustc-link-arg=-licui18n"); // needed by justenoughicu
+        println!("cargo:rustc-link-arg=-licuuc"); // needed by justenoughicu
+        println!("cargo:rustc-link-arg=-lm"); // needed by svg
+        println!("cargo:rustc-link-arg=-lz"); // needed by libtexpdf
+        println!("cargo:rustc-link-arg=-lpng"); // needed by libtexpdf
     }
 }
 
