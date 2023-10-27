@@ -176,16 +176,28 @@ function package:registerCommands ()
   self:registerCommand("makecolumns", function (options, _)
     -- Set a default value for column count
     options.columns = options.columns or 2
-    local aligned = {}
-    for key in pairs(SILE.frames) do
-      -- this must be checked before makecolumns() call, since the function changes the right() value of content
-      if SILE.getFrame(key):right() == SILE.getFrame("content"):right() and key ~= "content" then
-         table.insert(aligned, key)
+    local current_frame = SILE.typesetter.frame
+    local original_constraints = {}
+    -- Collect existing constraints that may need updating after makecolumns() changes them
+    for frameid in pairs(SILE.frames) do
+      if frameid ~= current_frame.id then
+        local frame = SILE.getFrame(frameid)
+        for method in pairs(frame.constraints) do
+          -- TODO: Remove the assumption about direction when makecolumns() takes into account frame advance direction
+          if method == "right" then
+            if frame[method](frame) == current_frame[method](current_frame) then
+              table.insert(original_constraints, { frame = frame, method = method })
+            end
+          end
+        end
       end
     end
     makecolumns(options)
-    for _, frame in ipairs(aligned) do
-      SILE.getFrame(frame):constrain("right", SILE.getFrame("content_col"..options.columns-1):right())
+    for _, info in ipairs(original_constraints) do
+      local frame, method = info.frame, info.method
+      local final_column_id = ("%s_col%d"):format(current_frame.id, options.columns-1)
+      local final_comumn_frame = SILE.getFrame(final_column_id)
+      frame:constrain(method, final_comumn_frame[method](final_comumn_frame))
     end
   end, "Split the current frame into multiple columns")
 
