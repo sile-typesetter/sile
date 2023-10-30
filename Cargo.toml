@@ -59,7 +59,7 @@ lto = true
   [dependencies.rust-embed]
   version = "8.0"
   optional = true
-  features = [ "include-exclude" ]
+  features = [ "include-exclude", "debug-embed" ]
 
   [dependencies.harfbuzz-sys]
   version = "0.5"
