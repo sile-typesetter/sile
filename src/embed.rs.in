@@ -52,50 +52,14 @@ pub fn inject_embeded_loader (lua: &Lua) {
     },
     _ => panic!("Unable to find approprate interface to inject embeded loader"),
   };
-  loaders.push(LuaFunction::wrap(|lua, module: String| {
+  loaders.push(LuaFunction::wrap(|lua, module: String| unsafe {
     match module.as_str() {
-      "fontmetrics" => {
-	LuaFunction::wrap(move |lua, ()| {
-	  let loader = unsafe { lua.create_c_function(luaopen_fontmetrics).unwrap() };
-	  let module: LuaTable = loader.call(()).unwrap();
-	  Ok(module)
-	}).into_lua(lua)
-      },
-      "justenoughfontconfig" => {
-	LuaFunction::wrap(move |lua, ()| {
-	  let loader = unsafe { lua.create_c_function(luaopen_justenoughfontconfig).unwrap() };
-	  let module: LuaTable = loader.call(()).unwrap();
-	  Ok(module)
-	}).into_lua(lua)
-      },
-      "justenoughharfbuzz" => {
-	LuaFunction::wrap(move |lua, ()| {
-	  let loader = unsafe { lua.create_c_function(luaopen_justenoughharfbuzz).unwrap() };
-	  let module: LuaTable = loader.call(()).unwrap();
-	  Ok(module)
-	}).into_lua(lua)
-      },
-      "justenoughicu" => {
-	LuaFunction::wrap(move |lua, ()| {
-	  let loader = unsafe { lua.create_c_function(luaopen_justenoughicu).unwrap() };
-	  let module: LuaTable = loader.call(()).unwrap();
-	  Ok(module)
-	}).into_lua(lua)
-      },
-      "justenoughlibtexpdf" => {
-	LuaFunction::wrap(move |lua, ()| {
-	  let loader = unsafe { lua.create_c_function(luaopen_justenoughlibtexpdf).unwrap() };
-	  let module: LuaTable = loader.call(()).unwrap();
-	  Ok(module)
-	}).into_lua(lua)
-      },
-      "svg" => {
-	LuaFunction::wrap(move |lua, ()| {
-	  let loader = unsafe { lua.create_c_function(luaopen_svg).unwrap() };
-	  let module: LuaTable = loader.call(()).unwrap();
-	  Ok(module)
-	}).into_lua(lua)
-      },
+      "fontmetrics" => lua.create_c_function(luaopen_fontmetrics).map(LuaValue::Function),
+      "justenoughfontconfig" => lua.create_c_function(luaopen_justenoughfontconfig).map(LuaValue::Function),
+      "justenoughharfbuzz" => lua.create_c_function(luaopen_justenoughharfbuzz).map(LuaValue::Function),
+      "justenoughicu" => lua.create_c_function(luaopen_justenoughicu).map(LuaValue::Function),
+      "justenoughlibtexpdf" => lua.create_c_function(luaopen_justenoughlibtexpdf).map(LuaValue::Function),
+      "svg" => lua.create_c_function(luaopen_svg).map(LuaValue::Function),
       _ => format!("C Module '{module}' is not linked in Rust binary").into_lua(lua)
     }
   })).unwrap();
