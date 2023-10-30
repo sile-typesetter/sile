@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.14.13](https://github.com/sile-typesetter/sile/compare/v0.14.12...v0.14.13) (2023-10-30)
+
+
+### Features
+
+* **classes:** Add landscape option to base class ([#1892](https://github.com/sile-typesetter/sile/issues/1892)) ([0fb9ade](https://github.com/sile-typesetter/sile/commit/0fb9adefca3adf9ff8a56755e69474960792d85a))
+* **cli:** Allow multiple runtime SILE_PATH segments (backport from develop branch) ([e7c8fe2](https://github.com/sile-typesetter/sile/commit/e7c8fe219686aa327032154484bf78be86c0baaa))
+
+
+### Bug Fixes
+
+* **frames:** Update frame constraints with new frame IDs after \makecolumns ([b2d6b4f](https://github.com/sile-typesetter/sile/commit/b2d6b4f7b095d74f3d39123904495a8e024c0f05))
+
 ### [0.14.12](https://github.com/sile-typesetter/sile/compare/v0.14.11...v0.14.12) (2023-10-11)
 
 
