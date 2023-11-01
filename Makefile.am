@@ -89,13 +89,15 @@ if EMBEDED_RESOURCES
 sile_SOURCES += src/embed.rs src/embed-includes.rs
 BUILT_SOURCES += src/embed.rs src/embed-includes.rs
 
-export EMBEDED_LUA_RESOURCES = $(SILEDATA) $(LUALIBRARIES) $(BUILT_LUA_SOURCES) $(LUAMODULES)
-
 src/embed-includes.rs: Makefile-distfiles
-	cat << EOF | sed -e '/^$$/d' > $@
-	$(foreach FILE,$(EMBEDED_LUA_RESOURCES),#[include = "$(FILE)"]
-	)
-	EOF
+	{
+		echo $(BUILT_LUA_SOURCES)
+		$(GREP) -E '^(SILEDATA|LUALIBRARIES|LUAMODULES) = ' $<
+	} |
+		$(SED) -E -e 's/^.* = //;s/ /\n/g' |
+		while read file; do
+			echo "#[include = \"$${file}\"]"
+		done > $@
 
 src/embed.rs: src/embed.rs.in src/embed-includes.rs
 	$(SED) \
