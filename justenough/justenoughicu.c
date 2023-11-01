@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+
 #include <unicode/ustring.h>
 #include <unicode/ustdio.h>
 #include <unicode/unum.h>
@@ -9,11 +10,14 @@
 #include <unicode/ubidi.h>
 #include <unicode/ucol.h>
 #include <unicode/utf16.h>
+
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
 
 #include "silewin32.h"
+
+#include "compat-5.2.c"
 
 typedef int32_t (*conversion_function_t)(UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, const char *locale, UErrorCode *pErrorCode);
 
@@ -494,29 +498,6 @@ int je_icu_version(lua_State *L) {
   lua_pushstring(L, U_ICU_VERSION);
   return 1;
 }
-
-#if !defined LUA_VERSION_NUM
-/* Lua 5.0 */
-#define luaL_Reg luaL_reg
-#endif
-
-#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501 && !LUAJIT
-/*
-** Adapted from Lua 5.2.0
-*/
-void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
-  luaL_checkstack(L, nup+1, "too many upvalues");
-  for (; l->name != NULL; l++) {  /* fill the table with given functions */
-    int i;
-    lua_pushstring(L, l->name);
-    for (i = 0; i < nup; i++)  /* copy upvalues to the top */
-      lua_pushvalue(L, -(nup+1));
-    lua_pushcclosure(L, l->func, nup);  /* closure with those upvalues */
-    lua_settable(L, -(nup + 3));
-  }
-  lua_pop(L, nup);  /* remove upvalues */
-}
-#endif
 
 static const struct luaL_Reg lib_table [] = {
   {"breakpoints", je_icu_breakpoints},
