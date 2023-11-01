@@ -46,9 +46,7 @@ pub fn inject_embeded_loader(lua: &Lua) {
     let package: LuaTable = lua.globals().get("package").unwrap();
     let loaders: LuaTable = match package.get("loaders").unwrap() {
         LuaValue::Table(loaders) => loaders,
-        LuaValue::Nil => {
-            package.get("searchers").unwrap()
-        }
+        LuaValue::Nil => package.get("searchers").unwrap(),
         _ => panic!("Unable to find approprate interface to inject embeded loader"),
     };
     loaders
@@ -121,16 +119,17 @@ pub fn inject_embeded_loader(lua: &Lua) {
             let pattern = "?.ftl";
             let path = pattern.replace('?', &module_path);
             match SileModules::get(&path) {
-                Some(module) =>
-                    LuaFunction::wrap(move |lua, ()| {
-                        let data = str::from_utf8(module.data.as_ref())
-                            .expect("Embeded content is not valid UTF-8");
-                        lua.load(chunk!{
-                            return assert(fluent:add_messages($data))
-                        }).call::<_, LuaValue>(())
+                Some(module) => LuaFunction::wrap(move |lua, ()| {
+                    let data = str::from_utf8(module.data.as_ref())
+                        .expect("Embeded content is not valid UTF-8");
+                    lua.load(chunk! {
+                        return assert(fluent:add_messages($data))
                     })
+                    .call::<_, LuaValue>(())
+                })
                 .into_lua(lua),
-                None => format!("FTL resource '{module_path}' is not embeded in Rust binary").into_lua(lua)
+                None => format!("FTL resource '{module_path}' is not embeded in Rust binary")
+                    .into_lua(lua),
             }
         }))
         .unwrap();
