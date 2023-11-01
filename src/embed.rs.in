@@ -47,8 +47,7 @@ pub fn inject_embeded_loader(lua: &Lua) {
     let loaders: LuaTable = match package.get("loaders").unwrap() {
         LuaValue::Table(loaders) => loaders,
         LuaValue::Nil => {
-            let loaders: LuaTable = package.get("searchers").unwrap();
-            loaders
+            package.get("searchers").unwrap()
         }
         _ => panic!("Unable to find approprate interface to inject embeded loader"),
     };

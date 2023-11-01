@@ -552,7 +552,7 @@ int je_pdf_version(lua_State *L) {
 /*
 ** Adapted from Lua 5.2.0
 */
-void luaL_setfuncs_libtexpdf (lua_State *L, const luaL_Reg *l, int nup) {
+void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
   luaL_checkstack(L, nup+1, "too many upvalues");
   for (; l->name != NULL; l++) {  /* fill the table with given functions */
     int i;
@@ -610,6 +610,6 @@ static const struct luaL_Reg lib_table [] = {
 
 int luaopen_justenoughlibtexpdf (lua_State *L) {
   lua_newtable(L);
-  luaL_setfuncs_libtexpdf(L, lib_table, 0);
+  luaL_setfuncs(L, lib_table, 0);
   return 1;
 }

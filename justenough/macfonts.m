@@ -17,7 +17,7 @@
 /*
 ** Adapted from Lua 5.2.0
 */
-static void luaL_setfuncs_macfonts (lua_State *L, const luaL_Reg *l, int nup) {
+static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
   luaL_checkstack(L, nup+1, "too many upvalues");
   for (; l->name != NULL; l++) {  /* fill the table with given functions */
     int i;
@@ -211,7 +211,7 @@ static const struct luaL_Reg lib_table [] = {
 
 int luaopen_macfonts (lua_State *L) {
   lua_newtable(L);
-  luaL_setfuncs_macfonts(L, lib_table, 0);
+  luaL_setfuncs(L, lib_table, 0);
   return 1;
 }
 
