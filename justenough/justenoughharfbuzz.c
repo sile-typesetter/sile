@@ -15,7 +15,8 @@
 #include "hb-utils.h"
 #include "silewin32.h"
 
-#include "compat-5.2.c"
+/* #define COMPAT53_PREFIX compat53 */
+#include "compat-5.3.h"
 
 /* The following function stolen from XeTeX_ext.c */
 static hb_tag_t

@@ -88,6 +88,13 @@ Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 if EMBEDED_RESOURCES
 sile_SOURCES += src/embed.rs src/embed-includes.rs
 BUILT_SOURCES += src/embed.rs src/embed-includes.rs
+$(CARGO_BIN): justenough/.libs/fontmetrics.a
+$(CARGO_BIN): justenough/.libs/justenoughfontconfig.a
+$(CARGO_BIN): justenough/.libs/justenoughharfbuzz.a
+$(CARGO_BIN): justenough/.libs/justenoughicu.a
+$(CARGO_BIN): justenough/.libs/justenoughlibtexpdf.a
+$(CARGO_BIN): justenough/.libs/svg.a
+$(CARGO_BIN): libtexpdf/.libs/libtexpdf.a
 
 src/embed-includes.rs: Makefile-distfiles
 	{
@@ -184,10 +191,12 @@ _DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTF
 # TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
 # these subdirs don't do crazy things like copying files outside of their own trees!
 _BUILT_SUBDIRS = .built-subdirs
-_SUBDIR_TELLS = justenough/.libs/justenoughfontconfig.so \
+_SUBDIR_TELLS = justenough/.libs/fontmetrics.so \
+				justenough/.libs/justenoughfontconfig.so \
 				justenough/.libs/justenoughharfbuzz.so \
 				justenough/.libs/justenoughicu.so \
 				justenough/.libs/justenoughlibtexpdf.so \
+				justenough/.libs/svg.so \
 				libtexpdf/.libs/libtexpdf.so.0.0.0
 $(_BUILT_SUBDIRS): $(_SUBDIR_TELLS)
 	touch $@

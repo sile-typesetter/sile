@@ -17,7 +17,8 @@
 
 #include "silewin32.h"
 
-#include "compat-5.2.c"
+// #define COMPAT53_PREFIX compat53
+#include "compat-5.3.h"
 
 typedef int32_t (*conversion_function_t)(UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, const char *locale, UErrorCode *pErrorCode);
 

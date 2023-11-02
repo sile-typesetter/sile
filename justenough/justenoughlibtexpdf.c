@@ -8,7 +8,8 @@
 
 #include <libtexpdf.h>
 
-#include "compat-5.2.c"
+/* #define COMPAT53_PREFIX compat53 */
+#include "compat-5.3.h"
 
 pdf_doc *p = NULL;
 double height = 0.0;

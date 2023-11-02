@@ -9,7 +9,8 @@
 
 #include "silewin32.h"
 
-#include "compat-5.2.c"
+// #define COMPAT53_PREFIX compat53
+#include "compat-5.3.h"
 
 int je_face_from_options(lua_State* L) {
   FcChar8 * font_path, * fullname, * familyname;

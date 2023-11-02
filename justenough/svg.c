@@ -9,7 +9,8 @@
 #define NANOSVG_IMPLEMENTATION  // Expands implementation
 #include "nanosvg.h"
 
-#include "compat-5.2.c"
+/* #define COMPAT53_PREFIX compat53 */
+#include "compat-5.3.h"
 
 static char* safe_append(char* output, int* output_l, int* max_output, char* s2) {
   int append_len = strlen(s2) + 1; // strlen doesn't count \0

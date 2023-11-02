@@ -7,7 +7,8 @@
 #include <hb.h>
 #include <hb-ot.h>
 
-#include "compat-5.2.c"
+// #define COMPAT53_PREFIX compat53
+#include "compat-5.3.h"
 
 #define MAX_NAME_LEN 512
 

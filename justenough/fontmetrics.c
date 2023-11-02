@@ -6,7 +6,8 @@
 
 #include "hb-utils.h"
 
-#include "compat-5.2.c"
+// #define COMPAT53_PREFIX compat53
+#include "compat-5.3.h"
 
 
 int fm_get_typographic_extents (lua_State *L) {
