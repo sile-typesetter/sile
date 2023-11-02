@@ -17,6 +17,7 @@ use vergen::EmitBuilder;
 include!("../src/cli.rs");
 
 fn main() {
+    println!("cargo:rerun-if-changed=.version");
     let mut builder = EmitBuilder::builder();
     // If passed a version from automake, use that instead of vergen's formatting
     if let Ok(val) = env::var("VERSION_FROM_AUTOTOOLS") {
