@@ -20,7 +20,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
       - name: Run rustfmt
         run: |
-          git ls-files '*.rs' | xargs rustfmt --check
+          git ls-files '*.rs' '*.rs.in' | xargs rustfmt --check --config skip_children=true
 
   clippy:
     strategy:
