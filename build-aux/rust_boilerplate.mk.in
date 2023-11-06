@@ -52,8 +52,10 @@ $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME).ps1: $(CARGO_BIN) | $(COMPLE
 $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME): $(CARGO_BIN) | $(COMPLETIONS_OUT_DIR)
 	$(INSTALL) -m755 $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME) $@
 
-$(_RUST_OUT) $(CARGO_BIN): $(sile_SOURCES) $(EXTRA_sile_SOURCES)
+$(_RUST_OUT) $(CARGO_BIN): $(@PACKAGE_VAR@_SOURCES) $(EXTRA_@PACKAGE_VAR@_SOURCES)
 	cd $(top_srcdir)
+	set -e
+	export AUTOTOOLS_DEPENDENCIES="$^"
 	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(CARGO_FEATURE_ARGS) $(CARGO_RELEASE_ARGS)
 	$(CARGO_ENV) $(CARGO) build --quiet --message-format=json $(CARGO_FEATURE_ARGS) $(CARGO_RELEASE_ARGS) |
 		$(JQ) -sr 'map(select(.reason == "build-script-executed")) | last | .out_dir' > $(_RUST_OUT)

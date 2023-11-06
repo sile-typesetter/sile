@@ -49,6 +49,7 @@ function package:_init ()
   base._init(self)
   self:loadPackage("footnotes")
   self:loadPackage("image")
+  self:loadPackage("lists")
   self:loadPackage("pdf")
   self:loadPackage("raiselower")
   self:loadPackage("rules")
@@ -67,15 +68,11 @@ function package:registerCommands ()
     SILE.typesetter:leaveHmode()
   end)
 
-  self:registerCommand("BulletList", function (_, content)
-    -- luacheck: ignore pandocListType
-    local pandocListType = "bullet"
-    SILE.settings:temporarily(function ()
-      SILE.settings:set("document.rskip","10pt")
-      SILE.settings:set("document.lskip","20pt")
-      SILE.process(content)
+  self:registerCommand("BulletList", function (options, content)
+    local wrapper, args = handlePandocArgs(options)
+    wrapper(function ()
+      SILE.call("itemize", args, content)
     end)
-    SILE.typesetter:leaveHmode()
   end)
 
   self:registerCommand("CodeBlock", function (options, content)
@@ -128,14 +125,11 @@ function package:registerCommands ()
     SILE.typesetter:leaveHmode()
   end)
 
-  self:registerCommand("OrderedList", function (_, content)
-    -- TODO: handle listAttributes
-    SILE.settings:temporarily(function ()
-      SILE.settings:set("document.rskip","10pt")
-      SILE.settings:set("document.lskip","20pt")
-      SILE.process(content)
+  self:registerCommand("OrderedList", function (options, content)
+    local wrapper, args = handlePandocArgs(options)
+    wrapper(function ()
+      SILE.call("enumerate", args, content)
     end)
-    SILE.typesetter:leaveHmode()
   end)
 
   self:registerCommand("Para", function (_, content)
@@ -277,20 +271,11 @@ function package:registerCommands ()
 
   -- Non native types
 
-  self:registerCommand("ListItem", function (_, content)
-    SILE.call("smallskip")
-    SILE.call("glue", { width = "-1em"})
-    SILE.call("rebox", { width = "1em" }, function ()
-      -- Note: Relies on Lua scope shadowing to find immediate parent list type
-      -- luacheck: ignore pandocListType
-      if pandocListType == "bullet" then
-        SILE.typesetter:typeset("•")
-      else
-        SILE.typesetter:typeset("-")
-      end
+  self:registerCommand("ListItem", function (options, content)
+    local wrapper, args = handlePandocArgs(options)
+    wrapper(function ()
+      SILE.call("item", args, content)
     end)
-    SILE.process(content)
-    SILE.call("smallskip")
   end)
 
   self:registerCommand("ListItemTerm", function (_, content)

@@ -13,7 +13,7 @@
 pdf_doc *p = NULL;
 double height = 0.0;
 double precision = 65536.0;
-char* producer = "SILE";
+const char* producer = "SILE";
 
 #define ASSERT_PDF_OPENED(p) \
   if (!p) { \
@@ -23,10 +23,10 @@ char* producer = "SILE";
 
 int je_pdf_init (lua_State *L) {
   pdf_rect mediabox;
-  const char*  fn = luaL_checkstring(L, 1);
+  const char* fn = luaL_checkstring(L, 1);
   double w = luaL_checknumber(L, 2);
   height = luaL_checknumber(L, 3);
-  producer = luaL_checkstring(L, 4);
+  const char* producer = luaL_checkstring(L, 4);
 
   p = texpdf_open_document(fn, 0, w, height, 0,0,0);
   texpdf_init_device(p, 1/precision, 2, 0);
