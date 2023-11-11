@@ -81,12 +81,6 @@ function package:registerCommands ()
 
   self:registerCommand("bibstyle", function (_, content)
     SU.deprecated("\\bibstyle", '\\set[parameter=bibtex.style]', "0.13.2", "0.14.0")
-    if type(content) == "table" then
-      content = content[1]
-    end
-    if type(content) == "string" then
-      SILE.settings:set("bibtex.style", content)
-    end
   end)
 
   self:registerCommand("cite", function (options, content)
