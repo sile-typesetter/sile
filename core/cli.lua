@@ -119,9 +119,8 @@ cli.parseArguments = function ()
   for _, path in ipairs(opts.postamble) do
     table.insert(SILE.input.postambles, path)
   end
-  for _, path in ipairs(opts.include) do
+  if opts.include then
     SU.deprecated("-I/--include", "-u/--use or -p/--preamble", "0.14.0", "0.15.0")
-    table.insert(SILE.input.includes, path)
   end
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
   local summary = function (...)
