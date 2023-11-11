@@ -3,14 +3,12 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "counters"
 
-SILE.formatCounter = function (counter)
+SILE.formatCounter = function ()
   SU.deprecated("SILE.formatCounter", "class:formatCounter", "0.13.0", "0.15.0")
-  return package.formatCounter(nil, counter)
 end
 
-SILE.formatMultilevelCounter = function (counter, options)
+SILE.formatMultilevelCounter = function ()
   SU.deprecated("SILE.formatMultilevelCounter", "class:formatMultilevelCounter", "0.13.0", "0.15.0")
-  return package.formatMultilevelCounter(nil, counter, options)
 end
 
 local function getCounter (_, id)

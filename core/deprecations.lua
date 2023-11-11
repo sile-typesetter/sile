@@ -49,9 +49,8 @@ SILE.baseClass = setmetatable({}, {
     __index = nobaseclass
   })
 
-SILE.defaultTypesetter = function (frame)
+SILE.defaultTypesetter = function ()
   SU.deprecated("SILE.defaultTypesetter", "SILE.typesetters.base", "0.14.6", "0.15.0")
-  return SILE.typesetters.base(frame)
 end
 
 SILE.toPoints = function (_, _)

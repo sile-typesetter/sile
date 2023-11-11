@@ -37,9 +37,8 @@ local function doswitch (frames)
   end
 end
 
-local function switchMasterOnePage (class, id)
+local function switchMasterOnePage (_, id)
   if not id then
-    id = class
     SU.deprecated("class.switchMasterOnePage", "class:switchMasterOnePage", "0.13.0", "0.15.0")
   end
   if not SILE.scratch.masters[id] then
@@ -53,7 +52,6 @@ end
 
 local function switchMaster (class, id)
   if not id then
-    id, class = class, SILE.documentState.documentClass
     SU.deprecated("class.switchMaster", "class:switchMaster", "0.13.0", "0.15.0")
   end
   _currentMaster = id
