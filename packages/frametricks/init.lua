@@ -153,12 +153,28 @@ function package:registerCommands ()
 
   self:registerCommand("showframe", function (options, _)
     local id = options.id or SILE.typesetter.frame.id
-    if id == "all" then
-      for _, frame in pairs(SILE.frames) do
-        SILE.outputter:debugFrame(frame)
+    options.allpages = options.allpages or true
+
+    local show = function()
+      if id == "all" then
+        for _, frame in pairs(SILE.frames) do
+          SILE.outputter:debugFrame(frame)
+        end
+      else
+        SILE.outputter:debugFrame(SILE.getFrame(id))
+      end
+    end
+
+    if options.allpages and options.allpages ~= "false" then
+      show()
+      local oldNewPage = SILE.documentState.documentClass.newPage
+      SILE.documentState.documentClass.newPage = function (self_)
+        local page = oldNewPage(self_)
+        show()
+        return page
       end
     else
-      SILE.outputter:debugFrame(SILE.getFrame(id))
+      show()
     end
   end)
 
