@@ -65,7 +65,6 @@ SILE.input = {
   filenames = {},
   evaluates = {},
   evaluateAfters = {},
-  includes = {},
   uses = {},
   options = {},
   preambles = {},

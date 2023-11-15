@@ -79,14 +79,8 @@ function package:registerCommands ()
     SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
   end)
 
-  self:registerCommand("bibstyle", function (_, content)
+  self:registerCommand("bibstyle", function (_, _)
     SU.deprecated("\\bibstyle", '\\set[parameter=bibtex.style]', "0.13.2", "0.14.0")
-    if type(content) == "table" then
-      content = content[1]
-    end
-    if type(content) == "string" then
-      SILE.settings:set("bibtex.style", content)
-    end
   end)
 
   self:registerCommand("cite", function (options, content)

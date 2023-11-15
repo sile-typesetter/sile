@@ -150,13 +150,17 @@ function class.declareSettings (_)
   })
 end
 
-function class:loadPackage (packname, options)
+function class:loadPackage (packname, options, reload)
   local pack = require(("packages.%s"):format(packname))
   if type(pack) == "table" and pack.type == "package" then -- new package
-    self.packages[pack._name] = pack(options)
+    self.packages[pack._name] = pack(options, reload)
   else -- legacy package
     self:initPackage(pack, options)
   end
+end
+
+function class:reloadPackage (packname, options)
+  return self:loadPackage(packname, options, true)
 end
 
 function class:initPackage (pack, options)

@@ -3,7 +3,7 @@ task:
   freebsd_instance:
     matrix:
       - image_family: freebsd-13-2
-      - image_family: freebsd-12-3
+      - image_family: freebsd-12-4
   env:
     MAKEFLAGS: -j$(nproc) -Otarget
     CFLAGS: -I/usr/local/include -fPIC
@@ -24,20 +24,20 @@ task:
     fingerprint_script: cat sile.rockspec.in
   dependencies_script:
     - pkg install -y autoconf automake fontconfig GentiumPlus git gmake harfbuzz jq libtool pkgconf png rust
-    - pkg install -y lua54 lua54-luaexpat lua54-lpeg lua54-luafilesystem lua54-luarocks lua54-luasec lua54-luasocket
-    - luarocks54 install cassowary
-    - luarocks54 install cldr
-    - luarocks54 install compat53
-    - luarocks54 install fluent
-    - luarocks54 install linenoise
-    - luarocks54 install loadkit
-    - luarocks54 install lua-zlib
-    - luarocks54 install lua_cliargs
-    - luarocks54 install luaepnf
-    - luarocks54 install luarepl
-    - luarocks54 install luautf8
-    - luarocks54 install penlight
-    - luarocks54 install vstruct
+    - pkg install -y luajit lua51-luaexpat lua51-lpeg lua51-luafilesystem lua51-luarocks lua51-luasec lua51-luasocket
+    - luarocks51 install cassowary
+    - luarocks51 install cldr
+    - luarocks51 install compat53
+    - luarocks51 install fluent
+    - luarocks51 install linenoise
+    - luarocks51 install loadkit
+    - luarocks51 install lua-zlib
+    - luarocks51 install lua_cliargs
+    - luarocks51 install luaepnf
+    - luarocks51 install luarepl
+    - luarocks51 install luautf8
+    - luarocks51 install penlight
+    - luarocks51 install vstruct
   bootstrap_script:
     - git fetch --prune --tags ||:
     - ./bootstrap.sh
@@ -45,6 +45,7 @@ task:
     ./configure MAKE=gmake \
       --enable-developer LUAROCKS=false LUACHECK=false BUSTED=false PDFINFO=false NIX=false \
       --disable-font-variations \
+      --with-system-lua-sources \
       --with-system-luarocks \
       --without-manual
   make_script:

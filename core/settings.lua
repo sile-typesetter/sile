@@ -1,6 +1,5 @@
 local deprecator = function ()
   SU.deprecated("SILE.settings.*", "SILE.settings:*", "0.13.0", "0.15.0")
-  return SILE.settings
 end
 
 local settings = pl.class()
@@ -96,18 +95,18 @@ function settings:_init()
 end
 
 function settings:pushState ()
-  if not self then self = deprecator() end
+  if not self then return deprecator() end
   table.insert(self.stateQueue, self.state)
   self.state = pl.tablex.copy(self.state)
 end
 
 function settings:popState ()
-  if not self then self = deprecator() end
+  if not self then return deprecator() end
   self.state = table.remove(self.stateQueue)
 end
 
 function settings:declare (spec)
-  if not spec then self, spec = deprecator(), self end
+  if not spec then return deprecator() end
   if spec.name then
     SU.deprecated("'name' argument of SILE.settings:declare", "'parameter' argument of SILE.settings:declare", "0.10.10", "0.11.0")
   end
@@ -121,7 +120,7 @@ end
 
 --- Reset all settings to their default value.
 function settings:reset ()
-  if not self then self = deprecator() end
+  if not self then return deprecator() end
   for k,_ in pairs(self.state) do
     self:set(k, self.defaults[k])
   end
@@ -131,7 +130,7 @@ end
 -- that is at the head of the settings stack (normally the document
 -- level).
 function settings:toplevelState ()
-  if not self then self = deprecator() end
+  if not self then return deprecator() end
   if #self.stateQueue ~= 0 then
     for parameter, _ in pairs(self.state) do
       -- Bypass self:set() as the latter performs some tests and a cast,
@@ -148,7 +147,7 @@ function settings:get (parameter)
   if parameter == "current.parindent" then
     return SILE.typesetter and SILE.typesetter.state.parindent
   end
-  if not parameter then self, parameter = deprecator(), self end
+  if not parameter then return deprecator() end
   if not self.declarations[parameter] then
     SU.error("Undefined setting '"..parameter.."'")
   end
@@ -184,7 +183,7 @@ function settings:set (parameter, value, makedefault, reset)
     end
     return
   end
-  if type(self) ~= "table" then self, parameter, value, makedefault, reset = deprecator(), self, parameter, value, makedefault end
+  if type(self) ~= "table" then return deprecator() end
   if not self.declarations[parameter] then
     SU.error("Undefined setting '"..parameter.."'")
   end
@@ -203,14 +202,14 @@ function settings:set (parameter, value, makedefault, reset)
 end
 
 function settings:temporarily (func)
-  if not func then self, func = deprecator(), self end
+  if not func then return deprecator() end
   self:pushState()
   func()
   self:popState()
 end
 
 function settings:wrap () -- Returns a closure which applies the current state, later
-  if not self then self = deprecator() end
+  if not self then return deprecator() end
   local clSettings = pl.tablex.copy(self.state)
   return function(content)
     table.insert(self.stateQueue, self.state)
