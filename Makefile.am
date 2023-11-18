@@ -75,6 +75,7 @@ EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconf
 EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL) $(FIGURES)
+EXTRA_DIST += src/embed.rs.in
 
 BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
 
@@ -86,8 +87,10 @@ Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@
 
 if EMBEDED_RESOURCES
-sile_SOURCES += src/embed.rs src/embed-includes.rs
-BUILT_SOURCES += src/embed.rs src/embed-includes.rs
+_EMBEDED_SOURCES = src/embed.rs src/embed-includes.rs
+nodist_sile_SOURCES = $(_EMBEDED_SOURCES)
+BUILT_SOURCES += $(_EMBEDED_SOURCES)
+CLEANFILES += $(_EMBEDED_SOURCES)
 $(CARGO_BIN): justenough/.libs/fontmetrics.a
 $(CARGO_BIN): justenough/.libs/justenoughfontconfig.a
 $(CARGO_BIN): justenough/.libs/justenoughharfbuzz.a
