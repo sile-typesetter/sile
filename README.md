@@ -177,10 +177,21 @@ $ nix run github:sile-typesetter/sile -- <sile arguments>
 
 SILE source code can be downloaded from [its website][sile] or directly from [the GitHub releases page][releases].
 
-SILE is written in the Lua programming language, so you will need a working Lua installation on your system (Lua 5.1, 5.2, 5.3, 5.4, and LuaJIT (2.0, 2.1, or OpenResty) are fully supported).
+SILE is completely programmable using the Lua programming language.
+As of v0.15.0, the CLI you actually execute is a Rust binary with a Lua VM built in.
+(For compatiblity and demonstration purposes a pure Lua version of the CLI is still available as \code{sile-lua}.)
+The Rust binary can be built based on your system's Lua sources or use its own vendored Lua sources.
+All SILE's Lua code takes a lowest-common-denominator approach to Lua compatibility.
+Any of Lua 5.1, 5.2, 5.3, 5.4, or LuaJIT (2.0, 2.1, or OpenResty) are fully supported.
+Compiling it to match your system's Lua version has the advantage of making it easy to access system installed Lua Rocks, but this is not a requirement.
+
+Compiling from sources will require both a Rust toolchain and Lua sources.
+At runtime no Rust tooling is required, and the system Lua interpreter is not actually used.
+
 It also relies on external libraries to access fonts and write PDF files.
-Its preferred combination of libraries is [Harfbuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX. Harfbuzz (minimum version 1.1.3) should be available from your operating system's package manager.
-For Harfbuzz to work you will also need fontconfig installed.
+Its preferred combination of libraries is [HarfBuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX.
+HarfBuzz (minimum version 2.7.4) should be available from your operating system’s package manager.
+For HarfBuzz to work you will also need fontconfig installed.
 SILE also requires the [ICU][icu] libraries for Unicode handling.
 
 On macOS, ICU can be installed via Homebrew:
