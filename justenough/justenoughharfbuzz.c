@@ -234,6 +234,8 @@ int je_hb_shape (lua_State *L) {
       double height = extents.y_bearing * point_size / upem;
       double tHeight = extents.height * point_size / upem;
       double width = glyph_pos[j].x_advance * point_size / upem;
+      double x_bearing = extents.x_bearing * point_size / upem;
+      double glyphWidth = extents.width * point_size / upem;
 
       /* The PDF model expects us to make positioning adjustments
       after a glyph is painted. For this we need to know the natural
@@ -263,6 +265,12 @@ int je_hb_shape (lua_State *L) {
       lua_checkstack(L, 2);
       lua_pushstring(L, "depth");
       lua_pushnumber(L, -tHeight - height);
+      lua_settable(L, -3);
+      lua_pushstring(L, "x_bearing");
+      lua_pushnumber(L, x_bearing);
+      lua_settable(L, -3);
+      lua_pushstring(L, "glyphWidth");
+      lua_pushnumber(L, glyphWidth);
       lua_settable(L, -3);
     }
     /* Cleanup */
