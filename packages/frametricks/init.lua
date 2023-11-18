@@ -41,7 +41,7 @@ end
 
 local makecolumns = function (options)
   local cFrame = SILE.typesetter.frame
-  local cols = options.columns or 2
+  local cols = options.columns
   local gutterWidth = options.gutter or "3%pw"
   local right = cFrame:right()
   local origId = cFrame.id
@@ -174,7 +174,31 @@ function package:registerCommands ()
   end, "Breaks the current frame in two vertically at the current location or at a point <offset> below the current location")
 
   self:registerCommand("makecolumns", function (options, _)
+    -- Set a default value for column count
+    options.columns = options.columns or 2
+    local current_frame = SILE.typesetter.frame
+    local original_constraints = {}
+    -- Collect existing constraints that may need updating after makecolumns() changes them
+    for frameid in pairs(SILE.frames) do
+      if frameid ~= current_frame.id then
+        local frame = SILE.getFrame(frameid)
+        for method in pairs(frame.constraints) do
+          -- TODO: Remove the assumption about direction when makecolumns() takes into account frame advance direction
+          if method == "right" then
+            if frame[method](frame) == current_frame[method](current_frame) then
+              table.insert(original_constraints, { frame = frame, method = method })
+            end
+          end
+        end
+      end
+    end
     makecolumns(options)
+    for _, info in ipairs(original_constraints) do
+      local frame, method = info.frame, info.method
+      local final_column_id = ("%s_col%d"):format(current_frame.id, options.columns-1)
+      local final_comumn_frame = SILE.getFrame(final_column_id)
+      frame:constrain(method, final_comumn_frame[method](final_comumn_frame))
+    end
   end, "Split the current frame into multiple columns")
 
   self:registerCommand("breakframehorizontal", function (options, _)
@@ -233,7 +257,6 @@ end
 
 package.documentation = [[
 \begin{document}
-As we mentioned in the first chapter, SILE uses frames as an indication of where to put text onto the page.
 The \autodoc:package{frametricks} package assists package authors by providing a number of commands to manipulate frames.
 
 The most immediately useful is \autodoc:command{\showframe}.

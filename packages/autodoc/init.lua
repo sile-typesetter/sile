@@ -13,7 +13,9 @@ local theme = {
   setting = "#42280e", -- some kind of dark brown
   bracketed = "#656565", -- some grey
   package = "#172557", -- saturated space blue
-  note = "#525257" -- some asphalt grey hue
+  note = "#525257", -- some asphalt grey hue
+  class = "#6a2c54", -- some dark shaded magenta
+  codeblock = "#303040" -- dark grey with a hint of blue
 }
 
 local colorWrapper = function (ctype, content)
@@ -170,6 +172,12 @@ function package:registerCommands ()
     end)
   end)
 
+  self:registerCommand("autodoc:class:style", function (_, content)
+    SILE.call("font", { weight = 700 }, function()
+      colorWrapper("class", content)
+    end)
+  end)
+
   self:registerCommand("autodoc:code:style", function (options, content)
     -- options.type is used to distinguish the type of code element and style
     -- it accordingly: "ast", "setting", "environment" shall select the font
@@ -293,38 +301,62 @@ function package:registerCommands ()
     -- We cannot really check package name to exist!
 
     SILE.call("autodoc:package:style", {}, { name })
-  end, "Outputs a package name in code, checking its validity.")
+  end, "Outputs a package name.")
+
+  -- Documenting a class name
+
+  self:registerCommand("autodoc:class", function (_, content)
+    if type(content) ~= "table" then SU.error("Expected a table content") end
+    if #content ~= 1 then SU.error("Expected a single element") end
+    local name = type(content[1] == "string") and content[1]
+    if not name then SU.error("Unexpected class name") end
+    -- We cannot really check class name to exist!
+
+    SILE.call("autodoc:class:style", {}, { name })
+  end, "Outputs a class name.")
 
   -- Homogenizing the appearance of blocks of code
 
   self:registerCommand("autodoc:codeblock", function(_, content)
-      SILE.call("bigskip")
       SILE.settings:temporarily(function()
         -- Note: We avoid using the verbatim environment and simplify things a bit
         -- (and try to better enforce novbreak points of insertion)
         SILE.call("verbatim:font")
+        -- Rather than absolutizing 4 different values, just do it once and cache it
+        local ex = SILE.measurement("1ex"):absolute()
+        SILE.typesetter:leaveHmode()
         SILE.settings:set("typesetter.parseppattern", "\n")
         SILE.settings:set("typesetter.obeyspaces", true)
         SILE.settings:set("document.parindent", SILE.nodefactory.glue())
-        SILE.settings:set("document.parskip", SILE.nodefactory.vglue("1pt"))
-        SILE.settings:set("document.baselineskip", SILE.nodefactory.glue("1.2em"))
+        SILE.settings:set("document.parskip", SILE.nodefactory.vglue(0.3*ex))
+        SILE.settings:set("document.baselineskip", SILE.nodefactory.glue(2.3*ex))
         SILE.settings:set("document.spaceskip", SILE.length("1spc"))
         SILE.settings:set("shaper.variablespaces", false)
         SILE.settings:set("document.language", "und")
-        SILE.call("autodoc:line")
-        SILE.call("novbreak")
-        SILE.process(content)
-        SILE.call("novbreak")
         SILE.typesetter:leaveHmode()
+        colorWrapper("codeblock", function ()
+          SILE.call("bigskip")
+          colorWrapper("note", function ()
+            SILE.call("autodoc:line")
+          end)
+          SILE.typesetter:pushVglue(-0.6*ex)
+          SILE.call("novbreak")
+          SILE.process(content)
+          SILE.call("novbreak")
+          SILE.typesetter:pushVglue(1.4*ex)
+          colorWrapper("note", function ()
+            SILE.call("autodoc:line")
+          end)
+          SILE.call("smallskip")
+        end)
     end)
-    SILE.call("novbreak")
-    SILE.call("autodoc:line")
-    SILE.call("smallskip")
   end, "Outputs its content as a standardized block of code")
 
   self:registerCommand("autodoc:line", function(_, _)
+    SILE.call("novbreak")
     SILE.call("fullrule", { thickness = "0.5pt" })
-  end, "Ouputs a line used for surrounding code blocks (somewhat internal)")
+    SILE.call("novbreak")
+  end, "Outputs a line used for surrounding code blocks (somewhat internal)")
 
   self:registerCommand("autodoc:example", function(_, content)
     -- Loosely derived from the \examplefont command from the original SILE manual...
@@ -341,7 +373,7 @@ function package:registerCommands ()
     local innerindent = SILE.measurement("1em"):absolute()
     SILE.settings:temporarily(function ()
       SILE.settings:set("document.lskip", leftindent)
-      SILE.settings:set("document.rskip", SILE.nodefactory.glue())
+      SILE.settings:set("document.rskip", leftindent)
 
       SILE.call("noindent")
       colorWrapper("note", function ()
@@ -351,10 +383,11 @@ function package:registerCommands ()
         SILE.call("hrule", { width = 3 * linedimen, height = linethickness })
         SILE.call("hrule", { width = linethickness, height = linethickness, depth = linedimen })
 
+        SILE.call("noindent")
         SILE.call("novbreak")
         SILE.settings:temporarily(function ()
           SILE.settings:set("document.lskip", SILE.nodefactory.glue(leftindent + innerindent))
-          SILE.settings:set("document.rskip", SILE.nodefactory.glue(innerindent))
+          SILE.settings:set("document.rskip", SILE.nodefactory.glue(leftindent + innerindent))
           SILE.call("font", { size = "0.95em", style = "italic "}, content)
           SILE.call("novbreak")
         end)
@@ -375,7 +408,7 @@ end
 
 package.documentation = [[
 \begin{document}
-This package extracts documentation information from other packages.
+The \autodoc:package{autodoc} package extracts documentation information from other packages.
 It’s used to construct the SILE manual.
 Keeping package documentation in the package itself keeps the documentation near the implementation, which (in theory) makes it easy for documentation and implementation to be in sync.
 
@@ -409,13 +442,12 @@ The \autodoc:command{\autodoc:parameter} commands takes either a parameter name,
 The \autodoc:environment{autodoc:codeblock} environment allows typesetting a block of code in a consistent way.
 This is not a true verbatim environment, and you still have to escape SILE’s special characters within it
 (unless calling commands is what you really intend doing there, obviously).
-For convenience, the package also provides a \code{raw} handler going by the same name, where you do not
-have to escape the special characters (backslashes, braces, percents).
+For convenience, the package also provides a \code{raw} handler going by the same name, where you do not have to escape the special characters (backslashes, braces, percents).
 
-The \autodoc:command{\autodoc:example} marks its content as an example, possibly typeset in a different choice
-of font.
+The \autodoc:command{\autodoc:example} marks its content as an example, possibly typeset in a different choice of font.
 
 The \autodoc:command{\autodoc:note} outputs its content as a note, in a dedicated framed and indented block.
+The \autodoc:command{\autodoc:package} and \autodoc:command{\autodoc:class} commands are used to format a package and class name.
 \end{document}
 ]]
 

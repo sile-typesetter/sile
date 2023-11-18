@@ -17,7 +17,7 @@ that you need to keep entering again and again.
 \define[command=SILE]{\font[family=Gentium Plus]{% Book Basic has no +smcp, but readers don't need to know, since we're only using Book Basic as a holdover from old SILE which did.
 S\lower[height=0.5ex]{I}L\kern[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}}
 For instance, let’s suppose that we want to design a nice little
-“bumpy road” logo for SILE. (Afficionados of T\kern[width=-.1667em]\lower[height=0.5ex]{E}\kern[width=-.125em]X and friends will be familiar with the concept of
+“bumpy road” logo for SILE. (Aficionados of T\kern[width=-.1667em]\lower[height=0.5ex]{E}\kern[width=-.125em]X and friends will be familiar with the concept of
 bumpy road logos.) Our logo will look like this: \SILE. It’s not a great
 logo, but we’ll use it as \SILE’s logo for the purposes of this section.
 
@@ -25,7 +25,7 @@ To typeset
 this logo, we need to ask \SILE to: typeset an ‘S’; typeset an ‘I’ lowered by
 a certain amount (half an ex, as it happens); typeset an ‘L’; walk backwards
 along the line a tiny bit; typeset a smaller-sized ‘E’ raised by a certain
-amount, using the \code{features} package to choose a small capital ‘E’.
+amount, using the \autodoc:package{features} package to choose a small capital ‘E’.
 
 In \SILE code, that looks like:
 
@@ -65,7 +65,7 @@ L%
 \end{raw}
 
 We are using the built-in SILE command \autodoc:command{\define}.
-\autodoc:command{\define} takes an option called \code{command};
+\autodoc:command{\define} takes an option called \autodoc:parameter{command};
 its value is the name of the command we are defining.
 The content of the \autodoc:command{\define} command is a series of SILE instructions to be executed when the command is used.
 
@@ -92,7 +92,7 @@ of any text up until the nearest comma, semicolon, or closing square bracket.
 
 Now let’s move on to the next level. Sometimes you will want to create
 commands which are not simply replacements, but which have arguments of their
-own. As an example, let’s say we use the \code{color} package to turn a bit of
+own. As an example, let’s say we use the \autodoc:package{color} package to turn a bit of
 text red \color[color=red]{like this}. The usual way to do that is to say
 
 \begin[type=autodoc:codeblock]{raw}

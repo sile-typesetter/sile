@@ -1,9 +1,12 @@
 AC_PREREQ([2.69])
-AC_INIT([sile], [m4_esyscmd(build-aux/git-version-gen .tarball-version)], [simon@simon-cozens.org])
+AC_INIT([sile], [m4_esyscmd(build-aux/git-version-gen .tarball-version)], [caleb@alerque.com])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
+
+AX_GIT_VERSION
+AX_TRANSFORM_PACKAGE_NAME
 
 AM_CONDITIONAL([IS_SDIST], [test ! -e .gitignore])
 
@@ -14,15 +17,14 @@ AC_PROG_OBJC
 AC_PROG_AWK
 AC_PROG_GREP
 AC_PROG_SED
-
-AX_PROGVAR([cmp])
-AX_PROGVAR([git])
 AX_PROGVAR([find])
 
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
 AC_CANONICAL_HOST
+
+AX_RUST_BOILERPLATE
 
 AC_ARG_ENABLE([dependency-checks],
               AS_HELP_STRING([--disable-dependency-checks],
@@ -33,6 +35,11 @@ AC_ARG_ENABLE([developer],
               AS_HELP_STRING([--enable-developer],
                              [Check for and enable tooling required only for developers]))
 AM_CONDITIONAL([DEVELOPER], [test "x$enable_developer" = "xyes"])
+
+AC_ARG_ENABLE([embeded],
+              AS_HELP_STRING([--enable-embeded-resources],
+                             [Compile resources such as Lua module files directly into the Rust CLI binary]))
+AM_CONDITIONAL([EMBEDED_RESOURCES], [test "x$enable_embeded_resources" = "xyes"])
 
 AC_ARG_ENABLE([font-variations],
               AS_HELP_STRING([--disable-font-variations],
@@ -66,10 +73,16 @@ AC_ARG_WITH([system-luarocks],
 AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
 AC_SUBST([SYSTEM_LUAROCKS])
 
+AC_ARG_WITH([system-lua-sources],
+            AS_HELP_STRING([--with-system-lua-sources],
+                           [Don’t compile against vendored Lua sources, use system headers]))
+AM_CONDITIONAL([SYSTEM_LUA_SOURCES], [test "x$with_system_lua_sources" = "xyes"])
+AC_SUBST([SYSTEM_LUA_SOURCES])
+
 AC_ARG_WITH([luajit],
-            AS_HELP_STRING([--with-luajit],
-                           [Run under LuaJIT instead of Lua]))
-AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" = "xyes"])
+            AS_HELP_STRING([--without-luajit],
+                           [Prefer LuaJIT over PUC Lua, even if the latter is newer]))
+AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" != "xno"])
 
 AC_ARG_WITH([manual],
             AS_HELP_STRING([--with-manual],
@@ -80,10 +93,17 @@ AM_CONDITIONAL([FONT_DOWNLOAD_TOOLS], [test -z ${DEVELOPER_TRUE} || (test -z ${M
 AC_SUBST([FONT_DOWNLOAD_TOOLS])
 
 AM_COND_IF([DEPENDENCY_CHECKS], [
+    AC_MSG_NOTICE([checking for SILE specific build dependencies])
 
     AX_FONT(Gentium Plus)
 
-    AC_PATH_PROG([PDFINFO], [pdfinfo])
+    AX_PROGVAR([pdfinfo])
+    AX_PROGVAR([jq])
+    AX_PROGVAR([xargs])
+    AM_COND_IF([MANUAL], [
+                AX_PROGVAR([dot])
+                AX_PROGVAR([gs])
+                ])
 
     AC_MSG_CHECKING([for OS X])
     have_appkit=no
@@ -146,15 +166,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         fi
     ])
 
-    case $host_os in
-        msys)
-            LUA_VERSION=5.3 # By fiat. This is obviously not good.
-            ;;
-        *)
-            AX_PROG_LUA([5.1])
-            ;;
-    esac
-
+    AX_PROG_LUA([5.1])
     AX_LUA_HEADERS
     AX_LUA_LIBS
 
@@ -168,7 +180,6 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
             AX_LUA_MODULE([compat53], [compat53])
         )
-        AX_LUA_MODULE([cosmo], [cosmo])
         AX_LUA_MODULE([cldr], [cldr])
         AX_LUA_MODULE([fluent], [fluent])
         AX_LUA_MODULE([linenoise], [linenoise])
@@ -197,9 +208,11 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     ])
 
     AM_COND_IF([DEVELOPER], [
+        AX_PROGVAR([git])
         AX_PROGVAR([busted])
         AX_PROGVAR([luacheck])
         AX_PROGVAR([luarocks])
+        AX_PROGVAR([nix])
         AX_PROGVAR([perl])
     ])
 
@@ -235,21 +248,41 @@ esac
 AC_SUBST([SHARED_LIB_EXT])
 AC_SUBST([LUAROCKSARGS])
 
-AX_SUBST_TRANSFORMED_PACKAGE_NAME
-
-adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])
-AC_DEFINE_UNQUOTED([SILE_PATH],["${SILE_PATH}"],[Path for SILE packages and classes])
+# Avoid need for `--datarootdir=$(cd ..; pwd)` hack to run locally for
+# tests/manual build when developer mode is enabled
+AM_COND_IF([DEVELOPER], [
+    adl_RECURSIVE_EVAL(["$(pwd)"], [SILE_PATH])
+    datarootdir="$(cd ..; pwd)"
+],[
+    adl_RECURSIVE_EVAL(["${datadir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_PATH])
+])
+AC_DEFINE_UNQUOTED([SILE_PATH], ["${SILE_PATH}"], [Path for SILE packages and classes])
 AC_SUBST([SILE_PATH])
 
+# In order for our Rust CLI binary to use the same default package.path as the system Lua,
+# we test the system Lua (required only at build not run time) for its current package.path.
+adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.path)')"], [LUA_PATH])
+AC_DEFINE_UNQUOTED([LUA_PATH], ["${LUA_PATH}"],[System Lua package path])
+AC_SUBST([LUA_PATH])
+
+adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.cpath)')"], [LUA_CPATH])
+AC_DEFINE_UNQUOTED([LUA_CPATH], ["${LUA_CPATH}"], [System Lua package cpath])
+AC_SUBST([LUA_CPATH])
+
 adl_RECURSIVE_EVAL(["${libdir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_LIB_PATH])
-AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"],[Path for SILE libraries])
+AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"], [Path for SILE libraries])
 AC_SUBST([SILE_LIB_PATH])
+
+AC_SUBST([ROCKSPECWARNING], ["DO NOT EDIT! Modify template sile.rockspec.in"])
+AC_SUBST([ROCKREV], [1])
 
 AX_SUBST_MAN_DATE
 
 AC_CONFIG_FILES([build-aux/list-dist-files.sh], [chmod +x build-aux/list-dist-files.sh])
-AC_CONFIG_FILES([Makefile src/Makefile sile.1 core/features.lua core/version.lua])
-AC_CONFIG_FILES([sile tests/regressions.pl], [chmod +x sile tests/regressions.pl])
+AC_CONFIG_FILES([Makefile justenough/Makefile sile-lua.1 core/features.lua core/pathsetup.lua core/version.lua])
+AC_CONFIG_FILES([sile-lua:sile.in], [chmod +x sile-lua])
+AC_CONFIG_FILES([tests/regressions.pl], [chmod +x tests/regressions.pl])
+AC_CONFIG_FILES([sile-dev-1.rockspec:sile.rockspec.in])
 
 AC_ARG_PROGRAM
 

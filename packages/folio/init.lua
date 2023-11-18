@@ -78,7 +78,7 @@ end
 
 package.documentation= [[
 \begin{document}
-The \autodoc:package{folio} package (which is automatically loaded by the \code{plain} class, and therefore by nearly every SILE class) controls the output of folios—the old-time typesetter word for page numbers.
+The \autodoc:package{folio} package (which is automatically loaded by the \autodoc:class{plain} class, and therefore by nearly every SILE class) controls the output of folios—the old-time typesetter word for page numbers.
 
 It provides four commands to users:
 

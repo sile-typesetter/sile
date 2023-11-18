@@ -7,8 +7,8 @@
         "luautf8",
         "pl",
         "fluent",
-        "SYSTEM_SILE_PATH",
-        "SHARED_LIB_EXT"
+        "executablePath",
+        "extendSilePath"
     ],
     "Lua.workspace.preloadFileSize": 5120,
     "Lua.workspace.checkThirdParty": false

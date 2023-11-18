@@ -57,9 +57,8 @@ function package:_init (options)
   end
   self:export("oddPage", self.oddPage)
   self:export("mirrorMaster", mirrorMaster)
-  self:export("switchPage", function (class)
+  self:export("switchPage", function ()
     SU.deprecated("class:switchPage", nil, "0.13.0", "0.15.0", _deprecate)
-    return class:switchPage()
   end)
   self.class.oddPageMaster = options.oddPageMaster
   self.class.evenPageMaster = options.evenPageMaster
@@ -134,8 +133,9 @@ end
 
 package.documentation = [[
 \begin{document}
-The \code{book} class described in Chapter 4 sets up left and right mirrored page masters; the \autodoc:package{twoside} package is responsible for swapping between the two left and right frames, running headers, and so on.
-Its main function in mirroring master frames does not provide any user-serviceable parts.
+A book-like class usually sets up left and right mirrored page masters.
+The \autodoc:package{twoside} package is then responsible for swapping between the two left and right frames, running headers, and so on.
+As it is normally loaded and initialized by a document class, its main function in mirroring master frames does not provide any user-serviceable parts.
 It does supply a few user-facing commands for convenience.
 
 The \autodoc:command{\open-double-page} ejects whatever page is currently being processed, then checks if it landed on an even page.

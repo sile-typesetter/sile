@@ -60,7 +60,7 @@ local icuFormat = function (num, lang, options)
   -- ICU locale: see  https://unicode-org.github.io/icu/userguide/locale/
   -- Ex. "en", "en-US", "sr-Latn"...
   local iculocale = lang or ""
-  -- ICU keywork for a numbering system specifier: @numbers=xxxx
+  -- ICU keyword for a numbering system specifier: @numbers=xxxx
   -- The specifiers are defined here:
   -- https://github.com/unicode-org/cldr/blob/main/common/bcp47/number.xml
   if options.system then

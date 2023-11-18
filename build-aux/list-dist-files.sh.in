@@ -7,7 +7,7 @@ finder () {
 }
 
 printf '%s' "SILEDATA ="
-finder core -name '*.lua' -not -name '*_spec.lua' -not -name 'version.lua'
+finder core -name '*.lua' -not -name '*_spec.lua' -not -name 'version.lua' -not -name 'features.lua' -not -name 'pathsetup.lua'
 finder classes inputters languages outputters packages shapers typesetters pagebuilders -name '*.lua' -not -name '*_spec.lua'
 finder classes i18n packages -name '*.ftl'
 finder packages -name '*.svg'

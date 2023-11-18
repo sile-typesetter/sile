@@ -73,7 +73,7 @@ function package:registerCommands ()
     -- Apply the font before boxing, so relative baselineskip applies #1027
     local material
     SILE.call("footnote:font", {}, function ()
-        material = SILE.call("vbox", {}, function ()
+      material = SILE.call("vbox", {}, function ()
         SILE.call("footnote:atstart", options)
         SILE.call("footnote:counter", options)
         SILE.process(content)
@@ -108,10 +108,14 @@ end
 
 package.documentation = [[
 \begin{document}
-We’ve seen that the \code{book} class allows you to add footnotes to text with the \autodoc:command{\footnote} command.
-This functionality exists in the class because the class loads the \autodoc:package{footnotes} package.
-The \code{book} class loads the \autodoc:package{insertions} package and tells it which frame should receive the footnotes that are typeset.
-Other commands provided by the \autodoc:package{footnotes} package take care of formatting the footnotes.
+The \autodoc:package{footnotes} package allows you to add footnotes to text with the \autodoc:command{\footnote} command.
+Other commands provided by the package, not described here, take care of formatting the footnotes.
+
+Usually, a document class is responsible for automatically loading this package.
+Minimally, upon initialization, it needs a frame identifier for the the footnotes, and one or more frame(s) which will be reduced as the footnotes take place.
+By default, it uses, respectively, the \code{footnotes} and \code{content} frames, which are assumed to be present in the default standard layout.
+
+For the record, it internally relies on the \autodoc:package{insertions} package and tells it which frame should receive the footnotes that are typeset.
 \end{document}
 ]]
 

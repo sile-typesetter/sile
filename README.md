@@ -65,15 +65,14 @@ Arch Linux has a prebuilt [SILE package][arch-sile] in the official package repo
 $ pacman -S sile
 ```
 
-The official package uses Lua 5.4.
-Alternatively, a package that uses LuaJIT may be built manually from the [Arch User Repository][aur] using [sile-luajit][aur-sile-luajit].
-A VCS package is also available as [sile-git][aur-sile-git] to build from the latest Git commit.
+The official package uses LuaJIT.
+If you install LuaRocks for use with SILE via `pacman`, use the `lua51-*` variants to match LuaJIT.
 
 #### Fedora
 
 A [COPR][copr] repository is available for Fedora users with packages of SILE
-and all the necessary dependencies including fonts.
-Fedora 36 and Fedora 37 are supported.
+and all the necessary dependencies.
+Fedora 38 and later are supported.
 There is work in progress to get the packages added to the official Fedora repository.
 
 ```console
@@ -197,7 +196,7 @@ If you try to `brew link` and you get a series of messages including something l
       export PKG_CONFIG_PATH="/usr/local/opt/icu4c/lib/pkgconfig"
 
 Optionally you may install the Lua libraries listed in the [rockspec][] to your system (using either your system's package manager or [luarocks][] (`luarocks install --only-deps sile-dev-1.rockspec`).
-By default all the required Lua libraries will be downloaded and bundled alongside the SILE the instalation.
+By default all the required Lua libraries will be downloaded and bundled alongside the SILE the installation.
 If you downloaded a source tarball these dependencies are included, if you are using a git clone of the source repository the build system will require `luarocks` to fetch them during build.
 Note that OpenSSL development headers will be required for one of the Lua modules to compile¹.
 If your system has all the required packages already you may add `--with-system-luarocks` to the `./configure` command to avoid bundling them.
@@ -330,8 +329,6 @@ There's also an [FAQ][faq] available.
 Please report bugs and send patches and pull requests at the [github repository][github].
 For questions and discussion, please join the [mailing list][list-en].
 
-日本語利用者は[メーリングリスト][list-ja]に参加してください。
-
 ## License Terms
 
 SILE is distributed under the [MIT licence][license].
@@ -353,15 +350,12 @@ SILE is distributed under the [MIT licence][license].
   [libtexpdf]: https://github.com/sile-typesetter/libtexpdf
   [arch-sile]: https://archlinux.org/packages/community/x86_64/sile/
   [aur]: https://wiki.archlinux.org/index.php/Arch_User_Repository
-  [aur-sile-luajit]: https://aur.archlinux.org/packages/sile-luajit/
-  [aur-sile-git]: https://aur.archlinux.org/packages/sile-git/
   [typesetting]: https://en.wikipedia.org/wiki/Typesetting
   [tex]: https://en.wikipedia.org/wiki/TeX
   [indesign]: https://en.wikipedia.org/wiki/Adobe_InDesign
   [brew]: http://brew.sh
   [brewfonts]: https://github.com/Homebrew/homebrew-cask-fonts
   [list-en]: https://groups.google.com/d/forum/sile-users
-  [list-ja]: https://groups.google.com/d/forum/sile-users-ja
   [nix]: https://nixos.org/nix
   [nix-flakes]: https://nixos.wiki/wiki/Flakes#Installing_flakes
   [ports]: http://ports.su/print/sile

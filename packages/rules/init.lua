@@ -107,38 +107,15 @@ function package:registerCommands ()
     local thickness = SU.cast("measurement", options.thickness or "0.2pt")
     local raise = SU.cast("measurement", options.raise or "0.5em")
 
-    -- BEGIN DEPRECATION COMPATIBILITY
     if options.height then
       SU.deprecated("\\fullrule[…, height=…]", "\\fullrule[…, thickness=…]", "0.13.1", "0.15.0")
-      thickness = SU.cast("measurement", options.height)
     end
     if not SILE.typesetter:vmode() then
       SU.deprecated("\\fullrule in horizontal mode", "\\hrule or \\hrulefill", "0.13.1", "0.15.0")
-      if options.width then
-        SU.deprecated("\\fullrule with width", "\\hrule and \\raise", "0.13.1", "0.15.0")
-        SILE.call("raise", { height = raise }, function ()
-          SILE.call("hrule", {
-            height = thickness,
-            width = options.width
-          })
-        end)
-      else
-        -- This was very broken anyway, as it was overflowing the line.
-        -- At least we try better...
-        SILE.call("hrulefill", { raise = raise, thickness = thickness })
-      end
-     return
     end
     if options.width then
       SU.deprecated("\\fullrule with width", "\\hrule and \\raise", "0.13.1 ", "0.15.0")
-      SILE.call("raise", { height = raise }, function ()
-        SILE.call("hrule", {
-          height = thickness,
-          width = options.width
-        })
-      end)
     end
-    -- END DEPRECATION COMPATIBILITY
 
     SILE.typesetter:leaveHmode()
     SILE.call("noindent")

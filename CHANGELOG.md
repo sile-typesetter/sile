@@ -2,6 +2,65 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.14.13](https://github.com/sile-typesetter/sile/compare/v0.14.12...v0.14.13) (2023-10-30)
+
+
+### Features
+
+* **classes:** Add landscape option to base class ([#1892](https://github.com/sile-typesetter/sile/issues/1892)) ([0fb9ade](https://github.com/sile-typesetter/sile/commit/0fb9adefca3adf9ff8a56755e69474960792d85a))
+* **cli:** Allow multiple runtime SILE_PATH segments (backport from develop branch) ([e7c8fe2](https://github.com/sile-typesetter/sile/commit/e7c8fe219686aa327032154484bf78be86c0baaa))
+
+
+### Bug Fixes
+
+* **frames:** Update frame constraints with new frame IDs after \makecolumns ([b2d6b4f](https://github.com/sile-typesetter/sile/commit/b2d6b4f7b095d74f3d39123904495a8e024c0f05))
+
+### [0.14.12](https://github.com/sile-typesetter/sile/compare/v0.14.11...v0.14.12) (2023-10-11)
+
+
+### Features
+
+* **i18n:** Add Portuguese localizations for bibtex package ([#1859](https://github.com/sile-typesetter/sile/issues/1859)) ([f716c35](https://github.com/sile-typesetter/sile/commit/f716c35109d36c7cb2118ab9c7c65227d9941e01))
+* **utilities:** Add utility function for console messages without trace info ([18526ce](https://github.com/sile-typesetter/sile/commit/18526ce75eeb8deb12e9b232e727993409ed8e06))
+
+
+### Bug Fixes
+
+* **build:** Make sure vendored luarocks isn't a phony target that runs repeatedly ([713434d](https://github.com/sile-typesetter/sile/commit/713434dadbc271299c8548dd2f2d4af57c1eec62))
+* **core:** Allocate exactly what we use, not a guess with an extra just in case ([640ded0](https://github.com/sile-typesetter/sile/commit/640ded0a90e427124f555a2a48d263cde5300d7d))
+* **core:** Correct usage of HarfBuzz when passing a filtered list of shapers ([f488643](https://github.com/sile-typesetter/sile/commit/f4886437d0ebf229db1c2779a8a324bf441efc1a))
+* **core:** Fixup class loader so cache is all Lua module specs ([#1863](https://github.com/sile-typesetter/sile/issues/1863)) ([7efff5b](https://github.com/sile-typesetter/sile/commit/7efff5b7e94f0c4897910c064ef842e6be2e4ab1))
+* **packages:** Don't warn on TOC content change if not actually used ([87c443d](https://github.com/sile-typesetter/sile/commit/87c443d1571f571b595c3e32febdcb03129f5b9a))
+
+### [0.14.11](https://github.com/sile-typesetter/sile/compare/v0.14.10...v0.14.11) (2023-08-23)
+
+
+### Bug Fixes
+
+* **core:** Leave legacy masterFilename alone but use first input filename internally ([29667a7](https://github.com/sile-typesetter/sile/commit/29667a752181dd40abe18672f6175fe10a9c5546))
+* **core:** Make masterFilename actually a filename ([759131e](https://github.com/sile-typesetter/sile/commit/759131e6c87517b56a433dccde29658dbe6df023))
+* **packages:** Avoid mix-and-matching indents in fixed-width specimin blocks ([de41cac](https://github.com/sile-typesetter/sile/commit/de41cac06a911e7c56f0ba4d1248a6da5999e6f3))
+* **utilities:** Use real semver parser for deprecation warnings ([5f0fed5](https://github.com/sile-typesetter/sile/commit/5f0fed51b2a9597272da62f00c15f8836f8c7bd1))
+
+## [0.14.10](https://github.com/sile-typesetter/sile/compare/v0.14.9...v0.14.10) (2023-07-11)
+
+
+### Features
+
+* **cli:** Allow more than one input document ([d20cbd8](https://github.com/sile-typesetter/sile/commit/d20cbd8a0b7a197ca87ca1dd1a39640fa746e301))
+* **i18n:** Add localized strings for Cantonese and Chinese ([cb67d36](https://github.com/sile-typesetter/sile/commit/cb67d3686117258adaca546298063d23c66135f9))
+* **packages:** Add document class styling in autodoc ([e70fa50](https://github.com/sile-typesetter/sile/commit/e70fa509673c32977a1e1f0545373229198c8aa8))
+* **packages:** Provide API for registering raw handlers linked to packages ([45cd3ac](https://github.com/sile-typesetter/sile/commit/45cd3ac96acbe3f2dd572ce0c3c72c7599090e6b))
+
+
+### Bug Fixes
+
+* **build:** Avoid build artifacts being listed for installation ([29c2ccd](https://github.com/sile-typesetter/sile/commit/29c2ccd227774caa4accb90bb0d23825aafccfd1))
+* **core:** Avoid stack overflow in Harfbuzz module ([#1793](https://github.com/sile-typesetter/sile/issues/1793)) ([5001efe](https://github.com/sile-typesetter/sile/commit/5001efe0cfeb421ce5796f8303bf046bb68c8326))
+* **outputters:** Setup --makedeps to play along without explicit --output ([6ff2e16](https://github.com/sile-typesetter/sile/commit/6ff2e16f24224bc2781edc38be8cb9e1418fb30e))
+* **packages:** Converters package no longer worked after 0.13.0 ([433795c](https://github.com/sile-typesetter/sile/commit/433795c3979688469a098a9966a595a4b0d34818))
+* **packages:** Correct chord line height and chord font use ([65961c6](https://github.com/sile-typesetter/sile/commit/65961c6629244817220bac8a6f386a9a738b7f0b)), closes [#1351](https://github.com/sile-typesetter/sile/issues/1351)
+
 ## [0.14.9](https://github.com/sile-typesetter/sile/compare/v0.14.8...v0.14.9) (2023-04-11)
 
 

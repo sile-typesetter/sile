@@ -29,6 +29,9 @@ fluent = require("fluent")()
 -- Includes for _this_ scope
 local lfs = require("lfs")
 
+-- Developer tooling profiler
+local ProFi
+
 SILE.utilities = require("core.utilities")
 SU = SILE.utilities -- regrettable global alias
 
@@ -56,13 +59,12 @@ SILE.documentState = {}
 SILE.rawHandlers = {}
 
 -- User input values, currently from CLI options, potentially all the inuts
--- needed for a user to use a SILE-as-a-library verion to produce documents
--- programatically.
+-- needed for a user to use a SILE-as-a-library version to produce documents
+-- programmatically.
 SILE.input = {
-  filename = "",
+  filenames = {},
   evaluates = {},
   evaluateAfters = {},
-  includes = {},
   uses = {},
   options = {},
   preambles = {},
@@ -94,7 +96,7 @@ SILE.nodefactory = require("core.nodefactory")
 
 -- NOTE:
 -- See remainaing internal libraries loaded at the end of this file because
--- they run core SILE functions on load istead of waiting to be called (or
+-- they run core SILE functions on load instead of waiting to be called (or
 -- depend on others that do).
 
 local function runEvals (evals, arg)
@@ -131,6 +133,14 @@ SILE.init = function ()
     SILE.outputter = SILE.outputters.dummy()
   end
   SILE.pagebuilder = SILE.pagebuilders.base()
+  io.stdout:setvbuf("no")
+  if SU.debugging("profile") then
+    ProFi = require("ProFi")
+    ProFi:start()
+  end
+  if SILE.makeDeps then
+    SILE.makeDeps:add(_G.executablePath)
+  end
   runEvals(SILE.input.evaluates, "evaluate")
 end
 
@@ -189,7 +199,9 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   dependency = dependency:gsub(".lua$", "")
   local status, lib
   if pathprefix then
-    status, lib = pcall(require, pl.path.join(pathprefix, dependency))
+    -- Note this is not a *path*, it is a module identifier:
+    -- https://github.com/sile-typesetter/sile/issues/1861
+    status, lib = pcall(require, pl.stringx.join('.', { pathprefix, dependency }))
   end
   if not status then
     local prefixederror = lib
@@ -280,7 +292,7 @@ function SILE.processString (doc, format, filename, options)
   -- a specific inputter to use, use it at the exclusion of all content type
   -- detection
   local inputter
-  if filename and filename:gsub("STDIN", "-") == SILE.input.filename and SILE.inputter then
+  if filename and pl.path.normcase(pl.path.normpath(filename)) == pl.path.normcase(SILE.input.filenames[1]) and SILE.inputter then
     inputter = SILE.inputter
   else
     format = format or detectFormat(doc, filename)
@@ -290,7 +302,7 @@ function SILE.processString (doc, format, filename, options)
     inputter = SILE.inputters[format](options)
     -- If we did content detection *and* this is the master file, save the
     -- inputter for posterity and postambles
-    if filename and filename:gsub("STDIN", "-") == SILE.input.filename then
+    if filename and pl.path.normcase(filename) == pl.path.normcase(SILE.input.filenames[1]:gsub("^-$", "STDIN")) then
       SILE.inputter = inputter
     end
   end
@@ -306,10 +318,19 @@ function SILE.processFile (filename, format, options)
     filename = "STDIN"
     doc = io.stdin:read("*a")
   else
-    filename = SILE.resolveFile(filename)
-    if not filename then
-      SU.error("Could not find file")
+    -- Turn slashes around in the event we get passed a path from a Windows shell
+    filename = filename:gsub("\\", "/")
+    if not SILE.masterFilename then
+      SILE.masterFilename = pl.path.splitext(pl.path.normpath(filename))
     end
+    if SILE.input.filenames[1] and not SILE.masterDir then
+      SILE.masterDir = pl.path.dirname(SILE.input.filenames[1])
+    end
+    if SILE.masterDir and SILE.masterDir:len() >= 1 then
+      _G.extendSilePath(SILE.masterDir)
+      _G.extendSilePathRocks(SILE.masterDir .. "/lua_modules")
+    end
+    filename = SILE.resolveFile(filename) or SU.error("Could not find file")
     local mode = lfs.attributes(filename).mode
     if mode ~= "file" and mode ~= "named pipe" then
       SU.error(filename.." isn't a file or named pipe, it's a ".. mode .."!")
@@ -356,7 +377,7 @@ function SILE.resolveFile (filename, pathprefix)
   candidates[#candidates+1] = "?"
   -- Iterate through the directory of the master file, the SILE_PATH variable, and the current directory
   -- Check for prefixed paths first, then the plain path in that fails
-  if SILE.masterFilename then
+  if SILE.masterDir then
     for path in SU.gtoke(SILE.masterDir..";"..tostring(os.getenv("SILE_PATH")), ";") do
       if path.string and path.string ~= "nil" then
         if pathprefix then candidates[#candidates+1] = pl.path.join(path.string, pathprefix, "?") end
@@ -369,8 +390,8 @@ function SILE.resolveFile (filename, pathprefix)
   local resolved, err = package.searchpath(filename, path, "/")
   if resolved then
     if SILE.makeDeps then SILE.makeDeps:add(resolved) end
-  else
-    SU.warn(("Unable to find file '%s': %s"):format(filename, err))
+  elseif SU.debugging("paths") then
+    SU.debug("paths", ("Unable to find file '%s': %s"):format(filename, err))
   end
   return resolved
 end
@@ -437,13 +458,19 @@ function SILE.finish ()
   if not SILE.quiet then
     io.stderr:write("\n")
   end
+  if SU.debugging("profile") then
+    ProFi:stop()
+    ProFi:writeReport(pl.path.splitext(SILE.input.filenames[1]) .. '.profile.txt')
+  end
+  if SU.debugging("versions") then
+    SILE.shaper:debugVersions()
+  end
 end
 
 -- Internal libraries that run core SILE functions on load
 SILE.settings = require("core.settings")()
 require("core.hyphenator-liang")
 require("core.languages")
-require("core.packagemanager")
 SILE.linebreak = require("core.break")
 require("core.frame")
 SILE.cli = require("core.cli")
@@ -451,7 +478,7 @@ SILE.repl = require("core.repl")
 SILE.font = require("core.font")
 
 -- For warnings and shims scheduled for removal that are easier to keep track
--- of when they are not spead across so many locations...
+-- of when they are not spread across so many locations...
 require("core/deprecations")
 
 return SILE

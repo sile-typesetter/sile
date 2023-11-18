@@ -1,7 +1,29 @@
 \begin{document}
-\chapter{SILE’s Input Language}
+\chapter{SILE’s Input}
 
-Let’s now go back and reconsider the first SILE file we saw:
+First, we need to clear some air.
+In our own earlier documentation we gave the impression the primary way to feed content into SILE was a propriatry language.
+This was \em{never} really true since XML was always fully supported as an alternative.
+It is even less true now that 3rd party plugins can add their own input formats.
+
+Hence this chanpter has been renamed.
+The original chapter title was "SILE’s Input Language", as if there was only one.
+The truth is there \em{is} an input syntax we call "SIL", but even that is perhaps best thought of as a structured data syntax rather than a unique language.
+The input strings \code{\\em\{foo\}} in SIL input syntax is 100\% equivalent to \code{<em>foo</em>} in XML input syntax.
+The SIL input syntax is provided as an easier to type alternative than XML which can be a bit verbose and tedious to work with by hand.
+On the other hand if you're handling data written by some other program, XML might be a much better solution.
+
+3rd party packages can also add their own input formats.
+The stipulation is that an inputter parses some content and returns an AST with content tags and options recognized by SILE.
+Markdown, Djot, and others have packages available that provide inputters, allowing them to be first class input candidates.
+Many others like Dockbook and TEI are just XML with a special tag schema.
+SILE can be extended to cover any tag schema.
+
+With that in mind, lets go back and reconsider the first SILE file we saw that was in SIL input syntax.
+
+\section{The SIL flavor}
+
+In the Getting Started chapter we looked at this document:
 
 \begin[type=autodoc:codeblock]{raw}
 \begin{document}
@@ -38,6 +60,14 @@ For instance, a standard B-format book can be specified by \code{papersize=198mm
 Once some of the basic document properties have been set up using these fixed size units, other dimensions may be specified relative to them, using \em{relative units}.
 For example, once the paper size is set, percentage of page width (\code{\%pw}) and height(\code{\%ph}) become valid units.
 In Chapter 4 we will meet more of these relative units, and in Chapter 7 we will meet some other ways of specifying lengths to make them stretchable or shrinkable.
+
+\subsection{Setting orientation as landscape}
+
+The orientation of the page is defined as "portrait" by default, but if you want to set it as landscape there is an option for that:
+
+\begin[type=autodoc:codeblock]{raw}
+\begin[landscape=true]{document}
+\end{raw}
 
 \section{Ordinary text}
 
@@ -120,7 +150,7 @@ So if you type \code{affluent fishing}, then, depending on your font, your outpu
     ‘\autodoc:example{affluent fishing}’.
 If you specifically want to break up the ligatures, insert empty groups (using the grouping characters \code{\{} and \code{\}}) in the middle of the possible ligatures:
     \code{af\{\}f\{\}luent f\{\}ishing}: ‘\autodoc:example{af{}f{}luent f{}ishing}’.
-See the section on the \code{features} package for more information on how to control the display of ligatures and other font features.
+See the section on the \autodoc:package{features} package for more information on how to control the display of ligatures and other font features.
 
 \section{Commands}
 
@@ -181,8 +211,8 @@ However, in some cases the environment form of the command will be easier to rea
 
 \section{The XML flavor}
 
-While we’re on the subject of alternative forms, SILE can actually process its input in a completely different file format.
-What we’ve seen so far has been SILE’s “TeX-like flavor,” but it can also directly read and process XML files.
+As mentioned at the start of the chapter, SILE can actually process its input in a completely different file format.
+What we’ve seen so far has been SILE’s “TeX-like” SIL syntax flavor, but it can also directly read and process XML files.
 (If it isn’t well-formed XML, then SILE will get very upset.)
 
 Any XML tags within the input file will then be regarded as SILE commands, and tag attributes are interpreted as command parameters.
@@ -203,7 +233,7 @@ The example above, in XML flavor, would look like this:
 <font family="Times" size="10pt">Hi there!</font>
 \end{raw}
 
-We don’t expect humans to write their documents in SILE’s XML flavor—the TeX-like SILE flavor is much better for that—but having an XML flavor allows for computers to deal with SILE a lot more easily.
+We don’t expect humans to write their documents in SILE’s XML flavor—the TeX-like SIL flavor is much better for that—but having an XML flavor allows for computers to deal with SILE a lot more easily.
 One could create graphical user interfaces to edit SILE documents, or convert other XML formats to SILE.
 
 However, there is an even smarter way of processing XML with SILE.

@@ -64,13 +64,14 @@ end
 function package:registerCommands ()
 
   self:registerCommand("crop:header", function (_, _)
-    local info = SILE.masterFilename .. " - " .. self.class:date("%x %X") .. " -  " .. outcounter
+    local info = SILE.input.filenames[1] .. " - " .. self.class:date("%x %X") .. " -  " .. outcounter
     SILE.typesetter:typeset(info)
   end)
 
   self:registerCommand("crop:setup", function (options, _)
     local papersize = SU.required(options, "papersize", "setting up crop marks")
-    local size = SILE.papersize(papersize)
+    local landscape = SU.boolean(options.landscape, self.class.options.landscape)
+    local size = SILE.papersize(papersize, landscape)
     local oldsize = SILE.documentState.paperSize
     SILE.documentState.paperSize = size
     local offsetx = ( SILE.documentState.paperSize[1] - oldsize[1] ) /2

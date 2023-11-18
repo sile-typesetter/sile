@@ -898,7 +898,7 @@ function typesetter:breakpointsToLines (breakpoints)
   end
   if linestart < #nodes then
     -- Abnormal, but warn so that one has a chance to check which bits
-    -- are misssing at output.
+    -- are missing at output.
     SU.warn("Internal typesetter error " .. (#nodes - linestart) .. " skipped nodes")
   end
   return lines
@@ -923,7 +923,7 @@ function typesetter.computeLineRatio (_, breakwidth, slice)
       -- zero boxes, so as to reach actual content...
       if slice[n].value ~= "margin" then
         -- ... but any other glue than a margin, at the end of a line, is actually
-        -- extraneous. It will however also be accounted for below, so substract
+        -- extraneous. It will however also be accounted for below, so subtract
         -- them to cancel their width. Typically, if a line break occurred at
         -- a space, the latter is then at the end of the line now, and must be
         -- ignored.

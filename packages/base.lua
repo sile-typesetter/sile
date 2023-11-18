@@ -14,15 +14,32 @@ local function script_path ()
   return base
 end
 
-function package:_init (_)
+local settingDeclarations = { }
+local rawhandlerRegistrations = {}
+local commandRegistrations = { }
+
+function package:_init (_, reload)
   self.class = SILE.scratch.half_initialized_class or SILE.documentState.documentClass
   if not self.class then
     SU.error("Attempted to initialize package before class, should have been queued in the preamble", true)
   end
   self.basedir = script_path()
-  self:declareSettings()
-  self:registerRawHandlers()
-  self:registerCommands()
+  -- Note string.format(%p) would be nicer than tostring() but only LuaJIT and Lua 5.4 support it
+  local settingsDeclarator = tostring(self.declareSettings)
+  if reload or not settingDeclarations[settingsDeclarator] then
+    settingDeclarations[settingsDeclarator] = true
+    self:declareSettings()
+  end
+  local rawhandlerRegistrator = tostring(self.registerRawHandlers)
+  if reload or not rawhandlerRegistrations[rawhandlerRegistrator] then
+    rawhandlerRegistrations[rawhandlerRegistrator] = true
+    self:registerRawHandlers()
+  end
+  local commandRegistrator = tostring(self.registerCommands)
+  if reload or not commandRegistrations[commandRegistrator] then
+    commandRegistrations[commandRegistrator] = true
+    self:registerCommands()
+  end
 end
 
 function package:_post_init ()
@@ -33,8 +50,12 @@ function package.declareSettings (_) end
 
 function package.registerRawHandlers (_) end
 
-function package:loadPackage (packname)
-  return self.class:loadPackage(packname)
+function package:loadPackage (packname, options, reload)
+  return self.class:loadPackage(packname, options, reload)
+end
+
+function package:reloadPackage (packname, options)
+  return self.class:reloadPackage(packname, options)
 end
 
 function package.registerCommands (_) end

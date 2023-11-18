@@ -26,8 +26,8 @@ globals = {
   "luautf8",
   "pl",
   "fluent",
-  "SYSTEM_SILE_PATH",
-  "SHARED_LIB_EXT"
+  "executablePath",
+  "extendSilePath"
 }
 max_line_length = false
 ignore = {

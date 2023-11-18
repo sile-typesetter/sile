@@ -1,0 +1,116 @@
+-- Allow autoconf to setup system lua paths at compile time, not run time (only used in developer mode)
+if "@LUA_PATH@" ~= "" then
+  package.path = "@LUA_PATH@"
+  package.cpath = "@LUA_CPATH@"
+end
+
+local executable = debug.getinfo(3, "S").source
+local luaversion = _VERSION:match("%d+%.%d+")
+
+-- Normalize possibly dirty Lua path formatting shortcut: /./ → /
+-- Even leafo/gh-actions-luarocks takes this shortcut which inhibits duplicate cleanup.
+package.path = package.path:gsub("/%./", "/")
+package.cpath = package.cpath:gsub("/%./", "/")
+
+-- Utility function so that last-added paths take precidence and are not duplicated.
+local function prepend_and_dedup (segment, path)
+  local escaped = segment:gsub('[%-%.%+%[%]%(%)%$%^%%%?%*]','%%%1') -- copied from pl.utils.escape() which we can't load yet
+  local striped = path:gsub(("^%s"):format(escaped), ""):gsub((";%s"):format(escaped), "")
+  return ("%s;%s"):format(segment, striped)
+end
+
+-- Prepend paths specifically for Lua module.s
+local function prependPath (path)
+  package.path  = prepend_and_dedup(path .. "/?/init.lua", package.path)
+  package.path  = prepend_and_dedup(path .. "/?.lua", package.path)
+end
+
+-- Prepand paths specifically for C modules.
+local function prependCPath (path)
+  package.cpath = prepend_and_dedup(path .. "/?.@SHARED_LIB_EXT@", package.cpath)
+end
+
+-- Take a given path and iterate over permutations of paths that LuaRocks might have installed a rock to that are
+-- specific to a given Lua version version
+local function extendPathsRocks (path)
+  prependCPath(path .. "/lib/lua/" .. luaversion)
+  prependCPath(path .. "/lib/lua/" .. luaversion .. "/sile")
+  prependPath(path .. "/share/lua/" .. luaversion)
+  prependPath(path .. "/share/lua/" .. luaversion .. "/sile")
+end
+
+-- Take a given path and iterate over the permutations of subdirectories we expect to finde SILE/Lua/C modules under.
+-- The second argument enables extra paths that we *only* expect to find in SILE source checkouts, and should not be
+-- found in system, user, toolkit, or project level paths.
+local function extendPaths (path, silesourcedir)
+  extendPathsRocks(path .. "/lua_modules")
+  prependCPath(path)
+  prependPath(path)
+  if silesourcedir then
+    prependPath(path .. "/lua-libraries")
+  else
+    prependCPath(path .. "/sile")
+    prependPath(path .. "/sile")
+  end
+  -- These paths are *only* used in developer mode for build testing
+  if "@DEVELOPER_FALSE@" ~= "" then -- see ./configure --(en|dis)able-developer
+    prependCPath(path .. "/libtexpdf/.libs")
+    prependCPath(path .. "/justenough/.libs")
+  end
+end
+
+-- Facilitate loading SILE classes & packages from system LuaRocks by adding variants of the default Lua paths with sile
+-- appended, stashed to be prepended later. Also weed out CWD relative paths, we add them in a different order later.
+local luapath = {}
+local extpath = {}
+for path in package.path:gmatch("[^;]+") do
+  table.insert(extpath, tostring(path:gsub("%?", "sile/?")))
+  table.insert(luapath, path)
+end
+package.path = table.concat(luapath, ";")
+
+-- This path is set by autoconf at configure time, and could be the full path to the source directory if in developer
+-- mode or the expeted system istalation location otherwise.
+extendPaths("@SILE_PATH@", true)
+extendPaths("@SILE_LIB_PATH@", true)
+
+-- If the configure time option to use system luarocks is disabled, use ones local to the source (again could be the
+-- development mode source directory or expected system instalation location).
+if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
+  extendPathsRocks("@SILE_PATH@/lua_modules")
+end
+
+-- Stuff the variants of system Lua Rocks paths with sile suffixes added back at higher priority that regular paths.
+package.path = table.concat(extpath, ";") .. ";" .. package.path
+
+-- Deal with the *run time* variant of SILE_PATH, which may be more than one path. This could be references to a source
+-- tree for development work, a fork of some SILE core libraries, or just a way to stuff toolkits into the path besides
+-- the default project local or system paths without exporting Lua environment variables.
+local pathvar = os.getenv("SILE_PATH")
+if pathvar then
+  for path in string.gmatch(pathvar, "[^;]+") do
+    if not path:match("^./") and path:len() >= 1 then
+      extendPaths(path, true)
+    end
+  end
+end
+
+-- Add the current working directory, presumably a local project, as one of the highest priority paths.
+local executable_dir = executable:gsub("(.*)(/.*)", "%1")
+if executable_dir:match("^@") then
+  -- Running from a nix flake reports this, but we don't want anything special to get added.
+  extendPaths(".")
+else
+  -- If executable_dir is just an alternate name of PWD, we don't need to duplicate it.
+  -- Also ignore Rust binary thinking its executable_dir is in its source directory.
+  if executable_dir ~= "./" and executable_dir ~= "src" then
+    extendPaths(executable_dir)
+  end
+  extendPathsRocks("./lua_modules")
+  extendPaths(".")
+end
+
+-- Stuff internal utility features into the global namespace so they could be manipulated externally (undocumented).
+_G.extendSilePath = extendPaths
+_G.extendSilePathRocks = extendPathsRocks
+_G.executablePath = executable
