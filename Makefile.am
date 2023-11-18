@@ -128,6 +128,10 @@ if EMBEDED_RESOURCES
 CARGO_FEATURE_ARGS += --features static
 endif
 
+if FONT_VARIATIONS
+CARGO_FEATURE_ARGS += --features variations
+endif
+
 DEPDIR := .deps
 LOCALFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 LOCALPATHS := SILE_PATH="$(PWD);libtexpdf/.libs;justenough/.libs"

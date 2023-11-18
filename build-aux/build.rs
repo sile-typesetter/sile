@@ -56,6 +56,7 @@ fn main() {
 
         // These are automatically linked by Cargo, but sadly *previous* to our links above
         println!("cargo:rustc-link-arg=-lharfbuzz"); // needed by justenoughharfbuzz
+        #[cfg(feature = "variations")]
         println!("cargo:rustc-link-arg=-lharfbuzz-subset"); // needed by justenoughharfbuzz
         println!("cargo:rustc-link-arg=-lfontconfig"); // needed by justenoughfontconfig
         println!("cargo:rustc-link-arg=-licui18n"); // needed by justenoughicu
