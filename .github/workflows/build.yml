@@ -9,7 +9,14 @@ concurrency:
 jobs:
 
   build-ubuntu:
+    strategy:
+      matrix:
+        configuration:
+          - [ 'dynamic', '' ]
+          - [ 'embeded', '--enable-embeded-resources' ]
+          - [ 'system', '--with-system-lua-sources' ]
     runs-on: ubuntu-22.04
+    name: Build Ubuntu ${{ matrix.configuration[0] }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,7 +48,8 @@ jobs:
           ./bootstrap.sh
           ./configure \
             --disable-font-variations \
-            --with-manual
+            --with-manual \
+            ${{ matrix.configuration[1] }}
           echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
           echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
       - name: Make
@@ -68,6 +76,7 @@ jobs:
 
   build-nix:
     runs-on: ubuntu-22.04
+    name: Build Nix
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -88,11 +88,14 @@ sile-lua.1
 .tarball-version
 .built-subdirs
 *.so
+*.o
 core/version.lua
 core/features.lua
 target/
 completions/
 core/pathsetup.lua
+src/embed.rs
+src/embed-includes.rs
 
 # Nix symlink to builds
 result

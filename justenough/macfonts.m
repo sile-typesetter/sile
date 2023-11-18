@@ -7,29 +7,8 @@
 #include <hb.h>
 #include <hb-ot.h>
 
-
-#if !defined LUA_VERSION_NUM
-/* Lua 5.0 */
-#define luaL_Reg luaL_reg
-#endif
-
-#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
-/*
-** Adapted from Lua 5.2.0
-*/
-static void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
-  luaL_checkstack(L, nup+1, "too many upvalues");
-  for (; l->name != NULL; l++) {  /* fill the table with given functions */
-    int i;
-    lua_pushstring(L, l->name);
-    for (i = 0; i < nup; i++)  /* copy upvalues to the top */
-      lua_pushvalue(L, -(nup+1));
-    lua_pushcclosure(L, l->func, nup);  /* closure with those upvalues */
-    lua_settable(L, -(nup + 3));
-  }
-  lua_pop(L, nup);  /* remove upvalues */
-}
-#endif
+// #define COMPAT53_PREFIX compat53
+#include "compat-5.3.h"
 
 #define MAX_NAME_LEN 512
 
@@ -119,7 +98,7 @@ getFileNameFromCTFont(CTFontRef ctFontRef, uint32_t *index)
 }
 
 
-int face_from_options(lua_State* L) {
+int je_face_from_options(lua_State* L) {
   uint32_t index = 0;
   const char *family = "Gentium";
   char * font_path;
@@ -204,7 +183,7 @@ int face_from_options(lua_State* L) {
 
 
 static const struct luaL_Reg lib_table [] = {
-  {"_face", face_from_options},
+  {"_face", je_face_from_options},
   {NULL, NULL}
 };
 

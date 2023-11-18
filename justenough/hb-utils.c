@@ -1,9 +1,8 @@
-#include "hb-utils.h"
-
 #include <string.h>
 #include <stdlib.h>
 #include <hb-ot.h>
 
+#include "hb-utils.h"
 #include "silewin32.h"
 
 static hb_variation_t* scan_variation_string(const char* cp1, unsigned int* ret) {
@@ -148,5 +147,3 @@ hb_font_t* get_hb_font(lua_State *L, int index) {
 
   return font;
 }
-
-

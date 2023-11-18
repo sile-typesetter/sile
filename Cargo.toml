@@ -15,6 +15,7 @@ homepage = "https://sile-typesetter.org"
 repository = "https://github.com/sile-typesetter/sile"
 license = "MIT"
 build = "build-aux/build.rs"
+# links = "svg"
 
 [[bin]]
 name = "sile"
@@ -28,6 +29,8 @@ lua52 = [ "mlua/lua52" ]
 lua51 = [ "mlua/lua51" ]
 luajit = [ "mlua/luajit" ]
 vendored = [ "mlua/vendored" ]
+static = [ "rust-embed" ]
+variations = []
 completions = [ "cli", "clap_complete" ]
 cli = [ "clap" ]
 bash = [ "completions" ]
@@ -53,6 +56,15 @@ lto = true
   [dependencies.mlua]
   version = "0.9"
   features = [ "macros" ]
+
+  [dependencies.rust-embed]
+  version = "8.0"
+  optional = true
+  features = [ "include-exclude" ]
+
+  [dependencies.harfbuzz-sys]
+  version = "0.5"
+  optional = true
 
 [build-dependencies]
 
