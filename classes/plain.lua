@@ -236,12 +236,14 @@ function class:registerCommands ()
   end)
 
   self:registerCommand("em", function (_, content)
-    SILE.call("font", { style = "Italic" }, content)
-  end)
+    local style = SILE.settings:get("font.style")
+    local toggle = (style and style:lower() == "italic") and "Regular" or "Italic"
+    SILE.call("font", { style = toggle }, content)
+  end, "Emphasizes its contents by switching the font style to italic (or back to regular if already italic)")
 
   self:registerCommand("strong", function (_, content)
     SILE.call("font", { weight = 700 }, content)
-  end)
+  end, "Sets the font weight to bold (700)")
 
   self:registerCommand("code", function (options, content)
     -- IMPLEMENTATION NOTE:
