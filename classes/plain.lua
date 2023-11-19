@@ -327,8 +327,26 @@ function class:registerCommands ()
     SILE.call("raggedleft", {}, content)
   end)
 
+  self:registerCommand("blockquote", function (_, content)
+    SILE.call("smallskip")
+    SILE.typesetter:leaveHmode()
+    SILE.settings:temporarily(function ()
+      local indent = SILE.measurement("2em"):absolute()
+      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      -- We keep the stretcheability of the lskip and rskip: honoring text alignment
+      -- from the parent context.
+      SILE.settings:set("document.lskip", SILE.nodefactory.glue(lskip.width + indent))
+      SILE.settings:set("document.rskip", SILE.nodefactory.glue(rskip.width + indent))
+      SILE.settings:set("font.size", SILE.settings:get("font.size") * 0.95)
+      SILE.process(content)
+      SILE.typesetter:leaveHmode()
+    end)
+    SILE.call("smallskip")
+  end, "A blockquote environment")
+
   self:registerCommand("quote", function (_, content)
-    SU.deprecated("\\quote", "\\pullquote", "0.14.5", "0.16.0", [[
+    SU.deprecated("\\quote", "\\pullquote or \\blockquote", "0.14.5", "0.16.0", [[
   The \quote command has *such* bad output it is being completely
   deprecated as unsuitable for general purpose use.
   The pullquote package (\use[module=packages.pullquote]) provides one
