@@ -221,20 +221,6 @@ function class:registerCommands ()
     SILE.call("penalty", { penalty = -20000 })
   end, "Fills the page with stretchable vglue and then requests a non-negotiable page break")
 
-  self:registerCommand("justified", function (_, content)
-    SILE.settings:set("document.rskip", nil)
-    SILE.settings:set("document.spaceskip", nil)
-    SILE.process(content)
-    SILE.call("par")
-  end)
-
-  self:registerCommand("rightalign", function (_, content)
-    SILE.call("raggedleft", {}, function ()
-      SILE.process(content)
-      SILE.call("par")
-    end)
-  end)
-
   self:registerCommand("em", function (_, content)
     local style = SILE.settings:get("font.style")
     local toggle = (style and style:lower() == "italic") and "Regular" or "Italic"
@@ -262,20 +248,92 @@ function class:registerCommands ()
     SILE.call("font", { language = "und" }, content)
   end)
 
+  self:registerCommand("center", function (_, content)
+    if #SILE.typesetter.state.nodes ~= 0 then
+      SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
+    end
+    SILE.settings:temporarily(function ()
+      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+      SILE.settings:set("current.parindent", SILE.nodefactory.glue())
+      SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue(lskip.width.length))
+      SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue(rskip.width.length))
+      SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+      SILE.settings:set("document.spaceskip", SILE.length("1spc", 0, 0))
+      SILE.process(content)
+      SILE.call("par")
+    end)
+  end, "Typeset its contents in a centered block (keeping margins).")
+
   self:registerCommand("raggedright", function (_, content)
-    SILE.call("ragged", { right = true }, content)
-  end)
+    SILE.settings:temporarily(function ()
+      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      SILE.settings:set("document.lskip", SILE.nodefactory.glue(lskip.width.length))
+      SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue(rskip.width.length))
+      SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+      SILE.settings:set("document.spaceskip", SILE.length("1spc", 0, 0))
+      SILE.process(content)
+      SILE.call("par")
+    end)
+  end, "Typeset its contents in a left aligned block (keeping margins).")
 
   self:registerCommand("raggedleft", function (_, content)
-    SILE.call("ragged", { left = true }, content)
+    SILE.settings:temporarily(function ()
+      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue(lskip.width.length))
+      SILE.settings:set("document.rskip", SILE.nodefactory.glue(rskip.width.length))
+      SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+      SILE.settings:set("document.spaceskip", SILE.length("1spc", 0, 0))
+      SILE.process(content)
+      SILE.call("par")
+    end)
+  end, "Typeset its contents in a right aligned block (keeping margins).")
+
+  self:registerCommand("justified", function (_, content)
+    SILE.settings:temporarily(function ()
+      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      SILE.settings:set("document.lskip", SILE.nodefactory.glue(lskip.width.length))
+      SILE.settings:set("document.rskip", SILE.nodefactory.glue(rskip.width.length))
+      SILE.settings:set("document.spaceskip", nil)
+      -- HACK. This knows too much about parfillskip defaults...
+      -- (Which must be big, but smaller than infinity. Doh!)
+      SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue("0pt plus 10000pt"))
+      SILE.process(content)
+      SILE.call("par")
+    end)
+   end, "Typeset its contents in a justified block (keeping margins).")
+
+  self:registerCommand("ragged", function (options, content)
+    -- Fairly dubious command for compatibility
+    local l = SU.boolean(options.left, false)
+    local r = SU.boolean(options.right, false)
+    if l and r then
+      SILE.call("center", {}, content)
+    elseif r then
+      SILE.call("raggedleft", {}, content)
+    elseif l then
+      SILE.call("raggedright", {}, content)
+    else
+      SILE.call("justified", {}, content)
+    end
+  end)
+
+  self:registerCommand("rightalign", function (_, content)
+    SU.deprecated("\\rightalign", "\\raggedleft", "0.15.0", "0.17.0")
+    SILE.call("raggedleft", {}, content)
   end)
 
   self:registerCommand("quote", function (_, content)
     SU.deprecated("\\quote", "\\pullquote", "0.14.5", "0.16.0", [[
   The \quote command has *such* bad output it is being completely
-  deprecated as unsuitable for general purpose use. The pullquote
-  package (\use[module=packages.pullquote]) provides one alternative,
-  but you can also copy and adapt the original source from the plain
+  deprecated as unsuitable for general purpose use.
+  The pullquote package (\use[module=packages.pullquote]) provides one
+  alternative, and the blockquote environment provides another.
+  But you can also copy and adapt the original source from the plain
   class if you need to maintain exact output past SILE v0.16.0.]])
     SILE.call("smallskip")
     SILE.call("par")
@@ -310,29 +368,6 @@ function class:registerCommands ()
 
   self:registerCommand("awful", function (_, _)
     SILE.settings:set("linebreak.tolerance", 10000)
-  end)
-
-  self:registerCommand("center", function (_, content)
-    if #SILE.typesetter.state.nodes ~= 0 then
-      SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
-    end
-    SILE.settings:temporarily(function()
-      SILE.settings:set("current.parindent", 0)
-      SILE.settings:set("document.parindent", 0)
-      SILE.call("ragged", { left = true, right = true }, content)
-    end)
-  end)
-
-  self:registerCommand("ragged", function (options, content)
-    SILE.settings:temporarily(function ()
-      if SU.boolean(options.left, false) then SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue()) end
-      if SU.boolean(options.right, false) then SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue()) end
-      SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
-      SILE.settings:set("document.parindent", SILE.nodefactory.glue())
-      SILE.settings:set("document.spaceskip", SILE.length("1spc", 0, 0))
-      SILE.process(content)
-      SILE.call("par")
-    end)
   end)
 
   self:registerCommand("hbox", function (_, content)
