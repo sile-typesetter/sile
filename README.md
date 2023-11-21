@@ -348,7 +348,7 @@ SILE is distributed under the [MIT licence][license].
   [harfbuzz]: http://www.freedesktop.org/wiki/Software/HarfBuzz/
   [icu]: http://icu-project.org
   [libtexpdf]: https://github.com/sile-typesetter/libtexpdf
-  [arch-sile]: https://archlinux.org/packages/community/x86_64/sile/
+  [arch-sile]: https://archlinux.org/packages/extra/x86_64/sile/
   [aur]: https://wiki.archlinux.org/index.php/Arch_User_Repository
   [typesetting]: https://en.wikipedia.org/wiki/Typesetting
   [tex]: https://en.wikipedia.org/wiki/TeX
