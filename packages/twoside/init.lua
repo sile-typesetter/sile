@@ -57,9 +57,8 @@ function package:_init (options)
   end
   self:export("oddPage", self.oddPage)
   self:export("mirrorMaster", mirrorMaster)
-  self:export("switchPage", function (class)
+  self:export("switchPage", function ()
     SU.deprecated("class:switchPage", nil, "0.13.0", "0.15.0", _deprecate)
-    return class:switchPage()
   end)
   self.class.oddPageMaster = options.oddPageMaster
   self.class.evenPageMaster = options.evenPageMaster

@@ -12,7 +12,7 @@ inputter._name = "base"
 inputter._docclass = nil
 
 function inputter:_init (options)
-  if options then self.options = options end
+  self.options = options or {}
 end
 
 function inputter:classInit (options)

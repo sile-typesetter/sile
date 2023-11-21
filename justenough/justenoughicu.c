@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+
 #include <unicode/ustring.h>
 #include <unicode/ustdio.h>
 #include <unicode/unum.h>
@@ -9,11 +10,15 @@
 #include <unicode/ubidi.h>
 #include <unicode/ucol.h>
 #include <unicode/utf16.h>
+
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
 
 #include "silewin32.h"
+
+// #define COMPAT53_PREFIX compat53
+#include "compat-5.3.h"
 
 typedef int32_t (*conversion_function_t)(UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, const char *locale, UErrorCode *pErrorCode);
 
@@ -27,7 +32,7 @@ typedef int32_t (*conversion_function_t)(UChar *dest, int32_t destCapacity, cons
   u_strFromUTF8(out, out_l, &out_l, in, in_l, &err); \
 }
 
-int icu_case(lua_State *L) {
+int je_icu_case(lua_State *L) {
   size_t input_l;
   const char* input = luaL_checklstring(L, 1, &input_l);
 
@@ -96,7 +101,7 @@ int icu_case(lua_State *L) {
     return luaL_error(L, "Error in UTF8 conversion %s", u_errorName(err));
 }
 
-int icu_breakpoints(lua_State *L) {
+int je_icu_breakpoints(lua_State *L) {
   const char* input = luaL_checkstring(L, 1);
   int input_l = strlen(input);
   const char* locale = luaL_checkstring(L, 2);
@@ -168,7 +173,7 @@ int icu_breakpoints(lua_State *L) {
   return breakcount;
 }
 
-int icu_canonicalize_language(lua_State *L) {
+int je_icu_canonicalize_language(lua_State *L) {
   const char* lang = luaL_checkstring(L, 1);
   char locale[200], minimized[200], result[200];
   UErrorCode error = 0;
@@ -190,7 +195,7 @@ int icu_canonicalize_language(lua_State *L) {
 
 #define MAX_ICU_FORMATTED_NUMBER_STRING 512
 
-int icu_format_number(lua_State *L) {
+int je_icu_format_number(lua_State *L) {
   double a = luaL_checknumber(L, 1);
   const char* locale = luaL_checkstring(L, 2);
   UNumberFormatStyle numFormatStyle = luaL_checkinteger(L, 3);
@@ -213,7 +218,7 @@ int icu_format_number(lua_State *L) {
   return 1;
 }
 
-int icu_bidi_runs(lua_State *L) {
+int je_icu_bidi_runs(lua_State *L) {
   size_t input_l;
   const char* input = luaL_checklstring(L, 1, &input_l);
   const char* direction = luaL_checkstring(L, 2);
@@ -292,7 +297,7 @@ int icu_bidi_runs(lua_State *L) {
   return count;
 }
 
-int icu_collation_create(lua_State *L) {
+int je_icu_collation_create(lua_State *L) {
   int nargs = lua_gettop(L);
   const char* locale = luaL_checkstring(L, 1);
 
@@ -452,7 +457,7 @@ int icu_collation_create(lua_State *L) {
   return 1;
 }
 
-int icu_collation_destroy(lua_State *L) {
+int je_icu_collation_destroy(lua_State *L) {
   UCollator *collator = (UCollator *)lua_touserdata(L, 1);
   if (!collator) {
     return luaL_error(L, "Collation cleanup called with invalid input");
@@ -461,7 +466,7 @@ int icu_collation_destroy(lua_State *L) {
   return 0;
 }
 
-int icu_compare(lua_State *L) {
+int je_icu_compare(lua_State *L) {
   UCollator *collator = (UCollator *)lua_touserdata(L, 1);
   if (!collator) {
     return luaL_error(L, "Comparison called with invalid first argument (collator)");
@@ -490,44 +495,21 @@ int icu_compare(lua_State *L) {
   //     UCollationResult result = ucol_strcollIter(collation, &s1iter, &s2iter, &status);
 }
 
-int icu_version(lua_State *L) {
+int je_icu_version(lua_State *L) {
   lua_pushstring(L, U_ICU_VERSION);
   return 1;
 }
 
-#if !defined LUA_VERSION_NUM
-/* Lua 5.0 */
-#define luaL_Reg luaL_reg
-#endif
-
-#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501 && !LUAJIT
-/*
-** Adapted from Lua 5.2.0
-*/
-void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
-  luaL_checkstack(L, nup+1, "too many upvalues");
-  for (; l->name != NULL; l++) {  /* fill the table with given functions */
-    int i;
-    lua_pushstring(L, l->name);
-    for (i = 0; i < nup; i++)  /* copy upvalues to the top */
-      lua_pushvalue(L, -(nup+1));
-    lua_pushcclosure(L, l->func, nup);  /* closure with those upvalues */
-    lua_settable(L, -(nup + 3));
-  }
-  lua_pop(L, nup);  /* remove upvalues */
-}
-#endif
-
 static const struct luaL_Reg lib_table [] = {
-  {"breakpoints", icu_breakpoints},
-  {"case", icu_case},
-  {"bidi_runs", icu_bidi_runs},
-  {"canonicalize_language", icu_canonicalize_language},
-  {"format_number", icu_format_number},
-  {"collation_create", icu_collation_create},
-  {"collation_destroy", icu_collation_destroy},
-  {"compare", icu_compare},
-  {"version", icu_version},
+  {"breakpoints", je_icu_breakpoints},
+  {"case", je_icu_case},
+  {"bidi_runs", je_icu_bidi_runs},
+  {"canonicalize_language", je_icu_canonicalize_language},
+  {"format_number", je_icu_format_number},
+  {"collation_create", je_icu_collation_create},
+  {"collation_destroy", je_icu_collation_destroy},
+  {"compare", je_icu_compare},
+  {"version", je_icu_version},
   {NULL, NULL}
 };
 

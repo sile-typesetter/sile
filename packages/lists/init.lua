@@ -72,8 +72,8 @@ local trim = function (str)
 end
 
 local enforceListType = function (cmd)
-  if cmd ~= "enumerate" and cmd ~= "itemize" then
-    SU.error("Only 'enumerate', 'itemize' or 'item' are accepted in lists, found '"..cmd.."'")
+  if cmd ~= "enumerate" and cmd ~= "itemize" and cmd ~= "BulletedList" and cmd ~= "OrderedList" then
+    SU.error("Only items or lists are allowed as content in lists, found '"..cmd.."'")
   end
 end
 
@@ -165,7 +165,7 @@ function package.doNestedList (_, listType, options, content)
     local counter = options.start and (SU.cast("integer", options.start) - 1) or 0
     for i = 1, #content do
       if type(content[i]) == "table" then
-        if content[i].command == "item" then
+        if content[i].command == "item" or content[i].command == "ListItem" then
           counter = counter + 1
           -- Enrich the node with internal properties
           content[i]._lists_ = {

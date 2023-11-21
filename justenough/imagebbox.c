@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "libtexpdf/libtexpdf.h"
+
+#include <libtexpdf.h>
 
 int get_pdf_bbox(FILE* f, long page_no, double* llx, double* lly, double* urx, double* ury) {
   pdf_obj* page;
@@ -68,5 +69,3 @@ int get_image_bbox(FILE* f, long page_no, double* llx, double* lly, double* urx,
   *yresol = ydensity != 0 ? 72 / ydensity : 0;
   return 0;
 }
-
-

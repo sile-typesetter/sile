@@ -54,13 +54,17 @@ endif
 
 $(MANUAL): $(FIGURES)
 
+BUILT_LUA_SOURCES = core/features.lua core/pathsetup.lua core/version.lua
+
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
 dist_man_MANS = sile-lua.1
 sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
 EXTRA_sile_SOURCES =
+if !EMBEDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
-nobase_nodist_pkgdata_DATA = core/features.lua core/pathsetup.lua core/version.lua $(LUAMODULES)
+nobase_nodist_pkgdata_DATA = $(BUILT_LUA_SOURCES) $(LUAMODULES)
+endif
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE.md
@@ -71,8 +75,9 @@ EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconf
 EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL) $(FIGURES)
+EXTRA_DIST += src/embed.rs.in
 
-BUILT_SOURCES = core/features.lua core/pathsetup.lua core/version.lua Makefile-distfiles
+BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
 
 CLEANFILES = $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS)
 
@@ -80,6 +85,36 @@ include $(top_srcdir)/build-aux/rust_boilerplate.mk
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@
+
+if EMBEDED_RESOURCES
+_EMBEDED_SOURCES = src/embed.rs src/embed-includes.rs
+nodist_sile_SOURCES = $(_EMBEDED_SOURCES)
+BUILT_SOURCES += $(_EMBEDED_SOURCES)
+CLEANFILES += $(_EMBEDED_SOURCES)
+$(CARGO_BIN): justenough/.libs/fontmetrics.a
+$(CARGO_BIN): justenough/.libs/justenoughfontconfig.a
+$(CARGO_BIN): justenough/.libs/justenoughharfbuzz.a
+$(CARGO_BIN): justenough/.libs/justenoughicu.a
+$(CARGO_BIN): justenough/.libs/justenoughlibtexpdf.a
+$(CARGO_BIN): justenough/.libs/svg.a
+$(CARGO_BIN): libtexpdf/.libs/libtexpdf.a
+
+src/embed-includes.rs: Makefile-distfiles
+	{
+		echo $(BUILT_LUA_SOURCES)
+		$(GREP) -E '^(SILEDATA|LUALIBRARIES|LUAMODULES) = ' $<
+	} |
+		$(SED) -E -e 's/^.* = //;s/ /\n/g' |
+		while read file; do
+			echo "#[include = \"$${file}\"]"
+		done > $@
+
+src/embed.rs: src/embed.rs.in src/embed-includes.rs
+	$(SED) \
+		-e '/@INCLUDE_EMDED_INCLUDES@/r $(word 2,$^)' \
+		-e '/@INCLUDE_EMDED_INCLUDES@/d' \
+		$< > $@
+endif EMBEDED_RESOURCES
 
 if LUAJIT
 MLUAVER = luajit
@@ -90,6 +125,14 @@ CARGO_FEATURE_ARGS = --features $(MLUAVER)
 
 if !SYSTEM_LUA_SOURCES
 CARGO_FEATURE_ARGS += --features vendored
+endif
+
+if EMBEDED_RESOURCES
+CARGO_FEATURE_ARGS += --features static
+endif
+
+if FONT_VARIATIONS
+CARGO_FEATURE_ARGS += --features variations
 endif
 
 DEPDIR := .deps
@@ -113,6 +156,10 @@ dist: sile-$(VERSION).pdf sile-$(VERSION).md
 
 sile-$(VERSION).pdf: $(MANUAL)
 	cp $(MANUAL) $@
+
+sile-%.md: CHANGELOG.md
+	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' CHANGELOG.md | \
+		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
 
 check: selfcheck
 
@@ -151,7 +198,13 @@ _DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTF
 # TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
 # these subdirs don't do crazy things like copying files outside of their own trees!
 _BUILT_SUBDIRS = .built-subdirs
-_SUBDIR_TELLS = justenoughfontconfig.so justenoughharfbuzz.so justenoughicu.so justenoughlibtexpdf.so libtexpdf/.libs/libtexpdf.so.0.0.0
+_SUBDIR_TELLS = justenough/.libs/fontmetrics.so \
+				justenough/.libs/justenoughfontconfig.so \
+				justenough/.libs/justenoughharfbuzz.so \
+				justenough/.libs/justenoughicu.so \
+				justenough/.libs/justenoughlibtexpdf.so \
+				justenough/.libs/svg.so \
+				libtexpdf/.libs/libtexpdf.so.0.0.0
 $(_BUILT_SUBDIRS): $(_SUBDIR_TELLS)
 	touch $@
 
@@ -176,35 +229,29 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS
 .PHONY: force
 force: ;
 
-PHONY_DEVELOPER_TARGETS = regressions test lint luarocks-lint luacheck busted coverage benchmark compare update_expecteds regression_previews docker docker-dep-check docker-ghcr-to-hub docker-build-push gource.webm
+PHONY_DEVELOPER_TARGETS = benchmark busted compare coverage docker docker-build-push \
+	docker-dep-check docker-ghcr-to-hub gource.webm lint luacheck luarocks-lint \
+	prerelease regression_previews regressions release release-preview tagrelease \
+	test update_expecteds update_libtexpdf
 .PHONY: $(PHONY_DEVELOPER_TARGETS)
 
 if DEVELOPER
 
 RELTYPE ?=
 
-.PHONY: tagrelease
 tagrelease:
 	test -z $$($(GIT) tag --points-at HEAD) || exit 0 # end if we are already on a release tag
 	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
 	$(GIT) diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
 	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
-.PHONY: prerelease
 prerelease: test docs update_libtexpdf
 
-.PHONY: release-preview
 release-preview:
 	npm run release -- --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
 
-.PHONY: release
 release: tagrelease
 
-sile-%.md: CHANGELOG.md
-	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' CHANGELOG.md | \
-		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
-
-.PHONY: update_libtexpdf
 update_libtexpdf:
 	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything already staged
 	$(GIT) submodule update --init --remote -- libtexpdf

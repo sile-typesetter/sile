@@ -43,9 +43,8 @@ function package:_init ()
     SILE.scratch.info = { thispage = {} }
   end
   self.class:registerHook("newpage", newPageInfo)
-  self:deprecatedExport("newPageInfo", function (class)
+  self:deprecatedExport("newPageInfo", function ()
     SU.deprecated("class:newPageInfo", nil, "0.13.0", "0.15.0", _deprecate)
-    return class:newPageInfo()
   end)
 end
 

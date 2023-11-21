@@ -65,7 +65,6 @@ SILE.input = {
   filenames = {},
   evaluates = {},
   evaluateAfters = {},
-  includes = {},
   uses = {},
   options = {},
   preambles = {},
@@ -329,6 +328,7 @@ function SILE.processFile (filename, format, options)
     end
     if SILE.masterDir and SILE.masterDir:len() >= 1 then
       _G.extendSilePath(SILE.masterDir)
+      _G.extendSilePathRocks(SILE.masterDir .. "/lua_modules")
     end
     filename = SILE.resolveFile(filename) or SU.error("Could not find file")
     local mode = lfs.attributes(filename).mode

@@ -13,14 +13,14 @@ jobs:
       fail-fast: false
       matrix:
         luaVersion:
-          - '5.4'
-          - '5.3'
-          - '5.2'
-          - '5.1'
-          - 'luajit'
-          # - 'luajit-openresty'
+          - [ '5.4', 'MYCFLAGS=-fPIC' ]
+          - [ '5.3', 'MYCFLAGS=-fPIC' ]
+          - [ '5.2', 'MYCFLAGS=-fPIC' ]
+          - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"' ]
+          - [ 'luajit', 'XCFLAGS=-fPIC' ]
+          # - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
     runs-on: ubuntu-22.04
-    name: Test on Lua ${{ matrix.luaVersion }}
+    name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,7 +38,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ matrix.luaVersion }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
       - name: Install system dependencies
@@ -48,7 +48,8 @@ jobs:
       - name: Setup ‘lua’
         uses: leafo/gh-actions-lua@v10
         with:
-          luaVersion: ${{ matrix.luaVersion }}
+          luaVersion: ${{ matrix.luaVersion[0] }}
+          luaCompileFlags: ${{ matrix.luaVersion[1] }}
       - name: Setup ‘cargo’
         uses: actions-rs/toolchain@v1
       - name: Setup ‘luarocks’
@@ -69,10 +70,10 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
+            ${{ matrix.luaVersion[1] }} \
             --enable-developer LUACHECK=false NIX=false \
             --disable-font-variations \
-            --without-system-luarocks \
-            --with${{ !startsWith(matrix.luaVersion, 'luajit') && 'out' || '' }}-luajit \
+            --with${{ !startsWith(matrix.luaVersion[0], 'luajit') && 'out' || '' }}-luajit \
             --without-manual
       - name: Make
         run: |
@@ -81,7 +82,7 @@ jobs:
         run: |
           make selfcheck
       - name: Test Busted
-        continue-on-error: ${{ matrix.luaVersion == '5.1' }}
+        continue-on-error: ${{ matrix.luaVersion[0] == '5.1' }}
         timeout-minutes: ${{ runner.debug && 20 || 2 }}
         run: |
           make busted
@@ -96,5 +97,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: test-${{ matrix.luaVersion }}-actuals
+          name: test-${{ matrix.luaVersion[0] }}-actuals
           path: tests/*.actual

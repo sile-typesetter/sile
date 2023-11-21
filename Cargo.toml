@@ -10,13 +10,38 @@ authors = [
   "Olivier Nicole",
   "Didier Willis"
 ]
+readme = "README.md"
 homepage = "https://sile-typesetter.org"
+repository = "https://github.com/sile-typesetter/sile"
 license = "MIT"
 build = "build-aux/build.rs"
+# links = "svg"
 
 [[bin]]
 name = "sile"
 required-features = [ "cli" ]
+
+[features]
+default = [ "cli", "bash", "elvish", "fish", "manpage", "powershell", "zsh" ]
+lua54 = [ "mlua/lua54" ]
+lua53 = [ "mlua/lua53" ]
+lua52 = [ "mlua/lua52" ]
+lua51 = [ "mlua/lua51" ]
+luajit = [ "mlua/luajit" ]
+vendored = [ "mlua/vendored" ]
+static = [ "rust-embed" ]
+variations = []
+completions = [ "cli", "clap_complete" ]
+cli = [ "clap" ]
+bash = [ "completions" ]
+elvish = [ "completions" ]
+fish = [ "completions" ]
+manpage = [ "clap_mangen" ]
+powershell = [ "completions" ]
+zsh = [ "completions" ]
+
+[profile.release]
+lto = true
 
 [dependencies]
 
@@ -31,6 +56,15 @@ required-features = [ "cli" ]
   [dependencies.mlua]
   version = "0.9"
   features = [ "macros" ]
+
+  [dependencies.rust-embed]
+  version = "8.0"
+  optional = true
+  features = [ "include-exclude" ]
+
+  [dependencies.harfbuzz-sys]
+  version = "0.5"
+  optional = true
 
 [build-dependencies]
 
@@ -51,23 +85,3 @@ required-features = [ "cli" ]
   version = "8.2"
   default-features = false
   features = [ "build", "cargo", "git", "gitoxide" ]
-
-[features]
-default = [ "cli", "bash", "elvish", "fish", "manpage", "powershell", "zsh" ]
-lua54 = [ "mlua/lua54" ]
-lua53 = [ "mlua/lua53" ]
-lua52 = [ "mlua/lua52" ]
-lua51 = [ "mlua/lua51" ]
-luajit = [ "mlua/luajit" ]
-vendored = [ "mlua/vendored" ]
-completions = [ "cli", "clap_complete" ]
-cli = [ "clap" ]
-bash = [ "completions" ]
-elvish = [ "completions" ]
-fish = [ "completions" ]
-manpage = [ "clap_mangen" ]
-powershell = [ "completions" ]
-zsh = [ "completions" ]
-
-[profile.release]
-lto = true

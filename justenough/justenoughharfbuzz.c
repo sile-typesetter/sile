@@ -12,9 +12,11 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include "hb-utils.h"
 #include "silewin32.h"
 
-#include "hb-utils.h"
+/* #define COMPAT53_PREFIX compat53 */
+#include "compat-5.3.h"
 
 /* The following function stolen from XeTeX_ext.c */
 static hb_tag_t
@@ -135,7 +137,7 @@ static char** scan_shaper_list(char* cp1) {
   return res;
 }
 
-int shape (lua_State *L) {
+int je_hb_shape (lua_State *L) {
     size_t font_l;
     const char * text = luaL_checkstring(L, 1);
     hb_font_t * hbFont = get_hb_font(L, 2);
@@ -144,7 +146,7 @@ int shape (lua_State *L) {
     const char * lang = luaL_checkstring(L, 5);
     double point_size = luaL_checknumber(L, 6);
     const char * featurestring = luaL_checkstring(L, 7);
-    char * shaper_list_string = luaL_checkstring(L, 8);
+    char * shaper_list_string = (char *)luaL_checkstring(L, 8);
     const char * const* shaper_list = NULL;
     if (strlen(shaper_list_string) > 0) {
       shaper_list = (const char * const*)scan_shaper_list(shaper_list_string);
@@ -232,6 +234,8 @@ int shape (lua_State *L) {
       double height = extents.y_bearing * point_size / upem;
       double tHeight = extents.height * point_size / upem;
       double width = glyph_pos[j].x_advance * point_size / upem;
+      double x_bearing = extents.x_bearing * point_size / upem;
+      double glyphWidth = extents.width * point_size / upem;
 
       /* The PDF model expects us to make positioning adjustments
       after a glyph is painted. For this we need to know the natural
@@ -262,6 +266,12 @@ int shape (lua_State *L) {
       lua_pushstring(L, "depth");
       lua_pushnumber(L, -tHeight - height);
       lua_settable(L, -3);
+      lua_pushstring(L, "x_bearing");
+      lua_pushnumber(L, x_bearing);
+      lua_settable(L, -3);
+      lua_pushstring(L, "glyphWidth");
+      lua_pushnumber(L, glyphWidth);
+      lua_settable(L, -3);
     }
     /* Cleanup */
     hb_buffer_destroy(buf);
@@ -277,7 +287,7 @@ static int has_table(hb_face_t* face, hb_tag_t tag) {
   return ret;
 }
 
-int instanciate(lua_State *L) {
+int je_hb_instanciate(lua_State *L) {
   unsigned int data_l = 0;
   const char * data_s = NULL;
 #ifdef HAVE_HARFBUZZ_SUBSET
@@ -367,7 +377,7 @@ int instanciate(lua_State *L) {
   return 1;
 }
 
-int get_glyph_dimensions(lua_State *L) {
+int je_hb_get_glyph_dimensions(lua_State *L) {
   hb_font_t* hbFont = get_hb_font(L, 1);
   double point_size = (unsigned int)luaL_checknumber(L, 2);
   hb_codepoint_t glyphId = (hb_codepoint_t)luaL_checknumber(L, 3);
@@ -402,7 +412,7 @@ int get_glyph_dimensions(lua_State *L) {
   return 1;
 }
 
-int get_harfbuzz_version (lua_State *L) {
+int je_hb_get_harfbuzz_version (lua_State *L) {
   unsigned int major;
   unsigned int minor;
   unsigned int micro;
@@ -413,7 +423,7 @@ int get_harfbuzz_version (lua_State *L) {
   return 1;
 }
 
-int version_lessthan (lua_State *L) {
+int je_hb_version_lessthan (lua_State *L) {
   unsigned int major = luaL_checknumber(L, 1);
   unsigned int minor = luaL_checknumber(L, 2);
   unsigned int micro = luaL_checknumber(L, 3);
@@ -421,7 +431,7 @@ int version_lessthan (lua_State *L) {
   return 1;
 }
 
-int list_shapers (lua_State *L) {
+int je_hb_list_shapers (lua_State *L) {
   const char **shaper_list = hb_shape_list_shapers ();
   int i = 0;
 
@@ -432,7 +442,7 @@ int list_shapers (lua_State *L) {
   return i;
 }
 
-int get_table (lua_State *L) {
+int je_hb_get_table (lua_State *L) {
   size_t tag_l;
   hb_face_t * face = hb_font_get_face(get_hb_font(L, 1));
   const char * tag_s = luaL_checklstring(L, 2, &tag_l);
@@ -448,44 +458,19 @@ int get_table (lua_State *L) {
   return 1;
 }
 
-#if !defined LUA_VERSION_NUM
-/* Lua 5.0 */
-#define luaL_Reg luaL_reg
-#endif
-
-#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
-/*
-** Adapted from Lua 5.2.0
-*/
-void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
-  luaL_checkstack(L, nup+1, "too many upvalues");
-  for (; l->name != NULL; l++) {  /* fill the table with given functions */
-    int i;
-    lua_pushstring(L, l->name);
-    for (i = 0; i < nup; i++)  /* copy upvalues to the top */
-      lua_pushvalue(L, -(nup+1));
-    lua_pushcclosure(L, l->func, nup);  /* closure with those upvalues */
-    lua_settable(L, -(nup + 3));
-  }
-  lua_pop(L, nup);  /* remove upvalues */
-}
-#endif
-
 static const struct luaL_Reg lib_table [] = {
-  {"_shape", shape},
-  {"get_glyph_dimensions", get_glyph_dimensions},
-  {"version", get_harfbuzz_version},
-  {"shapers", list_shapers},
-  {"get_table", get_table},
-  {"instanciate", instanciate},
-  {"version_lessthan", version_lessthan},
+  {"_shape", je_hb_shape},
+  {"get_glyph_dimensions", je_hb_get_glyph_dimensions},
+  {"version", je_hb_get_harfbuzz_version},
+  {"shapers", je_hb_list_shapers},
+  {"get_table", je_hb_get_table},
+  {"instanciate", je_hb_instanciate},
+  {"version_lessthan", je_hb_version_lessthan},
   {NULL, NULL}
 };
 
 int luaopen_justenoughharfbuzz (lua_State *L) {
   lua_newtable(L);
   luaL_setfuncs(L, lib_table, 0);
-  //lua_setglobal(L, "harfbuzz");
   return 1;
 }
-

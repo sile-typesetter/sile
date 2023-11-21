@@ -84,6 +84,10 @@
             pkgs.yarn
             # For npx
             pkgs.nodejs
+            # For gs, dot, and bsdtar used in building the manual
+            pkgs.ghostscript
+            pkgs.graphviz
+            pkgs.libarchive
           ];
         };
       };

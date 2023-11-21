@@ -9,7 +9,14 @@ concurrency:
 jobs:
 
   build-ubuntu:
+    strategy:
+      matrix:
+        configuration:
+          - [ 'dynamic', '' ]
+          - [ 'embeded', '--enable-embeded-resources' ]
+          - [ 'system', '--with-system-lua-sources' ]
     runs-on: ubuntu-22.04
+    name: Build Ubuntu ${{ matrix.configuration[0] }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,18 +35,21 @@ jobs:
           path: |
             lua_modules
           key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install cargo fonts-sil-gentiumplus ghostscript graphviz jq libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libluajit-5.1-dev libpng-dev luajit lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+          sudo apt-get install fonts-sil-gentiumplus ghostscript graphviz jq libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libluajit-5.1-dev libpng-dev luajit lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+      - name: Setup ‘cargo’
+        uses: actions-rs/toolchain@v1
       - name: Configure
         run: |
           ./bootstrap.sh
           ./configure \
-            --with-luajit \
             --disable-font-variations \
-            --without-system-luarocks \
-            --with-manual
+            --with-manual \
+            ${{ matrix.configuration[1] }}
           echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
           echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
       - name: Make
@@ -66,6 +76,7 @@ jobs:
 
   build-nix:
     runs-on: ubuntu-22.04
+    name: Build Nix
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -79,7 +90,7 @@ jobs:
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v5
+        uses: DeterminateSystems/nix-installer-action@v6
       - name: Cache Nix dependencies
         uses: DeterminateSystems/magic-nix-cache-action@v2
       - name: Setup developer environment

@@ -121,11 +121,12 @@ function shaper.preAddNodes (_, items, nnodeValue) -- Check for complex nodes
 end
 
 function shaper.addShapedGlyphToNnodeValue (_, nnodevalue, shapedglyph)
-  if nnodevalue.complex then
+  -- Note: previously we stored the shaped items only for "complex" nodes
+  -- (nodevalue.comple). We now always do it, so as to have them at hand for
+  -- italic correction.
+  if not nnodevalue.items then nnodevalue.items = {} end
+  nnodevalue.items[#nnodevalue.items+1] = shapedglyph
 
-    if not nnodevalue.items then nnodevalue.items = {} end
-    nnodevalue.items[#nnodevalue.items+1] = shapedglyph
-  end
   if not nnodevalue.glyphString then nnodevalue.glyphString = {} end
   if not nnodevalue.glyphNames then nnodevalue.glyphNames = {} end
   table.insert(nnodevalue.glyphString, shapedglyph.gid)

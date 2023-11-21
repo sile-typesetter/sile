@@ -1,20 +1,40 @@
+// rust-embed include attributes have issues with lots of matches...
+#![recursion_limit = "2048"]
+
 use mlua::chunk;
 use mlua::prelude::*;
-use std::{env, path::PathBuf};
+#[cfg(not(feature = "static"))]
+use std::env;
+use std::path::PathBuf;
 #[cfg(feature = "cli")]
 pub mod cli;
 
+#[cfg(feature = "static")]
+pub mod embed;
+
 pub type Result<T> = anyhow::Result<T>;
 
-pub fn version() -> crate::Result<String> {
+pub fn start_luavm() -> crate::Result<Lua> {
     let lua = unsafe { Lua::unsafe_new() };
-    let sile_path = match env::var("SILE_PATH") {
-        Ok(val) => val,
-        Err(_) => env!("CONFIGURE_DATADIR").to_string(),
-    };
-    let sile_path: LuaString = lua.create_string(&sile_path)?;
-    let sile: LuaTable = lua
-        .load(chunk! {
+    #[cfg(feature = "static")]
+    crate::embed::inject_embeded_loader(&lua);
+    inject_paths(&lua);
+    load_sile(&lua);
+    inject_version(&lua);
+    Ok(lua)
+}
+
+pub fn inject_paths(lua: &Lua) {
+    #[cfg(feature = "static")]
+    lua.load(r#"require("core.pathsetup")"#).exec().unwrap();
+    #[cfg(not(feature = "static"))]
+    {
+        let sile_path = match env::var("SILE_PATH") {
+            Ok(val) => val,
+            Err(_) => env!("CONFIGURE_DATADIR").to_string(),
+        };
+        let sile_path: LuaString = lua.create_string(&sile_path).unwrap();
+        lua.load(chunk! {
             local status
             for path in string.gmatch($sile_path, "[^;]+") do
                 status = pcall(dofile, path .. "/core/pathsetup.lua")
@@ -23,10 +43,28 @@ pub fn version() -> crate::Result<String> {
             if not status then
                 dofile("./core/pathsetup.lua")
             end
-            return require("core.sile")
         })
-        .eval()?;
-    let mut full_version: String = sile.get("full_version")?;
+        .exec()
+        .unwrap();
+    }
+}
+
+pub fn inject_version(lua: &Lua) {
+    let sile: LuaTable = lua.globals().get("SILE").unwrap();
+    let mut full_version: String = sile.get("full_version").unwrap();
+    full_version.push_str(" [Rust]");
+}
+
+pub fn load_sile(lua: &Lua) {
+    let entry: LuaString = lua.create_string("core.sile").unwrap();
+    let r#require: LuaFunction = lua.globals().get("require").unwrap();
+    r#require.call::<LuaString, ()>(entry).unwrap();
+}
+
+pub fn version() -> crate::Result<String> {
+    let lua = start_luavm()?;
+    let sile: LuaTable = lua.globals().get("SILE").unwrap();
+    let mut full_version: String = sile.get("full_version").unwrap();
     full_version.push_str(" [Rust]");
     Ok(full_version)
 }
@@ -52,28 +90,8 @@ pub fn run(
     quiet: bool,
     traceback: bool,
 ) -> crate::Result<()> {
-    let lua = unsafe { Lua::unsafe_new() };
-    let sile_path = match env::var("SILE_PATH") {
-        Ok(val) => val,
-        Err(_) => env!("CONFIGURE_DATADIR").to_string(),
-    };
-    let sile_path: LuaString = lua.create_string(&sile_path)?;
-    let sile: LuaTable = lua
-        .load(chunk! {
-            local status
-            for path in string.gmatch($sile_path, "[^;]+") do
-                status = pcall(dofile, path .. "/core/pathsetup.lua")
-                if status then break end
-            end
-            if not status then
-                dofile("./core/pathsetup.lua")
-            end
-            return require("core.sile")
-        })
-        .eval()?;
-    let mut full_version: String = sile.get("full_version")?;
-    full_version.push_str(" [Rust]");
-    sile.set("full_version", full_version)?;
+    let lua = start_luavm()?;
+    let sile: LuaTable = lua.globals().get("SILE")?;
     sile.set("traceback", traceback)?;
     sile.set("quiet", quiet)?;
     let mut has_input_filename = false;
