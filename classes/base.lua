@@ -334,7 +334,7 @@ function class:registerCommands ()
 
   self:registerCommand("script", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
+    if SU.ast.hasContent(content) then
       return SILE.processString(content[1], options.format or "lua", nil, packopts)
     elseif options.src then
       return SILE.require(options.src)
@@ -346,8 +346,8 @@ function class:registerCommands ()
 
   self:registerCommand("include", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, options.format, nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, options.format, packopts)
@@ -358,8 +358,8 @@ function class:registerCommands ()
 
   self:registerCommand("lua", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, "lua", nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, "lua", packopts)
@@ -373,8 +373,8 @@ function class:registerCommands ()
 
   self:registerCommand("sil", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, "sil")
     elseif options.src then
       return SILE.processFile(options.src, "sil", packopts)
@@ -385,8 +385,8 @@ function class:registerCommands ()
 
   self:registerCommand("xml", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, "xml", nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, "xml", packopts)
@@ -398,7 +398,7 @@ function class:registerCommands ()
   self:registerCommand("use", function (options, content)
     local packopts = packOptions(options)
     if content[1] and string.len(content[1]) > 0 then
-      local doc = SU.contentToString(content)
+      local doc = SU.ast.contentToString(content)
       SILE.processString(doc, "lua", nil, packopts)
     else
       if options.src then
