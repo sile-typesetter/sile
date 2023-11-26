@@ -296,12 +296,13 @@ function class:registerCommands ()
     SILE.settings:temporarily(function ()
       local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
       local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      -- Keep the fixed part of the margins for nesting but remove the stretchability.
       SILE.settings:set("document.lskip", SILE.nodefactory.glue(lskip.width.length))
       SILE.settings:set("document.rskip", SILE.nodefactory.glue(rskip.width.length))
+      -- Reset parfillskip to its default value, in case the surrounding context
+      -- is ragged and cancelled it.
+      SILE.settings:set("typesetter.parfillskip", nil, false, true)
       SILE.settings:set("document.spaceskip", nil)
-      -- HACK. This knows too much about parfillskip defaults...
-      -- (Which must be big, but smaller than infinity. Doh!)
-      SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue("0pt plus 10000pt"))
       SILE.process(content)
       SILE.call("par")
     end)
