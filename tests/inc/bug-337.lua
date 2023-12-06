@@ -4,11 +4,11 @@ local package = pl.class(base)
 package._name = "bug-337"
 
 
-function package:_init (class)
+function package:_init ()
 
-  base._init(self, class)
+  base._init(self)
 
-  class:defineMaster({
+  self.class:defineMaster({
       id = "right",
       firstContentFrame = "content",
       frames = {
@@ -26,15 +26,15 @@ function package:_init (class)
         }
       }
     })
-  class:defineMaster({
+  self.class:defineMaster({
       id = "left",
       firstContentFrame = "content",
       frames = {}
     })
-  class:mirrorMaster("right", "left")
-  class:switchMasterOnePage("right")
+  self.class:mirrorMaster("right", "left")
+  self.class:switchMasterOnePage("right")
 
-  class:loadPackage("cropmarks")
+  self.class:loadPackage("cropmarks")
 
 end
 

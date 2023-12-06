@@ -1,6 +1,6 @@
 \begin[class=plain]{document}
 
-\script[src=packages/math]
+\use[module=packages.math]
 
 Positive space commands:
 

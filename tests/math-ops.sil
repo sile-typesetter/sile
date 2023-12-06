@@ -1,6 +1,6 @@
 \begin[papersize=a5]{document}
 
-\script[src=packages/math]
+\use[module=packages.math]
 
 Custom atom types:
 
