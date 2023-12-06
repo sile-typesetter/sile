@@ -556,28 +556,33 @@ utilities.breadcrumbs = function ()
   return breadcrumbs
 end
 
-utilities.formatNumber = require("core.utilities-numbers")
+utilities.formatNumber = require("core.utilities.numbers")
 
-utilities.collatedSort = require("core.utilities-sorting")
+utilities.collatedSort = require("core.utilities.sorting")
 
-utilities.ast = require("core.utilities-ast")
+utilities.ast = require("core.utilities.ast")
+
 utilities.subContent = function (content)
   SU.deprecated("SU.subContent", "SU.ast.subContent", "0.15.0", "0.17.0", [[
     Note that the new implementation no longer introduces an id="stuff" key.]])
   return utilities.ast.subContent(content)
 end
+
 utilities.hasContent = function(content)
   SU.deprecated("SU.hasContent", "SU.ast.hasContent", "0.15.0", "0.17.0")
   return SU.ast.hasContent(content)
 end
+
 utilities.contentToString = function (content)
   SU.deprecated("SU.contentToString", "SU.ast.contentToString", "0.15.0", "0.17.0")
   return SU.ast.contentToString(content)
 end
+
 utilities.walkContent = function (content, action)
   SU.deprecated("SU.walkContent", "SU.ast.walkContent", "0.15.0", "0.17.0")
   SU.ast.walkContent(content, action)
 end
+
 utilities.stripContentPos = function (content)
   SU.deprecated("SU.stripContentPos", "SU.ast.stripContentPos", "0.15.0", "0.17.0")
   return SU.ast.stripContentPos(content)
