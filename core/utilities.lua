@@ -115,7 +115,7 @@ end
 utilities.debug = function (category, ...)
   if SILE.quiet then return end
   if utilities.debugging(category) then
-    local inputs = table.pack(...)
+    local inputs = pl.utils.pack(...)
     for i, input in ipairs(inputs) do
       if type(input) == "function" then
         local status, output = pcall(input)
@@ -261,7 +261,7 @@ end
 
 utilities.compress = function (items)
   local rv = {}
-  local max = math.max(table.unpack(pl.tablex.keys(items)))
+  local max = math.max(pl.utils.unpack(pl.tablex.keys(items)))
   for i = 1, max do if items[i] then rv[#rv+1] = items[i] end end
   return rv
 end
