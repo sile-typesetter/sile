@@ -30,7 +30,7 @@ SILE.fluent = setmetatable({}, {
   __call = function (_, ...)
     fluentglobal()
     SILE.fluent = fluent
-    return fluent(table.unpack({...}, 1, select("#", ...)))
+    return fluent(pl.utils.unpack({...}, 1, select("#", ...)))
   end,
   __index = function (_, key)
     fluentglobal()
