@@ -30,6 +30,7 @@ end
 
 local function loadInSandbox(untrusted_code)
   _deprecated()
+  -- luacheck: ignore _ENV
   if _ENV then -- simple Lua 5.2 version check
     local env = {}
     local untrusted_function, message = load(untrusted_code, nil, 't', env)

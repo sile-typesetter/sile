@@ -6,6 +6,7 @@ SILE.features = require("core.features")
 
 -- Initialize Lua environment and global utilities
 SILE.lua_version = _VERSION:sub(-3)
+-- luacheck: ignore jit
 SILE.lua_isjit = type(jit) == "table"
 SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
 

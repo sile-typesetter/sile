@@ -1,4 +1,5 @@
 -- luacheck: globals setfenv getfenv
+-- luacheck: ignore _ENV
 
 -- The following functions borrowed from Norman Ramsey's nbibtex,
 -- with permission.
