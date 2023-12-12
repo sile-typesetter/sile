@@ -478,7 +478,7 @@ function SILE.registerUnit (unit, spec)
 end
 
 function SILE.paperSizeParser (size)
-  -- SU.deprecated("SILE.paperSizeParser", "SILE.papersize", "0.10.0", nil)
+  SU.deprecated("SILE.paperSizeParser", "SILE.papersize", "0.15.0", "0.16.0")
   return SILE.papersize(size)
 end
 
