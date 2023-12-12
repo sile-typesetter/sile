@@ -39,7 +39,7 @@ utilities.error = function (message, isbug)
   io.stderr:flush()
   SILE.outputter:finish() -- Only really useful from the REPL but no harm in trying
   SILE.scratch.caughterror = true
-  error(message, 2)
+  error("", 2)
 end
 
 utilities.warn = function (message, isbug)
