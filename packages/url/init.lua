@@ -12,42 +12,41 @@ local preferBreakAfter = ":/.;?&=!_-"
 -- URL scheme:
 local alwaysBreakAfter = ":" -- Must have only one character here!
 
-local escapeRegExpMinimal = function (str)
+local escapeRegExpMinimal = function(str)
   -- Minimalist = just what's needed for the above strings
-  return string.gsub(str, '([%.%?%-%%])', '%%%1')
+  return string.gsub(str, "([%.%?%-%%])", "%%%1")
 end
 
-local breakPattern = "["..escapeRegExpMinimal(preferBreakBefore..preferBreakAfter..alwaysBreakAfter).."]"
+local breakPattern = "[" .. escapeRegExpMinimal(preferBreakBefore .. preferBreakAfter .. alwaysBreakAfter) .. "]"
 
-function package:_init ()
+function package:_init()
   base._init(self)
   self:loadPackage("verbatim")
   self:loadPackage("inputfilter")
   pdf = SILE.outputter._name == "libtexpdf"
-  if pdf then self:loadPackage("pdf") end
+  if pdf then
+    self:loadPackage("pdf")
+  end
 end
 
-function package.declareSettings (_)
-
+function package.declareSettings(_)
   SILE.settings:declare({
     parameter = "url.linebreak.primaryPenalty",
     type = "integer",
     default = 100,
-    help = "Penalty for breaking lines in URLs at preferred breakpoints"
+    help = "Penalty for breaking lines in URLs at preferred breakpoints",
   })
 
   SILE.settings:declare({
     parameter = "url.linebreak.secondaryPenalty",
     type = "integer",
     default = 200,
-    help = "Penalty for breaking lines in URLs at tolerable breakpoints (should be higher than url.linebreak.primaryPenalty)"
+    help = "Penalty for breaking lines in URLs at tolerable breakpoints (should be higher than url.linebreak.primaryPenalty)",
   })
-
 end
 
-function package:registerCommands ()
-
-  self:registerCommand("href", function (options, content)
+function package:registerCommands()
+  self:registerCommand("href", function(options, content)
     if not pdf then
       if options.src then
         SILE.process(content)
@@ -58,60 +57,81 @@ function package:registerCommands ()
     end
 
     if options.src then
-      SILE.call("pdf:link", { dest = options.src, external = true,
+      SILE.call("pdf:link", {
+        dest = options.src,
+        external = true,
         borderwidth = options.borderwidth,
         borderstyle = options.borderstyle,
         bordercolor = options.bordercolor,
-        borderoffset = options.borderoffset },
-        content)
+        borderoffset = options.borderoffset,
+      }, content)
     else
       options.src = content[1]
-      SILE.call("pdf:link", { dest = options.src, external = true,
+      SILE.call("pdf:link", {
+        dest = options.src,
+        external = true,
         borderwidth = options.borderwidth,
         borderstyle = options.borderstyle,
         bordercolor = options.bordercolor,
-        borderoffset = options.borderoffset },
-        function (_, _)
-          SILE.call("url", { language = options.language }, content)
-        end)
+        borderoffset = options.borderoffset,
+      }, function(_, _)
+        SILE.call("url", { language = options.language }, content)
+      end)
     end
   end, "Inserts a PDF hyperlink.")
 
-  local urlFilter = function (node, content, options)
-    if type(node) == "table" then return node end
+  local urlFilter = function(node, content, options)
+    if type(node) == "table" then
+      return node
+    end
     local result = {}
     for token in SU.gtoke(node, breakPattern) do
       if token.string then
-        result[#result+1] = token.string
+        result[#result + 1] = token.string
       else
         if string.find(preferBreakBefore, escapeRegExpMinimal(token.separator)) then
           -- Accepts breaking before, and at the extreme worst after.
-          result[#result+1] = self.class.packages.inputfilter:createCommand(
-          content.pos, content.col, content.lno,
-          "penalty", { penalty = options.primaryPenalty }
+          result[#result + 1] = self.class.packages.inputfilter:createCommand(
+            content.pos,
+            content.col,
+            content.lno,
+            "penalty",
+            { penalty = options.primaryPenalty }
           )
-          result[#result+1] = token.separator
-          result[#result+1] = self.class.packages.inputfilter:createCommand(
-          content.pos, content.col, content.lno,
-          "penalty", { penalty = options.worsePenalty }
+          result[#result + 1] = token.separator
+          result[#result + 1] = self.class.packages.inputfilter:createCommand(
+            content.pos,
+            content.col,
+            content.lno,
+            "penalty",
+            { penalty = options.worsePenalty }
           )
         elseif token.separator == alwaysBreakAfter then
           -- Accept breaking after (only).
-          result[#result+1] = token.separator
-          result[#result+1] = self.class.packages.inputfilter:createCommand(
-          content.pos, content.col, content.lno,
-          "penalty", { penalty = options.primaryPenalty }
+          result[#result + 1] = token.separator
+          result[#result + 1] = self.class.packages.inputfilter:createCommand(
+            content.pos,
+            content.col,
+            content.lno,
+            "penalty",
+            { penalty = options.primaryPenalty }
           )
         else
           -- Accept breaking after, but tolerate breaking before.
-          result[#result+1] = self.class.packages.inputfilter:createCommand(
-          content.pos, content.col, content.lno,
-          "penalty", { penalty = options.secondaryPenalty }
+          result[#result + 1] = self.class.packages.inputfilter:createCommand(
+            content.pos,
+            content.col,
+            content.lno,
+            "penalty",
+            { penalty = options.secondaryPenalty }
           )
-          result[#result+1] = token.separator
-          result[#result+1] = self.class.packages.inputfilter:createCommand(
-          content.pos, content.col, content.lno,
-          "penalty", { penalty = options.primaryPenalty }
+          result[#result + 1] = token.separator
+          result[#result + 1] = self.class.packages.inputfilter:createCommand(
+            content.pos,
+            content.col,
+            content.lno,
+            "penalty",
+            { penalty = options.primaryPenalty }
           )
         end
       end
@@ -119,8 +139,8 @@ function package:registerCommands ()
     return result
   end
 
-  self:registerCommand("url", function (options, content)
-    SILE.settings:temporarily(function ()
+  self:registerCommand("url", function(options, content)
+    SILE.settings:temporarily(function()
       local primaryPenalty = SILE.settings:get("url.linebreak.primaryPenalty")
       local secondaryPenalty = SILE.settings:get("url.linebreak.secondaryPenalty")
       local worsePenalty = primaryPenalty + secondaryPenalty
@@ -139,22 +159,21 @@ function package:registerCommands ()
           SILE.settings:set("document.language", options.language)
         end
       else
-        SILE.settings:set("document.language", 'und')
+        SILE.settings:set("document.language", "und")
       end
 
       local result = self.class.packages.inputfilter:transformContent(content, urlFilter, {
         primaryPenalty = primaryPenalty,
         secondaryPenalty = secondaryPenalty,
-        worsePenalty = worsePenalty
+        worsePenalty = worsePenalty,
       })
       SILE.call("urlstyle", {}, result)
     end)
   end, "Inserts penalties in an URL so it can be broken over multiple lines at appropriate places.")
 
-  self:registerCommand("urlstyle", function (options, content)
+  self:registerCommand("urlstyle", function(options, content)
     SILE.call("code", options, content)
   end, "Hook that may be redefined to change the styling of URLs")
-
 end
 
 package.documentation = [[

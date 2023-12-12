@@ -7,20 +7,28 @@ local BALANCE_PENALTY = -17777
 
 local unbalanced_buildPage
 
-local function buildPage (typesetter, independent)
+local function buildPage(typesetter, independent)
   local frame = typesetter.frame
-  if not (frame.balanced == true) then return unbalanced_buildPage(typesetter, independent) end
+  if not (frame.balanced == true) then
+    return unbalanced_buildPage(typesetter, independent)
+  end
 
   local colCount = 0
   local target = SILE.length()
   while frame and frame.balanced == true do
     target = target + frame:height()
     colCount = colCount + 1
-    if frame.next then frame = SILE.getFrame(frame.next) else break end
+    if frame.next then
+      frame = SILE.getFrame(frame.next)
+    else
+      break
+    end
   end
 
   -- Really, try and avoid doing anything, where possible.
-  if colCount == 1 then return unbalanced_buildPage(typesetter, independent) end
+  if colCount == 1 then
+    return unbalanced_buildPage(typesetter, independent)
+  end
   -- If the total amount of stuff on the output list is greater then the total
   -- of frame space on the page, and there are no magic requests to balance the
   -- columns, then we have a full page. Just send it out normally.
@@ -40,7 +48,9 @@ local function buildPage (typesetter, independent)
 
   -- Have we been explicitly asked to find a pagebreak at this point?
   -- If not, don't bother
-  if mustBalance == 0 and not independent then return false end
+  if mustBalance == 0 and not independent then
+    return false
+  end
   SU.debug("balancer", "Balancing", totalHeight, "of material over", colCount, "frames (total of", target, ")")
   SU.debug("balancer", "Must balance because mustBalance =", mustBalance, "and independent =", independent)
   -- OK. Now we have to balance the frames. We are going to cheat and
@@ -51,7 +61,11 @@ local function buildPage (typesetter, independent)
   while frame and frame.balanced == true do
     frame:relax("bottom")
     frame:constrain("height", totalHeight.length / colCount)
-    if frame.next then frame = SILE.getFrame(frame.next) else break end
+    if frame.next then
+      frame = SILE.getFrame(frame.next)
+    else
+      break
+    end
   end
   typesetter.state.lastPenalty = 0
   local oldPageBuilder = SILE.pagebuilder
@@ -72,7 +86,7 @@ local function buildPage (typesetter, independent)
   return true
 end
 
-function package:_init (class)
+function package:_init(class)
   base._init(self, class)
   self.class:registerPostinit(function(_)
     if not unbalanced_buildPage then
@@ -83,13 +97,11 @@ function package:_init (class)
   end)
 end
 
-function package:registerCommands ()
-
-  self:registerCommand("balancecolumns", function (_, _)
+function package:registerCommands()
+  self:registerCommand("balancecolumns", function(_, _)
     SILE.typesetter:leaveHmode()
     SILE.call("penalty", { penalty = BALANCE_PENALTY })
   end)
-
 end
 
 package.documentation = [[

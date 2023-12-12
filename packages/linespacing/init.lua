@@ -7,10 +7,12 @@ local metrics = require("fontmetrics")
 
 local metricscache = {}
 
-local getLineMetrics = function (l)
+local getLineMetrics = function(l)
   local linemetrics = { ascender = 0, descender = 0, lineheight = SILE.length() }
-  if not l or not l.nodes then return linemetrics end
-  for i = 1, #(l.nodes) do
+  if not l or not l.nodes then
+    return linemetrics
+  end
+  for i = 1, #l.nodes do
     local node = l.nodes[i]
     if node.is_nnode then
       local m = metricscache[SILE.font._key(node.options)]
@@ -21,19 +23,25 @@ local getLineMetrics = function (l)
         m.descender = m.descender * node.options.size
         metricscache[SILE.font._key(node.options)] = m
       end
-      SILE.settings:temporarily(function ()
+      SILE.settings:temporarily(function()
         SILE.call("font", node.options, {})
         m.lineheight = SU.cast("length", SILE.settings:get("linespacing.css.line-height")):absolute()
       end)
-      if m.ascender > linemetrics.ascender then linemetrics.ascender = m.ascender end
-      if m.descender > linemetrics.descender then linemetrics.descender = m.descender end
-      if m.lineheight > linemetrics.lineheight then linemetrics.lineheight = m.lineheight end
+      if m.ascender > linemetrics.ascender then
+        linemetrics.ascender = m.ascender
+      end
+      if m.descender > linemetrics.descender then
+        linemetrics.descender = m.descender
+      end
+      if m.lineheight > linemetrics.lineheight then
+        linemetrics.lineheight = m.lineheight
+      end
     end
   end
   return linemetrics
 end
 
-local linespacingLeading = function (_, vbox, previous)
+local linespacingLeading = function(_, vbox, previous)
   local method = SILE.settings:get("linespacing.method")
 
   local firstline = SILE.settings:get("linespacing.minimumfirstlineposition"):absolute()
@@ -64,7 +72,7 @@ local linespacingLeading = function (_, vbox, previous)
 
   -- For these methods, we need to read the font metrics
   if not metrics then
-    SU.error("'"..method.."' line spacing method requires font metrics module, which is not available.")
+    SU.error("'" .. method .. "' line spacing method requires font metrics module, which is not available.")
   end
 
   local thismetrics = getLineMetrics(vbox)
@@ -86,71 +94,66 @@ local linespacingLeading = function (_, vbox, previous)
       previous.depth = previous.depth + leading / 2
     end
     return SILE.nodefactory.vglue()
-
   end
 
-  SU.error("Unknown line spacing method "..method)
+  SU.error("Unknown line spacing method " .. method)
 end
 
-function package:_init ()
+function package:_init()
   base._init(self)
   self.class:registerPostinit(function(_)
     SILE.typesetter.leadingFor = linespacingLeading
   end)
 end
 
-function package.declareSettings (_)
-
+function package.declareSettings(_)
   SILE.settings:declare({
     parameter = "linespacing.method",
     default = "tex",
     type = "string",
-    help = "How to set the line spacing (tex, fixed, fit-font, fit-glyph, css)"
+    help = "How to set the line spacing (tex, fixed, fit-font, fit-glyph, css)",
   })
 
   SILE.settings:declare({
     parameter = "linespacing.fixed.baselinedistance",
     default = SILE.length("1.2em"),
     type = "length",
-    help = "Distance from baseline to baseline in the case of fixed line spacing"
+    help = "Distance from baseline to baseline in the case of fixed line spacing",
   })
 
   SILE.settings:declare({
     parameter = "linespacing.minimumfirstlineposition",
     default = SILE.length(0),
-    type = "length"
+    type = "length",
   })
 
   SILE.settings:declare({
     parameter = "linespacing.fit-glyph.extra-space",
     default = SILE.length(0),
-    type = "length"
+    type = "length",
   })
 
   SILE.settings:declare({
     parameter = "linespacing.fit-font.extra-space",
     default = SILE.length(0),
-    type = "length"
+    type = "length",
   })
 
   SILE.settings:declare({
     parameter = "linespacing.css.line-height",
     default = SILE.length("1.2em"),
-    type = "length"
+    type = "length",
   })
-
 end
 
-function package:registerCommands ()
-
-  self:registerCommand("linespacing-on", function ()
+function package:registerCommands()
+  self:registerCommand("linespacing-on", function()
     SILE.typesetter.leadingFor = linespacingLeading
   end)
 
-  self:registerCommand("linespacing-off", function ()
+  self:registerCommand("linespacing-off", function()
     SILE.typesetter.leadingFor = SILE.typesetters.base.leadingFor
   end)
-
 end
 
 package.documentation = [[

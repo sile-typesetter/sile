@@ -9,7 +9,9 @@ SILE.init()
 -- need. If that's the case, just skip even defining these tests and call it
 -- good. To test a complete set of tests use `make busted`.
 local fcf = os.getenv("FONTCONFIG_FILE")
-if not fcf then return end
+if not fcf then
+  return
+end
 
 describe("The OpenType loader/parser", function()
   local ot = require("core.opentype-parser")

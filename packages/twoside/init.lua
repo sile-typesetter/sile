@@ -5,20 +5,22 @@ package._name = "twoside"
 
 local _odd = true
 
-local mirrorMaster = function (_, existing, new)
+local mirrorMaster = function(_, existing, new)
   -- Frames in one master can't "see" frames in another, so we have to get creative
   -- XXX This knows altogether too much about the implementation of masters
-  if not SILE.scratch.masters[new] then SILE.scratch.masters[new] = {frames={}} end
+  if not SILE.scratch.masters[new] then
+    SILE.scratch.masters[new] = { frames = {} }
+  end
   if not SILE.scratch.masters[existing] then
-    SU.error("Can't find master "..existing)
+    SU.error("Can't find master " .. existing)
   end
   for name, frame in pairs(SILE.scratch.masters[existing].frames) do
     local newframe = pl.tablex.deepcopy(frame)
     if frame:isAbsoluteConstraint("right") then
-      newframe.constraints.left = "100%pw-("..frame.constraints.right..")"
+      newframe.constraints.left = "100%pw-(" .. frame.constraints.right .. ")"
     end
     if frame:isAbsoluteConstraint("left") then
-      newframe.constraints.right = "100%pw-("..frame.constraints.left..")"
+      newframe.constraints.right = "100%pw-(" .. frame.constraints.left .. ")"
     end
     SILE.scratch.masters[new].frames[name] = newframe
     if frame == SILE.scratch.masters[existing].firstContentFrame then
@@ -27,17 +29,17 @@ local mirrorMaster = function (_, existing, new)
   end
 end
 
-function package.oddPage (_)
+function package.oddPage(_)
   return _odd
 end
 
-local function switchPage (class)
+local function switchPage(class)
   _odd = not class:oddPage()
   local nextmaster = _odd and class.oddPageMaster or class.evenPageMaster
   class:switchMaster(nextmaster)
 end
 
-local _deprecate  = [[
+local _deprecate = [[
   Directly calling master switch handling functions is no longer necessary. All
   the SILE core classes and anything inheriting from them will take care of this
   automatically using hooks. Custom classes that override the class:newPage()
@@ -46,24 +48,24 @@ local _deprecate  = [[
 ]]
 
 local spread_counter = 0
-local spreadHook = function ()
+local spreadHook = function()
   spread_counter = spread_counter + 1
 end
 
-function package:_init (options)
+function package:_init(options)
   base._init(self)
   if not SILE.scratch.masters then
     SU.error("Cannot load twoside package before masters.")
   end
   self:export("oddPage", self.oddPage)
   self:export("mirrorMaster", mirrorMaster)
-  self:export("switchPage", function (class)
+  self:export("switchPage", function(class)
     SU.deprecated("class:switchPage", nil, "0.13.0", "0.15.0", _deprecate)
     return class:switchPage()
   end)
   self.class.oddPageMaster = options.oddPageMaster
   self.class.evenPageMaster = options.evenPageMaster
-  self.class:registerPostinit(function (class)
+  self.class:registerPostinit(function(class)
     -- TODO: Refactor this to make mirroring a separate package / option
     if not SILE.scratch.masters[options.evenPageMaster] then
       class:mirrorMaster(options.oddPageMaster, options.evenPageMaster)
@@ -73,8 +75,7 @@ function package:_init (options)
   self.class:registerHook("newpage", switchPage)
 end
 
-function package:registerCommands ()
-
+function package:registerCommands()
   self:registerCommand("open-double-page", function()
     SILE.call("open-spread", { double = false, odd = true, blank = false })
   end)
@@ -86,13 +87,12 @@ function package:registerCommands ()
   -- This is upstreamed from CaSILE. Similar to the original open-double-page,
   -- but can disable headers and folios on blank pages and allows opening the
   -- even side (with or without a leading blank).
-  self:registerCommand("open-spread", function (options)
+  self:registerCommand("open-spread", function(options)
     local odd = SU.boolean(options.odd, true)
     local double = SU.boolean(options.double, true)
     local blank = SU.boolean(options.blank, true)
-    local optionsMet = function ()
-      return (not double or spread_counter > 1) and
-             (odd == self.class:oddPage())
+    local optionsMet = function()
+      return (not double or spread_counter > 1) and (odd == self.class:oddPage())
     end
     spread_counter = 0
     SILE.typesetter:leaveHmode()
@@ -129,7 +129,6 @@ function package:registerCommands ()
       SILE.typesetter:leaveHmode()
     until optionsMet()
   end)
-
 end
 
 package.documentation = [[

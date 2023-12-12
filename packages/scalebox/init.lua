@@ -3,8 +3,7 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "scalebox"
 
-function package:registerCommands ()
-
+function package:registerCommands()
   self:registerCommand("scalebox", function(options, content)
     if SILE.outputter._name ~= "libtexpdf" then
       SU.warn("Output will not be scaled: \\scalebox only works with the libtexpdf backend")
@@ -52,11 +51,10 @@ function package:registerCommands ()
         typesetter.frame.state.cursorX = X
         typesetter.frame.state.cursorY = Y
         typesetter.frame:advanceWritingDirection(outputWidth)
-      end
+      end,
     })
     SILE.typesetter:pushHlist(hlist)
   end, "Scale content by some horizontal and vertical ratios")
-
 end
 
 package.documentation = [[

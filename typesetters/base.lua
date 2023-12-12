@@ -19,22 +19,21 @@ local supereject_penalty = 2 * -inf_bad
 
 -- Local helper class to compare pairs of margins
 local _margins = pl.class({
-    lskip = SILE.nodefactory.glue(),
-    rskip = SILE.nodefactory.glue(),
+  lskip = SILE.nodefactory.glue(),
+  rskip = SILE.nodefactory.glue(),
 
-    _init = function (self, lskip, rskip)
-      self.lskip, self.rskip = lskip, rskip
-    end,
+  _init = function(self, lskip, rskip)
+    self.lskip, self.rskip = lskip, rskip
+  end,
 
-    __eq = function (self, other)
-      return self.lskip.width == other.lskip.width and self.rskip.width == other.rskip.width
-    end
-
-  })
+  __eq = function(self, other)
+    return self.lskip.width == other.lskip.width and self.rskip.width == other.rskip.width
+  end,
+})
 
 local warned = false
 
-function typesetter:init (frame)
+function typesetter:init(frame)
   SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", warned and "" or [[
   The typesetter instance inheritance system for instances has been
   refactored using a different object model. Your instance was created
@@ -46,7 +45,7 @@ function typesetter:init (frame)
   self:_init(frame)
 end
 
-function typesetter:_init (frame)
+function typesetter:_init(frame)
   self:declareSettings()
   self.hooks = {}
   self.breadcrumbs = SU.breadcrumbs()
@@ -61,7 +60,6 @@ function typesetter:_init (frame)
 end
 
 function typesetter.declareSettings(_)
-
   -- Settings common to any typesetter instance.
   -- These shouldn't be re-declared and overwritten/reset in the typesetter
   -- constructor (see issue https://github.com/sile-typesetter/sile/issues/1708).
@@ -73,68 +71,67 @@ function typesetter.declareSettings(_)
     parameter = "typesetter.widowpenalty",
     type = "integer",
     default = 3000,
-    help = "Penalty to be applied to widow lines (at the start of a paragraph)"
+    help = "Penalty to be applied to widow lines (at the start of a paragraph)",
   })
 
   SILE.settings:declare({
     parameter = "typesetter.parseppattern",
     type = "string or integer",
     default = "\r?\n[\r\n]+",
-    help = "Lua pattern used to separate paragraphs"
+    help = "Lua pattern used to separate paragraphs",
   })
 
   SILE.settings:declare({
     parameter = "typesetter.obeyspaces",
     type = "boolean or nil",
     default = nil,
-    help = "Whether to ignore paragraph initial spaces"
+    help = "Whether to ignore paragraph initial spaces",
   })
 
   SILE.settings:declare({
     parameter = "typesetter.orphanpenalty",
     type = "integer",
     default = 3000,
-    help = "Penalty to be applied to orphan lines (at the end of a paragraph)"
+    help = "Penalty to be applied to orphan lines (at the end of a paragraph)",
   })
 
   SILE.settings:declare({
     parameter = "typesetter.parfillskip",
     type = "glue",
     default = SILE.nodefactory.glue("0pt plus 10000pt"),
-    help = "Glue added at the end of a paragraph"
+    help = "Glue added at the end of a paragraph",
   })
 
   SILE.settings:declare({
     parameter = "document.letterspaceglue",
     type = "glue or nil",
     default = nil,
-    help = "Glue added between tokens"
+    help = "Glue added between tokens",
   })
 
   SILE.settings:declare({
     parameter = "typesetter.underfulltolerance",
     type = "length or nil",
     default = SILE.length("1em"),
-    help = "Amount a page can be underfull without warning"
+    help = "Amount a page can be underfull without warning",
   })
 
   SILE.settings:declare({
     parameter = "typesetter.overfulltolerance",
     type = "length or nil",
     default = SILE.length("5pt"),
-    help = "Amount a page can be overfull without warning"
+    help = "Amount a page can be overfull without warning",
   })
 
   SILE.settings:declare({
     parameter = "typesetter.breakwidth",
     type = "measurement or nil",
     default = nil,
-    help = "Width to break lines at"
+    help = "Width to break lines at",
   })
-
 end
 
-function typesetter:initState ()
+function typesetter:initState()
   self.state = {
     nodes = {},
     outputQueue = {},
@@ -142,87 +139,91 @@ function typesetter:initState ()
   }
 end
 
-function typesetter:initFrame (frame)
+function typesetter:initFrame(frame)
   if frame then
     self.frame = frame
     self.frame:init(self)
   end
 end
 
-function typesetter.getMargins ()
+function typesetter.getMargins()
   return _margins(SILE.settings:get("document.lskip"), SILE.settings:get("document.rskip"))
 end
 
-function typesetter.setMargins (_, margins)
+function typesetter.setMargins(_, margins)
   SILE.settings:set("document.lskip", margins.lskip)
   SILE.settings:set("document.rskip", margins.rskip)
 end
 
-function typesetter:pushState ()
-  self.stateQueue[#self.stateQueue+1] = self.state
+function typesetter:pushState()
+  self.stateQueue[#self.stateQueue + 1] = self.state
   self:initState()
 end
 
-function typesetter:popState (ncount)
+function typesetter:popState(ncount)
   local offset = ncount and #self.stateQueue - ncount or nil
   self.state = table.remove(self.stateQueue, offset)
-  if not self.state then SU.error("Typesetter state queue empty") end
+  if not self.state then
+    SU.error("Typesetter state queue empty")
+  end
 end
 
-function typesetter:isQueueEmpty ()
-  if not self.state then return nil end
+function typesetter:isQueueEmpty()
+  if not self.state then
+    return nil
+  end
   return #self.state.nodes == 0 and #self.state.outputQueue == 0
 end
 
-function typesetter:vmode ()
+function typesetter:vmode()
   return #self.state.nodes == 0
 end
 
-function typesetter:debugState ()
-  print("\n---\nI am in "..(self:vmode() and "vertical" or "horizontal").." mode")
+function typesetter:debugState()
+  print("\n---\nI am in " .. (self:vmode() and "vertical" or "horizontal") .. " mode")
   print("Writing into " .. tostring(self.frame))
   print("Recent contributions: ")
-  for i = 1, #(self.state.nodes) do
-    io.stderr:write(self.state.nodes[i].. " ")
+  for i = 1, #self.state.nodes do
+    io.stderr:write(self.state.nodes[i] .. " ")
   end
   print("\nVertical list: ")
-  for i = 1, #(self.state.outputQueue) do
-    print("  "..self.state.outputQueue[i])
+  for i = 1, #self.state.outputQueue do
+    print("  " .. self.state.outputQueue[i])
   end
 end
 
 -- Boxy stuff
-function typesetter:pushHorizontal (node)
+function typesetter:pushHorizontal(node)
   self:initline()
-  self.state.nodes[#self.state.nodes+1] = node
+  self.state.nodes[#self.state.nodes + 1] = node
   return node
 end
 
-function typesetter:pushVertical (vbox)
-  self.state.outputQueue[#self.state.outputQueue+1] = vbox
+function typesetter:pushVertical(vbox)
+  self.state.outputQueue[#self.state.outputQueue + 1] = vbox
   return vbox
 end
 
-function typesetter:pushHbox (spec)
+function typesetter:pushHbox(spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
   local ntype = SU.type(spec)
   local node = (ntype == "hbox" or ntype == "zerohbox") and spec or SILE.nodefactory.hbox(spec)
   return self:pushHorizontal(node)
 end
 
-function typesetter:pushUnshaped (spec)
+function typesetter:pushUnshaped(spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "unshaped" and spec or SILE.nodefactory.unshaped(spec)
   return self:pushHorizontal(node)
 end
 
-function typesetter:pushGlue (spec)
+function typesetter:pushGlue(spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "glue" and spec or SILE.nodefactory.glue(spec)
   return self:pushHorizontal(node)
 end
 
-function typesetter:pushExplicitGlue (spec)
+function typesetter:pushExplicitGlue(spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "glue" and spec or SILE.nodefactory.glue(spec)
   node.explicit = true
@@ -230,30 +231,30 @@ function typesetter:pushExplicitGlue (spec)
   return self:pushHorizontal(node)
 end
 
-function typesetter:pushPenalty (spec)
+function typesetter:pushPenalty(spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "penalty" and spec or SILE.nodefactory.penalty(spec)
   return self:pushHorizontal(node)
 end
 
-function typesetter:pushMigratingMaterial (material)
+function typesetter:pushMigratingMaterial(material)
   local node = SILE.nodefactory.migrating({ material = material })
   return self:pushHorizontal(node)
 end
 
-function typesetter:pushVbox (spec)
+function typesetter:pushVbox(spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "vbox" and spec or SILE.nodefactory.vbox(spec)
   return self:pushVertical(node)
 end
 
-function typesetter:pushVglue (spec)
+function typesetter:pushVglue(spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "vglue" and spec or SILE.nodefactory.vglue(spec)
   return self:pushVertical(node)
 end
 
-function typesetter:pushExplicitVglue (spec)
+function typesetter:pushExplicitVglue(spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "vglue" and spec or SILE.nodefactory.vglue(spec)
   node.explicit = true
@@ -261,16 +262,18 @@ function typesetter:pushExplicitVglue (spec)
   return self:pushVertical(node)
 end
 
-function typesetter:pushVpenalty (spec)
+function typesetter:pushVpenalty(spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
   local node = SU.type(spec) == "penalty" and spec or SILE.nodefactory.penalty(spec)
   return self:pushVertical(node)
 end
 
 -- Actual typesetting functions
-function typesetter:typeset (text)
+function typesetter:typeset(text)
   text = tostring(text)
-  if text:match("^%\r?\n$") then return end
+  if text:match("^%\r?\n$") then
+    return
+  end
   local pId = SILE.traceStack:pushText(text)
   for token in SU.gtoke(text, SILE.settings:get("typesetter.parseppattern")) do
     if token.separator then
@@ -282,59 +285,67 @@ function typesetter:typeset (text)
   SILE.traceStack:pop(pId)
 end
 
-function typesetter:initline ()
-  if self.state.hmodeOnly then return end -- https://github.com/sile-typesetter/sile/issues/1718
-  if (#self.state.nodes == 0) then
-    self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zerohbox()
+function typesetter:initline()
+  if self.state.hmodeOnly then
+    return
+  end -- https://github.com/sile-typesetter/sile/issues/1718
+  if #self.state.nodes == 0 then
+    self.state.nodes[#self.state.nodes + 1] = SILE.nodefactory.zerohbox()
     SILE.documentState.documentClass.newPar(self)
   end
 end
 
-function typesetter:endline ()
+function typesetter:endline()
   self:leaveHmode()
   SILE.documentState.documentClass.endPar(self)
 end
 
 -- Takes string, writes onto self.state.nodes
-function typesetter:setpar (text)
+function typesetter:setpar(text)
   text = text:gsub("\r?\n", " "):gsub("\t", " ")
-  if (#self.state.nodes == 0) then
+  if #self.state.nodes == 0 then
     if not SILE.settings:get("typesetter.obeyspaces") then
       text = text:gsub("^%s+", "")
     end
     self:initline()
   end
-  if #text >0 then
-    self:pushUnshaped({ text = text, options= SILE.font.loadDefaults({})})
+  if #text > 0 then
+    self:pushUnshaped({ text = text, options = SILE.font.loadDefaults({}) })
   end
 end
 
-function typesetter:breakIntoLines (nodelist, breakWidth)
+function typesetter:breakIntoLines(nodelist, breakWidth)
   self:shapeAllNodes(nodelist)
   local breakpoints = SILE.linebreak:doBreak(nodelist, breakWidth)
   return self:breakpointsToLines(breakpoints)
 end
 
-function typesetter.shapeAllNodes (_, nodelist)
+function typesetter.shapeAllNodes(_, nodelist)
   local newNl = {}
   for i = 1, #nodelist do
     if nodelist[i].is_unshaped then
       pl.tablex.insertvalues(newNl, nodelist[i]:shape())
     else
-      newNl[#newNl+1] = nodelist[i]
+      newNl[#newNl + 1] = nodelist[i]
     end
   end
-  for i =1, #newNl do nodelist[i]=newNl[i] end
+  for i = 1, #newNl do
+    nodelist[i] = newNl[i]
+  end
   if #nodelist > #newNl then
-    for i=#newNl+1, #nodelist do nodelist[i]=nil end
+    for i = #newNl + 1, #nodelist do
+      nodelist[i] = nil
+    end
   end
 end
 
 -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
 -- Turns a node list into a list of vboxes
-function typesetter:boxUpNodes ()
+function typesetter:boxUpNodes()
   local nodelist = self.state.nodes
-  if #nodelist == 0 then return {} end
+  if #nodelist == 0 then
+    return {}
+  end
   for j = #nodelist, 1, -1 do
     if not nodelist[j].is_migrating then
       if nodelist[j].discardable then
@@ -344,93 +355,109 @@ function typesetter:boxUpNodes ()
       end
     end
   end
-  while (#nodelist > 0 and nodelist[1].is_penalty) do table.remove(nodelist, 1) end
-  if #nodelist == 0 then return {} end
+  while #nodelist > 0 and nodelist[1].is_penalty do
+    table.remove(nodelist, 1)
+  end
+  if #nodelist == 0 then
+    return {}
+  end
   self:shapeAllNodes(nodelist)
   local parfillskip = SILE.settings:get("typesetter.parfillskip")
   parfillskip.discardable = false
   self:pushGlue(parfillskip)
   self:pushPenalty(-inf_bad)
-  SU.debug("typesetter", function ()
-    return "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.contentToString(nodelist))
+  SU.debug("typesetter", function()
+    return "Boxed up " .. (#nodelist > 500 and #nodelist .. " nodes" or SU.contentToString(nodelist))
   end)
   local breakWidth = SILE.settings:get("typesetter.breakwidth") or self.frame:getLineWidth()
   local lines = self:breakIntoLines(nodelist, breakWidth)
   local vboxes = {}
-  for index=1, #lines do
+  for index = 1, #lines do
     local line = lines[index]
     local migrating = {}
     -- Move any migrating material
     local nodes = {}
-    for i =1, #line.nodes do
+    for i = 1, #line.nodes do
       local node = line.nodes[i]
       if node.is_migrating then
-        for j=1, #node.material do migrating[#migrating+1] = node.material[j] end
+        for j = 1, #node.material do
+          migrating[#migrating + 1] = node.material[j]
+        end
       else
-        nodes[#nodes+1] = node
+        nodes[#nodes + 1] = node
       end
     end
     local vbox = SILE.nodefactory.vbox({ nodes = nodes, ratio = line.ratio })
     local pageBreakPenalty = 0
-    if (#lines > 1 and index == 1) then
+    if #lines > 1 and index == 1 then
       pageBreakPenalty = SILE.settings:get("typesetter.widowpenalty")
-    elseif (#lines > 1 and index == (#lines-1)) then
+    elseif #lines > 1 and index == (#lines - 1) then
       pageBreakPenalty = SILE.settings:get("typesetter.orphanpenalty")
     end
-    vboxes[#vboxes+1] = self:leadingFor(vbox, self.state.previousVbox)
-    vboxes[#vboxes+1] = vbox
-    for i=1, #migrating do vboxes[#vboxes+1] = migrating[i] end
+    vboxes[#vboxes + 1] = self:leadingFor(vbox, self.state.previousVbox)
+    vboxes[#vboxes + 1] = vbox
+    for i = 1, #migrating do
+      vboxes[#vboxes + 1] = migrating[i]
+    end
     self.state.previousVbox = vbox
     if pageBreakPenalty > 0 then
       SU.debug("typesetter", "adding penalty of", pageBreakPenalty, "after", vbox)
-      vboxes[#vboxes+1] = SILE.nodefactory.penalty(pageBreakPenalty)
+      vboxes[#vboxes + 1] = SILE.nodefactory.penalty(pageBreakPenalty)
     end
   end
   return vboxes
 end
 
-function typesetter.pageTarget (_)
+function typesetter.pageTarget(_)
   SU.deprecated("SILE.typesetter:pageTarget", "SILE.typesetter:getTargetLength", "0.13.0", "0.14.0")
 end
 
-function typesetter:getTargetLength ()
+function typesetter:getTargetLength()
   return self.frame:getTargetLength()
 end
 
-function typesetter:registerHook (category, func)
-  if not self.hooks[category] then self.hooks[category] = {} end
+function typesetter:registerHook(category, func)
+  if not self.hooks[category] then
+    self.hooks[category] = {}
+  end
   table.insert(self.hooks[category], func)
 end
 
-function typesetter:runHooks (category, data)
-  if not self.hooks[category] then return data end
+function typesetter:runHooks(category, data)
+  if not self.hooks[category] then
+    return data
+  end
   for _, func in ipairs(self.hooks[category]) do
     data = func(self, data)
   end
   return data
 end
 
-function typesetter:registerFrameBreakHook (func)
+function typesetter:registerFrameBreakHook(func)
   self:registerHook("framebreak", func)
 end
 
-function typesetter:registerNewFrameHook (func)
+function typesetter:registerNewFrameHook(func)
   self:registerHook("newframe", func)
 end
 
-function typesetter:registerPageEndHook (func)
+function typesetter:registerPageEndHook(func)
   self:registerHook("pageend", func)
 end
 
-function typesetter:buildPage ()
+function typesetter:buildPage()
   local pageNodeList
   local res
-  if self:isQueueEmpty() then return false end
-  if SILE.scratch.insertions then SILE.scratch.insertions.thisPage = {} end
+  if self:isQueueEmpty() then
+    return false
+  end
+  if SILE.scratch.insertions then
+    SILE.scratch.insertions.thisPage = {}
+  end
   pageNodeList, res = SILE.pagebuilder:findBestBreak({
     vboxlist = self.state.outputQueue,
-    target   = self:getTargetLength(),
-    restart  = self.frame.state.pageRestart
+    target = self:getTargetLength(),
+    restart = self.frame.state.pageRestart,
   })
   if not pageNodeList then -- No break yet
     -- self.frame.state.pageRestart = res
@@ -446,7 +473,7 @@ function typesetter:buildPage ()
   return true
 end
 
-function typesetter:setVerticalGlue (pageNodeList, target)
+function typesetter:setVerticalGlue(pageNodeList, target)
   local glues = {}
   local gTotal = SILE.length()
   local totalHeight = SILE.length()
@@ -474,14 +501,22 @@ function typesetter:setVerticalGlue (pageNodeList, target)
   end
 
   if totalHeight:tonumber() == 0 then
-   return SU.debug("pagebuilder", "No glue adjustment needed on empty page")
+    return SU.debug("pagebuilder", "No glue adjustment needed on empty page")
   end
 
   local adjustment = target - totalHeight
   if adjustment:tonumber() > 0 then
     if adjustment > gTotal.stretch then
       if (adjustment - gTotal.stretch):tonumber() > SILE.settings:get("typesetter.underfulltolerance"):tonumber() then
-        SU.warn("Underfull frame " .. self.frame.id .. ": " .. adjustment .. " stretchiness required to fill but only " .. gTotal.stretch .. " available")
+        SU.warn(
+          "Underfull frame "
+            .. self.frame.id
+            .. ": "
+            .. adjustment
+            .. " stretchiness required to fill but only "
+            .. gTotal.stretch
+            .. " available"
+        )
       end
       adjustment = gTotal.stretch
     end
@@ -495,13 +530,21 @@ function typesetter:setVerticalGlue (pageNodeList, target)
     adjustment = 0 - adjustment
     if adjustment > gTotal.shrink then
       if (adjustment - gTotal.shrink):tonumber() > SILE.settings:get("typesetter.overfulltolerance"):tonumber() then
-        SU.warn("Overfull frame " .. self.frame.id .. ": " .. adjustment .. " shrinkability required to fit but only " .. gTotal.shrink .. " available")
+        SU.warn(
+          "Overfull frame "
+            .. self.frame.id
+            .. ": "
+            .. adjustment
+            .. " shrinkability required to fit but only "
+            .. gTotal.shrink
+            .. " available"
+        )
       end
       adjustment = gTotal.shrink
     end
     if gTotal.shrink:tonumber() > 0 then
       for i = 1, #glues do
-        local g  = glues[i]
+        local g = glues[i]
         g:adjustGlue(-adjustment:tonumber() * g.height.shrink:absolute() / gTotal.shrink)
       end
     end
@@ -509,7 +552,7 @@ function typesetter:setVerticalGlue (pageNodeList, target)
   SU.debug("pagebuilder", "Glues for this page adjusted by", adjustment, "drawn from", gTotal)
 end
 
-function typesetter:initNextFrame ()
+function typesetter:initNextFrame()
   local oldframe = self.frame
   self.frame:leave(self)
   if #self.state.outputQueue == 0 then
@@ -547,10 +590,9 @@ function typesetter:initNextFrame ()
     end
   end
   self:runHooks("newframe")
-
 end
 
-function typesetter:pushBack ()
+function typesetter:pushBack()
   SU.debug("typesetter", "Pushing back", #self.state.outputQueue, "nodes")
   local oldqueue = self.state.outputQueue
   self.state.outputQueue = {}
@@ -560,7 +602,9 @@ function typesetter:pushBack ()
     SU.debug("pushback", "process box", vbox)
     if vbox.margins and vbox.margins ~= lastMargins then
       SU.debug("pushback", "new margins", lastMargins, vbox.margins)
-      if not self.state.grid then self:endline() end
+      if not self.state.grid then
+        self:endline()
+      end
       self:setMargins(vbox.margins)
     end
     if vbox.explicit then
@@ -573,9 +617,9 @@ function typesetter:pushBack ()
     elseif not vbox.is_vglue and not vbox.is_penalty then
       SU.debug("pushback", "not vglue or penalty", vbox.type)
       local discardedFistInitLine = false
-      if (#self.state.nodes == 0) then
+      if #self.state.nodes == 0 then
         -- Setup queue but avoid calling newPar
-        self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zerohbox()
+        self.state.nodes[#self.state.nodes + 1] = SILE.nodefactory.zerohbox()
       end
       for i, node in ipairs(vbox.nodes) do
         if node.is_glue and not node.discardable then
@@ -592,10 +636,14 @@ function typesetter:pushBack ()
             SU.debug("pushback", "discard all other discretionaries", node)
           end
         elseif node.is_zero then
-          if discardedFistInitLine then self:pushHorizontal(node) end
+          if discardedFistInitLine then
+            self:pushHorizontal(node)
+          end
           discardedFistInitLine = true
         elseif node.is_penalty then
-          if not discardedFistInitLine then self:pushHorizontal(node) end
+          if not discardedFistInitLine then
+            self:pushHorizontal(node)
+          end
         else
           node.bidiDone = true
           self:pushHorizontal(node)
@@ -607,14 +655,15 @@ function typesetter:pushBack ()
     lastMargins = vbox.margins
     -- self:debugState()
   end
-  while self.state.nodes[#self.state.nodes]
-  and (self.state.nodes[#self.state.nodes].is_penalty
-    or self.state.nodes[#self.state.nodes].is_zero) do
+  while
+    self.state.nodes[#self.state.nodes]
+    and (self.state.nodes[#self.state.nodes].is_penalty or self.state.nodes[#self.state.nodes].is_zero)
+  do
     self.state.nodes[#self.state.nodes] = nil
   end
 end
 
-function typesetter:outputLinesToPage (lines)
+function typesetter:outputLinesToPage(lines)
   SU.debug("pagebuilder", "OUTPUTTING frame", self.frame.id)
   -- It would have been nice to avoid storing this "pastTop" into a frame
   -- state, to keep things less entangled. There are situations, though,
@@ -639,7 +688,7 @@ function typesetter:outputLinesToPage (lines)
   self.frame.state.totals.pastTop = pastTop
 end
 
-function typesetter:leaveHmode (independent)
+function typesetter:leaveHmode(independent)
   if self.state.hmodeOnly then
     -- HACK HBOX
     -- This should likely be an error, but may break existing uses
@@ -657,22 +706,26 @@ It will likely break in future versions]])
     vbox.margins = margins
     self:pushVertical(vbox)
   end
-  if independent then return end
+  if independent then
+    return
+  end
   if self:buildPage() then
     self:initNextFrame()
   end
 end
 
-function typesetter:inhibitLeading ()
+function typesetter:inhibitLeading()
   self.state.previousVbox = nil
 end
 
-function typesetter.leadingFor (_, vbox, previous)
+function typesetter.leadingFor(_, vbox, previous)
   -- Insert leading
   SU.debug("typesetter", "   Considering leading between two lines:")
   SU.debug("typesetter", "   1)", previous)
   SU.debug("typesetter", "   2)", vbox)
-  if not previous then return SILE.nodefactory.vglue() end
+  if not previous then
+    return SILE.nodefactory.vglue()
+  end
   local prevDepth = previous.depth
   SU.debug("typesetter", "   Depth of previous line was", prevDepth)
   local bls = SILE.settings:get("document.baselineskip")
@@ -688,10 +741,12 @@ function typesetter.leadingFor (_, vbox, previous)
   end
 end
 
-function typesetter:addrlskip (slice, margins, hangLeft, hangRight)
+function typesetter:addrlskip(slice, margins, hangLeft, hangRight)
   local LTR = self.frame:writingDirection() == "LTR"
   local rskip = margins[LTR and "rskip" or "lskip"]
-  if not rskip then rskip = SILE.nodefactory.glue(0) end
+  if not rskip then
+    rskip = SILE.nodefactory.glue(0)
+  end
   if hangRight and hangRight > 0 then
     rskip = SILE.nodefactory.glue({ width = rskip.width:tonumber() + hangRight })
   end
@@ -700,17 +755,21 @@ function typesetter:addrlskip (slice, margins, hangLeft, hangRight)
   table.insert(slice, rskip)
   table.insert(slice, SILE.nodefactory.zerohbox())
   local lskip = margins[LTR and "lskip" or "rskip"]
-  if not lskip then lskip = SILE.nodefactory.glue(0) end
+  if not lskip then
+    lskip = SILE.nodefactory.glue(0)
+  end
   if hangLeft and hangLeft > 0 then
     lskip = SILE.nodefactory.glue({ width = lskip.width:tonumber() + hangLeft })
   end
   lskip.value = "margin"
-  while slice[1].discardable do table.remove(slice, 1) end
+  while slice[1].discardable do
+    table.remove(slice, 1)
+  end
   table.insert(slice, 1, lskip)
   table.insert(slice, 1, SILE.nodefactory.zerohbox())
 end
 
-function typesetter:breakpointsToLines (breakpoints)
+function typesetter:breakpointsToLines(breakpoints)
   local linestart = 1
   local lines = {}
   local nodes = self.state.nodes
@@ -721,7 +780,7 @@ function typesetter:breakpointsToLines (breakpoints)
       local slice = {}
       local seenNonDiscardable = false
       for j = linestart, point.position do
-        slice[#slice+1] = nodes[j]
+        slice[#slice + 1] = nodes[j]
         if nodes[j] then
           if not nodes[j].discardable then
             seenNonDiscardable = true
@@ -748,7 +807,7 @@ function typesetter:breakpointsToLines (breakpoints)
         -- And compute the line...
         local ratio = self:computeLineRatio(point.width, slice)
         local thisLine = { ratio = ratio, nodes = slice }
-        lines[#lines+1] = thisLine
+        lines[#lines + 1] = thisLine
       end
     end
   end
@@ -760,7 +819,7 @@ function typesetter:breakpointsToLines (breakpoints)
   return lines
 end
 
-function typesetter.computeLineRatio (_, breakwidth, slice)
+function typesetter.computeLineRatio(_, breakwidth, slice)
   -- This somewhat wrong, see #1362 and #1528
   -- This is a somewhat partial workaround, at least made consistent with
   -- the nnode and discretionary outputYourself routines
@@ -848,9 +907,9 @@ function typesetter.computeLineRatio (_, breakwidth, slice)
   return ratio, naturalTotals
 end
 
-function typesetter:chuck () -- emergency shipout everything
+function typesetter:chuck() -- emergency shipout everything
   self:leaveHmode(true)
-  if (#self.state.outputQueue > 0) then
+  if #self.state.outputQueue > 0 then
     SU.debug("typesetter", "Emergency shipout", #self.state.outputQueue, "lines in frame", self.frame.id)
     self:outputLinesToPage(self.state.outputQueue)
     self.state.outputQueue = {}
@@ -864,16 +923,18 @@ end
 -- is responsible of doing it, if the hbox is built for anything
 -- else than e.g. measuring it. Likewise, the call has to decide
 -- what to do with the migrating content.
-local _rtl_pre_post = function (box, atypesetter, line)
-  local advance = function () atypesetter.frame:advanceWritingDirection(box:scaledWidth(line)) end
+local _rtl_pre_post = function(box, atypesetter, line)
+  local advance = function()
+    atypesetter.frame:advanceWritingDirection(box:scaledWidth(line))
+  end
   if atypesetter.frame:writingDirection() == "RTL" then
     advance()
-    return function () end
+    return function() end
   else
     return advance
   end
 end
-function typesetter:makeHbox (content)
+function typesetter:makeHbox(content)
   local recentContribution = {}
   local migratingNodes = {}
 
@@ -885,21 +946,21 @@ function typesetter:makeHbox (content)
   -- as leaving horizontal mode is not strictly forbidden here, it would
   -- lead to a possibly different result (the output queue being skipped).
   -- See also HACK HBOX comment in typesetter:leaveHmode().
-  local index = #(self.state.nodes)+1
+  local index = #self.state.nodes + 1
   self.state.hmodeOnly = true
   SILE.process(content)
   self.state.hmodeOnly = false -- Wouldn't be needed in a temporary state
 
   local l = SILE.length()
   local h, d = SILE.length(), SILE.length()
-  for i = index, #(self.state.nodes) do
+  for i = index, #self.state.nodes do
     local node = self.state.nodes[i]
     if node.is_migrating then
-      migratingNodes[#migratingNodes+1] = node
+      migratingNodes[#migratingNodes + 1] = node
     elseif node.is_unshaped then
       local shape = node:shape()
       for _, attr in ipairs(shape) do
-        recentContribution[#recentContribution+1] = attr
+        recentContribution[#recentContribution + 1] = attr
         h = attr.height > h and attr.height or h
         d = attr.depth > d and attr.depth or d
         l = l + attr:lineContribution():absolute()
@@ -910,19 +971,19 @@ function typesetter:makeHbox (content)
       -- But if discretionary nodes occur inside an hbox, since the latter
       -- is not line-broken, they will never be marked as 'used' and will
       -- evaluate to the replacement content (if any)...
-      recentContribution[#recentContribution+1] = node
+      recentContribution[#recentContribution + 1] = node
       l = l + node:replacementWidth():absolute()
       -- The replacement content may have ascenders and descenders...
       local hdisc = node:replacementHeight():absolute()
       local ddisc = node:replacementDepth():absolute()
       h = hdisc > h and hdisc or h
       d = ddisc > d and ddisc or d
-      -- By the way it's unclear how this is expected to work in TTB
-      -- writing direction. For other type of nodes, the line contribution
-      -- evaluates to the height rather than the width in TTB, but the
-      -- whole logic might then be dubious there too...
+    -- By the way it's unclear how this is expected to work in TTB
+    -- writing direction. For other type of nodes, the line contribution
+    -- evaluates to the height rather than the width in TTB, but the
+    -- whole logic might then be dubious there too...
     else
-      recentContribution[#recentContribution+1] = node
+      recentContribution[#recentContribution + 1] = node
       l = l + node:lineContribution():absolute()
       h = node.height > h and node.height or h
       d = node.depth > d and node.depth or d
@@ -931,31 +992,31 @@ function typesetter:makeHbox (content)
   end
 
   local hbox = SILE.nodefactory.hbox({
-      height = h,
-      width = l,
-      depth = d,
-      value = recentContribution,
-      outputYourself = function (box, atypesetter, line)
-        local _post = _rtl_pre_post(box, atypesetter, line)
-        local ox = atypesetter.frame.state.cursorX
-        local oy = atypesetter.frame.state.cursorY
-        SILE.outputter:setCursor(atypesetter.frame.state.cursorX, atypesetter.frame.state.cursorY)
-        for _, node in ipairs(box.value) do
-          node:outputYourself(atypesetter, line)
-        end
-        atypesetter.frame.state.cursorX = ox
-        atypesetter.frame.state.cursorY = oy
-        _post()
-        SU.debug("hboxes", function ()
-          SILE.outputter:debugHbox(box, box:scaledWidth(line))
-          return "Drew debug outline around hbox"
-        end)
+    height = h,
+    width = l,
+    depth = d,
+    value = recentContribution,
+    outputYourself = function(box, atypesetter, line)
+      local _post = _rtl_pre_post(box, atypesetter, line)
+      local ox = atypesetter.frame.state.cursorX
+      local oy = atypesetter.frame.state.cursorY
+      SILE.outputter:setCursor(atypesetter.frame.state.cursorX, atypesetter.frame.state.cursorY)
+      for _, node in ipairs(box.value) do
+        node:outputYourself(atypesetter, line)
       end
-    })
+      atypesetter.frame.state.cursorX = ox
+      atypesetter.frame.state.cursorY = oy
+      _post()
+      SU.debug("hboxes", function()
+        SILE.outputter:debugHbox(box, box:scaledWidth(line))
+        return "Drew debug outline around hbox"
+      end)
+    end,
+  })
   return hbox, migratingNodes
 end
 
-function typesetter:pushHlist (hlist)
+function typesetter:pushHlist(hlist)
   for _, h in ipairs(hlist) do
     self:pushHorizontal(h)
   end

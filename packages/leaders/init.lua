@@ -7,7 +7,7 @@ package._name = "leaders"
 -- Leaders package
 --
 
-local widthToFrameEdge = function (frame)
+local widthToFrameEdge = function(frame)
   local w
   if frame:writingDirection() == "LTR" then
     w = frame:right() - frame.state.cursorX
@@ -25,7 +25,7 @@ end
 
 local leader = pl.class(SILE.nodefactory.glue)
 
-function leader:outputYourself (typesetter, line)
+function leader:outputYourself(typesetter, line)
   local outputWidth = SU.rationWidth(self.width, self.width, line.ratio):tonumber()
   local leaderWidth = self.value.width:tonumber()
   local ox = typesetter.frame.state.cursorX
@@ -57,8 +57,18 @@ function leader:outputYourself (typesetter, line)
       if SU.debugging("leaders") then
         -- Draw some visible lines around leader repetitions.
         -- N.B. This might be wrong for other directions than LTR-TTB, but heh it's debug stuff.
-        SILE.outputter:drawRule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-leaderWidth, leaderWidth-0.3, 0.3)
-        SILE.outputter:drawRule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-leaderWidth, 0.3, leaderWidth-0.3)
+        SILE.outputter:drawRule(
+          typesetter.frame.state.cursorX,
+          typesetter.frame.state.cursorY - leaderWidth,
+          leaderWidth - 0.3,
+          0.3
+        )
+        SILE.outputter:drawRule(
+          typesetter.frame.state.cursorX,
+          typesetter.frame.state.cursorY - leaderWidth,
+          0.3,
+          leaderWidth - 0.3
+        )
       end
 
       self.value:outputYourself(typesetter, line)
@@ -67,9 +77,14 @@ function leader:outputYourself (typesetter, line)
     if SU.debugging("leaders") then
       -- Draw some visible lines around skipped leader repetitions.
       -- N.B. This might be wrong for other directions than LTR-TTB, but it's debug stuff again.
-      for _ = 0, skipRepetitions-1 do
+      for _ = 0, skipRepetitions - 1 do
         SILE.outputter:drawRule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY, leaderWidth, 0.3)
-        SILE.outputter:drawRule(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-leaderWidth, 0.3, leaderWidth)
+        SILE.outputter:drawRule(
+          typesetter.frame.state.cursorX,
+          typesetter.frame.state.cursorY - leaderWidth,
+          0.3,
+          leaderWidth
+        )
         typesetter.frame:advanceWritingDirection(leaderWidth)
       end
     end
@@ -80,11 +95,9 @@ function leader:outputYourself (typesetter, line)
   typesetter.frame.state.cursorX = ox
   typesetter.frame.state.cursorY = oy
   typesetter.frame:advanceWritingDirection(outputWidth)
-
 end
 
-function package:registerCommands ()
-
+function package:registerCommands()
   self:registerCommand("leaders", function(options, content)
     local width = options.width and SU.cast("glue", options.width) or SILE.nodefactory.hfillglue()
     local hbox, hlist = SILE.typesetter:makeHbox(content)
@@ -105,10 +118,9 @@ function package:registerCommands ()
     SILE.call("leaders", { width = SILE.nodefactory.hfillglue() }, function()
       SILE.call("kern", { width = SILE.length("0.25em") })
       SILE.typesetter:typeset(".")
-      SILE.call("kern", {width = SILE.length("0.25em") })
+      SILE.call("kern", { width = SILE.length("0.25em") })
     end)
   end)
-
 end
 
 package.documentation = [[

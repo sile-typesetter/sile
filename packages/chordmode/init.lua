@@ -3,33 +3,30 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "chordmode"
 
-function package:_init ()
+function package:_init()
   base._init(self)
   self:loadPackage("raiselower")
   self:loadPackage("inputfilter")
 end
 
-function package.declareSettings (_)
-
+function package.declareSettings(_)
   SILE.settings:declare({
     parameter = "chordmode.offset",
     type = "length",
     default = SILE.length("2ex"),
-    help = "Vertical offset between the chord name and the text."
+    help = "Vertical offset between the chord name and the text.",
   })
-
 end
 
-function package:registerCommands ()
-
-  self:registerCommand("ch", function (options, content)
-    local chordBox = SILE.typesetter:makeHbox(function ()
+function package:registerCommands()
+  self:registerCommand("ch", function(options, content)
+    local chordBox = SILE.typesetter:makeHbox(function()
       SILE.call("chordmode:chordfont", {}, { options.name })
     end)
     local origWidth = chordBox.width
     chordBox.width = SILE.length()
 
-    SILE.call("raise", { height = SILE.settings:get("chordmode.offset") }, function ()
+    SILE.call("raise", { height = SILE.settings:get("chordmode.offset") }, function()
       SILE.typesetter:pushHbox(chordBox)
     end)
 
@@ -43,7 +40,7 @@ function package:registerCommands ()
     end
   end, "Insert a chord name above the text")
 
-  local function _addChords (text, content)
+  local function _addChords(text, content)
     local result = {}
     local chordName
     local currentText = ""
@@ -51,15 +48,24 @@ function package:registerCommands ()
     local processText, processChordName, processChordText
 
     local function insertChord()
-      table.insert(result, self.class.packages.inputfilter:createCommand(
-      content.pos, content.col, content.lno,
-      "ch", { name = chordName }, currentText
-      ))
+      table.insert(
+        result,
+        self.class.packages.inputfilter:createCommand(
+          content.pos,
+          content.col,
+          content.lno,
+          "ch",
+          { name = chordName },
+          currentText
+        )
+      )
       chordName = nil
     end
 
     local function insertText()
-      if #currentText > 0 then table.insert(result, currentText) end
+      if #currentText > 0 then
+        table.insert(result, currentText)
+      end
       currentText = ""
     end
 
@@ -68,27 +74,27 @@ function package:registerCommands ()
     end
 
     processText = {
-      ["<"] = function (_)
+      ["<"] = function(_)
         insertText()
         process = processChordName
-      end
+      end,
     }
 
     processChordName = {
-      [">"] = function (_)
+      [">"] = function(_)
         chordName = currentText
         currentText = ""
         process = processChordText
-      end
+      end,
     }
 
     processChordText = {
-      ["<"] = function (_)
+      ["<"] = function(_)
         insertChord()
         currentText = ""
         process = processChordName
       end,
-      ["\n"] = function (separator)
+      ["\n"] = function(separator)
         insertChord()
         currentText = separator
         process = processText
@@ -97,14 +103,14 @@ function package:registerCommands ()
     process = processText
 
     for token in SU.gtoke(text, "[<\n>]") do
-      if(token.string) then
+      if token.string then
         currentText = currentText .. token.string
       else
         (process[token.separator] or ignore)(token.separator)
       end
     end
 
-    if (chordName ~= nil) then
+    if chordName ~= nil then
       insertChord()
     else
       insertText()
@@ -112,14 +118,13 @@ function package:registerCommands ()
     return result
   end
 
-  self:registerCommand("chordmode", function (_, content)
+  self:registerCommand("chordmode", function(_, content)
     SILE.process(self.class.packages.inputfilter:transformContent(content, _addChords))
   end, "Transform embedded chords to 'ch' commands")
 
-  self:registerCommand("chordmode:chordfont", function (_, content)
+  self:registerCommand("chordmode:chordfont", function(_, content)
     SILE.process(content)
   end, "Override this command to change chord style.")
-
 end
 
 package.documentation = [[

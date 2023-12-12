@@ -14,36 +14,36 @@ outputter.extension = "txt"
 -- have seemed) because that requires a page size which we don't know yet.
 -- function outputter:_init () end
 
-function outputter:_ensureInit ()
+function outputter:_ensureInit()
   if not outfile then
     local fname = self:getOutputFilename()
     outfile = fname == "-" and io.stdout or io.open(fname, "w+")
   end
 end
 
-function outputter:_writeline (...)
+function outputter:_writeline(...)
   self:_ensureInit()
   local args = pl.utils.pack(...)
-  for i=1, #args do
+  for i = 1, #args do
     outfile:write(args[i])
   end
 end
 
-function outputter:newPage ()
+function outputter:newPage()
   self:_ensureInit()
   outfile:write("")
 end
 
-function outputter:finish ()
+function outputter:finish()
   self:_ensureInit()
   outfile:close()
 end
 
-function outputter.getCursor (_)
+function outputter.getCursor(_)
   return cursorX, cursorY
 end
 
-function outputter:setCursor (x, y, relative)
+function outputter:setCursor(x, y, relative)
   self:_ensureInit()
   local bs = SILE.measurement("0.8bs"):tonumber()
   local spc = SILE.measurement("0.8spc"):tonumber()
@@ -51,7 +51,7 @@ function outputter:setCursor (x, y, relative)
   local newx, newy = offset.x + x, offset.y - y
   if started then
     if newx < cursorX then
-        outfile:write("\n")
+      outfile:write("\n")
     elseif newy > cursorY then
       if newy - cursorY > bs then
         outfile:write("\n")
@@ -70,10 +70,12 @@ function outputter:setCursor (x, y, relative)
   cursorX = newx
 end
 
-function outputter:drawHbox (value, width)
+function outputter:drawHbox(value, width)
   self:_ensureInit()
   width = SU.cast("number", width)
-  if not value.text then return end
+  if not value.text then
+    return
+  end
   self:_writeline(value.text)
   if width > 0 then
     started = true

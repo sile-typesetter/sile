@@ -21,7 +21,7 @@ local outputter = pl.class(base)
 outputter._name = "podofo"
 outputter.extension = "pdf"
 
-function outputter._init (_)
+function outputter._init(_)
   document = pdf.PdfMemDocument()
   pagesize = pdf.PdfRect()
   pagesize:SetWidth(SILE.documentState.paperSize[1])
@@ -31,45 +31,51 @@ function outputter._init (_)
   painter:SetPage(page)
 end
 
-function outputter.newPage (_)
+function outputter.newPage(_)
   painter:FinishPage()
   page = document:CreatePage(pagesize)
   painter:SetPage(page)
 end
 
-function outputter:finish ()
+function outputter:finish()
   painter:FinishPage()
   local fname = self:getOutputFilename()
   document:Write(fname == "-" and "/dev/stdout" or fname)
 end
 
-function outputter.getCursor (_)
+function outputter.getCursor(_)
   return cursorX, cursorY
 end
 
-function outputter.setCursor (_, x, y, relative)
+function outputter.setCursor(_, x, y, relative)
   local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
   cursorX = offset.x + x
   cursorY = offset.y + SILE.documentState.paperSize[2] - y
 end
 
-function outputter.setColor (_, color)
+function outputter.setColor(_, color)
   painter:SetColor(color.r, color.g, color.b)
 end
 
-function outputter:drawHbox (value, _)
+function outputter:drawHbox(value, _)
   local x, y = self:getCursor()
-  if not value.glyphNames then return end
-  for i = 1, #(value.glyphNames) do
+  if not value.glyphNames then
+    return
+  end
+  for i = 1, #value.glyphNames do
     painter:DrawGlyph(document, x, y, value.glyphNames[i])
   end
 end
 
-function outputter.setFont (_, options)
-  if SILE.font._key(options) == lastkey then return end
+function outputter.setFont(_, options)
+  if SILE.font._key(options) == lastkey then
+    return
+  end
   lastkey = SILE.font._key(options)
   if not podofoFaces[lastkey] then
-    local ftface = SILE.font.cache(options, function () SU.error("Font should exist") end)
+    local ftface = SILE.font.cache(options, function()
+      SU.error("Font should exist")
+    end)
     print(ftface.filename)
     podofoFaces[lastkey] = document:CreateFont(ftface.face)
   end
@@ -79,26 +85,28 @@ function outputter.setFont (_, options)
   SILE.fontCache[lastkey] = nil
 end
 
-function outputter.getImageSize (_, src)
+function outputter.getImageSize(_, src)
   local box_width, box_height, err = imagesize.imgsize(src)
   if not box_width then
-    SU.error(err.." loading image")
+    SU.error(err .. " loading image")
   end
   return box_width, box_height
 end
 
-function outputter.drawRule (_, x, y, width, depth)
+function outputter.drawRule(_, x, y, width, depth)
   painter:Rectangle(x, SILE.documentState.paperSize[2] - y, width, depth)
   painter:Close()
   painter:Fill()
 end
 
-function outputter:debugHbox (hbox, scaledWidth)
+function outputter:debugHbox(hbox, scaledWidth)
   painter:SetColor(0.9, 0.9, 0.9)
   painter:SetStrokeWidth(0.5)
   local x, y = self:getCursor()
-  painter:Rectangle(x, y+(hbox.height), scaledWidth, hbox.height+hbox.depth)
-  if (hbox.depth) then painter:Rectangle(x, y+(hbox.height), scaledWidth, hbox.height); end
+  painter:Rectangle(x, y + hbox.height, scaledWidth, hbox.height + hbox.depth)
+  if hbox.depth then
+    painter:Rectangle(x, y + hbox.height, scaledWidth, hbox.height)
+  end
   painter:Stroke()
   painter:SetColor(0, 0, 0)
   --cr:move_to(x, y)

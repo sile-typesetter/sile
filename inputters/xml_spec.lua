@@ -3,11 +3,10 @@ SILE.backend = "dummy"
 SILE.init()
 SILE.utilities.error = error
 
-describe("#XML #inputter", function ()
+describe("#XML #inputter", function()
   local inputter = SILE.inputters.xml()
 
-  describe("should parse", function ()
-
+  describe("should parse", function()
     it("commands with content", function()
       local t = inputter:parse([[<foo>bar</foo>]])[1][1]
       assert.is.equal("foo", t.command)
@@ -43,30 +42,31 @@ describe("#XML #inputter", function ()
     --   assert.is.equal("qiz \"qiz\"", t.options.baz)
     --   assert.is.equal("bar", t[1])
     -- end)
-
   end)
 
-  describe("should reject", function ()
-
+  describe("should reject", function()
     it("commands with bad characters", function()
-      assert.has_error(function() inputter:parse([[<" />]]) end,
-        "not well-formed (invalid token)")
-      assert.has_error(function() inputter:parse([[<' />]]) end,
-        [[not well-formed (invalid token)]])
-      assert.has_error(function() inputter:parse([[<"o></"o>]]) end,
-        [[not well-formed (invalid token)]])
+      assert.has_error(function()
+        inputter:parse([[<" />]])
+      end, "not well-formed (invalid token)")
+      assert.has_error(function()
+        inputter:parse([[<' />]])
+      end, [[not well-formed (invalid token)]])
+      assert.has_error(function()
+        inputter:parse([[<"o></"o>]])
+      end, [[not well-formed (invalid token)]])
     end)
 
     it("commands with unclosed content", function()
-      assert.has_error(function() inputter:parse([[<foo>bar]]) end,
-        [[no element found]])
+      assert.has_error(function()
+        inputter:parse([[<foo>bar]])
+      end, [[no element found]])
     end)
 
     it("mismatched environments", function()
-      assert.has_error(function() inputter:parse([[<foo><bar>baz</foo></bar>]]) end,
-        [[mismatched tag]])
+      assert.has_error(function()
+        inputter:parse([[<foo><bar>baz</foo></bar>]])
+      end, [[mismatched tag]])
     end)
-
   end)
 end)
-

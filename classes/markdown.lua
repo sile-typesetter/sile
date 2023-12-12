@@ -7,64 +7,62 @@ class._name = "markdown"
 
 SILE.inputs.markdown = {
   order = 2,
-  appropriate = function (fn, _)
+  appropriate = function(fn, _)
     return fn:match("md$") or fn:match("markdown$")
   end,
-  process = function (data)
+  process = function(data)
     local lunamark = require("lunamark")
     local reader = lunamark.reader.markdown
     local writer = lunamark.writer.ast.new()
     local parse = reader.new(writer)
     local t = parse(data)
-    t = { [1] = t, id = "document", options = { class = "markdown" }}
+    t = { [1] = t, id = "document", options = { class = "markdown" } }
     -- SILE.inputs.common.init(fn, t)
     SILE.process(t[1])
-  end
+  end,
 }
 
-function class:_init (options)
+function class:_init(options)
   book._init(self, options)
   self:loadPackage("url")
   self:loadPackage("image")
 end
 
-function class:registerCommands ()
-
+function class:registerCommands()
   book.registerCommands(self)
 
-  self:registerCommand("sect1", function (options, content)
+  self:registerCommand("sect1", function(options, content)
     SILE.call("chapter", options, content)
   end)
 
-  self:registerCommand("sect2", function (options, content)
+  self:registerCommand("sect2", function(options, content)
     SILE.call("section", options, content)
   end)
 
-  self:registerCommand("sect3", function (options, content)
+  self:registerCommand("sect3", function(options, content)
     SILE.call("subsection", options, content)
   end)
 
-  self:registerCommand("emphasis", function (options, content)
+  self:registerCommand("emphasis", function(options, content)
     SILE.call("em", options, content)
   end)
 
-  self:registerCommand("paragraph", function (_, content)
+  self:registerCommand("paragraph", function(_, content)
     SILE.process(content)
     SILE.call("par")
   end)
 
-  self:registerCommand("bulletlist", function (_, content)
+  self:registerCommand("bulletlist", function(_, content)
     SILE.process(content)
   end)
 
-  self:registerCommand("link", function (_, content)
-      SILE.call("verbatim:font", {}, content)
+  self:registerCommand("link", function(_, content)
+    SILE.call("verbatim:font", {}, content)
   end)
 
-  self:registerCommand("image", function (_, content)
-    SILE.call("img", {src=content.src})
+  self:registerCommand("image", function(_, content)
+    SILE.call("img", { src = content.src })
   end)
-
 end
 
 return class

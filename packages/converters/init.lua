@@ -3,32 +3,34 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "converters"
 
-local lfs = require('lfs')
+local lfs = require("lfs")
 
-local applyConverter = function (source, converter)
+local applyConverter = function(source, converter)
   local extLen = string.len(converter.sourceExt)
-  local targetFile = string.sub(source, 1, -extLen-1) .. converter.targetExt
+  local targetFile = string.sub(source, 1, -extLen - 1) .. converter.targetExt
 
   local sourceTime = lfs.attributes(source, "modification")
 
-  if (sourceTime==nil) then
+  if sourceTime == nil then
     SU.debug("converters", "Source file not found", source)
     return nil -- source not found
   end
 
   local targetTime = lfs.attributes(targetFile, "modification")
-  if((targetTime~=nil) and (targetTime>sourceTime)) then
+  if (targetTime ~= nil) and (targetTime > sourceTime) then
     SU.debug("converters", "Source file already converted", source)
     return targetFile -- already converted
   end
 
   local command = string.gsub(converter.command, "%$(%w+)", {
     SOURCE = source,
-    TARGET = targetFile
+    TARGET = targetFile,
   })
 
   local result = os.execute(command)
-  if type(result) ~= "boolean" then result = (result == 0) end
+  if type(result) ~= "boolean" then
+    result = (result == 0)
+  end
   if result then
     SU.debug("converters", "Converted", source, "to", targetFile)
     return targetFile
@@ -38,11 +40,11 @@ local applyConverter = function (source, converter)
 end
 
 -- TODO Make this a standard utility function
-local function extendCommand (name, func)
+local function extendCommand(name, func)
   -- Wrap an existing command
   local original = SILE.Commands[name]
   if original then
-    SILE.Commands[name] = function (options, content)
+    SILE.Commands[name] = function(options, content)
       func(options, content, original)
     end
   else
@@ -50,68 +52,64 @@ local function extendCommand (name, func)
   end
 end
 
-function package.register (_, sourceExt, targetExt, command)
+function package.register(_, sourceExt, targetExt, command)
   table.insert(SILE.scratch.converters, {
     sourceExt = sourceExt,
     targetExt = targetExt,
-    command = command
+    command = command,
   })
 end
 
-function package.checkConverters (_, source)
+function package.checkConverters(_, source)
   local resolvedSrc = SILE.resolveFile(source) or SU.error("Couldn't find file " .. source)
   for _, converter in ipairs(SILE.scratch.converters) do
     local extLen = string.len(converter.sourceExt)
-    if ((string.len(resolvedSrc) > extLen) and
-        (string.sub(resolvedSrc, -extLen) == converter.sourceExt)) then
+    if (string.len(resolvedSrc) > extLen) and (string.sub(resolvedSrc, -extLen) == converter.sourceExt) then
       return applyConverter(resolvedSrc, converter)
     end
   end
   return source -- No conversion needed.
 end
 
-function package:_init ()
+function package:_init()
   base._init(self)
   if not SILE.scratch.converters then
     SILE.scratch.converters = {}
   end
-  extendCommand("include", function (options, content, original)
+  extendCommand("include", function(options, content, original)
     local source = SU.required(options, "src", "include (converters)")
     local result = self:checkConverters(source)
     if result then
       options["src"] = result
       original(options, content)
     else
-      SU.error("Conversion failure for include '" .. source ..'"')
+      SU.error("Conversion failure for include '" .. source .. '"')
     end
   end)
-  extendCommand("img", function (options, content, original)
+  extendCommand("img", function(options, content, original)
     local source = SU.required(options, "src", "img (converters)")
     local result = self:checkConverters(source)
     if result then
       options["src"] = result
       original(options, content)
     else
-      SU.error("Conversion failure for image '" .. source ..'"')
+      SU.error("Conversion failure for image '" .. source .. '"')
     end
   end)
   self:deprecatedExport("register", self.register)
   self:deprecatedExport("checkConverters", self.checkConverters)
 end
 
-function package:registerCommands ()
-
-  self:registerCommand("converters:register", function (options, _)
+function package:registerCommands()
+  self:registerCommand("converters:register", function(options, _)
     self:register(options.from, options.to, options.command)
   end)
 
-  self:registerCommand("converters:check", function (options, _)
+  self:registerCommand("converters:check", function(options, _)
     SU.deprecated("\\converters:check", nil, "0.14.10", "0.16.0")
     self:checkConverters(options.source)
   end)
-
 end
-
 
 package.documentation = [[
 \begin{document}

@@ -6,22 +6,22 @@ local luaversion = _VERSION:match("%d+%.%d+")
 package.path = package.path:gsub("/%./", "/")
 package.cpath = package.cpath:gsub("/%./", "/")
 
-local function prepend_and_dedup (segment, path)
-  local escaped = segment:gsub('[%-%.%+%[%]%(%)%$%^%%%?%*]','%%%1') -- copied from pl.utils.escape() which we can't load yet
+local function prepend_and_dedup(segment, path)
+  local escaped = segment:gsub("[%-%.%+%[%]%(%)%$%^%%%?%*]", "%%%1") -- copied from pl.utils.escape() which we can't load yet
   local striped = path:gsub(("^%s"):format(escaped), ""):gsub((";%s"):format(escaped), "")
   return ("%s;%s"):format(segment, striped)
 end
 
-local function prependPath (path)
-  package.path  = prepend_and_dedup(path .. "/?/init.lua", package.path)
-  package.path  = prepend_and_dedup(path .. "/?.lua", package.path)
+local function prependPath(path)
+  package.path = prepend_and_dedup(path .. "/?/init.lua", package.path)
+  package.path = prepend_and_dedup(path .. "/?.lua", package.path)
 end
 
-local function prependCPath (path)
+local function prependCPath(path)
   package.cpath = prepend_and_dedup(path .. "/?.@SHARED_LIB_EXT@", package.cpath)
 end
 
-local function extendPaths (path, ours)
+local function extendPaths(path, ours)
   prependCPath(path)
   prependPath(path)
   if ours then
@@ -64,7 +64,9 @@ local cwd = executable:gsub("(.*)(/.*)", "%1")
 if cwd:match("^@") then -- Consider "ours" for the sake of Nix Flake
   extendPaths(".", true)
 else
-  if cwd ~= "./" then extendPaths(cwd) end
+  if cwd ~= "./" then
+    extendPaths(cwd)
+  end
   extendPaths(".")
 end
 

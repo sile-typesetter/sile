@@ -4,11 +4,21 @@ testsidenote._name = "testsidenote"
 
 local gutterWidth = "3%pw"
 
-function testsidenote:_init (options)
+function testsidenote:_init(options)
   plain._init(self, options)
-  self:declareFrame("contentA", {left = "left(content)", right = "left(gutter)", top = "top(content)", bottom = "bottom(content)" })
-  self:declareFrame("sidenotes", {left = "right(gutter)", width="width(contentA) * 2 / 3", right = "right(content)", top = "top(content)", bottom = "bottom(content)", balanced = true })
-  self:declareFrame("gutter", {left = "right(contentA)", right = "left(sidenotes)", width = gutterWidth })
+  self:declareFrame(
+    "contentA",
+    { left = "left(content)", right = "left(gutter)", top = "top(content)", bottom = "bottom(content)" }
+  )
+  self:declareFrame("sidenotes", {
+    left = "right(gutter)",
+    width = "width(contentA) * 2 / 3",
+    right = "right(content)",
+    top = "top(content)",
+    bottom = "bottom(content)",
+    balanced = true,
+  })
+  self:declareFrame("gutter", { left = "right(contentA)", right = "left(sidenotes)", width = gutterWidth })
   self.pageTemplate.firstContentFrame = self.pageTemplate.frames["contentA"]
   self:loadPackage("insertions")
   self:loadPackage("footnotes")
@@ -17,7 +27,7 @@ function testsidenote:_init (options)
     topBox = SILE.nodefactory.zerovglue(),
     interInsertionSkip = SILE.length("1ex"),
     insertInto = { frame = "sidenotes", ratio = 0 },
-    stealFrom = {  },
+    stealFrom = {},
   })
   return self
 end

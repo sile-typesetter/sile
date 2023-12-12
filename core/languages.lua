@@ -1,7 +1,7 @@
 local loadkit = require("loadkit")
 local cldr = require("cldr")
 
-loadkit.register("ftl", function (file)
+loadkit.register("ftl", function(file)
   local contents = assert(file:read("*a"))
   file:close()
   return assert(fluent:add_messages(contents))
@@ -11,36 +11,46 @@ local loadonce = {}
 
 SILE.languageSupport = {
   languages = {},
-  loadLanguage = function (language)
+  loadLanguage = function(language)
     language = language or SILE.settings:get("document.language")
     language = cldr.locales[language] and language or "und"
-    if loadonce[language] then return end
+    if loadonce[language] then
+      return
+    end
     loadonce[language] = true
     local langresource = string.format("languages.%s", language)
     local gotlang, lang = pcall(require, langresource)
     if not gotlang then
-      SU.warn(("Unable to load language feature support (e.g. hyphenation rules) for %s: %s")
-        :format(language, lang:gsub(":.*", "")))
+      SU.warn(
+        ("Unable to load language feature support (e.g. hyphenation rules) for %s: %s"):format(
+          language,
+          lang:gsub(":.*", "")
+        )
+      )
     end
     local ftlresource = string.format("i18n.%s", language)
     SU.debug("fluent", "Loading FTL resource", ftlresource, "into locale", language)
     fluent:set_locale(language)
     local gotftl, ftl = pcall(require, ftlresource)
     if not gotftl then
-      SU.warn(("Unable to load localized strings (e.g. table of contents header text) for %s: %s")
-        :format(language, ftl:gsub(":.*", "")))
+      SU.warn(
+        ("Unable to load localized strings (e.g. table of contents header text) for %s: %s"):format(
+          language,
+          ftl:gsub(":.*", "")
+        )
+      )
     end
     if type(lang) == "table" and lang.init then
       lang.init()
     end
-  end
+  end,
 }
 
-SILE.registerCommand("language", function (options, content)
+SILE.registerCommand("language", function(options, content)
   local main = SU.required(options, "main", "language setting")
   SILE.languageSupport.loadLanguage(main)
   if content[1] then
-    SILE.settings:temporarily(function ()
+    SILE.settings:temporarily(function()
       SILE.settings:set("document.language", main)
       SILE.process(content)
     end)
@@ -49,7 +59,7 @@ SILE.registerCommand("language", function (options, content)
   end
 end, nil, nil, true)
 
-SILE.registerCommand("fluent", function (options, content)
+SILE.registerCommand("fluent", function(options, content)
   local key = content[1]
   local locale = options.locale or SILE.settings:get("document.language")
   SU.debug("fluent", "Looking for", key, "in", locale)
@@ -65,7 +75,7 @@ SILE.registerCommand("fluent", function (options, content)
     message = entry:format(options)
   else
     SU.warn(string.format("No localized message for %s found in locale %s", key, locale))
-    fluent:set_locale('und')
+    fluent:set_locale("und")
     entry = fluent:get_message(key)
     if entry then
       message = entry:format(options)
@@ -75,7 +85,7 @@ SILE.registerCommand("fluent", function (options, content)
   SILE.processString(("<sile>%s</sile>"):format(message), "xml")
 end, nil, nil, true)
 
-SILE.registerCommand("ftl", function (options, content)
+SILE.registerCommand("ftl", function(options, content)
   local locale = options.locale or SILE.settings:get("document.language")
   SU.debug("fluent", "Loading message(s) into locale", locale)
   fluent:set_locale(locale)

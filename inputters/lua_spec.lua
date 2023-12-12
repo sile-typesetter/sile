@@ -3,11 +3,10 @@ SILE.backend = "dummy"
 SILE.init()
 SILE.utilities.error = error
 
-describe("#LUA #inputter", function ()
+describe("#LUA #inputter", function()
   local inputter = SILE.inputters.lua()
 
-  describe("should parse", function ()
-
+  describe("should parse", function()
     it("bare code", function()
       local t = inputter:parse([[SILE.scratch.foo = 42]])
       assert.is.truthy(type(t) == "function")
@@ -29,18 +28,17 @@ describe("#LUA #inputter", function ()
       assert.is.equal("foo", b.command)
       assert.is.equal("bar", b[1])
     end)
-
   end)
 
-  describe("should reject", function ()
-
+  describe("should reject", function()
     it("invalid Lua syntax", function()
       -- Lua 5.1 vs. others throw slightly different errors, hence partial matches
-      assert.has_error_matches(function () inputter:parse([[a = "b]]) end,
-        [[[string "a = "b"]:1: unfinished string near]], nil, true)
-      assert.has_error_matches(function() inputter:parse([[if]]) end,
-        [[[string "if"]:1: unexpected symbol near]], nil, true)
+      assert.has_error_matches(function()
+        inputter:parse([[a = "b]])
+      end, [[[string "a = "b"]:1: unfinished string near]], nil, true)
+      assert.has_error_matches(function()
+        inputter:parse([[if]])
+      end, [[[string "if"]:1: unexpected symbol near]], nil, true)
     end)
-
   end)
 end)

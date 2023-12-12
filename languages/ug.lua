@@ -12,62 +12,62 @@ SILE.settings:declare({
   parameter = "languages.ug.hyphenoffset",
   help = "Space added between text and hyphen",
   type = "glue or nil",
-  default = SILE.nodefactory.glue("1pt")
+  default = SILE.nodefactory.glue("1pt"),
 })
 
 local transliteration = {
   -- I'm going to pretend that normalisation isn't a problem
-  { al = "ئا", la = "a", lapa = "^a"},
-  { al = "ا", la = "a"},
-  { al = "ب", la = "b"} ,
-  { al = "پ", la = "p"} ,
-  { al = "ت", la = "t"} ,
-  { al = "ج", la = "c"} ,
-  { al = "چ", la = "ç"} ,
-  { al = "د", la = "d"} ,
-  { al = "ر", la = "r"} ,
-  { al = "ژ", la = "j"} ,
-  { al = "ز", la = "z"} ,
-  { al = "ش", la = "ş"} ,
-  { al = "س", la = "s"} ,
-  { al = "غ", la = "ğ"} ,
-  { al = "ف", la = "f"} ,
-  { al = "ق", la = "q"} ,
-  { al = "ك", la = "k"} ,
-  { al = "گ", la = "g"} ,
-  { al = "ڭ", la = "ġ"} ,
-  { al = "ل", la = "l"} ,
-  { al = "م", la = "m"} ,
-  { al = "ن", la = "n"},
-  { al = "ھ", la = "h"},
-  { al = "ۋ", la = "w"},
-  { al = "ئې", la = "e", lapa = "^e"},
-  { al = "ې", la = "e"},
-  { al = "ئە", la = "ä", lapa = "^ä"},
-  { al = "ە", la = "ä"} ,
-  { al = "ئى", la = "i", lapa = "^i"},
-  { al = "ى", la = "i"},
-  { al = "ي", la = "y"},
-  { al = "ئو", la = "o", lapa = "^o"},
-  { al = "و", la = "o"},
-  { al = "ئۇ", la = "u", lapa = "^u"},
-  { al = "ۇ", la = "u"},
-  { al = "ئۆ", la = "ö", lapa = "^ö"},
-  { al = "ۆ", la = "ö"},
-  { al = "ئۈ", la = "ü", lapa = "^ü"},
-  { al = "ۈ", la = "ü"},
-  { al = "خ", la = "x"}
+  { al = "ئا", la = "a", lapa = "^a" },
+  { al = "ا", la = "a" },
+  { al = "ب", la = "b" },
+  { al = "پ", la = "p" },
+  { al = "ت", la = "t" },
+  { al = "ج", la = "c" },
+  { al = "چ", la = "ç" },
+  { al = "د", la = "d" },
+  { al = "ر", la = "r" },
+  { al = "ژ", la = "j" },
+  { al = "ز", la = "z" },
+  { al = "ش", la = "ş" },
+  { al = "س", la = "s" },
+  { al = "غ", la = "ğ" },
+  { al = "ف", la = "f" },
+  { al = "ق", la = "q" },
+  { al = "ك", la = "k" },
+  { al = "گ", la = "g" },
+  { al = "ڭ", la = "ġ" },
+  { al = "ل", la = "l" },
+  { al = "م", la = "m" },
+  { al = "ن", la = "n" },
+  { al = "ھ", la = "h" },
+  { al = "ۋ", la = "w" },
+  { al = "ئې", la = "e", lapa = "^e" },
+  { al = "ې", la = "e" },
+  { al = "ئە", la = "ä", lapa = "^ä" },
+  { al = "ە", la = "ä" },
+  { al = "ئى", la = "i", lapa = "^i" },
+  { al = "ى", la = "i" },
+  { al = "ي", la = "y" },
+  { al = "ئو", la = "o", lapa = "^o" },
+  { al = "و", la = "o" },
+  { al = "ئۇ", la = "u", lapa = "^u" },
+  { al = "ۇ", la = "u" },
+  { al = "ئۆ", la = "ö", lapa = "^ö" },
+  { al = "ۆ", la = "ö" },
+  { al = "ئۈ", la = "ü", lapa = "^ü" },
+  { al = "ۈ", la = "ü" },
+  { al = "خ", la = "x" },
 }
 
 local arabicToLatin = function(s)
-  for i = 1,#transliteration do
+  for i = 1, #transliteration do
     s = s:gsub(transliteration[i].al, transliteration[i].la)
   end
   return s
 end
 
 local latinToArabic = function(s, useLapa)
-  for i = 1,#transliteration do
+  for i = 1, #transliteration do
     if useLapa then
       s = s:lower():gsub(transliteration[i].lapa or transliteration[i].la, transliteration[i].al)
     elseif not transliteration[i].lapa then
@@ -94,7 +94,7 @@ local zwj = SU.utf8charfromcodepoint("U+200D")
 --   return n
 -- end
 
-local lastjoinable = function (t)
+local lastjoinable = function(t)
   t = SU.splitUtf8(t)
   local last = t[#t]
   local jointype = chardata[SU.codepoint(last)] and chardata[SU.codepoint(last)].arabic
@@ -133,12 +133,16 @@ SILE.hyphenator.languages.ug = function(n)
     return { n }
   end
   -- Choose 1. Aim to split in middle.
-  SU.debug("uyghur", function () return SU.concat(items, "/") .. " -> " end)
-  local splitpoint = math.ceil(#items/2)
-  local nitems = {"",""}
-  for i=1,#items do
-    if i <= splitpoint then nitems[1] = nitems[1]..items[i]
-    else nitems[2] = nitems[2]..items[i]
+  SU.debug("uyghur", function()
+    return SU.concat(items, "/") .. " -> "
+  end)
+  local splitpoint = math.ceil(#items / 2)
+  local nitems = { "", "" }
+  for i = 1, #items do
+    if i <= splitpoint then
+      nitems[1] = nitems[1] .. items[i]
+    else
+      nitems[2] = nitems[2] .. items[i]
     end
   end
   items = nitems
@@ -150,15 +154,15 @@ SILE.hyphenator.languages.ug = function(n)
   local prebreak = SILE.shaper:createNnodes(items[1] .. (lastjoinable(items[1]) and zwj or ""), state)
   if SILE.settings:get("languages.ug.hyphenoffset") then
     local w = SILE.settings:get("languages.ug.hyphenoffset").width
-    prebreak[#prebreak+1] = SILE.nodefactory.kern({ width = w })
+    prebreak[#prebreak + 1] = SILE.nodefactory.kern({ width = w })
   end
   local hnodes = SILE.shaper:createNnodes(hyphen, state)
-  prebreak[#prebreak+1] = hnodes[1]
-  local postbreak = SILE.shaper:createNnodes((lastjoinable(items[1]) and zwj or "")..items[2], state)
+  prebreak[#prebreak + 1] = hnodes[1]
+  local postbreak = SILE.shaper:createNnodes((lastjoinable(items[1]) and zwj or "") .. items[2], state)
   local d = SILE.nodefactory.discretionary({
-    replacement = {n},
+    replacement = { n },
     prebreak = prebreak,
-    postbreak = postbreak
+    postbreak = postbreak,
   })
   return { SILE.nodefactory.zerohbox(), d }
 end

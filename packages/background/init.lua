@@ -3,7 +3,7 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "background"
 
-local outputBackground = function (color)
+local outputBackground = function(color)
   local page = SILE.getFrame("page")
   local backgroundColor = SILE.color(color)
   SILE.outputter:pushColor(backgroundColor)
@@ -11,27 +11,25 @@ local outputBackground = function (color)
   SILE.outputter:popColor()
 end
 
-function package:_init ()
+function package:_init()
   base._init(self)
   self:loadPackage("color")
 end
 
-function package:registerCommands ()
-
-  self:registerCommand("background", function (options, _)
+function package:registerCommands()
+  self:registerCommand("background", function(options, _)
     options.color = options.color or "white"
     options.allpages = options.allpages or true
     outputBackground(options.color)
     if options.allpages and options.allpages ~= "false" then
       local oldNewPage = SILE.documentState.documentClass.newPage
-      SILE.documentState.documentClass.newPage = function (self_)
+      SILE.documentState.documentClass.newPage = function(self_)
         local page = oldNewPage(self_)
         outputBackground(options.color)
         return page
       end
     end
   end, "Draws a solid background color <color> on pages after initialization.")
-
 end
 
 package.documentation = [[

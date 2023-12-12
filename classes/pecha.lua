@@ -3,12 +3,12 @@ local plain = require("classes.plain")
 local class = pl.class(plain)
 class._name = "pecha"
 
-local tibetanNumber = function (n)
+local tibetanNumber = function(n)
   local out = ""
   local a = 0x0f20
   repeat
-    out = luautf8.char(n%10 + a) .. out
-    n = (n - n%10)/10
+    out = luautf8.char(n % 10 + a) .. out
+    n = (n - n % 10) / 10
   until n < 1
   return out
 end
@@ -18,28 +18,28 @@ class.defaultFrameset = {
     left = "5%pw",
     right = "95%pw",
     top = "5%ph",
-    bottom = "90%ph"
+    bottom = "90%ph",
   },
-  folio =   {
+  folio = {
     left = "right(content)",
     rotate = -90,
     width = "2.5%pw",
     top = "top(content)",
-    height = "height(content)"
+    height = "height(content)",
   },
   runningHead = {
     width = "2.5%pw",
     rotate = -90,
     right = "left(content)",
     top = "top(content)",
-    height = "height(content)"
-  }
+    height = "height(content)",
+  },
 }
 
 function class:_init(options)
   plain._init(self, options)
   self:loadPackage("rotate")
-  self:registerPostinit(function ()
+  self:registerPostinit(function()
     SILE.call("language", { main = "bo" })
     SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue())
     SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
@@ -49,7 +49,7 @@ end
 
 function class:endPage()
   local folioframe = SILE.getFrame("folio")
-  SILE.typesetNaturally(folioframe, function ()
+  SILE.typesetNaturally(folioframe, function()
     SILE.settings:pushState()
     -- Restore the settings to the top of the queue, which should be the document #986
     SILE.settings:toplevelState()
@@ -57,8 +57,8 @@ function class:endPage()
     SILE.typesetter:typeset(" ")
     SILE.call("vfill")
     SILE.call("pecha-folio-font")
-    SILE.call("center", {}, function ()
-        SILE.typesetter:typeset(tibetanNumber(SILE.scratch.counters.folio.value))
+    SILE.call("center", {}, function()
+      SILE.typesetter:typeset(tibetanNumber(SILE.scratch.counters.folio.value))
     end)
     SILE.call("vfill")
     SILE.typesetter:leaveHmode()

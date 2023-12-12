@@ -1,6 +1,6 @@
 local cli = pl.class()
 
-cli.parseArguments = function ()
+cli.parseArguments = function()
   local cliargs = require("cliargs")
   local print_version = function()
     print(SILE.full_version)
@@ -28,7 +28,11 @@ cli.parseArguments = function ()
   cliargs:option("-O, --options=PARAMETER=VALUE[,PARAMETER=VALUE]", "set document class options", {})
   cliargs:option("-p, --preamble=FILE", "process SIL, XML, or other content before the input document", {})
   cliargs:option("-P, --postamble=FILE", "process SIL, XML, or other content after the input document", {})
-  cliargs:option("-u, --use=MODULE[[PARAMETER=VALUE][,PARAMETER=VALUE]]", "load and initialize a module before processing input", {})
+  cliargs:option(
+    "-u, --use=MODULE[[PARAMETER=VALUE][,PARAMETER=VALUE]]",
+    "load and initialize a module before processing input",
+    {}
+  )
   cliargs:flag("-q, --quiet", "suppress warnings and informational messages during processing")
   cliargs:flag("-t, --traceback", "display detailed location trace on errors and warnings")
   cliargs:flag("-h, --help", "display this help, then exit")
@@ -44,7 +48,7 @@ cli.parseArguments = function ()
   end
   if opts.INPUTS and #opts.INPUTS > 0 then
     local has_input_filename = false
-    pl.tablex.foreachi(opts.INPUTS, function (v, k)
+    pl.tablex.foreachi(opts.INPUTS, function(v, k)
       if v == "STDIO" then
         opts.INPUTS[k] = "-"
       elseif not has_input_filename then
@@ -52,8 +56,10 @@ cli.parseArguments = function ()
       end
     end)
     if not has_input_filename and not opts.output then
-      SU.error("Unable to derive an output filename (perhaps because input is a STDIO stream).\n"..
-               "  Please use --output to set one explicitly.")
+      SU.error(
+        "Unable to derive an output filename (perhaps because input is a STDIO stream).\n"
+          .. "  Please use --output to set one explicitly."
+      )
     end
     SILE.input.filenames = opts.INPUTS
   end
@@ -106,23 +112,23 @@ cli.parseArguments = function ()
     table.insert(SILE.input.includes, path)
   end
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
-  local summary = function (...)
+  local summary = function(...)
     local contentloc = SILE.traceStack:locationHead()
-    local codeloc = pl.utils.unpack({...}, 1, select('#', ...))
+    local codeloc = pl.utils.unpack({ ... }, 1, select("#", ...))
     return ("Processing at: %s\n\tUsing code at: %s"):format(contentloc, codeloc)
   end
-  local unexpected = function ()
+  local unexpected = function()
     if not SILE.scratch.caughterror then
       io.stderr:write("\n! Unexpected Lua error\n")
     end
   end
-  local trace = function (...)
+  local trace = function(...)
     unexpected()
     io.stderr:write(debug.traceback("", 2) or "\t! debug.traceback() did not identify code location")
     io.stderr:write("\n")
     return summary(...)
   end
-  local identity = function (...)
+  local identity = function(...)
     unexpected()
     return summary(...) .. "\n\nRun with --traceback for more detailed trace leading up to errors."
   end

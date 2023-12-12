@@ -5,7 +5,7 @@ package._name = "masters"
 
 local _currentMaster
 
-local function defineMaster (_, args)
+local function defineMaster(_, args)
   SU.required(args, "id", "defining master")
   SU.required(args, "frames", "defining master")
   SU.required(args, "firstContentFrame", "defining master")
@@ -21,7 +21,7 @@ local function defineMaster (_, args)
   SILE.scratch.masters[args.id].firstContentFrame = SILE.scratch.masters[args.id].frames[args.firstContentFrame]
 end
 
-local function defineMasters (class, list)
+local function defineMasters(class, list)
   if list then
     for i = 1, #list do
       defineMaster(class, list[i])
@@ -29,7 +29,7 @@ local function defineMasters (class, list)
   end
 end
 
-local function doswitch (frames)
+local function doswitch(frames)
   SILE.frames = { page = SILE.frames.page }
   for id, frame in pairs(frames) do
     SILE.frames[id] = frame
@@ -37,13 +37,13 @@ local function doswitch (frames)
   end
 end
 
-local function switchMasterOnePage (class, id)
+local function switchMasterOnePage(class, id)
   if not id then
     id = class
     SU.deprecated("class.switchMasterOnePage", "class:switchMasterOnePage", "0.13.0", "0.15.0")
   end
   if not SILE.scratch.masters[id] then
-    SU.error("Can't find master "..id)
+    SU.error("Can't find master " .. id)
   end
   SILE.documentState.thisPageTemplate = SILE.scratch.masters[id]
   doswitch(SILE.scratch.masters[id].frames)
@@ -51,14 +51,14 @@ local function switchMasterOnePage (class, id)
   SILE.typesetter:initFrame(SILE.scratch.masters[id].firstContentFrame)
 end
 
-local function switchMaster (class, id)
+local function switchMaster(class, id)
   if not id then
     id, class = class, SILE.documentState.documentClass
     SU.deprecated("class.switchMaster", "class:switchMaster", "0.13.0", "0.15.0")
   end
   _currentMaster = id
   if not SILE.scratch.masters[id] then
-    SU.error("Can't find master "..id)
+    SU.error("Can't find master " .. id)
   end
   class.pageTemplate = SILE.scratch.masters[id]
   SILE.documentState.thisPageTemplate = class.pageTemplate
@@ -66,11 +66,11 @@ local function switchMaster (class, id)
   SILE.typesetter:initFrame(SILE.scratch.masters[id].firstContentFrame)
 end
 
-local function currentMaster (_)
+local function currentMaster(_)
   return _currentMaster
 end
 
-function package:_init (options)
+function package:_init(options)
   base._init(self, options)
   if not SILE.scratch.masters then
     SILE.scratch.masters = {}
@@ -85,8 +85,7 @@ function package:_init (options)
   end
 end
 
-function package:registerCommands ()
-
+function package:registerCommands()
   self:registerCommand("define-master-template", function(options, content)
     SU.required(options, "id", "defining a master")
     SU.required(options, "first-content-frame", "defining a master")
@@ -99,24 +98,24 @@ function package:registerCommands ()
     SILE.scratch.masters[options.id] = {}
     SILE.scratch.masters[options.id].frames = SILE.documentState.thisPageTemplate.frames
     if not SILE.scratch.masters[options.id].frames[options["first-content-frame"]] then
-      SU.error("first-content-frame "..options["first-content-frame"].." not found")
+      SU.error("first-content-frame " .. options["first-content-frame"] .. " not found")
     end
-    SILE.scratch.masters[options.id].firstContentFrame = SILE.scratch.masters[options.id].frames[options["first-content-frame"]]
+    SILE.scratch.masters[options.id].firstContentFrame =
+      SILE.scratch.masters[options.id].frames[options["first-content-frame"]]
     SILE.documentState.thisPageTemplate.frames = spare
     SILE.frames = sp2
   end)
 
-  self:registerCommand("switch-master-one-page", function (options, _)
+  self:registerCommand("switch-master-one-page", function(options, _)
     SU.required(options, "id", "switching master")
     self.class:switchMasterOnePage(options.id)
     SILE.typesetter:leaveHmode()
   end, "Switches the master for the current page")
 
-  self:registerCommand("switch-master", function (options, _)
+  self:registerCommand("switch-master", function(options, _)
     SU.required(options, "id", "switching master")
     self.class:switchMaster(options.id)
   end, "Switches the master for the current page")
-
 end
 
 package.documentation = [[

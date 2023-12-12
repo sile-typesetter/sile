@@ -9,7 +9,7 @@ end
 
 local toc_used = false
 
-function package:moveTocNodes ()
+function package:moveTocNodes()
   local node = SILE.scratch.info.thispage.toc
   if node then
     for i = 1, #node do
@@ -19,10 +19,12 @@ function package:moveTocNodes ()
   end
 end
 
-function package.writeToc (_)
+function package.writeToc(_)
   local tocdata = pl.pretty.write(SILE.scratch.tableofcontents)
-  local tocfile, err = io.open(pl.path.splitext(SILE.input.filenames[1]) .. '.toc', "w")
-  if not tocfile then return SU.error(err) end
+  local tocfile, err = io.open(pl.path.splitext(SILE.input.filenames[1]) .. ".toc", "w")
+  if not tocfile then
+    return SU.error(err)
+  end
   tocfile:write("return " .. tocdata)
   tocfile:close()
 
@@ -31,12 +33,12 @@ function package.writeToc (_)
   end
 end
 
-function package.readToc (_)
+function package.readToc(_)
   if SILE.scratch._tableofcontents and #SILE.scratch._tableofcontents > 0 then
     -- already loaded
     return SILE.scratch._tableofcontents
   end
-  local tocfile, _ = io.open(pl.path.splitext(SILE.input.filenames[1]) .. '.toc')
+  local tocfile, _ = io.open(pl.path.splitext(SILE.input.filenames[1]) .. ".toc")
   if not tocfile then
     return false -- No TOC yet
   end
@@ -46,7 +48,7 @@ function package.readToc (_)
   return SILE.scratch._tableofcontents
 end
 
-local function _linkWrapper (dest, func)
+local function _linkWrapper(dest, func)
   if dest and SILE.Commands["pdf:link"] then
     return function()
       SILE.call("pdf:link", { dest = dest }, func)
@@ -59,7 +61,7 @@ end
 -- Flatten a node list into just its string representation.
 -- (Similar to SU.contentToString(), but allows passing typeset
 -- objects to functions that need plain strings).
-local function _nodesToText (nodes)
+local function _nodesToText(nodes)
   -- A real interword space width depends on several settings (depending on variable
   -- spaces being enabled or not, etc.), and the computation below takes that into
   -- account.
@@ -88,7 +90,7 @@ local function _nodesToText (nodes)
       -- we cannot take a general decision, as it is a versatile object  and its
       -- outputYourself() method could moreover have been redefined to do fancy
       -- things. Better warn and skip.
-      SU.warn("Some content could not be converted to text: "..node)
+      SU.warn("Some content could not be converted to text: " .. node)
     end
   end
   -- Trim leading and trailing spaces, and simplify internal spaces.
@@ -99,7 +101,7 @@ if not SILE.scratch.pdf_destination_counter then
   SILE.scratch.pdf_destination_counter = 1
 end
 
-function package:_init ()
+function package:_init()
   base._init(self)
   if not SILE.scratch.tableofcontents then
     SILE.scratch.tableofcontents = {}
@@ -112,9 +114,8 @@ function package:_init ()
   self:deprecatedExport("moveTocNodes", self.moveTocNodes)
 end
 
-function package:registerCommands ()
-
-  self:registerCommand("tableofcontents", function (options, _)
+function package:registerCommands()
+  self:registerCommand("tableofcontents", function(options, _)
     local depth = SU.cast("integer", options.depth or 3)
     local linking = SU.boolean(options.linking, true)
     toc_used = true
@@ -131,35 +132,35 @@ function package:registerCommands ()
           level = item.level,
           pageno = item.pageno,
           number = item.number,
-          link = linking and item.link
+          link = linking and item.link,
         }, item.label)
       end
     end
     SILE.call("tableofcontents:footer")
   end)
 
-  self:registerCommand("tableofcontents:item", function (options, content)
-    SILE.settings:temporarily(function ()
+  self:registerCommand("tableofcontents:item", function(options, content)
+    SILE.settings:temporarily(function()
       SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
-      SILE.call("tableofcontents:level" .. options.level .. "item", {
-      }, _linkWrapper(options.link,
-      function ()
-        SILE.call("tableofcontents:level" .. options.level .. "number", {
-        }, function ()
-          if options.number then
-            SILE.typesetter:typeset(options.number or "")
-            SILE.call("kern", { width = "1spc" })
-          end
+      SILE.call(
+        "tableofcontents:level" .. options.level .. "item",
+        {},
+        _linkWrapper(options.link, function()
+          SILE.call("tableofcontents:level" .. options.level .. "number", {}, function()
+            if options.number then
+              SILE.typesetter:typeset(options.number or "")
+              SILE.call("kern", { width = "1spc" })
+            end
+          end)
+          SILE.process(content)
+          SILE.call("dotfill")
+          SILE.typesetter:typeset(options.pageno)
         end)
-        SILE.process(content)
-        SILE.call("dotfill")
-        SILE.typesetter:typeset(options.pageno)
-      end)
       )
     end)
   end)
 
-  self:registerCommand("tocentry", function (options, content)
+  self:registerCommand("tocentry", function(options, content)
     local dest
     if SILE.Commands["pdf:destination"] then
       dest = "dest" .. tostring(SILE.scratch.pdf_destination_counter)
@@ -177,61 +178,60 @@ function package:registerCommands ()
         label = SU.stripContentPos(content),
         level = (options.level or 1),
         number = options.number,
-        link = dest
-      }
+        link = dest,
+      },
     })
   end)
 
-  self:registerCommand("tableofcontents:title", function (_, _)
+  self:registerCommand("tableofcontents:title", function(_, _)
     SU.deprecated("\\tableofcontents:title", "\\fluent{tableofcontents-title}", "0.13.0", "0.14.0")
   end, "Deprecated")
 
-  self:registerCommand("tableofcontents:notocmessage", function (_, _)
-    SILE.call("tableofcontents:headerfont", {}, function ()
+  self:registerCommand("tableofcontents:notocmessage", function(_, _)
+    SILE.call("tableofcontents:headerfont", {}, function()
       SILE.call("fluent", {}, { "tableofcontents-not-generated" })
     end)
   end)
 
-  self:registerCommand("tableofcontents:headerfont", function (_, content)
+  self:registerCommand("tableofcontents:headerfont", function(_, content)
     SILE.call("font", { size = 24, weight = 800 }, content)
   end)
 
-  self:registerCommand("tableofcontents:header", function (_, _)
+  self:registerCommand("tableofcontents:header", function(_, _)
     SILE.call("par")
     SILE.call("noindent")
-    SILE.call("tableofcontents:headerfont", {}, function ()
+    SILE.call("tableofcontents:headerfont", {}, function()
       SILE.call("fluent", {}, { "tableofcontents-title" })
     end)
     SILE.call("medskip")
   end)
 
-  self:registerCommand("tableofcontents:footer", function (_, _) end)
+  self:registerCommand("tableofcontents:footer", function(_, _) end)
 
-  self:registerCommand("tableofcontents:level1item", function (_, content)
+  self:registerCommand("tableofcontents:level1item", function(_, content)
     SILE.call("bigskip")
     SILE.call("noindent")
     SILE.call("font", { size = 14, weight = 800 }, content)
     SILE.call("medskip")
   end)
 
-  self:registerCommand("tableofcontents:level2item", function (_, content)
+  self:registerCommand("tableofcontents:level2item", function(_, content)
     SILE.call("noindent")
     SILE.call("font", { size = 12 }, content)
     SILE.call("medskip")
   end)
 
-  self:registerCommand("tableofcontents:level3item", function (_, content)
+  self:registerCommand("tableofcontents:level3item", function(_, content)
     SILE.call("indent")
     SILE.call("font", { size = 10 }, content)
     SILE.call("smallskip")
   end)
 
-  self:registerCommand("tableofcontents:level1number", function (_, _) end)
+  self:registerCommand("tableofcontents:level1number", function(_, _) end)
 
-  self:registerCommand("tableofcontents:level2number", function (_, _) end)
+  self:registerCommand("tableofcontents:level2number", function(_, _) end)
 
-  self:registerCommand("tableofcontents:level3number", function (_, _) end)
-
+  self:registerCommand("tableofcontents:level3number", function(_, _) end)
 end
 
 package.documentation = [[

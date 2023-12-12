@@ -3,15 +3,19 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "unichar"
 
-function package:registerCommands ()
-
+function package:registerCommands()
   self:registerCommand("unichar", function(_, content)
     local cp = content[1]
-    if type(cp) ~= "string" then SU.error("Bad argument to \\unicode") end
+    if type(cp) ~= "string" then
+      SU.error("Bad argument to \\unicode")
+    end
     local hlist = SILE.typesetter.state.nodes
     local char = SU.utf8charfromcodepoint(cp)
-    if #hlist > 1 and hlist[#hlist].is_unshaped
-                  and pl.tablex.deepcompare(hlist[#hlist].options, SILE.font.loadDefaults({})) then
+    if
+      #hlist > 1
+      and hlist[#hlist].is_unshaped
+      and pl.tablex.deepcompare(hlist[#hlist].options, SILE.font.loadDefaults({}))
+    then
       -- Stack character with a preceeding unshaped node if its font is the
       -- same as the current one, so that combining characters (e.g. diacritics)
       -- and kerning works with \unichar'ed code points too.
@@ -20,7 +24,6 @@ function package:registerCommands ()
       SILE.typesetter:typeset(char)
     end
   end)
-
 end
 
 package.documentation = [[

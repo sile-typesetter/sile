@@ -15,16 +15,16 @@ local otFeatureMap = {
     Contextual = "clig",
     Rare = "dlig",
     Discretionary = "dlig",
-    Historic = "hlig"
+    Historic = "hlig",
   },
   Fractions = {
     On = "frac",
-    Alternate = "afrc"
+    Alternate = "afrc",
   },
-  StylisticSet = function (i)
+  StylisticSet = function(i)
     return string.format("ss%02i", tonumber(i))
   end,
-  CharacterVariant = function (i)
+  CharacterVariant = function(i)
     return string.format("cv%02i", tonumber(i))
   end,
   Letters = {
@@ -33,7 +33,7 @@ local otFeatureMap = {
     PetiteCaps = "pcap",
     UppercaseSmallCaps = "c2sc",
     UppercasePetiteCaps = "c2pc",
-    Unicase = "unic"
+    Unicase = "unic",
   },
   Numbers = {
     Uppercase = "lnum",
@@ -43,7 +43,7 @@ local otFeatureMap = {
     Proportional = "pnum",
     monospaced = "tnum",
     SlashedZero = "zero",
-    Arabic = "anum"
+    Arabic = "anum",
   },
   Contextuals = {
     Swash = "cswh",
@@ -51,7 +51,7 @@ local otFeatureMap = {
     WordInitial = "init",
     WordFinal = "fina",
     LineFinal = "falt",
-    Inner = "medi"
+    Inner = "medi",
   },
   VerticalPosition = {
     Superior = "sups",
@@ -59,7 +59,7 @@ local otFeatureMap = {
     Numerator = "numr",
     Denominator = "dnom",
     ScientificInferior = "sinf",
-    Ordinal = "ordn"
+    Ordinal = "ordn",
   },
   Style = {
     Alternate = "salt",
@@ -69,17 +69,17 @@ local otFeatureMap = {
     Historic = "hist",
     TitlingCaps = "titl",
     HorizontalKana = "hkna",
-    VerticalKana = "vkna"
+    VerticalKana = "vkna",
   },
   Diacritics = {
     MarkToBase = "mark",
     MarkToMark = "mkmk",
     AboveBase = "abvm",
-    BelowBase = "blwm"
+    BelowBase = "blwm",
   },
   Kerning = {
     Uppercase = "cpsp",
-    On = "kern"
+    On = "kern",
   },
   CJKShape = {
     Traditional = "trad",
@@ -88,7 +88,7 @@ local otFeatureMap = {
     JIS1983 = "jp83",
     JIS1990 = "jp90",
     Expert = "expt",
-    NLC = "nlck"
+    NLC = "nlck",
   },
   CharacterWidth = {
     Proportional = "pwid",
@@ -97,54 +97,51 @@ local otFeatureMap = {
     Third = "twid",
     Quarter = "qwid",
     AlternateProportional = "palt",
-    AlternateHalf = "halt"
-  }
+    AlternateHalf = "halt",
+  },
 }
 
-local function tagpos (pos, k, v)
+local function tagpos(pos, k, v)
   return k, { posneg = pos, value = v }
 end
 
 -- Parser for feature strings
-local featurename = C((1 - S",;:=")^1)
+local featurename = C((1 - S(",;:=")) ^ 1)
 local value = C(SILE.parserBits.integer)
-local tag = C(S"+-") * featurename * (P"=" * value)^0 * S",;:"^-1 / tagpos
-local featurestring = Cf(Ct"" * tag^0, rawset)
+local tag = C(S("+-")) * featurename * (P("=") * value) ^ 0 * S(",;:") ^ -1 / tagpos
+local featurestring = Cf(Ct("") * tag ^ 0, rawset)
 
 -- Parser for fontspec strings
 -- Refer to fontspec.pdf (see doc), Chapter 3, Table 4 (p. 37)
-local fontspecsafe = R("AZ", "az", "09") + P":"
+local fontspecsafe = R("AZ", "az", "09") + P(":")
 local ws = SILE.parserBits.ws
-local fontspecsep = P"," * ws
-local fontspecname = C(fontspecsafe^1)
-local fontspeclist = ws * P"{" *
-                     Ct(ws * fontspecname *
-                        (fontspecsep * fontspecname * ws)^0) *
-                     P"}" * ws
+local fontspecsep = P(",") * ws
+local fontspecname = C(fontspecsafe ^ 1)
+local fontspeclist = ws * P("{") * Ct(ws * fontspecname * (fontspecsep * fontspecname * ws) ^ 0) * P("}") * ws
 
 local otFeatures = pl.class(pl.Map)
 
-function otFeatures:_init ()
+function otFeatures:_init()
   self:super()
   local str = SILE.settings:get("font.features")
   local tbl = featurestring:match(str)
   if not tbl then
-    SU.error("Unparsable Opentype feature string '"..str.."'")
+    SU.error("Unparsable Opentype feature string '" .. str .. "'")
   end
   for feat, flag in pairs(tbl) do
     self:set(feat, flag.posneg == "+")
   end
 end
 
-function otFeatures:__tostring ()
+function otFeatures:__tostring()
   local ret = {}
   for _, f in ipairs(self:items()) do
-    ret[#ret+1] = (f[2] and "+" or "-") .. f[1]
+    ret[#ret + 1] = (f[2] and "+" or "-") .. f[1]
   end
   return table.concat(ret, ";")
 end
 
-function otFeatures:loadOption (name, val, invert)
+function otFeatures:loadOption(name, val, invert)
   local posneg = not invert
   local key = otFeatureMap[name]
   if not key then
@@ -152,7 +149,10 @@ function otFeatures:loadOption (name, val, invert)
   else
     local matches = lpeg.match(fontspeclist, val)
     for _, v in ipairs(matches or { val }) do
-      v = v:gsub("^No", function () posneg = false; return "" end)
+      v = v:gsub("^No", function()
+        posneg = false
+        return ""
+      end)
       local feat = type(key) == "function" and key(v) or key[v]
       if not feat then
         SU.warn("Bad OpenType value " .. v .. " for feature " .. name)
@@ -169,7 +169,7 @@ end
 -- that odd.  Junicode, for example, a common font among medievalists, has many
 -- Stylistic Sets and Character Variations, many of which make sense to enable
 -- simultaneously.
-function otFeatures:loadOptions (options, invert)
+function otFeatures:loadOptions(options, invert)
   SU.debug("features", "Features was", self)
   for k, v in pairs(options) do
     self:loadOption(k, v, invert)
@@ -177,15 +177,14 @@ function otFeatures:loadOptions (options, invert)
   SU.debug("features", "Features interpreted as", self)
 end
 
-function otFeatures:unloadOptions (options)
+function otFeatures:unloadOptions(options)
   self:loadOptions(options, true)
 end
 
 local fontfn = SILE.Commands.font
 
-function package:registerCommands ()
-
-  self:registerCommand("add-font-feature", function (options, _)
+function package:registerCommands()
+  self:registerCommand("add-font-feature", function(options, _)
     local otfeatures = otFeatures()
     otfeatures:loadOptions(options)
     SILE.settings:set("font.features", tostring(otfeatures))
@@ -197,14 +196,14 @@ function package:registerCommands ()
     SILE.settings:set("font.features", tostring(otfeatures))
   end)
 
-  self:registerCommand("font", function (options, content)
+  self:registerCommand("font", function(options, content)
     local otfeatures = otFeatures()
     -- It is guaranteed that future releases of SILE will not implement non-OT \font
     -- features with capital letters.
     -- Cf. https://github.com/sile-typesetter/sile/issues/992#issuecomment-665575353
     -- So, we reserve 'em all. ⍩⃝
     for k, v in pairs(options) do
-      if k:match('^[A-Z]') then
+      if k:match("^[A-Z]") then
         otfeatures:loadOption(k, v)
         options[k] = nil
       end
@@ -213,7 +212,6 @@ function package:registerCommands ()
     options.features = (options.features and options.features .. ";" or "") .. tostring(otfeatures)
     return fontfn(options, content)
   end, tostring(SILE.Help.font) .. " (overridden)")
-
 end
 
 package.documentation = [[

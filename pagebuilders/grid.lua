@@ -7,13 +7,21 @@ function pagebuilder:_init()
   base._init(self)
 end
 
-function pagebuilder.findBestBreak (_, options)
+function pagebuilder.findBestBreak(_, options)
   local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")
-  local target   = SU.required(options, "target", "in findBestBreak")
+  local target = SU.required(options, "target", "in findBestBreak")
   local i = 0
   local totalHeight = SILE.length()
   local bestBreak = 0
-  SU.debug("pagebuilder", "Page builder for frame", SILE.typesetter.frame.id, "called with", #vboxlist, "nodes,", target)
+  SU.debug(
+    "pagebuilder",
+    "Page builder for frame",
+    SILE.typesetter.frame.id,
+    "called with",
+    #vboxlist,
+    "nodes,",
+    target
+  )
   if SU.debugging("vboxes") then
     for j, box in ipairs(vboxlist) do
       SU.debug("vboxes", (j == i and " >" or "  ") .. j .. ": " .. box)
@@ -44,10 +52,14 @@ function pagebuilder.findBestBreak (_, options)
     SU.debug("pagebuilder", "I have", left, "left")
     SU.debug("pagebuilder", "totalHeight", totalHeight, "with target", target)
     local badness = 0
-    if _left < 0 then badness = 1000000 end
+    if _left < 0 then
+      badness = 1000000
+    end
     if node.is_penalty then
-      if node.penalty < -3000 then badness = 100000
-      else badness = -_left * _left - node.penalty
+      if node.penalty < -3000 then
+        badness = 100000
+      else
+        badness = -_left * _left - node.penalty
       end
     end
     if badness > 0 then

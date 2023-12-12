@@ -11,11 +11,13 @@ inputter._name = "base"
 
 inputter._docclass = nil
 
-function inputter:_init (options)
-  if options then self.options = options end
+function inputter:_init(options)
+  if options then
+    self.options = options
+  end
 end
 
-function inputter:classInit (options)
+function inputter:classInit(options)
   options = pl.tablex.merge(options, SILE.input.options, true)
   local constructor, class
   if SILE.scratch.class_from_uses then
@@ -31,7 +33,7 @@ function inputter:classInit (options)
   SILE.documentState.documentClass = constructor(options)
 end
 
-function inputter:requireClass (tree)
+function inputter:requireClass(tree)
   local root = SILE.documentState.documentClass == nil
   if root then
     if tree.command ~= "sile" and tree.command ~= "document" then
@@ -42,7 +44,7 @@ function inputter:requireClass (tree)
   end
 end
 
-function inputter:process (doc)
+function inputter:process(doc)
   -- Input parsers can already return multiple ASTs, but so far we only process one
   local tree = self:parse(doc)[1]
   self:requireClass(tree)
@@ -50,24 +52,28 @@ function inputter:process (doc)
 end
 
 -- Just a simple one-level find. We're not reimplementing XPath here.
-function inputter.findInTree (_, tree, command)
-  for i=1, #tree do
+function inputter.findInTree(_, tree, command)
+  for i = 1, #tree do
     if type(tree[i]) == "table" and tree[i].command == command then
       return tree[i]
     end
   end
 end
 
-local function process_ambles (ambles)
+local function process_ambles(ambles)
   for _, amble in ipairs(ambles) do
     if type(amble) == "string" then
       SILE.processFile(amble)
     elseif type(amble) == "function" then
-      SU.warn("Passing functions as pre/postambles is not officially sactioned and may go away without being marked as a breaking change.")
+      SU.warn(
+        "Passing functions as pre/postambles is not officially sactioned and may go away without being marked as a breaking change."
+      )
       amble()
     elseif type(amble) == "table" then
       local options = {}
-      if amble.pack then amble, options = amble.pack, amble.options end
+      if amble.pack then
+        amble, options = amble.pack, amble.options
+      end
       if amble.type == "package" then
         amble(options)
       else
@@ -77,11 +83,11 @@ local function process_ambles (ambles)
   end
 end
 
-function inputter.preamble (_)
+function inputter.preamble(_)
   process_ambles(SILE.input.preambles)
 end
 
-function inputter.postamble (_)
+function inputter.postamble(_)
   process_ambles(SILE.input.postambles)
 end
 

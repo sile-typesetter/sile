@@ -5,8 +5,10 @@ package._name = "grid"
 
 local oldPagebuilderType, oldTypesetterType
 
-local function startGridInFrame (typesetter)
-  if not SILE.typesetter.state.grid then return end -- Ensure the frame hook isn't effective when grid is off
+local function startGridInFrame(typesetter)
+  if not SILE.typesetter.state.grid then
+    return
+  end -- Ensure the frame hook isn't effective when grid is off
   local queue = typesetter.state.outputQueue
   typesetter.frame.state.totals.gridCursor = SILE.measurement(0)
   if #queue == 0 then
@@ -22,16 +24,15 @@ local function startGridInFrame (typesetter)
   end
 end
 
-function package:_init (options)
+function package:_init(options)
   self.spacing = SU.cast("measurement", options.spacing or "1bs"):absolute()
   base._init(self)
 end
 
-function package:registerCommands ()
-
-  self:registerCommand("grid:debug", function (options, _)
+function package:registerCommands()
+  self:registerCommand("grid:debug", function(options, _)
     local spacing = SU.cast("measurement", options.spacing or self.spacing):absolute()
-    local debugGrid = function ()
+    local debugGrid = function()
       local frame = SILE.typesetter.frame
       local gridCursor = spacing
       while gridCursor < frame:height() do
@@ -43,7 +44,7 @@ function package:registerCommands ()
     SILE.typesetter:registerNewFrameHook(debugGrid)
   end)
 
-  self:registerCommand("grid", function (options, _)
+  self:registerCommand("grid", function(options, _)
     if options.spacing then
       self.spacing = SU.cast("measurement", options.spacing):absolute()
     end
@@ -59,12 +60,11 @@ function package:registerCommands ()
     SILE.typesetter:registerNewFrameHook(startGridInFrame)
   end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
-  self:registerCommand("no-grid", function (_, _)
+  self:registerCommand("no-grid", function(_, _)
     SILE.typesetter.state.grid = false
     SILE.typesetters[oldTypesetterType]:cast(SILE.typesetter)
     SILE.pagebuilders[oldPagebuilderType]:cast(SILE.pagebuilder)
   end, "Stops grid typesetting.")
-
 end
 
 package.documentation = [[

@@ -5,31 +5,30 @@ class._name = "letter"
 
 class.defaultFrameset = {
   content = {
-      left = "5%pw",
-      right = "95%pw",
-      top = "2in",
-      bottom = "90%ph"
-    }
+    left = "5%pw",
+    right = "95%pw",
+    top = "2in",
+    bottom = "90%ph",
+  },
 }
 
-function class:_init (options)
+function class:_init(options)
   plain._init(self, options)
   SILE.scratch.letter = {
     sender = nil,
     date = nil,
     recipient = "",
-    salutation = ""
+    salutation = "",
   }
 end
 
-function class:registerCommands ()
-
+function class:registerCommands()
   plain.registerCommands(self)
 
-  self:registerCommand("letter", function (_, content)
+  self:registerCommand("letter", function(_, content)
     SILE.settings:set("current.parindent", SILE.nodefactory.glue())
     SILE.settings:set("document.parindent", SILE.nodefactory.glue())
-    SILE.call("raggedright", {}, function ()
+    SILE.call("raggedright", {}, function()
       SILE.call("letter:format:date")
       SILE.call("bigskip")
       if SILE.scratch.letter.sender then
@@ -44,20 +43,20 @@ function class:registerCommands ()
     end)
   end)
 
-  self:registerCommand("sender", function (_, content)
+  self:registerCommand("sender", function(_, content)
     SILE.scratch.letter.sender = content
   end)
-  self:registerCommand("recipient", function (_, content)
+  self:registerCommand("recipient", function(_, content)
     SILE.scratch.letter.recipient = content
   end)
-  self:registerCommand("salutation", function (_, content)
+  self:registerCommand("salutation", function(_, content)
     SILE.scratch.letter.salutation = content
   end)
-  self:registerCommand("date", function (_, content)
+  self:registerCommand("date", function(_, content)
     SILE.scratch.letter.date = content
   end)
 
-  self:registerCommand("letter:format:date", function ()
+  self:registerCommand("letter:format:date", function()
     if not SILE.scratch.letter.date then
       SILE.scratch.letter.date = { os.date("%A, %d %B") }
     end
@@ -65,18 +64,17 @@ function class:registerCommands ()
     SILE.call("par")
   end)
 
-  self:registerCommand("letter:format:sender", function ()
+  self:registerCommand("letter:format:sender", function()
     SILE.process(SILE.scratch.letter.sender)
   end)
 
-  self:registerCommand("letter:format:recipient", function ()
+  self:registerCommand("letter:format:recipient", function()
     SILE.process(SILE.scratch.letter.recipient)
   end)
 
-  self:registerCommand("letter:format:salutation", function ()
+  self:registerCommand("letter:format:salutation", function()
     SILE.process(SILE.scratch.letter.salutation)
   end)
-
 end
 
 return class

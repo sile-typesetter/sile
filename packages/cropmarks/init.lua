@@ -5,7 +5,7 @@ package._name = "cropmarks"
 
 local outcounter = 1
 
-local function outputMarks ()
+local function outputMarks()
   local page = SILE.getFrame("page")
   SILE.outputter:drawRule(page:left() - 10, page:top(), -10, 0.5)
   SILE.outputter:drawRule(page:left(), page:top() - 10, 0.5, -10)
@@ -16,10 +16,10 @@ local function outputMarks ()
   SILE.outputter:drawRule(page:right() + 10, page:bottom(), 10, 0.5)
   SILE.outputter:drawRule(page:right(), page:bottom() + 10, 0.5, 10)
 
-  local hbox, hlist = SILE.typesetter:makeHbox(function ()
-    SILE.settings:temporarily(function ()
+  local hbox, hlist = SILE.typesetter:makeHbox(function()
+    SILE.settings:temporarily(function()
       SILE.call("noindent")
-      SILE.call("font", { size="6pt" })
+      SILE.call("font", { size = "6pt" })
       SILE.call("crop:header")
     end)
   end)
@@ -32,11 +32,13 @@ local function outputMarks ()
   outcounter = outcounter + 1
 
   if hbox then
-    for i = 1, #(hbox.value) do hbox.value[i]:outputYourself(SILE.typesetter, { ratio = 1 }) end
+    for i = 1, #hbox.value do
+      hbox.value[i]:outputYourself(SILE.typesetter, { ratio = 1 })
+    end
   end
 end
 
-local function reconstrainFrameset (fs)
+local function reconstrainFrameset(fs)
   for n, f in pairs(fs) do
     if n ~= "page" then
       if f:isAbsoluteConstraint("right") then
@@ -56,26 +58,25 @@ local function reconstrainFrameset (fs)
   end
 end
 
-function package:_init ()
+function package:_init()
   base._init(self)
   self:loadPackage("date")
 end
 
-function package:registerCommands ()
-
-  self:registerCommand("crop:header", function (_, _)
+function package:registerCommands()
+  self:registerCommand("crop:header", function(_, _)
     local info = SILE.input.filenames[1] .. " - " .. self.class:date("%x %X") .. " -  " .. outcounter
     SILE.typesetter:typeset(info)
   end)
 
-  self:registerCommand("crop:setup", function (options, _)
+  self:registerCommand("crop:setup", function(options, _)
     local papersize = SU.required(options, "papersize", "setting up crop marks")
     local landscape = SU.boolean(options.landscape, self.class.options.landscape)
     local size = SILE.papersize(papersize, landscape)
     local oldsize = SILE.documentState.paperSize
     SILE.documentState.paperSize = size
-    local offsetx = ( SILE.documentState.paperSize[1] - oldsize[1] ) /2
-    local offsety = ( SILE.documentState.paperSize[2] - oldsize[2] ) /2
+    local offsetx = (SILE.documentState.paperSize[1] - oldsize[1]) / 2
+    local offsety = (SILE.documentState.paperSize[2] - oldsize[2]) / 2
     local page = SILE.getFrame("page")
     page:constrain("right", page:right() + offsetx)
     page:constrain("left", offsetx)
@@ -88,14 +89,15 @@ function package:registerCommands ()
     else
       reconstrainFrameset(SILE.documentState.documentClass.pageTemplate.frames)
     end
-    if SILE.typesetter.frame then SILE.typesetter.frame:init() end
+    if SILE.typesetter.frame then
+      SILE.typesetter.frame:init()
+    end
     local oldEndPage = SILE.documentState.documentClass.endPage
-    SILE.documentState.documentClass.endPage = function (self_)
+    SILE.documentState.documentClass.endPage = function(self_)
       oldEndPage(self_)
       outputMarks()
     end
   end)
-
 end
 
 package.documentation = [[

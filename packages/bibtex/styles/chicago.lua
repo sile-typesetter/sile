@@ -16,16 +16,31 @@ local ChicagoStyles = pl.tablex.merge(Bibliography.Style, {
     -- So we try to match the closest format.
     if number or volume then
       -- General format
-      return andAuthors, ". ", quotes(title, "."), " ", italic(journal),
-            optional(" ", volume), optional(" no. ", number), optional(" ", parens(optional(month, " "), year)),
-            optional(": ", pageRange), ".",
-            optional(" ", doi, "."), optional(" ", url, ".")
+      return andAuthors,
+        ". ",
+        quotes(title, "."),
+        " ",
+        italic(journal),
+        optional(" ", volume),
+        optional(" no. ", number),
+        optional(" ", parens(optional(month, " "), year)),
+        optional(": ", pageRange),
+        ".",
+        optional(" ", doi, "."),
+        optional(" ", url, ".")
     end
     -- Magazine or newspaper format
-    return andAuthors, ". ", quotes(title, "."), " ", italic(journal),
-           optional(", ", month), optional(", ", year ),
-           optional(": ", pageRange), ".",
-           optional(" ", doi, "."), optional(" ", url, ".")
+    return andAuthors,
+      ". ",
+      quotes(title, "."),
+      " ",
+      italic(journal),
+      optional(", ", month),
+      optional(", ", year),
+      optional(": ", pageRange),
+      ".",
+      optional(" ", doi, "."),
+      optional(" ", url, ".")
   end,
 
   Book = function(_ENV)
@@ -39,24 +54,40 @@ local ChicagoStyles = pl.tablex.merge(Bibliography.Style, {
     -- Likewise, we try to match the colsets format...
     local pub = publisher or institution or organization or howpublished
     if booktitle then
-      return optional(andAuthors, ", "), quotes(title, "."),  " ",
+      return optional(andAuthors, ", "),
+        quotes(title, "."),
+        " ",
         optional("In ", italic(booktitle), ". "),
         optional(transEditor, ". "),
-        optional(address, ": "), optional(pub, year and ", " or ". "), optional(year, ". "),
-        optional(number, ". "), optional(doi, ". "), optional(url, ".")
+        optional(address, ": "),
+        optional(pub, year and ", " or ". "),
+        optional(year, ". "),
+        optional(number, ". "),
+        optional(doi, ". "),
+        optional(url, ".")
     end
-    return optional(andAuthors, ", "), italic(title), ". ",
+    return optional(andAuthors, ", "),
+      italic(title),
+      ". ",
       optional(transEditor, ". "),
-      optional(address, ": "), optional(pub, year and ", " or ". "), optional(year, ". "),
-      optional(number, ". "), optional(doi, ". "), optional(url, ". ")
+      optional(address, ": "),
+      optional(pub, year and ", " or ". "),
+      optional(year, ". "),
+      optional(number, ". "),
+      optional(doi, ". "),
+      optional(url, ". ")
   end,
 
   Thesis = function(_ENV)
     local pub = publisher or institution or organization or howpublished or school
-    return optional(andSurnames(3), ", "), quotes(title, "."), " ",
+    return optional(andSurnames(3), ", "),
+      quotes(title, "."),
+      " ",
       optional(transEditor, ". "),
       optional(bibtype, ". "), -- "type" from BibTeX entry
-      optional(address, ": "), optional(pub, ", "), optional(year, ".")
+      optional(address, ": "),
+      optional(pub, ", "),
+      optional(year, ".")
   end,
 }, true)
 -- luacheck: pop

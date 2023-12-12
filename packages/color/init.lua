@@ -3,19 +3,21 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "color"
 
-function package:registerCommands ()
-
-  self:registerCommand("color", function (options, content)
+function package:registerCommands()
+  self:registerCommand("color", function(options, content)
     local color = SILE.color(options.color or "black")
     SILE.typesetter:pushHbox({
-      outputYourself = function () SILE.outputter:pushColor(color) end
+      outputYourself = function()
+        SILE.outputter:pushColor(color)
+      end,
     })
     SILE.process(content)
     SILE.typesetter:pushHbox({
-      outputYourself = function () SILE.outputter:popColor() end
+      outputYourself = function()
+        SILE.outputter:popColor()
+      end,
     })
   end, "Changes the active ink color to the color <color>.")
-
 end
 
 package.documentation = [[

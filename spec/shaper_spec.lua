@@ -3,7 +3,6 @@ SILE.backend = "debug"
 SILE.init()
 
 describe("SILE.shapers.base", function()
-
   it("should always have positive stretch and shrink", function()
     SILE.settings:set("shaper.variablespaces", true)
     SILE.settings:set("shaper.spacestretchfactor", 2)
@@ -13,5 +12,4 @@ describe("SILE.shapers.base", function()
     assert.is.truthy(space.width.stretch > SILE.measurement(0))
     assert.is.truthy(space.width.shrink > SILE.measurement(0))
   end)
-
 end)

@@ -3,5 +3,5 @@ return {
   font_variations = "@FONT_VARIATIONS_TRUE@" ~= "#",
   fontconfig = "@FONTCONFIG_TRUE@" ~= "#",
   harfbuzz = "@HARFBUZZ_TRUE@" ~= "#",
-  icu = "@ICU_TRUE@" ~= "#"
+  icu = "@ICU_TRUE@" ~= "#",
 }

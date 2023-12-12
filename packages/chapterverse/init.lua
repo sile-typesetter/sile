@@ -3,7 +3,7 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "chapterverse"
 
-function package:_init ()
+function package:_init()
   base._init(self)
   self:loadPackage("infonode")
   if not SILE.scratch.chapterverse then
@@ -11,31 +11,30 @@ function package:_init ()
   end
 end
 
-function package:registerCommands ()
-
-  self:registerCommand("save-book-title", function (_, content)
+function package:registerCommands()
+  self:registerCommand("save-book-title", function(_, content)
     SU.debug("chapterverse", "book:", content[1])
     SILE.scratch.chapterverse.book = content[1]
   end)
 
-  self:registerCommand("save-chapter-number", function (_, content)
+  self:registerCommand("save-chapter-number", function(_, content)
     SU.debug("chapterverse", "chapter:", content[1])
     SILE.scratch.chapterverse.chapter = content[1]
   end)
 
-  self:registerCommand("save-verse-number", function (_, content)
+  self:registerCommand("save-verse-number", function(_, content)
     SU.debug("chapterverse", "verse:", content[1])
     SILE.scratch.chapterverse.verse = content[1]
     local ref = {
       book = SILE.scratch.chapterverse.book,
       chapter = SILE.scratch.chapterverse.chapter,
-      verse = SILE.scratch.chapterverse.verse
+      verse = SILE.scratch.chapterverse.verse,
     }
     SU.debug("chapterverse", "ref:", ref)
     SILE.call("info", { category = "references", value = ref }, {})
   end)
 
-  self:registerCommand("first-reference", function (_, _)
+  self:registerCommand("first-reference", function(_, _)
     local refs = SILE.scratch.info.thispage.references
     SU.debug("chapterverse", "first-reference:", SILE.scratch.info)
     if refs then
@@ -46,18 +45,20 @@ function package:registerCommands ()
     end
   end)
 
-  self:registerCommand("last-reference", function (options, _)
+  self:registerCommand("last-reference", function(options, _)
     local refs = SILE.scratch.info.thispage.references
     if refs then
-      SU.debug("chapterverse", "last-reference:", refs[#(refs)])
-      SILE.call("format-reference", options, refs[#(refs)])
+      SU.debug("chapterverse", "last-reference:", refs[#refs])
+      SILE.call("format-reference", options, refs[#refs])
     else
       SU.debug("chapterverse", "last-reference: none")
     end
   end)
 
-  self:registerCommand("format-reference", function (options, content)
-    if type(options.showbook) == "nil" then options.showbook = true end
+  self:registerCommand("format-reference", function(options, content)
+    if type(options.showbook) == "nil" then
+      options.showbook = true
+    end
     SU.debug("chapterverse", "formatting:", content)
     local ref
     if content.book and options.showbook then
@@ -68,7 +69,6 @@ function package:registerCommands ()
     SU.debug("chapterverse", "formatting:", ref)
     SILE.typesetter:typeset(ref)
   end)
-
 end
 
 package.documentation = [[

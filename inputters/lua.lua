@@ -5,7 +5,7 @@ inputter._name = "lua"
 
 inputter.order = 99
 
-function inputter.appropriate (round, filename, doc)
+function inputter.appropriate(round, filename, doc)
   if round == 1 then
     return filename:match(".lua$")
   elseif round == 2 then
@@ -18,13 +18,15 @@ function inputter.appropriate (round, filename, doc)
   end
 end
 
-function inputter.parse (_, doc)
+function inputter.parse(_, doc)
   local result, err = load(doc)
-  if not result then SU.error(err) end
+  if not result then
+    SU.error(err)
+  end
   return result
 end
 
-function inputter:process (doc)
+function inputter:process(doc)
   local tree = self:parse(doc)()
   if type(tree) == "string" then
     return SILE.processString(tree, nil, nil, self.args)

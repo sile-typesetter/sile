@@ -5,7 +5,7 @@ shaper._name = "fallback"
 
 local fallbackQueue = pl.class()
 
-function fallbackQueue:_init (text, fallbacks)
+function fallbackQueue:_init(text, fallbacks)
   self.fallbacks = fallbacks
   self.runs = {
     {
@@ -14,7 +14,7 @@ function fallbackQueue:_init (text, fallbacks)
       start = 1,
       -- WARNING: shaper index is in bytes, not UTF8 aware character
       -- lengths so do *not* use luautf8.len() here
-      stop = text:len()
+      stop = text:len(),
     },
   }
   self._fallbacks = fallbacks
@@ -22,54 +22,56 @@ function fallbackQueue:_init (text, fallbacks)
   self.pending = nil
 end
 
-function fallbackQueue:popFallback ()
+function fallbackQueue:popFallback()
   return table.remove(self.fallbacks, 1)
 end
 
-function fallbackQueue:popRun ()
+function fallbackQueue:popRun()
   self:popFallback()
   return table.remove(self.runs, 1)
 end
 
-function fallbackQueue:currentOptions ()
+function fallbackQueue:currentOptions()
   return self.fallbacks[1]
 end
 
-function fallbackQueue:nextFallback ()
+function fallbackQueue:nextFallback()
   return self.fallbacks[2]
 end
 
-function fallbackQueue:currentRun ()
+function fallbackQueue:currentRun()
   return self.runs[1]
 end
 
-function fallbackQueue:currentText ()
+function fallbackQueue:currentText()
   local run = self:currentRun()
   -- WARNING: shaper index is in bytes, not UTF8 aware character
   -- lengths so do *not* use luautf8.sub() here
   return self.text:sub(run.start, run.stop)
 end
 
-function fallbackQueue:addRun (offset, start)
+function fallbackQueue:addRun(offset, start)
   if not self.pending then
-    SU.debug("font-fallback", function ()
+    SU.debug("font-fallback", function()
       return ("New run pending for %s starting byte %s insert at %s"):format(self:currentText(), start, offset)
     end)
     local options = self:nextFallback()
-    if not options then return false end
+    if not options then
+      return false
+    end
     options.size = SILE.measurement(options.size):tonumber()
     self.pending = {
       options = options,
       offset = offset,
-      start = start
+      start = start,
     }
   end
   return true
 end
 
-function fallbackQueue:pushNextRun (stop)
+function fallbackQueue:pushNextRun(stop)
   if self.pending then
-    SU.debug("font-fallback", function ()
+    SU.debug("font-fallback", function()
       return ("Push pending run for %s ending at %s"):format(self:currentText(), stop)
     end)
     self.pending.stop = stop
@@ -80,7 +82,7 @@ end
 
 local activeFallbacks = {}
 
-function shaper:shapeToken (text, options)
+function shaper:shapeToken(text, options)
   local items = {}
   local fallbackOptions = { options }
   for _, font in ipairs(activeFallbacks) do
@@ -88,13 +90,13 @@ function shaper:shapeToken (text, options)
   end
   local shapeQueue = fallbackQueue(text, fallbackOptions)
   repeat -- iterate fallbacks
-    SU.debug("font-fallback", function ()
+    SU.debug("font-fallback", function()
       return ("Start fallback iteration for text '%s'"):format(text)
     end)
     local run = shapeQueue:currentRun()
     local face = run.options.family:len() > 0 and run.options.family or run.options.filename
     local chunk = shapeQueue:currentText()
-    SU.debug("font-fallback", function ()
+    SU.debug("font-fallback", function()
       return ("Try shaping chunk '%s' with '%s'"):format(chunk, face)
     end)
     local candidate_items = self._base.shapeToken(self, chunk, run.options)
@@ -102,24 +104,30 @@ function shaper:shapeToken (text, options)
     for _, item in ipairs(candidate_items) do
       item.fontOptions = run.options
       if item.gid == 0 or item.name == ".null" or item.name == ".notdef" then
-        SU.debug("font-fallback", function ()
+        SU.debug("font-fallback", function()
           return ("Glyph %s not found in %s"):format(item.text, face)
         end)
         local newstart = run.start + item.index
         local pending = shapeQueue:addRun(run.offset, newstart)
         if not pending then
-          SU.warn(("Glyph(s) '%s' not available in any fallback font,\n  run with '-d font-fallback' for more detail.\n"):format(item.text))
+          SU.warn(
+            ("Glyph(s) '%s' not available in any fallback font,\n  run with '-d font-fallback' for more detail.\n"):format(
+              item.text
+            )
+          )
           run.offset = run.offset + 1
           table.insert(items, run.offset, item) -- output tofu if we're out of fallbacks
         end
       else
-        SU.debug("font-fallback", function ()
+        SU.debug("font-fallback", function()
           return ("Found glyph '%s' in '%s'"):format(item.text, face)
         end)
         shapeQueue:pushNextRun(run.start + item.index - 1) -- if notdef run pending, end it
         if item.index == _index then
           local previous = items[run.offset]
-          while previous.next do previous = previous.next end
+          while previous.next do
+            previous = previous.next
+          end
           previous.next = item
         else
           _index = run.index
@@ -134,30 +142,32 @@ function shaper:shapeToken (text, options)
   return items
 end
 
-function shaper:createNnodes (token, options)
+function shaper:createNnodes(token, options)
   options.tracking = SILE.settings:get("shaper.tracking")
   local items, _ = self:shapeToken(token, options)
-  if #items < 1 then return {} end
+  if #items < 1 then
+    return {}
+  end
   local lang = options.language
   SILE.languageSupport.loadLanguage(lang)
   local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
   local run = { [1] = { slice = {}, fontOptions = items[1].fontOptions, chunk = "" } }
   for i = 1, #items do
     if items[i].fontOptions ~= run[#run].fontOptions then
-      run[#run+1] = { slice = {}, chunk = "", fontOptions = items[i].fontOptions }
-      if i <#items then
+      run[#run + 1] = { slice = {}, chunk = "", fontOptions = items[i].fontOptions }
+      if i < #items then
         run[#run].fontOptions = items[i].fontOptions
       end
     end
     run[#run].chunk = run[#run].chunk .. items[i].text
-    run[#run].slice[#(run[#run].slice)+1] = items[i]
+    run[#run].slice[#run[#run].slice + 1] = items[i]
   end
   local nodes = {}
-  for i=1, #run do
+  for i = 1, #run do
     options = run[i].fontOptions
     SU.debug("font-fallback", "Shaping", run[i].chunk, "in", options.family)
     for node in nodeMaker(options):iterator(run[i].slice, run[i].chunk) do
-      nodes[#nodes+1] = node
+      nodes[#nodes + 1] = node
     end
   end
   SU.debug("font-fallback", nodes)

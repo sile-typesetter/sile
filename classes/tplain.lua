@@ -10,15 +10,15 @@ class.defaultFrameset.content = {
   gridsize = 10,
   linegap = 7,
   linelength = 50,
-  linecount = 30
+  linecount = 30,
 }
 
 -- The classes tplain and tbook inherit from plain and book respectively but also
 -- have this bit in common; this makes it accessible
-function class:_t_common ()
+function class:_t_common()
   self:loadPackage("font-fallback")
   self:loadPackage("hanmenkyoshi")
-  self:registerPostinit(function (class_)
+  self:registerPostinit(function(class_)
     class_:bidiDisableTypesetter(SILE.typesetter)
     class_:bidiDisableTypesetter(SILE.typesetters.base)
   end)
@@ -27,23 +27,25 @@ function class:_t_common ()
   SILE.settings:set("document.parindent", SILE.nodefactory.glue("10pt"))
 end
 
-function class:_init (options)
+function class:_init(options)
   plain._init(self, options)
   class._t_common(self)
 end
 
-function class:declareOptions ()
+function class:declareOptions()
   plain.declareOptions(self)
-  self:declareOption("layout", function (_, value)
+  self:declareOption("layout", function(_, value)
     if value then
       self.layout = value
-      if value == "tate" then self:loadPackage("tate") end
+      if value == "tate" then
+        self:loadPackage("tate")
+      end
     end
     return self.layout
   end)
 end
 
-function class:setOptions (options)
+function class:setOptions(options)
   options.layout = options.layout or "yoko"
   plain.setOptions(self, options)
 end

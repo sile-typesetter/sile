@@ -1,18 +1,18 @@
 SILE = require("core.sile")
-SU.warn = function () end
+SU.warn = function() end
 
 describe("The color parser", function()
   local parse = SILE.color
   local rebecca = {
     b = 0.6,
     g = 0.2,
-    r = 0.4
+    r = 0.4,
   }
   local reddish = {
     c = 0,
     k = 0.3,
     m = 0.81,
-    y = 0.81
+    y = 0.81,
   }
   it("should return the correct RGB values for a named color", function()
     assert.is.same(parse("rebeccapurple"), rebecca)
@@ -35,9 +35,14 @@ describe("The color parser", function()
   end)
 
   it("error if unable to parse", function()
-    assert.has.errors(function () parse("not_a_color") end)
-    assert.has.errors(function () parse(nil) end)
-    assert.has.errors(function () parse("") end)
+    assert.has.errors(function()
+      parse("not_a_color")
+    end)
+    assert.has.errors(function()
+      parse(nil)
+    end)
+    assert.has.errors(function()
+      parse("")
+    end)
   end)
 end)
-

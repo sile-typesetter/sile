@@ -3,7 +3,7 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "color-fonts"
 
-function package:_init ()
+function package:_init()
   base._init(self)
 
   local harfbuzz = require("shapers.harfbuzz")
@@ -11,9 +11,11 @@ function package:_init ()
   SILE.shapers.harfbuzzWithColor = pl.class(harfbuzz)
   SILE.shapers.harfbuzzWithColor._name = "harfbuzzWithColor"
 
-  function SILE.shapers.harfbuzzWithColor.shapeToken (self_, str, options)
+  function SILE.shapers.harfbuzzWithColor.shapeToken(self_, str, options)
     local ot = require("core.opentype-parser")
-    if not options.family then return {} end
+    if not options.family then
+      return {}
+    end
     local face = SILE.font.cache(options, SILE.shaper.getFace)
     local font = ot.parseFont(face)
     local items = self_._base.shapeToken(self_, str, options)
@@ -47,10 +49,10 @@ function package:_init ()
               text = text,
               color = color,
             }
-            newItems[#newItems+1] = newItem
+            newItems[#newItems + 1] = newItem
           end
         else
-          newItems[#newItems+1] = items[i]
+          newItems[#newItems + 1] = items[i]
         end
       end
       return newItems
@@ -58,43 +60,48 @@ function package:_init ()
     return items
   end
 
-  function SILE.shapers.harfbuzzWithColor.createNnodes (self_, token, options)
+  function SILE.shapers.harfbuzzWithColor.createNnodes(self_, token, options)
     local items, _ = self_:shapeToken(token, options)
-    if #items < 1 then return {} end
+    if #items < 1 then
+      return {}
+    end
     local lang = options.language
     SILE.languageSupport.loadLanguage(lang)
     local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
     local run = { [1] = { slice = {}, color = items[1].color, chunk = "" } }
     for i = 1, #items do
       if items[i].color ~= run[#run].color then
-        run[#run+1] = { slice = {}, chunk = "", color = items[i].color }
-        if i <#items then
+        run[#run + 1] = { slice = {}, chunk = "", color = items[i].color }
+        if i < #items then
           run[#run].color = items[i].color
         end
       end
       run[#run].chunk = run[#run].chunk .. items[i].text
-      run[#run].slice[#(run[#run].slice)+1] = items[i]
+      run[#run].slice[#run[#run].slice + 1] = items[i]
     end
     local nodes = {}
-    for i=1, #run do
+    for i = 1, #run do
       options = pl.tablex.deepcopy(options)
       if run[i].color then
-        nodes[#nodes+1] = SILE.nodefactory.hbox({
-          outputYourself = function () SILE.outputter:pushColor(run[i].color) end
+        nodes[#nodes + 1] = SILE.nodefactory.hbox({
+          outputYourself = function()
+            SILE.outputter:pushColor(run[i].color)
+          end,
         })
       end
       for node in nodeMaker(options):iterator(run[i].slice, run[i].chunk) do
-        nodes[#nodes+1] = node
+        nodes[#nodes + 1] = node
       end
       if run[i].color then
-        nodes[#nodes+1] = SILE.nodefactory.hbox({
-          outputYourself = function () SILE.outputter:popColor() end
+        nodes[#nodes + 1] = SILE.nodefactory.hbox({
+          outputYourself = function()
+            SILE.outputter:popColor()
+          end,
         })
       end
     end
     return nodes
   end
-
 end
 
 package.documentation = [[

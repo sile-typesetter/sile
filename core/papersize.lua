@@ -59,28 +59,33 @@ local papersize = {
   flse = { 612, 936 },
   csheet = { 1224, 1584 },
   dsheet = { 1584, 2448 },
-  esheet = { 2448, 3168 }
+  esheet = { 2448, 3168 },
 }
 
 setmetatable(papersize, {
-    __call = function (self, size, landscape)
-      local geometry
-      local _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
-      if x and y then
-        geometry = { SILE.measurement(x):tonumber(), SILE.measurement(y):tonumber() }
-      else
-        local preset_name = string.lower(size:gsub("[-%s]+", ""))
-        geometry = self[preset_name]
-      end
-      if SU.boolean(landscape) then
-        geometry[1], geometry[2] = geometry[2], geometry[1]
-      end
-      if geometry then return geometry end
-      SU.error(string.format([[Unable to parse papersize '%s'.
+  __call = function(self, size, landscape)
+    local geometry
+    local _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
+    if x and y then
+      geometry = { SILE.measurement(x):tonumber(), SILE.measurement(y):tonumber() }
+    else
+      local preset_name = string.lower(size:gsub("[-%s]+", ""))
+      geometry = self[preset_name]
+    end
+    if SU.boolean(landscape) then
+      geometry[1], geometry[2] = geometry[2], geometry[1]
+    end
+    if geometry then
+      return geometry
+    end
+    SU.error(string.format(
+      [[Unable to parse papersize '%s'.
   Custom sizes may be entered with 'papersize=<measurement> x <measurement>'.
   Predefined paper sizes include: %s]],
-  size, table.concat(pl.tablex.keys(papersize), ", ")))
-    end
-  })
+      size,
+      table.concat(pl.tablex.keys(papersize), ", ")
+    ))
+  end,
+})
 
 return papersize

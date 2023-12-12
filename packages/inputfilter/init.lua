@@ -3,19 +3,21 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "inputfilter"
 
-function package:transformContent (content, transformFunction, extraArgs)
+function package:transformContent(content, transformFunction, extraArgs)
   local newContent = {}
   for k, v in SU.sortedpairs(content) do
     if type(k) == "number" then
       if type(v) == "string" then
         local transformed = transformFunction(v, content, extraArgs)
         if type(transformed) == "table" then
-          for i = 1, #transformed do newContent[#newContent+1] = transformed[i] end
+          for i = 1, #transformed do
+            newContent[#newContent + 1] = transformed[i]
+          end
         else
-          newContent[#newContent+1] = transformed
+          newContent[#newContent + 1] = transformed
         end
       else
-        newContent[#newContent+1] = self:transformContent(v, transformFunction, extraArgs)
+        newContent[#newContent + 1] = self:transformContent(v, transformFunction, extraArgs)
       end
     else
       newContent[k] = v
@@ -24,7 +26,7 @@ function package:transformContent (content, transformFunction, extraArgs)
   return newContent
 end
 
-function package.createCommand (_, pos, col, lno, command, options, content)
+function package.createCommand(_, pos, col, lno, command, options, content)
   local result = { content }
   result.col = col
   result.lno = lno
@@ -35,7 +37,7 @@ function package.createCommand (_, pos, col, lno, command, options, content)
   return result
 end
 
-function package:_init ()
+function package:_init()
   base._init(self)
   self:deprecatedExport("createCommand", self.createCommand)
   self:deprecatedExport("transformContent", self.transformContent)

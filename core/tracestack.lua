@@ -5,56 +5,63 @@
 -- Do not manipulate the stack directly, use provided push<Type> and pop methods.
 -- There are different types of stack frames, see pushFrame for more details.
 local traceStack = pl.class({
-    -- Stores the frame which was last popped. Reset after a push.
-    -- Helps to further specify current location in the processed document.
-    afterFrame = nil,
-  })
+  -- Stores the frame which was last popped. Reset after a push.
+  -- Helps to further specify current location in the processed document.
+  afterFrame = nil,
+})
 
 traceStack.defaultFrame = pl.class({
 
-    location = function (self, relative)
-      local str = ""
-      if self.file and not relative then
-        str = str .. self.file .. ":"
-      end
-      if self.lno then
-        str = str .. self.lno .. ":"
-        if self.col then
-          str = str .. self.col .. ":"
-        end
-      end
-      str = str .. (str:len() > 0 and " " or "") .. "in "
-      str = str .. tostring(self)
-      return str
-    end,
-
-    __tostring = function (self)
-      self.file = nil
-      self.lno = nil
-      self.col = nil
-      return #self > 0 and tostring(self) or ""
+  location = function(self, relative)
+    local str = ""
+    if self.file and not relative then
+      str = str .. self.file .. ":"
     end
-  })
+    if self.lno then
+      str = str .. self.lno .. ":"
+      if self.col then
+        str = str .. self.col .. ":"
+      end
+    end
+    str = str .. (str:len() > 0 and " " or "") .. "in "
+    str = str .. tostring(self)
+    return str
+  end,
+
+  __tostring = function(self)
+    self.file = nil
+    self.lno = nil
+    self.col = nil
+    return #self > 0 and tostring(self) or ""
+  end,
+})
 
 traceStack.documentFrame = pl.class(traceStack.defaultFrame)
 
-local function oneline (str)
-  return str:gsub("\n", "␤"):gsub("\r", "␍"):gsub("\f", "␊"):gsub("\a", "␇"):gsub("\b", "␈"):gsub("\t", "␉"):gsub("\v", "␋")
+local function oneline(str)
+  return str
+    :gsub("\n", "␤")
+    :gsub("\r", "␍")
+    :gsub("\f", "␊")
+    :gsub("\a", "␇")
+    :gsub("\b", "␈")
+    :gsub("\t", "␉")
+    :gsub("\v", "␋")
 end
 
-function traceStack.documentFrame:_init (file, snippet)
+function traceStack.documentFrame:_init(file, snippet)
   self.command = "document"
   self.file = file
   self.snippet = snippet
 end
 
-function traceStack.documentFrame:__tostring ()
+function traceStack.documentFrame:__tostring()
   return "<snippet>:\n\t\t[[" .. oneline(self.snippet) .. "]]"
 end
 
 traceStack.commandFrame = pl.class(traceStack.defaultFrame)
 
-function traceStack.commandFrame:_init (command, content, options)
+function traceStack.commandFrame:_init(command, content, options)
   self.command = command
   self.file = content.file or SILE.currentlyProcessingFile
   self.lno = content.lno
@@ -62,25 +69,25 @@ function traceStack.commandFrame:_init (command, content, options)
   self.options = options or {}
 end
 
-function traceStack.commandFrame:__tostring ()
-  local opts = pl.tablex.size(self.options) == 0 and "" or
-    pl.pretty.write(self.options, ""):gsub("^{", "["):gsub("}$", "]")
+function traceStack.commandFrame:__tostring()
+  local opts = pl.tablex.size(self.options) == 0 and ""
+    or pl.pretty.write(self.options, ""):gsub("^{", "["):gsub("}$", "]")
   return "\\" .. tostring(self.command) .. opts
 end
 
 traceStack.contentFrame = pl.class(traceStack.commandFrame)
 
-function traceStack.contentFrame:_init (command, content)
+function traceStack.contentFrame:_init(command, content)
   self:super(command, content, content.options)
 end
 
 traceStack.textFrame = pl.class(traceStack.defaultFrame)
 
-function traceStack.textFrame:_init (text)
+function traceStack.textFrame:_init(text)
   self.text = text
 end
 
-function traceStack.textFrame:__tostring ()
+function traceStack.textFrame:__tostring()
   if self.text:len() > 20 then
     self.text = luautf8.sub(self.text, 1, 18) .. "…"
   end
@@ -88,14 +95,16 @@ function traceStack.textFrame:__tostring ()
   return '"' .. self.text .. '"'
 end
 
-local function formatTraceLine (string)
+local function formatTraceLine(string)
   local prefix = "\t"
   return prefix .. string .. "\n"
 end
 
 -- Push a document processing run (input method) onto the stack
 function traceStack:pushDocument(file, doc)
-  if type(doc) == "table" then doc = tostring(doc) end
+  if type(doc) == "table" then
+    doc = tostring(doc)
+  end
   local snippet = doc:sub(1, 100)
   local frame = traceStack.documentFrame(file, snippet)
   return self:pushFrame(frame)
@@ -108,7 +117,9 @@ function traceStack:pushCommand(command, content, options)
   if not command then
     SU.warn("Command should be specified for SILE.traceStack:pushCommand", true)
   end
-  if type(content) == "function" then content = {} end
+  if type(content) == "function" then
+    content = {}
+  end
   local frame = traceStack.commandFrame(command, content, options)
   return self:pushFrame(frame)
 end
@@ -145,7 +156,7 @@ local lastPushId = 0
 -- .col = number - column on the line
 -- .toStringHelper = function() that serializes extended information about the frame BESIDES location
 function traceStack:pushFrame(frame)
-  SU.debug("traceStack", function ()
+  SU.debug("traceStack", function()
     return string.rep(".", #self) .. "PUSH(" .. frame:location() .. ")"
   end)
   self[#self + 1] = frame
@@ -173,7 +184,7 @@ function traceStack:pop(pushId)
     -- Correctly balanced: pop the frame
     self.afterFrame = popped
     self[#self] = nil
-    SU.debug("traceStack", function ()
+    SU.debug("traceStack", function()
       return string.rep(".", #self) .. "POP(" .. popped:location() .. ")"
     end)
   end
@@ -185,7 +196,9 @@ function traceStack:locationHead()
   local top = self[#self]
   if not top then
     -- Stack is empty, there is not much we can do
-    return formatTraceLine(afterFrame and "after " .. afterFrame:location() or SILE.currentlyProcessingFile or "<nowhere>")
+    return formatTraceLine(
+      afterFrame and "after " .. afterFrame:location() or SILE.currentlyProcessingFile or "<nowhere>"
+    )
   end
   local trace = top:location()
   local locationFrame = top

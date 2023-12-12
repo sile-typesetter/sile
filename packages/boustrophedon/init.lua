@@ -3,12 +3,12 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "boustrophedon"
 
-function package:_init (class)
+function package:_init(class)
   base._init(self, class)
-  SILE.hyphenator.languages.grc = { patterns={} }
+  SILE.hyphenator.languages.grc = { patterns = {} }
   SILE.nodeMakers.grc = pl.class(SILE.nodeMakers.unicode)
-  function SILE.nodeMakers.grc.iterator (node, items)
-    return coroutine.wrap(function ()
+  function SILE.nodeMakers.grc.iterator(node, items)
+    return coroutine.wrap(function()
       for i = 1, #items do
         node:addToken(items[i].text, items[i])
         node:makeToken()
@@ -21,19 +21,18 @@ end
 
 local function hackVboxDir(v, dir)
   local output = v.outputYourself
-  v.outputYourself = function (self, typesetter, line)
+  v.outputYourself = function(self, typesetter, line)
     typesetter.frame.direction = dir
     typesetter.frame:newLine()
     output(self, typesetter, line)
   end
 end
 
-function package:registerCommands ()
-
-  self:registerCommand("boustrophedon", function (_, content)
+function package:registerCommands()
+  self:registerCommand("boustrophedon", function(_, content)
     SILE.typesetter:leaveHmode()
     local saveBoxup = SILE.typesetter.boxUpNodes
-    SILE.typesetter.boxUpNodes = function (self_)
+    SILE.typesetter.boxUpNodes = function(self_)
       local vboxlist = saveBoxup(self_)
       local startdir = SILE.typesetter.frame.direction
       local dir = startdir
@@ -45,11 +44,11 @@ function package:registerCommands ()
       end
       if startdir == dir then
         local restore = SILE.nodefactory.vbox({})
-        restore.outputYourself = function (_, typesetter, _)
+        restore.outputYourself = function(_, typesetter, _)
           typesetter.frame.direction = startdir
           typesetter.frame:newLine()
         end
-        vboxlist[#vboxlist+1] = restore
+        vboxlist[#vboxlist + 1] = restore
       end
       return vboxlist
     end

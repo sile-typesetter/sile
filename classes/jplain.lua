@@ -4,7 +4,7 @@ local tplain = require("classes.tplain")
 local class = pl.class(tplain)
 class._name = "jplain"
 
-function class:_init (options)
+function class:_init(options)
   tplain._init(self, options)
   SILE.languageSupport.loadLanguage("ja")
   SILE.settings:set("document.language", "ja", true)

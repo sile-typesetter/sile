@@ -3,14 +3,13 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "image"
 
-function package:registerCommands ()
-
-  self:registerCommand("img", function (options, _)
+function package:registerCommands()
+  self:registerCommand("img", function(options, _)
     SU.required(options, "src", "including image file")
-    local width =  SU.cast("measurement", options.width or 0):tonumber()
+    local width = SU.cast("measurement", options.width or 0):tonumber()
     local height = SU.cast("measurement", options.height or 0):tonumber()
     local pageno = SU.cast("integer", options.page or 1)
-    local src = SILE.resolveFile(options.src) or SU.error("Couldn't find file "..options.src)
+    local src = SILE.resolveFile(options.src) or SU.error("Couldn't find file " .. options.src)
     local box_width, box_height, _, _ = SILE.outputter:getImageSize(src, pageno)
     local sx, sy = 1, 1
     if width > 0 and height > 0 then
@@ -28,13 +27,19 @@ function package:registerCommands ()
       height = box_height / sy,
       depth = 0,
       value = src,
-      outputYourself = function (node, typesetter, _)
-        SILE.outputter:drawImage(node.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-node.height, node.width, node.height, pageno)
+      outputYourself = function(node, typesetter, _)
+        SILE.outputter:drawImage(
+          node.value,
+          typesetter.frame.state.cursorX,
+          typesetter.frame.state.cursorY - node.height,
+          node.width,
+          node.height,
+          pageno
+        )
         typesetter.frame:advanceWritingDirection(node.width)
-    end})
-
+      end,
+    })
   end, "Inserts the image specified with the <src> option in a box of size <width> by <height>")
-
 end
 
 package.documentation = [[

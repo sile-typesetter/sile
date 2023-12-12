@@ -13,11 +13,16 @@ local origpath = package.path
 
 SILE.PackageManager = {
   installed = {},
-  Catalogue = {}
+  Catalogue = {},
 }
 
-local _deprecated = function ()
-  SU.deprecated("SILE.PackageManager", nil, "0.13.2", "0.15.0", [[
+local _deprecated = function()
+  SU.deprecated(
+    "SILE.PackageManager",
+    nil,
+    "0.13.2",
+    "0.15.0",
+    [[
   The built in SILE package manager has been completely deprecated. In its place
     SILE can now load classes, packages, and other resources installed via
     LuaRocks. Any SILE package may be published on LuaRocks.org or any private
@@ -25,7 +30,8 @@ local _deprecated = function ()
     directory, or a custom location. Please see the SILE manual for usage
     instructions. Package authors especially can review the template repository
     on GitHub for how to create a package.
-  ]])
+  ]]
+  )
 end
 
 local function loadInSandbox(untrusted_code)
@@ -33,13 +39,19 @@ local function loadInSandbox(untrusted_code)
   -- luacheck: ignore _ENV
   if _ENV then -- simple Lua 5.2 version check
     local env = {}
-    local untrusted_function, message = load(untrusted_code, nil, 't', env)
-    if not untrusted_function then return nil, message end
+    local untrusted_function, message = load(untrusted_code, nil, "t", env)
+    if not untrusted_function then
+      return nil, message
+    end
     return pcall(untrusted_function)
   else
-    if untrusted_code:byte(1) == 27 then return nil, "binary bytecode prohibited" end
+    if untrusted_code:byte(1) == 27 then
+      return nil, "binary bytecode prohibited"
+    end
     local untrusted_function, message = load(untrusted_code)
-    if not untrusted_function then return nil, message end
+    if not untrusted_function then
+      return nil, message
+    end
     -- luacheck: globals setfenv env
     -- (At least there is in Lua 5.1)
     setfenv(untrusted_function, env)
@@ -49,13 +61,15 @@ end
 
 local function dumpTable(tbl)
   _deprecated()
-  if type(tbl) == 'table' then
-    local str = '{ '
+  if type(tbl) == "table" then
+    local str = "{ "
     for k, v in pairs(tbl) do
-      if type(k) ~= 'number' then k = '"'..k..'"' end
-      str = str .. '['..k..'] = ' .. dumpTable(v) .. ','
+      if type(k) ~= "number" then
+        k = '"' .. k .. '"'
+      end
+      str = str .. "[" .. k .. "] = " .. dumpTable(v) .. ","
     end
-    return str .. '} '
+    return str .. "} "
   else
     -- This only works because we are only storing strings!
     return '"' .. tostring(tbl) .. '"'
@@ -67,11 +81,15 @@ local function fixupPaths()
   local cpaths = ""
   for pkg, _ in pairs(SILE.PackageManager.installed) do
     _deprecated()
-    paths = paths .. packageHome .. pkg .. '/?.lua;'
-    cpaths = cpaths .. packageHome .. pkg .. "/?."..SHARED_LIB_EXT.. ";"
+    paths = paths .. packageHome .. pkg .. "/?.lua;"
+    cpaths = cpaths .. packageHome .. pkg .. "/?." .. SHARED_LIB_EXT .. ";"
   end
-  if paths:len() >= 1 then package.path = paths .. ";" .. origpath end
-  if cpaths:len() >= 1 then package.cpath = cpaths .. ";" .. origcpath end
+  if paths:len() >= 1 then
+    package.path = paths .. ";" .. origpath
+  end
+  if cpaths:len() >= 1 then
+    package.cpath = cpaths .. ";" .. origcpath
+  end
 end
 
 local function saveInstalled()
@@ -79,29 +97,29 @@ local function saveInstalled()
   local dump = dumpTable(SILE.PackageManager.installed)
   local file, err = io.open(installedCatalogue, "w")
   if err then
-    SU.error("Could not write installed package list at"..installedCatalogue..": "..err)
+    SU.error("Could not write installed package list at" .. installedCatalogue .. ": " .. err)
   end
-  file:write("return "..dump)
+  file:write("return " .. dump)
   file:close()
   fixupPaths()
 end
 
-local function updateCatalogue ()
+local function updateCatalogue()
   if not lfs.attributes(packageHome) then
     if not lfs.mkdir(packageHome) then
-      SU.error("Error making package manager home directory: "..packageHome)
+      SU.error("Error making package manager home directory: " .. packageHome)
     end
   end
-  print("Loading catalogue from "..catalogueURL)
+  print("Loading catalogue from " .. catalogueURL)
   local result, statuscode, _ = http.request(catalogueURL)
   if statuscode ~= 200 then
-    SU.error("Could not load catalogue from "..catalogueURL..": "..statuscode)
+    SU.error("Could not load catalogue from " .. catalogueURL .. ": " .. statuscode)
   end
   local file, err = io.open(catalogueHome, "w")
   if err then
-    SU.error("Could not write package catalogue at"..catalogueHome..": "..err)
+    SU.error("Could not write package catalogue at" .. catalogueHome .. ": " .. err)
   end
-  print("Writing "..(#result).." bytes to "..catalogueHome)
+  print("Writing " .. #result .. " bytes to " .. catalogueHome)
   file:write(result)
   file:close()
   recentlyUpdated = true
@@ -114,7 +132,7 @@ local function loadInstalledCatalogue()
     local contents = file:read("*all")
     local success, res = loadInSandbox(contents)
     if not success then
-      SU.error("Error loading installed package list: "..res)
+      SU.error("Error loading installed package list: " .. res)
     end
     SILE.PackageManager.installed = res
   end
@@ -126,7 +144,7 @@ local function reloadCatalogue()
     local contents = file:read("*all")
     local success, res = loadInSandbox(contents)
     if not success then
-      SU.error("Error loading package catalogue: "..res)
+      SU.error("Error loading package catalogue: " .. res)
     end
     SILE.PackageManager.Catalogue = res
   end
@@ -150,7 +168,7 @@ function updatePackage(packageName, branch)
   local cwd = lfs.currentdir()
   local _, err = lfs.chdir(target)
   if err then
-    SU.warn("Package directory "..target.." went away! Trying again...")
+    SU.warn("Package directory " .. target .. " went away! Trying again...")
     SILE.PackageManager.installed[packageName] = nil
     saveInstalled()
     installPackage(packageName)
@@ -158,11 +176,11 @@ function updatePackage(packageName, branch)
 
   local ret = os.execute("git pull")
   if not ret then
-    SU.error("Error updating repository for package "..packageName..": "..ret)
+    SU.error("Error updating repository for package " .. packageName .. ": " .. ret)
   end
-  ret = os.execute("git checkout "..branch)
+  ret = os.execute("git checkout " .. branch)
   if not ret then
-    SU.error("Error updating repository for package "..packageName..": "..ret)
+    SU.error("Error updating repository for package " .. packageName .. ": " .. ret)
   end
   lfs.chdir(cwd)
   SILE.PackageManager.installed[packageName] = branch
@@ -171,11 +189,15 @@ end
 
 function installPackage(packageName)
   _deprecated()
-  if not recentlyUpdated  then updateCatalogue() end
-  if not recentlyReloaded then reloadCatalogue() end
+  if not recentlyUpdated then
+    updateCatalogue()
+  end
+  if not recentlyReloaded then
+    reloadCatalogue()
+  end
   if not SILE.PackageManager.Catalogue[packageName] then
     -- Add support for URL-based package names later.
-    SU.error("Can't install "..packageName..": package not known")
+    SU.error("Can't install " .. packageName .. ": package not known")
   end
 
   local metadata = SILE.PackageManager.Catalogue[packageName]
@@ -184,7 +206,7 @@ function installPackage(packageName)
   if metadata.depends then
     for _, pkg in ipairs(metadata.depends) do
       if not SILE.PackageManager.installed[pkg] then
-        print(packageName.." requires "..pkg..", installing that...")
+        print(packageName .. " requires " .. pkg .. ", installing that...")
         installPackage(pkg)
       end
     end
@@ -197,9 +219,11 @@ function installPackage(packageName)
     if lfs.attributes(target) then
       updatePackage(packageName, branch)
     else
-      local ret = os.execute("git clone -c advice.detachedHead=false -b "..branch.." "..metadata.repository.." "..target)
+      local ret = os.execute(
+        "git clone -c advice.detachedHead=false -b " .. branch .. " " .. metadata.repository .. " " .. target
+      )
       if not ret then -- This should return status code but it's returning true for me...
-        SU.error("Error cloning repository for package "..packageName..": "..ret)
+        SU.error("Error cloning repository for package " .. packageName .. ": " .. ret)
       end
     end
     SILE.PackageManager.installed[packageName] = branch

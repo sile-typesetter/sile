@@ -16,7 +16,7 @@ local mathMode = {
   script = 4,
   scriptCramped = 5,
   scriptScript = 6,
-  scriptScriptCramped = 7
+  scriptScriptCramped = 7,
 }
 
 local scriptType = {
@@ -37,13 +37,12 @@ local scriptType = {
 }
 
 local mathVariantToScriptType = function(attr)
-  return
-    attr == "normal" and scriptType.upright or
-    attr == "bold" and scriptType.bold or
-    attr == "italic" and scriptType.italic or
-    attr == "bold-italic" and scriptType.boldItalic or
-    attr == "double-struck" and scriptType.doubleStruck or
-    SU.error("Invalid value \""..attr.."\" for option mathvariant")
+  return attr == "normal" and scriptType.upright
+    or attr == "bold" and scriptType.bold
+    or attr == "italic" and scriptType.italic
+    or attr == "bold-italic" and scriptType.boldItalic
+    or attr == "double-struck" and scriptType.doubleStruck
+    or SU.error('Invalid value "' .. attr .. '" for option mathvariant')
 end
 
 local function isDisplayMode(mode)
@@ -64,30 +63,46 @@ end
 
 local mathScriptConversionTable = {
   capital = {
-    [scriptType.upright] = function(codepoint) return codepoint end,
+    [scriptType.upright] = function(codepoint)
+      return codepoint
+    end,
     [scriptType.bold] = function(codepoint)
       return codepoint + 0x1D400 - 0x41
     end,
-    [scriptType.italic] = function(codepoint) return codepoint + 0x1D434 - 0x41 end,
-    [scriptType.boldItalic] = function(codepoint) return codepoint + 0x1D468 - 0x41 end,
+    [scriptType.italic] = function(codepoint)
+      return codepoint + 0x1D434 - 0x41
+    end,
+    [scriptType.boldItalic] = function(codepoint)
+      return codepoint + 0x1D468 - 0x41
+    end,
     [scriptType.doubleStruck] = function(codepoint)
-      return codepoint == 0x43 and 0x2102 or
-        codepoint == 0x48 and 0x210D or
-        codepoint == 0x4E and 0x2115 or
-        codepoint == 0x50 and 0x2119 or
-        codepoint == 0x51 and 0x211A or
-        codepoint == 0x52 and 0x211D or
-        codepoint == 0x5A and 0x2124 or
-        codepoint + 0x1D538 - 0x41
-    end
+      return codepoint == 0x43 and 0x2102
+        or codepoint == 0x48 and 0x210D
+        or codepoint == 0x4E and 0x2115
+        or codepoint == 0x50 and 0x2119
+        or codepoint == 0x51 and 0x211A
+        or codepoint == 0x52 and 0x211D
+        or codepoint == 0x5A and 0x2124
+        or codepoint + 0x1D538 - 0x41
+    end,
   },
   small = {
-    [scriptType.upright] = function(codepoint) return codepoint end,
-    [scriptType.bold] = function(codepoint) return codepoint + 0x1D41A - 0x61 end,
-    [scriptType.italic] = function(codepoint) return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61 end,
-    [scriptType.boldItalic] = function(codepoint) return codepoint + 0x1D482 - 0x61 end,
-    [scriptType.doubleStruck] = function(codepoint) return codepoint + 0x1D552 - 0x61 end,
-  }
+    [scriptType.upright] = function(codepoint)
+      return codepoint
+    end,
+    [scriptType.bold] = function(codepoint)
+      return codepoint + 0x1D41A - 0x61
+    end,
+    [scriptType.italic] = function(codepoint)
+      return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61
+    end,
+    [scriptType.boldItalic] = function(codepoint)
+      return codepoint + 0x1D482 - 0x61
+    end,
+    [scriptType.doubleStruck] = function(codepoint)
+      return codepoint + 0x1D552 - 0x61
+    end,
+  },
 }
 
 local mathCache = {}
@@ -98,7 +113,7 @@ local function retrieveMathTable(font)
     SU.debug("math", "Loading math font", key)
     local face = SILE.font.cache(font, SILE.shaper.getFace)
     if not face then
-      SU.error("Could not find requested font ".. font .." or any suitable substitutes")
+      SU.error("Could not find requested font " .. font .. " or any suitable substitutes")
     end
     local mathTable = ot.parseMath(hb.get_table(face, "MATH"))
     local upem = ot.parseHead(hb.get_table(face, "head")).unitsPerEm
@@ -107,8 +122,11 @@ local function retrieveMathTable(font)
     end
     local constants = {}
     for k, v in pairs(mathTable.mathConstants) do
-      if type(v) == "table" then v = v.value end
-      if k:sub(-9) == "ScaleDown" then constants[k] = v / 100
+      if type(v) == "table" then
+        v = v.value
+      end
+      if k:sub(-9) == "ScaleDown" then
+        constants[k] = v / 100
       else
         constants[k] = v * font.size / upem
       end
@@ -121,7 +139,7 @@ local function retrieveMathTable(font)
       constants = constants,
       italicsCorrection = italicsCorrection,
       mathVariants = mathTable.mathVariants,
-      unitsPerEm = upem
+      unitsPerEm = upem,
     }
   end
   return mathCache[key]
@@ -139,15 +157,23 @@ local function getSuperscriptMode(mode)
   elseif mode == mathMode.script or mode == mathMode.scriptScript then
     return mathMode.scriptScript
   -- S', SS' -> SS'
-  else return mathMode.scriptScriptCramped end
+  else
+    return mathMode.scriptScriptCramped
+  end
 end
 local function getSubscriptMode(mode)
   -- D, T, D', T' -> S'
-  if mode == mathMode.display or mode == mathMode.text
-      or mode == mathMode.displayCramped or mode == mathMode.textCramped then
-      return mathMode.scriptCramped
+  if
+    mode == mathMode.display
+    or mode == mathMode.text
+    or mode == mathMode.displayCramped
+    or mode == mathMode.textCramped
+  then
+    return mathMode.scriptCramped
   -- S, SS, S', SS' -> SS'
-  else return mathMode.scriptScriptCramped end
+  else
+    return mathMode.scriptScriptCramped
+  end
 end
 
 -- Style transition functions for fraction (numerator and denominator)
@@ -168,7 +194,9 @@ local function getNumeratorMode(mode)
   elseif mode == mathMode.script or mode == mathMode.scriptScript then
     return mathMode.scriptScript
   -- S', SS' -> SS'
-  else return mathMode.scriptScriptCramped end
+  else
+    return mathMode.scriptScriptCramped
+  end
 end
 local function getDenominatorMode(mode)
   -- D, D' -> T'
@@ -178,15 +206,17 @@ local function getDenominatorMode(mode)
   elseif mode == mathMode.text or mode == mathMode.textCramped then
     return mathMode.scriptCramped
   -- S, SS, S', SS' -> SS'
-  else return mathMode.scriptScriptCramped end
+  else
+    return mathMode.scriptScriptCramped
+  end
 end
 
 local function getRightMostGlyphId(node)
-  while node and node:is_a(elements.stackbox) and node.direction == 'H' do
-    node = node.children[#(node.children)]
+  while node and node:is_a(elements.stackbox) and node.direction == "H" do
+    node = node.children[#node.children]
   end
   if node and node:is_a(elements.text) then
-    return node.value.glyphString[#(node.value.glyphString)]
+    return node.value.glyphString[#node.value.glyphString]
   else
     return 0
   end
@@ -195,7 +225,7 @@ end
 -- Compares two SILE length, without considering shrink or stretch values, and
 -- returns the biggest.
 local function maxLength(...)
-  local arg = {...}
+  local arg = { ... }
   local m
   for i, v in ipairs(arg) do
     if i == 1 then
@@ -229,11 +259,11 @@ end
 elements.mbox = pl.class(nodefactory.hbox)
 elements.mbox._type = "Mbox"
 
-function elements.mbox:__tostring ()
+function elements.mbox:__tostring()
   return self._type
 end
 
-function elements.mbox:_init ()
+function elements.mbox:_init()
   nodefactory.hbox._init(self)
   self.font = {}
   self.children = {} -- The child nodes
@@ -246,30 +276,32 @@ function elements.mbox:_init ()
     family = SILE.settings:get("math.font.family"),
     size = SILE.settings:get("math.font.size"),
     style = SILE.settings:get("math.font.style"),
-    weight = SILE.settings:get("math.font.weight")
+    weight = SILE.settings:get("math.font.weight"),
   }
   local filename = SILE.settings:get("math.font.filename")
-  if filename and filename ~= "" then font.filename = filename end
+  if filename and filename ~= "" then
+    font.filename = filename
+  end
   self.font = SILE.font.loadDefaults(font)
 end
 
-function elements.mbox.styleChildren (_)
+function elements.mbox.styleChildren(_)
   SU.error("styleChildren is a virtual function that need to be overridden by its child classes")
 end
 
-function elements.mbox.shape (_, _, _)
+function elements.mbox.shape(_, _, _)
   SU.error("shape is a virtual function that need to be overridden by its child classes")
 end
 
-function elements.mbox.output (_, _, _, _)
+function elements.mbox.output(_, _, _, _)
   SU.error("output is a virtual function that need to be overridden by its child classes")
 end
 
-function elements.mbox:getMathMetrics ()
+function elements.mbox:getMathMetrics()
   return retrieveMathTable(self.font)
 end
 
-function elements.mbox:getScaleDown ()
+function elements.mbox:getScaleDown()
   local constants = self:getMathMetrics().constants
   local scaleDown
   if isScriptMode(self.mode) then
@@ -282,39 +314,41 @@ function elements.mbox:getScaleDown ()
   return scaleDown
 end
 
-  -- Determine the mode of its descendants
-function elements.mbox:styleDescendants ()
+-- Determine the mode of its descendants
+function elements.mbox:styleDescendants()
   self:styleChildren()
   for _, n in ipairs(self.children) do
-    if n then n:styleDescendants() end
+    if n then
+      n:styleDescendants()
+    end
   end
 end
 
-  -- shapeTree shapes the mbox and all its descendants in a recursive fashion
-  -- The inner-most leaf nodes determine their shape first, and then propagate to their parents
-  -- During the process, each node will determine its size by (width, height, depth)
-  -- and (relX, relY) which the relative position to its parent
-function elements.mbox:shapeTree ()
+-- shapeTree shapes the mbox and all its descendants in a recursive fashion
+-- The inner-most leaf nodes determine their shape first, and then propagate to their parents
+-- During the process, each node will determine its size by (width, height, depth)
+-- and (relX, relY) which the relative position to its parent
+function elements.mbox:shapeTree()
   for _, n in ipairs(self.children) do
-    if n then n:shapeTree() end
+    if n then
+      n:shapeTree()
+    end
   end
   self:shape()
 end
 
-  -- Output the node and all its descendants
-function elements.mbox:outputTree (x, y, line)
+-- Output the node and all its descendants
+function elements.mbox:outputTree(x, y, line)
   self:output(x, y, line)
   local debug = SILE.settings:get("math.debug.boxes")
   if debug and not (self:is_a(elements.space)) then
     SILE.outputter:setCursor(scaleWidth(x, line), y.length)
-    SILE.outputter:debugHbox(
-      { height = self.height.length,
-        depth = self.depth.length },
-      scaleWidth(self.width, line)
-    )
+    SILE.outputter:debugHbox({ height = self.height.length, depth = self.depth.length }, scaleWidth(self.width, line))
   end
   for _, n in ipairs(self.children) do
-    if n then n:outputTree(x + n.relX, y + n.relY, line) end
+    if n then
+      n:outputTree(x + n.relX, y + n.relY, line)
+    end
   end
 end
 
@@ -327,78 +361,78 @@ local spaceKind = {
 -- Indexed by left atom
 local spacingRules = {
   [atomType.ordinary] = {
-    [atomType.bigOperator] = {spaceKind.thin},
-    [atomType.binaryOperator] = {spaceKind.med, notScript = true},
-    [atomType.relationalOperator] = {spaceKind.thick, notScript = true},
-    [atomType.inner] = {spaceKind.thin, notScript = true}
+    [atomType.bigOperator] = { spaceKind.thin },
+    [atomType.binaryOperator] = { spaceKind.med, notScript = true },
+    [atomType.relationalOperator] = { spaceKind.thick, notScript = true },
+    [atomType.inner] = { spaceKind.thin, notScript = true },
   },
   [atomType.bigOperator] = {
-    [atomType.ordinary] = {spaceKind.thin},
-    [atomType.bigOperator] = {spaceKind.thin},
-    [atomType.relationalOperator] = {spaceKind.thick, notScript = true},
-    [atomType.inner] = {spaceKind.thin, notScript = true},
+    [atomType.ordinary] = { spaceKind.thin },
+    [atomType.bigOperator] = { spaceKind.thin },
+    [atomType.relationalOperator] = { spaceKind.thick, notScript = true },
+    [atomType.inner] = { spaceKind.thin, notScript = true },
   },
   [atomType.binaryOperator] = {
-    [atomType.ordinary] = {spaceKind.med, notScript = true},
-    [atomType.bigOperator] = {spaceKind.med, notScript = true},
-    [atomType.openingSymbol] = {spaceKind.med, notScript = true},
-    [atomType.inner] = {spaceKind.med, notScript = true}
+    [atomType.ordinary] = { spaceKind.med, notScript = true },
+    [atomType.bigOperator] = { spaceKind.med, notScript = true },
+    [atomType.openingSymbol] = { spaceKind.med, notScript = true },
+    [atomType.inner] = { spaceKind.med, notScript = true },
   },
   [atomType.relationalOperator] = {
-    [atomType.ordinary] = {spaceKind.thick, notScript = true},
-    [atomType.bigOperator] = {spaceKind.thick, notScript = true},
-    [atomType.openingSymbol] = {spaceKind.thick, notScript = true},
-    [atomType.inner] = {spaceKind.thick, notScript = true}
+    [atomType.ordinary] = { spaceKind.thick, notScript = true },
+    [atomType.bigOperator] = { spaceKind.thick, notScript = true },
+    [atomType.openingSymbol] = { spaceKind.thick, notScript = true },
+    [atomType.inner] = { spaceKind.thick, notScript = true },
   },
   [atomType.closeSymbol] = {
-    [atomType.bigOperator] = {spaceKind.thin},
-    [atomType.binaryOperator] = {spaceKind.med, notScript = true},
-    [atomType.relationalOperator] = {spaceKind.thick, notScript = true},
-    [atomType.inner] = {spaceKind.thin, notScript = true}
+    [atomType.bigOperator] = { spaceKind.thin },
+    [atomType.binaryOperator] = { spaceKind.med, notScript = true },
+    [atomType.relationalOperator] = { spaceKind.thick, notScript = true },
+    [atomType.inner] = { spaceKind.thin, notScript = true },
   },
   [atomType.punctuationSymbol] = {
-    [atomType.ordinary] = {spaceKind.thin, notScript = true},
-    [atomType.bigOperator] = {spaceKind.thin, notScript = true},
-    [atomType.relationalOperator] = {spaceKind.thin, notScript = true},
-    [atomType.openingSymbol] = {spaceKind.thin, notScript = true},
-    [atomType.closeSymbol] = {spaceKind.thin, notScript = true},
-    [atomType.punctuationSymbol] = {spaceKind.thin, notScript = true},
-    [atomType.inner] = {spaceKind.thin, notScript = true}
+    [atomType.ordinary] = { spaceKind.thin, notScript = true },
+    [atomType.bigOperator] = { spaceKind.thin, notScript = true },
+    [atomType.relationalOperator] = { spaceKind.thin, notScript = true },
+    [atomType.openingSymbol] = { spaceKind.thin, notScript = true },
+    [atomType.closeSymbol] = { spaceKind.thin, notScript = true },
+    [atomType.punctuationSymbol] = { spaceKind.thin, notScript = true },
+    [atomType.inner] = { spaceKind.thin, notScript = true },
   },
   [atomType.inner] = {
-    [atomType.ordinary] = {spaceKind.thin, notScript = true},
-    [atomType.bigOperator] = {spaceKind.thin},
-    [atomType.binaryOperator] = {spaceKind.med, notScript = true},
-    [atomType.relationalOperator] = {spaceKind.thick, notScript = true},
-    [atomType.openingSymbol] = {spaceKind.thin, notScript = true},
-    [atomType.punctuationSymbol] = {spaceKind.thin, notScript = true},
-    [atomType.inner] = {spaceKind.thin, notScript = true}
-  }
+    [atomType.ordinary] = { spaceKind.thin, notScript = true },
+    [atomType.bigOperator] = { spaceKind.thin },
+    [atomType.binaryOperator] = { spaceKind.med, notScript = true },
+    [atomType.relationalOperator] = { spaceKind.thick, notScript = true },
+    [atomType.openingSymbol] = { spaceKind.thin, notScript = true },
+    [atomType.punctuationSymbol] = { spaceKind.thin, notScript = true },
+    [atomType.inner] = { spaceKind.thin, notScript = true },
+  },
 }
 
 -- _stackbox stacks its content one, either horizontally or vertically
 elements.stackbox = pl.class(elements.mbox)
 elements.stackbox._type = "Stackbox"
 
-function elements.stackbox:__tostring ()
-  local result = self.direction.."Box("
+function elements.stackbox:__tostring()
+  local result = self.direction .. "Box("
   for i, n in ipairs(self.children) do
-    result = result..(i == 1 and "" or ", ")..tostring(n)
+    result = result .. (i == 1 and "" or ", ") .. tostring(n)
   end
-  result = result..")"
+  result = result .. ")"
   return result
 end
 
-function elements.stackbox:_init (direction, children)
+function elements.stackbox:_init(direction, children)
   elements.mbox._init(self)
   if not (direction == "H" or direction == "V") then
-    SU.error("Wrong direction '"..direction.."'; should be H or V")
+    SU.error("Wrong direction '" .. direction .. "'; should be H or V")
   end
   self.direction = direction
   self.children = children
 end
 
-function elements.stackbox:styleChildren ()
+function elements.stackbox:styleChildren()
   for _, n in ipairs(self.children) do
     n.mode = self.mode
   end
@@ -406,13 +440,13 @@ function elements.stackbox:styleChildren ()
     -- Insert spaces according to the atom type, following Knuth's guidelines
     -- in the TeXbook
     local spaces = {}
-    for i = 1, #self.children-1 do
+    for i = 1, #self.children - 1 do
       local v = self.children[i]
       local v2 = self.children[i + 1]
       if spacingRules[v.atom] and spacingRules[v.atom][v2.atom] then
         local rule = spacingRules[v.atom][v2.atom]
         if not (rule.notScript and (isScriptMode(self.mode) or isScriptScriptMode(self.mode))) then
-          spaces[i+1] = rule[1]
+          spaces[i + 1] = rule[1]
         end
       end
     end
@@ -420,7 +454,9 @@ function elements.stackbox:styleChildren ()
     for i, _ in pairs(spaces) do
       table.insert(spaceIdx, i)
     end
-    table.sort(spaceIdx, function(a, b) return a > b end)
+    table.sort(spaceIdx, function(a, b)
+      return a > b
+    end)
     for _, idx in ipairs(spaceIdx) do
       local hsp = elements.space(spaces[idx], 0, 0)
       table.insert(self.children, idx, hsp)
@@ -428,7 +464,7 @@ function elements.stackbox:styleChildren ()
   end
 end
 
-function elements.stackbox:shape ()
+function elements.stackbox:shape()
   -- For a horizontal stackbox (i.e. mrow):
   -- 1. set self.height and self.depth to max element height & depth
   -- 2. handle stretchy operators
@@ -447,8 +483,7 @@ function elements.stackbox:shape ()
     end
     -- Handle stretchy operators
     for _, elt in ipairs(self.children) do
-      if elt.is_a(elements.text) and elt.kind == 'operator'
-          and elt.stretchy then
+      if elt.is_a(elements.text) and elt.kind == "operator" and elt.stretchy then
         elt:stretchyReshape(self.depth, self.height)
       end
     end
@@ -481,41 +516,57 @@ function elements.stackbox:shape ()
 end
 
 -- Despite of its name, this function actually output the whole tree of nodes recursively.
-function elements.stackbox:outputYourself (typesetter, line)
+function elements.stackbox:outputYourself(typesetter, line)
   local mathX = typesetter.frame.state.cursorX
   local mathY = typesetter.frame.state.cursorY
   self:outputTree(self.relX + mathX, self.relY + mathY, line)
   typesetter.frame:advanceWritingDirection(scaleWidth(self.width, line))
 end
 
-function elements.stackbox.output (_, _, _, _) end
+function elements.stackbox.output(_, _, _, _) end
 
 elements.subscript = pl.class(elements.mbox)
 elements.subscript._type = "Subscript"
 
-function elements.subscript:__tostring ()
-  return (self.sub and "Subscript" or "Superscript") .. "(" ..
-    tostring(self.base) .. ", " .. tostring(self.sub or self.super) .. ")"
+function elements.subscript:__tostring()
+  return (self.sub and "Subscript" or "Superscript")
+    .. "("
+    .. tostring(self.base)
+    .. ", "
+    .. tostring(self.sub or self.super)
+    .. ")"
 end
 
-function elements.subscript:_init (base, sub, sup)
+function elements.subscript:_init(base, sub, sup)
   elements.mbox._init(self)
   self.base = base
   self.sub = sub
   self.sup = sup
-  if self.base then table.insert(self.children, self.base) end
-  if self.sub then table.insert(self.children, self.sub) end
-  if self.sup then table.insert(self.children, self.sup) end
+  if self.base then
+    table.insert(self.children, self.base)
+  end
+  if self.sub then
+    table.insert(self.children, self.sub)
+  end
+  if self.sup then
+    table.insert(self.children, self.sup)
+  end
   self.atom = self.base.atom
 end
 
-function elements.subscript:styleChildren ()
-  if self.base then self.base.mode = self.mode end
-  if self.sub then self.sub.mode = getSubscriptMode(self.mode) end
-  if self.sup then self.sup.mode = getSuperscriptMode(self.mode) end
+function elements.subscript:styleChildren()
+  if self.base then
+    self.base.mode = self.mode
+  end
+  if self.sub then
+    self.sub.mode = getSubscriptMode(self.mode)
+  end
+  if self.sup then
+    self.sup.mode = getSuperscriptMode(self.mode)
+  end
 end
 
-function elements.subscript:calculateItalicsCorrection ()
+function elements.subscript:calculateItalicsCorrection()
   local lastGid = getRightMostGlyphId(self.base)
   if lastGid > 0 then
     local mathMetrics = self:getMathMetrics()
@@ -526,7 +577,7 @@ function elements.subscript:calculateItalicsCorrection ()
   return 0
 end
 
-function elements.subscript:shape ()
+function elements.subscript:shape()
   local mathMetrics = self:getMathMetrics()
   local constants = mathMetrics.constants
   local scaleDown = self:getScaleDown()
@@ -555,10 +606,8 @@ function elements.subscript:shape ()
       --self.base.depth + constants.subscriptBaselineDropMin * scaleDown,
       (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
     ))
-    if (self:is_a(elements.underOver)
-        or self:is_a(elements.stackbox) or self.base.largeop) then
-      self.sub.relY = maxLength(self.sub.relY,
-        self.base.depth + constants.subscriptBaselineDropMin*scaleDown)
+    if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or self.base.largeop then
+      self.sub.relY = maxLength(self.sub.relY, self.base.depth + constants.subscriptBaselineDropMin * scaleDown)
     end
   end
   if self.sup then
@@ -571,39 +620,37 @@ function elements.subscript:shape ()
     end
     self.sup.relX = self.width + supShift
     self.sup.relY = SILE.length(math.max(
-      isCrampedMode(self.mode)
-      and constants.superscriptShiftUpCramped * scaleDown
-      or constants.superscriptShiftUp * scaleDown, -- or cramped
+      isCrampedMode(self.mode) and constants.superscriptShiftUpCramped * scaleDown
+        or constants.superscriptShiftUp * scaleDown, -- or cramped
       --self.base.height - constants.superscriptBaselineDropMax * scaleDown,
       (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
-    )) * (-1)
-    if (self:is_a(elements.underOver)
-        or self:is_a(elements.stackbox) or self.base.largeop) then
+    )) * -1
+    if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or self.base.largeop then
       self.sup.relY = maxLength(
-        (0-self.sup.relY),
-        self.base.height - constants.superscriptBaselineDropMax
-        * scaleDown) * (-1)
-      end
+        (0 - self.sup.relY),
+        self.base.height - constants.superscriptBaselineDropMax * scaleDown
+      ) * -1
+    end
   end
   if self.sub and self.sup then
     local gap = self.sub.relY - self.sub.height - self.sup.relY - self.sup.depth
     if gap.length:tonumber() < constants.subSuperscriptGapMin * scaleDown then
       -- The following adjustment comes directly from Appendix G of he
       -- TeXbook (rule 18e).
-      self.sub.relY = constants.subSuperscriptGapMin * scaleDown
-        + self.sub.height + self.sup.relY + self.sup.depth
-      local psi = constants.superscriptBottomMaxWithSubscript*scaleDown
-        + self.sup.relY + self.sup.depth
+      self.sub.relY = constants.subSuperscriptGapMin * scaleDown + self.sub.height + self.sup.relY + self.sup.depth
+      local psi = constants.superscriptBottomMaxWithSubscript * scaleDown + self.sup.relY + self.sup.depth
       if psi:tonumber() > 0 then
         self.sup.relY = self.sup.relY - psi
         self.sub.relY = self.sub.relY - psi
       end
     end
   end
-  self.width = self.width + maxLength(
-    self.sub and self.sub.width + subShift or SILE.length(0),
-    self.sup and self.sup.width + supShift or SILE.length(0)
-  ) + constants.spaceAfterScript * scaleDown
+  self.width = self.width
+    + maxLength(
+      self.sub and self.sub.width + subShift or SILE.length(0),
+      self.sup and self.sup.width + supShift or SILE.length(0)
+    )
+    + constants.spaceAfterScript * scaleDown
   self.height = maxLength(
     self.base and self.base.height or SILE.length(0),
     self.sub and (self.sub.height - self.sub.relY) or SILE.length(0),
@@ -616,38 +663,46 @@ function elements.subscript:shape ()
   )
 end
 
-function elements.subscript.output (_, _, _, _) end
+function elements.subscript.output(_, _, _, _) end
 
 elements.underOver = pl.class(elements.subscript)
 elements.underOver._type = "UnderOver"
 
-function elements.underOver:__tostring ()
-  return self._type .. "(" .. tostring(self.base) .. ", " ..
-    tostring(self.sub) .. ", " .. tostring(self.sup) .. ")"
+function elements.underOver:__tostring()
+  return self._type .. "(" .. tostring(self.base) .. ", " .. tostring(self.sub) .. ", " .. tostring(self.sup) .. ")"
 end
 
-function elements.underOver:_init (base, sub, sup)
+function elements.underOver:_init(base, sub, sup)
   elements.mbox._init(self)
   self.atom = base.atom
   self.base = base
   self.sub = sub
   self.sup = sup
-  if self.sup then table.insert(self.children, self.sup) end
+  if self.sup then
+    table.insert(self.children, self.sup)
+  end
   if self.base then
     table.insert(self.children, self.base)
   end
-  if self.sub then table.insert(self.children, self.sub) end
+  if self.sub then
+    table.insert(self.children, self.sub)
+  end
 end
 
-function elements.underOver:styleChildren ()
-  if self.base then self.base.mode = self.mode end
-  if self.sub then self.sub.mode = getSubscriptMode(self.mode) end
-  if self.sup then self.sup.mode = getSuperscriptMode(self.mode) end
+function elements.underOver:styleChildren()
+  if self.base then
+    self.base.mode = self.mode
+  end
+  if self.sub then
+    self.sub.mode = getSubscriptMode(self.mode)
+  end
+  if self.sup then
+    self.sup.mode = getSuperscriptMode(self.mode)
+  end
 end
 
-function elements.underOver:shape ()
-  if not (self.mode == mathMode.display
-    or self.mode == mathMode.displayCramped) then
+function elements.underOver:shape()
+  if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) then
     self.isUnderOver = true
     elements.subscript.shape(self)
     return
@@ -659,14 +714,23 @@ function elements.underOver:shape ()
     self.base.relY = SILE.length(0)
   end
   if self.sub then
-    self.sub.relY = self.base.depth + SILE.length(math.max(
-    (self.sub.height + constants.lowerLimitGapMin * scaleDown):tonumber(),
-    constants.lowerLimitBaselineDropMin * scaleDown))
+    self.sub.relY = self.base.depth
+      + SILE.length(
+        math.max(
+          (self.sub.height + constants.lowerLimitGapMin * scaleDown):tonumber(),
+          constants.lowerLimitBaselineDropMin * scaleDown
+        )
+      )
   end
   if self.sup then
-    self.sup.relY = 0 - self.base.height - SILE.length(math.max(
-    (constants.upperLimitGapMin * scaleDown + self.sup.depth):tonumber(),
-    constants.upperLimitBaselineRiseMin * scaleDown))
+    self.sup.relY = 0
+      - self.base.height
+      - SILE.length(
+        math.max(
+          (constants.upperLimitGapMin * scaleDown + self.sup.depth):tonumber(),
+          constants.upperLimitBaselineRiseMin * scaleDown
+        )
+      )
   end
   -- Determine relative Xs based on widest symbol
   local widest, a, b
@@ -701,16 +765,24 @@ function elements.underOver:shape ()
   end
   widest.relX = SILE.length(0)
   local c = widest.width / 2
-  if a then a.relX = c - a.width / 2 end
-  if b then b.relX = c - b.width / 2 end
+  if a then
+    a.relX = c - a.width / 2
+  end
+  if b then
+    b.relX = c - b.width / 2
+  end
   local itCorr = self:calculateItalicsCorrection() * scaleDown
-  if self.sup then self.sup.relX = self.sup.relX + itCorr / 2 end
-  if self.sub then self.sub.relX = self.sub.relX - itCorr / 2 end
+  if self.sup then
+    self.sup.relX = self.sup.relX + itCorr / 2
+  end
+  if self.sub then
+    self.sub.relX = self.sub.relX - itCorr / 2
+  end
   -- Determine width and height
   self.width = maxLength(
-  self.base and self.base.width or SILE.length(0),
-  self.sub and self.sub.width or SILE.length(0),
-  self.sup and self.sup.width or SILE.length(0)
+    self.base and self.base.width or SILE.length(0),
+    self.sub and self.sub.width or SILE.length(0),
+    self.sup and self.sup.width or SILE.length(0)
   )
   if self.sup then
     self.height = 0 - self.sup.relY + self.sup.height
@@ -724,7 +796,7 @@ function elements.underOver:shape ()
   end
 end
 
-function elements.underOver:calculateItalicsCorrection ()
+function elements.underOver:calculateItalicsCorrection()
   local lastGid = getRightMostGlyphId(self.base)
   if lastGid > 0 then
     local mathMetrics = self:getMathMetrics()
@@ -742,34 +814,39 @@ function elements.underOver:calculateItalicsCorrection ()
   return 0
 end
 
-function elements.underOver.output (_, _, _, _) end
+function elements.underOver.output(_, _, _, _) end
 
 -- terminal is the base class for leaf node
 elements.terminal = pl.class(elements.mbox)
 elements.terminal._type = "Terminal"
 
-function elements.terminal:_init ()
+function elements.terminal:_init()
   elements.mbox._init(self)
 end
 
-function elements.terminal.styleChildren (_) end
+function elements.terminal.styleChildren(_) end
 
-function elements.terminal.shape (_) end
+function elements.terminal.shape(_) end
 
 elements.space = pl.class(elements.terminal)
 elements.space._type = "Space"
 
-function elements.space:_init ()
+function elements.space:_init()
   elements.terminal._init(self)
 end
 
-function elements.space:__tostring ()
-  return self._type .. "(width=" .. tostring(self.width) ..
-  ", height=" .. tostring(self.height) ..
-  ", depth=" .. tostring(self.depth) .. ")"
+function elements.space:__tostring()
+  return self._type
+    .. "(width="
+    .. tostring(self.width)
+    .. ", height="
+    .. tostring(self.height)
+    .. ", depth="
+    .. tostring(self.depth)
+    .. ")"
 end
 
-local function getStandardLength (value)
+local function getStandardLength(value)
   if type(value) == "string" then
     local direction = 1
     if value:sub(1, 1) == "-" then
@@ -787,43 +864,49 @@ local function getStandardLength (value)
   return SILE.length(value)
 end
 
-function elements.space:_init (width, height, depth)
+function elements.space:_init(width, height, depth)
   elements.terminal._init(self)
   self.width = getStandardLength(width)
   self.height = getStandardLength(height)
   self.depth = getStandardLength(depth)
 end
 
-function elements.space:shape ()
+function elements.space:shape()
   self.width = self.width:absolute() * self:getScaleDown()
   self.height = self.height:absolute() * self:getScaleDown()
   self.depth = self.depth:absolute() * self:getScaleDown()
 end
 
-function elements.space.output (_) end
+function elements.space.output(_) end
 
 -- text node. For any actual text output
 elements.text = pl.class(elements.terminal)
 elements.text._type = "Text"
 
-function elements.text:__tostring ()
-  return self._type .. "(atom=" .. tostring(self.atom) ..
-      ", kind=" .. tostring(self.kind) ..
-      ", script=" .. tostring(self.script) ..
-      (self.stretchy and ", stretchy" or "") ..
-      (self.largeop and ", largeop" or "") ..
-      ", text=\"" .. (self.originalText or self.text) .. "\")"
+function elements.text:__tostring()
+  return self._type
+    .. "(atom="
+    .. tostring(self.atom)
+    .. ", kind="
+    .. tostring(self.kind)
+    .. ", script="
+    .. tostring(self.script)
+    .. (self.stretchy and ", stretchy" or "")
+    .. (self.largeop and ", largeop" or "")
+    .. ', text="'
+    .. (self.originalText or self.text)
+    .. '")'
 end
 
-function elements.text:_init (kind, attributes, script, text)
+function elements.text:_init(kind, attributes, script, text)
   elements.terminal._init(self)
   if not (kind == "number" or kind == "identifier" or kind == "operator") then
-    SU.error("Unknown text node kind '"..kind.."'; should be one of: number, identifier, operator.")
+    SU.error("Unknown text node kind '" .. kind .. "'; should be one of: number, identifier, operator.")
   end
   self.kind = kind
   self.script = script
   self.text = text
-  if self.script ~= 'upright' then
+  if self.script ~= "upright" then
     local converted = ""
     for _, uchr in luautf8.codes(self.text) do
       local dst_char = luautf8.char(uchr)
@@ -832,22 +915,22 @@ function elements.text:_init (kind, attributes, script, text)
       elseif uchr >= 0x61 and uchr <= 0x7A then -- Latin non-capital letter
         dst_char = luautf8.char(mathScriptConversionTable.small[self.script](uchr))
       end
-      converted = converted..dst_char
+      converted = converted .. dst_char
     end
     self.originalText = self.text
     self.text = converted
   end
-  if self.kind == 'operator' then
+  if self.kind == "operator" then
     if self.text == "-" then
       self.text = "−"
     end
   end
-  for attribute,value in pairs(attributes) do
+  for attribute, value in pairs(attributes) do
     self[attribute] = value
   end
 end
 
-function elements.text:shape ()
+function elements.text:shape()
   self.font.size = self.font.size * self:getScaleDown()
   local face = SILE.font.cache(self.font, SILE.shaper.getFace)
   local mathMetrics = self:getMathMetrics()
@@ -856,8 +939,7 @@ function elements.text:shape ()
   if isDisplayMode(self.mode) and self.largeop then
     -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
     glyphs = pl.tablex.deepcopy(glyphs)
-    local constructions = mathMetrics.mathVariants
-      .vertGlyphConstructions[glyphs[1].gid]
+    local constructions = mathMetrics.mathVariants.vertGlyphConstructions[glyphs[1].gid]
     if constructions then
       local displayVariants = constructions.mathGlyphVariantRecord
       -- We select the biggest variant. TODO: we should probably select the
@@ -872,8 +954,7 @@ function elements.text:shape ()
       end
       if biggest then
         glyphs[1].gid = biggest.variantGlyph
-        local dimen = hb.get_glyph_dimensions(face,
-          self.font.size, biggest.variantGlyph)
+        local dimen = hb.get_glyph_dimensions(face, self.font.size, biggest.variantGlyph)
         glyphs[1].width = dimen.width
         glyphs[1].glyphAdvance = dimen.glyphAdvance
         --[[ I am told (https://github.com/alif-type/xits/issues/90) that,
@@ -912,8 +993,10 @@ function elements.text:shape ()
       self.width = self.width + itCorr * self:getScaleDown()
     end
     for i = 1, #glyphs do
-      self.height = i == 1 and SILE.length(glyphs[i].height) or SILE.length(math.max(self.height:tonumber(), glyphs[i].height))
-      self.depth = i == 1 and SILE.length(glyphs[i].depth) or SILE.length(math.max(self.depth:tonumber(), glyphs[i].depth))
+      self.height = i == 1 and SILE.length(glyphs[i].height)
+        or SILE.length(math.max(self.height:tonumber(), glyphs[i].height))
+      self.depth = i == 1 and SILE.length(glyphs[i].depth)
+        or SILE.length(math.max(self.depth:tonumber(), glyphs[i].depth))
     end
   else
     self.width = SILE.length(0)
@@ -922,12 +1005,12 @@ function elements.text:shape ()
   end
 end
 
-function elements.text:stretchyReshape (depth, height)
+function elements.text:stretchyReshape(depth, height)
   -- Required depth+height of stretched glyph, in font units
   local mathMetrics = self:getMathMetrics()
   local upem = mathMetrics.unitsPerEm
   local sz = self.font.size
-  local requiredAdvance = (depth + height):tonumber() * upem/sz
+  local requiredAdvance = (depth + height):tonumber() * upem / sz
   SU.debug("math", "stretch: rA =", requiredAdvance)
   -- Choose variant of the closest size. The criterion we use is to have
   -- an advance measurement as close as possible as the required one.
@@ -937,16 +1020,15 @@ function elements.text:stretchyReshape (depth, height)
   -- their parts for cases when the biggest variant is not big enough.
   -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
   local glyphs = pl.tablex.deepcopy(self.value.items)
-  local constructions = self:getMathMetrics().mathVariants
-    .vertGlyphConstructions[glyphs[1].gid]
+  local constructions = self:getMathMetrics().mathVariants.vertGlyphConstructions[glyphs[1].gid]
   if constructions then
     local variants = constructions.mathGlyphVariantRecord
     SU.debug("math", "stretch: variants =", variants)
     local closest
     local closestI
-    local m = requiredAdvance - (self.depth+self.height):tonumber() * upem/sz
+    local m = requiredAdvance - (self.depth + self.height):tonumber() * upem / sz
     SU.debug("math", "stretch: m =", m)
-    for i,v in ipairs(variants) do
+    for i, v in ipairs(variants) do
       local diff = math.abs(v.advanceMeasurement - requiredAdvance)
       SU.debug("math", "stretch: diff =", diff)
       if diff < m then
@@ -964,8 +1046,7 @@ function elements.text:stretchyReshape (depth, height)
       -- the shaping phase is already done. Need to do better.
       glyphs[1].gid = closest.variantGlyph
       local face = SILE.font.cache(self.font, SILE.shaper.getFace)
-      local dimen = hb.get_glyph_dimensions(face,
-        self.font.size, closest.variantGlyph)
+      local dimen = hb.get_glyph_dimensions(face, self.font.size, closest.variantGlyph)
       glyphs[1].width = dimen.width
       glyphs[1].height = dimen.height
       glyphs[1].depth = dimen.depth
@@ -975,17 +1056,17 @@ function elements.text:stretchyReshape (depth, height)
       self.height = SILE.length(dimen.height)
       SILE.shaper:preAddNodes(glyphs, self.value)
       self.value.items = glyphs
-      self.value.glyphString = {glyphs[1].gid}
+      self.value.glyphString = { glyphs[1].gid }
     end
   end
 end
 
-function elements.text:output (x, y, line)
-  if not self.value.glyphString then return end
+function elements.text:output(x, y, line)
+  if not self.value.glyphString then
+    return
+  end
   local compensatedY
-  if isDisplayMode(self.mode)
-      and self.atom == atomType.bigOperator
-      and self.value.items[1].fontDepth then
+  if isDisplayMode(self.mode) and self.atom == atomType.bigOperator and self.value.items[1].fontDepth then
     compensatedY = SILE.length(y.length + self.value.items[1].depth - self.value.items[1].fontDepth)
   else
     compensatedY = y
@@ -1001,12 +1082,11 @@ end
 elements.fraction = pl.class(elements.mbox)
 elements.fraction._type = "Fraction"
 
-function elements.fraction:__tostring ()
-  return self._type .. "(" .. tostring(self.numerator) .. ", " ..
-    tostring(self.denominator) .. ")"
+function elements.fraction:__tostring()
+  return self._type .. "(" .. tostring(self.numerator) .. ", " .. tostring(self.denominator) .. ")"
 end
 
-function elements.fraction:_init (numerator, denominator)
+function elements.fraction:_init(numerator, denominator)
   elements.mbox._init(self)
   self.numerator = numerator
   self.denominator = denominator
@@ -1014,12 +1094,12 @@ function elements.fraction:_init (numerator, denominator)
   table.insert(self.children, denominator)
 end
 
-function elements.fraction:styleChildren ()
+function elements.fraction:styleChildren()
   self.numerator.mode = getNumeratorMode(self.mode)
   self.denominator.mode = getDenominatorMode(self.mode)
 end
 
-function elements.fraction:shape ()
+function elements.fraction:shape()
   -- Determine relative abscissas and width
   local widest, other
   if self.denominator.width > self.numerator.width then
@@ -1036,50 +1116,66 @@ function elements.fraction:shape ()
   self.axisHeight = constants.axisHeight * scaleDown
   self.ruleThickness = constants.fractionRuleThickness * scaleDown
   if isDisplayMode(self.mode) then
-    self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
-      (constants.fractionNumDisplayStyleGapMin*scaleDown + self.numerator.depth):tonumber(),
-      constants.fractionNumeratorDisplayStyleShiftUp * scaleDown
-        - self.axisHeight - self.ruleThickness/2))
+    self.numerator.relY = -self.axisHeight
+      - self.ruleThickness / 2
+      - SILE.length(
+        math.max(
+          (constants.fractionNumDisplayStyleGapMin * scaleDown + self.numerator.depth):tonumber(),
+          constants.fractionNumeratorDisplayStyleShiftUp * scaleDown - self.axisHeight - self.ruleThickness / 2
+        )
+      )
   else
-    self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
-      (constants.fractionNumeratorGapMin*scaleDown + self.numerator.depth):tonumber(),
-      constants.fractionNumeratorShiftUp * scaleDown - self.axisHeight
-        - self.ruleThickness/2))
+    self.numerator.relY = -self.axisHeight
+      - self.ruleThickness / 2
+      - SILE.length(
+        math.max(
+          (constants.fractionNumeratorGapMin * scaleDown + self.numerator.depth):tonumber(),
+          constants.fractionNumeratorShiftUp * scaleDown - self.axisHeight - self.ruleThickness / 2
+        )
+      )
   end
   if isDisplayMode(self.mode) then
-    self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
-      (constants.fractionDenomDisplayStyleGapMin * scaleDown
-        + self.denominator.height):tonumber(),
-      constants.fractionDenominatorDisplayStyleShiftDown * scaleDown
-        + self.axisHeight - self.ruleThickness/2))
+    self.denominator.relY = -self.axisHeight
+      + self.ruleThickness / 2
+      + SILE.length(
+        math.max(
+          (constants.fractionDenomDisplayStyleGapMin * scaleDown + self.denominator.height):tonumber(),
+          constants.fractionDenominatorDisplayStyleShiftDown * scaleDown + self.axisHeight - self.ruleThickness / 2
+        )
+      )
   else
-    self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
-      (constants.fractionDenominatorGapMin * scaleDown
-        + self.denominator.height):tonumber(),
-      constants.fractionDenominatorShiftDown * scaleDown
-        + self.axisHeight - self.ruleThickness/2))
+    self.denominator.relY = -self.axisHeight
+      + self.ruleThickness / 2
+      + SILE.length(
+        math.max(
+          (constants.fractionDenominatorGapMin * scaleDown + self.denominator.height):tonumber(),
+          constants.fractionDenominatorShiftDown * scaleDown + self.axisHeight - self.ruleThickness / 2
+        )
+      )
   end
   self.height = self.numerator.height - self.numerator.relY
   self.depth = self.denominator.relY + self.denominator.depth
 end
 
-function elements.fraction:output (x, y, line)
+function elements.fraction:output(x, y, line)
   SILE.outputter:drawRule(
     scaleWidth(x, line),
     y.length - self.axisHeight - self.ruleThickness / 2,
-    scaleWidth(self.width, line), self.ruleThickness)
+    scaleWidth(self.width, line),
+    self.ruleThickness
+  )
 end
 
-local function newSubscript (spec)
-    return elements.subscript(spec.base, spec.sub, spec.sup)
+local function newSubscript(spec)
+  return elements.subscript(spec.base, spec.sub, spec.sup)
 end
 
-local function newUnderOver (spec)
+local function newUnderOver(spec)
   return elements.underOver(spec.base, spec.sub, spec.sup)
 end
 
 -- TODO replace with penlight equivalent
-local function mapList (f, l)
+local function mapList(f, l)
   local ret = {}
   for i, x in ipairs(l) do
     ret[i] = f(i, x)
@@ -1090,41 +1186,40 @@ end
 elements.mtr = pl.class(elements.mbox)
 -- elements.mtr._type = "" -- TODO why not set?
 
-function elements.mtr:_init (children)
+function elements.mtr:_init(children)
   self.children = children
 end
 
-function elements.mtr:styleChildren ()
+function elements.mtr:styleChildren()
   for _, c in ipairs(self.children) do
     c.mode = self.mode
   end
 end
 
-function elements.mtr.shape (_) end -- done by parent table
+function elements.mtr.shape(_) end -- done by parent table
 
-function elements.mtr.output (_) end
+function elements.mtr.output(_) end
 
 elements.table = pl.class(elements.mbox)
 elements.table._type = "table" -- TODO why case difference?
 
-function elements.table:_init (children, options)
+function elements.table:_init(children, options)
   elements.mbox._init(self)
   self.children = children
   self.options = options
   self.nrows = #self.children
   self.ncols = math.max(pl.utils.unpack(mapList(function(_, row)
-    return #row.children end, self.children)))
+    return #row.children
+  end, self.children)))
   SU.debug("math", "self.ncols =", self.ncols)
-  self.rowspacing = self.options.rowspacing and SILE.length(self.options.rowspacing)
-    or SILE.length("7pt")
-  self.columnspacing = self.options.columnspacing and SILE.length(self.options.columnspacing)
-    or SILE.length("6pt")
+  self.rowspacing = self.options.rowspacing and SILE.length(self.options.rowspacing) or SILE.length("7pt")
+  self.columnspacing = self.options.columnspacing and SILE.length(self.options.columnspacing) or SILE.length("6pt")
   -- Pad rows that do not have enough cells by adding cells to the
   -- right.
-  for i,row in ipairs(self.children) do
+  for i, row in ipairs(self.children) do
     for j = 1, (self.ncols - #row.children) do
       SU.debug("math", "padding i =", i, "j =", j)
-      table.insert(row.children, elements.stackbox('H', {}))
+      table.insert(row.children, elements.stackbox("H", {}))
       SU.debug("math", "size", #row.children)
     end
   end
@@ -1132,7 +1227,7 @@ function elements.table:_init (children, options)
     local l = {}
     for w in string.gmatch(options.columnalign, "[^%s]+") do
       if not (w == "left" or w == "center" or w == "right") then
-        SU.error("Invalid specifier in `columnalign` attribute: "..w)
+        SU.error("Invalid specifier in `columnalign` attribute: " .. w)
       end
       table.insert(l, w)
     end
@@ -1146,58 +1241,58 @@ function elements.table:_init (children, options)
     end
     self.options.columnalign = l
   else
-    self.options.columnalign = pl.List.range(1, self.ncols):map(function(_) return "center" end)
+    self.options.columnalign = pl.List.range(1, self.ncols):map(function(_)
+      return "center"
+    end)
   end
 end
 
-function elements.table:styleChildren ()
+function elements.table:styleChildren()
   if self.mode == mathMode.display and self.options.displaystyle ~= "false" then
-    for _,c in ipairs(self.children) do
+    for _, c in ipairs(self.children) do
       c.mode = mathMode.display
     end
   else
-    for _,c in ipairs(self.children) do
+    for _, c in ipairs(self.children) do
       c.mode = mathMode.text
     end
   end
 end
 
-function elements.table:shape ()
+function elements.table:shape()
   -- Determine the height (resp. depth) of each row, which is the max
   -- height (resp. depth) among its elements. Then we only need to add it to
   -- the table's height and center every cell vertically.
-  for _,row in ipairs(self.children) do
+  for _, row in ipairs(self.children) do
     row.height = SILE.length(0)
     row.depth = SILE.length(0)
-    for _,cell in ipairs(row.children) do
+    for _, cell in ipairs(row.children) do
       row.height = maxLength(row.height, cell.height)
       row.depth = maxLength(row.depth, cell.depth)
     end
   end
   self.vertSize = SILE.length(0)
   for i, row in ipairs(self.children) do
-    self.vertSize = self.vertSize + row.height + row.depth +
-      (i == self.nrows and SILE.length(0) or self.rowspacing) -- Spacing
+    self.vertSize = self.vertSize + row.height + row.depth + (i == self.nrows and SILE.length(0) or self.rowspacing) -- Spacing
   end
   local rowHeightSoFar = SILE.length(0)
   for i, row in ipairs(self.children) do
     row.relY = rowHeightSoFar + row.height - self.vertSize
-    rowHeightSoFar = rowHeightSoFar + row.height + row.depth +
-      (i == self.nrows and SILE.length(0) or self.rowspacing) -- Spacing
+    rowHeightSoFar = rowHeightSoFar + row.height + row.depth + (i == self.nrows and SILE.length(0) or self.rowspacing) -- Spacing
   end
   self.width = SILE.length(0)
   local thisColRelX = SILE.length(0)
   -- For every column...
-  for i = 1,self.ncols do
+  for i = 1, self.ncols do
     -- Determine its width
     local columnWidth = SILE.length(0)
-    for j = 1,self.nrows do
+    for j = 1, self.nrows do
       if self.children[j].children[i].width > columnWidth then
         columnWidth = self.children[j].children[i].width
       end
     end
     -- Use it to align the contents of every cell as required.
-    for j = 1,self.nrows do
+    for j = 1, self.nrows do
       local cell = self.children[j].children[i]
       if self.options.columnalign[i] == "left" then
         cell.relX = thisColRelX
@@ -1209,22 +1304,21 @@ function elements.table:shape ()
         SU.error("invalid columnalign parameter")
       end
     end
-    thisColRelX = thisColRelX + columnWidth +
-      (i == self.ncols and SILE.length(0) or self.columnspacing) -- Spacing
+    thisColRelX = thisColRelX + columnWidth + (i == self.ncols and SILE.length(0) or self.columnspacing) -- Spacing
   end
   self.width = thisColRelX
   -- Center myself vertically around the axis, and update relative Ys of rows accordingly
   local axisHeight = self:getMathMetrics().constants.axisHeight * self:getScaleDown()
   self.height = self.vertSize / 2 + axisHeight
   self.depth = self.vertSize / 2 - axisHeight
-  for _,row in ipairs(self.children) do
+  for _, row in ipairs(self.children) do
     row.relY = row.relY + self.vertSize / 2 - axisHeight
     -- Also adjust width
     row.width = self.width
   end
 end
 
-function elements.table.output (_) end
+function elements.table.output(_) end
 
 elements.mathMode = mathMode
 elements.atomType = atomType

@@ -5,8 +5,10 @@ package._name = "rotate"
 
 local pdf = require("justenoughlibtexpdf")
 
-local enter = function (self, _)
-  if not self.rotate then return end
+local enter = function(self, _)
+  if not self.rotate then
+    return
+  end
   local x = -math.rad(self.rotate)
   -- Keep center point the same
   pdf:gsave()
@@ -17,8 +19,10 @@ local enter = function (self, _)
   pdf.setmatrix(1, 0, 0, 1, -cx, -cy)
 end
 
-local leave =   function(self, _)
-  if not self.rotate then return end
+local leave = function(self, _)
+  if not self.rotate then
+    return
+  end
   pdf:grestore()
 end
 
@@ -28,17 +32,17 @@ end
 --                                                     RotationTransform[theta, {w/2,h/2}]]],
 --                                      w > 0 && h > 0 && theta > 0 && theta < 2 Pi ]
 -- PiecewiseExpand[xmax - xmin]
-    -- \[Piecewise]  -w Cos[theta]-h Sin[theta]  Sin[theta]<=0&&Cos[theta]<=0
-    --                w Cos[theta]-h Sin[theta]  Sin[theta]<=0&&Cos[theta]>0
-    --               -w Cos[theta]+h Sin[theta]  Sin[theta]>0&&Cos[theta]<=0
-    --                w Cos[theta]+h Sin[theta]  True
+-- \[Piecewise]  -w Cos[theta]-h Sin[theta]  Sin[theta]<=0&&Cos[theta]<=0
+--                w Cos[theta]-h Sin[theta]  Sin[theta]<=0&&Cos[theta]>0
+--               -w Cos[theta]+h Sin[theta]  Sin[theta]>0&&Cos[theta]<=0
+--                w Cos[theta]+h Sin[theta]  True
 
-local outputRotatedHbox = function (self, typesetter, line)
+local outputRotatedHbox = function(self, typesetter, line)
   local origbox = self.value.orig
   local x = self.value.theta
   -- Find origin of untransformed hbox
   local save = typesetter.frame.state.cursorX
-  typesetter.frame.state.cursorX = typesetter.frame.state.cursorX - (origbox.width.length-self.width)/2
+  typesetter.frame.state.cursorX = typesetter.frame.state.cursorX - (origbox.width.length - self.width) / 2
 
   local horigin = (typesetter.frame.state.cursorX + origbox.width.length / 2):tonumber()
   local vorigin = -(typesetter.frame.state.cursorY - (origbox.height - origbox.depth) / 2):tonumber()
@@ -52,7 +56,7 @@ local outputRotatedHbox = function (self, typesetter, line)
   typesetter.frame:advanceWritingDirection(self.width)
 end
 
-function package:_init ()
+function package:_init()
   base._init(self)
   if SILE.typesetter and SILE.typesetter.frame then
     enter(SILE.typesetter.frame, SILE.typesetter)
@@ -62,8 +66,7 @@ function package:_init ()
   table.insert(SILE.framePrototype.leaveHooks, leave)
 end
 
-function package:registerCommands ()
-
+function package:registerCommands()
   self:registerCommand("rotate", function(options, content)
     local angle = SU.required(options, "angle", "rotate command")
     local theta = -math.rad(angle)
@@ -73,36 +76,37 @@ function package:registerCommands ()
     local st = math.sin(theta)
     local ct = math.cos(theta)
     local height, width, depth
-    if st <= 0 and ct <= 0    then
-      width  = -w * ct - h * st
-      height = 0.5*(h-h*ct-w*st)
-      depth  = 0.5*(h+h*ct+w*st)
-    elseif st <=0 and ct > 0  then
-      width  =  w * ct - h * st
-      height = 0.5*(h+h*ct-w*st)
-      depth  = 0.5*(h-h*ct+w*st)
+    if st <= 0 and ct <= 0 then
+      width = -w * ct - h * st
+      height = 0.5 * (h - h * ct - w * st)
+      depth = 0.5 * (h + h * ct + w * st)
+    elseif st <= 0 and ct > 0 then
+      width = w * ct - h * st
+      height = 0.5 * (h + h * ct - w * st)
+      depth = 0.5 * (h - h * ct + w * st)
     elseif st > 0 and ct <= 0 then
-      width  = -w * ct + h * st
-      height = 0.5*(h-h*ct+w*st)
-      depth  = 0.5*(h+h*ct-w*st)
+      width = -w * ct + h * st
+      height = 0.5 * (h - h * ct + w * st)
+      depth = 0.5 * (h + h * ct - w * st)
     else
-      width  =  w * ct + h * st
-      height = 0.5*(h+h*ct+w*st)
-      depth  = 0.5*(h-h*ct-w*st)
+      width = w * ct + h * st
+      height = 0.5 * (h + h * ct + w * st)
+      depth = 0.5 * (h - h * ct - w * st)
     end
     depth = -depth
-    if depth < SILE.length(0) then depth = SILE.length(0) end
+    if depth < SILE.length(0) then
+      depth = SILE.length(0)
+    end
     SILE.outputter:_ensureInit()
     SILE.typesetter:pushHbox({
-      value = { orig = origbox, theta = theta},
+      value = { orig = origbox, theta = theta },
       height = height,
       width = width,
       depth = depth,
-      outputYourself = outputRotatedHbox
+      outputYourself = outputRotatedHbox,
     })
     SILE.typesetter:pushHlist(hlist)
   end)
-
 end
 
 package.documentation = [[

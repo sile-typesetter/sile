@@ -11,7 +11,7 @@ local formatNumber = {
 
     -- Alpha is a special case (a numbering system, though this table is for
     -- formatting style hooks normally)
-    alpha = function (num)
+    alpha = function(num)
       local out = ""
       local a = string.byte("a")
       repeat
@@ -20,16 +20,15 @@ local formatNumber = {
         num = (num - num % 26) / 26
       until num < 1
       return out
-    end
-
-  }
+    end,
+  },
 }
 
 -- Decent subset from unum.h
 local icuStyles = {
   default = 0, -- UNUM_PATTERN_DECIMAL
   decimal = 1, -- UNUM_DECIMAL
-  string = 5,  -- UNUM_SPELLOUT
+  string = 5, -- UNUM_SPELLOUT
   ordinal = 6, -- UNUM_ORDINAL
 }
 
@@ -41,7 +40,7 @@ local icuStyleBypass = {
   roman = true,
 }
 
-local icuFormat = function (num, lang, options)
+local icuFormat = function(num, lang, options)
   -- Consistency: further below we'll concatenate those, and an empty
   -- string is likely a user mistake.
   if not lang and not options.system then
@@ -89,8 +88,8 @@ local icuFormat = function (num, lang, options)
   return tostring(ok and result or num)
 end
 
-setmetatable (formatNumber, {
-  __call = function (self, num, options, case)
+setmetatable(formatNumber, {
+  __call = function(self, num, options, case)
     -- Formats a number according to options, and optional case
     -- Options:
     -- - system: a numbering system string, e.g. "latn" (= "arabic"), "roman", "arab", etc.
@@ -108,7 +107,12 @@ setmetatable (formatNumber, {
     -- BEGIN COMPATIBILITY SHIM
     if type(options) ~= "table" then
       -- It used to be a string aggregating both concepts.
-      SU.deprecated("Previous syntax of SU.formatNumber", "new syntax for SU.formatNumber", "0.14.6", "0.16.0", [[
+      SU.deprecated(
+        "Previous syntax of SU.formatNumber",
+        "new syntax for SU.formatNumber",
+        "0.14.6",
+        "0.16.0",
+        [[
   Previous syntax was SU.formatNumber(num, format[, case]) with a format string
   New syntax is SU.formatNumber(num, options[, case]) with an options table,
   possibly containing:
@@ -120,7 +124,8 @@ setmetatable (formatNumber, {
       Possibly extended by additional language-specific formatting rules.
   Note that the new syntax doesn't handle casing on the format style, for separation of
   concerns.
-]])
+]]
+      )
       if not case then
         if options:match("^%l") then
           case = "lower"
@@ -136,7 +141,12 @@ setmetatable (formatNumber, {
       elseif options:lower() == "string" then
         options = { style = "string" }
       elseif options:lower() == "ordinal" and SILE.settings:get("document.language") == "tr" then
-        SU.deprecated("Format 'ordinal' in Turkish in SU.formatNumber", "'ordinal-string' in SU.formatNumber", "0.14.6", "0.16.0")
+        SU.deprecated(
+          "Format 'ordinal' in Turkish in SU.formatNumber",
+          "'ordinal-string' in SU.formatNumber",
+          "0.14.6",
+          "0.16.0"
+        )
         options = { style = "ordinal-string" }
       else
         options = { system = options }
@@ -183,7 +193,7 @@ setmetatable (formatNumber, {
       result = icuFormat(num, lang, options)
     end
     return icu.case(result, lang, case)
-  end
+  end,
 })
 
 return formatNumber
