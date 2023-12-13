@@ -92,24 +92,6 @@ function class:setOptions (options)
   for option, value in pairs(options) do
     self.options[option] = value
   end
-  if not SILE.documentState.sheetSize then
-    SILE.documentState.sheetSize = {
-      SILE.documentState.paperSize[1],
-      SILE.documentState.paperSize[2]
-    }
-  end
-  if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1]
-      or SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] then
-    SU.error("Sheet size shall not be smaller than the paper size")
-  end
-  if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1] + SILE.documentState.bleed then
-    SU.debug("frames", "Sheet size width augmented to take page bleed into account")
-    SILE.documentState.sheetSize[1] = SILE.documentState.paperSize[1] + SILE.documentState.bleed
-  end
-  if SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] + SILE.documentState.bleed then
-    SU.debug("frames", "Sheet size height augmented to take page bleed into account")
-    SILE.documentState.sheetSize[2] = SILE.documentState.paperSize[2] + SILE.documentState.bleed
-  end
 end
 
 function class:declareOption (option, setter)
@@ -153,9 +135,22 @@ function class:declareOptions ()
     if size then
       self.sheetsize = size
       SILE.documentState.sheetSize = SILE.papersize(size, self.options.landscape)
+      if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1]
+        or SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] then
+        SU.error("Sheet size shall not be smaller than the paper size")
+      end
+      if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1] + SILE.documentState.bleed then
+        SU.debug("frames", "Sheet size width augmented to take page bleed into account")
+        SILE.documentState.sheetSize[1] = SILE.documentState.paperSize[1] + SILE.documentState.bleed
+      end
+      if SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] + SILE.documentState.bleed then
+        SU.debug("frames", "Sheet size height augmented to take page bleed into account")
+        SILE.documentState.sheetSize[2] = SILE.documentState.paperSize[2] + SILE.documentState.bleed
+      end
+    else
+      return self.sheetsize
     end
-    return self.sheetsize
-  end)
+   end)
   self:declareOption("bleed", function (_, dimen)
     if dimen then
       self.bleed = dimen

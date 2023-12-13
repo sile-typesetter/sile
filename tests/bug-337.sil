@@ -1,4 +1,4 @@
-\begin[papersize=a7,class=book, sheetsize=a6]{document}
+\begin[papersize=a7,class=book,sheetsize=a6]{document}
 \use[module=packages.color]
 \script[src=inc.bug-337]
 \define[command=cropmarks:header]{tests/bug-337.sil}

@@ -58,7 +58,7 @@ end
 function package:registerCommands ()
 
   self:registerCommand("cropmarks:header", function (_, _)
-    local info = SILE.masterFilename
+    local info = SILE.input.filenames[1]
        .. " - "
        .. self.class.packages.date:date({ format = "%x %X" })
        .. " - " .. outcounter

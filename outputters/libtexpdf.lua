@@ -28,13 +28,15 @@ local deltaX
 local deltaY
 local function trueXCoord (x)
   if not deltaX then
-    deltaX = (SILE.documentState.sheetSize[1] - SILE.documentState.paperSize[1]) / 2
+    local sheetSize = SILE.documentState.sheetSize or SILE.documentState.paperSize
+    deltaX = (sheetSize[1] - SILE.documentState.paperSize[1]) / 2
   end
   return x + deltaX
 end
 local function trueYCoord (y)
   if not deltaY then
-    deltaY = (SILE.documentState.sheetSize[2] - SILE.documentState.paperSize[2]) / 2
+    local sheetSize = SILE.documentState.sheetSize or SILE.documentState.paperSize
+    deltaY = (sheetSize[2] - SILE.documentState.paperSize[2]) / 2
   end
   return y + deltaY
 end
@@ -45,7 +47,8 @@ end
 
 function outputter:_ensureInit ()
   if not started then
-    local w, h = SILE.documentState.sheetSize[1], SILE.documentState.sheetSize[2]
+    local sheetSize = SILE.documentState.sheetSize or SILE.documentState.paperSize
+    local w, h = sheetSize[1], sheetSize[2]
     local fname = self:getOutputFilename()
     -- Ideally we could want to set the PDF CropBox, BleedBox, TrimBox...
     -- Our wrapper only manages the MediaBox at this point.
@@ -193,7 +196,8 @@ function outputter:drawSVG (figure, x, y, _, height, scalefactor)
   pdf.add_content("q")
   self:setCursor(x, y)
   x, y = self:getCursor()
-  local newy = y - SILE.documentState.paperSize[2] / 2 + height - SILE.documentState.sheetSize[2] / 2
+  local sheetSize = SILE.documentState.sheetSize or SILE.documentState.paperSize
+  local newy = y - SILE.documentState.paperSize[2] / 2 + height - sheetSize[2] / 2
   pdf.add_content(table.concat({ scalefactor, 0, 0, -scalefactor, trueXCoord(x), newy, "cm" }, " "))
   pdf.add_content(figure)
   pdf.add_content("Q")
