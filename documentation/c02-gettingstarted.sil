@@ -82,9 +82,11 @@ These may be built and installed like any other AUR\footnote{\url{https://wiki.a
 
 \subsection{Fedora}
 
-A COPR repository\footnote{\url{https://copr.fedorainfracloud.org/coprs/jonny/SILE/}} is available for Fedora users with packages of SILE and all the necessary dependencies including fonts.
-Fedora 36 and Fedora 37 are supported.
-There is work in progress to get the packages added to the official Fedora repository.
+Official packages are available in Fedora 39 and beyond.
+
+\terminal{$ dnf install sile}
+
+For older Fedora releases a COPR repository\footnote{\url{https://copr.fedorainfracloud.org/coprs/jonny/SILE/}} is available with Fedora 36 and 37 support.
 
 \begin{terminal}
 $ dnf copr enable jonny/SILE
