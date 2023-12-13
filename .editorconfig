@@ -10,7 +10,16 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 max_line_length = 120
+
+# StyLua keys
 collapse_simple_statement = never
+
+# EmmyLuaCodeStyle keys
+quote_style = double,
+call_arg_parentheses = keep,
+trailing_table_separator = always,
+align_call_args = true,
+end_statement_with_semicolon = same_line
 
 [*.pl]
 indent_style = space
