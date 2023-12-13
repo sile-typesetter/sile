@@ -1,0 +1,16 @@
+name: StyLua
+
+on: [ push, pull_request ]
+
+jobs:
+
+  luacheck:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: JohnnyMorganz/stylua-action@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: v3.0.0
+          args: --check -g '*.lua' -g '*.lua.in' .

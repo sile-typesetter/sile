@@ -7,9 +7,9 @@ package._name = "break-firstfit"
 -- algorithm, especially when you're dealing with vertical
 -- typesetting. Oh, and it's really fast too.
 
-function package:_init ()
-  base._init(self)
-  SILE.typesetters.firstfit:cast(SILE.typesetter)
+function package:_init()
+   base._init(self)
+   SILE.typesetters.firstfit:cast(SILE.typesetter)
 end
 
 package.documentation = [[
