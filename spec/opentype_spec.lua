@@ -10,16 +10,16 @@ SILE.init()
 -- good. To test a complete set of tests use `make busted`.
 local fcf = os.getenv("FONTCONFIG_FILE")
 if not fcf then
-  return
+   return
 end
 
 describe("The OpenType loader/parser", function()
-  local ot = require("core.opentype-parser")
-  local face = SILE.shaper.getFace({ family = "Libertinus Serif" })
-  local font = ot.parseFont(face)
+   local ot = require("core.opentype-parser")
+   local face = SILE.shaper.getFace({ family = "Libertinus Serif" })
+   local font = ot.parseFont(face)
 
-  it("should convert Microsoft-platform name strings to UTF8", function()
-    local version = font.names[5]["en-US"][1]
-    assert.is.equal("Version 7.020;RELEASE", version)
-  end)
+   it("should convert Microsoft-platform name strings to UTF8", function()
+      local version = font.names[5]["en-US"][1]
+      assert.is.equal("Version 7.020;RELEASE", version)
+   end)
 end)

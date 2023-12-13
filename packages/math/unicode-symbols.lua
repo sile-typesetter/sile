@@ -1,43 +1,43 @@
 local atomType = {
-  ordinary = 0,
-  bigOperator = 1,
-  binaryOperator = 2,
-  relationalOperator = 3,
-  openingSymbol = 4,
-  closeSymbol = 5,
-  punctuationSymbol = 6,
-  inner = 7,
-  overSymbol = 8,
-  underSymbol = 9,
-  accentSymbol = 10,
-  radicalSymbol = 11,
-  vcenter = 12,
+   ordinary = 0,
+   bigOperator = 1,
+   binaryOperator = 2,
+   relationalOperator = 3,
+   openingSymbol = 4,
+   closeSymbol = 5,
+   punctuationSymbol = 6,
+   inner = 7,
+   overSymbol = 8,
+   underSymbol = 9,
+   accentSymbol = 10,
+   radicalSymbol = 11,
+   vcenter = 12,
 }
 
 local symbolDefaults = {}
 
 local mkAtomType = {
-  mathopen = atomType.openingSymbol,
-  mathclose = atomType.closeSymbol,
-  mathord = atomType.ordinary,
-  mathfence = atomType.ordinary,
-  mathalpha = atomType.ordinary,
-  mathbin = atomType.binaryOperator,
-  mathaccent = atomType.accentSymbol,
-  mathaccentwide = atomType.accentSymbol,
-  mathrel = atomType.relationalOperator,
-  mathunder = atomType.underSymbol,
-  mathover = atomType.overSymbol,
-  mathop = atomType.ordinary,
+   mathopen = atomType.openingSymbol,
+   mathclose = atomType.closeSymbol,
+   mathord = atomType.ordinary,
+   mathfence = atomType.ordinary,
+   mathalpha = atomType.ordinary,
+   mathbin = atomType.binaryOperator,
+   mathaccent = atomType.accentSymbol,
+   mathaccentwide = atomType.accentSymbol,
+   mathrel = atomType.relationalOperator,
+   mathunder = atomType.underSymbol,
+   mathover = atomType.overSymbol,
+   mathop = atomType.ordinary,
 }
 
 local symbols = {}
 
 -- TODO: Stuff 4th argument (description) into help string for symbol command
 local function addSymbol(codepoint, command, typ, _)
-  local str = luautf8.char(codepoint)
-  symbols[command] = str
-  symbolDefaults[str] = { atom = mkAtomType[typ] }
+   local str = luautf8.char(codepoint)
+   symbols[command] = str
+   symbolDefaults[str] = { atom = mkAtomType[typ] }
 end
 
 -- Generated from the unicode-math-table.tex in the unicode-math LaTeX package
@@ -627,10 +627,10 @@ addSymbol(0x02300, "diameter", "mathord", "diameter sign")
 addSymbol(0x02302, "house", "mathord", "house")
 addSymbol(0x02305, "varbarwedge", "mathbin", "/barwedge b: logical and, bar above [projective (bar over small wedge)]")
 addSymbol(
-  0x02306,
-  "vardoublebarwedge",
-  "mathbin",
-  "/doublebarwedge b: logical and, double bar above [perspective (double bar over small wedge)]"
+   0x02306,
+   "vardoublebarwedge",
+   "mathbin",
+   "/doublebarwedge b: logical and, double bar above [perspective (double bar over small wedge)]"
 )
 addSymbol(0x02308, "lceil", "mathopen", "left ceiling")
 addSymbol(0x02309, "rceil", "mathclose", "right ceiling")
@@ -943,10 +943,10 @@ addSymbol(0x02915, "nVrightarrowtail", "mathrel", "rightwards arrow with tail wi
 addSymbol(0x02916, "twoheadrightarrowtail", "mathrel", "rightwards two-headed arrow with tail")
 addSymbol(0x02917, "nvtwoheadrightarrowtail", "mathrel", "rightwards two-headed arrow with tail with vertical stroke")
 addSymbol(
-  0x02918,
-  "nVtwoheadrightarrowtail",
-  "mathrel",
-  "rightwards two-headed arrow with tail with double vertical stroke"
+   0x02918,
+   "nVtwoheadrightarrowtail",
+   "mathrel",
+   "rightwards two-headed arrow with tail with double vertical stroke"
 )
 addSymbol(0x02919, "lefttail", "mathrel", "leftwards arrow-tail")
 addSymbol(0x0291A, "righttail", "mathrel", "rightwards arrow-tail")
@@ -1022,68 +1022,68 @@ addSymbol(0x0295F, "barrightharpoondown", "mathrel", "rightwards harpoon with ba
 addSymbol(0x02960, "upharpoonleftbar", "mathrel", "upwards harpoon with barb left from bar")
 addSymbol(0x02961, "bardownharpoonleft", "mathrel", "downwards harpoon with barb left from bar")
 addSymbol(
-  0x02962,
-  "leftharpoonsupdown",
-  "mathrel",
-  "leftwards harpoon with barb up above leftwards harpoon with barb down"
+   0x02962,
+   "leftharpoonsupdown",
+   "mathrel",
+   "leftwards harpoon with barb up above leftwards harpoon with barb down"
 )
 addSymbol(
-  0x02963,
-  "upharpoonsleftright",
-  "mathrel",
-  "upwards harpoon with barb left beside upwards harpoon with barb right"
+   0x02963,
+   "upharpoonsleftright",
+   "mathrel",
+   "upwards harpoon with barb left beside upwards harpoon with barb right"
 )
 addSymbol(
-  0x02964,
-  "rightharpoonsupdown",
-  "mathrel",
-  "rightwards harpoon with barb up above rightwards harpoon with barb down"
+   0x02964,
+   "rightharpoonsupdown",
+   "mathrel",
+   "rightwards harpoon with barb up above rightwards harpoon with barb down"
 )
 addSymbol(
-  0x02965,
-  "downharpoonsleftright",
-  "mathrel",
-  "downwards harpoon with barb left beside downwards harpoon with barb right"
+   0x02965,
+   "downharpoonsleftright",
+   "mathrel",
+   "downwards harpoon with barb left beside downwards harpoon with barb right"
 )
 addSymbol(
-  0x02966,
-  "leftrightharpoonsup",
-  "mathrel",
-  "leftwards harpoon with barb up above rightwards harpoon with barb up"
+   0x02966,
+   "leftrightharpoonsup",
+   "mathrel",
+   "leftwards harpoon with barb up above rightwards harpoon with barb up"
 )
 addSymbol(
-  0x02967,
-  "leftrightharpoonsdown",
-  "mathrel",
-  "leftwards harpoon with barb down above rightwards harpoon with barb down"
+   0x02967,
+   "leftrightharpoonsdown",
+   "mathrel",
+   "leftwards harpoon with barb down above rightwards harpoon with barb down"
 )
 addSymbol(
-  0x02968,
-  "rightleftharpoonsup",
-  "mathrel",
-  "rightwards harpoon with barb up above leftwards harpoon with barb up"
+   0x02968,
+   "rightleftharpoonsup",
+   "mathrel",
+   "rightwards harpoon with barb up above leftwards harpoon with barb up"
 )
 addSymbol(
-  0x02969,
-  "rightleftharpoonsdown",
-  "mathrel",
-  "rightwards harpoon with barb down above leftwards harpoon with barb down"
+   0x02969,
+   "rightleftharpoonsdown",
+   "mathrel",
+   "rightwards harpoon with barb down above leftwards harpoon with barb down"
 )
 addSymbol(0x0296A, "leftharpoonupdash", "mathrel", "leftwards harpoon with barb up above long dash")
 addSymbol(0x0296B, "dashleftharpoondown", "mathrel", "leftwards harpoon with barb down below long dash")
 addSymbol(0x0296C, "rightharpoonupdash", "mathrel", "rightwards harpoon with barb up above long dash")
 addSymbol(0x0296D, "dashrightharpoondown", "mathrel", "rightwards harpoon with barb down below long dash")
 addSymbol(
-  0x0296E,
-  "updownharpoonsleftright",
-  "mathrel",
-  "upwards harpoon with barb left beside downwards harpoon with barb right"
+   0x0296E,
+   "updownharpoonsleftright",
+   "mathrel",
+   "upwards harpoon with barb left beside downwards harpoon with barb right"
 )
 addSymbol(
-  0x0296F,
-  "downupharpoonsleftright",
-  "mathrel",
-  "downwards harpoon with barb left beside upwards harpoon with barb right"
+   0x0296F,
+   "downupharpoonsleftright",
+   "mathrel",
+   "downwards harpoon with barb left beside upwards harpoon with barb right"
 )
 addSymbol(0x02970, "rightimply", "mathrel", "right double arrow with rounded head")
 addSymbol(0x02971, "equalrightarrow", "mathrel", "equals sign above rightwards arrow")
@@ -1529,10 +1529,10 @@ addSymbol(0x02B3A, "nVleftarrowtail", "mathrel", "leftwards arrow with tail with
 addSymbol(0x02B3B, "twoheadleftarrowtail", "mathrel", "leftwards two-headed arrow with tail")
 addSymbol(0x02B3C, "nvtwoheadleftarrowtail", "mathrel", "leftwards two-headed arrow with tail with vertical stroke")
 addSymbol(
-  0x02B3D,
-  "nVtwoheadleftarrowtail",
-  "mathrel",
-  "leftwards two-headed arrow with tail with double vertical stroke"
+   0x02B3D,
+   "nVtwoheadleftarrowtail",
+   "mathrel",
+   "leftwards two-headed arrow with tail with double vertical stroke"
 )
 addSymbol(0x02B3E, "leftarrowx", "mathrel", "leftwards arrow through x")
 addSymbol(0x02B3F, "leftcurvedarrow", "mathrel", "wave arrow pointing directly left")
@@ -2652,7 +2652,7 @@ symbolDefaults["mod"] = { atom = atomType.binaryOperator }
 symbolDefaults["%"] = { atom = atomType.binaryOperator }
 
 return {
-  symbols = symbols,
-  atomType = atomType,
-  symbolDefaults = symbolDefaults,
+   symbols = symbols,
+   atomType = atomType,
+   symbolDefaults = symbolDefaults,
 }
