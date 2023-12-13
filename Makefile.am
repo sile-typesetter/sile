@@ -227,7 +227,7 @@ luacheck:
 	$(LUACHECK) -j$(shell nproc) -q .
 
 stylua:
-	$(STYLUA) --check .
+	$(STYLUA) --check -g '*.lua' -g '*.lua.in' .
 
 busted: $(SILE) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'

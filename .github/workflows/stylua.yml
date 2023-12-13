@@ -13,4 +13,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: v3.0.0
-          args: --check .
+          args: --check -g '*.lua' -g '*.lua.in' .
