@@ -80,6 +80,14 @@ Finally, there is also the case when the actual paper sheets available to you ar
 
 For instance, \code{papersize=6in x 9in, sheetsize=a4} produces an A4-dimensioned document, but with you content formatted as a 6 per 9 inches US trade book. You may, obviously, combine these options and also specify a bleed area.
 
+\subsection{Setting orientation as landscape}
+
+The orientation of the page is defined as "portrait" by default, but if you want to set it as landscape there is an option for that:
+
+\begin[type=autodoc:codeblock]{raw}
+\begin[landscape=true]{document}
+\end{raw}
+
 \section{Ordinary text}
 
 On the whole, ordinary text isn’t particularly interesting—it’s just typeset.

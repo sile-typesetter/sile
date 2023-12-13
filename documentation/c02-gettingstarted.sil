@@ -256,7 +256,7 @@ This can be done with:
 Now the \code{sile} command will be available from any directory.
 
 \begin{autodoc:note}
-If you wish you, can skip the install step and use the compiled SILE executable diretly from the source directory.
+If you wish you, can skip the install step and use the compiled SILE executable directly from the source directory.
 As configured above, this will only work from a shell with the CWD set to the SILE source.
 To make it usable from anywhere, you can configure it with the source directory baked in as the installation location.
 

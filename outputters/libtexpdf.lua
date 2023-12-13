@@ -61,7 +61,7 @@ function outputter:newPage ()
   pdf.beginpage()
 end
 
--- pdf stucture package needs a tie in here
+-- pdf structure package needs a tie in here
 function outputter._endHook (_)
 end
 

@@ -169,7 +169,7 @@ end
 
 \subsection{Defining raw handlers}
 
-“Raw handlers” allow packages to register new handlers (or callbacks) for use with the \autodoc:environment{raw} environment, which content is read as-is by SILE, without being interpretated.
+“Raw handlers” allow packages to register new handlers (or callbacks) for use with the \autodoc:environment{raw} environment, which content is read as-is by SILE, without being interpreted.
 This is intended for advanced use cases where you may want to provide a way for users to embed arbitrary content (likely in another syntax), and you will provide the complete parsing and handling for it.\footnote{%
 This may be used to implement a “clever” verbatim environment.
 It is also used, for instance, by the \strong{markdown.sile} 3rd-party collection to embed Markdown or Djot content directly in a (SIL or XML) document.}
@@ -458,7 +458,7 @@ self:registerCommand("tocentry", function (options, content)
   SILE.call("info", {
     category = "toc",
     value = {
-      label = SU.stripContentPos(content), level = (options.level or 1)
+      label = SU.ast.stripContentPos(content), level = (options.level or 1)
     }
   })
 end)

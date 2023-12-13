@@ -75,7 +75,7 @@ function leader:outputYourself (typesetter, line)
     end
   end
   -- Return to our start (saved) position and move to the full leaders width.
-  -- (So we are sure to safely get the correct width, whathever we did above
+  -- (So we are sure to safely get the correct width, whatever we did above
   -- with the remainder space and the leader repetitions).
   typesetter.frame.state.cursorX = ox
   typesetter.frame.state.cursorY = oy

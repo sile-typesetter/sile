@@ -126,7 +126,7 @@ end
 function package:registerRawHandlers ()
 
   self:registerRawHandler("autodoc:codeblock", function(options, content)
-    SILE.call("autodoc:codeblock", options, { content[1] }) -- Still issues with SU.contentToString() witb raw content
+    SILE.call("autodoc:codeblock", options, { content[1] }) -- Still issues with SU.ast.contentToString() witb raw content
   end)
 
 end
@@ -356,7 +356,7 @@ function package:registerCommands ()
     SILE.call("novbreak")
     SILE.call("fullrule", { thickness = "0.5pt" })
     SILE.call("novbreak")
-  end, "Ouputs a line used for surrounding code blocks (somewhat internal)")
+  end, "Outputs a line used for surrounding code blocks (somewhat internal)")
 
   self:registerCommand("autodoc:example", function(_, content)
     -- Loosely derived from the \examplefont command from the original SILE manual...

@@ -8,8 +8,10 @@ inputter.order = 2
 
 local function startcommand (parser, command, options)
   local stack = parser:getcallbacks().stack
-  local lno, col, _ = parser:pos()
-  local element = { command = command, options = options, lno = lno, col = col }
+  local lno, col, pos = parser:pos()
+  local position = { lno = lno, col = col, pos = pos }
+  -- create an empty command which content will be filled on closing tag
+  local element = SU.ast.createCommand(command, options, nil, position)
   table.insert(stack, element)
 end
 
@@ -33,12 +35,13 @@ local function text (parser, msg)
 end
 
 local function parse (doc)
-  local content = { StartElement = startcommand,
-              EndElement = endcommand,
-              CharacterData = text,
-              _nonstrict = true,
-              stack = {{}}
-            }
+  local content = {
+    StartElement = startcommand,
+    EndElement = endcommand,
+    CharacterData = text,
+    _nonstrict = true,
+    stack = {{}}
+  }
   local parser = lxp.new(content)
   local status, err
   if type(doc) == "string" then
@@ -80,7 +83,7 @@ function inputter.parse (_, doc)
   -- it doesn't look like a native SILE one already.
   local rootelement = tree.command
   if rootelement ~= "sile" and rootelement ~= "document" then
-    tree = { tree, command = "document" }
+    tree = SU.ast.createCommand("document", {}, tree)
   end
   return { tree }
 end

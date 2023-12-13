@@ -132,6 +132,13 @@ function typesetter.declareSettings(_)
     help = "Width to break lines at"
   })
 
+  SILE.settings:declare({
+    parameter = "typesetter.italicCorrection",
+    type = "boolean",
+    default = false,
+    help = "Whether italic correction is activated or not"
+  })
+
 end
 
 function typesetter:initState ()
@@ -315,18 +322,160 @@ function typesetter:breakIntoLines (nodelist, breakWidth)
   return self:breakpointsToLines(breakpoints)
 end
 
-function typesetter.shapeAllNodes (_, nodelist)
-  local newNl = {}
-  for i = 1, #nodelist do
-    if nodelist[i].is_unshaped then
-      pl.tablex.insertvalues(newNl, nodelist[i]:shape())
-    else
-      newNl[#newNl+1] = nodelist[i]
+local function getLastShape(nodelist)
+  local hasGlue
+  local last
+  if nodelist then
+    -- The node list may contain nnodes, penalties, kern and glue
+    -- We skip the latter, and retrieve the last shaped item.
+    for i = #nodelist, 1, -1 do
+      local n = nodelist[i]
+      if n.is_nnode then
+        local items = n.nodes[#n.nodes].value.items
+        last = items[#items]
+        break
+      end
+      if n.is_kern and n.subtype == "punctspace" then
+        -- Some languages such as French insert a special space around
+        -- punctuations. In those case, we should not need italic correction.
+        break
+      end
+      if n.is_glue then hasGlue = true end
     end
   end
-  for i =1, #newNl do nodelist[i]=newNl[i] end
-  if #nodelist > #newNl then
-    for i=#newNl+1, #nodelist do nodelist[i]=nil end
+  return last, hasGlue
+end
+local function getFirstShape(nodelist)
+  local first
+  local hasGlue
+  if nodelist then
+    -- The node list may contain nnodes, penalties, kern and glue
+    -- We skip the latter, and retrieve the first shaped item.
+    for i = 1, #nodelist do
+      local n = nodelist[i]
+      if n.is_nnode then
+        local items = n.nodes[1].value.items
+        first = items[1]
+        break
+      end
+      if n.is_kern and n.subtype == "punctspace" then
+        -- Some languages such as French insert a special space around
+        -- punctuations. In those case, we should not need italic correction.
+        break
+      end
+      if n.is_glue then hasGlue = true end
+    end
+  end
+  return first, hasGlue
+end
+
+local function fromItalicCorrection (precShape, curShape)
+  local xOffset
+  if not curShape or not precShape then
+    xOffset = 0
+  else
+    -- Computing italic correction is at best heuristics.
+    -- The strong assumption is that italic is slanted to the right.
+    -- Thus, the part of the character that goes beyond its width is usually
+    -- maximal at the top of the glyph.
+    -- E.g. consider a "f", that would be the top hook extent.
+    -- Pathological cases exist, such as fonts with a Q with a long tail,
+    -- but these will rarely occur in usual languages. For instance, Klingon's
+    -- "QaQ" might be an issue, but there's not much we can do...
+    -- Another assumption is that we can distribute that extent in proportion
+    -- with the next character's height.
+    -- This might not work that well with non-Latin scripts.
+    local d = precShape.glyphWidth + precShape.x_bearing
+    local delta = d > precShape.width and d - precShape.width or 0
+    xOffset = precShape.height <= curShape.height
+      and delta
+      or delta * curShape.height / precShape.height
+  end
+  return xOffset
+end
+
+local function toItalicCorrection (precShape, curShape)
+  if not SILE.settings:get("typesetter.italicCorrection") then return end
+  local xOffset
+  if not curShape or not precShape then
+    xOffset = 0
+  else
+    -- Same assumptions as fromItalicCorrection(), but on the starting side of
+    -- the glyph.
+    local d = curShape.x_bearing
+    local delta = d < 0 and -d or 0
+    xOffset = precShape.depth >= curShape.depth
+      and delta
+      or delta * precShape.depth / curShape.depth
+  end
+  return xOffset
+end
+
+local function isItalicLike(nnode)
+  -- We could do...
+  --  return nnode and string.lower(nnode.options.style) == "italic"
+  -- But it's probably more robust to use the italic angle, so that
+  -- thin italic, oblique or slanted fonts etc. may work too.
+  local ot = require("core.opentype-parser")
+  local face = SILE.font.cache(nnode.options, SILE.shaper.getFace)
+  local font = ot.parseFont(face)
+  return font.post.italicAngle ~= 0
+end
+
+function typesetter.shapeAllNodes (_, nodelist, inplace)
+  inplace = SU.boolean(inplace, true) -- Compatibility with earlier versions
+  local newNodelist = {}
+  local prec
+  local precShapedNodes
+  for _, current in ipairs(nodelist) do
+    if current.is_unshaped then
+      local shapedNodes = current:shape()
+
+      if SILE.settings:get("typesetter.italicCorrection") and prec then
+        local itCorrOffset
+        local isGlue
+        if isItalicLike(prec) and not isItalicLike(current) then
+          local precShape, precHasGlue = getLastShape(precShapedNodes)
+          local curShape, curHasGlue = getFirstShape(shapedNodes)
+          isGlue = precHasGlue or curHasGlue
+          itCorrOffset = fromItalicCorrection(precShape, curShape)
+        elseif not isItalicLike(prec) and isItalicLike(current) then
+          local precShape, precHasGlue = getLastShape(precShapedNodes)
+          local curShape, curHasGlue = getFirstShape(shapedNodes)
+          isGlue = precHasGlue or curHasGlue
+          itCorrOffset = toItalicCorrection(precShape, curShape)
+        end
+        if itCorrOffset and itCorrOffset ~= 0 then
+          -- If one of the node contains a glue (e.g. "a \em{proof} is..."),
+          -- line breaking may occur between them, so our correction shall be
+          -- a glue too.
+          -- Otherwise, the font change is considered to occur at a non-breaking
+          -- point (e.g. "\em{proof}!") and the correction shall be a kern.
+          local makeItCorrNode = isGlue and SILE.nodefactory.glue or SILE.nodefactory.kern
+          newNodelist[#newNodelist+1] = makeItCorrNode({
+            width = SILE.length(itCorrOffset),
+            subtype = "itcorr"
+          })
+        end
+      end
+
+      pl.tablex.insertvalues(newNodelist, shapedNodes)
+
+      prec = current
+      precShapedNodes = shapedNodes
+    else
+      prec = nil
+      newNodelist[#newNodelist+1] = current
+    end
+  end
+
+  if not inplace then
+    return newNodelist
+  end
+
+  for i =1, #newNodelist do nodelist[i] = newNodelist[i] end
+  if #nodelist > #newNodelist then
+    for i= #newNodelist + 1, #nodelist do nodelist[i] = nil end
   end
 end
 
@@ -352,7 +501,7 @@ function typesetter:boxUpNodes ()
   self:pushGlue(parfillskip)
   self:pushPenalty(-inf_bad)
   SU.debug("typesetter", function ()
-    return "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.contentToString(nodelist))
+    return "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.ast.contentToString(nodelist))
   end)
   local breakWidth = SILE.settings:get("typesetter.breakwidth") or self.frame:getLineWidth()
   local lines = self:breakIntoLines(nodelist, breakWidth)
@@ -641,12 +790,7 @@ end
 
 function typesetter:leaveHmode (independent)
   if self.state.hmodeOnly then
-    -- HACK HBOX
-    -- This should likely be an error, but may break existing uses
-    -- (although these are probably already defective).
-    -- See also comment HACK HBOX in typesetter:makeHbox().
-    SU.warn([[Building paragraphs in this context may have unpredictable results.
-It will likely break in future versions]])
+    SU.error([[Paragraphs are forbidden in restricted horizontal mode.]])
   end
   SU.debug("typesetter", "Leaving hmode")
   local margins = self:getMargins()
@@ -754,7 +898,7 @@ function typesetter:breakpointsToLines (breakpoints)
   end
   if linestart < #nodes then
     -- Abnormal, but warn so that one has a chance to check which bits
-    -- are misssing at output.
+    -- are missing at output.
     SU.warn("Internal typesetter error " .. (#nodes - linestart) .. " skipped nodes")
   end
   return lines
@@ -779,7 +923,7 @@ function typesetter.computeLineRatio (_, breakwidth, slice)
       -- zero boxes, so as to reach actual content...
       if slice[n].value ~= "margin" then
         -- ... but any other glue than a margin, at the end of a line, is actually
-        -- extraneous. It will however also be accounted for below, so substract
+        -- extraneous. It will however also be accounted for below, so subtract
         -- them to cancel their width. Typically, if a line break occurred at
         -- a space, the latter is then at the end of the line now, and must be
         -- ignored.
@@ -877,33 +1021,21 @@ function typesetter:makeHbox (content)
   local recentContribution = {}
   local migratingNodes = {}
 
-  -- HACK HBOX
-  -- This is from the original implementation.
-  -- It would be somewhat cleaner to use a temporary typesetter state
-  -- (pushState/popState) rather than using the current one, removing
-  -- the processed nodes from it afterwards. However, as long
-  -- as leaving horizontal mode is not strictly forbidden here, it would
-  -- lead to a possibly different result (the output queue being skipped).
-  -- See also HACK HBOX comment in typesetter:leaveHmode().
-  local index = #(self.state.nodes)+1
+  self:pushState()
   self.state.hmodeOnly = true
   SILE.process(content)
-  self.state.hmodeOnly = false -- Wouldn't be needed in a temporary state
 
+  -- We must do a first pass for shaping the nnodes:
+  -- This is also where italic correction may occur.
+  local nodes = self:shapeAllNodes(self.state.nodes, false)
+
+  -- Then we can process and measure the nodes.
   local l = SILE.length()
   local h, d = SILE.length(), SILE.length()
-  for i = index, #(self.state.nodes) do
-    local node = self.state.nodes[i]
+  for i = 1, #nodes do
+    local node = nodes[i]
     if node.is_migrating then
       migratingNodes[#migratingNodes+1] = node
-    elseif node.is_unshaped then
-      local shape = node:shape()
-      for _, attr in ipairs(shape) do
-        recentContribution[#recentContribution+1] = attr
-        h = attr.height > h and attr.height or h
-        d = attr.depth > d and attr.depth or d
-        l = l + attr:lineContribution():absolute()
-      end
     elseif node.is_discretionary then
       -- HACK https://github.com/sile-typesetter/sile/issues/583
       -- Discretionary nodes have a null line contribution...
@@ -927,8 +1059,8 @@ function typesetter:makeHbox (content)
       h = node.height > h and node.height or h
       d = node.depth > d and node.depth or d
     end
-    self.state.nodes[i] = nil -- wouldn't be needed in a temporary state
   end
+  self:popState()
 
   local hbox = SILE.nodefactory.hbox({
       height = h,

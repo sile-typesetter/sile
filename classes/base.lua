@@ -79,12 +79,19 @@ end
 
 function class:setOptions (options)
   options = options or {}
-  options.papersize = options.papersize or "a4"
-  options.bleed = options.bleed or "0"
+  -- Classes that add options with dependencies should explicitly handle them, then exempt them from furthur processing.
+  -- The landscape and crop related options are handled explicitly before papersize, then the "rest" of options that are not interdependent.
+  self.options.landscape = SU.boolean(options.landscape, false)
+  options.landscape = nil
+  self.options.papersize = options.papersize or "a4"
+  options.papersize = nil
+  self.options.bleed = options.bleed or "0"
+  options.bleed = nil
+  self.options.sheetsize = options.sheetsize or nil
+  options.sheetsize = nil
   for option, value in pairs(options) do
     self.options[option] = value
   end
-
   if not SILE.documentState.sheetSize then
     SILE.documentState.sheetSize = {
       SILE.documentState.paperSize[1],
@@ -121,10 +128,16 @@ function class:declareOptions ()
     end
     return self._name
   end)
+  self:declareOption("landscape", function(_, landscape)
+    if landscape then
+      self.landscape = landscape
+    end
+    return self.landscape
+  end)
   self:declareOption("papersize", function (_, size)
     if size then
       self.papersize = size
-      SILE.documentState.paperSize = SILE.papersize(size)
+      SILE.documentState.paperSize = SILE.papersize(size, self.options.landscape)
       SILE.documentState.orgPaperSize = SILE.documentState.paperSize
       SILE.newFrame({
         id = "page",
@@ -139,7 +152,7 @@ function class:declareOptions ()
   self:declareOption("sheetsize", function (_, size)
     if size then
       self.sheetsize = size
-      SILE.documentState.sheetSize = SILE.papersize(size)
+      SILE.documentState.sheetSize = SILE.papersize(size, self.options.landscape)
     end
     return self.sheetsize
   end)
@@ -173,13 +186,17 @@ function class.declareSettings (_)
   })
 end
 
-function class:loadPackage (packname, options)
+function class:loadPackage (packname, options, reload)
   local pack = require(("packages.%s"):format(packname))
   if type(pack) == "table" and pack.type == "package" then -- new package
-    self.packages[pack._name] = pack(options)
+    self.packages[pack._name] = pack(options, reload)
   else -- legacy package
     self:initPackage(pack, options)
   end
+end
+
+function class:reloadPackage (packname, options)
+  return self:loadPackage(packname, options, true)
 end
 
 function class:initPackage (pack, options)
@@ -353,7 +370,7 @@ function class:registerCommands ()
 
   self:registerCommand("script", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
+    if SU.ast.hasContent(content) then
       return SILE.processString(content[1], options.format or "lua", nil, packopts)
     elseif options.src then
       return SILE.require(options.src)
@@ -365,8 +382,8 @@ function class:registerCommands ()
 
   self:registerCommand("include", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, options.format, nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, options.format, packopts)
@@ -377,8 +394,8 @@ function class:registerCommands ()
 
   self:registerCommand("lua", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, "lua", nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, "lua", packopts)
@@ -392,8 +409,8 @@ function class:registerCommands ()
 
   self:registerCommand("sil", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, "sil")
     elseif options.src then
       return SILE.processFile(options.src, "sil", packopts)
@@ -404,8 +421,8 @@ function class:registerCommands ()
 
   self:registerCommand("xml", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, "xml", nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, "xml", packopts)
@@ -417,7 +434,7 @@ function class:registerCommands ()
   self:registerCommand("use", function (options, content)
     local packopts = packOptions(options)
     if content[1] and string.len(content[1]) > 0 then
-      local doc = SU.contentToString(content)
+      local doc = SU.ast.contentToString(content)
       SILE.processString(doc, "lua", nil, packopts)
     else
       if options.src then
@@ -609,8 +626,8 @@ function class:finish ()
   end
   SILE.typesetter:runHooks("pageend") -- normally run by the typesetter
   self:endPage()
-  if SILE.typesetter then
-    assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
+  if SILE.typesetter and not SILE.typesetter:isQueueEmpty() then
+    SU.error("Queues are not empty as expected after ending last page", true)
   end
   SILE.outputter:finish()
   self:runHooks("finish")

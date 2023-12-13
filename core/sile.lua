@@ -59,13 +59,12 @@ SILE.documentState = {}
 SILE.rawHandlers = {}
 
 -- User input values, currently from CLI options, potentially all the inuts
--- needed for a user to use a SILE-as-a-library verion to produce documents
--- programatically.
+-- needed for a user to use a SILE-as-a-library version to produce documents
+-- programmatically.
 SILE.input = {
   filenames = {},
   evaluates = {},
   evaluateAfters = {},
-  includes = {},
   uses = {},
   options = {},
   preambles = {},
@@ -97,7 +96,7 @@ SILE.nodefactory = require("core.nodefactory")
 
 -- NOTE:
 -- See remainaing internal libraries loaded at the end of this file because
--- they run core SILE functions on load istead of waiting to be called (or
+-- they run core SILE functions on load instead of waiting to be called (or
 -- depend on others that do).
 
 local function runEvals (evals, arg)
@@ -200,7 +199,9 @@ SILE.require = function (dependency, pathprefix, deprecation_ack)
   dependency = dependency:gsub(".lua$", "")
   local status, lib
   if pathprefix then
-    status, lib = pcall(require, pl.path.join(pathprefix, dependency))
+    -- Note this is not a *path*, it is a module identifier:
+    -- https://github.com/sile-typesetter/sile/issues/1861
+    status, lib = pcall(require, pl.stringx.join('.', { pathprefix, dependency }))
   end
   if not status then
     local prefixederror = lib
@@ -327,11 +328,9 @@ function SILE.processFile (filename, format, options)
     end
     if SILE.masterDir and SILE.masterDir:len() >= 1 then
       _G.extendSilePath(SILE.masterDir)
+      _G.extendSilePathRocks(SILE.masterDir .. "/lua_modules")
     end
-    filename = SILE.resolveFile(filename)
-    if not filename then
-      SU.error("Could not find file")
-    end
+    filename = SILE.resolveFile(filename) or SU.error("Could not find file")
     local mode = lfs.attributes(filename).mode
     if mode ~= "file" and mode ~= "named pipe" then
       SU.error(filename.." isn't a file or named pipe, it's a ".. mode .."!")
@@ -391,8 +390,8 @@ function SILE.resolveFile (filename, pathprefix)
   local resolved, err = package.searchpath(filename, path, "/")
   if resolved then
     if SILE.makeDeps then SILE.makeDeps:add(resolved) end
-  else
-    SU.warn(("Unable to find file '%s': %s"):format(filename, err))
+  elseif SU.debugging("paths") then
+    SU.debug("paths", ("Unable to find file '%s': %s"):format(filename, err))
   end
   return resolved
 end
@@ -472,7 +471,6 @@ end
 SILE.settings = require("core.settings")()
 require("core.hyphenator-liang")
 require("core.languages")
-require("core.packagemanager")
 SILE.linebreak = require("core.break")
 require("core.frame")
 SILE.cli = require("core.cli")
@@ -480,7 +478,7 @@ SILE.repl = require("core.repl")
 SILE.font = require("core.font")
 
 -- For warnings and shims scheduled for removal that are easier to keep track
--- of when they are not spead across so many locations...
+-- of when they are not spread across so many locations...
 require("core/deprecations")
 
 return SILE

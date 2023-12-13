@@ -76,7 +76,7 @@ function class:registerCommands ()
 
   self:registerCommand("noindent", function (_, content)
     if #SILE.typesetter.state.nodes ~= 0 then
-      SU.warn("\\noindent called after nodes already recieved in a paragraph, the setting will have no effect because the parindent (if any) has already been output")
+      SU.warn("\\noindent called after nodes already received in a paragraph, the setting will have no effect because the parindent (if any) has already been output")
     end
     SILE.settings:set("current.parindent", SILE.nodefactory.glue())
     SILE.process(content)

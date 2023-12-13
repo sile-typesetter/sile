@@ -10,7 +10,7 @@ Since DocDook itself doesn’t specify anything about presentation such as paper
 When you use the \code{-c docbook} command line option to SILE, SILE will use the \autodoc:class{docbook} class in spite of any document declaration.
 In addition, options such as paper size could be set; for example, \code{-O papersize=legal}.
 
-The class initalization for DocBoox isn’t too fancy; it just loads up a couple packages that will get used later.
+The class initialization for DocBoox isn’t too fancy; it just loads up a couple packages that will get used later.
 
 \begin{autodoc:note}
 Much of the example code in this chapter is in SIL format using macros.
@@ -69,10 +69,10 @@ self:registerCommand("example", function(options,content)
 \code{\\docbook-titling} is a command similarly defined in \code{docbook.sil} which sets the default font for titling and headers. Once again, if someone wants to customize the look of the output we make it easier for them by giving them simple, compartmentalized commands to override.
 
 So far so good, but how do we extract the \code{<title>} tag from the \code{content} abstract syntax tree?
-SILE does not provide XPath or CSS-style selectors to locate content form within the DOM tree;\footnote{Patches, as they say, are welcome.} instead there is a simple one-level function called \code{SILE.inputter:findInTree()} which looks for a particular tag or command name within the immediate children of the current tree:
+SILE does not provide XPath or CSS-style selectors to locate content form within the DOM tree;\footnote{Patches, as they say, are welcome.} instead there is a simple one-level function called \code{SU.ast.findInTree()} which looks for a particular tag or command name within the immediate children of the current tree:
 
 \begin[type=autodoc:codeblock]{raw}
-    local t = SILE.inputter:findInTree(content, "title")
+    local t = SU.ast.findInTree(content, "title")
     if t then
       SILE.typesetter:typeset(": ")
       SILE.process(t)
@@ -149,7 +149,7 @@ We also increment the count at the current level, while at the same time wiping 
 Now we find the title, and prefix it by the concatenation of all the \code{seccount}s:
 
 \begin[type=autodoc:codeblock]{raw}
-  local title = SILE.inputter:findInTree(content, "title")
+  local title = SU.ast.findInTree(content, "title")
   local number = table.concat(SILE.scratch.docbook.seccount, '.')
   if title then
     SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title",{},function()

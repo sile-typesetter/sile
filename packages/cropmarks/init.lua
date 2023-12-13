@@ -70,7 +70,7 @@ function package:registerCommands ()
   end)
 
   self:registerCommand("crop:setup", function (_, _)
-    SU.deprecated("crop:setup", "cropmarks:setup", "0.14.10", "0.17.0")
+    SU.deprecated("crop:setup", "cropmarks:setup", "0.15.10", "0.17.0")
     SILE.call("cropmarks:setup")
   end)
 end

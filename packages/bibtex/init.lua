@@ -39,12 +39,12 @@ end)
 ---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
 local parseBibtex = function (fn)
-  fn = SILE.resolveFile(fn)
-  local fh,e = io.open(fn)
-  if e then SU.error("Error reading bibliography file "..e) end
+  fn = SILE.resolveFile(fn) or SU.error("Unable to resolve Bibtex file "..fn)
+  local fh, e = io.open(fn)
+  if e then SU.error("Error reading bibliography file: "..e) end
   local doc = fh:read("*all")
   local t = epnf.parsestring(bibtexparser, doc)
-  if not(t) or not(t[1]) or t.id ~= "document" then
+  if not t or not t[1] or t.id ~= "document" then
     SU.error("Error parsing bibtex")
   end
   local entries = {}
@@ -79,18 +79,12 @@ function package:registerCommands ()
     SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
   end)
 
-  self:registerCommand("bibstyle", function (_, content)
+  self:registerCommand("bibstyle", function (_, _)
     SU.deprecated("\\bibstyle", '\\set[parameter=bibtex.style]', "0.13.2", "0.14.0")
-    if type(content) == "table" then
-      content = content[1]
-    end
-    if type(content) == "string" then
-      SILE.settings:set("bibtex.style", content)
-    end
   end)
 
   self:registerCommand("cite", function (options, content)
-    if not options.key then options.key = SU.contentToString(content) end
+    if not options.key then options.key = SU.ast.contentToString(content) end
     local style = SILE.settings:get("bibtex.style")
     local bibstyle = require("packages.bibtex.styles." .. style)
     local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
@@ -102,7 +96,7 @@ function package:registerCommands ()
   end)
 
   self:registerCommand("reference", function (options, content)
-    if not options.key then options.key = SU.contentToString(content) end
+    if not options.key then options.key = SU.ast.contentToString(content) end
     local style = SILE.settings:get("bibtex.style")
     local bibstyle = require("packages.bibtex.styles." .. style)
     local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)

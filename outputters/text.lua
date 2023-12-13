@@ -59,7 +59,7 @@ function outputter:setCursor (x, y, relative)
         outfile:write("‫")
       end
     elseif newx > cursorX then
-      if newx - cursorX > spc then
+      if newx:tonumber() - cursorX:tonumber() > spc then
         outfile:write(" ")
       else
         outfile:write("‫")

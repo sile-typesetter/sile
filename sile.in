@@ -1,12 +1,12 @@
 #!@LUA@
 
--- globals used only in core/packagemanager, soon to be deprecated
-SYSTEM_SILE_PATH = "@SILE_PATH@"
-SHARED_LIB_EXT = "@SHARED_LIB_EXT@"
-
 -- At this point at run time we may or may not have anything useful in package.path,
 -- so require() isn't something we can rely on.
-local status = pcall(dofile, "@SILE_PATH@/core/pathsetup.lua")
+local status
+for path in string.gmatch("@SILE_PATH@", "[^;]+") do
+  status = pcall(dofile, path .. "/core/pathsetup.lua")
+  if status then break end
+end
 if not status then
   dofile("./core/pathsetup.lua")
 end
@@ -20,6 +20,7 @@ end
 -- This global is set here and *also* in the core library, since this
 -- effectively passes the same table they are interchangeable (for now).
 SILE = require("core.sile")
+SILE.full_version = SILE.full_version .. " [Lua]"
 
 SILE.cli:parseArguments()
 
