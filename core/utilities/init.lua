@@ -343,76 +343,6 @@ utilities.cast = function (wantedType, value)
   end
 end
 
-utilities.hasContent = function(content)
-  return type(content) == "function" or type(content) == "table" and #content > 0
-end
-
--- Flatten content trees into just the string components (allows passing
--- objects with complex structures to functions that need plain strings)
-utilities.contentToString = function (content)
-  local string = ""
-  for i = 1, #content do
-    if type(content[i]) == "table" and type(content[i][1]) == "string" then
-      string = string .. content[i][1]
-    elseif type(content[i]) == "string" then
-      -- Work around PEG parser returning env tags as content
-      -- TODO: refactor capture groups in PEG parser
-      if content.command == content[i] and content[i] == content[i+1] then
-        break
-      end
-      string = string .. content[i]
-    end
-  end
-  return string
-end
-
--- Strip the top level command off a content object and keep only the child
--- items — assuming that the current command is taking care of itself
-utilities.subContent = function (content)
-  local out = { id="stuff" }
-  for key, val in utilities.sortedpairs(content) do
-    if type(key) == "number" then
-      out[#out+1] = val
-    end
-  end
-  return out
-end
-
--- Call `action` on each content AST node, recursively, including `content` itself.
--- Not called on leaves, i.e. strings.
-utilities.walkContent = function (content, action)
-  if type(content) ~= "table" then
-    return
-  end
-  action(content)
-  for i = 1, #content do
-    utilities.walkContent(content[i], action)
-  end
-end
-
---- Strip position, line and column recursively from a content tree.
--- This can be used to remove position details where we do not want them,
--- e.g. in table of contents entries (referring to the original content,
--- regardless where it was exactly, for the purpose of checking whether
--- the table of contents changed.)
---
-utilities.stripContentPos = function (content)
-  if type(content) ~= "table" then
-    return content
-  end
-  local stripped = {}
-  for k, v in pairs(content) do
-    if type(v) == "table" then
-      v = SU.stripContentPos(v)
-    end
-    stripped[k] = v
-  end
-  if content.id or content.command then
-    stripped.pos, stripped.col, stripped.lno = nil, nil, nil
-  end
-  return stripped
-end
-
 utilities.rateBadness = function(inf_bad, shortfall, spring)
   if spring == 0 then return inf_bad end
   local bad = math.floor(100 * math.abs(shortfall / spring) ^ 3)
@@ -626,8 +556,36 @@ utilities.breadcrumbs = function ()
   return breadcrumbs
 end
 
-utilities.formatNumber = require("core.utilities-numbers")
+utilities.formatNumber = require("core.utilities.numbers")
 
-utilities.collatedSort = require("core.utilities-sorting")
+utilities.collatedSort = require("core.utilities.sorting")
+
+utilities.ast = require("core.utilities.ast")
+
+utilities.subContent = function (content)
+  SU.deprecated("SU.subContent", "SU.ast.subContent", "0.15.0", "0.17.0", [[
+    Note that the new implementation no longer introduces an id="stuff" key.]])
+  return utilities.ast.subContent(content)
+end
+
+utilities.hasContent = function(content)
+  SU.deprecated("SU.hasContent", "SU.ast.hasContent", "0.15.0", "0.17.0")
+  return SU.ast.hasContent(content)
+end
+
+utilities.contentToString = function (content)
+  SU.deprecated("SU.contentToString", "SU.ast.contentToString", "0.15.0", "0.17.0")
+  return SU.ast.contentToString(content)
+end
+
+utilities.walkContent = function (content, action)
+  SU.deprecated("SU.walkContent", "SU.ast.walkContent", "0.15.0", "0.17.0")
+  SU.ast.walkContent(content, action)
+end
+
+utilities.stripContentPos = function (content)
+  SU.deprecated("SU.stripContentPos", "SU.ast.stripContentPos", "0.15.0", "0.17.0")
+  return SU.ast.stripContentPos(content)
+end
 
 return utilities
