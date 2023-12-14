@@ -82,16 +82,9 @@ These may be built and installed like any other AUR\footnote{\url{https://wiki.a
 
 \subsection{Fedora}
 
-Official packages are available in Fedora 39 and beyond.
+Official packages are available in all current versions of Fedora:
 
 \terminal{$ dnf install sile}
-
-For older Fedora releases a COPR repository\footnote{\url{https://copr.fedorainfracloud.org/coprs/jonny/SILE/}} is available with Fedora 36 and 37 support.
-
-\begin{terminal}
-$ dnf copr enable jonny/SILE
-$ dnf install sile
-\end{terminal}
 
 \subsection{OpenSUSE}
 

@@ -70,16 +70,9 @@ If you install LuaRocks for use with SILE via `pacman`, use the `lua51-*` varian
 
 #### Fedora
 
-Official packages are available in Fedora 39 and beyond.
+Official packages are available in all current versions of Fedora:
 
 ```console
-$ dnf install sile
-```
-
-For older Fedora releases a [COPR repository][copr] is available for Fedora 36 and 37.
-
-```console
-$ dnf copr enable jonny/SILE
 $ dnf install sile
 ```
 
