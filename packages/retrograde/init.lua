@@ -23,11 +23,13 @@ function package:defaults (target)
   target = semver(target and target or SILE.version)
   local target_hit = false
   for version, settings in pl.tablex.sort(self.default_settings, semver_descending) do
+     version = semver(version)
      for parameter, value in pairs(settings) do
+        SU.debug("defaults", ("Resetting '%s' to '%s' as it was prior to v%s"):format(parameter, tostring(value), version))
         SILE.settings:set(parameter, value, true)
      end
      if target_hit then break end
-     if semver(version) <= target then target_hit = true end
+     if version <= target then target_hit = true end
   end
 end
 
