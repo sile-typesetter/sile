@@ -1,6 +1,6 @@
 #[cfg(feature = "manpage")]
 use clap_mangen::Man;
-#[cfg(feature = "static")]
+#[cfg(any(feature = "static", feature = "completions"))]
 use std::path::Path;
 use std::{collections, env};
 use vergen::EmitBuilder;
@@ -9,7 +9,7 @@ use {
     clap::CommandFactory,
     clap_complete::generator::generate_to,
     clap_complete::shells::{Bash, Elvish, Fish, PowerShell, Zsh},
-    std::{fs, path::Path},
+    std::fs,
 };
 
 #[cfg(feature = "completions")]
