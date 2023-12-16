@@ -52,15 +52,15 @@ if SILE.input.filenames and #SILE.input.filenames >= 1 then
     SILE.use(spec.module, spec.options)
   end
 
-  local main, err = xpcall(function()
+  local process_status, error_msg = xpcall(function()
     pl.tablex.imap(SILE.processFile, SILE.input.filenames)
   end, SILE.errorHandler)
 
-  if not main then
-    if type(err) == "string" and err:match(": interrupted!") then
+  if not process_status then
+    if type(error_msg) == "string" and error_msg:match(": interrupted!") then
       SILE.outputter:finish()
     else
-      io.stderr:write("\nerror summary:\n\t" .. tostring(err) .. "\n")
+      io.stderr:write("\nerror summary:\n\t" .. tostring(error_msg) .. "\n")
     end
     os.exit(1)
   end
