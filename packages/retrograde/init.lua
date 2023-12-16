@@ -29,7 +29,7 @@ function package:defaults (target)
   for version, settings in pl.tablex.sort(self.default_settings, semver_descending) do
      version = semver(version)
      for parameter, value in pairs(settings) do
-        SU.debug("defaults", ("Resetting '%s' to '%s' as it was prior to v%s"):format(parameter, tostring(value), version))
+        SU.debug("retrograde", ("Resetting '%s' to '%s' as it was prior to v%s"):format(parameter, tostring(value), version))
         SILE.settings:set(parameter, value, true)
      end
      if target_hit then break end
