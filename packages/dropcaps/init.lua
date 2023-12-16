@@ -59,9 +59,9 @@ function package:registerCommands ()
 
     -- Setup up the necessary indents for the final paragraph content
     local joinOffset = join and standoff:tonumber() or 0
-    SILE.settings:set("current.hangAfter", -lines)
-    SILE.settings:set("current.hangIndent", targetWidth + joinOffset)
-    SU.debug("dropcaps", "joinOffset", joinOffset)
+    SILE.settings:set("current.hangafter", -lines)
+    SILE.settings:set("current.hangindent", targetWidth + joinOffset)
+    SU.debug("dropcaps", "joinoffset", joinOffset)
 
     -- The paragraph is indented so as to leave enough space for the drop cap.
     -- We "trick" the typesetter with a zero-dimension box wrapping our original box.

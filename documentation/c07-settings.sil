@@ -285,11 +285,11 @@ Assuming italics is slanted forward (in left-to-right writing direction) and tha
 Be aware, nevertheless, that this solution cannot be made perfect, even assuming a reasonable choice of fonts.
 Pathological cases may still occur, even in latin scripts, for which there is no solution but using manual kerning.
 
-To enable automated italic correction, you can set the \autodoc:setting{typesetter.italicCorrection} setting to \code{true}.
+To enable automated italic correction, you can set the \autodoc:setting{typesetter.italiccorrection} setting to \code{true}.
 Let’s turn it on and check how our previous gibberish now behaves.
 
 \begin{autodoc:example}%
-\set[parameter=typesetter.italicCorrection, value=true]{%
+\set[parameter=typesetter.italiccorrection, value=true]{%
 \quad{}(\em{fluff}) ¡\em{fancyful proof}! [\em{puff}] \em{fluff}ⁿ
 \par}
 \end{autodoc:example}
@@ -310,16 +310,16 @@ are doing with these.
 \item{\autodoc:setting{linebreak.tolerance}: How bad a breakpoint is before it is
       rejected by the algorithm.
       (Default: 500)}
-\item{\autodoc:setting{linebreak.parShape}: Whether to utilize a callback to
-      \code{SILE.linebreak:parShape()} to get a customized shape for each line in a paragraph.
+\item{\autodoc:setting{linebreak.parshape}: Whether to utilize a callback to
+      \code{SILE.linebreak:parshape()} to get a customized shape for each line in a paragraph.
       (Default: false)}
 \item{\autodoc:setting{linebreak.pretolerance}: If there are no breakpoints better than
       this, the paragraph is considered for hyphenation.
       (Default: 100)}
-\item{\autodoc:setting{linebreak.hangIndent}: How far to indent initial line(s) of a paragraph.
+\item{\autodoc:setting{linebreak.hangindent}: How far to indent initial line(s) of a paragraph.
       (Default: 0)}
-\item{\autodoc:setting{linebreak.hangAfter}: An integer count of how many lines should have
-      \autodoc:setting{linebreak.hangIndent} applied.
+\item{\autodoc:setting{linebreak.hangafter}: An integer count of how many lines should have
+      \autodoc:setting{linebreak.hangindent} applied.
       (Default: nil)}
 \item{\autodoc:setting{linebreak.adjdemerits}: Additional demerits which are accumulated in the
       course of paragraph building when two consecutive lines are visually incompatible. In these
@@ -328,16 +328,16 @@ are doing with these.
 \item{\autodoc:setting{linebreak.looseness}: How many lines the current paragraph should
       be made longer than normal.
       (Default: 0)}
-\item{\autodoc:setting{linebreak.prevGraf}: The number of lines in the paragraph last added to
+\item{\autodoc:setting{linebreak.prevgraf}: The number of lines in the paragraph last added to
       the vertical list.}
-\item{\autodoc:setting{linebreak.emergencyStretch}: Assumed extra stretchability in lines of a
+\item{\autodoc:setting{linebreak.emergencystretch}: Assumed extra stretchability in lines of a
       paragraph.
       (Default: 0)}
-\item{\autodoc:setting{linebreak.linePenalty}: Penalty value associated with each line break.
+\item{\autodoc:setting{linebreak.linepenalty}: Penalty value associated with each line break.
       (Default: 10)}
-\item{\autodoc:setting{linebreak.hyphenPenalty}: Penalty associated with break at a hyphen.
+\item{\autodoc:setting{linebreak.hyphenpenalty}: Penalty associated with break at a hyphen.
       (Default: 50)}
-\item{\autodoc:setting{linebreak.doubleHyphenDemerits}: Penalty for consecutive lines ending
+\item{\autodoc:setting{linebreak.doublehyphendemerits}: Penalty for consecutive lines ending
       with a hyphen.
       (Default: 10000)}
 \end{itemize}

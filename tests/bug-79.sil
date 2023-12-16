@@ -4,6 +4,6 @@
 \frame[id=frame, left=2cm, width=5.8cm, top=2cm, bottom=10cm]
 \end{pagetemplate}
 \font[size=10pt,family=Libertinus Serif,language=cs]
-\set[parameter=linebreak.emergencyStretch, value=0.5cm]
+\set[parameter=linebreak.emergencystretch, value=0.5cm]
 zana Bourová, zápolila ve čtyřech závodech, nejlépe se umístila na Benecku na 4. místě. Magdaléna Chrástová skončila na místě sedmnáctém, Barbora Šulcová byla hned za
 \end{document}

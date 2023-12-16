@@ -28,10 +28,10 @@ function package:outputFolio (frame)
         -- Reset settings the document may have but should not be applied to footnotes
         -- See also same resets in footnote package
         for _, v in ipairs({
-          "current.hangAfter",
-          "current.hangIndent",
-          "linebreak.hangAfter",
-          "linebreak.hangIndent" }) do
+          "current.hangafter",
+          "current.hangindent",
+          "linebreak.hangafter",
+          "linebreak.hangindent" }) do
           SILE.settings:set(v, SILE.settings.defaults[v])
         end
 

@@ -174,7 +174,7 @@ function settings:set (parameter, value, makedefault, reset)
   -- own lifecycle (e.g. reset for the next paragraph).
   -- These should be rather typesetter states, or something to that extent
   -- yet to clarify. Notably, current.parindent falls in that category,
-  -- BUT probably current.hangAfter and current.hangIndent too.
+  -- BUT probably current.hangafter and current.hangindent too.
   -- To avoid breaking too much code yet without being sure of the solution,
   -- we implement a hack of sorts for current.parindent only.
   -- Note moreover that current.parindent is currently probably a bad concept

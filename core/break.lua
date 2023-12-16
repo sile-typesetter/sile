@@ -1,22 +1,22 @@
-SILE.settings:declare({ parameter = "linebreak.parShape", type = "boolean", default = false,
+SILE.settings:declare({ parameter = "linebreak.parshape", type = "boolean", default = false,
   help = "If set to true, the paragraph shaping method is activated." })
 SILE.settings:declare({ parameter = "linebreak.tolerance", type = "integer or nil", default = 500 })
 SILE.settings:declare({ parameter = "linebreak.pretolerance", type = "integer or nil", default = 100 })
-SILE.settings:declare({ parameter = "linebreak.hangIndent", type = "measurement", default = 0 })
-SILE.settings:declare({ parameter = "linebreak.hangAfter", type = "integer or nil", default = nil })
+SILE.settings:declare({ parameter = "linebreak.hangindent", type = "measurement", default = 0 })
+SILE.settings:declare({ parameter = "linebreak.hangafter", type = "integer or nil", default = nil })
 SILE.settings:declare({ parameter = "linebreak.adjdemerits", type = "integer", default = 10000,
   help = "Additional demerits which are accumulated in the course of paragraph building when two consecutive lines are visually incompatible. In these cases, one line is built with much space for justification, and the other one with little space." })
 SILE.settings:declare({ parameter = "linebreak.looseness", type = "integer", default = 0 })
-SILE.settings:declare({ parameter = "linebreak.prevGraf", type = "integer", default = 0 })
-SILE.settings:declare({ parameter = "linebreak.emergencyStretch", type = "measurement", default = 0 })
-SILE.settings:declare({ parameter = "linebreak.doLastLineFit", type = "boolean", default = false }) -- unimplemented
-SILE.settings:declare({ parameter = "linebreak.linePenalty", type = "integer", default = 10 })
-SILE.settings:declare({ parameter = "linebreak.hyphenPenalty", type = "integer", default = 50 })
-SILE.settings:declare({ parameter = "linebreak.doubleHyphenDemerits", type = "integer", default = 10000 })
-SILE.settings:declare({ parameter = "linebreak.finalHyphenDemerits", type = "integer", default = 5000 })
+SILE.settings:declare({ parameter = "linebreak.prevgraf", type = "integer", default = 0 })
+SILE.settings:declare({ parameter = "linebreak.emergencystretch", type = "measurement", default = 0 })
+SILE.settings:declare({ parameter = "linebreak.dolastlinefit", type = "boolean", default = false }) -- unimplemented
+SILE.settings:declare({ parameter = "linebreak.linepenalty", type = "integer", default = 10 })
+SILE.settings:declare({ parameter = "linebreak.hyphenpenalty", type = "integer", default = 50 })
+SILE.settings:declare({ parameter = "linebreak.doublehyphendemerits", type = "integer", default = 10000 })
+SILE.settings:declare({ parameter = "linebreak.finalhyphendemerits", type = "integer", default = 5000 })
 
--- doubleHyphenDemerits
--- hyphenPenalty
+-- doublehyphendemerits
+-- hyphenpenalty
 
 local classes = { "tight"; "decent"; "loose"; "veryLoose" }
 local passSerial = 0
@@ -75,7 +75,7 @@ function lineBreak:trimGlue() -- 842
   nodes[#nodes+1] = SILE.nodefactory.penalty(inf_bad)
 end
 
--- NOTE FOR DEVELOPERS: this method is called when the linebreak.parShape
+-- NOTE FOR DEVELOPERS: this method is called when the linebreak.parshape
 -- setting is true. The arguments passed are self (the linebreaker instance)
 -- and a counter representing the current line number.
 --
@@ -125,13 +125,13 @@ function lineBreak.parShapeCacheClear(_)
 end
 
 function lineBreak:setupLineLengths() -- 874
-  self.parShaping = param("parShape") or false
+  self.parShaping = param("parshape") or false
   if self.parShaping then
     self.lastSpecialLine = nil
     self.easy_line = nil
   else
-    self.hangAfter = param("hangAfter") or 0
-    self.hangIndent = param("hangIndent"):tonumber()
+    self.hangAfter = param("hangafter") or 0
+    self.hangIndent = param("hangindent"):tonumber()
     if self.hangIndent == 0 then
       self.lastSpecialLine = 0
       self.secondWidth = self.hsize or SU.error("No hsize")
@@ -154,7 +154,7 @@ function lineBreak:tryBreak() -- 855
   local pi, breakType
   local node = self.nodes[self.place]
   if not node then pi = ejectPenalty; breakType = "hyphenated"
-  elseif node.is_discretionary then breakType = "hyphenated"; pi = param("hyphenPenalty")
+  elseif node.is_discretionary then breakType = "hyphenated"; pi = param("hyphenpenalty")
   else breakType = "unhyphenated"; pi = node.penalty or 0 end
   if debugging then SU.debug("break", "Trying a ", breakType, "break p =", pi) end
   self.no_break_yet = true -- We have to store all this state crap in the object, or it's global variables all the way
@@ -354,7 +354,7 @@ end
 
 function lineBreak:computeDemerits(pi, breakType)
   if self.artificialDemerits then return 0 end
-  local demerit = param("linePenalty") + self.badness
+  local demerit = param("linepenalty") + self.badness
   if math.abs(demerit) >= 10000 then
     demerit = 100000000
   else
@@ -369,9 +369,9 @@ function lineBreak:computeDemerits(pi, breakType)
   end
   if breakType == "hyphenated" and self.r.type == "hyphenated" then
     if self.nodes[self.place] then
-      demerit = demerit + param("doubleHyphenDemerits")
+      demerit = demerit + param("doublehyphendemerits")
     else
-      demerit = demerit + param("finalHyphenDemerits")
+      demerit = demerit + param("finalhyphendemerits")
     end
   end
   -- XXX adjDemerits not added here
@@ -578,7 +578,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
   else
     self.threshold = param("tolerance")
     self.pass = "second"
-    self.finalpass = param("emergencyStretch") <= 0
+    self.finalpass = param("emergencystretch") <= 0
   end
   -- 889
   while 1 do
@@ -600,7 +600,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       type = "unhyphenated",
       fitness = "decent",
       next = self.activeListHead,
-      lineNumber = param("prevGraf") + 1,
+      lineNumber = param("prevgraf") + 1,
       totalDemerits = 0
     }
 
@@ -621,7 +621,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       self.threshold = param("tolerance")
     else
       self.pass = "emergency"
-      self.background.stretch:___add(param("emergencyStretch"))
+      self.background.stretch:___add(param("emergencystretch"))
       self.finalpass = true
     end
   end

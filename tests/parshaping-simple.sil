@@ -14,7 +14,7 @@ local testshape = {
 
 SILE.settings:set("linebreak.tolerance", 2000)
 SILE.settings:set("document.parindent", 0)
-SILE.settings:set("linebreak.parShape", true)
+SILE.settings:set("linebreak.parshape", true)
 
 SILE.linebreak.parShape = function (self, line)
   local shape = testshape[line]

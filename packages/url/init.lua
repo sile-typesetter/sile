@@ -30,17 +30,17 @@ end
 function package.declareSettings (_)
 
   SILE.settings:declare({
-    parameter = "url.linebreak.primaryPenalty",
+    parameter = "url.linebreak.primarypenalty",
     type = "integer",
     default = 100,
     help = "Penalty for breaking lines in URLs at preferred breakpoints"
   })
 
   SILE.settings:declare({
-    parameter = "url.linebreak.secondaryPenalty",
+    parameter = "url.linebreak.secondarypenalty",
     type = "integer",
     default = 200,
-    help = "Penalty for breaking lines in URLs at tolerable breakpoints (should be higher than url.linebreak.primaryPenalty)"
+    help = "Penalty for breaking lines in URLs at tolerable breakpoints (should be higher than url.linebreak.primarypenalty)"
   })
 
 end
@@ -121,8 +121,8 @@ function package:registerCommands ()
 
   self:registerCommand("url", function (options, content)
     SILE.settings:temporarily(function ()
-      local primaryPenalty = SILE.settings:get("url.linebreak.primaryPenalty")
-      local secondaryPenalty = SILE.settings:get("url.linebreak.secondaryPenalty")
+      local primaryPenalty = SILE.settings:get("url.linebreak.primarypenalty")
+      local secondaryPenalty = SILE.settings:get("url.linebreak.secondarypenalty")
       local worsePenalty = primaryPenalty + secondaryPenalty
 
       if options.language then
@@ -176,7 +176,7 @@ Note that if French (\code{fr}) is selected, the special typographic rules apply
 To typeset a URL and also make it an active hyperlink, use the \autodoc:command{\href} command without the \autodoc:parameter{src} option,
 but with the URL passed as argument.
 
-The breaks are controlled by two penalty settings: \autodoc:setting{url.linebreak.primaryPenalty} for preferred breakpoints and, for less acceptable but still tolerable breakpoints, \autodoc:setting{url.linebreak.secondaryPenalty}—its value should logically be higher than the previous one.
+The breaks are controlled by two penalty settings: \autodoc:setting{url.linebreak.primarypenalty} for preferred breakpoints and, for less acceptable but still tolerable breakpoints, \autodoc:setting{url.linebreak.secondarypenalty}—its value should logically be higher than the previous one.
 
 The \autodoc:command{\urlstyle} command hook may be overridden to change the style of URLs.
 By default, they are typeset as “code”.
