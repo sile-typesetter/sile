@@ -72,8 +72,8 @@ local function buildPage (typesetter, independent)
   return true
 end
 
-function package:_init (class)
-  base._init(self, class)
+function package:_init (options)
+  base._init(self, options)
   self.class:registerPostinit(function(_)
     if not unbalanced_buildPage then
       unbalanced_buildPage = SILE.typesetter.buildPage
