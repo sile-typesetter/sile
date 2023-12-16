@@ -1,4 +1,5 @@
 \begin[papersize=a5]{document}
+\use[module=packages.retrograde,target=v0.15.0]
 \use[module=packages.lorem]
 \pagetemplate[first-content-frame=a]{
 \frame[id=a,top=5%ph,bottom=95%ph,next=b,left=5%pw,right=28%pw]
