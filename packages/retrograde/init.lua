@@ -14,6 +14,7 @@ end
 package.default_settings = {
    ["0.15.0"] = {
       ["shaper.spaceenlargementfactor"] = 1.2,
+      ["document.parindent"] = "20pt",
    },
 }
 
