@@ -1,4 +1,5 @@
 \begin[class=jplain,layout=tate]{document}
+\use[module=packages.retrograde,target=v0.15.0]
 \nofolios
 % Note: differences between Noto font versions make adding more characters to
 % this test brittle. For example 日本は昔からruns into trouble when the height
