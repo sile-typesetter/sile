@@ -133,7 +133,7 @@ function typesetter.declareSettings(_)
   })
 
   SILE.settings:declare({
-    parameter = "typesetter.italicCorrection",
+    parameter = "typesetter.italiccorrection",
     type = "boolean",
     default = false,
     help = "Whether italic correction is activated or not"
@@ -395,7 +395,7 @@ local function fromItalicCorrection (precShape, curShape)
 end
 
 local function toItalicCorrection (precShape, curShape)
-  if not SILE.settings:get("typesetter.italicCorrection") then return end
+  if not SILE.settings:get("typesetter.italiccorrection") then return end
   local xOffset
   if not curShape or not precShape then
     xOffset = 0
@@ -431,7 +431,7 @@ function typesetter.shapeAllNodes (_, nodelist, inplace)
     if current.is_unshaped then
       local shapedNodes = current:shape()
 
-      if SILE.settings:get("typesetter.italicCorrection") and prec then
+      if SILE.settings:get("typesetter.italiccorrection") and prec then
         local itCorrOffset
         local isGlue
         if isItalicLike(prec) and not isItalicLike(current) then

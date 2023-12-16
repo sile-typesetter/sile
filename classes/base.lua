@@ -137,13 +137,13 @@ function class.declareSettings (_)
     help = "Glue at start of paragraph"
   })
   SILE.settings:declare({
-    parameter = "current.hangIndent",
+    parameter = "current.hangindent",
     type = "measurement or nil",
     default = nil,
     help = "Size of hanging indent"
   })
   SILE.settings:declare({
-    parameter = "current.hangAfter",
+    parameter = "current.hangafter",
     type = "integer or nil",
     default = nil,
     help = "Number of lines affected by handIndent"
@@ -539,26 +539,26 @@ function class.newPar (typesetter)
   -- unlikely. And anyway pushback() has plenty of other issues.
   typesetter:pushGlue(parindent:absolute())
   SILE.settings:set("current.parindent", nil)
-  local hangIndent = SILE.settings:get("current.hangIndent")
+  local hangIndent = SILE.settings:get("current.hangindent")
   if hangIndent then
-    SILE.settings:set("linebreak.hangIndent", hangIndent)
+    SILE.settings:set("linebreak.hangindent", hangIndent)
   end
-  local hangAfter = SILE.settings:get("current.hangAfter")
+  local hangAfter = SILE.settings:get("current.hangafter")
   if hangAfter then
-    SILE.settings:set("linebreak.hangAfter", hangAfter)
+    SILE.settings:set("linebreak.hangafter", hangAfter)
   end
 end
 
 -- WARNING: not called as class method
 function class.endPar (typesetter)
   typesetter:pushVglue(SILE.settings:get("document.parskip"))
-  if SILE.settings:get("current.hangIndent") then
-    SILE.settings:set("current.hangIndent", nil)
-    SILE.settings:set("linebreak.hangIndent", nil)
+  if SILE.settings:get("current.hangindent") then
+    SILE.settings:set("current.hangindent", nil)
+    SILE.settings:set("linebreak.hangindent", nil)
   end
-  if SILE.settings:get("current.hangAfter") then
-    SILE.settings:set("current.hangAfter", nil)
-    SILE.settings:set("linebreak.hangAfter", nil)
+  if SILE.settings:get("current.hangafter") then
+    SILE.settings:set("current.hangafter", nil)
+    SILE.settings:set("linebreak.hangafter", nil)
   end
 end
 

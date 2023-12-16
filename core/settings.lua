@@ -76,6 +76,15 @@ function settings:_init()
 
   SILE.registerCommand("set", function(options, content)
     local parameter = SU.required(options, "parameter", "\\set command")
+    local lower = parameter:lower()
+    if parameter ~= lower then
+      SU.deprecated(('SILE.settings:set("%s")'):format(parameter), (':set("%s")'):format(lower), "0.14.0", "0.17.0",
+      [[
+    All setting parameter names should be lower case.
+    Previously we had a mix of lowercase and camelCase.
+    In the future only lowercase will be accepted.]])
+      parameter = lower
+    end
     local makedefault = SU.boolean(options.makedefault, false)
     local reset = SU.boolean(options.reset, false)
     local value = options.value
@@ -165,7 +174,7 @@ function settings:set (parameter, value, makedefault, reset)
   -- own lifecycle (e.g. reset for the next paragraph).
   -- These should be rather typesetter states, or something to that extent
   -- yet to clarify. Notably, current.parindent falls in that category,
-  -- BUT probably current.hangAfter and current.hangIndent too.
+  -- BUT probably current.hangafter and current.hangindent too.
   -- To avoid breaking too much code yet without being sure of the solution,
   -- we implement a hack of sorts for current.parindent only.
   -- Note moreover that current.parindent is currently probably a bad concept

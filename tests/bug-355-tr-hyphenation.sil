@@ -2,7 +2,7 @@
 \nofolios
 \neverindent
 \set[parameter=shaper.variablespaces, value=false]
-\set[parameter=linebreak.emergencyStretch,value=0]
+\set[parameter=linebreak.emergencystretch,value=0]
 \language[main=tr]
 
 % Without stretchable spaces there is no variablility for SILE to do justification.

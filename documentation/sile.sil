@@ -6,7 +6,7 @@
 % Quite drastic value below, but for a fast-changing technical document with snippets of code,
 % and little resources for fine-checking and tuning, we prefer (possibly large) underfull lines
 % to ugly overfull ones:
-\set[parameter=linebreak.emergencyStretch,value=20%lw]
+\set[parameter=linebreak.emergencystretch,value=20%lw]
 \set[parameter=autodoc.highlighting, value=true]
 \font[size=11pt,family=Gentium Book Basic]
 \nofolios
