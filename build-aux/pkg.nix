@@ -118,8 +118,6 @@ in stdenv.mkDerivation (finalAttrs: {
 
   postPatch = ''
     patchShebangs build-aux/*.sh build-aux/git-version-gen
-  '' + lib.optionalString stdenv.isDarwin ''
-    sed -i -e 's|@import AppKit;|#import <AppKit/AppKit.h>|' src/macfonts.m
   '';
 
   NIX_LDFLAGS = lib.optionalString stdenv.isDarwin "-framework AppKit";
