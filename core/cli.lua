@@ -119,7 +119,7 @@ cli.parseArguments = function ()
   for _, path in ipairs(opts.postamble) do
     table.insert(SILE.input.postambles, path)
   end
-  if opts.include then
+  if #opts.include > 0 then
     SU.deprecated("-I/--include", "-u/--use or -p/--preamble", "0.14.0", "0.15.0")
   end
   -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
