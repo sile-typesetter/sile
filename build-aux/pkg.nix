@@ -138,15 +138,6 @@ in stdenv.mkDerivation (finalAttrs: {
     touch source/build-aux/rust_boilerplate.mk
   '';
 
-  # remove forbidden references to $TMPDIR
-  preFixup = lib.optionalString stdenv.isLinux ''
-    for f in "$out"/bin/*; do
-      if isELF "$f"; then
-        patchelf --shrink-rpath --allowed-rpath-prefixes "$NIX_STORE" "$f"
-      fi
-    done
-  '';
-
   passthru = {
     # So it will be easier to inspect this environment, in comparison to others
     inherit luaEnv;
