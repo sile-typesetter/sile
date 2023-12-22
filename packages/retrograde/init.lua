@@ -15,6 +15,9 @@ package.default_settings = {
    ["0.15.0"] = {
       ["shaper.spaceenlargementfactor"] = 1.2,
    },
+   ["0.9.5"] = {
+      ["font.family"] = "Gentium Basic",
+   },
 }
 
 function package:_init (options)
