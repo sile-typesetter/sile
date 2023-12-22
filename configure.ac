@@ -214,6 +214,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         AX_PROGVAR([luarocks])
         AX_PROGVAR([nix])
         AX_PROGVAR([perl])
+        AX_PROGVAR([delta])
     ])
 
 ])

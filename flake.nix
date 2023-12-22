@@ -80,6 +80,8 @@
           configureFlags =  sile.configureFlags ++ [ "--enable-developer" ];
           nativeBuildInputs = sile.nativeBuildInputs ++ [
             pkgs.luarocks
+            # For regression test diff highlighting
+            pkgs.delta
             # For commitlint git hook
             pkgs.yarn
             # For npx

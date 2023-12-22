@@ -10,6 +10,9 @@ my (@failed, @passed, @unsupported, @knownbad, @knownbadbutpassing, @missing);
 my @specifics = @ARGV;
 my @DISABLEDSRCS = split(/ +/, $DISABLEDSRCS);
 
+my $highlighter = -t STDOUT ? "| @DELTA@" : "";
+my $diffcontext = -t STDOUT ? "2" : "0";
+
 my $exit = 0;
 for (@specifics ? @specifics : <tests/*.sil tests/*.xml tests/*.nil>) {
     my $expectation = $_; $expectation =~ s/\.(sil|xml)$/\.expected/;
@@ -30,7 +33,7 @@ for (@specifics ? @specifics : <tests/*.sil tests/*.xml tests/*.nil>) {
             push @failed, $_;
         } elsif (!system("grep -qx 'UNSUPPORTED' $actual")) {
             $unsupported = 1;
-        } elsif (!system("diff -".($knownbad?"q":"")."U0 $expectation $actual")) {
+        } elsif (!system("diff -".($knownbad?"q":"")."U$diffcontext $expectation $actual $highlighter")) {
             if ($knownbad) { push @knownbadbutpassing, $_;  }
             else { push @passed, $_; }
         } elsif ($knownbad) {
