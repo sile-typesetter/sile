@@ -6,6 +6,7 @@ SILE.features = require("core.features")
 
 -- Initialize Lua environment and global utilities
 SILE.lua_version = _VERSION:sub(-3)
+-- luacheck: ignore jit
 SILE.lua_isjit = type(jit) == "table"
 SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
 
@@ -144,10 +145,43 @@ SILE.init = function ()
   runEvals(SILE.input.evaluates, "evaluate")
 end
 
+local function suggest_luarocks (module)
+  local guessed_module_name = module:gsub(".*%.", "") .. ".sile"
+  return ([[
+
+    If the expected module is a 3rd party extension you may need to install it
+    using LuaRocks. The details of how to do this are highly dependent on
+    your system and preferred installation method, but as an example installing
+    a 3rd party SILE module to a project-local tree where might look like this:
+
+        luarocks --lua-version %s --tree lua_modules install %s
+
+    This will install the LuaRocks to your project, then you need to tell your
+    shell to pass along that info about available LuaRocks paths to SILE. This
+    only needs to be done once in each shell.
+
+        eval $(luarocks --lua-version %s --tree lua_modules path)
+
+    Thereafter running SILE again should work as expected:
+
+       sile %s
+
+    ]]):format(
+        SILE.lua_version,
+        guessed_module_name,
+        SILE.lua_version,
+        pl.stringx.join(" ", _G.arg)
+        )
+end
+
 SILE.use = function (module, options)
-  local pack
+  local status, pack
   if type(module) == "string" then
-    pack = require(module)
+    status, pack = pcall(require, module)
+    if not status then
+      SU.error(("Unable to use '%s':\n%s%s")
+        :format(module, SILE.traceback and ("    Lua ".. pack) or "", suggest_luarocks(module)))
+    end
   elseif type(module) == "table" then
     pack = module
   end

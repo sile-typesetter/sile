@@ -1,4 +1,4 @@
-std = "max"
+std = "min"
 include_files = {
   "**/*.lua",
   "sile.in",
@@ -21,6 +21,7 @@ files["**/*_spec.lua"] = {
   std = "+busted"
 }
 globals = {
+  package = { fields = { "searchpath" } },
   "SILE",
   "SU",
   "luautf8",

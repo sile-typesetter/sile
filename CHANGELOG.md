@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.14.14](https://github.com/sile-typesetter/sile/compare/v0.14.13...v0.14.14) (2023-12-23)
+
+
+### Features
+
+* **cli:** Change module load error to suggestion for how to install 3rd party modules ([c280050](https://github.com/sile-typesetter/sile/commit/c2800505eda2ee1630eea931f88efb07f6892d00))
+* **languages:** U+00A0 non-breaking space must be stretchable by default ([b769a63](https://github.com/sile-typesetter/sile/commit/b769a633069db4f32746d920dc9696296c7ab7db))
+* **typesetters:** Support U+00AD soft hyphen as discretionary break ([285507e](https://github.com/sile-typesetter/sile/commit/285507e5fddf3b0c752bb2b5bf81e8bf7f19144a))
+
+
+### Bug Fixes
+
+* **backends:** Fix plain text backend to work in LuaJIT/Lua 5.1 ([b185d49](https://github.com/sile-typesetter/sile/commit/b185d4972a5f29e7441f7af34e1ac49f49e6747f))
+* **cli:** Stop outputting error messages twice on failure to process main file ([da5d609](https://github.com/sile-typesetter/sile/commit/da5d60902a4129deb79ae4658ba82757d7277b85))
+* **core:** Use nil-safe and Lua-version-robust table utils ([2405b23](https://github.com/sile-typesetter/sile/commit/2405b23f0f448b217a066ecb34cae54f3e63aa64))
+* **packages:** Adjust dropcap logic for letters with a depth ([fd6963d](https://github.com/sile-typesetter/sile/commit/fd6963d226cc6a3b325dd796414936d200ae1ed2))
+
 ### [0.14.13](https://github.com/sile-typesetter/sile/compare/v0.14.12...v0.14.13) (2023-10-30)
 
 

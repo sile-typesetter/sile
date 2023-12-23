@@ -1,0 +1,16 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+% Language without hyphenation patterns
+% (so we are sure that the hyphenation comes from the soft hyphens)
+\set[parameter=document.language, value=und]
+% The text has soft hyphens U+00AD inside words.
+Lorem ip­sum­do­lor­sit­amet.
+Lorem ip­sum­do­lor­sit­amet.
+Lorem ip­sum­do­lor­sit­amet.% Should be hyphenated here as "ip-sum"
+
+\set[parameter=typesetter.softHyphen, value=false]
+Lorem ip­sum­do­lor­sit­amet.
+Lorem ip­sum­do­lor­sit­amet.
+Lorem ip­sum­do­lor­sit­amet.
+\end{document}
