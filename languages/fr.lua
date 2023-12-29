@@ -176,6 +176,7 @@ function SILE.nodeMakers.fr:mustRemove (i, items)
     if i < #items then
       local next = items[i+1].text
       if self:isSpace(next)
+          or self:isNonBreakingSpace(next)
           or self:isHighPunctuation(next)
           or self:isColonPunctuation(next)
           or self:isClosingQuote(next) then
