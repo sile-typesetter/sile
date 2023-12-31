@@ -39,9 +39,16 @@ SILE.framePrototype = pl.class({
           end
         end
         -- Add definitions of width and height
-        for method in pairs(alldims) do
-          if spec[method] then
-            self:constrain(method, spec[method])
+        if self.x and self.y then
+          self:constrain("left", self.x .. "-(" .. spec["width"] .. "/2)")
+          self:constrain("right", self.x .. "+(" .. spec["width"] .. "/2)")
+          self:constrain("top", self.y .. "-(" .. spec["height"] .. "/2)")
+          self:constrain("bottom", self.y .. "+(" .. spec["height"] .. "/2)")
+        else 
+          for method in pairs(alldims) do
+            if spec[method] then
+              self:constrain(method, spec[method])
+            end
           end
         end
       end
