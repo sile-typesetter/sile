@@ -162,4 +162,24 @@ function outputter:drawRule (x, y, width, depth)
   self:_writeline("Draw line", _round(x), _round(y), _round(width), _round(depth))
 end
 
+function outputter:setLinkAnchor (name, x, y)
+  self:_writeline("Setting link anchor", name, x, y)
+end
+
+function outputter:beginLink (dest, opts)
+   self:_writeline("Begining a link", dest, opts)
+end
+
+function outputter:endLink(dest, opts, x0, y0, x1, y1)
+   self:_writeline("Ending a link", dest, opts, x0, y0, x1, y1)
+end
+
+function outputter:setBookmark (dest, title, level)
+   self:_writeline("Setting bookmark", dest, title, level)
+end
+
+function outputter:setMetadata (key, value)
+   self:_writeline("Set metadata", key, value)
+end
+
 return outputter
