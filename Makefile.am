@@ -139,6 +139,7 @@ DEPDIR := .deps
 LOCALFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
 LOCALPATHS := SILE_PATH="$(PWD);libtexpdf/.libs;justenough/.libs"
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
+DRAFT ?= false
 
 dist-hook: $(MANUAL) dist-hook-distfiles
 
@@ -185,7 +186,7 @@ define runsile =
 	mkdir -p $(DEPDIR)/$$(dirname $@)
 	$(silepass)
 	export -n SILE_COVERAGE
-	if $(hastoc); then
+	if $$($(hastoc)) && ! $(DRAFT); then
 		$${hadtoc} || $(silepass)
 		[ "$${pg}" = "$${pg0}" ] || $(silepass)
 	fi
