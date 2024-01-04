@@ -127,7 +127,8 @@ package.documentation = [[
 \pdf:structure[type=P]{%
 For PDF documents to be considered accessible, they must contain a description of the PDF’s document structure.
 This package allows structure trees to be created and saved to the PDF file.
-Currently this provides a low-level interface to creating nodes in the tree; classes which require PDF accessibility should use the \autodoc:command{\pdf:structure} command in their sectioning implementation to declare the document structure.
+Currently this provides a low-level interface to creating nodes in the tree;
+   classes which require PDF accessibility should use the \autodoc:command{\pdf:structure} command in their sectioning implementation to declare the document structure.
 }
 
 \pdf:structure[type=P]{%

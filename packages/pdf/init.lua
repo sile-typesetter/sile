@@ -119,15 +119,22 @@ package.documentation = [[
 The \autodoc:package{pdf} package enables basic support for PDF links and table-of-contents entries.
 It provides the four commands \autodoc:command{\pdf:destination}, \autodoc:command{\pdf:link}, \autodoc:command{\pdf:bookmark}, and \autodoc:command{\pdf:metadata}.
 
-The \autodoc:command{\pdf:destination} parameter creates a link target; it expects a parameter called \autodoc:parameter{name} to uniquely identify the target.
+The \autodoc:command{\pdf:destination} parameter creates a link target;
+   it expects a parameter called \autodoc:parameter{name} to uniquely identify the target.
 To create a link to that location in the document, use \autodoc:command{\pdf:link[dest=<name>]{<content>}}.
 
-The \autodoc:command{\pdf:link} command accepts several options defining its border style: a \autodoc:parameter{borderwidth} length setting the border width (defaults to \code{0}, meaning no border), a \autodoc:parameter{borderstyle} string (can be set to \code{underline} or \code{dashed}, otherwise a solid box), a \autodoc:parameter{bordercolor} color specification for this border (defaults to \code{blue}), and finally a \autodoc:parameter{borderoffset} length for adjusting the border with some vertical space above the content and below the baseline (defaults to \code{1pt}).
+The \autodoc:command{\pdf:link} command accepts several options defining its border style:
+   a \autodoc:parameter{borderwidth} length setting the border width (defaults to \code{0}, meaning no border),
+   a \autodoc:parameter{borderstyle} string (can be set to \code{underline} or \code{dashed}, otherwise a solid box),
+   a \autodoc:parameter{bordercolor} color specification for this border (defaults to \code{blue}),
+   and finally a \autodoc:parameter{borderoffset} length for adjusting the border with some vertical space above the content and below the baseline (defaults to \code{1pt}).
 Note that PDF renderers may vary on how they honor these border styling features on link annotations.
 
 It also has an \autodoc:parameter{external} option for URL links, which is not intended to be used directly—refer to the \autodoc:package{url} package for more flexibility typesetting external links.
 
-To set arbitrary key-value metadata, use something like \autodoc:command{\pdf:metadata[key=Author, value=J. Smith]}. The PDF metadata field names are case-sensitive. Common keys include \code{Title}, \code{Author}, \code{Subject}, \code{Keywords}, \code{CreationDate}, and \code{ModDate}.
+To set arbitrary key-value metadata, use something like \autodoc:command{\pdf:metadata[key=Author, value=J. Smith]}.
+The PDF metadata field names are case-sensitive.
+Common keys include \code{Title}, \code{Author}, \code{Subject}, \code{Keywords}, \code{CreationDate}, and \code{ModDate}.
 \end{document}
 ]]
 
