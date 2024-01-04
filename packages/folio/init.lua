@@ -52,6 +52,14 @@ function package:_init (options)
   self:export("outputFolio", self.outputFolio)
 end
 
+function package:declareSettings(_)
+  SILE.settings:declare({
+    parameter = "folio.style",
+    default = "center",
+    type = "string"
+  })
+end
+
 function package:registerCommands ()
 
   self:registerCommand("folios", function (_, _)
@@ -71,7 +79,16 @@ function package:registerCommands ()
   end, "Deprecated")
 
   self:registerCommand("foliostyle", function (_, content)
-    SILE.call("center", {}, content)
+    local style = SILE.settings:get("folio.style") 
+    if style == "mirror" then
+      if SILE.scratch.counters.folio.value % 2 == 0 then 
+        SILE.call("raggedright", {}, content)
+      else
+        SILE.call("raggedleft", {}, content)
+      end
+    else
+      SILE.call("center", {}, content)
+    end
   end)
 
 end
@@ -95,9 +112,12 @@ If, for instance, you want to set page numbers in a different font you can redef
 \define[command=foliostyle]{\center{\font[family=Albertus]{\process}}}
 \end{raw}
 
-If you want to put page numbers on the left side of even pages and the right side of odd pages, there are a couple of ways you can do that.
-The complicated way is to define a command in Lua which inspects the page number and then sets the number ragged left or ragged right appropriately.
-The easy way is just to put your folio frame where you want it on the master page.
+If you want to put page numbers on the left side of even pages and the right side of odd pages you can just set the settings' parameter \code{folio.style} to \code{mirror}:
+
+\begin[type=autodoc:codeblock]{raw}
+\set[parameter=folio.style, value=mirror]
+\end{raw}
+
 \end{document}
 ]]
 
