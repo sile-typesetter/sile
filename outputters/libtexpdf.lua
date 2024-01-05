@@ -307,7 +307,7 @@ end
 
 -- Unstable link APIs
 
-function outputter:linkAnchor (x, y, name)
+function outputter:setLinkAnchor (name, x, y)
   x = SU.cast("number", x)
   y = SU.cast("number", y)
   self:_ensureInit()
@@ -328,17 +328,18 @@ local function borderStyle (style, width)
   return "/Border[0 0 " .. width .. "]"
 end
 
-function outputter:enterLinkTarget (_, _) -- destination, options as argument
+function outputter:startLink (_, _) -- destination, options as argument
+  self:_ensureInit()
   -- HACK:
   -- Looking at the code, pdf.begin_annotation does nothing, and Simon wrote a comment
   -- about tracking boxes. Unsure what he implied with this obscure statement.
   -- Sure thing is that some backends may need the destination here, e.g. an HTML backend
   -- would generate a <a href="#destination">, as well as the options possibly for styling
   -- on the link opening?
-  self:_ensureInit()
   pdf.begin_annotation()
 end
-function outputter.leaveLinkTarget (_, x0, y0, x1, y1, dest, opts)
+
+function outputter.endLink (_, dest, opts, x0, y0, x1, y1)
   local bordercolor = borderColor(opts.bordercolor)
   local borderwidth = SU.cast("integer", opts.borderwidth)
   local borderstyle = borderStyle(opts.borderstyle, borderwidth)
@@ -375,7 +376,6 @@ function outputter:setMetadata (key, value)
 end
 
 function outputter:setBookmark (dest, title, level)
-  -- Added UTF8 to UTF16-BE conversion
   -- For annotations and bookmarks, text strings must be encoded using
   -- either PDFDocEncoding or UTF16-BE with a leading byte-order marker.
   -- As PDFDocEncoding supports only limited character repertoire for

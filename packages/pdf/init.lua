@@ -19,7 +19,7 @@ function package:registerCommands ()
         local x, y = state.cursorX, state.cursorY
         typesetter.frame:advancePageDirection(line.height)
         local _y = SILE.documentState.paperSize[2] - y
-        SILE.outputter:linkAnchor(x, _y, name)
+        SILE.outputter:setLinkAnchor(name, x, _y)
       end
     })
   end)
@@ -74,7 +74,6 @@ function package:registerCommands ()
       borderwidth = borderwidth,
       borderoffset = borderoffset
     }
-
     local x0, y0
     SILE.typesetter:pushHbox({
       value = nil,
@@ -84,7 +83,7 @@ function package:registerCommands ()
       outputYourself = function (_, typesetter, _)
         x0 = typesetter.frame.state.cursorX:tonumber()
         y0 = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY):tonumber()
-        SILE.outputter:enterLinkTarget(dest, opts)
+        SILE.outputter:beginLink(dest, opts)
       end
     })
     local hbox, hlist = SILE.typesetter:makeHbox(content) -- hack
@@ -97,7 +96,7 @@ function package:registerCommands ()
       outputYourself = function (_, typesetter, _)
         local x1 = typesetter.frame.state.cursorX:tonumber()
         local y1 = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY + hbox.height):tonumber()
-        SILE.outputter:leaveLinkTarget(x0, y0, x1, y1, dest, opts) -- Unstable API
+        SILE.outputter:endLink(dest, opts, x0, y0, x1, y1) -- Unstable API
       end
     })
     SILE.typesetter:pushHlist(hlist)
