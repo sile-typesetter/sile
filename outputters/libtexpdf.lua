@@ -386,4 +386,10 @@ function outputter:setBookmark (dest, title, level)
   pdf.bookmark(d, level)
 end
 
+-- Assumes the caller known what they want to stuff in raw PDF format
+function outputter:drawRaw (literal)
+   self:_ensureInit()
+   pdf.add_content(literal)
+end
+
 return outputter

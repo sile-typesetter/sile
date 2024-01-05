@@ -126,16 +126,13 @@ function package:registerCommands ()
     if SILE.outputter._name ~= "libtexpdf" then
       SU.error("pdf package requires libtexpdf backend")
     end
-    if type(SILE.outputter._ensureInit) == "function" then
-      SILE.outputter:_ensureInit()
-    end
     SILE.typesetter:pushHbox({
       value = nil,
       height = SILE.measurement(0),
       width = SILE.measurement(0),
       depth = SILE.measurement(0),
       outputYourself = function (_, _, _)
-        pdf.add_content(content[1])
+        SILE.outputter:drawRaw (content[1])
       end
     })
   end)

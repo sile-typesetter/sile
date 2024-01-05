@@ -82,4 +82,9 @@ function outputter:drawHbox (value, width)
   end
 end
 
+function outputter:drawRaw (literal)
+   self:_ensureInit()
+   outfile:write(literal)
+end
+
 return outputter

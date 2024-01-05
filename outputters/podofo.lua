@@ -106,4 +106,10 @@ function outputter:debugHbox (hbox, scaledWidth)
   --cr:move_to(x, y)
 end
 
+-- untested
+function outputter:drawRaw (literal)
+  local x, y = self:getCursor()
+  painter:DrawText(x, y, literal, string.len(literal))
+end
+
 return outputter

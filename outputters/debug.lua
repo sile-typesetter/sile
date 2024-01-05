@@ -183,4 +183,8 @@ function outputter:setMetadata (key, value)
    self:_writeline("Set metadata", key, value)
 end
 
+function outputter:drawRaw (literal)
+   self:_writeline("Draw raw", literal)
+end
+
 return outputter

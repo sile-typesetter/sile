@@ -120,4 +120,9 @@ function outputter:debugHbox (hbox, scaledWidth)
   cr:move_to(x, y)
 end
 
+-- untested
+function outputter.drawRaw (_, literal)
+   cr:show_text(literal)
+end
+
 return outputter
