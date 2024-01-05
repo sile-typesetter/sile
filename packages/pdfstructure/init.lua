@@ -119,6 +119,27 @@ function package:registerCommands ()
     stPointer = oldstPointer
   end)
 
+  self:registerCommand("pdf:literal", function (_, content)
+    -- NOTE: This method is used by the pdfstructure package and should
+    -- probably be moved elsewhere, so there's no attempt here to delegate
+    -- the low-level libtexpdf call to te outputter.
+    if SILE.outputter._name ~= "libtexpdf" then
+      SU.error("pdf package requires libtexpdf backend")
+    end
+    if type(SILE.outputter._ensureInit) == "function" then
+      SILE.outputter:_ensureInit()
+    end
+    SILE.typesetter:pushHbox({
+      value = nil,
+      height = SILE.measurement(0),
+      width = SILE.measurement(0),
+      depth = SILE.measurement(0),
+      outputYourself = function (_, _, _)
+        pdf.add_content(content[1])
+      end
+    })
+  end)
+
 end
 
 package.documentation = [[
