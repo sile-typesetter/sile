@@ -22,6 +22,7 @@ outputter._name = "cairo"
 outputter.extension = "pdf"
 
 function outputter:_init ()
+  base._init(self)
   local fname = self:getOutputFilename()
   local surface = cairolgi.PdfSurface.create(fname == "-" and "/dev/stdout" or fname, SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
   cr = cairolgi.Context.create(surface)

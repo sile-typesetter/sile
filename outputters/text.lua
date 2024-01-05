@@ -36,6 +36,7 @@ end
 
 function outputter:finish ()
   self:_ensureInit()
+  self:runHooks("prefinish")
   outfile:close()
 end
 

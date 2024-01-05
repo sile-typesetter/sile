@@ -59,6 +59,7 @@ end
 function outputter:finish ()
   if SILE.status.unsupported then self:_writeline("UNSUPPORTED") end
   self:_writeline("End page")
+  self:runHooks("prefinish")
   self:_writeline("Finish")
   outfile:close()
 end

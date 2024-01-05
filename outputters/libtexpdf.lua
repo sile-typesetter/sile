@@ -71,7 +71,7 @@ end
 function outputter:finish ()
   self:_ensureInit()
   pdf.endpage()
-  self:_endHook()
+  self:runHooks("prefinish")
   pdf.finish()
   started = false
   lastkey = nil

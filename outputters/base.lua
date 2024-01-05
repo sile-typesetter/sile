@@ -2,11 +2,29 @@ local outputter = pl.class()
 outputter.type = "outputter"
 outputter._name = "base"
 
-function outputter._init () end
+function outputter:_init ()
+   self.hooks = {}
+   return self
+end
+
+function outputter:registerHook (category, func)
+   if not self.hooks[category] then self.hooks[category] = {} end
+   table.insert(self.hooks[category], func)
+end
+
+function outputter:runHooks (category, data)
+  if not self.hooks[category] then return nil end
+  for _, func in ipairs(self.hooks[category]) do
+    data = func(self, data)
+  end
+  return data
+end
 
 function outputter.newPage () end
 
-function outputter.finish () end
+function outputter:finish ()
+  self:runHooks("prefinish")
+end
 
 function outputter.getCursor () end
 

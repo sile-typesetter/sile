@@ -79,7 +79,7 @@ function package:_init ()
   local stRoot = stNode("Document")
   stPointer = stRoot
   self:loadPackage("pdf")
-  function SILE.outputters.libtexpdf._endHook (_)
+  SILE.outputter:registerHook("prefinish", function()
     local catalog = pdf.get_dictionary("Catalog")
     local structureTree = pdf.parse("<< /Type /StructTreeRoot >>")
     pdf.add_dict(catalog, pdf.parse("/StructTreeRoot"), pdf.reference(structureTree))
@@ -88,7 +88,7 @@ function package:_init ()
     pdf.add_dict(structureTree, pdf.parse("/K"), dumpTree(stRoot))
     if structureNumberTree then pdf.release(structureNumberTree) end
     if structureTree then pdf.release(structureTree) end
-  end
+  end)
 end
 
 function package:registerCommands ()
