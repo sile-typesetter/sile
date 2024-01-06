@@ -52,27 +52,39 @@ jobs:
             ${{ matrix.configuration[1] }}
           echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
           echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
+          echo "CARCH=$(uname -m)" >> $GITHUB_ENV
       - name: Make
         run: |
           make
       - name: Package
         run: |
           make dist
-      - name: Upload artifacts
-        if: ${{ !contains(github.ref, 'refs/tags/v') }}
+      - name: Upload source dist artifact
+        if: ${{ matrix.configuration[0] == 'dynamic' && !contains(github.ref, 'refs/tags/v') }}
         uses: actions/upload-artifact@v4
         with:
           name: sile-${{ env.VERSION }}
           path: sile-${{ env.VERSION }}.zip
+      - name: Append architecture to embeded binary
+        if: ${{ matrix.configuration[0] == 'embeded' }}
+        run: |
+          cp sile sile-${{ env.CARCH }}
+      - name: Upload embeded binary artifact
+        if: ${{ matrix.configuration[0] == 'embeded' && !contains(github.ref, 'refs/tags/v') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: sile-${{ env.CARCH }}
+          path: sile-${{ env.CARCH }}
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: github.repository == 'sile-typesetter/sile' && startsWith(github.ref, 'refs/tags/v')
+        if: matrix.configuration[0] == 'embeded' && github.repository == 'sile-typesetter/sile' && startsWith(github.ref, 'refs/tags/v')
         with:
           body_path: sile-${{ env.VERSION }}.md
           files: |
             sile-${{ env.VERSION }}.pdf
             sile-${{ env.VERSION }}.zip
             sile-${{ env.VERSION }}.tar.xz
+            sile-${{ env.CARCH }}
 
   build-nix:
     runs-on: ubuntu-22.04
