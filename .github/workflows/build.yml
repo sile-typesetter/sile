@@ -111,6 +111,6 @@ jobs:
           nix develop --command ./bootstrap.sh
           nix develop --configure
           nix develop --command make
-      - name: Run HB6+ only regressions
+      - name: Run regression tests for which Ubuntu can't provide deps
         run: |
-          nix develop --command make regressions TESTSRCS=tests/variations-axis.sil
+          nix develop --command make regressions TESTSRCS='tests/variations-axis.sil tests/feat-unicode-softhyphen.sil'
