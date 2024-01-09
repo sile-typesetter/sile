@@ -79,7 +79,7 @@ EXTRA_DIST += src/embed.rs.in
 
 BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
 
-CLEANFILES = $(DEPFILES) $(ACTUALS) $(TESTPDFS) $(MANUAL) $(_BUILT_SUBDIRS)
+CLEANFILES = $(MANUAL)
 
 include $(top_srcdir)/build-aux/rust_boilerplate.mk
 
@@ -172,7 +172,10 @@ selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS)
 	$(PDFINFO) $$output | $(GREP) "SILE v$(VERSION)"
 
 .PHONY: docs
-docs: $(MANUAL)
+docs: $(_MANUAL)
+
+.PHONY: docs-figures
+docs-figures: $(FIGURES)
 
 # This is a monkey patch to figure out how many passes we have to to to
 # garantee the TOC is up to date, simplify when #230 is fixed.
@@ -199,15 +202,32 @@ _DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTF
 # TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
 # these subdirs don't do crazy things like copying files outside of their own trees!
 _BUILT_SUBDIRS = .built-subdirs
-_SUBDIR_TELLS = justenough/.libs/fontmetrics.so \
-				justenough/.libs/justenoughfontconfig.so \
-				justenough/.libs/justenoughharfbuzz.so \
-				justenough/.libs/justenoughicu.so \
-				justenough/.libs/justenoughlibtexpdf.so \
-				justenough/.libs/svg.so \
-				libtexpdf/.libs/libtexpdf.so.0.0.0
+_SUBDIR_TELLS =
+
+if SHARED
+_SUBDIR_TELLS += justenough/.libs/fontmetrics.$(SHARED_LIB_EXT) \
+				justenough/.libs/justenoughfontconfig.$(SHARED_LIB_EXT) \
+				justenough/.libs/justenoughharfbuzz.$(SHARED_LIB_EXT) \
+				justenough/.libs/justenoughicu.$(SHARED_LIB_EXT) \
+				justenough/.libs/justenoughlibtexpdf.$(SHARED_LIB_EXT) \
+				justenough/.libs/svg.$(SHARED_LIB_EXT) \
+				libtexpdf/.libs/libtexpdf.$(SHARED_LIB_EXT).0.0.0
+endif
+
+if STATIC
+_SUBDIR_TELLS += justenough/.libs/fontmetrics.a \
+				justenough/.libs/justenoughfontconfig.a \
+				justenough/.libs/justenoughharfbuzz.a \
+				justenough/.libs/justenoughicu.a \
+				justenough/.libs/justenoughlibtexpdf.a \
+				justenough/.libs/svg.a \
+				libtexpdf/.libs/libtexpdf.a
+endif
+
 $(_BUILT_SUBDIRS): $(_SUBDIR_TELLS)
 	touch $@
+
+CLEANFILES += $(_BUILT_SUBDIRS)
 
 $(_SUBDIR_TELLS):
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -263,6 +283,7 @@ update_libtexpdf:
 TESTPDFS   = $(addsuffix      .pdf,$(basename $(TESTSRCS)))
 EXPECTEDS ?= $(filter $(addsuffix .expected,$(basename $(TESTSRCS))),$(TESTEXPECTS))
 ACTUALS    = $(addsuffix   .actual,$(basename $(EXPECTEDS)))
+CLEANFILES += $(TESTPDFS) $(ACTUALS)
 
 REGRESSIONSCRIPT := ./tests/regressions.pl
 BUSTEDFLAGS ?=
@@ -341,6 +362,7 @@ tests/%.actual: tests/%.nil $$(patterndeps)
 
 DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(MANUAL))))
 DEPDIRS = $(sort $(dir $(DEPFILES)))
+CLEANFILES += $(DEPFILES)
 
 $(DEPDIRS): | Makefile-distfiles
 	mkdir -p $@
@@ -362,18 +384,20 @@ docker: Dockerfile hooks/build .version
 docker-dep-check: .docker_deps .aur_deps
 	diff -u $^
 
-CLEANFILES += .docker_deps
 .docker_deps: hooks/build
 	$(SHELL) -c 'source <($(SED) -nE "/^(RUN|'"'"')/{s/.*=/echo /;p}" $<)' | \
 		tr ' ' '\n' | \
 		sort > $@
 
-CLEANFILES += .aur_deps
+CLEANFILES += .docker_deps
+
 .aur_deps:
 	curl -Ls 'https://aur.archlinux.org/cgit/aur.git/plain/.SRCINFO?h=sile-git' | \
 		$(SED) -nE '/\bdepends =/{s/.*= //;p}' | \
 		$(GREP) -vxE '(lua-.*|.*\.so|git|glibc)' | \
 		sort > $@
+
+CLEANFILES += .aur_deps
 
 define docker_push =
 	test -z "$(DOCKER_PAT)" || \

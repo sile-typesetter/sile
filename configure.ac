@@ -36,6 +36,9 @@ AC_ARG_ENABLE([developer],
                              [Check for and enable tooling required only for developers]))
 AM_CONDITIONAL([DEVELOPER], [test "x$enable_developer" = "xyes"])
 
+AM_CONDITIONAL([SHARED], [test "x$enable_shared" = "xyes"])
+AM_CONDITIONAL([STATIC], [test "x$enable_static" = "xyes"])
+
 AC_ARG_ENABLE([embeded],
               AS_HELP_STRING([--enable-embeded-resources],
                              [Compile resources such as Lua module files directly into the Rust CLI binary]))
