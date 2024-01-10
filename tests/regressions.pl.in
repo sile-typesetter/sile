@@ -26,14 +26,14 @@ for (@specifics ? @specifics : <tests/*.sil tests/*.xml tests/*.nil>) {
             next;
         }
         # Run but don't fail on tests that exist but are known to fail
-        if (!system("head -n1 $_ | grep -q KNOWNBAD")) {
+        if (!system("@HEAD@ -n1 $_ | @GREP@ -q KNOWNBAD")) {
             $knownbad = 1;
         }
         if (! -f $actual and ! $knownbad) {
             push @failed, $_;
-        } elsif (!system("grep -qx 'UNSUPPORTED' $actual")) {
+        } elsif (!system("@GREP@ -qx 'UNSUPPORTED' $actual")) {
             $unsupported = 1;
-        } elsif (!system("cmp -s $expectation $actual")) {
+        } elsif (!system("@CMP@ -s $expectation $actual")) {
             if ($knownbad) { push @knownbadbutpassing, $_;  }
             else { push @passed, $_; }
         } elsif ($knownbad) {
@@ -41,7 +41,7 @@ for (@specifics ? @specifics : <tests/*.sil tests/*.xml tests/*.nil>) {
         } elsif ($unsupported) {
             push @unsupported, $_;
         } else {
-            system("diff -".($knownbad?"q":"")."U$diffcontext $expectation $actual $highlighter");
+            system("@DIFF@ -".($knownbad?"q":"")."U$diffcontext $expectation $actual $highlighter");
             push @failed, $_;
         }
     } else {

@@ -156,7 +156,7 @@ CLEAN ?=
 dist: sile-$(VERSION).pdf sile-$(VERSION).md
 
 sile-$(VERSION).pdf: $(MANUAL)
-	cp $(MANUAL) $@
+	$(CP) $(MANUAL) $@
 
 sile-%.md: CHANGELOG.md
 	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' CHANGELOG.md | \
@@ -167,7 +167,7 @@ check: selfcheck
 .PHONY: selfcheck
 selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS)
 	output=$$(mktemp -t selfcheck-XXXXXX.pdf)
-	trap 'rm -f $$output' EXIT HUP TERM
+	trap '$(RM) $$output' EXIT HUP TERM
 	echo "<sile>foo</sile>" | $(LOCALPATHS) ./$(bin_PROGRAMS) -o $$output -
 	$(PDFINFO) $$output | $(GREP) "SILE v$(VERSION)"
 
@@ -186,7 +186,7 @@ silepass = $(localsile) $< -o $@ && pg0=$${pg} pg=$$($(pages)) || false
 define runsile =
 	set -e
 	pg=$$($(pages)) hadtoc=$$($(hastoc))
-	mkdir -p $(DEPDIR)/$$(dirname $@)
+	$(MKDIR_P) $(DEPDIR)/$$(dirname $@)
 	$(silepass)
 	export -n SILE_COVERAGE
 	if $$($(hastoc)) && ! $(DRAFT); then
@@ -264,12 +264,12 @@ tagrelease:
 	test -z $$($(GIT) tag --points-at HEAD) || exit 0 # end if we are already on a release tag
 	$(GIT) diff-index --quiet --cached HEAD || exit 1 # die if anything staged but not committed
 	$(GIT) diff-files --quiet || exit 1 # die if any tracked files have unstagged changes
-	npm run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
+	$(NPM) run release -- $(and $(RELTYPE),--release-as $(RELTYPE))
 
 prerelease: test docs update_libtexpdf
 
 release-preview:
-	npm run release -- --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
+	$(NPM) run release -- --dry-run $(and $(RELTYPE),--release-as $(RELTYPE))
 
 release: tagrelease
 
@@ -324,16 +324,16 @@ _BASESHA ?= $(shell test -e .git && $(GIT) rev-parse --short=7 $(BASESHA))
 clean-recursive: clean-tests
 
 clean-tests:
-	rm -rf tests/*.actual
-	rm -rf $(DEPDIR)/tests/*
+	$(RM) -r tests/*.actual
+	$(RM) -r $(DEPDIR)/tests/*
 
 clean-recursive: clean-deps
 
 clean-deps:
-	rm -rf $(DEPDIR)
+	$(RM) -r $(DEPDIR)
 
 time-%.json: benchmark-%/time.json
-	cp $< $@
+	$(CP) $< $@
 
 update_expecteds: $(EXPECTEDS)
 
@@ -349,15 +349,15 @@ tests/%.expected: tests/%.nil $$(patterndeps)
 regression_previews: $(TESTPREVIEWS)
 
 tests/%.actual: tests/%.sil $$(patterndeps)
-	-$(if $(CLEAN),rm -f $@,:)
+	-$(if $(CLEAN),$(RM) $@,:)
 	$(localsile) -b debug $< -o $@
 
 tests/%.actual: tests/%.xml $$(patterndeps)
-	-$(if $(CLEAN),rm -f $@,:)
+	-$(if $(CLEAN),$(RM) $@,:)
 	$(localsile) -b debug $< -o $@
 
 tests/%.actual: tests/%.nil $$(patterndeps)
-	-$(if $(CLEAN),rm -f $@,:)
+	-$(if $(CLEAN),$(RM) $@,:)
 	$(localsile) -b debug $< -o $@
 
 DEPFILES = $(addsuffix .d,$(addprefix $(DEPDIR)/,$(basename $(TESTSRCS) $(MANUAL))))
@@ -365,7 +365,7 @@ DEPDIRS = $(sort $(dir $(DEPFILES)))
 CLEANFILES += $(DEPFILES)
 
 $(DEPDIRS): | Makefile-distfiles
-	mkdir -p $@
+	$(MKDIR_P) $@
 
 $(DEPFILES): | $(DEPDIRS)
 
@@ -382,53 +382,53 @@ docker: Dockerfile hooks/build .version
 	./hooks/build $(VERSION)
 
 docker-dep-check: .docker_deps .aur_deps
-	diff -u $^
+	$(DIFF) -u $^
 
 .docker_deps: hooks/build
 	$(SHELL) -c 'source <($(SED) -nE "/^(RUN|'"'"')/{s/.*=/echo /;p}" $<)' | \
-		tr ' ' '\n' | \
-		sort > $@
+		$(TR) ' ' '\n' | \
+		$(SORT) > $@
 
 CLEANFILES += .docker_deps
 
 .aur_deps:
-	curl -Ls 'https://aur.archlinux.org/cgit/aur.git/plain/.SRCINFO?h=sile-git' | \
+	$(CURL) -Ls 'https://aur.archlinux.org/cgit/aur.git/plain/.SRCINFO?h=sile-git' | \
 		$(SED) -nE '/\bdepends =/{s/.*= //;p}' | \
 		$(GREP) -vxE '(lua-.*|.*\.so|git|glibc)' | \
-		sort > $@
+		$(SORT) > $@
 
 CLEANFILES += .aur_deps
 
 define docker_push =
 	test -z "$(DOCKER_PAT)" || \
-		docker login https://$(DOCKER_REGISTRY) -u $(DOCKER_USERNAME) -p $(DOCKER_PAT)
-	docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+		$(DOCKER) login https://$(DOCKER_REGISTRY) -u $(DOCKER_USERNAME) -p $(DOCKER_PAT)
+	$(DOCKER) push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
 	if [[ "$(DOCKER_TAG)" == v*.*.* ]]; then \
 		tag=$(DOCKER_TAG) ; \
-		docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
-		docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
-		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
-		docker push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
+		$(DOCKER) tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
+		$(DOCKER) tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
+		$(DOCKER) push $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
+		$(DOCKER) push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
 	fi
 endef
 
 docker-ghcr-to-hub:
-	docker pull $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG)
-	docker tag  $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+	$(DOCKER) pull $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG)
+	$(DOCKER) tag  $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
 	$(docker_push)
 
 docker-build-push: docker
-	docker tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
+	$(DOCKER) tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
 	$(docker_push)
 
 gource.webm:
-	mkdir -p /tmp/gravatars
+	$(MKDIR_P) /tmp/gravatars
 	magick documentation/sile-logo.pdf[0] -density 300 -colorspace RGB -negate -resize 50% /tmp/sile-logo.jpg
 	$(GIT) log --pretty=format:"%an—%ae" | \
-		sort -u | \
+		$(SORT) -u | \
 		while IFS=— read name email; do \
 			test -f "/tmp/gravatars/$$name.jpg" || \
-				curl -S "https://www.gravatar.com/avatar/$$(echo -n $$email | md5sum | cut -d\  -f1)?d=identicon&s=256" -o "/tmp/gravatars/$$name.jpg" ; \
+				$(CURL) -S "https://www.gravatar.com/avatar/$$(echo -n $$email | md5sum | cut -d\  -f1)?d=identicon&s=256" -o "/tmp/gravatars/$$name.jpg" ; \
 		done ;\
 	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - | \
 		ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libvpx -b 10000K $@
