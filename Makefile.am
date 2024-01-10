@@ -159,8 +159,7 @@ sile-$(VERSION).pdf: $(MANUAL)
 	$(INSTALL) $(MANUAL) $@
 
 sile-%.md: CHANGELOG.md
-	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' CHANGELOG.md | \
-		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
+	$(GITCLIFF) --unreleased > $@
 
 check: selfcheck
 
