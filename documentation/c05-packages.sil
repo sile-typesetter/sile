@@ -274,6 +274,10 @@ This section introduces packages that could not fit in another category.
 \status:low
 \package-documentation{ifattop}
 
+\subsection{retrograde}
+\status:high
+\package-documentation{retrograde}
+
 \section{Frames and page layouts}
 
 As we mentioned in the first chapter, SILE uses frames as an indication of where to put text onto

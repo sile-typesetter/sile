@@ -105,7 +105,7 @@ function class:registerCommands ()
       number = self.packages.counters:formatMultilevelCounter(self:getMultilevelCounter("sectioning"))
     end
     if SU.boolean(options.toc, true) then
-      SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))
+      SILE.call("tocentry", { level = level, number = number }, SU.ast.subContent(content))
     end
     if SU.boolean(options.numbering, true) then
       if options.msg then

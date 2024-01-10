@@ -83,7 +83,7 @@ local mathGrammar = function (_ENV)
         -- Remove the last mathlist if empty. This way,
         -- `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
         if not t[#t][1] or not t[#t][1][1] then table.remove(t) end
-        return table.unpack(t)
+        return pl.utils.unpack(t)
       end
 
   START "texlike_math"

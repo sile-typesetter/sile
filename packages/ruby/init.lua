@@ -51,12 +51,23 @@ function package.declareSettings (_)
     help = "Glue added between consecutive Latin ruby"
   })
 
+  SILE.settings:declare({
+    parameter = "ruby.opentype",
+    type = "boolean",
+    default = true,
+    help = "Use OpenType tate feature instead of of a bold weight"
+  })
+
 end
 
 function package:registerCommands ()
 
   self:registerCommand("ruby:font", function (_, _)
-    SILE.call("font", { size = "0.6zw", weight = 800 })
+    if SILE.settings:get("ruby.opentype") then
+      SILE.call("font", { size = "0.6zw", features = "+ruby" })
+    else
+      SILE.call("font", { size = "0.6zw", weight = 700 })
+    end
   end)
 
   self:registerCommand("ruby", function (options, content)

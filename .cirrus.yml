@@ -2,8 +2,8 @@ task:
   name: Cirrus CI (FreeBSD)
   freebsd_instance:
     matrix:
+      - image_family: freebsd-14-0
       - image_family: freebsd-13-2
-      - image_family: freebsd-12-4
   env:
     MAKEFLAGS: -j$(nproc) -Otarget
     CFLAGS: -I/usr/local/include -fPIC
@@ -24,14 +24,13 @@ task:
     fingerprint_script: cat sile.rockspec.in
   dependencies_script:
     - pkg install -y autoconf automake fontconfig GentiumPlus git gmake harfbuzz jq libtool pkgconf png rust
-    - pkg install -y luajit lua51-luaexpat lua51-lpeg lua51-luafilesystem lua51-luarocks lua51-luasec lua51-luasocket
+    - pkg install -y luajit lua51-luaexpat lua51-lpeg lua51-luafilesystem lua51-luarocks lua51-luasec lua51-luasocket lua51-lzlib
     - luarocks51 install cassowary
     - luarocks51 install cldr
     - luarocks51 install compat53
     - luarocks51 install fluent
     - luarocks51 install linenoise
     - luarocks51 install loadkit
-    - luarocks51 install lua-zlib
     - luarocks51 install lua_cliargs
     - luarocks51 install luaepnf
     - luarocks51 install luarepl
@@ -43,7 +42,7 @@ task:
     - ./bootstrap.sh
   configure_script: |
     ./configure MAKE=gmake \
-      --enable-developer LUAROCKS=false LUACHECK=false BUSTED=false PDFINFO=false NIX=false \
+      --enable-developer LUAROCKS=false LUACHECK=false BUSTED=false DELTA=cat PDFINFO=false NIX=false \
       --disable-font-variations \
       --with-system-lua-sources \
       --with-system-luarocks \

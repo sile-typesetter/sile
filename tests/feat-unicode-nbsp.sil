@@ -1,0 +1,34 @@
+\begin[papersize=a6]{document}
+\use[module=packages.retrograde,target=v0.15.0]
+\neverindent
+\nofolios
+\language[main=und]
+% Reference text
+Lorem ipsum dolor sit amet, sit amet adipiscing elit.
+Sed non risus. Suspendisse lectus tortor.
+\medskip
+% Four first spaces are U+00A0.
+% Expect proper stretchability as regular spaces.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.\break
+Sed non risus. Suspendisse lectus tortor.
+
+% All spaces are U+00A0 but two:
+% Expectation:
+% Expect non-breakable spaces, shrinking as regular spaces
+% when necessary.
+Lorem ipsum dolor sit amet, sit amet adipiscing elit.
+Sed non risus. Suspendisse lectus tortor.
+
+\set[parameter=linebreak.emergencyStretch, value=20em]
+Lorem ipsum dolor sit amet, sit amet adipiscing.
+Suspendisse lectus tortor.
+
+% Punctiation spaces are U+00A0 in the following case.
+% Expectation:
+% French punctuation spaces are managed automatically,
+% also replacing U+00A0.
+\medskip
+\language[main=fr]
+Français ? Français : « Français ! »
+
+\end{document}

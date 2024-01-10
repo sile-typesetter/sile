@@ -21,7 +21,7 @@ function settings:_init()
   self:declare({
     parameter = "document.parindent",
     type = "glue",
-    default = SILE.nodefactory.glue("20pt"),
+    default = SILE.nodefactory.glue("1bs"),
     help = "Glue at start of paragraph"
   })
 
