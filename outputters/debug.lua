@@ -15,7 +15,7 @@ local function _round (input)
   -- just enough to fix the bias so our test suite works across interpreters.
   -- Note that even a true rounding function here will fail because the bias is
   -- inherent to the floating point type. Also note we are erroring in favor of
-  -- the *less* common option beacuse the LuaJIT VMS are hopelessly broken
+  -- the *less* common option because the LuaJIT VMS are hopelessly broken
   -- whereas normal LUA VMs can be cooerced.
   if input > 0 then input = input + .00000000000001 end
   if input < 0 then input = input - .00000000000001 end
@@ -24,6 +24,7 @@ end
 
 local outputter = pl.class(base)
 outputter._name = "debug"
+outputter.extension = "debug"
 
 -- The outputter init can't actually initialize output (as logical as it might
 -- have seemed) because that requires a page size which we don't know yet.
@@ -32,7 +33,7 @@ outputter._name = "debug"
 function outputter:_ensureInit ()
   if not started then
     started = true -- keep this before self:_writeline or it will be a race condition!
-    local fname = self:getOutputFilename("debug")
+    local fname = self:getOutputFilename()
     outfile = fname == "-" and io.stdout or io.open(fname, "w+")
     if SILE.documentState.paperSize then
       self:_writeline("Set paper size ", SILE.documentState.paperSize[1], SILE.documentState.paperSize[2])
@@ -43,7 +44,7 @@ end
 
 function outputter:_writeline (...)
   self:_ensureInit()
-  local args = table.pack(...)
+  local args = pl.utils.pack(...)
   for i = 1, #args do
     outfile:write(args[i])
     if i < #args then outfile:write("\t") end

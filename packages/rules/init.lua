@@ -107,38 +107,15 @@ function package:registerCommands ()
     local thickness = SU.cast("measurement", options.thickness or "0.2pt")
     local raise = SU.cast("measurement", options.raise or "0.5em")
 
-    -- BEGIN DEPRECATION COMPATIBILITY
     if options.height then
       SU.deprecated("\\fullrule[…, height=…]", "\\fullrule[…, thickness=…]", "0.13.1", "0.15.0")
-      thickness = SU.cast("measurement", options.height)
     end
     if not SILE.typesetter:vmode() then
       SU.deprecated("\\fullrule in horizontal mode", "\\hrule or \\hrulefill", "0.13.1", "0.15.0")
-      if options.width then
-        SU.deprecated("\\fullrule with width", "\\hrule and \\raise", "0.13.1", "0.15.0")
-        SILE.call("raise", { height = raise }, function ()
-          SILE.call("hrule", {
-            height = thickness,
-            width = options.width
-          })
-        end)
-      else
-        -- This was very broken anyway, as it was overflowing the line.
-        -- At least we try better...
-        SILE.call("hrulefill", { raise = raise, thickness = thickness })
-      end
-     return
     end
     if options.width then
       SU.deprecated("\\fullrule with width", "\\hrule and \\raise", "0.13.1 ", "0.15.0")
-      SILE.call("raise", { height = raise }, function ()
-        SILE.call("hrule", {
-          height = thickness,
-          width = options.width
-        })
-      end)
     end
-    -- END DEPRECATION COMPATIBILITY
 
     SILE.typesetter:leaveHmode()
     SILE.call("noindent")
@@ -149,9 +126,7 @@ function package:registerCommands ()
   self:registerCommand("underline", function (_, content)
     local underlinePosition, underlineThickness = getUnderlineParameters()
 
-    local hbox = SILE.call("hbox", {}, content)
-    table.remove(SILE.typesetter.state.nodes) -- steal it back...
-
+    local hbox, hlist = SILE.typesetter:makeHbox(content)
     -- Re-wrap the hbox in another hbox responsible for boxing it at output
     -- time, when we will know the line contribution and can compute the scaled width
     -- of the box, taking into account possible stretching and shrinking.
@@ -176,14 +151,13 @@ function package:registerCommands ()
         SILE.outputter:drawRule(oldX, Y - underlinePosition, newX - oldX, underlineThickness)
       end
     })
+    SILE.typesetter:pushHlist(hlist)
   end, "Underlines some content")
 
   self:registerCommand("strikethrough", function (_, content)
     local yStrikeoutPosition, yStrikeoutSize = getStrikethroughParameters()
 
-    local hbox = SILE.call("hbox", {}, content)
-    table.remove(SILE.typesetter.state.nodes) -- steal it back...
-
+    local hbox, hlist = SILE.typesetter:makeHbox(content)
     -- Re-wrap the hbox in another hbox responsible for boxing it at output
     -- time, when we will know the line contribution and can compute the scaled width
     -- of the box, taking into account possible stretching and shrinking.
@@ -205,6 +179,7 @@ function package:registerCommands ()
         SILE.outputter:drawRule(oldX, Y - yStrikeoutPosition - yStrikeoutSize / 2, newX - oldX, yStrikeoutSize)
       end
     })
+    SILE.typesetter:pushHlist(hlist)
   end, "Strikes out some content")
 
   self:registerCommand("boxaround", function (_, content)
@@ -212,9 +187,7 @@ function package:registerCommands ()
     -- Plan replacement with a better suited package.
     SU.deprecated("\\boxaround (undocumented)", "\\framebox (package)", "0.12.0")
 
-    local hbox = SILE.call("hbox", {}, content)
-    table.remove(SILE.typesetter.state.nodes) -- steal it back...
-
+    local hbox, hlist = SILE.typesetter:makeHbox(content)
     -- Re-wrap the hbox in another hbox responsible for boxing it at output
     -- time, when we will know the line contribution and can compute the scaled width
     -- of the box, taking into account possible stretching and shrinking.
@@ -245,6 +218,7 @@ function package:registerCommands ()
         SILE.outputter:drawRule(oldX + w - thickness, Y - h, thickness, h + d)
       end
     })
+    SILE.typesetter:pushHlist(hlist)
   end, "Draws a box around some content")
 
 end
@@ -253,23 +227,23 @@ package.documentation = [[
 \begin{document}
 The \autodoc:package{rules} package provides several line-drawing commands.
 
-The \autodoc:command{\hrule} command draws a blob of ink of a given \autodoc:parameter{width} (length), \autodoc:parameter{height} (above the current baseline) and \autodoc:parameter{depth} (below the current baseline).
+The \autodoc:command{\hrule} command draws a blob of ink of a given \autodoc:parameter{width} (length), \autodoc:parameter{height} (above the current baseline), and \autodoc:parameter{depth} (below the current baseline).
 Such rules are horizontal boxes, placed along the baseline of a line of text and treated just like other text to be output.
 So, they can appear in the middle of a paragraph, like this:
 \hrule[width=20pt, height=0.5pt]
-(that one was generated with \autodoc:command{\hrule[width=20pt, height=0.5pt]}.)
+(That one was generated with \autodoc:command{\hrule[width=20pt, height=0.5pt]}.)
 
 The \autodoc:command{\underline} command \underline{underlines} its content.
 
 The \autodoc:command{\strikethrough} command \strikethrough{strikes} its content.
 
-\note{The position and thickness of the underlines and strikethroughs are based on then current font metrics, honoring the values defined by the type designer.}
+\autodoc:note{The position and thickness of the underlines and strikethroughs are based on the metrics of the current font, honoring the values defined by the type designer.}
 
-The \autodoc:command{\hrulefill} inserts an infinite horizontal rubber, similar to an \autodoc:command{\hfill}, but —as its name implies— filled with a rule (that is, a solid line).
+The \autodoc:command{\hrulefill} inserts an infinite horizontal rubber, similar to an \autodoc:command{\hfill}, but—as its name implies—filled with a rule (that is, a solid line).
 By default, it stands on the baseline and has a thickness of 0.2pt, below the baseline.
 It supports optional parameters \autodoc:parameter{raise=<dimension>} and \autodoc:parameter{thickness=<dimension>} to adjust the position and thickness of the line, respectively.
 The former accepts a negative measurement, to lower the line.
-An alternative is to use the \autodoc:parameter{position} option, which can be set to \code{underline} or \code{strikethrough}.
+Alternatively, use the \autodoc:parameter{position} option, which can be set to \code{underline} or \code{strikethrough}.
 In that case, it honors the current font metrics and the line is drawn at the appropriate position and, by default, with the relevant thickness.
 You can still set a custom thickness with the \autodoc:parameter{thickness} parameter.
 

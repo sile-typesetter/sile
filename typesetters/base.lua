@@ -1,3 +1,11 @@
+--- SILE typesetter (default/base) class.
+--
+-- @copyright License: MIT
+-- @module typesetters.base
+--
+
+-- Typesetter base class
+
 local typesetter = pl.class()
 typesetter.type = "typesetter"
 typesetter._name = "base"
@@ -39,6 +47,27 @@ function typesetter:init (frame)
 end
 
 function typesetter:_init (frame)
+  self:declareSettings()
+  self.hooks = {}
+  self.breadcrumbs = SU.breadcrumbs()
+
+  self.frame = nil
+  self.stateQueue = {}
+  self:initFrame(frame)
+  self:initState()
+  -- In case people use stdlib prototype syntax off of the instantiated typesetter...
+  getmetatable(self).__call = self.init
+  return self
+end
+
+function typesetter.declareSettings(_)
+
+  -- Settings common to any typesetter instance.
+  -- These shouldn't be re-declared and overwritten/reset in the typesetter
+  -- constructor (see issue https://github.com/sile-typesetter/sile/issues/1708).
+  -- On the other hand, it's fairly acceptable to have them made global:
+  -- Any derived typesetter, whatever its implementation, should likely provide
+  -- some logic for them (= widows, orphans, spacing, etc.)
 
   SILE.settings:declare({
     parameter = "typesetter.widowpenalty",
@@ -103,16 +132,27 @@ function typesetter:_init (frame)
     help = "Width to break lines at"
   })
 
-  self.hooks = {}
-  self.breadcrumbs = SU.breadcrumbs()
+  SILE.settings:declare({
+    parameter = "typesetter.italicCorrection",
+    type = "boolean",
+    default = false,
+    help = "Whether italic correction is activated or not"
+  })
 
-  self.frame = nil
-  self.stateQueue = {}
-  self:initFrame(frame)
-  self:initState()
-  -- In case people use stdlib prototype syntax off of the instantiated typesetter...
-  getmetatable(self).__call = self.init
-  return self
+  SILE.settings:declare({
+    parameter = "typesetter.softHyphen",
+    type = "boolean",
+    default = true,
+    help = "When true, soft hyphens are rendered as discretionary breaks, otherwise they are ignored"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.softHyphenWarning",
+    type = "boolean",
+    default = false,
+    help = "When true, a warning is issued when a soft hyphen is encountered"
+  })
+
 end
 
 function typesetter:initState ()
@@ -257,13 +297,36 @@ function typesetter:typeset (text)
     if token.separator then
       self:endline()
     else
-      self:setpar(token.string)
+      if SILE.settings:get("typesetter.softHyphen") then
+        local warnedshy = false
+        for token2 in SU.gtoke(token.string, luautf8.char(0x00AD)) do
+          if token2.separator then -- soft hyphen support
+            local discretionary = SILE.nodefactory.discretionary({})
+            local hbox = SILE.typesetter:makeHbox({ SILE.settings:get("font.hyphenchar") })
+            discretionary.prebreak = { hbox }
+            table.insert(SILE.typesetter.state.nodes, discretionary)
+            if not warnedshy and SILE.settings:get("typesetter.softHyphenWarning") then
+              SU.warn("Soft hyphen encountered and replaced with discretionary")
+            end
+            warnedshy = true
+          else
+            self:setpar(token2.string)
+          end
+        end
+      else
+        if SILE.settings:get("typesetter.softHyphenWarning") and luautf8.match(token.string, luautf8.char(0x00AD)) then
+          SU.warn("Soft hyphen encountered and ignored")
+        end
+        text = luautf8.gsub(token.string, luautf8.char(0x00AD), "")
+        self:setpar(text)
+      end
     end
   end
   SILE.traceStack:pop(pId)
 end
 
 function typesetter:initline ()
+  if self.state.hmodeOnly then return end -- https://github.com/sile-typesetter/sile/issues/1718
   if (#self.state.nodes == 0) then
     self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zerohbox()
     SILE.documentState.documentClass.newPar(self)
@@ -295,18 +358,160 @@ function typesetter:breakIntoLines (nodelist, breakWidth)
   return self:breakpointsToLines(breakpoints)
 end
 
-function typesetter.shapeAllNodes (_, nodelist)
-  local newNl = {}
-  for i = 1, #nodelist do
-    if nodelist[i].is_unshaped then
-      pl.tablex.insertvalues(newNl, nodelist[i]:shape())
-    else
-      newNl[#newNl+1] = nodelist[i]
+local function getLastShape(nodelist)
+  local hasGlue
+  local last
+  if nodelist then
+    -- The node list may contain nnodes, penalties, kern and glue
+    -- We skip the latter, and retrieve the last shaped item.
+    for i = #nodelist, 1, -1 do
+      local n = nodelist[i]
+      if n.is_nnode then
+        local items = n.nodes[#n.nodes].value.items
+        last = items[#items]
+        break
+      end
+      if n.is_kern and n.subtype == "punctspace" then
+        -- Some languages such as French insert a special space around
+        -- punctuations. In those case, we should not need italic correction.
+        break
+      end
+      if n.is_glue then hasGlue = true end
     end
   end
-  for i =1, #newNl do nodelist[i]=newNl[i] end
-  if #nodelist > #newNl then
-    for i=#newNl+1, #nodelist do nodelist[i]=nil end
+  return last, hasGlue
+end
+local function getFirstShape(nodelist)
+  local first
+  local hasGlue
+  if nodelist then
+    -- The node list may contain nnodes, penalties, kern and glue
+    -- We skip the latter, and retrieve the first shaped item.
+    for i = 1, #nodelist do
+      local n = nodelist[i]
+      if n.is_nnode then
+        local items = n.nodes[1].value.items
+        first = items[1]
+        break
+      end
+      if n.is_kern and n.subtype == "punctspace" then
+        -- Some languages such as French insert a special space around
+        -- punctuations. In those case, we should not need italic correction.
+        break
+      end
+      if n.is_glue then hasGlue = true end
+    end
+  end
+  return first, hasGlue
+end
+
+local function fromItalicCorrection (precShape, curShape)
+  local xOffset
+  if not curShape or not precShape then
+    xOffset = 0
+  else
+    -- Computing italic correction is at best heuristics.
+    -- The strong assumption is that italic is slanted to the right.
+    -- Thus, the part of the character that goes beyond its width is usually
+    -- maximal at the top of the glyph.
+    -- E.g. consider a "f", that would be the top hook extent.
+    -- Pathological cases exist, such as fonts with a Q with a long tail,
+    -- but these will rarely occur in usual languages. For instance, Klingon's
+    -- "QaQ" might be an issue, but there's not much we can do...
+    -- Another assumption is that we can distribute that extent in proportion
+    -- with the next character's height.
+    -- This might not work that well with non-Latin scripts.
+    local d = precShape.glyphWidth + precShape.x_bearing
+    local delta = d > precShape.width and d - precShape.width or 0
+    xOffset = precShape.height <= curShape.height
+      and delta
+      or delta * curShape.height / precShape.height
+  end
+  return xOffset
+end
+
+local function toItalicCorrection (precShape, curShape)
+  if not SILE.settings:get("typesetter.italicCorrection") then return end
+  local xOffset
+  if not curShape or not precShape then
+    xOffset = 0
+  else
+    -- Same assumptions as fromItalicCorrection(), but on the starting side of
+    -- the glyph.
+    local d = curShape.x_bearing
+    local delta = d < 0 and -d or 0
+    xOffset = precShape.depth >= curShape.depth
+      and delta
+      or delta * precShape.depth / curShape.depth
+  end
+  return xOffset
+end
+
+local function isItalicLike(nnode)
+  -- We could do...
+  --  return nnode and string.lower(nnode.options.style) == "italic"
+  -- But it's probably more robust to use the italic angle, so that
+  -- thin italic, oblique or slanted fonts etc. may work too.
+  local ot = require("core.opentype-parser")
+  local face = SILE.font.cache(nnode.options, SILE.shaper.getFace)
+  local font = ot.parseFont(face)
+  return font.post.italicAngle ~= 0
+end
+
+function typesetter.shapeAllNodes (_, nodelist, inplace)
+  inplace = SU.boolean(inplace, true) -- Compatibility with earlier versions
+  local newNodelist = {}
+  local prec
+  local precShapedNodes
+  for _, current in ipairs(nodelist) do
+    if current.is_unshaped then
+      local shapedNodes = current:shape()
+
+      if SILE.settings:get("typesetter.italicCorrection") and prec then
+        local itCorrOffset
+        local isGlue
+        if isItalicLike(prec) and not isItalicLike(current) then
+          local precShape, precHasGlue = getLastShape(precShapedNodes)
+          local curShape, curHasGlue = getFirstShape(shapedNodes)
+          isGlue = precHasGlue or curHasGlue
+          itCorrOffset = fromItalicCorrection(precShape, curShape)
+        elseif not isItalicLike(prec) and isItalicLike(current) then
+          local precShape, precHasGlue = getLastShape(precShapedNodes)
+          local curShape, curHasGlue = getFirstShape(shapedNodes)
+          isGlue = precHasGlue or curHasGlue
+          itCorrOffset = toItalicCorrection(precShape, curShape)
+        end
+        if itCorrOffset and itCorrOffset ~= 0 then
+          -- If one of the node contains a glue (e.g. "a \em{proof} is..."),
+          -- line breaking may occur between them, so our correction shall be
+          -- a glue too.
+          -- Otherwise, the font change is considered to occur at a non-breaking
+          -- point (e.g. "\em{proof}!") and the correction shall be a kern.
+          local makeItCorrNode = isGlue and SILE.nodefactory.glue or SILE.nodefactory.kern
+          newNodelist[#newNodelist+1] = makeItCorrNode({
+            width = SILE.length(itCorrOffset),
+            subtype = "itcorr"
+          })
+        end
+      end
+
+      pl.tablex.insertvalues(newNodelist, shapedNodes)
+
+      prec = current
+      precShapedNodes = shapedNodes
+    else
+      prec = nil
+      newNodelist[#newNodelist+1] = current
+    end
+  end
+
+  if not inplace then
+    return newNodelist
+  end
+
+  for i =1, #newNodelist do nodelist[i] = newNodelist[i] end
+  if #nodelist > #newNodelist then
+    for i= #newNodelist + 1, #nodelist do nodelist[i] = nil end
   end
 end
 
@@ -332,7 +537,7 @@ function typesetter:boxUpNodes ()
   self:pushGlue(parfillskip)
   self:pushPenalty(-inf_bad)
   SU.debug("typesetter", function ()
-    return "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.contentToString(nodelist))
+    return "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.ast.contentToString(nodelist))
   end)
   local breakWidth = SILE.settings:get("typesetter.breakwidth") or self.frame:getLineWidth()
   local lines = self:breakIntoLines(nodelist, breakWidth)
@@ -417,6 +622,7 @@ function typesetter:buildPage ()
     self:runHooks("noframebreak")
     return false
   end
+  SU.debug("pagebuilder", "Buildding page for", self.frame.id)
   self.state.lastPenalty = res
   self.frame.state.pageRestart = nil
   pageNodeList = self:runHooks("framebreak", pageNodeList)
@@ -425,25 +631,42 @@ function typesetter:buildPage ()
   return true
 end
 
-function typesetter.setVerticalGlue (_, pageNodeList, target)
+function typesetter:setVerticalGlue (pageNodeList, target)
   local glues = {}
   local gTotal = SILE.length()
   local totalHeight = SILE.length()
+
+  local pastTop = false
   for _, node in ipairs(pageNodeList) do
-    if not node.is_insertion then
-      totalHeight:___add(node.height)
-      totalHeight:___add(node.depth)
+    if not pastTop and not node.discardable and not node.explicit then
+      -- "Ignore discardable and explicit glues at the top of a frame."
+      -- See typesetter:outputLinesToPage()
+      -- Note the test here doesn't check is_vglue, so will skip other
+      -- discardable nodes (e.g. penalties), but it shouldn't matter
+      -- for the type of computing performed here.
+      pastTop = true
     end
-    if node.is_vglue then
-      table.insert(glues, node)
-      gTotal:___add(node.height)
+    if pastTop then
+      if not node.is_insertion then
+        totalHeight:___add(node.height)
+        totalHeight:___add(node.depth)
+      end
+      if node.is_vglue then
+        table.insert(glues, node)
+        gTotal:___add(node.height)
+      end
     end
   end
+
+  if totalHeight:tonumber() == 0 then
+   return SU.debug("pagebuilder", "No glue adjustment needed on empty page")
+  end
+
   local adjustment = target - totalHeight
   if adjustment:tonumber() > 0 then
     if adjustment > gTotal.stretch then
       if (adjustment - gTotal.stretch):tonumber() > SILE.settings:get("typesetter.underfulltolerance"):tonumber() then
-        SU.warn("Underfull frame: " .. adjustment .. " stretchiness required to fill but only " .. gTotal.stretch .. " available")
+        SU.warn("Underfull frame " .. self.frame.id .. ": " .. adjustment .. " stretchiness required to fill but only " .. gTotal.stretch .. " available")
       end
       adjustment = gTotal.stretch
     end
@@ -457,7 +680,7 @@ function typesetter.setVerticalGlue (_, pageNodeList, target)
     adjustment = 0 - adjustment
     if adjustment > gTotal.shrink then
       if (adjustment - gTotal.shrink):tonumber() > SILE.settings:get("typesetter.overfulltolerance"):tonumber() then
-        SU.warn("Overfull frame: " .. adjustment .. " shrinkability required to fit but only " .. gTotal.shrink .. " available")
+        SU.warn("Overfull frame " .. self.frame.id .. ": " .. adjustment .. " shrinkability required to fit but only " .. gTotal.shrink .. " available")
       end
       adjustment = gTotal.shrink
     end
@@ -578,19 +801,33 @@ end
 
 function typesetter:outputLinesToPage (lines)
   SU.debug("pagebuilder", "OUTPUTTING frame", self.frame.id)
+  -- It would have been nice to avoid storing this "pastTop" into a frame
+  -- state, to keep things less entangled. There are situations, though,
+  -- we will have left horizontal mode (triggering output), but will later
+  -- call typesetter:chuck() do deal with any remaining content, and we need
+  -- to know whether some content has been output already.
+  local pastTop = self.frame.state.totals.pastTop
   for _, line in ipairs(lines) do
+    -- Ignore discardable and explicit glues at the top of a frame:
     -- Annoyingly, explicit glue *should* disappear at the top of a page.
     -- if you don't want that, add an empty vbox or something.
-    if not self.frame.state.totals.pastTop and not line.discardable and not line.explicit then
-      self.frame.state.totals.pastTop = true
+    if not pastTop and not line.discardable and not line.explicit then
+      -- Note the test here doesn't check is_vglue, so will skip other
+      -- discardable nodes (e.g. penalties), but it shouldn't matter
+      -- for outputting.
+      pastTop = true
     end
-    if self.frame.state.totals.pastTop then
+    if pastTop then
       line:outputYourself(self, line)
     end
   end
+  self.frame.state.totals.pastTop = pastTop
 end
 
 function typesetter:leaveHmode (independent)
+  if self.state.hmodeOnly then
+    SU.error([[Paragraphs are forbidden in restricted horizontal mode.]])
+  end
   SU.debug("typesetter", "Leaving hmode")
   local margins = self:getMargins()
   local vboxlist = self:boxUpNodes()
@@ -654,7 +891,7 @@ function typesetter:addrlskip (slice, margins, hangLeft, hangRight)
 end
 
 function typesetter:breakpointsToLines (breakpoints)
-  local linestart = 0
+  local linestart = 1
   local lines = {}
   local nodes = self.state.nodes
 
@@ -662,56 +899,83 @@ function typesetter:breakpointsToLines (breakpoints)
     local point = breakpoints[i]
     if point.position ~= 0 then
       local slice = {}
-      local seenHbox = 0
-      -- local toss = 1
+      local seenNonDiscardable = false
       for j = linestart, point.position do
         slice[#slice+1] = nodes[j]
         if nodes[j] then
-          -- toss = 0
-          if nodes[j].is_box or nodes[j].is_discretionary then seenHbox = 1 end
+          if not nodes[j].discardable then
+            seenNonDiscardable = true
+          end
         end
       end
-      if seenHbox == 0 then break end
-      local mrg = self:getMargins()
-      self:addrlskip(slice, mrg, point.left, point.right)
-      local ratio = self:computeLineRatio(point.width, slice)
-      -- TODO see bug 620
-      -- if math.abs(ratio) > 1 then SU.warn("Using ratio larger than 1" .. ratio) end
-      local thisLine = { ratio = ratio, nodes = slice }
-      lines[#lines+1] = thisLine
-      if slice[#slice].is_discretionary then
-        linestart = point.position
-      else
+      if not seenNonDiscardable then
+        -- Slip lines containing only discardable nodes (e.g. glues).
+        SU.debug("typesetter", "Skipping a line containing only discardable nodes")
         linestart = point.position + 1
+      else
+        -- If the line ends with a discretionary, repeat it on the next line,
+        -- so as to account for a potential postbreak.
+        if slice[#slice].is_discretionary then
+          linestart = point.position
+        else
+          linestart = point.position + 1
+        end
+
+        -- Then only we can add some extra margin glue...
+        local mrg = self:getMargins()
+        self:addrlskip(slice, mrg, point.left, point.right)
+
+        -- And compute the line...
+        local ratio = self:computeLineRatio(point.width, slice)
+        local thisLine = { ratio = ratio, nodes = slice }
+        lines[#lines+1] = thisLine
       end
     end
   end
-  --self.state.nodes = nodes.slice(linestart+1,nodes.length)
+  if linestart < #nodes then
+    -- Abnormal, but warn so that one has a chance to check which bits
+    -- are missing at output.
+    SU.warn("Internal typesetter error " .. (#nodes - linestart) .. " skipped nodes")
+  end
   return lines
 end
 
 function typesetter.computeLineRatio (_, breakwidth, slice)
-  -- This somewhat wrong, see #1362.
-  -- This is a very partial workaround, at least made consistent with the
-  -- nnode outputYourself routine expectation (which is somewhat wrong too)
+  -- This somewhat wrong, see #1362 and #1528
+  -- This is a somewhat partial workaround, at least made consistent with
+  -- the nnode and discretionary outputYourself routines
+  -- (which are somewhat wrong too, or to put it otherwise, the whole
+  -- logic here, marking nodes without removing/replacing them, likely makes
+  -- things more complex than they should).
+  -- TODO Possibly consider a full rewrite/refactor.
   local naturalTotals = SILE.length()
 
+  -- From the line end, check if the line is hyphenated (to account for a prebreak)
+  -- or contains extraneous glues (e.g. to account for spaces to ignore).
   local n = #slice
   while n > 1 do
     if slice[n].is_glue or slice[n].is_zero then
+      -- Skip margin glues (they'll be accounted for in the loop below) and
+      -- zero boxes, so as to reach actual content...
       if slice[n].value ~= "margin" then
+        -- ... but any other glue than a margin, at the end of a line, is actually
+        -- extraneous. It will however also be accounted for below, so subtract
+        -- them to cancel their width. Typically, if a line break occurred at
+        -- a space, the latter is then at the end of the line now, and must be
+        -- ignored.
         naturalTotals:___sub(slice[n].width)
       end
     elseif slice[n].is_discretionary then
+      -- Stop as we reached an hyphenation, and account for the prebreak.
       slice[n].used = true
       if slice[n].parent then
         slice[n].parent.hyphenated = true
       end
-      naturalTotals:___sub(slice[n]:replacementWidth())
       naturalTotals:___add(slice[n]:prebreakWidth())
       slice[n].height = slice[n]:prebreakHeight()
       break
     else
+      -- Stop as we reached actual content.
       break
     end
     n = n - 1
@@ -734,8 +998,9 @@ function typesetter.computeLineRatio (_, breakwidth, slice)
       skipping = false
     elseif node.is_discretionary then
       skipping = false
-      if node.used then
-        naturalTotals:___add(node:replacementWidth())
+      local seen = node.parent and seenNodes[node.parent]
+      if not seen and not node.used then
+        naturalTotals:___add(node:replacementWidth():absolute())
         slice[i].height = slice[i]:replacementHeight():absolute()
       end
     elseif not skipping then
@@ -743,23 +1008,127 @@ function typesetter.computeLineRatio (_, breakwidth, slice)
     end
   end
 
-  if slice[1].is_discretionary then
-    naturalTotals:___sub(slice[1]:replacementWidth())
-    naturalTotals:___add(slice[1]:postbreakWidth())
-    slice[1].height = slice[1]:postbreakHeight()
+  -- From the line start, skip glues and margins, and check if it then starts
+  -- with a used discretionary. If so, account for a postbreak.
+  n = 1
+  while n < #slice do
+    if slice[n].is_discretionary and slice[n].used then
+      naturalTotals:___add(slice[n]:postbreakWidth())
+      slice[n].height = slice[n]:postbreakHeight()
+      break
+    elseif not (slice[n].is_glue or slice[n].is_zero) then
+      break
+    end
+    n = n + 1
   end
+
   local _left = breakwidth:tonumber() - naturalTotals:tonumber()
   local ratio = _left / naturalTotals[_left < 0 and "shrink" or "stretch"]:tonumber()
-  -- Here a previous comment said: TODO: See bug 620
-  -- But the latter seems to suggest capping the ratio if greater than 1, which is wrong.
   ratio = math.max(ratio, -1)
   return ratio, naturalTotals
 end
 
 function typesetter:chuck () -- emergency shipout everything
   self:leaveHmode(true)
-  self:outputLinesToPage(self.state.outputQueue)
-  self.state.outputQueue = {}
+  if (#self.state.outputQueue > 0) then
+    SU.debug("typesetter", "Emergency shipout", #self.state.outputQueue, "lines in frame", self.frame.id)
+    self:outputLinesToPage(self.state.outputQueue)
+    self.state.outputQueue = {}
+  end
+end
+
+-- Logic for building an hbox from content.
+-- It returns the hbox and an horizontal list of (migrating) elements
+-- extracted outside of it.
+-- None of these are pushed to the typesetter node queue. The caller
+-- is responsible of doing it, if the hbox is built for anything
+-- else than e.g. measuring it. Likewise, the call has to decide
+-- what to do with the migrating content.
+local _rtl_pre_post = function (box, atypesetter, line)
+  local advance = function () atypesetter.frame:advanceWritingDirection(box:scaledWidth(line)) end
+  if atypesetter.frame:writingDirection() == "RTL" then
+    advance()
+    return function () end
+  else
+    return advance
+  end
+end
+function typesetter:makeHbox (content)
+  local recentContribution = {}
+  local migratingNodes = {}
+
+  self:pushState()
+  self.state.hmodeOnly = true
+  SILE.process(content)
+
+  -- We must do a first pass for shaping the nnodes:
+  -- This is also where italic correction may occur.
+  local nodes = self:shapeAllNodes(self.state.nodes, false)
+
+  -- Then we can process and measure the nodes.
+  local l = SILE.length()
+  local h, d = SILE.length(), SILE.length()
+  for i = 1, #nodes do
+    local node = nodes[i]
+    if node.is_migrating then
+      migratingNodes[#migratingNodes+1] = node
+    elseif node.is_discretionary then
+      -- HACK https://github.com/sile-typesetter/sile/issues/583
+      -- Discretionary nodes have a null line contribution...
+      -- But if discretionary nodes occur inside an hbox, since the latter
+      -- is not line-broken, they will never be marked as 'used' and will
+      -- evaluate to the replacement content (if any)...
+      recentContribution[#recentContribution+1] = node
+      l = l + node:replacementWidth():absolute()
+      -- The replacement content may have ascenders and descenders...
+      local hdisc = node:replacementHeight():absolute()
+      local ddisc = node:replacementDepth():absolute()
+      h = hdisc > h and hdisc or h
+      d = ddisc > d and ddisc or d
+      -- By the way it's unclear how this is expected to work in TTB
+      -- writing direction. For other type of nodes, the line contribution
+      -- evaluates to the height rather than the width in TTB, but the
+      -- whole logic might then be dubious there too...
+    else
+      recentContribution[#recentContribution+1] = node
+      l = l + node:lineContribution():absolute()
+      h = node.height > h and node.height or h
+      d = node.depth > d and node.depth or d
+    end
+  end
+  self:popState()
+
+  local hbox = SILE.nodefactory.hbox({
+      height = h,
+      width = l,
+      depth = d,
+      value = recentContribution,
+      outputYourself = function (box, atypesetter, line)
+        local _post = _rtl_pre_post(box, atypesetter, line)
+        local ox = atypesetter.frame.state.cursorX
+        local oy = atypesetter.frame.state.cursorY
+        SILE.outputter:setCursor(atypesetter.frame.state.cursorX, atypesetter.frame.state.cursorY)
+        SU.debug("hboxes", function ()
+          -- setCursor is also invoked by the internal (wrapped) hboxes etc.
+          -- so we must show our debug box before outputting its content.
+          SILE.outputter:debugHbox(box, box:scaledWidth(line))
+          return "Drew debug outline around hbox"
+        end)
+        for _, node in ipairs(box.value) do
+          node:outputYourself(atypesetter, line)
+        end
+        atypesetter.frame.state.cursorX = ox
+        atypesetter.frame.state.cursorY = oy
+        _post()
+      end
+    })
+  return hbox, migratingNodes
+end
+
+function typesetter:pushHlist (hlist)
+  for _, h in ipairs(hlist) do
+    self:pushHorizontal(h)
+  end
 end
 
 return typesetter

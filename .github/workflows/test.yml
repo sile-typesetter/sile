@@ -2,6 +2,10 @@ name: Test
 
 on: [ push, pull_request ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   test:
@@ -9,17 +13,17 @@ jobs:
       fail-fast: false
       matrix:
         luaVersion:
-          - [ '5.4.2', 'MYCFLAGS=-fPIC' ] # https://github.com/luarocks/luarocks/issues/1302
+          - [ '5.4', 'MYCFLAGS=-fPIC' ]
           - [ '5.3', 'MYCFLAGS=-fPIC' ]
           - [ '5.2', 'MYCFLAGS=-fPIC' ]
           - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"' ]
           - [ 'luajit', 'XCFLAGS=-fPIC' ]
-          # - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
+          - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
     runs-on: ubuntu-22.04
     name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Cache test fonts
@@ -34,15 +38,20 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
-      - name: Fetch tags
+          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+      - name: Install system dependencies
         run: |
-          git fetch --prune --tags ||:
+          sudo apt-get update
+          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
       - name: Setup ‘lua’
         uses: leafo/gh-actions-lua@v10
         with:
           luaVersion: ${{ matrix.luaVersion[0] }}
           luaCompileFlags: ${{ matrix.luaVersion[1] }}
+      - name: Setup ‘cargo’
+        uses: actions-rs/toolchain@v1
       - name: Setup ‘luarocks’
         uses: leafo/gh-actions-luarocks@v4
       - name: Prep system Lua for use
@@ -57,30 +66,37 @@ jobs:
           LUA_INCLUDE=-I$(deepest $PWD/.lua/include)
           MAKEFLAGS=-j$(nproc) -Otarget
           EOF
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
       - name: Configure
         run: |
           ./bootstrap.sh
           ./configure \
-            --enable-developer LUACHECK=false \
+            ${{ matrix.luaVersion[1] }} \
+            --enable-developer LUACHECK=false NIX=false DELTA=cat \
             --disable-font-variations \
+            --with${{ !startsWith(matrix.luaVersion[0], 'luajit') && 'out' || '' }}-luajit \
             --without-system-luarocks \
-            --with${{ startsWith(matrix.luaVersion[0], '5') && 'out' || '' }}-luajit \
             --without-manual
       - name: Make
         run: |
           make
+      - name: Prove SILE runs at all
+        run: |
+          make selfcheck
       - name: Test Busted
+        continue-on-error: ${{ matrix.luaVersion[0] == '5.1' }}
+        timeout-minutes: ${{ runner.debug && 20 || 2 }}
         run: |
           make busted
       - name: Test Regressions
+        timeout-minutes: ${{ runner.debug && 20 || 2 }}
         run: |
           make regressions
+      - name: Test Cargo
+        timeout-minutes: ${{ runner.debug && 20 || 2 }}
+        run: |
+          make cargo-test
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-${{ matrix.luaVersion[0] }}-actuals
           path: tests/*.actual

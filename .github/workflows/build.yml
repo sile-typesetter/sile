@@ -2,13 +2,25 @@ name: Build
 
 on: [ push, pull_request ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   build-ubuntu:
+    strategy:
+      matrix:
+        configuration:
+          - [ 'dynamic', '' ]
+          - [ 'system', '--with-system-lua-sources' ]
+          - [ 'embeded', '--enable-embeded-resources' ]
+          - [ 'static', '--enable-embeded-resources --disable-shared --enable-static' ]
     runs-on: ubuntu-22.04
+    name: Build Ubuntu ${{ matrix.configuration[0] }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Cache test fonts
@@ -23,50 +35,64 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
-      - name: Fetch tags
-        run: |
-          git fetch --prune --tags ||:
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev liblua5.3-dev libpng-dev lua5.3 lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+          sudo apt-get install fonts-sil-gentiumplus ghostscript graphviz jq libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libluajit-5.1-dev libpng-dev luajit lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+      - name: Setup ‘cargo’
+        uses: actions-rs/toolchain@v1
       - name: Configure
         run: |
           ./bootstrap.sh
           ./configure \
             --disable-font-variations \
-            --without-system-luarocks \
-            --with-manual
+            --with-manual \
+            ${{ matrix.configuration[1] }}
           echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
           echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
+          echo "CARCH=$(uname -m)" >> $GITHUB_ENV
       - name: Make
         run: |
           make
       - name: Package
         run: |
           make dist
-      - name: Upload artifacts
-        if: ${{ !contains(github.ref, 'refs/tags/v') }}
-        uses: actions/upload-artifact@v3
+      - name: Upload source dist artifact
+        if: ${{ matrix.configuration[0] == 'dynamic' && !contains(github.ref, 'refs/tags/v') }}
+        uses: actions/upload-artifact@v4
         with:
           name: sile-${{ env.VERSION }}
           path: sile-${{ env.VERSION }}.zip
+      - name: Append architecture to static binary
+        if: ${{ matrix.configuration[0] == 'static' }}
+        run: |
+          cp sile sile-${{ env.CARCH }}
+      - name: Upload static binary artifact
+        if: ${{ matrix.configuration[0] == 'static' && !contains(github.ref, 'refs/tags/v') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: sile-${{ env.CARCH }}
+          path: sile-${{ env.CARCH }}
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: matrix.configuration[0] == 'static' && github.repository == 'sile-typesetter/sile' && startsWith(github.ref, 'refs/tags/v')
         with:
           body_path: sile-${{ env.VERSION }}.md
           files: |
             sile-${{ env.VERSION }}.pdf
             sile-${{ env.VERSION }}.zip
             sile-${{ env.VERSION }}.tar.xz
+            sile-${{ env.CARCH }}
 
   build-nix:
     runs-on: ubuntu-22.04
+    name: Build Nix
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Cache test fonts
@@ -76,19 +102,15 @@ jobs:
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
-      - name: Fetch tags
-        run: |
-          git fetch --prune --tags ||:
       - name: Install Nix
-        uses: cachix/install-nix-action@v18
-        with:
-          extra_nix_config: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+        uses: DeterminateSystems/nix-installer-action@v9
+      - name: Cache Nix dependencies
+        uses: DeterminateSystems/magic-nix-cache-action@v2
       - name: Setup developer environment
         run: |
           nix develop --command ./bootstrap.sh
           nix develop --configure
           nix develop --command make
-      - name: Run HB6+ only regressions
+      - name: Run regression tests for which Ubuntu can't provide deps
         run: |
-          nix develop --command make regressions TESTSRCS=tests/variations-axis.sil
+          nix develop --command make regressions TESTSRCS='tests/variations-axis.sil tests/feat-unicode-softhyphen.sil'

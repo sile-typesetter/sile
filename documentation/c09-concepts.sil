@@ -1,123 +1,180 @@
 \begin[class=book]{document}
-\include[src=documentation/macros.sil]
 \chapter{The Nitty Gritty}
 
-\noindent{}We are finally at the bottom of our delve into SILE’s commands
-and settings. Here are the basic building blocks out of which all of the
-other operations in SILE are created.
+We are finally at the bottom of our delve into SILE’s commands and settings.
+Here are the basic building blocks out of which all of the other operations in SILE are created.
 
-\note{At this point, it is expected that
-you are a class designer, and will be able to follow the details of how
-SILE implements these commands and features; we will also explain how to
-interact with these components at the Lua level.}
+\autodoc:note{At this point, it is expected that you are a class or package designer, and will be able to follow the details of how SILE implements these commands and features;
+we will also explain how to interact with these components at the Lua level.}
 
-\section{Boxes, Glue and Penalties}
+\section{Measurements and lengths}
 
-SILE’s job is, looking at it in very abstract terms, all about arranging
-little boxes on a page. Some of those boxes have letters in them, and
-those letters are such-and-such a number of points wide and
-such-and-such a number of points high;
-some of the boxes are empty but are there just to take up space; when a
-horizontal row of boxes has been decided (i.e. when a line break is determined)
-then the whole row of boxes is put into another box and the vertical list
-of boxes are then arranged to form a page.
+Before dabbling into more advanced topics, let’s introduce “measurements” and “lengths” in SILE, the two available Lua constructs for representing dimensions.
 
-Conceptually, then, SILE knows about a few different basic components:
-horizontal boxes (such as a letter); horizontal glue (the stretchable, shrinkable
-space between words); vertical boxes (a line of text); vertical glue (the space
-between lines and paragraphs); and penalties (information about where and when
-not to break lines and pages).\footnote{Additionally there are three more types of box
-that SILE cares about: N-nodes, unshaped nodes, and discretionaries.}
-
-The most immediately useful of these are horizontal and vertical glue. It
-is possible to explicitly add horizontal and vertical glue into SILE‘s processing
-stream using the \code{\\glue} and \code{\\skip} commands. These take a
-\code{width} and a \code{height} parameter respectively, both of which are
-glue dimensions. So, for instance, the \code{\\smallskip} command is
-the equivalent of \code{\\skip[height=3pt plus 1pt minus 1pt]}; \code{\\thinspace}
-is defined as being \code{\\glue[width=0.16667em]}.
-
-Similarly, there is a \code{\\penalty} command for inserting penalty nodes;
-\code{\\break} is defined as \code{\\penalty[penalty=-10000]} and \code{\\nobreak}
-is \code{\\penalty[penalty=10000]}.
-
-You can also create horizontal and vertical boxes from within SILE. One obvious
-reason for doing so would be to explicitly avoid material being broken up by a
-page or line break; another reason for doing so would be that once you box some
-material up, you then know how wide or tall it is. The \code{\\hbox} and \code{\\vbox}
-commands put their contents into a box; when called from Lua, they also \em{return}
-the new box.
-
-\subsection{From Lua}
-
-SILE’s Lua interface contains a \code{nodefactory} for creating boxes and glue.
-Before we get into that, however, you need to know that glue measurements in SILE
-should always be specified in terms of \code{SILE.length} objects; these are
-“three-dimensional” lengths, in that they consist of a base length plus stretch and
-shrink. To construct a \code{SILE.length}:
+Measurements are specified in terms of \code{SILE.measurement} objects.
+It is a basic construct with an amount and a unit. Let us illustrate two common ways for creating such an object in Lua (from a string, with same syntax as in command parameters; or from a Lua table).
 
 \begin[type=autodoc:codeblock]{raw}
-local l = SILE.length({ length = x, stretch = y, shrink = z })
+local m1 = SILE.measurement("10pt")
+local m2 = SILE.measurement({ amount = 10, unit = "pt" })
 \end{raw}
 
-Now we can construct horizontal and vertical glue:
+SILE also provides a more advanced construct specified in terms of \code{SILE.length} objects;
+these are “three-dimensional” dimensions, in that they consist in a base measurement plus stretch and shrink measurements.
+They are therefore composed of three \code{SILE.measurement}.
 
 \begin[type=autodoc:codeblock]{raw}
-local glue  = SILE.nodefactory.glue({ width =  l })
+local l1 = SILE.length("10pt plus 2pt minus 1pt")
+local l2 = SILE.length({ length = "1Opt", stretch = "2pt", shrink = "1pt" })
+\end{raw}
+
+Both of these are used for various purposes.
+In many cases, they are nearly interchangeable.
+Casting from one to the other is straightforward:
+casting a length to a measurement returns just the base measurement and discards the stretch and shrink properties;
+casting a measurement to a length sets its stretch and shrink properties to zero.
+
+\begin[type=autodoc:codeblock]{raw}
+local l3 = SILE.length(SILE.measurement("10pt")) -- 10pt, without stretch and shrink
+local m3 = SILE.measurement(SILE.length("10pt plus 2pt minus 1pt")) -- 10pt
+\end{raw}
+
+Proper casting is important, for your code to remain portable across the various versions of the Lua language.
+
+\section{Boxes, glue, and penalties}
+
+SILE’s job, looking at it in very abstract terms, is all about arranging little boxes on a page.
+Some of those boxes have letters in them, and those letters are such-and-such a number of points wide and such-and-such a number of points high;
+some of the boxes are empty but are there just to take up space.
+When a horizontal row of boxes has been decided (i.e., when a line break is determined) then the whole row of boxes is put into another box and the vertical list of boxes are then arranged to form a page.
+
+Conceptually, then, SILE knows about a few different basic components:
+
+\begin{itemize}
+\item{Horizontal boxes (such as a letter)}
+\item{Horizontal glue (such as the stretchable or shrinkable space between words)}
+\item{Vertical boxes (typically, a line of text)}
+\item{Vertical glue (such as the space between lines and paragraphs)}
+\item{Penalties (information about where and when not to break lines and pages)}
+\end{itemize}
+
+Additionally, horizontal boxes are further specialized.\footnote{The math support in SILE also defines additional types of boxes, not discussed here.}
+
+\begin{itemize}
+\item{Discretionaries (special construct used when a word is hyphenated)}
+\item{N-nodes and unshaped nodes (text content shaped according to a certain font, or not yet shaped and measured)}
+\item{Migrating boxes (such as foonote content)}
+\end{itemize}
+
+The most immediately useful of these are horizontal and vertical glue.
+Horizontal and vertical glue can be explicitly added into SILE‘s processing stream using the \autodoc:command{\glue} and \autodoc:command{\skip} commands.
+These take a \autodoc:parameter{width} and a \autodoc:parameter{height} parameter, respectively, both of which are glue dimensions.
+For instance, the \autodoc:command{\smallskip} command is the equivalent of \autodoc:command{\skip[height=3pt plus 1pt minus 1pt]};
+\autodoc:command{\thinspace} is defined as being \autodoc:command{\glue[width=0.16667em]}.
+
+Similarly, there is a \autodoc:command{\penalty} command for inserting penalty nodes;
+\autodoc:command{\break} is defined as \autodoc:command{\penalty[penalty=-10000]}
+and \autodoc:command{\nobreak} is \autodoc:command{\penalty[penalty=10000]}.
+
+You can also create horizontal and vertical boxes from within SILE.
+One reason for doing so would be to explicitly avoid material being broken up by a page or line break;
+another reason for doing so would be that once you box some material up, you then know how wide or tall it is.
+The \autodoc:command{\hbox} and \autodoc:command{\vbox} commands put their contents into a box.
+
+At a Lua coding level, SILE’s Lua interface contains a \code{nodefactory} for creating boxes and glue.
+Here is one way (among others) for you to construct horizontal and vertical glue:
+
+\begin[type=autodoc:codeblock]{raw}
+local glue  = SILE.nodefactory.glue({ width = l })
 local vglue = SILE.nodefactory.vglue({ height = l })
 \end{raw}
 
-SILE’s typesetting is organised by the \code{SILE.typesetter} object; it
-maintains two queues of material that it is still working on: the node queue and
-the output queue. Material in these queues is content that has been parsed but
-not yet rendered to the canvas and can still be manipulated. The node queue
-(\code{SILE.typesetter.state.nodes}) contains new horizontal boxes and glue
-that have not yet been broken up into lines. The output queue
-(\code{SILE.typesetter.state.outputQueue}) consists of vertical material
-(lines) which have not yet been broken up into pages. Line breaking and page
-breaking happen when the typesetter moves between horizontal and vertical mode.
+\section{Kerns}
 
-As new content is parsed it is added to the node queue in as small chunks as
-possible—chunks that must remain together no matter where they end up on
-a line. For example this might include individual symbols, syllables, or objects such as
-images. As soon as new content which requires a vertical break is encountered,
-the node queue is processed to derive any missing shaping information about
-each node, then the sequence of node is broken up into  lines. Once all the
-"horizontal mode" nodes are broken into lines and those lines are added to the
-output queue, the other new vertical content can be processed. At any point you
-can force the current queue of horizontal content (the node queue) to be shaped
-into lines and added to the vertical output queue by calling the function
-\code{SILE.typesetter:leaveHmode()}. This is a handy move for writing custom
-functions, but it is a fairly low level control (i.e. it is unlikely to be
-useful while writing a document). A related but higher level command,
-\code{\\par}, is more frequently used when writing a document and embedded in
-the content. The \code{\\par} command first calls
-\code{SILE.typesetter:leaveHmode()}, then inserts a vertical skip according to
-the \autodoc:setting{document.parskip} setting, then goes on to reset a number of
-settings that are typically paragraph related such as hanging indents.
+\define[command=SILEkern]{\font[family=Gentium Plus]{% Book Basic has no +smcp, but readers don't need to know, since we're only using Book Basic as a holdover from old SILE which did.
+S\lower[height=0.5ex]{I}L\kern[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}}
+\define[command=SILEglue]{\font[family=Gentium Plus]{%
+S\lower[height=0.5ex]{I}L\glue[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}}
+\autodoc:command{\kern}’s are a type of \autodoc:command{\glue}, only different in that while a \autodoc:command{\glue} can be broken at the end of a line, a \autodoc:command{\kern}
+can’t.
+Hearkening back to our \SILEkern example from the \em{Macros and Commands} chapter, consider that example, repeated enough times to cause a linebreak, but with \autodoc:command{\glue}’s everywhere \autodoc:command{\kern}’s are used instead:
 
-When writing a custom command, if you want to manually add a vertical space to
-the output first ensure that the material in the current paragraph has been all
-properly boxed-up and moved onto the output queue by calling
-\code{SILE.typesetter:leaveHmode()}; then add your desired glue to the output
-queue.
-This is exactly what the \code{\\skip} and similar commands do.
+\begin{autodoc:example}%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
+\end{autodoc:example}
+\par
+Note end of lines where \SILEglue is broken between its ‘L’ and ‘\raise[height=0.6ex]{\font[family=Gentium Plus,features=+smcp]{e}}’.
+Instead, if we typeset the same line using \autodoc:command{\kern}’s as we had originally:
 
-Adding boxes and glue to the typesetter’s queues is
-such a common operation that the typesetter has some utility methods to construct
-the nodes and add them for you:
+\begin{autodoc:example}%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
+\end{autodoc:example}
+
+The line just continues on right off the page. Why this is a useful feature is more obvious if there are spaces between them:
+
+\begin{autodoc:example}%
+Glues:
+
+\SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue
+\end{autodoc:example}
+\par
+\begin{autodoc:example}%
+Kerns:
+
+\SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern
+\end{autodoc:example}
+
+\section{The typesetter}
+
+SILE’s typesetting is organised by the \code{SILE.typesetter} object.
+It maintains two queues of material that it is still working on: the node queue and the output queue.
+Material in these queues is content that has been parsed but not yet rendered to the canvas and can still be manipulated.
+The node queue (\code{SILE.typesetter.state.nodes}) contains new horizontal boxes and glue
+that have not yet been broken up into lines.
+The output queue (\code{SILE.typesetter.state.outputQueue}) consists of vertical material
+(lines) which have not yet been broken up into pages.
+Line breaking and page breaking happen when the typesetter moves between horizontal and vertical mode.
+
+As new content is parsed it is added to the node queue in as small chunks as possible.
+These chunks must remain together no matter where they end up on a line.
+This might include individual symbols, syllables, or objects such as images.
+As soon as new content which requires a vertical break is encountered, the node queue is processed to derive any missing shaping information about each node, then the sequence of node is broken up into  lines.
+Once all the “horizontal mode” nodes are broken into lines and those lines are added to the output queue, the other new vertical content can be processed.
+At any point you can force the current queue of horizontal content (the node queue) to be shaped
+into lines and added to the vertical output queue by calling the function \code{SILE.typesetter:leaveHmode()}.
+
+When writing a custom command, if you want to manually add a vertical space to the output, first ensure that the material in the current paragraph has been all properly boxed-up and moved onto the output queue by calling \code{SILE.typesetter:leaveHmode()}, then add your desired glue to the output queue.
+This is exactly what the \autodoc:command{\skip} and similar commands do.
+
+It might be a good point to better explain here the actual difference between just leaving horizontal mode, and the related, but higher level, \autodoc:command{\par} command.
+The latter is more frequently used when writing a document.
+It first calls \code{SILE.typesetter:leaveHmode()}, but then also inserts a vertical skip according to the \autodoc:setting{document.parskip} setting, and goes on to reset a number of settings that are typically paragraph-related such as hanging indents.
+When designing you own commands, there are therefore some cases when you may just need to call \code{SILE.typesetter:leaveHmode()} and handle everything else in your own code; and situations when invoking \code{SILE.call("par")} might be more adequate, resulting in an effective paragraph to be terminated.
+
+Adding boxes and glue to the typesetter’s queues is such a common operation that the typesetter has some utility methods to construct the nodes and add them for you:
 
 \begin[type=autodoc:codeblock]{raw}
 SILE.typesetter:leaveHmode()
 SILE.typesetter:pushVglue({ height = l })
 \end{raw}
 
-Adding boxes yourself is a little more complicated, because boxes need to
-know how to display themselves on the page. To facilitate this, they normally
-store a \code{value} and an \code{outputYourself} member function. For instance,
-the \code{image} package actually does something very simple; it adds a horizontal
-box to the node queue which knows the width and height of the image, the source,
-and instructions to the output engine to display the image:
+Adding boxes yourself is a little more complicated, because boxes need to know how to display themselves on the page.
+To facilitate this, they normally store a \code{value} and an \code{outputYourself} member function.
+For instance, the \autodoc:package{image} package does something very simple: it adds a horizontal box to the node queue which knows the width and height of the image, the source, and instructions to the output engine to display the image:
 
 \begin[type=autodoc:codeblock]{raw}
 SILE.typesetter:pushHbox({
@@ -134,122 +191,50 @@ SILE.typesetter:pushHbox({
 end});
 \end{raw}
 
-Adding horizontal and vertical penalties to the typesetter’s queues is similarly
-done with the \code{SILE.typesetter:pushPenalty(\{penalty = x\})} and
-\code{SILE.typesetter:pushVpenalty(\{penalty = y\})} methods.
-
-\subsection{Kerns}
-
-\define[command=SILEkern]{\font[family=Gentium Plus]{% Book Basic has no +smcp, but readers don't need to know, since we're only using Book Basic as a holdover from old SILE which did.
-S\lower[height=0.5ex]{I}L\kern[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}}
-\define[command=SILEglue]{\font[family=Gentium Plus]{%
-S\lower[height=0.5ex]{I}L\glue[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}}
-\code{\\kern}’s are a type of \code{\\glue}. The difference between the two is
-that, while a \code{\\glue} can be broken at the end of a line, a \code{\\kern}
-can’t be. Hearkening back to our \SILEkern example from the \em{Macros and
-Commands} chapter, consider that example, repeated enough times to cause a
-linebreak, but with \code{\\glue}’s everywhere \code{\\kern}’s are used
-instead:
-
-\line
-\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
-\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
-\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
-\SILEglue\SILEglue\color[color=#dd0000]{\SILEglue}\SILEglue\SILEglue%
-\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
-\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
-\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
-\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
-\line
-
-The 27\sup{th} of the 60 \SILEglue’s, in \color[color=#dd0000]{red}, is broken
-between its ‘L’ and ‘\raise[height=0.6ex]{\font[family=Gentium Plus,features=+smcp]{e}}’.
-Meanwhile, if we typeset the same line, except using \code{\\kern}’s as we had
-originally instead…
-
-\line
-\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
-\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
-\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
-\SILEkern\SILEkern\color[color=#dd0000]{\SILEkern}\SILEkern\SILEkern%
-\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
-\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
-\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
-\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern\SILEkern%
-\line
-
-The line just continues on right off the page. Why this is a useful feature is
-more obvious if there are spaces between them:
-
-\line
-Glues:
-
-\SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \color[color=#dd0000]{\SILEglue} \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue \SILEglue
-\line
-
-\line
-Kerns:
-
-\SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \color[color=#dd0000]{\SILEkern} \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern \SILEkern
-\line
-
+Adding horizontal and vertical penalties to the typesetter’s queues is similarly done with the \code{SILE.typesetter:pushPenalty(\{penalty = x\})} and \code{SILE.typesetter:pushVpenalty(\{penalty = y\})} methods.
 
 \section{Frames}
 
 As we have previously mentioned, SILE arranges text into frames on the page.
-The overall layout of a page, including the apparent margins between content
-and the page edge and other content regions, is controlled by defining the
-position of the frame or frames into which the content will be flowed.
+The overall layout of a page, including the apparent margins between content and the page edge and other content regions, is controlled by defining the position of the frame or frames into which the content will be flowed.
 
-Normally those frames are defined by your document class, but you can actually
-create your own frames on a per-page basis using the \code{\\pagetemplate}
-and \code{\\frame} commands. There are very few situations in which you will
-actually want to do this, but if you can understand this, it will help you
-to understand how to define your own document classes.
+Normally those frames are defined by your document class, but you can actually create your own frames on a per-page basis using the \autodoc:command{\pagetemplate} and \autodoc:command{\frame} commands.
+There are very few situations in which you will actually want to do this, but if you can understand this, it will help you to understand how to define your own document classes.
 
-For instance, in a couple of pages time we’re going to implement a two-column layout.
-SILE uses a \em{constraint solver} system to declare its frames, which means
-that you can tell it how the frames relate to each other and it will compute
-where the frames should be physically placed on the page.
+For instance, in a couple of page’s time, we’re going to implement a two-column layout.
+SILE uses a \em{constraint solver} system to declare its frames, which means that you can tell it how the frames relate to each other and it will compute where the frames should be physically placed on the page.
 
-Here is how we will go about it. We need to start with a page break, because
-SILE will not appreciate you changing the page layout after it’s started to
-determine how to put text onto that page.\footnote{Of course you can use
-the \code{frametricks} package to get around this limitation—split the current
-frame and start fiddling around with the positions of the new frames that
-\code{frametricks} created for you.} How do we get to the start of a new
-page? Remember that the \code{\\eject} (another word for \code{\\break} in
-vertical mode) only adds a penalty to the end of the output queue; page breaking
-is triggered when we leave horizontal mode, and the way to do that is \code{\\par}.
-So we start with \code{\\eject\\par} and then we will begin a \code{\\pagetemplate}.
-Within \code{\\pagetemplate} we need to tell SILE which frame to begin typesetting
-onto.
+Here is how we will go about it.
+We need to start with a page break, because SILE will not appreciate you changing the page layout after it’s started to determine how to put text onto that page.\footnote{You can use the \autodoc:package{frametricks} package to get around this limitation—split the current frame and start fiddling around with the positions of the new frames that \autodoc:package{frametricks} created for you.}
+How do we get to the start of a new page?
+Remember that the \autodoc:command{\eject} (another word for \autodoc:command{\break} in vertical mode) only adds a penalty to the end of the output queue;
+      page breaking is triggered when we leave horizontal mode, and the way to do that is \autodoc:command{\par}.
+So we start with \autodoc:command{\eject\par} and then we will begin a \autodoc:command{\pagetemplate}.
+Within \autodoc:command{\pagetemplate} we need to tell SILE which frame to begin typesetting onto:
 
 \begin[type=autodoc:codeblock]{raw}
 \eject\par
 \begin[first-content-frame=leftCol]{pagetemplate}
 \end{raw}
 
-Now we will declare our columns. But we’re actually going to start by declaring
-the gutter first, because that’s something that we know and can define; we’re
-going to stipulate that the gutter width will be 3\% of the page width:
+Now we will declare our columns.
+But we’re actually going to start by declaring the gutter first, because that’s something that we know and can define; we’re going to stipulate that the gutter width will be 3\% of the page width:
 
 \begin[type=autodoc:codeblock]{raw}
 \frame[id=gutter,width=3%pw]
 \end{raw}
 
-\begin{note}%
-Declarations of frame dimensions are like ordinary SILE \code{<dimension>}s,
-except with three additional features:
+\begin{autodoc:note}%
+Declarations of frame dimensions are like ordinary SILE \code{<dimension>}s, except with three additional features:
 
 \begin{itemize}
 \item{You can refer to properties of other frames using the \code{top()},
       \code{bottom()}, \code{left()}, \code{right()}, \code{height()} and
-      \code{width()} functions. These functions take a frame ID. SILE magically
+      \code{width()} functions. These functions take a frame ID. SILE
       pre-defines the frame \code{page} to allow you to access the dimensions
       of the whole page.}
 \item{You can use arithmetic functions: plus, minus, divide, multiply, and
-      parenthesis have their ordinary arithmetic meaning. To declare that frame
+      parentheses symbols have their ordinary arithmetic meaning. To declare that frame
       \code{b} should be half the height of frame \code{a} plus 5 millimeters,
       you can say \code{height=5mm + (height(b) / 2)}. However, as we will see
       later, it is usually better to structure your declarations to let SILE
@@ -258,23 +243,19 @@ except with three additional features:
       you can use the shortcut \code{width=5\%pw} instead of \code{width=0.05 * width(page)}
       and \code{height=50\%ph} instead of \code{height=0.5 * height(page)}.}
 \end{itemize}
+\end{autodoc:note}
 
-\end{note}
-
-Next we declare the left and right column frames. The \code{book} class
-gives us some frames already, one of which, \code{content}, defines a typeblock
-with a decent size and positioning on the page.
-We will use the boundaries of this frame to declare our columns: the left
-margin of the left column is the left margin of the typeblock; the right margin of
-the right column is the right margin of the typeblock. But we also want
-a few other parameters to ensure that:
+Next we declare the left and right column frames.
+The \autodoc:class{book} class gives us some frames already, one of which, \code{content}, defines a typeblock with a decent size and positioning on the page.
+We will use the boundaries of this frame to declare our columns: the left margin of the left column is the left margin of the typeblock, and the right margin of the right column is the right margin of the typeblock.
+But we also want a few other parameters to ensure that:
 
 \begin{itemize}
 \item{the gutter is placed between our two columns}
-\item{the two columns have the same width (We don’t know what that width is,
-      but SILE will work it out for us.)}
+\item{the two columns have the same width (we don’t know what that width is,
+      but SILE will work it out for us)}
 \item{after the left column is full, typesetting should move to the right
-      column.}
+      column}
 \end{itemize}
 
 \begin[type=autodoc:codeblock]{raw}
@@ -304,10 +285,8 @@ Let’s do it.
 \showframe[id=rightCol]
 So there we have it: a two-column page layout.
 
-In the next chapter we’ll use the knowledge of how to declare frames to
-help us to create our own document class files. In the meantime, here is
-some dummy text to demonstrate the fact that text does indeed flow between
-the two columns naturally:
+In the next chapter we’ll use the knowledge of how to declare frames to help us to create our own document class files.
+In the meantime, here is some dummy text to demonstrate the fact that text does indeed flow between the two columns naturally:
 
 \lorem[words=500]
 \end{document}

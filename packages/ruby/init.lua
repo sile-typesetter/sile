@@ -29,7 +29,7 @@ end
 
 function package:_init ()
   base._init(self)
-  -- Japaneese language support defines units which are useful here
+  -- Japanese language support defines units which are useful here
   self:loadPackage("font-fallback")
   SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
   SILE.languageSupport.loadLanguage("ja")
@@ -51,12 +51,23 @@ function package.declareSettings (_)
     help = "Glue added between consecutive Latin ruby"
   })
 
+  SILE.settings:declare({
+    parameter = "ruby.opentype",
+    type = "boolean",
+    default = true,
+    help = "Use OpenType tate feature instead of of a bold weight"
+  })
+
 end
 
 function package:registerCommands ()
 
   self:registerCommand("ruby:font", function (_, _)
-    SILE.call("font", { size = "0.6zw", weight = 800 })
+    if SILE.settings:get("ruby.opentype") then
+      SILE.call("font", { size = "0.6zw", features = "+ruby" })
+    else
+      SILE.call("font", { size = "0.6zw", weight = 700 })
+    end
   end)
 
   self:registerCommand("ruby", function (options, content)
@@ -65,14 +76,13 @@ function package:registerCommands ()
 
     checkIfSpacerNeeded(reading)
 
-    SILE.call("hbox", {}, function ()
+    local rubybox = SILE.call("hbox", {}, function ()
       SILE.settings:temporarily(function ()
         SILE.call("noindent")
         SILE.call("ruby:font")
         SILE.typesetter:typeset(reading)
       end)
     end)
-    local rubybox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
     rubybox.outputYourself = function (box, typesetter, line)
       local ox = typesetter.frame.state.cursorX
       local oy = typesetter.frame.state.cursorY
@@ -87,8 +97,7 @@ function package:registerCommands ()
       typesetter.frame.state.cursorY = oy
     end
     -- measure the content
-    SILE.call("hbox", {}, content)
-    local cbox = SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes]
+    local cbox = SILE.call("hbox", {}, content)
     SU.debug("ruby", "base box is", cbox)
     SU.debug("ruby", "reading is", rubybox)
     if cbox:lineContribution() > rubybox:lineContribution() then

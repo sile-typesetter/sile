@@ -1,0 +1,170 @@
+\begin{document}
+\chapter{Advanced Class Files 1: SILE As An XML Processor}
+
+Now we are ready to look at a working example of writing a class to turn an arbitrary XML format into a PDF file.
+We’ll be looking at the DocBook processor that ships with SILE.
+DocBook is an XML format for structured technical documentation.
+DocBook itself doesn’t encode any presentation information about how its various tags should be rendered on a page, and so we shall have to make all the presentation decisions for ourself.
+
+Since DocDook itself doesn’t specify anything about presentation such as paper size, you may need to supply values either on the command line or using a preamble.
+When you use the \code{-c docbook} command line option to SILE, SILE will use the \autodoc:class{docbook} class in spite of any document declaration.
+In addition, options such as paper size could be set; for example, \code{-O papersize=legal}.
+
+The class initialization for DocBoox isn’t too fancy; it just loads up a couple packages that will get used later.
+
+\begin{autodoc:note}
+Much of the example code in this chapter is in SIL format using macros.
+The actual \autodoc:class{docbook} class currently uses Lua functions to specify these commands.
+The functionality is the same, but the Lua syntax is more flexible and recommended for most use cases.
+The SILE \autodoc:command{\define} macros shown here can still be used in a preamble file if desired.
+\end{autodoc:note}
+
+Now we can start defining SILE commands to render XML elements.
+Most of these are fairly straightforward so we will not dwell on them too much.
+For instance, DocBook has tags like \code{<code>}, \code{<filename>}, and \code{<guimenu>} which should all be rendered in a monospaced typewriter font.
+To make it easier to customize the class, we abstract out the font change into a single command:
+
+\begin[type=autodoc:codeblock]{raw}
+\define[command=docbook-ttfont]{\font[family=Inconsolata,size=2ex]{\process}}
+\end{raw}
+
+Now we can define our tags for \code{<code>} and other similar tags:
+
+\begin[type=autodoc:codeblock]{raw}
+\define[command=code]{\docbook-ttfont{\process}}
+\define[command=filename]{\docbook-ttfont{\process}}
+\define[command=guimenu]{\docbook-ttfont{\process}}
+\define[command=guilabel]{\docbook-ttfont{\process}}
+\define[command=guibutton]{\docbook-ttfont{\process}}
+\define[command=computeroutput]{\docbook-ttfont{\process}}
+\end{raw}
+
+If an end user wants things to look different, they can redefine the \code{docbook-ttfont} command and get a different font.
+
+\section{Handling titles}
+
+So much for simple tags.
+Things get interesting when there is a mismatch between the simple format of SILE macros and the complexity of DocBook markup.
+
+We have already seen an example of the \code{<link>} tag where we also need to process XML attributes, so we will not repeat that here.
+Let’s look at another area of complexity: the apparently-simple \code{<title>} tag.
+The reason this is complex is that it occurs in different contexts—sometimes more than once within a context—and it should often be rendered differently in different contexts.
+For instance, \code{<article><title>...} will look different to \code{<section><title>...}.
+Inside an \code{<example>} tag, the title will be prefixed by an example number; inside a \code{<bibliomixed>} bibliography entry, the title should not be set off as a new block but should be part of the running text, and so on.
+
+What we will do to deal with this situation is provide a very simple definition of \code{<title>}, but when processing the containing elements of \code{<title>} (such as \code{<article>} and \code{<example>}), we will process the title ourselves.
+
+Let’s look at \code{<example>}, which has the added complexity of needing to keep track of an article number.
+
+\begin[type=autodoc:codeblock]{raw}
+self:registerCommand("example", function(options,content)
+  SILE.call("increment-counter", {id="Example"})
+  SILE.call("bigskip")
+  SILE.call("docbook-line")
+  SILE.call("docbook-titling", {}, function()
+    SILE.typesetter:typeset("Example".." ".. class:formatCounter(SILE.scratch.counters.Example]))
+\end{raw}
+
+\code{\\docbook-line} is a command that we’ve defined in the \code{docbook.sil} macros file to draw a line across the width of the page to set off examples and so on.
+\code{\\docbook-titling} is a command similarly defined in \code{docbook.sil} which sets the default font for titling and headers. Once again, if someone wants to customize the look of the output we make it easier for them by giving them simple, compartmentalized commands to override.
+
+So far so good, but how do we extract the \code{<title>} tag from the \code{content} abstract syntax tree?
+SILE does not provide XPath or CSS-style selectors to locate content form within the DOM tree;\footnote{Patches, as they say, are welcome.} instead there is a simple one-level function called \code{SU.ast.findInTree()} which looks for a particular tag or command name within the immediate children of the current tree:
+
+\begin[type=autodoc:codeblock]{raw}
+    local t = SU.ast.findInTree(content, "title")
+    if t then
+      SILE.typesetter:typeset(": ")
+      SILE.process(t)
+\end{raw}
+
+We’ve output \autodoc:example{Example 123} so far, and now we need to say \autodoc:example{: \em{Title}}.
+But we also need to ensure that the \code{<title>} tag doesn’t get processed again when we process the content of the example:
+
+\begin[type=autodoc:codeblock]{raw}
+      docbook.wipe(t)
+\end{raw}
+
+\code{docbook.wipe} is a little helper function which nullifies the content of a Lua table:
+
+\begin[type=autodoc:codeblock]{raw}
+function docbook.wipe(tbl)
+  while((#tbl) > 0) do tbl[#tbl] = nil end
+end
+\end{raw}
+
+Let’s finish off the \code{<example>} example by skipping a bit between the title and the content, processing the content and drawing a final line across the page:
+
+\begin[type=autodoc:codeblock]{raw}
+    end
+  end)
+  SILE.call("smallskip")
+  SILE.process(content)
+  SILE.call("docbook-line")
+  SILE.call("bigskip")
+end)
+\end{raw}
+
+It happens that the \code{<example>}, \code{<table>}, and \code{<figure>} tags are pretty equivalent: they produce numbered titles and then go on to process their content.
+So in reality we actually define an abstract \code{countedThing} method and define these commands in terms of that.
+
+\section{Sectioning}
+
+DocBook sectioning is a little different to the SILE \autodoc:class{book} class.
+\code{<section>} tags can be nested; to start a subsection, you place another \code{<section>} tag inside the current \code{<section>}.
+So in order to know what level we are currently on, we need a stack. We also need to keep track of what section number we are on at \em{each} level.
+For instance, with the expected section numbers and titles in XML comments:
+
+\begin[type=autodoc:codeblock]{raw}
+  <section><title>A</title> : \autodoc:example{1. A}
+    <section><title>B</title>: \autodoc:example{1.1 B}
+    </section>
+    <section><title>C</title>: \autodoc:example{1.2 C}
+      <section><title>D</title>: \autodoc:example{1.2.1 D}
+      </section>
+    </section>
+    <section><title>E</title>: \autodoc:example{1.3 E}
+  </section>
+  <section><title>F</title>: \autodoc:example{2. F}
+\end{raw}
+
+So, we will keep two variables: the current level, and the counters for all of the levels so far.
+Each time we enter a \code{section}, we increase the current level counter:
+
+\begin[type=autodoc:codeblock]{raw}
+self:registerCommand("section", function (options, content)
+  SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel + 1
+\end{raw}
+
+We also increment the count at the current level, while at the same time wiping out any counts we have for levels above the current level (if we didn’t do that, then \autodoc:example{E} in our example above would be marked \autodoc:example{1.3.1}):
+
+\begin[type=autodoc:codeblock]{raw}
+  SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] =
+    (SILE.scratch.docbook.seccount[SILE.scratch.docbook.seclevel] or 0) + 1
+  while #(SILE.scratch.docbook.seccount) > SILE.scratch.docbook.seclevel do
+    SILE.scratch.docbook.seccount[#(SILE.scratch.docbook.seccount)] = nil
+  end
+\end{raw}
+
+Now we find the title, and prefix it by the concatenation of all the \code{seccount}s:
+
+\begin[type=autodoc:codeblock]{raw}
+  local title = SU.ast.findInTree(content, "title")
+  local number = table.concat(SILE.scratch.docbook.seccount, '.')
+  if title then
+    SILE.call("docbook-section-"..SILE.scratch.docbook.seclevel.."-title",{},function()
+      SILE.typesetter:typeset(number.." ")
+      SILE.process(title)
+    end)
+    docbook.wipe(title)
+  end
+\end{raw}
+
+Finally we can process the content of the tag, and decrease the level count as we leave the \code{</section>} tag:
+
+\begin[type=autodoc:codeblock]{raw}
+  SILE.process(content)
+  SILE.scratch.docbook.seclevel = SILE.scratch.docbook.seclevel - 1
+end)
+\end{raw}
+\end{document}

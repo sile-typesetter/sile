@@ -225,7 +225,7 @@ end
 -- Typesetting of mbox evolves four steps:
 --   1. Determine the mode for each mbox according to their parent.
 --   2. Shape the mbox hierarchy from leaf to top. Get the shape and relative position.
---   3. Convert mbox into _nnode's to put in SILE's typesetting framwork
+--   3. Convert mbox into _nnode's to put in SILE's typesetting framework
 elements.mbox = pl.class(nodefactory.hbox)
 elements.mbox._type = "Mbox"
 
@@ -254,15 +254,15 @@ function elements.mbox:_init ()
 end
 
 function elements.mbox.styleChildren (_)
-  SU.error("styleChildren is a virtual function that need to be overriden by its child classes")
+  SU.error("styleChildren is a virtual function that need to be overridden by its child classes")
 end
 
 function elements.mbox.shape (_, _, _)
-  SU.error("shape is a virtual function that need to be overriden by its child classes")
+  SU.error("shape is a virtual function that need to be overridden by its child classes")
 end
 
 function elements.mbox.output (_, _, _, _)
-  SU.error("output is a virtual function that need to be overriden by its child classes")
+  SU.error("output is a virtual function that need to be overridden by its child classes")
 end
 
 function elements.mbox:getMathMetrics ()
@@ -860,7 +860,7 @@ function elements.text:shape ()
       .vertGlyphConstructions[glyphs[1].gid]
     if constructions then
       local displayVariants = constructions.mathGlyphVariantRecord
-      -- We select the biggest variant. TODO: we shoud probably select the
+      -- We select the biggest variant. TODO: we should probably select the
       -- first variant that is higher than displayOperatorMinHeight.
       local biggest
       local m = 0
@@ -945,7 +945,7 @@ function elements.text:stretchyReshape (depth, height)
     local closest
     local closestI
     local m = requiredAdvance - (self.depth+self.height):tonumber() * upem/sz
-    SU.debug("math", "strech: m =", m)
+    SU.debug("math", "stretch: m =", m)
     for i,v in ipairs(variants) do
       local diff = math.abs(v.advanceMeasurement - requiredAdvance)
       SU.debug("math", "stretch: diff =", diff)
@@ -1105,14 +1105,14 @@ function elements.mtr.shape (_) end -- done by parent table
 function elements.mtr.output (_) end
 
 elements.table = pl.class(elements.mbox)
-elements.table._type = "table" -- TODO why case diference?
+elements.table._type = "table" -- TODO why case difference?
 
 function elements.table:_init (children, options)
   elements.mbox._init(self)
   self.children = children
   self.options = options
   self.nrows = #self.children
-  self.ncols = math.max(table.unpack(mapList(function(_, row)
+  self.ncols = math.max(pl.utils.unpack(mapList(function(_, row)
     return #row.children end, self.children)))
   SU.debug("math", "self.ncols =", self.ncols)
   self.rowspacing = self.options.rowspacing and SILE.length(self.options.rowspacing)

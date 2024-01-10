@@ -2,6 +2,121 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.14.14](https://github.com/sile-typesetter/sile/compare/v0.14.13...v0.14.14) (2023-12-23)
+
+
+### Features
+
+* **cli:** Change module load error to suggestion for how to install 3rd party modules ([c280050](https://github.com/sile-typesetter/sile/commit/c2800505eda2ee1630eea931f88efb07f6892d00))
+* **languages:** U+00A0 non-breaking space must be stretchable by default ([b769a63](https://github.com/sile-typesetter/sile/commit/b769a633069db4f32746d920dc9696296c7ab7db))
+* **typesetters:** Support U+00AD soft hyphen as discretionary break ([285507e](https://github.com/sile-typesetter/sile/commit/285507e5fddf3b0c752bb2b5bf81e8bf7f19144a))
+
+
+### Bug Fixes
+
+* **backends:** Fix plain text backend to work in LuaJIT/Lua 5.1 ([b185d49](https://github.com/sile-typesetter/sile/commit/b185d4972a5f29e7441f7af34e1ac49f49e6747f))
+* **cli:** Stop outputting error messages twice on failure to process main file ([da5d609](https://github.com/sile-typesetter/sile/commit/da5d60902a4129deb79ae4658ba82757d7277b85))
+* **core:** Use nil-safe and Lua-version-robust table utils ([2405b23](https://github.com/sile-typesetter/sile/commit/2405b23f0f448b217a066ecb34cae54f3e63aa64))
+* **packages:** Adjust dropcap logic for letters with a depth ([fd6963d](https://github.com/sile-typesetter/sile/commit/fd6963d226cc6a3b325dd796414936d200ae1ed2))
+
+### [0.14.13](https://github.com/sile-typesetter/sile/compare/v0.14.12...v0.14.13) (2023-10-30)
+
+
+### Features
+
+* **classes:** Add landscape option to base class ([#1892](https://github.com/sile-typesetter/sile/issues/1892)) ([0fb9ade](https://github.com/sile-typesetter/sile/commit/0fb9adefca3adf9ff8a56755e69474960792d85a))
+* **cli:** Allow multiple runtime SILE_PATH segments (backport from develop branch) ([e7c8fe2](https://github.com/sile-typesetter/sile/commit/e7c8fe219686aa327032154484bf78be86c0baaa))
+
+
+### Bug Fixes
+
+* **frames:** Update frame constraints with new frame IDs after \makecolumns ([b2d6b4f](https://github.com/sile-typesetter/sile/commit/b2d6b4f7b095d74f3d39123904495a8e024c0f05))
+
+### [0.14.12](https://github.com/sile-typesetter/sile/compare/v0.14.11...v0.14.12) (2023-10-11)
+
+
+### Features
+
+* **i18n:** Add Portuguese localizations for bibtex package ([#1859](https://github.com/sile-typesetter/sile/issues/1859)) ([f716c35](https://github.com/sile-typesetter/sile/commit/f716c35109d36c7cb2118ab9c7c65227d9941e01))
+* **utilities:** Add utility function for console messages without trace info ([18526ce](https://github.com/sile-typesetter/sile/commit/18526ce75eeb8deb12e9b232e727993409ed8e06))
+
+
+### Bug Fixes
+
+* **build:** Make sure vendored luarocks isn't a phony target that runs repeatedly ([713434d](https://github.com/sile-typesetter/sile/commit/713434dadbc271299c8548dd2f2d4af57c1eec62))
+* **core:** Allocate exactly what we use, not a guess with an extra just in case ([640ded0](https://github.com/sile-typesetter/sile/commit/640ded0a90e427124f555a2a48d263cde5300d7d))
+* **core:** Correct usage of HarfBuzz when passing a filtered list of shapers ([f488643](https://github.com/sile-typesetter/sile/commit/f4886437d0ebf229db1c2779a8a324bf441efc1a))
+* **core:** Fixup class loader so cache is all Lua module specs ([#1863](https://github.com/sile-typesetter/sile/issues/1863)) ([7efff5b](https://github.com/sile-typesetter/sile/commit/7efff5b7e94f0c4897910c064ef842e6be2e4ab1))
+* **packages:** Don't warn on TOC content change if not actually used ([87c443d](https://github.com/sile-typesetter/sile/commit/87c443d1571f571b595c3e32febdcb03129f5b9a))
+
+### [0.14.11](https://github.com/sile-typesetter/sile/compare/v0.14.10...v0.14.11) (2023-08-23)
+
+
+### Bug Fixes
+
+* **core:** Leave legacy masterFilename alone but use first input filename internally ([29667a7](https://github.com/sile-typesetter/sile/commit/29667a752181dd40abe18672f6175fe10a9c5546))
+* **core:** Make masterFilename actually a filename ([759131e](https://github.com/sile-typesetter/sile/commit/759131e6c87517b56a433dccde29658dbe6df023))
+* **packages:** Avoid mix-and-matching indents in fixed-width specimin blocks ([de41cac](https://github.com/sile-typesetter/sile/commit/de41cac06a911e7c56f0ba4d1248a6da5999e6f3))
+* **utilities:** Use real semver parser for deprecation warnings ([5f0fed5](https://github.com/sile-typesetter/sile/commit/5f0fed51b2a9597272da62f00c15f8836f8c7bd1))
+
+## [0.14.10](https://github.com/sile-typesetter/sile/compare/v0.14.9...v0.14.10) (2023-07-11)
+
+
+### Features
+
+* **cli:** Allow more than one input document ([d20cbd8](https://github.com/sile-typesetter/sile/commit/d20cbd8a0b7a197ca87ca1dd1a39640fa746e301))
+* **i18n:** Add localized strings for Cantonese and Chinese ([cb67d36](https://github.com/sile-typesetter/sile/commit/cb67d3686117258adaca546298063d23c66135f9))
+* **packages:** Add document class styling in autodoc ([e70fa50](https://github.com/sile-typesetter/sile/commit/e70fa509673c32977a1e1f0545373229198c8aa8))
+* **packages:** Provide API for registering raw handlers linked to packages ([45cd3ac](https://github.com/sile-typesetter/sile/commit/45cd3ac96acbe3f2dd572ce0c3c72c7599090e6b))
+
+
+### Bug Fixes
+
+* **build:** Avoid build artifacts being listed for installation ([29c2ccd](https://github.com/sile-typesetter/sile/commit/29c2ccd227774caa4accb90bb0d23825aafccfd1))
+* **core:** Avoid stack overflow in Harfbuzz module ([#1793](https://github.com/sile-typesetter/sile/issues/1793)) ([5001efe](https://github.com/sile-typesetter/sile/commit/5001efe0cfeb421ce5796f8303bf046bb68c8326))
+* **outputters:** Setup --makedeps to play along without explicit --output ([6ff2e16](https://github.com/sile-typesetter/sile/commit/6ff2e16f24224bc2781edc38be8cb9e1418fb30e))
+* **packages:** Converters package no longer worked after 0.13.0 ([433795c](https://github.com/sile-typesetter/sile/commit/433795c3979688469a098a9966a595a4b0d34818))
+* **packages:** Correct chord line height and chord font use ([65961c6](https://github.com/sile-typesetter/sile/commit/65961c6629244817220bac8a6f386a9a738b7f0b)), closes [#1351](https://github.com/sile-typesetter/sile/issues/1351)
+
+## [0.14.9](https://github.com/sile-typesetter/sile/compare/v0.14.8...v0.14.9) (2023-04-11)
+
+
+### Features
+
+* **classes:** Add Picas unit to cover all units speced in Docbook ([88f03fa](https://github.com/sile-typesetter/sile/commit/88f03fa9cbc4595d62d9545f15c17aa9b2eaea2e))
+* **classes:** Implement the`\code` command in the plain class ([0d371ba](https://github.com/sile-typesetter/sile/commit/0d371ba816ca3976c7a6df23dc7136aa2406c01c))
+* **cli:** Add -q / --quiet flag to reduce output to essential errors ([#1759](https://github.com/sile-typesetter/sile/issues/1759)) ([f69ed20](https://github.com/sile-typesetter/sile/commit/f69ed2092c352513db699e7247db77f4f766d8d1))
+* **core:** Support initializing fill glues with a width ([#1765](https://github.com/sile-typesetter/sile/issues/1765)) ([5bc372a](https://github.com/sile-typesetter/sile/commit/5bc372ac66174a0cd3c15930a73e20825621e250))
+* **packages:** Introduce urlstyle hook in the url package ([8f6235d](https://github.com/sile-typesetter/sile/commit/8f6235d0e995b3f684fc5ba9f4646494800fb37a))
+* **packages:** New scalebox package for arbitrary box re-scaling ([a11f61e](https://github.com/sile-typesetter/sile/commit/a11f61e6aeaa306652a506a652edd94a0a319c23))
+* **packages:** Support migrating content in re-wrapped hboxes ([da3ab6d](https://github.com/sile-typesetter/sile/commit/da3ab6d73e267c448fac7f17e650a4feaeb1c577))
+* **typesetters:** Implement hbox building logic in the typesetter ([0f5bc69](https://github.com/sile-typesetter/sile/commit/0f5bc69981140553374ae2c5cc30f0fff913cf61))
+
+
+### Bug Fixes
+
+* **build:** Distribute SVG and FTL source files in packages ([7cef0ea](https://github.com/sile-typesetter/sile/commit/7cef0ea5f9303b32d4f54783498ada68f79b010c))
+* **classes:** Avoid justification issues with relative parindent ([3ffd272](https://github.com/sile-typesetter/sile/commit/3ffd27220afa78e061fb0cc23663a9a9b82e0ac8))
+* **classes:** Make sure un-numbered chapters make it in the ToC ([e5af292](https://github.com/sile-typesetter/sile/commit/e5af2922c99bd7458dba786fd6ecea4b82f69bb2))
+* **classes:** Parse bare number and percentage units in docbook images ([8b965b9](https://github.com/sile-typesetter/sile/commit/8b965b9a8f95da2bdc22e20ba33aa4d3c4b7043b))
+* **classes:** Setting current.hangIndent is a measurement ([e213d6e](https://github.com/sile-typesetter/sile/commit/e213d6e3d9a2b6e231743a03def660cfcc16a193))
+* **cli:** Return success if --help explicitly requested ([#1737](https://github.com/sile-typesetter/sile/issues/1737)) ([35a229d](https://github.com/sile-typesetter/sile/commit/35a229d22b0c527b288c04a27379beab67ee8f9a))
+* **core,typesetter:** Discretionary nodes are incorrectly handled ([dd7d05c](https://github.com/sile-typesetter/sile/commit/dd7d05c86c9eea2da17421fe09f9ae1261f0c23e))
+* **core:** Ensure restoring settings top-level state does not error ([fce8447](https://github.com/sile-typesetter/sile/commit/fce84479a00a402f80d2f16ec71a1dc3e49a047e))
+* **outputters:** Update Cairo/Podofo hbox debug API to match libtexpdf ([#1703](https://github.com/sile-typesetter/sile/issues/1703)) ([607dcf7](https://github.com/sile-typesetter/sile/commit/607dcf7b3d8a83547779758cb70f6285a07c4848))
+* **packages:** Correct image aspect preservation logic ([6ace5b1](https://github.com/sile-typesetter/sile/commit/6ace5b19d4b88ba406c353fd86b3edc70d4952c1))
+* **packages:** Fix output of debug breaks in infonode package ([#1725](https://github.com/sile-typesetter/sile/issues/1725)) ([c8a1467](https://github.com/sile-typesetter/sile/commit/c8a1467494b6cbcf3582c56598cb68f55c11df83))
+* **packages:** Make sure pullquotes start in block mode ([#1774](https://github.com/sile-typesetter/sile/issues/1774)) ([00151bc](https://github.com/sile-typesetter/sile/commit/00151bc13b85dcc5a43dae0737599de8c32de25f))
+* **packages:** Strip content position in ToC entries ([#1739](https://github.com/sile-typesetter/sile/issues/1739)) ([23345ea](https://github.com/sile-typesetter/sile/commit/23345ea0f7740a3779adeb3dad6c9ce7cdd82c3b))
+* **packages:** Text conversion in bookmarks has spacing issues ([7ef2bb4](https://github.com/sile-typesetter/sile/commit/7ef2bb42cde4f752ecaabc29cf85e362691a3c02))
+* **typesetter:** Account for discretionary dimensions in hbox building ([91cb950](https://github.com/sile-typesetter/sile/commit/91cb950c3b603f3154dc0aac1585f6cf2c1df127))
+* **typesetter:** Avoid initializing new line during hbox creation ([ae455a1](https://github.com/sile-typesetter/sile/commit/ae455a1b17eae5d1dd22b0ee4bca4f19f383af14))
+* **typesetter:** New typesetter instances shall not reset settings ([16d8a6a](https://github.com/sile-typesetter/sile/commit/16d8a6a028bbfbbd808d255182e5ca3aa327b193))
+* **typesetter:** Skip lines containing only discardables without ignoring next lines ([9c3dc65](https://github.com/sile-typesetter/sile/commit/9c3dc6510ba36a356c95b8c4354ecd41234e645e))
+* **typesetter:** Top glues shall be skipped when streching/shrinking a page ([8818a24](https://github.com/sile-typesetter/sile/commit/8818a24b6f69e0835b23ca813b69a9576309582a))
+* **typsetter:** Hack around scoping issues for parindent setting ([fc85298](https://github.com/sile-typesetter/sile/commit/fc852981396426eec0e76dfea9187939856fa8ed))
+* **utilities:** Enforce stricter type casts (SU.cast, SU.boolean) ([a325eb7](https://github.com/sile-typesetter/sile/commit/a325eb7adee72b6700e9405415747e6be9671aef))
+
 ## [0.14.8](https://github.com/sile-typesetter/sile/compare/v0.14.7...v0.14.8) (2023-01-26)
 
 

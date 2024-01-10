@@ -2,7 +2,7 @@ SILE = require("core.sile")
 SU.warn = function () end
 
 describe("The papersize parser", function()
-  local parse = SILE.paperSizeParser
+  local parse = SILE.papersize
   it("should return the correct values for a6", function()
     local a6 = { 297.6377985, 419.52756359999995 }
     assert.is.same(parse("a6"), a6)
@@ -13,6 +13,11 @@ describe("The papersize parser", function()
     local size = { 144, 288 }
     assert.is.same(parse("2in x 4in"), size)
     assert.is.same(parse("144 x 288"), size)
+  end)
+  it("should flip x and y page geometry for landscape mode", function()
+    local size = { 288, 144 }
+    assert.is.same(parse("2in x 4in", true), size)
+    assert.is.same(parse("144 x 288", true), size)
   end)
   it("error if unable to parse", function()
     assert.has.errors(function () parse("notapaper") end)

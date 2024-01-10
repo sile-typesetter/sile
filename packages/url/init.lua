@@ -3,8 +3,6 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "url"
 
-local pdf
-
 -- URL escape sequence, URL fragment:
 local preferBreakBefore = "%#"
 -- URL path elements, URL query arguments, acceptable extras:
@@ -23,8 +21,7 @@ function package:_init ()
   base._init(self)
   self:loadPackage("verbatim")
   self:loadPackage("inputfilter")
-  pdf = SILE.outputter._name == "libtexpdf"
-  if pdf then self:loadPackage("pdf") end
+  self:loadPackage("pdf")
 end
 
 function package.declareSettings (_)
@@ -48,15 +45,6 @@ end
 function package:registerCommands ()
 
   self:registerCommand("href", function (options, content)
-    if not pdf then
-      if options.src then
-        SILE.process(content)
-      else
-        SILE.call("url", { language = options.language }, content)
-      end
-      return -- DONE.
-    end
-
     if options.src then
       SILE.call("pdf:link", { dest = options.src, external = true,
         borderwidth = options.borderwidth,
@@ -147,13 +135,13 @@ function package:registerCommands ()
         secondaryPenalty = secondaryPenalty,
         worsePenalty = worsePenalty
       })
-      SILE.call("code", {}, result)
+      SILE.call("urlstyle", {}, result)
     end)
   end, "Inserts penalties in an URL so it can be broken over multiple lines at appropriate places.")
 
-  self:registerCommand("code", function (options, content)
-    SILE.call("verbatim:font", options, content)
-  end)
+  self:registerCommand("urlstyle", function (options, content)
+    SILE.call("code", options, content)
+  end, "Hook that may be redefined to change the styling of URLs")
 
 end
 
@@ -163,7 +151,7 @@ package.documentation = [[
 This package enhances the typesetting of URLs in two ways.
 First, it provides the \autodoc:command{\href[src=<url>]{<content>}} command which inserts PDF hyperlinks, \href[src=http://www.sile-typesetter.org/]{like this}.
 
-The \autodoc:command{\href} command accepts the same \autodoc:parameter{borderwidth}, \autodoc:parameter{bordercolor}, \autodoc:parameter{borderstyle} and \autodoc:parameter{borderoffset} styling options as the \autodoc:command[check=false]{\pdf:link} command from the \autodoc:package{pdf} package, for instance \href[src=http://www.sile-typesetter.org/, borderwidth=0.4pt, bordercolor=blue, borderstyle=underline]{like this}.
+The \autodoc:command{\href} command accepts the same \autodoc:parameter{borderwidth}, \autodoc:parameter{bordercolor}, \autodoc:parameter{borderstyle}, and \autodoc:parameter{borderoffset} styling options as the \autodoc:command[check=false]{\pdf:link} command from the \autodoc:package{pdf} package, for instance \href[src=http://www.sile-typesetter.org/, borderwidth=0.4pt, bordercolor=blue, borderstyle=underline]{like this}.
 
 Nowadays, it is a common practice to have URLs in print articles (whether it is a good practice or not is yet \em{another} topic).
 Therefore, the package also provides the \autodoc:command{\url} command, which will automatically insert breakpoints into unwieldy URLs like \url{https://github.com/sile-typesetter/sile-typesetter.github.io/tree/master/examples} so that they can be broken up over multiple lines.
@@ -173,10 +161,14 @@ By default, the \autodoc:command{\url} command ignores the current language, as 
 If you have no other choice, however, you can pass it a \autodoc:parameter{language} option to enforce a language to be applied.
 Note that if French (\code{fr}) is selected, the special typographic rules applying to punctuations in this language are disabled.
 
-To typeset an URL and at the same type have it as active hyperlink, one can use the \autodoc:command{\href} command without the \autodoc:parameter{src} option,
+To typeset a URL and also make it an active hyperlink, use the \autodoc:command{\href} command without the \autodoc:parameter{src} option,
 but with the URL passed as argument.
 
-The breaks are controlled by two penalty settings, \autodoc:setting{url.linebreak.primaryPenalty} for preferred breakpoints and, for less acceptable but still tolerable breakpoints, \autodoc:setting{url.linebreak.secondaryPenalty} —its value should logically be higher than the previous one.
+The breaks are controlled by two penalty settings: \autodoc:setting{url.linebreak.primaryPenalty} for preferred breakpoints and, for less acceptable but still tolerable breakpoints, \autodoc:setting{url.linebreak.secondaryPenalty}—its value should logically be higher than the previous one.
+
+The \autodoc:command{\urlstyle} command hook may be overridden to change the style of URLs.
+By default, they are typeset as “code”.
+
 \end{document}
 ]]
 

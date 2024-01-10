@@ -24,7 +24,7 @@ function package:_init (options)
   trTag = SU.required(options, "trTag", "setting up table class")
   tdTag = SU.required(options, "tdTag", "setting up table class")
 
-  -- This is a post init calback instead of the usual early command registration
+  -- This is a post init callback instead of the usual early command registration
   -- method using our package loader because we don't know what commands to register
   -- until we've been instantiated.
   self.class:registerPostinit(function (_)
@@ -38,11 +38,14 @@ function package:_init (options)
     self:registerCommand(tdTag, function(_, content)
       local tbl = SILE.scratch.simpletable.tables[#(SILE.scratch.simpletable.tables)]
       local row = tbl[#tbl]
+      local hbox, hlist = SILE.typesetter:makeHbox(content)
       row[#row+1] = {
         content = content,
-        hbox = SILE.call("hbox", {}, content)
+        hbox = hbox
       }
-      SILE.typesetter.state.nodes[#(SILE.typesetter.state.nodes)] = nil
+      if #hlist > 0 then
+        SU.warn("Ignored migrating content in simpletable row (unsupported)")
+      end
     end)
 
     self:registerCommand(tableTag, function(_, content)

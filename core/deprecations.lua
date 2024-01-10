@@ -30,7 +30,7 @@ SILE.fluent = setmetatable({}, {
   __call = function (_, ...)
     fluentglobal()
     SILE.fluent = fluent
-    return fluent(table.unpack({...}, 1, select("#", ...)))
+    return fluent(pl.utils.unpack({...}, 1, select("#", ...)))
   end,
   __index = function (_, key)
     fluentglobal()
@@ -49,9 +49,8 @@ SILE.baseClass = setmetatable({}, {
     __index = nobaseclass
   })
 
-SILE.defaultTypesetter = function (frame)
+SILE.defaultTypesetter = function ()
   SU.deprecated("SILE.defaultTypesetter", "SILE.typesetters.base", "0.14.6", "0.15.0")
-  return SILE.typesetters.base(frame)
 end
 
 SILE.toPoints = function (_, _)
@@ -82,3 +81,25 @@ function SILE.doTexlike (doc)
     [[Add format argument "sil" to skip content detection and assume SIL input]])
   return SILE.processString(doc, "sil")
 end
+
+local nopackagemanager = function ()
+  SU.deprecated("SILE.PackageManager", nil, "0.13.2", "0.15.0", [[
+  The built in SILE package manager has been completely deprecated. In its place
+    SILE can now load classes, packages, and other resources installed via
+    LuaRocks. Any SILE package may be published on LuaRocks.org or any private
+    repository. Rocks may be installed to the host system root filesystem, a user
+    directory, or a custom location. Please see the SILE manual for usage
+    instructions. Package authors especially can review the template repository
+    on GitHub for how to create a package.
+  ]])
+end
+
+SILE.PackageManager = {}
+setmetatable(SILE.PackageManager, {
+  __index = nopackagemanager
+})
+
+-- luacheck: ignore updatePackage
+-- luacheck: ignore installPackage
+updatePackage = nopackagemanager
+installPackage = nopackagemanager

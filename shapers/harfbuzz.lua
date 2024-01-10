@@ -98,12 +98,15 @@ function shaper.getFace (opts)
     SU.debug("fonts", "Instanciated", _pretty_varitions(face), "as", face.tempfilename)
   elseif (face.variations ~= "") or (bitshim.rshift(face.index, 16) ~= 0) then
     if not SILE.features.font_variations then
-      SU.warn([[This build of SILE was compiled with font variations support disabled,
+      SU.warn([[
+  This build of SILE was compiled with font variations support disabled,
   likely due to not having the subsetter library included in HarfBuzz >= 6.
   This document specifies font variations which cannot be correctly rendered.
   Please rebuild SILE with the necessary library support. Alternatively to procede
   anyway *incorrectly* render this document run:
+
       sile -e 'SILE.features.font_variations = true' ....
+
   Or modify the document to remove variations options from font commands.]])
     end
     SU.error("Failed to instanciate: " .. _pretty_varitions(face))
@@ -121,11 +124,12 @@ function shaper.preAddNodes (_, items, nnodeValue) -- Check for complex nodes
 end
 
 function shaper.addShapedGlyphToNnodeValue (_, nnodevalue, shapedglyph)
-  if nnodevalue.complex then
+  -- Note: previously we stored the shaped items only for "complex" nodes
+  -- (nodevalue.comple). We now always do it, so as to have them at hand for
+  -- italic correction.
+  if not nnodevalue.items then nnodevalue.items = {} end
+  nnodevalue.items[#nnodevalue.items+1] = shapedglyph
 
-    if not nnodevalue.items then nnodevalue.items = {} end
-    nnodevalue.items[#nnodevalue.items+1] = shapedglyph
-  end
   if not nnodevalue.glyphString then nnodevalue.glyphString = {} end
   if not nnodevalue.glyphNames then nnodevalue.glyphNames = {} end
   table.insert(nnodevalue.glyphString, shapedglyph.gid)

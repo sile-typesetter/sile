@@ -1,0 +1,42 @@
+name: Rust Lint
+
+on: [ push, pull_request ]
+
+jobs:
+
+  rustfmt:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          components: rustfmt
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+      - name: Run rustfmt
+        run: |
+          git ls-files '*.rs' '*.rs.in' | xargs rustfmt --check --config skip_children=true
+
+  clippy:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          components: clippy
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+      - uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ github.token }}
+          args: --features luajit,vendored -- -D warnings

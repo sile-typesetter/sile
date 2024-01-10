@@ -76,7 +76,7 @@ function class:registerCommands ()
 
   self:registerCommand("noindent", function (_, content)
     if #SILE.typesetter.state.nodes ~= 0 then
-      SU.warn("\\noindent called after nodes already recieved in a paragraph, the setting will have no effect because the parindent (if any) has already been output")
+      SU.warn("\\noindent called after nodes already received in a paragraph, the setting will have no effect because the parindent (if any) has already been output")
     end
     SILE.settings:set("current.parindent", SILE.nodefactory.glue())
     SILE.process(content)
@@ -221,46 +221,138 @@ function class:registerCommands ()
     SILE.call("penalty", { penalty = -20000 })
   end, "Fills the page with stretchable vglue and then requests a non-negotiable page break")
 
-  self:registerCommand("justified", function (_, content)
-    SILE.settings:set("document.rskip", nil)
-    SILE.settings:set("document.spaceskip", nil)
-    SILE.process(content)
-    SILE.call("par")
-  end)
-
-  self:registerCommand("rightalign", function (_, content)
-    SILE.call("raggedleft", {}, function ()
-      SILE.process(content)
-      SILE.call("par")
-    end)
-  end)
-
   self:registerCommand("em", function (_, content)
-    SILE.call("font", { style = "Italic" }, content)
-  end)
+    local style = SILE.settings:get("font.style")
+    local toggle = (style and style:lower() == "italic") and "Regular" or "Italic"
+    SILE.call("font", { style = toggle }, content)
+  end, "Emphasizes its contents by switching the font style to italic (or back to regular if already italic)")
 
   self:registerCommand("strong", function (_, content)
     SILE.call("font", { weight = 700 }, content)
+  end, "Sets the font weight to bold (700)")
+
+  self:registerCommand("code", function (options, content)
+    -- IMPLEMENTATION NOTE:
+    -- The \code command came from the url package, though used in plenty of
+    -- places. It was referring to the verbatim:font from the verbatim
+    -- package, which _should_ be sort of unrelated.
+    -- Trying to untangle the things here, by introducing the
+    -- definition from the former, but it's of sub-quality...
+    -- The ugly -3 size is a HACK of sorts.
+    options.family = options.family or "Hack"
+    options.size = options.size or SILE.settings:get("font.size") - 3
+    SILE.call("font", options, content)
   end)
 
   self:registerCommand("nohyphenation", function (_, content)
     SILE.call("font", { language = "und" }, content)
   end)
 
+  self:registerCommand("center", function (_, content)
+    if #SILE.typesetter.state.nodes ~= 0 then
+      SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
+    end
+    SILE.settings:temporarily(function ()
+      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+      SILE.settings:set("current.parindent", SILE.nodefactory.glue())
+      SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue(lskip.width.length))
+      SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue(rskip.width.length))
+      SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+      SILE.settings:set("document.spaceskip", SILE.length("1spc", 0, 0))
+      SILE.process(content)
+      SILE.call("par")
+    end)
+  end, "Typeset its contents in a centered block (keeping margins).")
+
   self:registerCommand("raggedright", function (_, content)
-    SILE.call("ragged", { right = true }, content)
-  end)
+    SILE.settings:temporarily(function ()
+      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      SILE.settings:set("document.lskip", SILE.nodefactory.glue(lskip.width.length))
+      SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue(rskip.width.length))
+      SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+      SILE.settings:set("document.spaceskip", SILE.length("1spc", 0, 0))
+      SILE.process(content)
+      SILE.call("par")
+    end)
+  end, "Typeset its contents in a left aligned block (keeping margins).")
 
   self:registerCommand("raggedleft", function (_, content)
-    SILE.call("ragged", { left = true }, content)
+    SILE.settings:temporarily(function ()
+      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue(lskip.width.length))
+      SILE.settings:set("document.rskip", SILE.nodefactory.glue(rskip.width.length))
+      SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+      SILE.settings:set("document.spaceskip", SILE.length("1spc", 0, 0))
+      SILE.process(content)
+      SILE.call("par")
+    end)
+  end, "Typeset its contents in a right aligned block (keeping margins).")
+
+  self:registerCommand("justified", function (_, content)
+    SILE.settings:temporarily(function ()
+      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      -- Keep the fixed part of the margins for nesting but remove the stretchability.
+      SILE.settings:set("document.lskip", SILE.nodefactory.glue(lskip.width.length))
+      SILE.settings:set("document.rskip", SILE.nodefactory.glue(rskip.width.length))
+      -- Reset parfillskip to its default value, in case the surrounding context
+      -- is ragged and cancelled it.
+      SILE.settings:set("typesetter.parfillskip", nil, false, true)
+      SILE.settings:set("document.spaceskip", nil)
+      SILE.process(content)
+      SILE.call("par")
+    end)
+   end, "Typeset its contents in a justified block (keeping margins).")
+
+  self:registerCommand("ragged", function (options, content)
+    -- Fairly dubious command for compatibility
+    local l = SU.boolean(options.left, false)
+    local r = SU.boolean(options.right, false)
+    if l and r then
+      SILE.call("center", {}, content)
+    elseif r then
+      SILE.call("raggedleft", {}, content)
+    elseif l then
+      SILE.call("raggedright", {}, content)
+    else
+      SILE.call("justified", {}, content)
+    end
   end)
 
+  self:registerCommand("rightalign", function (_, content)
+    SU.deprecated("\\rightalign", "\\raggedleft", "0.15.0", "0.17.0")
+    SILE.call("raggedleft", {}, content)
+  end)
+
+  self:registerCommand("blockquote", function (_, content)
+    SILE.call("smallskip")
+    SILE.typesetter:leaveHmode()
+    SILE.settings:temporarily(function ()
+      local indent = SILE.measurement("2em"):absolute()
+      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      -- We keep the stretcheability of the lskip and rskip: honoring text alignment
+      -- from the parent context.
+      SILE.settings:set("document.lskip", SILE.nodefactory.glue(lskip.width + indent))
+      SILE.settings:set("document.rskip", SILE.nodefactory.glue(rskip.width + indent))
+      SILE.settings:set("font.size", SILE.settings:get("font.size") * 0.95)
+      SILE.process(content)
+      SILE.typesetter:leaveHmode()
+    end)
+    SILE.call("smallskip")
+  end, "A blockquote environment")
+
   self:registerCommand("quote", function (_, content)
-    SU.deprecated("\\quote", "\\pullquote", "0.14.5", "0.16.0", [[
+    SU.deprecated("\\quote", "\\pullquote or \\blockquote", "0.14.5", "0.16.0", [[
   The \quote command has *such* bad output it is being completely
-  deprecated as unsuitable for general purpose use. The pullquote
-  package (\use[module=packages.pullquote]) provides one alternative,
-  but you can also copy and adapt the original source from the plain
+  deprecated as unsuitable for general purpose use.
+  The pullquote package (\use[module=packages.pullquote]) provides one
+  alternative, and the blockquote environment provides another.
+  But you can also copy and adapt the original source from the plain
   class if you need to maintain exact output past SILE v0.16.0.]])
     SILE.call("smallskip")
     SILE.call("par")
@@ -297,86 +389,18 @@ function class:registerCommands ()
     SILE.settings:set("linebreak.tolerance", 10000)
   end)
 
-  self:registerCommand("center", function (_, content)
-    if #SILE.typesetter.state.nodes ~= 0 then
-      SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
-    end
-    SILE.settings:temporarily(function()
-      SILE.settings:set("current.parindent", 0)
-      SILE.settings:set("document.parindent", 0)
-      SILE.call("ragged", { left = true, right = true }, content)
-    end)
-  end)
-
-  self:registerCommand("ragged", function (options, content)
-    SILE.settings:temporarily(function ()
-      if SU.boolean(options.left, false) then SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue()) end
-      if SU.boolean(options.right, false) then SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue()) end
-      SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
-      SILE.settings:set("document.parindent", SILE.nodefactory.glue())
-      SILE.settings:set("document.spaceskip", SILE.length("1spc", 0, 0))
-      SILE.process(content)
-      SILE.call("par")
-    end)
-  end)
-
-  local _rtl_pre_post = function (box, typesetter, line)
-    local advance = function () typesetter.frame:advanceWritingDirection(box:scaledWidth(line)) end
-    if typesetter.frame:writingDirection() == "RTL" then
-      advance()
-      return function () end
-    else
-      return advance
-    end
-  end
-
   self:registerCommand("hbox", function (_, content)
-    local index = #(SILE.typesetter.state.nodes)+1
-    local recentContribution = {}
-    SILE.process(content)
-    local l = SILE.length()
-    local h, d = SILE.length(), SILE.length()
-    for i = index, #(SILE.typesetter.state.nodes) do
-      local node = SILE.typesetter.state.nodes[i]
-      if node.is_unshaped then
-        local shape = node:shape()
-        for _, attr in ipairs(shape) do
-          recentContribution[#recentContribution+1] = attr
-          h = attr.height > h and attr.height or h
-          d = attr.depth > d and attr.depth or d
-          l = l + attr:lineContribution():absolute()
-        end
-      else
-        recentContribution[#recentContribution+1] = node
-        l = l + node:lineContribution():absolute()
-        h = node.height > h and node.height or h
-        d = node.depth > d and node.depth or d
-      end
-      SILE.typesetter.state.nodes[i] = nil
+    local hbox, hlist = SILE.typesetter:makeHbox(content)
+    SILE.typesetter:pushHbox(hbox)
+    if #hlist > 0 then
+      SU.warn("Hbox has migrating content (ignored for now, but likely to break in future versions)")
+      -- Ugly shim:
+      -- One day we ought to do SILE.typesetter:pushHlist(hlist) here, so as to push
+      -- back the migrating contents from within the hbox'ed content.
+      -- However, old Lua code assumed the hbox to be returned, and sometimes removed it
+      -- from the typesetter queue (for measuring, etc.), assuming it was the last
+      -- element in the queue...
     end
-    local hbox = SILE.nodefactory.hbox({
-        height = h,
-        width = l,
-        depth = d,
-        value = recentContribution,
-        outputYourself = function (self_, typesetter, line)
-          local _post = _rtl_pre_post(self_, typesetter, line)
-          local ox = typesetter.frame.state.cursorX
-          local oy = typesetter.frame.state.cursorY
-          SILE.outputter:setCursor(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
-          for _, node in ipairs(self_.value) do
-            node:outputYourself(typesetter, line)
-          end
-          typesetter.frame.state.cursorX = ox
-          typesetter.frame.state.cursorY = oy
-          _post()
-          SU.debug("hboxes", function ()
-            SILE.outputter:debugHbox(self_, self_:scaledWidth(line))
-            return "Drew debug outline around hbox"
-          end)
-        end
-      })
-    table.insert(SILE.typesetter.state.nodes, hbox)
     return hbox
   end, "Compiles all the enclosed horizontal-mode material into a single hbox")
 

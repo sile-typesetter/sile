@@ -1,0 +1,15 @@
+\begin[papersize=a7]{document}
+\use[module=packages.retrograde,target=v0.15.0]
+\neverindent
+\nofolios
+\set[parameter=document.parskip, value=50pt]
+\par% bug 1647 was caused to the parskip introduced here, skipped at outputting
+% but counted when adjusting vertical glues.
+This paragraph is at the page top.
+
+This paragraph has a big parskip before it.
+\vfill
+This paragraph must be at the page bottom.
+\par
+\break
+\end{document}

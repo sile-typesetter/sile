@@ -26,7 +26,7 @@ SILE.settings:declare({
   parameter = "languages.fr.colonspace",
   type = "kern",
   default = SILE.nodefactory.kern(spaces.colonspace),
-  help = "The amount of space before a colon, theoretically a non-breakable, shrinkable, strechable inter-word space"
+  help = "The amount of space before a colon, theoretically a non-breakable, shrinkable, stretchable inter-word space"
 })
 
 SILE.settings:declare({
@@ -67,6 +67,9 @@ local getSpaceGlue = function(options, parameter)
     SILE.settings:set("font.filename", options.filename)
     sg = sg:absolute()
   end)
+  -- Track a subtype on that kern:
+  -- See automated italic correction at the typesetter level.
+  sg.subtype = "punctspace"
   return sg
 end
 
@@ -172,7 +175,7 @@ function SILE.nodeMakers.fr:mustRemove (i, items)
   -- Clear "manual" spaces we do not want, so that later we only have to
   -- insert the relevant kerns.
   local curr = items[i].text
-  if self:isSpace(curr) then
+  if self:isSpace(curr) or self:isNonBreakingSpace(curr) then
     if i < #items then
       local next = items[i+1].text
       if self:isSpace(next)

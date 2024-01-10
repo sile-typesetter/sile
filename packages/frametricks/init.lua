@@ -41,7 +41,7 @@ end
 
 local makecolumns = function (options)
   local cFrame = SILE.typesetter.frame
-  local cols = options.columns or 2
+  local cols = options.columns
   local gutterWidth = options.gutter or "3%pw"
   local right = cFrame:right()
   local origId = cFrame.id
@@ -174,7 +174,31 @@ function package:registerCommands ()
   end, "Breaks the current frame in two vertically at the current location or at a point <offset> below the current location")
 
   self:registerCommand("makecolumns", function (options, _)
+    -- Set a default value for column count
+    options.columns = options.columns or 2
+    local current_frame = SILE.typesetter.frame
+    local original_constraints = {}
+    -- Collect existing constraints that may need updating after makecolumns() changes them
+    for frameid in pairs(SILE.frames) do
+      if frameid ~= current_frame.id then
+        local frame = SILE.getFrame(frameid)
+        for method in pairs(frame.constraints) do
+          -- TODO: Remove the assumption about direction when makecolumns() takes into account frame advance direction
+          if method == "right" then
+            if frame[method](frame) == current_frame[method](current_frame) then
+              table.insert(original_constraints, { frame = frame, method = method })
+            end
+          end
+        end
+      end
+    end
     makecolumns(options)
+    for _, info in ipairs(original_constraints) do
+      local frame, method = info.frame, info.method
+      local final_column_id = ("%s_col%d"):format(current_frame.id, options.columns-1)
+      local final_comumn_frame = SILE.getFrame(final_column_id)
+      frame:constrain(method, final_comumn_frame[method](final_comumn_frame))
+    end
   end, "Split the current frame into multiple columns")
 
   self:registerCommand("breakframehorizontal", function (options, _)
@@ -183,8 +207,7 @@ function package:registerCommands ()
 
   self:registerCommand("float", function (options, content)
     SILE.typesetter:leaveHmode()
-    local hbox = SILE.call("hbox", {}, content)
-    table.remove(SILE.typesetter.state.nodes) -- steal it back
+    local hbox = SILE.typesetter:makeHbox(content) -- HACK What about migrating nodes here?
     local heightOfPageSoFar = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue).height
     local overshoot = SILE.length(heightOfPageSoFar + hbox.height - SILE.typesetter:getTargetLength())
     if overshoot > SILE.length(0) then
@@ -234,7 +257,6 @@ end
 
 package.documentation = [[
 \begin{document}
-As we mentioned in the first chapter, SILE uses frames as an indication of where to put text onto the page.
 The \autodoc:package{frametricks} package assists package authors by providing a number of commands to manipulate frames.
 
 The most immediately useful is \autodoc:command{\showframe}.
@@ -260,8 +282,8 @@ We just issued a \autodoc:command{\breakframevertical} command at the start of t
 As you can see, the current frame is called \code{\script{SILE.typesetter:typeset(SILE.typesetter.frame.id)}} and now begins at the start of the paragraph.
 
 Similarly, the \autodoc:command{\breakframehorizontal} command breaks the frame in two into a left and a right frame.
-The command takes an optional argument \autodoc:parameter{offset=<dimension>}, specifying where on the line the frame should be split.
-If it is not supplied, the frame is split at the current position in the line.
+The command takes an optional parameter \autodoc:parameter{offset=<dimension>}, specifying where on the line the frame should be split.
+If \autodoc:parameter{offset} is not supplied, the frame is split at the current position in the line.
 
 The command \autodoc:command{\shiftframeedge} allows you to reposition the current frame left or right.
 It takes \autodoc:parameter{left} and/or \autodoc:parameter{right} parameters, which can be positive or negative dimensions.
@@ -269,15 +291,16 @@ It should only be used at the top of a frame, as it reinitializes the typesetter
 
 Combining all of these commands, the \autodoc:command{\float} command breaks the current frame, creates a small frame to hold a floating object, flows text into the surrounding frame, and then, once text has descended past the floating object, moves the frame back into place again.
 It takes two optional parameters, \autodoc:parameter{bottomboundary=<dimension>} and/or \autodoc:parameter{rightboundary=<dimension>}, which open up additional space around the frame.
-At the start of this paragraph, I issued the command
 
-\begin[type=autodoc:codeblock]{raw}
-\float[bottomboundary=5pt]{\font[size=60pt]{C}}.
-\end{raw}
+% At the start of this paragraph, I issued the command
+%
+% \begin[type=autodoc:codeblock]{raw}
+% \float[bottomboundary=5pt]{\font[size=60pt]{C}}
+% \end{raw}
 
 To reiterate: we started playing around with frames like this in the early days of SILE and they have not really proved a good solution to the things we wanted to do with them.
 They’re great for arranging where content should live on the page, but messing about with them dynamically seems to create more problems than it solves.
-There’s probably a reason why InDesign and similar applications handle floats, drop caps, tables and so on inside the context of a content frame rather than by messing with the frames themselves.
+There’s probably a reason why InDesign and similar applications handle floats, drop caps, tables, and so on inside the context of a content frame rather than by messing with the frames themselves.
 If you feel tempted to play with \autodoc:package{frametricks}, there’s almost always a better way to achieve what you want without it.
 \end{document}
 ]]

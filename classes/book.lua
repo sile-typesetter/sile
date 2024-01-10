@@ -105,7 +105,7 @@ function class:registerCommands ()
       number = self.packages.counters:formatMultilevelCounter(self:getMultilevelCounter("sectioning"))
     end
     if SU.boolean(options.toc, true) then
-      SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))
+      SILE.call("tocentry", { level = level, number = number }, SU.ast.subContent(content))
     end
     if SU.boolean(options.numbering, true) then
       if options.msg then
@@ -118,6 +118,7 @@ function class:registerCommands ()
 
   self:registerCommand("book:chapter:post", function (_, _)
     SILE.call("par")
+    SILE.call("noindent")
   end)
 
   self:registerCommand("book:section:post", function (_, _)
@@ -164,6 +165,9 @@ function class:registerCommands ()
     end)
     SILE.call("bigskip")
     SILE.call("nofoliothispage")
+    -- English typography (notably) expects the first paragraph under a section
+    -- not to be indented. Frenchies, don't use this class :)
+    SILE.call("noindent")
   end, "Begin a new chapter")
 
   self:registerCommand("section", function (options, content)
@@ -203,6 +207,9 @@ function class:registerCommands ()
     SILE.call("novbreak")
     SILE.call("bigskip")
     SILE.call("novbreak")
+    -- English typography (notably) expects the first paragraph under a section
+    -- not to be indented. Frenchies, don't use this class :)
+    SILE.call("noindent")
     SILE.typesetter:inhibitLeading()
   end, "Begin a new section")
 
@@ -229,6 +236,9 @@ function class:registerCommands ()
     SILE.call("novbreak")
     SILE.call("medskip")
     SILE.call("novbreak")
+    -- English typography (notably) expects the first paragraph under a section
+    -- not to be indented. Frenchies, don't use this class :)
+    SILE.call("noindent")
     SILE.typesetter:inhibitLeading()
   end, "Begin a new subsection")
 

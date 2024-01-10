@@ -36,10 +36,9 @@ end
 
 package.documentation = [[
 \begin{document}
-If you don’t want your images, rules or text to be placed along the baseline, you can use the \autodoc:package{raiselower} package to move them up and down.
-(The \autodoc:package{footnote} package uses this to superscript the footnote reference numbers.)
+If you don’t want your images, rules, or text to be placed along the baseline, you can use the \autodoc:package{raiselower} package to move them up and down.
 
-It provides two simple commands, \autodoc:command{\raise} and \autodoc:command{\lower} which both take a \autodoc:parameter{height=<dimension>} parameter.
+It provides two simple commands, \autodoc:command{\raise} and \autodoc:command{\lower}, which both take a \autodoc:parameter{height=<dimension>} parameter.
 They will respectively raise or lower their argument by the given height.
 The raised or lowered content will not alter the height or depth of the line.
 

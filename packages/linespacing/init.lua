@@ -167,14 +167,18 @@ By default, this is set to \code{tex}. The other options available are:
 \medskip
 \set[parameter=linespacing.method,value=fixed]
 \set[parameter=linespacing.fixed.baselinedistance,value=1.5em]
-\noindent{}• \code{fixed}. This set the lines at a fixed baseline-to-baseline distance, determined by the \autodoc:setting{linespacing.fixed.baselinedistance} parameter.
-You can specify this parameter either relative to the type size (e.g. \code{1.2em}) or as a absolute distance (\code{15pt}).
-This paragraph is set with a fixed 1.5em baseline-to-baseline distance.
+\begin{itemize}
+\item{\code{fixed}. This set the lines at a fixed baseline-to-baseline distance, determined by the \autodoc:setting{linespacing.fixed.baselinedistance} parameter.
+You can specify this parameter either relative to the type size (\code{1.2em}) or as a absolute distance (\code{15pt}).
+This paragraph is set with a fixed 1.5em baseline-to-baseline distance.}
+\end{itemize}
 
 \medskip
 \set[parameter=linespacing.method,value=fit-glyph]
-\noindent{}• \code{fit-glyph}. This sets the lines solid; that is, the lowest point on line 1 (either a descender like \font[size=20pt]{q} or, if there are no descenders, the baseline) will touch the \font[size=20pt]{highest} point of line 2, as in this paragraph.
-You generally don’t want to use this as is.
+\begin{itemize}
+\item{\code{fit-glyph}. This sets the lines solid; that is, the lowest point on line 1 (either a descender like \font[size=20pt]{q} or, if there are no descenders, the baseline) will touch the \font[size=20pt]{highest} point of line 2, as in this paragraph.
+You generally don’t want to use this as-is.}
+\end{itemize}
 
 \set[parameter=linespacing.fit-glyph.extra-space,value=5pt]
 
@@ -183,10 +187,12 @@ What you probably want to do is insert a constant (relative or absolute) s\font[
 
 \medskip
 \set[parameter=linespacing.method,value=fit-font]
-\noindent{}• \code{fit-font}. This inspects each hbox on the line, and asks the fonts it finds for their bounding boxes - the highest ascender and the lower descender.
+\begin{itemize}
+\item{\code{fit-font}. This inspects each \code{hbox} on the line, and asks the fonts it finds for their bounding boxes—the highest ascender and the lower descender.
 It then sets the lines solid.
 Essentially each character is treated as if it is the same height, rather like composing a slug of metal type.
-If there are things other than text on your line, or the text is buried inside other boxes, this may not work so well.
+If there are things other than text on your line, or the text is buried inside other boxes, this may not work well.}
+\end{itemize}
 
 \set[parameter=linespacing.fit-font.extra-space,value=5pt]
 
@@ -195,7 +201,9 @@ As with \code{fit-glyph}, you can insert extra space between the lines with the 
 \medskip
 \set[parameter=linespacing.method,value=css]
 \set[parameter=linespacing.css.line-height,value=2em]
-\noindent{}• \code{css}. This is similar to the method used in browsers; the baseline distance is set with the \autodoc:setting{linespacing.css.line-height} parameter, and the excess \font[size=20pt]{space} between this parameter and the actual height of the line is distributed between the top and bottom of the line.
+\begin{itemize}
+\item{\code{css}. This is similar to the method used in browsers; the baseline distance is set with the \autodoc:setting{linespacing.css.line-height} parameter, and the excess \font[size=20pt]{space} between this parameter and the actual height of the line is distributed between the top and bottom of the line.}
+\end{itemize}
 \medskip
 
 \linespacing-off

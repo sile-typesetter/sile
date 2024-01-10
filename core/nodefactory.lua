@@ -213,12 +213,25 @@ function nodefactory.nnode:absolute ()
 end
 
 function nodefactory.nnode:outputYourself (typesetter, line)
+  -- See typesetter:computeLineRatio() which implements the currently rather messy
+  -- and probably slightly dubious 'hyphenated' logic.
+  -- Example: consider the word "out-put".
+  -- The node queue therefore contains N(out)D(-)N(put) all pointing to the same
+  -- parent N(output).
   if self.parent and not self.parent.hyphenated then
+    -- When we hit N(out) and are not hyphenated, we output N(output) directly
+    -- and mark it as used, so as to skip D(-)N(put) afterwards.
+    -- I guess this was done to ensure proper kerning (vs. outputting each of
+    -- the nodes separately).
     if not self.parent.used then
       self.parent:outputYourself(typesetter, line)
     end
     self.parent.used = true
   else
+    -- It's possible not to have a parent, e.g. N(word) without hyphenation points.
+    -- Either that, or we have a hyphenated parent but are in the case we are
+    -- outputting one of the elements e.g. N(out)D(-) [line break] N(put).
+    -- (ignoring the G(margin) nodes and potentially zerohbox nodes also on either side of the line break)
     for _, node in ipairs(self.nodes) do node:outputYourself(typesetter, line) end
   end
 end
@@ -242,7 +255,7 @@ end
 getmetatable(nodefactory.unshaped).__index = function (_, _)
   -- if k == "width" then SU.error("Can't get width of unshaped node", true) end
   -- TODO: No idea why porting to proper Penlight classes this ^^^^^^ started
-  -- killing everything. Perhaps becaus this function started working and would
+  -- killing everything. Perhaps because this function started working and would
   -- actually need to return rawget(self, k) or something?
 end
 
@@ -275,14 +288,27 @@ function nodefactory.discretionary:toText ()
 end
 
 function nodefactory.discretionary:outputYourself (typesetter, line)
-  -- TODO this is an indication of a deeper bug. If we were asked to output
-  -- discretionaries but the parent nnode is not hyphenated then we're
-  -- outputting things that were only used for measuring "what if" scenarios in
-  -- break point calculations. These nodes shouldn't exist at this point.
+  -- See typesetter:computeLineRatio() which implements the currently rather
+  -- messy hyphenated checks.
+  -- Example: consider the word "out-put-ter".
+  -- The node queue contains N(out)D(-)N(put)D(-)N(ter) all pointing to the same
+  -- parent N(output), and here we hit D(-)
+
+  -- Non-hyphenated parent: when N(out) was hit, we went for outputting
+  -- the whole parent, so all other elements must now be skipped.
   if self.parent and not self.parent.hyphenated then return end
+
+  -- It's possible not to have a parent (e.g. on a discretionary directly
+  -- added in the queue and not coming from the hyphenator logic).
+  -- Eiher that, or we have a hyphenate parent.
   if self.used then
+    -- This is the actual hyphenation point.
+    -- Skip margin glue and zero boxes.
+    -- If we then reach our discretionary, it means its the first in the line,
+    -- i.e. a postbreak. Otherwise, its a prebreak (near the end of the line,
+    -- notwithstanding glues etc.)
     local i = 1
-    while (line.nodes[i].is_glue and line.nodes[i].value == "lskip")
+    while (line.nodes[i].is_glue and line.nodes[i].value == "margin")
       or line.nodes[i].type == "zerohbox" do
       i = i + 1
     end
@@ -292,6 +318,10 @@ function nodefactory.discretionary:outputYourself (typesetter, line)
       for _, node in ipairs(self.prebreak) do node:outputYourself(typesetter, line) end
     end
   else
+    -- This is not the hyphenation point (but another discretionary in the queue)
+    -- E.g. we were in the case where we have N(out)D(-) [line break] N(out)D(-)N(ter)
+    -- and now hit the second D(-).
+    -- Unused discretionaries are obviously replaced.
     for _, node in ipairs(self.replacement) do node:outputYourself(typesetter, line) end
   end
 end
@@ -333,6 +363,12 @@ function nodefactory.discretionary:replacementHeight ()
   if self.replaceh then return self.replaceh end
   self.replaceh = _maxnode(self.replacement, "height")
   return self.replaceh
+end
+
+function nodefactory.discretionary:replacementDepth ()
+  if self.replaced then return self.replaced end
+  self.replaced = _maxnode(self.replacement, "depth")
+  return self.replaced
 end
 
 nodefactory.alternative = pl.class(nodefactory.hbox)
@@ -380,21 +416,24 @@ function nodefactory.glue:outputYourself (typesetter, line)
   typesetter.frame:advanceWritingDirection(outputWidth)
 end
 
+-- A hfillglue is just a glue with infinite stretch.
+-- (Convenience so callers do not have to know what infinity is.)
 nodefactory.hfillglue = pl.class(nodefactory.glue)
 function nodefactory.hfillglue:_init (spec)
-  self.width = SILE.length(0, infinity)
   self:super(spec)
+  self.width = SILE.length(self.width.length, infinity, self.width.shrink)
 end
 
--- possible bug, deprecated constructor actually used vglue as base class for this
+-- A hssglue is just a glue with infinite stretch and shrink.
+-- (Convenience so callers do not have to know what infinity is.)
 nodefactory.hssglue = pl.class(nodefactory.glue)
 function nodefactory.hssglue:_init (spec)
-  self.width = SILE.length(0, infinity, infinity)
   self:super(spec)
+  self.width = SILE.length(self.width.length, infinity, infinity)
 end
 
 nodefactory.kern = pl.class(nodefactory.glue)
-nodefactory.kern.type = "kern"
+nodefactory.kern.type = "kern" -- Perhaps some smell here, see comment on vkern
 nodefactory.kern.discardable = false
 
 function nodefactory.kern:__tostring ()
@@ -428,18 +467,34 @@ function nodefactory.vglue:unbox ()
   return { self }
 end
 
+-- A vfillglue is just a vglue with infinite stretch.
+-- (Convenience so callers do not have to know what infinity is.)
 nodefactory.vfillglue = pl.class(nodefactory.vglue)
 function nodefactory.vfillglue:_init (spec)
-  self.height = SILE.length(0, infinity)
   self:super(spec)
+  self.height = SILE.length(self.width.length, infinity, self.width.shrink)
 end
 
+-- A vssglue is just a vglue with infinite stretch and shrink.
+-- (Convenience so callers do not have to know what infinity is.)
 nodefactory.vssglue = pl.class(nodefactory.vglue)
-nodefactory.vssglue.height = SILE.length(0, infinity, infinity)
+function nodefactory.vssglue:_init (spec)
+  self:super(spec)
+  self.height = SILE.length(self.width.length, infinity, infinity)
+end
 
 nodefactory.zerovglue = pl.class(nodefactory.vglue)
 
 nodefactory.vkern = pl.class(nodefactory.vglue)
+-- FIXME TODO
+-- Here we cannot do:
+--   nodefactory.vkern.type = "vkern"
+-- It cannot be typed as "vkern" as the pagebuilder doesn't check is_vkern.
+-- So it's just a vglue currrenty, marked as not discardable...
+-- But on the other hand, nodefactory.kern is typed "kern" and is not a glue...
+-- Frankly, the discardable/explicit flags and the types are too
+-- entangled and point towards a more general design issue.
+-- N.B. this vkern node is only used in the linespacing package so far.
 nodefactory.vkern.discardable = false
 
 function nodefactory.vkern:__tostring ()

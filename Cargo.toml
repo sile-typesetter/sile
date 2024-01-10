@@ -1,0 +1,87 @@
+[package]
+name = "sile"
+version = "0.14.14"
+edition = "2021"
+rust-version = "1.71.0"
+description = "Simon’s Improved Layout Engine"
+authors = [
+  "Simon Cozens",
+  "Caleb Maclennan <caleb@alerque.com>",
+  "Olivier Nicole",
+  "Didier Willis"
+]
+readme = "README.md"
+homepage = "https://sile-typesetter.org"
+repository = "https://github.com/sile-typesetter/sile"
+license = "MIT"
+build = "build-aux/build.rs"
+# links = "svg"
+
+[[bin]]
+name = "sile"
+required-features = [ "cli" ]
+
+[features]
+default = [ "cli", "bash", "elvish", "fish", "manpage", "powershell", "zsh" ]
+lua54 = [ "mlua/lua54" ]
+lua53 = [ "mlua/lua53" ]
+lua52 = [ "mlua/lua52" ]
+lua51 = [ "mlua/lua51" ]
+luajit = [ "mlua/luajit" ]
+vendored = [ "mlua/vendored" ]
+static = [ "rust-embed" ]
+variations = []
+completions = [ "cli", "clap_complete" ]
+cli = [ "clap" ]
+bash = [ "completions" ]
+elvish = [ "completions" ]
+fish = [ "completions" ]
+manpage = [ "clap_mangen" ]
+powershell = [ "completions" ]
+zsh = [ "completions" ]
+
+[profile.release]
+lto = true
+
+[dependencies]
+
+  [dependencies.anyhow]
+  version = "1.0"
+
+  [dependencies.clap]
+  version = "4.4"
+  optional = true
+  features = [ "derive", "string", "wrap_help" ]
+
+  [dependencies.mlua]
+  version = "0.9"
+  features = [ "macros" ]
+
+  [dependencies.rust-embed]
+  version = "8.0"
+  optional = true
+  features = [ "include-exclude" ]
+
+  [dependencies.harfbuzz-sys]
+  version = "0.5"
+  optional = true
+
+[build-dependencies]
+
+  [build-dependencies.clap_complete]
+  version = "4.4"
+  optional = true
+
+  [build-dependencies.clap_mangen]
+  version = "0.2"
+  optional = true
+
+  [build-dependencies.clap]
+  version = "4.4"
+  optional = true
+  features = [ "derive" ]
+
+  [build-dependencies.vergen]
+  version = "8.2"
+  default-features = false
+  features = [ "build", "cargo", "git", "gitoxide" ]

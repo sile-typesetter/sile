@@ -79,7 +79,16 @@ end
 
 function class:setOptions (options)
   options = options or {}
-  options.papersize = options.papersize or "a4"
+  -- Classes that add options with dependencies should explicitly handle them, then exempt them from furthur processing.
+  -- The landscape and crop related options are handled explicitly before papersize, then the "rest" of options that are not interdependent.
+  self.options.landscape = SU.boolean(options.landscape, false)
+  options.landscape = nil
+  self.options.papersize = options.papersize or "a4"
+  options.papersize = nil
+  self.options.bleed = options.bleed or "0"
+  options.bleed = nil
+  self.options.sheetsize = options.sheetsize or nil
+  options.sheetsize = nil
   for option, value in pairs(options) do
     self.options[option] = value
   end
@@ -101,10 +110,16 @@ function class:declareOptions ()
     end
     return self._name
   end)
+  self:declareOption("landscape", function(_, landscape)
+    if landscape then
+      self.landscape = landscape
+    end
+    return self.landscape
+  end)
   self:declareOption("papersize", function (_, size)
     if size then
       self.papersize = size
-      SILE.documentState.paperSize = SILE.papersize(size)
+      SILE.documentState.paperSize = SILE.papersize(size, self.options.landscape)
       SILE.documentState.orgPaperSize = SILE.documentState.paperSize
       SILE.newFrame({
         id = "page",
@@ -115,6 +130,33 @@ function class:declareOptions ()
       })
     end
     return self.papersize
+  end)
+  self:declareOption("sheetsize", function (_, size)
+    if size then
+      self.sheetsize = size
+      SILE.documentState.sheetSize = SILE.papersize(size, self.options.landscape)
+      if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1]
+        or SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] then
+        SU.error("Sheet size shall not be smaller than the paper size")
+      end
+      if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1] + SILE.documentState.bleed then
+        SU.debug("frames", "Sheet size width augmented to take page bleed into account")
+        SILE.documentState.sheetSize[1] = SILE.documentState.paperSize[1] + SILE.documentState.bleed
+      end
+      if SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] + SILE.documentState.bleed then
+        SU.debug("frames", "Sheet size height augmented to take page bleed into account")
+        SILE.documentState.sheetSize[2] = SILE.documentState.paperSize[2] + SILE.documentState.bleed
+      end
+    else
+      return self.sheetsize
+    end
+   end)
+  self:declareOption("bleed", function (_, dimen)
+    if dimen then
+      self.bleed = dimen
+      SILE.documentState.bleed = SU.cast("measurement", dimen):tonumber()
+    end
+    return self.bleed
   end)
 end
 
@@ -127,7 +169,7 @@ function class.declareSettings (_)
   })
   SILE.settings:declare({
     parameter = "current.hangIndent",
-    type = "integer or nil",
+    type = "measurement or nil",
     default = nil,
     help = "Size of hanging indent"
   })
@@ -139,13 +181,17 @@ function class.declareSettings (_)
   })
 end
 
-function class:loadPackage (packname, options)
+function class:loadPackage (packname, options, reload)
   local pack = require(("packages.%s"):format(packname))
   if type(pack) == "table" and pack.type == "package" then -- new package
-    self.packages[pack._name] = pack(options)
+    self.packages[pack._name] = pack(options, reload)
   else -- legacy package
     self:initPackage(pack, options)
   end
+end
+
+function class:reloadPackage (packname, options)
+  return self:loadPackage(packname, options, true)
 end
 
 function class:initPackage (pack, options)
@@ -319,10 +365,35 @@ function class:registerCommands ()
 
   self:registerCommand("script", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
+    local function _deprecated (original, suggested)
+      SU.deprecated("\\script", "\\lua or \\use", "0.15.0", "0.16.0", ([[
+      The \script function has been deprecated. It was overloaded to mean
+      too many different things and more targeted tools were introduced in
+      SILE v0.14.0. To load 3rd party modules designed for use with SILE,
+      replace \script[src=...] with \use[module=...]. To run arbitrary Lua
+      code inline use \lua{}, optionally with a require= parameter to load
+      a (non-SILE) Lua module using the Lua module path or src= to load a
+      file by file path.
+
+      For this use case consider replacing:
+
+          %s
+
+      with:
+
+          %s
+      ]]):format(original, suggested))
+    end
+    if SU.ast.hasContent(content) then
+      _deprecated("\\script{...}", "\\lua{...}")
       return SILE.processString(content[1], options.format or "lua", nil, packopts)
     elseif options.src then
-      return SILE.require(options.src)
+      local module = options.src:gsub("%/", ".")
+      local original = (("\\script[src=%s]"):format(options.src))
+      local result = SILE.require(options.src)
+      local suggested = (result._name and "\\use[module=%s]" or "\\lua[require=%s]"):format(module)
+      _deprecated(original, suggested)
+      return result
     else
       SU.error("\\script function requires inline content or a src file path")
       return SILE.processString(content[1], options.format or "lua", nil, packopts)
@@ -331,8 +402,8 @@ function class:registerCommands ()
 
   self:registerCommand("include", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, options.format, nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, options.format, packopts)
@@ -343,8 +414,8 @@ function class:registerCommands ()
 
   self:registerCommand("lua", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, "lua", nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, "lua", packopts)
@@ -358,8 +429,8 @@ function class:registerCommands ()
 
   self:registerCommand("sil", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, "sil")
     elseif options.src then
       return SILE.processFile(options.src, "sil", packopts)
@@ -370,8 +441,8 @@ function class:registerCommands ()
 
   self:registerCommand("xml", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, "xml", nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, "xml", packopts)
@@ -383,7 +454,7 @@ function class:registerCommands ()
   self:registerCommand("use", function (options, content)
     local packopts = packOptions(options)
     if content[1] and string.len(content[1]) > 0 then
-      local doc = SU.contentToString(content)
+      local doc = SU.ast.contentToString(content)
       SILE.processString(doc, "lua", nil, packopts)
     else
       if options.src then
@@ -430,19 +501,16 @@ function class:registerCommands ()
   self:registerCommand("discretionary", function (options, _)
     local discretionary = SILE.nodefactory.discretionary({})
     if options.prebreak then
-      SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.prebreak) end)
-      discretionary.prebreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
-      SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+      local hbox = SILE.typesetter:makeHbox({ options.prebreak })
+      discretionary.prebreak = { hbox }
     end
     if options.postbreak then
-      SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.postbreak) end)
-      discretionary.postbreak = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
-      SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+      local hbox = SILE.typesetter:makeHbox({ options.postbreak })
+      discretionary.postbreak = { hbox }
     end
     if options.replacement then
-      SILE.call("hbox", {}, function () SILE.typesetter:typeset(options.replacement) end)
-      discretionary.replacement = { SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] }
-      SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes] = nil
+      local hbox = SILE.typesetter:makeHbox({ options.replacement })
+      discretionary.replacement = { hbox }
     end
     table.insert(SILE.typesetter.state.nodes, discretionary)
   end, "Inserts a discretionary node.")
@@ -513,7 +581,19 @@ end
 
 -- WARNING: not called as class method
 function class.newPar (typesetter)
-  typesetter:pushGlue(SILE.settings:get("current.parindent") or SILE.settings:get("document.parindent"))
+  local parindent = SILE.settings:get("current.parindent") or SILE.settings:get("document.parindent")
+  -- See https://github.com/sile-typesetter/sile/issues/1361
+  -- The parindent *cannot* be pushed non-absolutized, as it may be evaluated
+  -- outside the (possibly temporary) setting scope where it was used for line
+  -- breaking.
+  -- Early absolutization can be problematic sometimes, but here we do not
+  -- really have the choice.
+  -- As of problematic cases, consider a parindent that would be defined in a
+  -- frame-related unit (%lw, %fw, etc.). If a frame break occurs and the next
+  -- frame has a different width, the parindent won't be re-evaluated in that
+  -- new frame context. However, defining a parindent in such a unit is quite
+  -- unlikely. And anyway pushback() has plenty of other issues.
+  typesetter:pushGlue(parindent:absolute())
   SILE.settings:set("current.parindent", nil)
   local hangIndent = SILE.settings:get("current.hangIndent")
   if hangIndent then
@@ -566,9 +646,9 @@ function class:finish ()
   end
   SILE.typesetter:runHooks("pageend") -- normally run by the typesetter
   self:endPage()
-    if SILE.typesetter then
-      assert(SILE.typesetter:isQueueEmpty(), "queues not empty")
-    end
+  if SILE.typesetter and not SILE.typesetter:isQueueEmpty() then
+    SU.error("Queues are not empty as expected after ending last page", true)
+  end
   SILE.outputter:finish()
   self:runHooks("finish")
 end

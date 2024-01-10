@@ -1,4 +1,4 @@
-std = "max"
+std = "min"
 include_files = {
   "**/*.lua",
   "sile.in",
@@ -10,6 +10,7 @@ exclude_files = {
   "benchmark-*",
   "compare-*",
   "sile-*",
+  "target",
   "lua_modules",
   "lua-libraries",
   ".lua",
@@ -20,13 +21,14 @@ files["**/*_spec.lua"] = {
   std = "+busted"
 }
 globals = {
+  package = { fields = { "searchpath" } },
   "SILE",
   "SU",
   "luautf8",
   "pl",
   "fluent",
-  "SYSTEM_SILE_PATH",
-  "SHARED_LIB_EXT"
+  "executablePath",
+  "extendSilePath"
 }
 max_line_length = false
 ignore = {

@@ -91,7 +91,7 @@ end
 -- up to the that total. Returning values that don't add up may produce
 -- unexpected results.
 --
--- TeX wizards shall also note that this is slighty different from
+-- TeX wizards shall also note that this is slightly different from
 -- Knuth's definition "nline l1 i1 l2 i2 ... lN iN".
 function lineBreak:parShape(_)
   return 0, self.hsize, 0
@@ -176,7 +176,7 @@ function lineBreak:tryBreak() -- 855
       end
       -- 861
       if self.r.lineNumber > self.old_l then
-        if debugging then SU.debug("break", "Mimimum demerits = " .. self.minimumDemerits) end
+        if debugging then SU.debug("break", "Minimum demerits = " .. self.minimumDemerits) end
         if self.minimumDemerits < awful_bad and (self.old_l ~= self.easy_line or self.r == self.activeListHead) then
           self:createNewActiveNodes(breakType)
         end
@@ -694,9 +694,13 @@ end
 
 function lineBreak:dumpActiveRing()
   local p = self.activeListHead
-  io.stderr:write("\n")
+  if not SILE.quiet then
+    io.stderr:write("\n")
+  end
   repeat
-    if p == self.r then io.stderr:write("-> ") else io.stderr:write("   ") end
+    if not SILE.quiet then
+      if p == self.r then io.stderr:write("-> ") else io.stderr:write("   ") end
+    end
     SU.debug("break", lineBreak:describeBreakNode(p))
     p = p.next
   until p == self.activeListHead

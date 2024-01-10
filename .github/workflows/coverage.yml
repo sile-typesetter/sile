@@ -2,6 +2,10 @@ name: Coverage
 
 on: [ push, pull_request ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 # Coverage slows down tests *a lot*.
 # Also most of our regression tests use a dummy back end.
 # Here we use LuaJIT for speed and use the real backend.
@@ -12,7 +16,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Cache test fonts
@@ -27,10 +31,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-luajit-${{ hashFiles('Makefile-luarocks', 'sile-dev-1.rockspec') }}
-      - name: Fetch tags
-        run: |
-          git fetch --prune --tags ||:
+          key: luarocks-luajit-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
       - name: Setup ‘lua’
         uses: leafo/gh-actions-lua@v10
         with:
@@ -59,15 +60,14 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
-            --enable-developer LUACHECK=false \
+            --enable-developer LUACHECK=false NIX=false DELTA=cat \
             --disable-font-variations \
-            --without-system-luarocks \
-            --with-luajit \
             --without-manual
       - name: Make
         run: |
           make
       - name: Run all testing with coverage
+        timeout-minutes: ${{ runner.debug && 200 || 20 }}
         run: |
           make coverage
       - name: Report test coverage

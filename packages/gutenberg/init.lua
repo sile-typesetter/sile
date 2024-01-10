@@ -12,8 +12,11 @@ function package:registerCommands ()
   self:registerCommand("alternative", function (_, content)
     local alts = {}
     for _, fragment in ipairs(content) do
-      SILE.call("hbox", {}, { fragment })
-      table.insert(alts, table.remove(SILE.typesetter.state.nodes))
+      local hbox, hlist = SILE.typesetter:makeHbox({ fragment })
+      if #hlist > 0 then
+        SU.error("Forbidden migrating content in alternative")
+      end
+      table.insert(alts, hbox)
     end
     local alternative = SILE.nodefactory.alternative({
       options = alts,
@@ -27,11 +30,12 @@ end
 
 package.documentation = [[
 \begin{document}
-One of the reasons why Johann Gutenberg’s 42 line Bible is considered a masterpiece of early printing is due to the quality of justification of every line.
-To achieve perfect justification color, Gutenberg used a number of ligatures, abbreviations, substitutions and so on.
-As an experiment in extending SILE’s justification engine, the \code{gutenberg} package allows SILE to choose between a number of different options for a particular piece of text, depending on what would improve the line fitting.
+Johann Gutenberg’s 42-line Bible is considered a masterpiece of early printing in part due to the quality of justification of every line.
+To achieve perfect justification color, Gutenberg used a number of ligatures, abbreviations, substitutions, and so on.
 
-For instance, issuing the command \autodoc:command{\alternative{\{and\}\{&\}}} would insert either the text \examplefont{and} or an ampersand, depending on what best fits the current line.
+As an experiment in extending SILE’s justification engine, the \autodoc:package{gutenberg} package allows SILE to choose between a number of different options for a particular piece of text, depending on what would improve the line fitting.
+
+For instance, issuing the command \autodoc:command{\alternative{\{and\}\{&\}}} would insert either the text \autodoc:example{and} or an ampersand, depending on what best fits the current line.
 \end{document}
 ]]
 

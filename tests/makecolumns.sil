@@ -1,0 +1,5 @@
+\begin[papersize=a5]{document}
+\use[module=packages.frametricks]
+\makecolumns[columns=4]
+\showframe[id=all]
+\end{document}

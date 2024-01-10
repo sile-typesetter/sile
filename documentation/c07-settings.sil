@@ -7,8 +7,8 @@ subtle to a dramatic effect on the eventual document. External packages may
 declare their own settings, which are documented accordingly. Here we will
 run through the settings which are built into the SILE system itself.
 
-Settings in SILE are \em{namespaced} so that 1) the name of the setting gives you
-some kind of clue as to what area of the system it will affect, and 2) packages
+Settings in SILE are \em{namespaced} so that the name of the setting gives you
+some kind of clue as to what area of the system it will affect, and so that packages
 can define their own settings without worrying that they will be interfering
 with other packages or the SILE internals. Namespacing of settings takes the
 form \code{\em{area.name}}—so for instance, \autodoc:setting{typesetter.orphanpenalty} is
@@ -17,7 +17,7 @@ lines.
 
 The interface to changing settings from within a SILE document is the
 \autodoc:command{\set} command. It takes several options, the most basic one being
-\em{parameter}, which expresses which setting is being changed. The \em{value}
+\autodoc:parameter{parameter}, which expresses which setting is being changed. The \autodoc:parameter{value}
 option expresses the value to which the setting is being changed. As an
 example:
 
@@ -25,10 +25,10 @@ example:
 \set[parameter=typesetter.orphanpenalty, value=250]
 \end{raw}
 
-Two additional options are accepted. The \em{makedefault} option can added so
-that whatever value you set sticks as the new default. The \em{reset} can be
-used without a \em{value} option to reset whatever the current value is back to
-the default Note these two options are mutually exclusive.
+Two additional options are accepted. The \autodoc:parameter{makedefault} option can added so
+that whatever value you set sticks as the new default. The \autodoc:parameter{reset} can be
+used without a \autodoc:parameter{value} option to reset whatever the current value is back to
+the default. Note that these two options are mutually exclusive.
 
 \begin[type=autodoc:codeblock]{raw}
 \set[parameter=typesetter.orphanpenalty, value=250, makedefault=true]
@@ -47,7 +47,7 @@ setting is localised to the content of the argument. In other words, this code:
 \set[parameter=typesetter.orphanpenalty, value=250]{\lorem}
 \end{raw}
 
-will change the orphan penalty to 250, typeset 50 words of dummy text, and then
+\noindent will change the orphan penalty to 250, typeset 50 words of dummy text, and then
 return the orphan penalty to its previous value.
 
 If you are working in Lua, you have two choices to work with. As with any
@@ -66,37 +66,33 @@ arguments instead of named options:
 SILE.settings:set("typesetter.orphanpenalty", 250)
 \end{raw}
 
-The 3rd and 4th optional arguments are for \em{makedefault} and \em{reset}
+The third and fourth optional arguments are for \autodoc:parameter{makedefault} and \autodoc:parameter{reset}
 respectively.
 
 Now, let’s begin looking at what each of the built-in settings does, starting
 from the most obvious and moving towards the most subtle.
 
-\section{Spacing Settings}
+\section{Spacing settings}
 
-In our \code{\\note} example, we saw the setting \autodoc:setting{document.lskip}.
-This is a \em{glue} parameter which is added to the left side of every line.
-Setting this to a positive length effectively increases the left margin of
-the text. Similarly, \autodoc:setting{document.rskip} adds some space to the right side of
-every line.
+The \autodoc:setting{document.lskip} and \autodoc:setting{document.rskip} settings are \em{glue} parameters which are added, respectively, to the left and right side of every line.
+Setting \autodoc:setting{document.lskip} to a positive length effectively increases the left margin of the text.
+Similarly, \autodoc:setting{document.rskip} adds some space to the right side of every line.
 
-Note that these skip settings are not the same as page margins. The
-\autodoc:setting{document.lskip} and \autodoc:setting{document.rskip} values are applied inside of the
-current frame and are relative to the edge of the frame, not to the edge of the
-page. They are best used for temporary adjustments to the margins relative to the
-normal margins, such as to indent a pull-quote. They can also be negative,
-pulling the effective margin outside of the current frame.
+Note that these skip settings are not the same as page margins.
+The \autodoc:setting{document.lskip} and \autodoc:setting{document.rskip} values are applied inside of the current frame and are relative to the edge of the frame, not to the edge of the page.
+They are best used for temporary adjustments to the margins relative to the normal margins, such as to indent a pull-quote.
+They can also be negative, pulling the effective margin outside of the current frame.
 
-\begin{note}
-\notehead{Glue} A \em{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means ‘space,’ but as well as signifying a length,
+\begin{autodoc:note}
+A \autodoc:parameter{glue} parameter is slightly different from an ordinary dimensioned length. Glue basically means “space,” but as well as signifying a length,
 it also has two additional optional components: \em{stretch} and \em{shrink},
 specified as \code{<dimension> plus <dimension> minus <dimension>}. The
-first dimension is the basic length; the stretch is the maximum length that
+first dimension is the basic length, the stretch is the maximum length that
 can be added to it, and the shrink is some length that can be taken away from it.
 For instance, \code{12pt plus 6pt minus 3pt} specifies a space that would
 ideally by 12 points, but can expand or contract from a minimum of 9 points to a maximum
 of 18 points.
-\end{note}
+\end{autodoc:note}
 
 Let’s think about how the \autodoc:environment{center} environment is implemented. First,
 we will add incredibly stretchable glue to the left and right margins, like so:
@@ -109,7 +105,7 @@ we will add incredibly stretchable glue to the left and right margins, like so:
 This produces the following:
 
 \medskip%
-\begin{examplefont}%
+\begin{autodoc:example}%
 \set[parameter=document.lskip,value=0pt plus 500pt]% Lying for didactic purposes
 \set[parameter=document.rskip,value=0pt plus 500pt]
 \set[parameter=document.spaceskip,value=0.5en plus 120pt minus 0.3en]
@@ -124,7 +120,7 @@ end of each paragraph so that when the text is justified, the spacing of the
 last line is not stretched out of proportion. This makes the centering of the
 last line look a bit odd. We will deal with these three issues in the following
 paragraphs.\par
-\end{examplefont}
+\end{autodoc:example}
 \medskip
 
 \set[parameter=document.lskip,value=0pt]%
@@ -132,18 +128,18 @@ paragraphs.\par
 \set[parameter=document.spaceskip]%
 The indentation at the start of each paragraph is controlled by the
 setting \autodoc:setting{document.parindent}; this is a glue parameter, and by default it’s
-set to 20pt with no stretch and shrink. Actually, the amount added to the
+set to 20pt with no stretch and shrink. (In fact, the amount added to the
 start of the paragraph is \autodoc:setting{current.parindent}. After each paragraph,
 \autodoc:setting{current.parindent} is reset to the value of \autodoc:setting{document.parindent}. The
-\autodoc:command{\noindent} command works by setting \autodoc:setting{current.parindent} to zero.
+\autodoc:command{\noindent} command works by setting \autodoc:setting{current.parindent} to zero.)
 
 \medskip%
 \set[parameter=current.parindent,value=-20pt]%
 \set[parameter=document.lskip,value=20pt]%
-How would you make a paragraph like this with a ‘hanging’ indentation? We’ve
+How would you make a paragraph like this with a “hanging” indentation? We’ve
 set the \autodoc:setting{document.lskip} to 20 points, and the \autodoc:setting{current.parindent} to
-\em{minus} 20 points. (In other words, we called: \autodoc:command{\set[parameter=document.lskip,value=20pt]}
-and \autodoc:command{\set[parameter=current.parindent,value=-20pt]}.)
+\em{minus} 20 points. In other words, we called: \autodoc:command{\set[parameter=document.lskip,value=20pt]}
+and \autodoc:command{\set[parameter=current.parindent,value=-20pt]}.
 
 \medskip%
 \set[parameter=document.lskip,value=0pt]%
@@ -164,7 +160,7 @@ rules. Let’s reiterate those rules now in terms of settings:
       to be \autodoc:setting{document.lineskip} apart.}
 \end{itemize}
 
-\note{This linebreaking method is fiddly, and book designers may prefer to
+\autodoc:note{This linebreaking method is fiddly, and book designers may prefer to
 work with the tools provided by the \autodoc:package{linespacing} package.}
 
 \subsection{Word spacing settings}
@@ -172,11 +168,12 @@ work with the tools provided by the \autodoc:package{linespacing} package.}
 There are multiple ways of defining the space between words. By default,
 the space between words is determined by the width of the
 space character in the current font. To help with justifying the text, the
-spaces are shrinkable and stretchable. Specifically, if the width of a space in the current font settings is \code{<space>}, then the width of the space
-between words is \code{<shaper.spaceenlargementfactor> * <space> plus
-<shaper.spacestretchfactor> * <space> minus <shaper.spaceshrinkfactor> *
-<space>}. The default values of these settings make the space width
-\code{1.2 <space> plus 0.5 <space> minus 0.333 <space>}.
+spaces are shrinkable and stretchable.
+Specifically, if the width of a space in the current font settings is \code{⟨space⟩}, then the width of the space between words is
+  \autodoc:setting{shaper.spaceenlargementfactor} × \code{⟨space⟩}
+  \code{plus} \autodoc:setting{shaper.spacestretchfactor} × \code{⟨space⟩}
+  \code{minus} \autodoc:setting{shaper.spaceshrinkfactor} × \code{⟨space⟩}.
+The default values of these settings make the space width \code{1.2 ⟨space⟩ plus 0.5 ⟨space⟩ minus 0.333 ⟨space⟩}.
 
 If you want to set the word space width explicitly, you can set the
 \autodoc:setting{document.spaceskip} setting. You will also need to turn \em{off} the
@@ -187,6 +184,10 @@ then you need to turn on \autodoc:setting{shaper.variablespaces} (set it to a
 true value) and also \em{unset} the setting \autodoc:setting{document.spaceskip}. To
 unset it, just call \autodoc:command{\set} with no \autodoc:parameter{value} parameter:
 \autodoc:command{\set[parameter=document.spaceskip]}.
+
+Note that non-breaking spaces (U+00A0), following the guidelines of Unicode Annex 14 (UAX 14), are treated by default as stretchable or shrinkable akin to regular inter-word spaces, contributing to text justification and alignment for consistent layout.
+
+If you want to disable this behavior, the \autodoc:setting{languages.fixedNbsp} setting may be set to \code{true} to enforce fixed-width non-breaking spaces.
 
 \subsection{Letter spacing settings}
 
@@ -215,7 +216,9 @@ saying that anyone who would letterspace lowercase would steal sheep.\footnote{H
 \section{Typesetter settings}
 
 The settings which affect SILE’s spacing controls have the most obvious effect
-on a document; the typesetter itself has some knobs that can be twiddled:
+on a document; the typesetter itself has some knobs that can be twiddled.
+
+\subsection{Paragraphing}
 
 \autodoc:setting{typesetter.widowpenalty} and \autodoc:setting{typesetter.orphanpenalty}\footnote{TeX
 users, please notice the renaming.} affect how strongly SILE is averse to
@@ -249,7 +252,7 @@ Now we can finally complete our implementation of centering:
 \end{raw}
 
 \medskip
-\noindent\begin{examplefont}%
+\noindent\begin{autodoc:example}%
 \set[parameter=document.lskip,value=0pt plus 100000pt]%
 \set[parameter=document.rskip,value=0pt plus 100000pt]%
 \set[parameter=document.spaceskip,value=0.5en]%
@@ -257,13 +260,47 @@ Now we can finally complete our implementation of centering:
 \set[parameter=typesetter.parfillskip,value=0pt]
 
 And this is (more or less) how the \autodoc:environment{center} environment is defined in
-the plain class: we make the margins able to expand but the spaces not able
+the \autodoc:class{plain} class: we make the margins able to expand but the spaces not able
 to expand; we turn off indenting at the start of the paragraph, and we turn
 off the filling glue at the end of the paragraph.
 \par
-\end{examplefont}
+\end{autodoc:example}
 
-\medskip
+\subsection{Automated italic correction}
+
+When an italicized word is followed or preceded by non-italicized text, the spacing may need to be adjusted, or “corrected”, so that the characters do not overlap.
+You might thus want to insert some additional space between italicized words and non-italicized ones.
+
+Here is some gibberish exemplifying the issue.
+
+\begin{autodoc:example}%
+\quad{}(\em{fluff}) ¡\em{fancyful proof}! [\em{puff}] \em{fluff}ⁿ
+\par
+\end{autodoc:example}
+
+Inserting the necessary spaces manually is quite tedious, not to say impractical.
+However, the concept of italic correction does not exist in OpenType fonts, and they do not provide the metrics that would allow a typesetting system to implement it easily.\footnote{%
+This would apply to Graphite fonts too.
+More generally, there is no known font format supporting kerning across font style changes.
+(Well, some TeX fonts have such a possibility, but it does not really help here.)}
+A heuristic approach is to use the difference between a glyph’s bounding box and its advance width (when switching from italics to roman) or its bearing width (the other way round).
+Assuming italics is slanted forward (in left-to-right writing direction) and that italicized glyphs usually reach their maximum extent to the right towards their top (and towards their bottom, on their left side), then it is possible to approximate a fairly decent correction.
+
+Be aware, nevertheless, that this solution cannot be made perfect, even assuming a reasonable choice of fonts.
+Pathological cases may still occur, even in latin scripts, for which there is no solution but using manual kerning.
+
+To enable automated italic correction, you can set the \autodoc:setting{typesetter.italicCorrection} setting to \code{true}.
+Let’s turn it on and check how our previous gibberish now behaves.
+
+\begin{autodoc:example}%
+\set[parameter=typesetter.italicCorrection, value=true]{%
+\quad{}(\em{fluff}) ¡\em{fancyful proof}! [\em{puff}] \em{fluff}ⁿ
+\par}
+\end{autodoc:example}
+
+Note that this setting only works on full paragraphs, or with horizontal boxes constructed  with \autodoc:command{\hbox{<content>}}.\footnote{%
+That is, when characters are actually \em{shaped}, so that SILE knows their properties and metrics.}
+In other terms, turning it on or off around just a few words in a sentence will not have the intended effect.
 
 \section{Linebreaking settings}
 
@@ -322,14 +359,18 @@ engine in use. To get a list of the subshapers enabled in your build of
 Harfbuzz, run \code{sile --debug=versions} on any file:
 
 \begin[type=autodoc:codeblock]{raw}
-% $ sile --debug=versions hello.sil
+$ sile --debug=versions hello.sil
+
 ...
+
 Harfbuzz version: 2.4.0
+
 Shapers enabled: graphite2, ot, coretext, coretext_aat, fallback
+
 ...
 \end{raw}
 
-If I wanted to test out the OS X’s CoreText shaper instead of using
+If I wanted to test out the macOS CoreText shaper instead of using
 Graphite and Harfbuzz’s own OpenType shaper, I could set:
 
 \begin[type=autodoc:codeblock]{raw}
@@ -349,22 +390,22 @@ because complex layout commands are expected to be implemented in Lua. The
 following SILE functions access the settings system from inside Lua:
 
 \begin{itemize}
-\item{\code{SILE.settings:set(\em{<parameter>}, \em{value})}: sets a setting.
+\item{\code{SILE.settings:set(\em{⟨parameter⟩}, \em{⟨value⟩})}: sets a setting.
 
-\note{
+\autodoc:note{%
 You should note that, while in the SILE layer, the \autodoc:command{\set} command does its
 best to turn the textual description of a type into the appropriate Lua type
 for the value. \code{SILE.settings:set} does not do that; it expects the value
 to be of the appropriate type: lengths need to be a \code{SILE.length} object,
 glue must be \code{SILE.nodefactory.glue} and so on.}}
 
-\item{\code{SILE.settings:get(\em{<parameter>})}: retrieves the current
+\item{\code{SILE.settings:get(\em{⟨parameter⟩})}: retrieves the current
       setting of the parameter.}
-\item{\code{SILE.settings:temporarily(\em{function})}: Saves all settings,
+\item{\code{SILE.settings:temporarily(\em{⟨function⟩})}: Saves all settings,
       runs the function and then restores all settings afterwards.}
-\item{\code{SILE.settings:declare(\em{<specification>})}: Declares a new
+\item{\code{SILE.settings:declare(\em{⟨specification⟩})}: Declares a new
       setting. See the base settings in \code{settings.lua} for examples of how
       to call this. A class or package should namespace its settings with
-      \code{<package>.<setting>}.}
+      \code{⟨package⟩.⟨setting⟩}.}
 \end{itemize}
 \end{document}

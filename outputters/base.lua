@@ -34,10 +34,30 @@ function outputter.debugFrame (_, _, _) end
 
 function outputter.debugHbox (_, _, _) end
 
-function outputter.getOutputFilename (_, ext)
-  if SILE.outputFilename then return SILE.outputFilename end
-  if SILE.masterFilename then return SILE.masterFilename .. "." .. ext end
-  SU.error("Cannot guess output filename without an input name")
+function outputter.linkAnchor (_, _, _) end -- Unstable API
+
+function outputter.enterLinkTarget (_, _, _) end -- Unstable API
+
+function outputter.leaveLinkTarget (_, _, _, _, _, _, _) end -- Unstable API
+
+function outputter.setMetadata (_, _, _) end
+
+function outputter.setBookmark (_, _, _) end
+
+function outputter:getOutputFilename ()
+  local fname
+  if SILE.outputFilename then
+    fname = SILE.outputFilename
+  elseif SILE.input.filenames[1] then
+    fname = pl.path.splitext(SILE.input.filenames[1])
+    if self.extension then
+      fname = fname .. "." .. self.extension
+    end
+  end
+  if not fname then
+    SU.error("Cannot guess output filename without an input name")
+  end
+  return fname
 end
 
 return outputter

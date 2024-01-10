@@ -14,7 +14,7 @@ class.defaultFrameset.content = {
 }
 
 -- The classes tplain and tbook inherit from plain and book respectively but also
--- have this bit in common; this makes it accessable
+-- have this bit in common; this makes it accessible
 function class:_t_common ()
   self:loadPackage("font-fallback")
   self:loadPackage("hanmenkyoshi")

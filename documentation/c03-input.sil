@@ -1,7 +1,29 @@
 \begin{document}
-\chapter{SILE’s Input Language}
+\chapter{SILE’s Input}
 
-Let’s now go back and reconsider the first SILE file we saw:
+First, we need to clear some air.
+In our own earlier documentation we gave the impression the primary way to feed content into SILE was a propriatry language.
+This was \em{never} really true since XML was always fully supported as an alternative.
+It is even less true now that 3rd party plugins can add their own input formats.
+
+Hence this chanpter has been renamed.
+The original chapter title was "SILE’s Input Language", as if there was only one.
+The truth is there \em{is} an input syntax we call "SIL", but even that is perhaps best thought of as a structured data syntax rather than a unique language.
+The input strings \code{\\em\{foo\}} in SIL input syntax is 100\% equivalent to \code{<em>foo</em>} in XML input syntax.
+The SIL input syntax is provided as an easier to type alternative than XML which can be a bit verbose and tedious to work with by hand.
+On the other hand if you're handling data written by some other program, XML might be a much better solution.
+
+3rd party packages can also add their own input formats.
+The stipulation is that an inputter parses some content and returns an AST with content tags and options recognized by SILE.
+Markdown, Djot, and others have packages available that provide inputters, allowing them to be first class input candidates.
+Many others like Dockbook and TEI are just XML with a special tag schema.
+SILE can be extended to cover any tag schema.
+
+With that in mind, lets go back and reconsider the first SILE file we saw that was in SIL input syntax.
+
+\section{The SIL flavor}
+
+In the Getting Started chapter we looked at this document:
 
 \begin[type=autodoc:codeblock]{raw}
 \begin{document}
@@ -23,47 +45,71 @@ To manually change the paper size, an optional argument may be added to the docu
 
 SILE knows about the ISO standard A, B and C series paper sizes using names like a4 and b5 as well as many other traditional sizes.
 Here is a full list of papersize preset names:
-a0, a1, a10, a2, a3, a4, a5, a6, a7, a8, a9, ansia, ansib, ansic, ansid, ansie, archa, archb, archc, archd, arche, arche1, arche2, arche3, b0, b1, b10, b2, b3, b4, b5, b6, b7, b8, b9, c2, c3, c4, c5, c6, c7, c8, comm10, csheet, dl, dsheet, esheet, executive, flsa, flse, folio, halfexecutive, halfletter, ledger, legal, letter, monarch, note, quarto, statement, and tabloid.
+    a0, a1, a10, a2, a3, a4, a5, a6, a7, a8, a9, ansia, ansib, ansic, ansid, ansie, archa, archb, archc, archd, arche, arche1, arche2, arche3, b0, b1, b10, b2, b3, b4, b5, b6, b7, b8, b9, c2, c3, c4, c5, c6, c7, c8, comm10, csheet, dl, dsheet, esheet, executive, flsa, flse, folio, halfexecutive, halfletter, ledger, legal, letter, monarch, note, quarto, statement, and tabloid.
 
-If you need a paper size for your document which is not one of the standards,
-then you can specify it by dimensions:
+If you need a paper size for your document which is not one of the standards, then you can specify it by dimensions:
 
 \code{papersize=\em{<measurement> x <measurement>}}.
 
 SILE knows a number of ways of specifying a measurement.
 A \code{<measurement>} as mentioned above can be specified as a floating-point number followed by a unit abbreviation.
 Acceptable units include printer’s points (\code{pt}), millimeters (\code{mm}), centimeters (\code{cm}), or inches (\code{in}).
-(You can even use feet (\code{ft}) or meters (\code{m}) if you are typesetting \em{particularly} large documents or twips (\code{twip}) for \em{particularly} small documents.)
+(You can even use feet (\code{ft}) or meters (\code{m}) if you are typesetting \em{particularly} large documents or twips (\code{twip}, twentieths of a point) for \em{particularly} small documents.)
 For instance, a standard B-format book can be specified by \code{papersize=198mm x 129mm}.
 
-Once some of the basic document properties have been setup using these fixed size units, other dimensions may be specified relative to them, using \em{relative units}.
-For example once the paper size is set, percentage of page width (\code{\%pw}) and height(\code{\%ph}) become valid units.
-In chapter 4 we will meet more of these relative units, and in chapter 7 we will meet some other ways of specifying lengths to make them stretchable or shrinkable.
+Once some of the basic document properties have been set up using these fixed size units, other dimensions may be specified relative to them, using \em{relative units}.
+For example, once the paper size is set, percentage of page width (\code{\%pw}) and height(\code{\%ph}) become valid units.
+In Chapter 4 we will meet more of these relative units, and in Chapter 7 we will meet some other ways of specifying lengths to make them stretchable or shrinkable.
+
+\subsection{Setting orientation as landscape}
+
+The orientation of the page is defined as "portrait" by default, but if you want to set it as landscape there is an option for that:
+
+\begin[type=autodoc:codeblock]{raw}
+\begin[landscape=true]{document}
+\end{raw}
+
+\subsection{Full bleed printing}
+
+When preparing a book for press printing, you may be asked by the professional printer to output the document on a larger sheet than your target paper, and to reserve a trim area around it.
+This trick is often called “full bleed printing”.
+Your document will be printed on an oversized sheet that will then be mechanically cut down to the target size.
+You can specify the expected “trim” (or “bleed”) dimension, to be distributed evenly on all sides
+of the document:
+
+\code{papersize=\em{<paper size>}, bleed=\em{<measurement>}}.
+
+For instance, a US trade book with an extra 0.125 inch bleed area can be specified by \code{papersize=6in x 9in, bleed=0.25in}.
+The output paper size is then 6.25 per 9.25 inches, with the actual 6 per 9 inches inner content centered.
+
+Some packages, such as \autodoc:package{background} and \autodoc:package{cropmarks}, ensure their content extends over the trim area and thus indeed “bleeds” off the sides of the page, so that artifacts such as blank lines are avoided when the sheets are cut, would they be trimmed slightly differently for some assembling or technical reasons.
+
+Finally, there is also the case when the actual paper sheets available to you are larger than your target paper size, and yet you would want the output document to show properly centered:
+
+\code{papersize=\em{<paper size>}, sheetsize=\em{<actual paper size>}}.
+
+For instance, \code{papersize=6in x 9in, sheetsize=a4} produces an A4-dimensioned document, but with you content formatted as a 6 per 9 inches US trade book. You may, obviously, combine these options and also specify a bleed area.
 
 \section{Ordinary text}
 
 On the whole, ordinary text isn’t particularly interesting—it’s just typeset.
 
-\note{TeX users may have an expectation that SILE will do certain things with
-ordinary text as well. For instance, if you place two straight-backquotes
-into a TeX document (like this: \code{``}) then TeX will magically turn that
-into a double opening quote (“). SILE won’t do this. If you want a double
-opening quote, you have to ask for one. Similarly, en- and em-dashes have to be
-input as actual Unicode characters for en- and em-dashes, rather than the
-pseudo-ligatures such as \code{--} or \code{---} that TeX later transforms to
-the Unicode characters.}
+\begin{autodoc:note}
+TeX users may have an expectation that SILE will do certain things with ordinary text as well.
+For instance, if you place two straight-backquotes into a TeX document (like this: \code{``}) then TeX will magically turn that into a double opening quote (“).
+SILE won’t do this.
+If you want a double opening quote, you have to ask for one.
+Similarly, en- and em-dashes have to be input as actual Unicode characters for en- and em-dashes, rather than the pseudo-ligatures such as \code{--} or \code{---} that TeX later transforms to the Unicode characters.
+\end{autodoc:note}
 
 There are only a few bits of cleverness that happen around ordinary text.
 
-The first is that space is not particularly significant. If you write
-\code{Hello {} {} SILE!} with three spaces, you get the same output as if you
-write \code{Hello SILE!} with just one. Space at the beginning of a line will
-be ignored.
+The first is that space is not particularly significant.
+If you write \code{Hello {} {} SILE!} with three spaces, you get the same output as if you write \code{Hello SILE!} with just one.
+Space at the beginning of a line will be ignored.
 
-Similarly, you can place a line break anywhere you like in the input file, and
-it won’t affect the output because SILE considers each paragraph at a time and
-computes the appropriate line breaks for the paragraph based on the width of
-the line available. In other words, if your input file says
+Similarly, you can place a line break anywhere you like in the input file, and it won’t affect the output because SILE considers each paragraph at a time and computes the appropriate line breaks for the paragraph based on the width of the line available.
+In other words, if your input file says
 
 \begin[type=autodoc:codeblock]{raw}
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
@@ -74,29 +120,29 @@ fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
 culpa qui officia deserunt mollit anim id est laborum.
 \end{raw}
 
-\noindent{}…you might not necessarily get a line break after ‘tempor’; you’ll
-get a line break wherever is most appropriate. In the context of this document,
-you’ll get:
+\noindent{}…you might not necessarily get a line break after ‘tempor’;
+    rather, you’ll get a line break wherever is most appropriate.
+In the context of this document, you’ll get:
 
 \begin[language=la]{font}
-\begin{examplefont}
+\begin{autodoc:example}
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
 incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
 nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
 fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
 culpa qui officia deserunt mollit anim id est laborum.\par
-\end{examplefont}
+\end{autodoc:example}
 \end{font}
 
 In other words, a line break is converted to a space.
 
-\note{Sometimes this conversion is not what you want. If you don’t want single
-line breaks to be converted to a space, use a comment character \code{\%} at
-the end of a line to suppress the additional whitespace.}
+\begin{autodoc:note}
+Sometimes this conversion is not what you want.
+If you don’t want single line breaks to be converted to a space, use a comment character \code{\%} at the end of a line to suppress the additional whitespace.
+\end{autodoc:note}
 
-When you want to end a paragraph, you need to input two line breaks in a row,
-like this:
+When you want to end a paragraph, you need to input two line breaks in a row, like this:
 
 \begin[type=autodoc:codeblock]{raw}
 Paragraph one.
@@ -107,63 +153,51 @@ This is not paragraph three.
 This is paragraph three.
 \end{raw}
 
-The second clever thing that happens around ordinary text is that a few—four,
-in fact—characters have a special meaning to SILE. All of these will be
-familiar to TeX users.
+The second clever thing that happens around ordinary text is that a few—four, in fact—characters have a special meaning to SILE.
+All of these will be familiar to TeX users.
 
-We’ve seen that a \em{backslash} is used to start a command, and we’ll look
-into commands in more detail soon. \em{Left and right curly braces} (\code{\{},
-\code{\}}) are used for grouping, particularly in command arguments. Finally,
-a \em{percent sign} is used as a comment character, meaning that everything
-from the percent to the end of the line is ignored by SILE. If you want to
-actually typeset these characters, prepend a backslash to them: \code{\\\\}
-produces ‘\\’, \code{\\\{} produces ‘\{’, \code{\\\}} produces ‘\}’, and
-\code{\\\%} produces ‘\%’.
+We’ve seen that a \em{backslash} is used to start a command, and we’ll look into commands in more detail soon.
+\em{Left and right curly braces} (\code{\{}, \code{\}}) are used for grouping, particularly in command arguments.
+Finally, a \em{percent sign} is used as a comment character, meaning that everything from the percent to the end of the line is ignored by SILE.
+If you want to actually typeset these characters, prepend a backslash to them:
+    \code{\\\\} produces ‘\\’, \code{\\\{} produces ‘\{’, \code{\\\}} produces ‘\}’, and \code{\\\%} produces ‘\%’.
 
-The third clever thing is SILE will automatically hyphenate text at the end of
-a line if it feels this will make the paragraph shape look better. Text is
-hyphenated according to the current language options in place. By default, text
-is assumed to be in English unless SILE is told otherwise.
+The third clever thing is SILE will automatically hyphenate text at the end of a line if it feels this will make the paragraph shape look better.
+Text is hyphenated according to the current language options in place.
+By default, text is assumed to be in English unless SILE is told otherwise.
 
-The final clever thing is that, where fonts declare ligatures (where two or
-more letters are merged into one in order to make them visually more
-attractive), SILE automatically applies the ligature. So if you type
-\code{affluent fishing} then, (depending on your font), your output might look
-like: ‘\examplefont{affluent fishing}.’ If you specifically want to break up
-the ligatures, then insert empty groups (using the grouping characters
-\code{\{} and \code{\}}) in the middle of the possible ligatures: \code{af\{\}f\{\}luent
-f\{\}ishing}: \examplefont{af{}f{}luent f{}ishing}. See the section on
-the \code{features} package for more information on how to control the display
-of ligatures and other font features.
+The final clever thing is that where fonts declare ligatures (where two or more letters are merged into one in order to make them visually more attractive), SILE automatically applies the ligature.
+So if you type \code{affluent fishing}, then, depending on your font, your output might look like:
+    ‘\autodoc:example{affluent fishing}’.
+If you specifically want to break up the ligatures, insert empty groups (using the grouping characters \code{\{} and \code{\}}) in the middle of the possible ligatures:
+    \code{af\{\}f\{\}luent f\{\}ishing}: ‘\autodoc:example{af{}f{}luent f{}ishing}’.
+See the section on the \autodoc:package{features} package for more information on how to control the display of ligatures and other font features.
 
 \section{Commands}
 
-Typically (and we’ll unpack that statement later), SILE commands are made up of
-a backslash followed by a command name, and a document starts with
-a \code{\\begin\{document\}} command and ends with \code{\\end\{document\}}.
+Typically (and we’ll unpack that statement later), SILE commands are made up of a backslash followed by a command name, and a document starts with a \code{\\begin\{document\}} command and ends with \code{\\end\{document\}}.
 
-A command may also take two other optional components: some \em{parameters},
-and an \em{argument}. The \code{\\begin} command at the start of the document
-is an example of this.\footnote{Strictly speaking \code{\\begin} isn’t actually
-a command but we’ll pretend that it is for now and get to the details in
-a moment.}
+A command may also take two other optional components: some \em{parameters}, and an \em{argument}.
+The \code{\\begin} command at the start of the document is an example of this.%
+\footnote{Strictly speaking \code{\\begin} isn’t actually a command but we’ll pretend that it is for now and get to the details in a moment.}
 
 \begin[type=autodoc:codeblock]{raw}
 \begin{document}
 \end{raw}
 
-The parameters to a command are enclosed in square brackets and take the form
-\code{\em{key}=\em{value}};\break{}multiple parameters are separated by commas
-or semicolons, as in \code{[key1=value1,key2=value2,…]} Spaces around the
-keys are not significant; we could equally write that as \code{[key1 = value1;
-key2 = value2; …]}. If you need to include a comma or semicolon within the
-value to a parameter, you can enclose the value in quotes: \code{[key1
-= "value1, still value 1", key2 = value2; …]}.
+The parameters to a command are enclosed in square brackets and take the form \code{\em{key}=\em{value}};
+    multiple parameters are separated by commas or semicolons, as in \code{[key1=value1,key2=value2,…]}.
+Spaces around the keys are not significant;
+    we could equally write that as \code{[key1 = value1; key2 = value2; …]}.
+If you need to include a comma or semicolon within the value to a parameter, you can enclose the value in quotes:
+    \code{[key1 = "value1, still value 1", key2 = value2; …]}.
 
-The optional argument (of which there can only be at most one) is enclosed in curly braces.
-\footnote{TeX users may forget this and try adding a command argument “bare”, without the braces.
-This won’t work; in SILE, the braces are always mandatory.}
-Because the argument is optional, there is a difference between this: \code{\\command\{args\}} (which is interpreted as a command with argument \code{args}) and \code{\\command \{args\}} (which is interpreted as a command with no arguments, followed by the word \command{args} in a new group).
+The optional argument (of which there can only be at most one) is enclosed in curly braces.%
+\footnote{TeX users may forget this and try adding a command argument “bare,” without the braces.
+        This won’t work; in SILE, the braces are always mandatory.}
+Because the argument is optional, there is a difference between this:
+    \code{\\command\{args\}} (which is interpreted as a command with argument \code{args}) and this:
+    \code{\\command \{args\}} (which is interpreted as a command with no arguments, followed by the word \code{args} in a new group).
 
 Here are a few more examples of SILE commands:
 
@@ -178,12 +212,13 @@ Here are a few more examples of SILE commands:
 \end{raw}%
 \section{Environments}
 
-Commands like \code{\\chapter} and \code{\\em} (emphasises text by making it italic) are normally used to enclose a relatively small piece of text; a few lines at most.
-Where you want to enclose a larger piece of the document, you can use an \em{environment}; an environment begins with \code{\\begin\{\em{name}\}} and encloses all the text up until the corresponding \code{\\end\{\em{name}\}}.
-We’ve already seen an example, the \code{document} environment, which must enclose the \em{entire} document.
+Commands like \autodoc:command{\chapter} (to start a chapter) and \autodoc:command{\em} (to emphasise text) are normally used to enclose a relatively small piece of text—a few lines at most.
+Where you want to enclose a larger piece of the document, you can use an \em{environment}.
+An environment begins with \code{\\begin\{\em{name}\}} and encloses all the text up until the corresponding \code{\\end\{\em{name}\}}.
+We’ve already seen an example: the \autodoc:environment[check=false]{document} environment, which must enclose the \em{entire} document.
 
 Here is a secret: there is absolutely no difference between a command and an environment.
-In other words, the following two forms are equivalent:
+As an example, the following two forms are equivalent:
 
 \begin[type=autodoc:codeblock]{raw}
 \font[family=Times,size=10pt]{Hi there!}
@@ -195,16 +230,16 @@ Hi there!
 
 However, in some cases the environment form of the command will be easier to read and will help you to be clearer on where the command begins and ends.
 
-\section{The XML Flavour}
+\section{The XML flavor}
 
-While we’re on the subject of alternative forms, SILE can actually process its input in a completely different file format.
-What we’ve seen so far has been SILE’s “TeX-like flavor”, but it can also directly read and process XML files.
+As mentioned at the start of the chapter, SILE can actually process its input in a completely different file format.
+What we’ve seen so far has been SILE’s “TeX-like” SIL syntax flavor, but it can also directly read and process XML files.
 (If it isn’t well-formed XML, then SILE will get very upset.)
 
 Any XML tags within the input file will then be regarded as SILE commands, and tag attributes are interpreted as command parameters.
 Once read and parsed, processing content from either of the two file formats are exactly equivalent.
 
-In other words, the XML form of the above document would be:
+The XML form of the above document would be:
 
 \begin[type=autodoc:codeblock]{raw}
 <document>
@@ -219,7 +254,7 @@ The example above, in XML flavor, would look like this:
 <font family="Times" size="10pt">Hi there!</font>
 \end{raw}
 
-We don’t expect humans to write their documents in SILE’s XML flavor—the TeX-like SILE flavor is much better for that—but having an XML flavor allows for computers to deal with SILE a lot more easily.
+We don’t expect humans to write their documents in SILE’s XML flavor—the TeX-like SIL flavor is much better for that—but having an XML flavor allows for computers to deal with SILE a lot more easily.
 One could create graphical user interfaces to edit SILE documents, or convert other XML formats to SILE.
 
 However, there is an even smarter way of processing XML with SILE.

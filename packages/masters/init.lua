@@ -37,9 +37,8 @@ local function doswitch (frames)
   end
 end
 
-local function switchMasterOnePage (class, id)
+local function switchMasterOnePage (_, id)
   if not id then
-    id = class
     SU.deprecated("class.switchMasterOnePage", "class:switchMasterOnePage", "0.13.0", "0.15.0")
   end
   if not SILE.scratch.masters[id] then
@@ -53,7 +52,6 @@ end
 
 local function switchMaster (class, id)
   if not id then
-    id, class = class, SILE.documentState.documentClass
     SU.deprecated("class.switchMaster", "class:switchMaster", "0.13.0", "0.15.0")
   end
   _currentMaster = id
@@ -123,7 +121,7 @@ package.documentation = [[
 \begin{document}
 The masters functionality is also itself an add-on package.
 It allows a class to define sets of frames and switch between them either temporarily or permanently.
-It defines the commands \autodoc:command{\define-master-template} (which is pattern on the \autodoc:command{\pagetemplate} function we will meet in chapter 8), \autodoc:command{\switch-master} and \autodoc:command{\switch-master-one-page}.
+It defines the commands \autodoc:command{\define-master-template} (which is patterned on the \autodoc:command{\pagetemplate} function we will meet in Chapter 8), \autodoc:command{\switch-master}, and \autodoc:command{\switch-master-one-page}.
 See \code{tests/masters.sil} for more about this package.
 \end{document}
 ]]

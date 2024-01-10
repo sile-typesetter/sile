@@ -1,250 +1,369 @@
 \begin{document}
 \chapter{SILE Packages}
 
-SILE comes with a number of packages which provide additional functionality.
-In fact, the actual “core” of SILE’s functionality is very small and very
-extensible, with most of the interesting features being provided by add-on
-packages. SILE packages are written in the Lua programming language, and can
-define new commands, change the way that the SILE system operates, or indeed
-do anything that it’s possible to do in Lua.
+SILE comes with a number of standard packages which provide additional functionality.
+In fact, the actual “core” of SILE’s functionality is small and extensible, with most of the interesting features being provided by add-on packages.
+SILE ships with the core libraries plus a small collection of packages covering some common needs; more can be added from 3rd party sources.
+SILE packages are written in the Lua programming language, and can define new commands, change the way that the SILE system operates, or indeed do anything that is possible to do in Lua.
 
-As mentioned above, loading a package is done through the \code{\\script} command,
-which runs Lua code. By convention packages live in the \code{packages/} subdirectory
-of either your input file’s location, your current working directory or SILE’s
-installation directory. For instance, we’ll soon be talking about the
-\code{grid} package, which normally can be found as
-\code{/usr/local/lib/sile/packages/grid/init.lua}. To load this, we’d say:
+\section{Loading a package}
+
+Loading a package is done through the \code{\\use} command.
+By convention packages live in a \code{packages/}
+For instance, we’ll soon be talking about the \autodoc:package{grid} package, which normally can be found as \code{sile/packages/grid/init.lua} in wherever your system installed the SILE resource files.
+To load this, we’d say:
 
 \begin[type=autodoc:codeblock]{raw}
 \use[module=packages.grid]
 \end{raw}
 
-\note{\notehead{How SILE locates files} SILE searches for paths in a variety of
-directories: first, in the directory in which your input file is located,
-then the current wording directory; next, if the environment variable
-\code{SILE_PATH} is set, it will look in that directory; then it will look in
-the standard installation directories \code{/usr/lib/sile} and
-\code{/usr/local/lib/sile}. Unlike TeX, it does not descend into subdirectories
-when looking for a file, and so if you have arranged your personal macro, class
-or package files into subdirectories, you will need to provide a full relative
-path to them.}
+\autodoc:note{
+By default SILE will look for packages in a variety of directories:
 
-\section{image}
-\package-documentation{image}
+\begin{enumerate}
+\item{The directory where your input source file is located.}
+\item{The current working directory.}
+\item{The environment variable \code{SILE_PATH}, if defined.}
+\item{The default Lua search path.}
+\item{Various directories depending on where and how SILE is installed on your system.}
+\end{enumerate}
 
-\section{folio}
-\package-documentation{folio}
+SILE does not descend into subdirectories when looking for a file.
+If you have arranged your personal class or package files into subdirectories,
+you will need to provide a full relative path to them.}
 
-\section{rules}
-\package-documentation{rules}
+\section{The SILE ecosystem}
 
-\section{color}
-\package-documentation{color}
-
-\section{background}
-\package-documentation{background}
-
-\section{rotate}
-\package-documentation{rotate}
-
-\section{features}
-\package-documentation{features}
-
-\section{unichar}
-\package-documentation{unichar}
-
-\section{bidi}
-\package-documentation{bidi}
-
-\section{pullquote}
-\package-documentation{pullquote}
-
-\section{raiselower}
-\package-documentation{raiselower}
-
-\section{grid}
-\package-documentation{grid}
-
-\section{linespacing}
-\package-documentation{linespacing}
-
-\section{verbatim}
-\package-documentation{verbatim}
-
-\section{font-fallback}
-\package-documentation{font-fallback}
-
-\section{boustrophedon}
-\package-documentation{boustrophedon}
-
-\section{chordmode}
-\package-documentation{chordmode}
-
-\section{converters}
-\package-documentation{converters}
-
-\section{cropmarks}
-\package-documentation{cropmarks}
-
-\section{date}
-\package-documentation{date}
-
-\section{debug}
-\package-documentation{debug}
-
-\section{dropcaps}
-\package-documentation{dropcaps}
-
-\section{leaders}
-\package-documentation{leaders}
-
-\section{lorem}
-\package-documentation{lorem}
-
-\section{specimen}
-\package-documentation{specimen}
-
-\section{textcase}
-\package-documentation{textcase}
-
-\section{url}
-\package-documentation{url}
-
-\section{Packages usually used by other packages}
-
-In addition, there are certain packages that you \em{probably} don’t need
-to use directly, as their main job is to provide more
-basic functionality to other packages and classes. Classes such as the
-\code{book} class compose functionality from different auxiliary packages.
-
-\subsection{footnotes}
-\package-documentation{footnotes}
-
-\subsection{color-fonts}
-\package-documentation{color-fonts}
-
-\subsection{counters}
-\package-documentation{counters}
-
-\subsection{pdf}
-\package-documentation{pdf}
-
-\subsection{ifattop}
-\package-documentation{ifattop}
-
-\subsection{frametricks}
-\package-documentation{frametricks}
-
-\subsection{insertions}
-\package-documentation{insertions}
-
-\subsection{twoside}
-\package-documentation{twoside}
-
-\subsection{masters}
-\package-documentation{masters}
-
-\subsection{infonode}
-\package-documentation{infonode}
-
-\subsection{inputfilter}
-\package-documentation{inputfilter}
-
-\subsection{break-firstfit}
-\package-documentation{break-firstfit}
-
-\subsection{chapterverse}
-\package-documentation{chapterverse}
-
-\subsection{parallel}
-\package-documentation{parallel}
-
-\subsection{rebox}
-\package-documentation{rebox}
-
-\subsection{tableofcontents}
-\package-documentation{tableofcontents}
-
-\subsection{xmltricks}
-\package-documentation{xmltricks}
-
-\section{Experimental packages}
-
-\subsection{autodoc}
-\package-documentation{autodoc}
-
-\subsection{balanced-frames}
-\package-documentation{balanced-frames}
-
-\subsection{bibtex}
-\package-documentation{bibtex}
-
-\subsection{gutenberg}
-\package-documentation{gutenberg}
-
-\subsection{indexer}
-\package-documentation{indexer}
-
-\subsection{lists}
-\package-documentation{lists}
-
-\subsection{math}
-\package-documentation{math}
-
-\subsection{pdfstructure}
-\package-documentation{pdfstructure}
-
-\subsection{svg}
-\package-documentation{svg}
-
-\section{The Package Manager}
-
-The SILE installation includes a core collection of packages we hope are generally useful.
+The SILE installation includes a core collection of modules we hope are generally useful.
 But there’s more out there!
-SILE is able to use packages installed via the LuaRocks package manager.
-It can also be configured to read packages from any directory of your choosing.
+As mentioned earlier in this manual, a number of third-party contributed collections of modules can be installed via the LuaRocks package manager.
 
-A SILE compatible LuaRock simply installs the relevant class, package, language, i18n, or similar files in a \code{sile} directory.
+\autodoc:note{
+A non-authoritative list of third-party modules may be consulted at \url{https://luarocks.org/m/sile}. To publish your own modules to LuaRocks, see the \code{package-template.sile} repository.
+}
+
+A SILE compatible LuaRock simply installs the relevant class, package, language, internationalization resources, or similar files in a \code{sile} directory.
 This directory could be in your system Lua directory, in your user directory, or any other location you specify.
 
-By default SILE will look for packages in:
-
-\begin{itemize}
-\item{The directory where the SILE source file is located,}
-\item{The current working directory,}
-\item{The default LUA search path,}
-\item{The directory where SILE is installed on the system.}
-\end{itemize}
-
-By default, LuaRocks will install packages to the Lua search path.
+By default, LuaRocks will install these modules to the Lua search path.
 
 \begin[type=autodoc:codeblock]{raw}
-$ luarocks install lilypond.sile
+$ luarocks install markdown.sile
 $ sile ...
 \end{raw}
 
 Depending on your system, this probably requires root permissions.
 If you either don’t have root permissions or don’t want to pollute your system’s root file system, you can also install as a user.
-To use packages installed as a user you will need to have LuaRocks add it’s user tree to your Lua search path before running SILE.
+To use packages installed as a user you will need to have LuaRocks add its user tree to your Lua search path before running SILE.
 
 \begin[type=autodoc:codeblock]{raw}
-$ luarocks --local install lilypond.sile
+$ luarocks --local install markdown.sile
 $ eval $(luarocks --local path)
 $ sile ...
 \end{raw}
 
-Of course you can add that eval statement to your shell profile to always include your user’s directory in your Lua path.
-You can also add your own entries to the top of the search path list by setting the \code{SILE_PATH} variable, for example:
+Of course, you can add that eval statement to your shell profile to always include your user directory in your Lua path.
+You can also add your own entries to the top of the search path list by setting the \code{SILE_PATH} variable. For example:
 
 \begin[type=autodoc:codeblock]{raw}
 $ export SILE_PATH="/path/to/my/library/"
 $ sile ...
 \end{raw}
 
-To write a package and publish to LuaRocks, see the package-template.sile repository.
-
-It’s worth noting that packages are not limited to just the package interface.
-They can include classes, languages, i18n resources, or anything else provided by SILE.
+Note that modules are not limited to just packages.
+They can include classes, languages, internationalization resources, or anything else provided by SILE.\footnote{%
 Also because external locations are searched before SILE itself, they can even override any core part of SILE itself.
-As such you should probably make sure you review what a package does before installing it!
+As such you should probably make sure you review what a package does before installing it!}
+
+\use[module=packages.unichar]
+\define[command=status:high]{\font[size=9pt]{\color[color=green]{\font[family=Symbola]{\unichar{U+25CF}} Good maturity}}\novbreak\noindent}
+\define[command=status:medium]{\font[size=9pt]{\color[color=olivedrab]{\font[family=Symbola]{\unichar{U+25CD}} Usable with limitations}}\novbreak\noindent}
+\define[command=status:low]{\font[size=9pt]{\color[color=darkslateblue]{\font[family=Symbola]{\unichar{U+25CB}} Experimental}}\novbreak\noindent}
+
+\section{Graphics}
+
+As well as processing text, SILE can also include images.
+
+\subsection{image}
+\status:high
+\package-documentation{image}
+
+\subsection{svg}
+\status:medium
+\package-documentation{svg}
+
+\subsection{converters}
+\status:medium
+\package-documentation{converters}
+
+\section{Text & Characters}
+
+This section covers a range of different topics from initial capitals to text transforms, through URL formatting.
+
+\subsection{dropcaps}
+\status:high
+\package-documentation{dropcaps}
+
+\subsection{lorem}
+\status:high
+\package-documentation{lorem}
+
+\subsection{textcase}
+\status:high
+\package-documentation{textcase}
+
+\subsection{unichar}
+\status:high
+\package-documentation{unichar}
+
+\subsection{url}
+\status:medium
+\package-documentation{url}
+
+\subsection{gutenberg}
+\status:low
+\package-documentation{gutenberg}
+
+\section{Colors}
+
+Color perception is a complicated topic, depending on many factors.
+SILE currently provides a few packages for handling coloring, in a simple acceptation of the term.
+
+\subsection{color}
+\status:medium
+\package-documentation{color}
+
+\subsection{background}
+\status:medium
+\package-documentation{background}
+
+\section{Fillers & Rules}
+
+Line-filling patterns or rules, rectangular blobs of inks... What else to say?
+
+\subsection{leaders}
+\status:high
+\package-documentation{leaders}
+
+\subsection{rules}
+\status:medium
+\package-documentation{rules}
+
+\section{Boxes & Effects}
+
+You can manipulate boxed elements to achieve a variety of effects.
+
+\subsection{raiselower}
+\status:high
+\package-documentation{raiselower}
+
+\subsection{rebox}
+\status:high
+\package-documentation{rebox}
+
+\subsection{rotate}
+\status:medium
+\package-documentation{rotate}
+
+\subsection{scalebox}
+\status:high
+\package-documentation{scalebox}
+
+\section{Mathematical formulas}
+\status:medium
+\package-documentation{math}
+
+\section{Specialized environments}
+
+SILE’s standard set of packages provides a few high-level environment.
+Some are quite expected from a typesetting system, and other also possibly serve as an illustration for class and package designers, regarding how to use varying techniques.
+
+\subsection{lists}
+\status:high
+\package-documentation{lists}
+
+\subsection{pullquote}
+\status:medium
+\package-documentation{pullquote}
+
+\subsection{verbatim}
+\status:medium
+\package-documentation{verbatim}
+
+\subsection{specimen}
+\status:high
+\package-documentation{specimen}
+
+\subsection{boustrophedon}
+\status:high
+\package-documentation{boustrophedon}
+
+\subsection{chordmode}
+\status:high
+\package-documentation{chordmode}
+
+\section{Advanced font features}
+
+The following packages leverage SILE’s font default handling and the \autodoc:command{\font} command with new capabilities.
+
+\subsection{features}
+\status:high
+\package-documentation{features}
+
+\subsection{font-fallback}
+\status:medium
+\package-documentation{font-fallback}
+
+\section{Advanced line-spacing}
+
+We will later document the default line-spacing algorithm used by SILE and the available settings that may be tuned.
+Still, some packages are proposed for \em{altering} that algorithm and may be useful in some contexts.
+
+\subsection{grid}
+\status:medium
+\package-documentation{grid}
+
+\subsection{linespacing}
+\status:low
+\package-documentation{linespacing}
+
+\section{Document parts}
+
+You \em{probably} don’t need to load the auxiliary packages in this section directly.
+Their main job is to provide more basic functionality to other packages and classes.
+Classes compose functionality from different auxiliary packages.
+Nevertheless, these packages also provide several user-facing commands of interest.
+
+\subsection{folio}
+\status:high
+\package-documentation{folio}
+
+\subsection{footnotes}
+\status:medium
+\package-documentation{footnotes}
+
+\subsection{tableofcontents}
+\status:medium
+\package-documentation{tableofcontents}
+
+\section{Bibliographies & Indexes}
+
+This section is devoted to packages collating references, in a broad sense.
+
+\subsection{bibtex}
+\status:medium
+\package-documentation{bibtex}
+
+\subsection{indexer}
+\status:low
+\package-documentation{indexer}
+
+\section{Miscellaneous utilities}
+
+This section introduces packages that could not fit in another category.
+
+\subsection{date}
+\status:high
+\package-documentation{date}
+
+\subsection{debug}
+\status:high
+\package-documentation{debug}
+
+\subsection{ifattop}
+\status:low
+\package-documentation{ifattop}
+
+\subsection{retrograde}
+\status:high
+\package-documentation{retrograde}
+
+\section{Frames and page layouts}
+
+As we mentioned in the first chapter, SILE uses frames as an indication of where to put text onto
+the page.
+
+\subsection{cropmarks}
+\status:low
+\package-documentation{cropmarks}
+
+\subsection{frametricks}
+\status:low
+\package-documentation{frametricks}
+
+\subsection{twoside}
+\status:medium
+\package-documentation{twoside}
+
+\subsection{masters}
+\status:high
+\package-documentation{masters}
+
+\subsection{break-firstfit}
+\status:medium
+\package-documentation{break-firstfit}
+
+\subsection{balanced-frames}
+\status:low
+\package-documentation{balanced-frames}
+
+\section{Low-level internal packages}
+
+In addition, there are packages that you \em{very probably} don’t need to use directly when typesetting documents.
+
+\subsection{bidi}
+\status:high
+\package-documentation{bidi}
+
+\subsection{color-fonts}
+\status:high
+\package-documentation{color-fonts}
+
+\subsection{counters}
+\status:high
+\package-documentation{counters}
+
+\subsection{insertions}
+\status:medium
+\package-documentation{insertions}
+
+\subsection{infonode}
+\status:high
+\package-documentation{infonode}
+
+\subsection{inputfilter}
+\status:high
+\package-documentation{inputfilter}
+
+\subsection{chapterverse}
+\status:low
+\package-documentation{chapterverse}
+
+\subsection{parallel}
+\status:low
+\package-documentation{parallel}
+
+\subsection{autodoc}
+\status:high
+\package-documentation{autodoc}
+
+\subsection{pdf}
+\status:medium
+\package-documentation{pdf}
+
+\subsection{pdfstructure}
+\status:medium
+\package-documentation{pdfstructure}
+
+\section{Highly experimental packages}
+
+The following packages are not documented here:
+\autodoc:package{complex-spaces},
+\autodoc:package{pagebuilder-bestfit},
+\autodoc:package{pandoc},
+\autodoc:package{simpletable},
+\autodoc:package{xmltricks}.
+
+\autodoc:note{These packages are not ready for use in production and are subject to change without notice in future versions.}
+
 \end{document}

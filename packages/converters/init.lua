@@ -59,11 +59,12 @@ function package.register (_, sourceExt, targetExt, command)
 end
 
 function package.checkConverters (_, source)
+  local resolvedSrc = SILE.resolveFile(source) or SU.error("Couldn't find file " .. source)
   for _, converter in ipairs(SILE.scratch.converters) do
     local extLen = string.len(converter.sourceExt)
-    if ((string.len(source) > extLen) and
-        (string.sub(source, -extLen) == converter.sourceExt)) then
-      return applyConverter(source, converter)
+    if ((string.len(resolvedSrc) > extLen) and
+        (string.sub(resolvedSrc, -extLen) == converter.sourceExt)) then
+      return applyConverter(resolvedSrc, converter)
     end
   end
   return source -- No conversion needed.
@@ -75,17 +76,23 @@ function package:_init ()
     SILE.scratch.converters = {}
   end
   extendCommand("include", function (options, content, original)
-    local result = self:checkConverters(options.src)
-    if not result then
+    local source = SU.required(options, "src", "include (converters)")
+    local result = self:checkConverters(source)
+    if result then
       options["src"] = result
       original(options, content)
+    else
+      SU.error("Conversion failure for include '" .. source ..'"')
     end
   end)
   extendCommand("img", function (options, content, original)
-    local result = self:checkConverters(options.src)
-    if not result then
+    local source = SU.required(options, "src", "img (converters)")
+    local result = self:checkConverters(source)
+    if result then
       options["src"] = result
       original(options, content)
+    else
+      SU.error("Conversion failure for image '" .. source ..'"')
     end
   end)
   self:deprecatedExport("register", self.register)
@@ -99,6 +106,7 @@ function package:registerCommands ()
   end)
 
   self:registerCommand("converters:check", function (options, _)
+    SU.deprecated("\\converters:check", nil, "0.14.10", "0.16.0")
     self:checkConverters(options.source)
   end)
 
@@ -111,25 +119,26 @@ The \autodoc:package{converters} package allows you to register additional handl
 That sounds a bit abstract, so it’s best explained by example.
 Suppose you have a GIF image that you would like to include in your document.
 You read the documentation for the \autodoc:package{image} package and you discover that sadly GIF images are not supported.
-What \autodoc:package{converters} does is allow you to teach SILE how to get the GIF format into something that \em{is} supported.
-We can use the ImageMagick toolkit to turn a GIF into a JPG, and JPGs are supported.
+The \autodoc:package{converters} package allows you to teach SILE how to get the GIF format into something that \em{is} supported.
+We can use the ImageMagick toolkit to turn a GIF into a JPEG, and JPEGs are supported directly by SILE.
 
 We do this by registering a converter with the \autodoc:command{\converters:register} command:
 
 \begin[type=autodoc:codeblock]{raw}
 \use[module=packages.converters]
+
 \converters:register[from=.gif,to=.jpg,command=convert $SOURCE $TARGET]
 \end{raw}
 
 And now it just magically works:
 
 \begin[type=autodoc:codeblock]{raw}
-\img[src=hello.gif, width=50px]
+\img[src=hello.gif, width=50pt]
 \end{raw}
 
 This will execute the command \code{convert hello.gif hello.jpg} and include the converted \code{hello.jpg} file.
 
-This trick also works for text file:
+This trick also works for text files:
 
 \begin[type=autodoc:codeblock]{raw}
 \converters:register[from=.md, to=.sil, command=pandoc -o $TARGET $SOURCE]

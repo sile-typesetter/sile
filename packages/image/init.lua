@@ -13,18 +13,21 @@ function package:registerCommands ()
     local src = SILE.resolveFile(options.src) or SU.error("Couldn't find file "..options.src)
     local box_width, box_height, _, _ = SILE.outputter:getImageSize(src, pageno)
     local sx, sy = 1, 1
-    if width > 0 or height > 0 then
-      sx = width > 0 and box_width / width
-      sy = height > 0 and box_height / height
-      sx = sx or sy
-      sy = sy or sx
+    if width > 0 and height > 0 then
+      sx, sy = box_width / width, box_height / height
+    elseif width > 0 then
+      sx = box_width / width
+      sy = sx
+    elseif height > 0 then
+      sy = box_height / height
+      sx = sy
     end
 
     SILE.typesetter:pushHbox({
-      width= box_width / (sx),
-      height= box_height / (sy),
-      depth= 0,
-      value= src,
+      width = box_width / sx,
+      height = box_height / sy,
+      depth = 0,
+      value = src,
       outputYourself = function (node, typesetter, _)
         SILE.outputter:drawImage(node.value, typesetter.frame.state.cursorX, typesetter.frame.state.cursorY-node.height, node.width, node.height, pageno)
         typesetter.frame:advanceWritingDirection(node.width)
@@ -36,20 +39,18 @@ end
 
 package.documentation = [[
 \begin{document}
-As well as processing text, SILE can also include images.
-
 Loading the \autodoc:package{image} package gives you the \autodoc:command{\img} command, fashioned after the HTML equivalent.
 It takes the following parameters: \autodoc:parameter{src=<file>} must be the path to an image file; you may also give \autodoc:parameter{height} and/or \autodoc:parameter{width} parameters to specify the output size of the image on the paper.
-If the size parameters are not given, then the image will be output at its ‘natural’ size, honoring its resolution if available.
+If the size parameters are not given, then the image will be output at its “natural” size, honoring its resolution if available.
 The command also supports a \autodoc:parameter{page=<number>} option, to specify the selected page in formats supporting
 several pages (such as PDF).
 
-\begin{note}
-With the libtexpdf backend (the default), the images can be in JPEG, PNG, EPS or PDF formats.
-\end{note}
+\begin{autodoc:note}
+With the libtexpdf backend (the default), the images can be in JPEG, PNG, EPS, or PDF formats.
+\end{autodoc:note}
 
 Here is a 200x243 pixel image output with \autodoc:command{\img[src=documentation/gutenberg.png]}.
-The image has a claimed resolution of 100 pixels per inch, so ends up being 2 inches (144pt) wide on the page:\par
+The image has a claimed resolution of 100 pixels per inch, so ends up being two inches (144pt) wide on the page:\par
 \img[src=documentation/gutenberg.png]
 
 \raggedright{

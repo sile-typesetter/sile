@@ -20,6 +20,26 @@ local _font
 
 local outputter = pl.class(base)
 outputter._name = "libtexpdf"
+outputter.extension = "pdf"
+
+-- N.B. Sometimes setCoord is called before the outputter has ensured initialization.
+-- This ok for coordinates manipulation, at these points we know the page size.
+local deltaX
+local deltaY
+local function trueXCoord (x)
+  if not deltaX then
+    local sheetSize = SILE.documentState.sheetSize or SILE.documentState.paperSize
+    deltaX = (sheetSize[1] - SILE.documentState.paperSize[1]) / 2
+  end
+  return x + deltaX
+end
+local function trueYCoord (y)
+  if not deltaY then
+    local sheetSize = SILE.documentState.sheetSize or SILE.documentState.paperSize
+    deltaY = (sheetSize[2] - SILE.documentState.paperSize[2]) / 2
+  end
+  return y + deltaY
+end
 
 -- The outputter init can't actually initialize output (as logical as it might
 -- have seemed) because that requires a page size which we don't know yet.
@@ -27,8 +47,11 @@ outputter._name = "libtexpdf"
 
 function outputter:_ensureInit ()
   if not started then
-    local w, h = SILE.documentState.paperSize[1], SILE.documentState.paperSize[2]
-    local fname = self:getOutputFilename("pdf")
+    local sheetSize = SILE.documentState.sheetSize or SILE.documentState.paperSize
+    local w, h = sheetSize[1], sheetSize[2]
+    local fname = self:getOutputFilename()
+    -- Ideally we could want to set the PDF CropBox, BleedBox, TrimBox...
+    -- Our wrapper only manages the MediaBox at this point.
     pdf.init(fname == "-" and "/dev/stdout" or fname, w, h, SILE.full_version)
     pdf.beginpage()
     started = true
@@ -41,7 +64,7 @@ function outputter:newPage ()
   pdf.beginpage()
 end
 
--- pdf stucture package needs a tie in here
+-- pdf structure package needs a tie in here
 function outputter._endHook (_)
 end
 
@@ -89,7 +112,7 @@ function outputter:_drawString (str, width, x_offset, y_offset)
   local x, y = self:getCursor()
   pdf.colorpush_rgb(0,0,0)
   pdf.colorpop()
-  pdf.setstring(x+x_offset, y+y_offset, str, string.len(str), _font, width)
+  pdf.setstring(trueXCoord(x+x_offset), trueYCoord(y+y_offset), str, string.len(str), _font, width)
 end
 
 function outputter:drawHbox (value, width)
@@ -156,7 +179,7 @@ function outputter:drawImage (src, x, y, width, height, pageno)
   width = SU.cast("number", width)
   height = SU.cast("number", height)
   self:_ensureInit()
-  pdf.drawimage(src, x, y, width, height, pageno or 1)
+  pdf.drawimage(src, trueXCoord(x), trueYCoord(y), width, height, pageno or 1)
 end
 
 function outputter:getImageSize (src, pageno)
@@ -173,8 +196,9 @@ function outputter:drawSVG (figure, x, y, _, height, scalefactor)
   pdf.add_content("q")
   self:setCursor(x, y)
   x, y = self:getCursor()
-  local newy = y - SILE.documentState.paperSize[2] + height
-  pdf.add_content(table.concat({ scalefactor, 0, 0, -scalefactor, x, newy, "cm" }, " "))
+  local sheetSize = SILE.documentState.sheetSize or SILE.documentState.paperSize
+  local newy = y - SILE.documentState.paperSize[2] / 2 + height - sheetSize[2] / 2
+  pdf.add_content(table.concat({ scalefactor, 0, 0, -scalefactor, trueXCoord(x), newy, "cm" }, " "))
   pdf.add_content(figure)
   pdf.add_content("Q")
 end
@@ -186,7 +210,7 @@ function outputter:drawRule (x, y, width, height)
   height = SU.cast("number", height)
   self:_ensureInit()
   local paperY = SILE.documentState.paperSize[2]
-  pdf.setrule(x, paperY - y - height, width, height)
+  pdf.setrule(trueXCoord(x), trueYCoord(paperY - y - height), width, height)
 end
 
 function outputter:debugFrame (frame)
@@ -225,6 +249,141 @@ function outputter:debugHbox (hbox, scaledWidth)
     self:drawRule(x-_dl/2, y+hbox.depth-_dl/2, scaledWidth+_dl, _dl)
   end
   self:popColor()
+end
+
+-- The methods below are only implemented on outputters supporting these features.
+-- In PDF, it relies on transformation matrices, but other backends may call
+-- for a different strategy.
+-- ! The API is unstable and subject to change. !
+
+function outputter:scaleFn (xorigin, yorigin, xratio, yratio, callback)
+  xorigin = SU.cast("number", xorigin)
+  yorigin = SU.cast("number", yorigin)
+  local x0 = trueXCoord(xorigin)
+  local y0 = -trueYCoord(yorigin)
+  self:_ensureInit()
+  pdf:gsave()
+  pdf.setmatrix(1, 0, 0, 1, x0, y0)
+  pdf.setmatrix(xratio, 0, 0, yratio, 0, 0)
+  pdf.setmatrix(1, 0, 0, 1, -x0, -y0)
+  callback()
+  pdf:grestore()
+end
+
+function outputter:rotateFn (xorigin, yorigin, theta, callback)
+  xorigin = SU.cast("number", xorigin)
+  yorigin = SU.cast("number", yorigin)
+  local x0 = trueXCoord(xorigin)
+  local y0 = -trueYCoord(yorigin)
+  self:_ensureInit()
+  pdf:gsave()
+  pdf.setmatrix(1, 0, 0, 1, x0, y0)
+  pdf.setmatrix(math.cos(theta), math.sin(theta), -math.sin(theta), math.cos(theta), 0, 0)
+  pdf.setmatrix(1, 0, 0, 1, -x0, -y0)
+  callback()
+  pdf:grestore()
+end
+
+-- Other rotation unstable APIs
+
+function outputter:enterFrameRotate (xa, xb, y, theta) -- Unstable API see rotate package
+  xa = SU.cast("number", xa)
+  xb = SU.cast("number", xb)
+  y = SU.cast("number", y)
+  -- Keep center point the same?
+  local cx0 = trueXCoord(xa)
+  local cx1 = trueXCoord(xb)
+  local cy = -trueYCoord(y)
+  self:_ensureInit()
+  pdf:gsave()
+  pdf.setmatrix(1, 0, 0, 1, cx1, cy)
+  pdf.setmatrix(math.cos(theta), math.sin(theta), -math.sin(theta), math.cos(theta), 0, 0)
+  pdf.setmatrix(1, 0, 0, 1, -cx0, -cy)
+end
+
+function outputter.leaveFrameRotate (_)
+  pdf:grestore()
+end
+
+-- Unstable link APIs
+
+function outputter:linkAnchor (x, y, name)
+  x = SU.cast("number", x)
+  y = SU.cast("number", y)
+  self:_ensureInit()
+  pdf.destination(name, trueXCoord(x), trueYCoord(y))
+end
+
+local function borderColor (color)
+  if color then
+    if color.r then return "/C [" .. color.r .. " " .. color.g .. " " .. color.b .. "]" end
+    if color.c then return "/C [" .. color.c .. " " .. color.m .. " " .. color.y .. " " .. color.k .. "]" end
+    if color.l then return "/C [" .. color.l .. "]" end
+  end
+  return ""
+end
+local function borderStyle (style, width)
+  if style == "underline" then return "/BS<</Type/Border/S/U/W " .. width .. ">>" end
+  if style == "dashed" then return "/BS<</Type/Border/S/D/D[3 2]/W " .. width .. ">>" end
+  return "/Border[0 0 " .. width .. "]"
+end
+
+function outputter:enterLinkTarget (_, _) -- destination, options as argument
+  -- HACK:
+  -- Looking at the code, pdf.begin_annotation does nothing, and Simon wrote a comment
+  -- about tracking boxes. Unsure what he implied with this obscure statement.
+  -- Sure thing is that some backends may need the destination here, e.g. an HTML backend
+  -- would generate a <a href="#destination">, as well as the options possibly for styling
+  -- on the link opening?
+  self:_ensureInit()
+  pdf.begin_annotation()
+end
+function outputter.leaveLinkTarget (_, x0, y0, x1, y1, dest, opts)
+  local bordercolor = borderColor(opts.bordercolor)
+  local borderwidth = SU.cast("integer", opts.borderwidth)
+  local borderstyle = borderStyle(opts.borderstyle, borderwidth)
+  local target = opts.external and "/Type/Action/S/URI/URI" or "/S/GoTo/D"
+  local d = "<</Type/Annot/Subtype/Link" .. borderstyle .. bordercolor .. "/A<<" .. target .. "(" .. dest .. ")>>>>"
+  pdf.end_annotation(d,
+    trueXCoord(x0) , trueYCoord(y0 - opts.borderoffset),
+    trueXCoord(x1), trueYCoord(y1 + opts.borderoffset))
+end
+
+-- Bookmarks and metadata
+
+local function validate_date (date)
+  return string.match(date, [[^D:%d+%s*-%s*%d%d%s*'%s*%d%d%s*'?$]]) ~= nil
+end
+
+function outputter:setMetadata (key, value)
+  if key == "Trapped" then
+    SU.warn("Skipping special metadata key \\Trapped")
+    return
+  end
+
+  if key == "ModDate" or key == "CreationDate" then
+    if not validate_date(value) then
+      SU.warn("Invalid date: " .. value)
+      return
+    end
+  else
+    -- see comment in on bookmark
+    value = SU.utf8_to_utf16be(value)
+  end
+  self:_ensureInit()
+  pdf.metadata(key, value)
+end
+
+function outputter:setBookmark (dest, title, level)
+  -- Added UTF8 to UTF16-BE conversion
+  -- For annotations and bookmarks, text strings must be encoded using
+  -- either PDFDocEncoding or UTF16-BE with a leading byte-order marker.
+  -- As PDFDocEncoding supports only limited character repertoire for
+  -- European languages, we use UTF-16BE for internationalization.
+  local ustr = SU.utf8_to_utf16be_hexencoded(title)
+  local d = "<</Title<" .. ustr .. ">/A<</S/GoTo/D(" .. dest .. ")>>>>"
+  self:_ensureInit()
+  pdf.bookmark(d, level)
 end
 
 return outputter

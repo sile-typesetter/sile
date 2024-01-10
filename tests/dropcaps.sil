@@ -1,0 +1,7 @@
+\begin[papersize=a6]{document}
+\nofolios
+\use[module=packages.dropcaps]
+\font[size=25pt]
+\dropcap[lines=2]{T}esting one two three, don't collide with me.
+Four five six, no crossing sticks.
+\end{document}

@@ -63,6 +63,11 @@ end
 function package:_init (options)
   base._init(self, options)
   SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
+  if type(options.frames) ~= "table" then
+    SU.error([[Package parallel must be initialized with a set of appropriately named frames.
+This package is usually intended to be loaded from some supporting class or
+from another package, responsible for correct initialization.]])
+  end
   for frame, typesetter in pairs(options.frames) do
     typesetterPool[frame] = SILE.typesetters.base(SILE.getFrame(typesetter))
     typesetterPool[frame].id = typesetter
@@ -146,7 +151,7 @@ package.documentation = [[
 The \autodoc:package{parallel} package provides the mechanism for typesetting diglot or other parallel documents.
 When used by a class such as \code{classes/diglot.lua}, it registers a command for each parallel frame, to allow you to select which frame you’re typesetting into.
 It also defines the \autodoc:command{\sync} command, which adds vertical spacing to each frame such that the \em{next} set of text is vertically aligned.
-See \url{https://sile-typesetter.org/examples/parallel.sil} and the source of \code{classes/diglot.lua} for examples which makes the operation clear.
+See \url{https://sile-typesetter.org/examples/parallel.sil} and the source of \code{classes/diglot.lua} for examples which make the operation clear.
 \end{document}
 ]]
 

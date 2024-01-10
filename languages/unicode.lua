@@ -2,6 +2,13 @@ local icu = require("justenoughicu")
 
 local chardata = require("char-def")
 
+SILE.settings:declare({
+  parameter = "languages.fixedNbsp",
+  type = "boolean",
+  default = false,
+  help = "Whether to treat U+00A0 (NO-BREAK SPACE) as a fixed-width space"
+})
+
 SILE.nodeMakers.base = pl.class({
 
     _init = function (self, options)
@@ -43,6 +50,14 @@ SILE.nodeMakers.base = pl.class({
       self.lastnode = "penalty"
     end,
 
+    makeNonBreakingSpace = function (self)
+      -- Unicode Line Breaking Algorithm (UAX 14) specifies that U+00A0
+      -- (NO-BREAK SPACE) is expanded or compressed like a normal space.
+      coroutine.yield(SILE.nodefactory.kern(SILE.shaper:measureSpace(self.options)))
+      self.lastnode = "glue"
+      self.lasttype = "sp"
+    end,
+
     iterator = function (_, _)
       SU.error("Abstract function nodemaker:iterator called", true)
     end,
@@ -59,6 +74,15 @@ SILE.nodeMakers.base = pl.class({
 
     isSpace = function (self, char)
       return self.isSpaceType[self:charData(char).linebreak]
+    end,
+
+    isNonBreakingSpace = function (self, char)
+      local c = self:charData(char)
+      return c.contextname and c.contextname == "nobreakspace"
+    end,
+
+    isActiveNonBreakingSpace = function (self, char)
+      return self:isNonBreakingSpace(char) and not SILE.settings:get("languages.fixedNbsp")
     end,
 
     isBreaking = function (self, char)
@@ -85,6 +109,9 @@ function SILE.nodeMakers.unicode:dealWith (item)
   if self:isSpace(item.text) then
     self:makeToken()
     self:makeGlue(item)
+  elseif self:isActiveNonBreakingSpace(item.text) then
+    self:makeToken()
+    self:makeNonBreakingSpace()
   elseif self:isBreaking(item.text) then
     self:addToken(char, item)
     self:makeToken()
@@ -152,7 +179,11 @@ function SILE.nodeMakers.unicode:handleWordBreak (item)
   if self:isSpace(item.text) then
     -- Spacing word break
     self:makeGlue(item)
-  else -- a word break which isn't a space
+  elseif self:isActiveNonBreakingSpace(item.text) then
+    -- Non-breaking space word break
+    self:makeNonBreakingSpace()
+  else
+     -- a word break which isn't a space
     self:addToken(item.text, item)
   end
 end
@@ -161,7 +192,7 @@ function SILE.nodeMakers.unicode:handleLineBreak (item, subtype)
   -- Because we are in charge of paragraphing, we
   -- will override space-type line breaks, and treat
   -- them just as ordinary word spaces.
-  if self:isSpace(item.text) then
+  if self:isSpace(item.text) or self:isActiveNonBreakingSpace(item.text) then
     self:handleWordBreak(item)
     return
   end
