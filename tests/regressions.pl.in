@@ -33,7 +33,7 @@ for (@specifics ? @specifics : <tests/*.sil tests/*.xml tests/*.nil>) {
             push @failed, $_;
         } elsif (!system("grep -qx 'UNSUPPORTED' $actual")) {
             $unsupported = 1;
-        } elsif (!system("diff -".($knownbad?"q":"")."U$diffcontext $expectation $actual $highlighter")) {
+        } elsif (!system("cmp -s $expectation $actual")) {
             if ($knownbad) { push @knownbadbutpassing, $_;  }
             else { push @passed, $_; }
         } elsif ($knownbad) {
@@ -41,6 +41,7 @@ for (@specifics ? @specifics : <tests/*.sil tests/*.xml tests/*.nil>) {
         } elsif ($unsupported) {
             push @unsupported, $_;
         } else {
+            system("diff -".($knownbad?"q":"")."U$diffcontext $expectation $actual $highlighter");
             push @failed, $_;
         }
     } else {
