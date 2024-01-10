@@ -250,7 +250,7 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS
 .PHONY: force
 force: ;
 
-PHONY_DEVELOPER_TARGETS = benchmark busted compare coverage docker docker-build-push \
+PHONY_DEVELOPER_TARGETS = busted compare coverage docker docker-build-push \
 	docker-dep-check docker-ghcr-to-hub gource.webm lint luacheck luarocks-lint \
 	prerelease regression_previews regressions release release-preview tagrelease \
 	test update_expecteds update_libtexpdf
@@ -331,9 +331,6 @@ clean-recursive: clean-deps
 
 clean-deps:
 	$(RM) -r $(DEPDIR)
-
-time-%.json: benchmark-%/time.json
-	$(CP) $< $@
 
 update_expecteds: $(EXPECTEDS)
 
