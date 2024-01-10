@@ -1,4 +1,3 @@
 \begin[papersize=a4,class=jplain,layout=tate]{document}
-\use[module=packages.retrograde,target=v0.15.0]
 \latin-in-tate{Hello world.}
 \end{document}
