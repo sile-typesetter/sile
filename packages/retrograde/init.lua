@@ -21,13 +21,17 @@ package.default_settings = {
    },
 }
 
+package.shim_commands = {
+}
+
 function package:_init (options)
   base._init(self, options)
   self:recede(options.target)
 end
 
 function package:recede (target)
-   self:recede_defaults(target)
+  self:recede_defaults(target)
+  self:recede_commands(target)
 end
 
 function package._prep (_, target, type)
@@ -56,6 +60,32 @@ function package:recede_defaults (target)
   end
 end
 
+function package:recede_commands (target)
+  local semvertarget, terminal = self:_prep(target, "command")
+  local currents = {}
+  local target_hit = false
+  for version, commands in pl.tablex.sort(self.shim_commands, semver_descending) do
+     version = semver(version)
+     if target_hit then
+        terminal()
+        break
+     end
+     for command, get_function in pairs(commands) do
+        SU.debug("retrograde", ("Shimming command '%s' to behavior similar to prior to v%s."):format(command, version))
+        local current = SILE.Commands[command]
+        currents[command] = current
+        SILE.Commands[command] = get_function(current)
+     end
+     if version <= semvertarget then target_hit = true end
+  end
+  local function reverter ()
+     for command, current in pairs(currents) do
+        SILE.Commands[command] = current
+     end
+  end
+  return reverter
+end
+
 function package:registerCommands ()
 
   self:registerCommand("recede", function (options, content)
@@ -70,6 +100,16 @@ function package:registerCommands ()
         end)
      else
         self:recede_defaults(options.target)
+     end
+  end)
+
+  self:registerCommand("recede-commands", function (options, content)
+     if content then
+       local reverter = self:recede_commands(options.target)
+       SILE.process(content)
+       reverter()
+     else
+        self:recede_commands(options.target)
      end
   end)
 
