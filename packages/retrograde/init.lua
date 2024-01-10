@@ -21,7 +21,45 @@ package.default_settings = {
    },
 }
 
+local function _v14_aligns (content)
+  SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+  SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+  SILE.settings:set("document.spaceskip", SILE.length("1spc", 0, 0))
+  SILE.process(content)
+  SILE.call("par")
+end
+
 package.shim_commands = {
+  ["0.15.0"] = {
+    ["center"] = function (_)
+      return function (_, content)
+        if #SILE.typesetter.state.nodes ~= 0 then
+          SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
+        end
+        SILE.settings:temporarily(function ()
+          SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue())
+          SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue())
+          _v14_aligns(content)
+        end)
+      end
+    end,
+    ["raggedright"] = function (_)
+      return function (_, content)
+        SILE.settings:temporarily(function ()
+          SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue())
+          _v14_aligns(content)
+        end)
+      end
+    end,
+    ["raggedleft"] = function (_)
+      return function (_, content)
+        SILE.settings:temporarily(function ()
+          SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue())
+          _v14_aligns(content)
+        end)
+      end
+    end,
+  }
 }
 
 function package:_init (options)
