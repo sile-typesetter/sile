@@ -42,7 +42,7 @@ task:
     - ./bootstrap.sh
   configure_script: |
     ./configure MAKE=gmake \
-      --enable-developer LUAROCKS=false LUACHECK=false BUSTED=false DELTA=cat PDFINFO=false NIX=false DOCKER=false \
+      --enable-developer LUAROCKS=false LUACHECK=false BUSTED=false DELTA=cat PDFINFO=false NIX=false NPM=false DOCKER=false \
       --disable-font-variations \
       --with-system-lua-sources \
       --with-system-luarocks \
