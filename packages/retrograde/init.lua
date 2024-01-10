@@ -66,6 +66,7 @@ function package:registerCommands ()
      if content then
         SILE.settings:temporarily(function ()
            self:recede_defaults(options.target)
+           SILE.process(content)
         end)
      else
         self:recede_defaults(options.target)
