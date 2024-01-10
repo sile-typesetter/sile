@@ -14,44 +14,140 @@ end
 package.default_settings = {
    ["0.15.0"] = {
       ["shaper.spaceenlargementfactor"] = 1.2,
+      ["document.parindent"] = "20pt",
    },
    ["0.9.5"] = {
       ["font.family"] = "Gentium Basic",
    },
 }
 
-function package:_init (options)
-  base._init(self, options)
-  self:defaults(options.target)
+local function _v14_aligns (content)
+  SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+  SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+  SILE.settings:set("document.spaceskip", SILE.length("1spc", 0, 0))
+  SILE.process(content)
+  SILE.call("par")
 end
 
-function package:defaults (target)
+package.shim_commands = {
+  ["0.15.0"] = {
+    ["center"] = function (_)
+      return function (_, content)
+        if #SILE.typesetter.state.nodes ~= 0 then
+          SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
+        end
+        SILE.settings:temporarily(function ()
+          SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue())
+          SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue())
+          _v14_aligns(content)
+        end)
+      end
+    end,
+    ["raggedright"] = function (_)
+      return function (_, content)
+        SILE.settings:temporarily(function ()
+          SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue())
+          _v14_aligns(content)
+        end)
+      end
+    end,
+    ["raggedleft"] = function (_)
+      return function (_, content)
+        SILE.settings:temporarily(function ()
+          SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue())
+          _v14_aligns(content)
+        end)
+      end
+    end,
+  }
+}
+
+function package:_init (options)
+  base._init(self, options)
+  self:recede(options.target)
+end
+
+function package:recede (target)
+  self:recede_defaults(target)
+  self:recede_commands(target)
+end
+
+function package._prep (_, target, type)
   target = semver(target and target or SILE.version)
-  SU.debug("retrograde", ("Targeting default changes back as far as the release of SILE v%s."):format(target))
+  SU.debug("retrograde", ("Targeting %s changes back as far as the release of SILE v%s."):format(type, target))
+  local terminal = function (version)
+   SU.debug("retrograde", ("The next set of %s changes is from the release of SILE v%s, stopping."):format(type, version))
+  end
+  return target, terminal
+end
+
+function package:recede_defaults (target)
+  local semvertarget, terminal = self:_prep(target, "default")
   local target_hit = false
   for version, settings in pl.tablex.sort(self.default_settings, semver_descending) do
      version = semver(version)
      if target_hit then
-        SU.debug("retrograde", ("The next set of default changes is from the release of SILE v%s, stopping."):format(version))
+        terminal()
         break
      end
      for parameter, value in pairs(settings) do
         SU.debug("retrograde", ("Resetting '%s' to '%s' as it was prior to v%s."):format(parameter, tostring(value), version))
         SILE.settings:set(parameter, value, true)
      end
-     if version <= target then target_hit = true end
+     if version <= semvertarget then target_hit = true end
   end
+end
+
+function package:recede_commands (target)
+  local semvertarget, terminal = self:_prep(target, "command")
+  local currents = {}
+  local target_hit = false
+  for version, commands in pl.tablex.sort(self.shim_commands, semver_descending) do
+     version = semver(version)
+     if target_hit then
+        terminal()
+        break
+     end
+     for command, get_function in pairs(commands) do
+        SU.debug("retrograde", ("Shimming command '%s' to behavior similar to prior to v%s."):format(command, version))
+        local current = SILE.Commands[command]
+        currents[command] = current
+        SILE.Commands[command] = get_function(current)
+     end
+     if version <= semvertarget then target_hit = true end
+  end
+  local function reverter ()
+     for command, current in pairs(currents) do
+        SILE.Commands[command] = current
+     end
+  end
+  return reverter
 end
 
 function package:registerCommands ()
 
-  self:registerCommand("defaults", function (options, content)
+  self:registerCommand("recede", function (options, content)
+     SILE.call("recede-defaults", options, content)
+  end)
+
+  self:registerCommand("recede-defaults", function (options, content)
      if content then
         SILE.settings:temporarily(function ()
-           self:defaults(options.target)
+           self:recede_defaults(options.target)
+           SILE.process(content)
         end)
      else
-        self:defaults(options.target)
+        self:recede_defaults(options.target)
+     end
+  end)
+
+  self:registerCommand("recede-commands", function (options, content)
+     if content then
+       local reverter = self:recede_commands(options.target)
+       SILE.process(content)
+       reverter()
+     else
+        self:recede_commands(options.target)
      end
   end)
 
