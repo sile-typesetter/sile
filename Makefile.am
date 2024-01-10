@@ -156,7 +156,7 @@ CLEAN ?=
 dist: sile-$(VERSION).pdf sile-$(VERSION).md
 
 sile-$(VERSION).pdf: $(MANUAL)
-	$(CP) $(MANUAL) $@
+	$(INSTALL) $(MANUAL) $@
 
 sile-%.md: CHANGELOG.md
 	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' CHANGELOG.md | \
