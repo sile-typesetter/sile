@@ -23,36 +23,52 @@ package.default_settings = {
 
 function package:_init (options)
   base._init(self, options)
-  self:defaults(options.target)
+  self:recede(options.target)
 end
 
-function package:defaults (target)
+function package:recede (target)
+   self:recede_defaults(target)
+end
+
+function package._prep (_, target, type)
   target = semver(target and target or SILE.version)
-  SU.debug("retrograde", ("Targeting default changes back as far as the release of SILE v%s."):format(target))
+  SU.debug("retrograde", ("Targeting %s changes back as far as the release of SILE v%s."):format(type, target))
+  local terminal = function (version)
+   SU.debug("retrograde", ("The next set of %s changes is from the release of SILE v%s, stopping."):format(type, version))
+  end
+  return target, terminal
+end
+
+function package:recede_defaults (target)
+  local semvertarget, terminal = self:_prep(target, "default")
   local target_hit = false
   for version, settings in pl.tablex.sort(self.default_settings, semver_descending) do
      version = semver(version)
      if target_hit then
-        SU.debug("retrograde", ("The next set of default changes is from the release of SILE v%s, stopping."):format(version))
+        terminal()
         break
      end
      for parameter, value in pairs(settings) do
         SU.debug("retrograde", ("Resetting '%s' to '%s' as it was prior to v%s."):format(parameter, tostring(value), version))
         SILE.settings:set(parameter, value, true)
      end
-     if version <= target then target_hit = true end
+     if version <= semvertarget then target_hit = true end
   end
 end
 
 function package:registerCommands ()
 
-  self:registerCommand("defaults", function (options, content)
+  self:registerCommand("recede", function (options, content)
+     SILE.call("recede-defaults", options, content)
+  end)
+
+  self:registerCommand("recede-defaults", function (options, content)
      if content then
         SILE.settings:temporarily(function ()
-           self:defaults(options.target)
+           self:recede_defaults(options.target)
         end)
      else
-        self:defaults(options.target)
+        self:recede_defaults(options.target)
      end
   end)
 
