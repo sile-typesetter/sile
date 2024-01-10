@@ -139,6 +139,20 @@ function typesetter.declareSettings(_)
     help = "Whether italic correction is activated or not"
   })
 
+  SILE.settings:declare({
+    parameter = "typesetter.softHyphen",
+    type = "boolean",
+    default = true,
+    help = "When true, soft hyphens are rendered as discretionary breaks, otherwise they are ignored"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.softHyphenWarning",
+    type = "boolean",
+    default = false,
+    help = "When true, a warning is issued when a soft hyphen is encountered"
+  })
+
 end
 
 function typesetter:initState ()
@@ -283,7 +297,29 @@ function typesetter:typeset (text)
     if token.separator then
       self:endline()
     else
-      self:setpar(token.string)
+      if SILE.settings:get("typesetter.softHyphen") then
+        local warnedshy = false
+        for token2 in SU.gtoke(token.string, luautf8.char(0x00AD)) do
+          if token2.separator then -- soft hyphen support
+            local discretionary = SILE.nodefactory.discretionary({})
+            local hbox = SILE.typesetter:makeHbox({ SILE.settings:get("font.hyphenchar") })
+            discretionary.prebreak = { hbox }
+            table.insert(SILE.typesetter.state.nodes, discretionary)
+            if not warnedshy and SILE.settings:get("typesetter.softHyphenWarning") then
+              SU.warn("Soft hyphen encountered and replaced with discretionary")
+            end
+            warnedshy = true
+          else
+            self:setpar(token2.string)
+          end
+        end
+      else
+        if SILE.settings:get("typesetter.softHyphenWarning") and luautf8.match(token.string, luautf8.char(0x00AD)) then
+          SU.warn("Soft hyphen encountered and ignored")
+        end
+        text = luautf8.gsub(token.string, luautf8.char(0x00AD), "")
+        self:setpar(text)
+      end
     end
   end
   SILE.traceStack:pop(pId)
@@ -1072,16 +1108,18 @@ function typesetter:makeHbox (content)
         local ox = atypesetter.frame.state.cursorX
         local oy = atypesetter.frame.state.cursorY
         SILE.outputter:setCursor(atypesetter.frame.state.cursorX, atypesetter.frame.state.cursorY)
+        SU.debug("hboxes", function ()
+          -- setCursor is also invoked by the internal (wrapped) hboxes etc.
+          -- so we must show our debug box before outputting its content.
+          SILE.outputter:debugHbox(box, box:scaledWidth(line))
+          return "Drew debug outline around hbox"
+        end)
         for _, node in ipairs(box.value) do
           node:outputYourself(atypesetter, line)
         end
         atypesetter.frame.state.cursorX = ox
         atypesetter.frame.state.cursorY = oy
         _post()
-        SU.debug("hboxes", function ()
-          SILE.outputter:debugHbox(box, box:scaledWidth(line))
-          return "Drew debug outline around hbox"
-        end)
       end
     })
   return hbox, migratingNodes

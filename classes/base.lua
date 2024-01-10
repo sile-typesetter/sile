@@ -80,11 +80,15 @@ end
 function class:setOptions (options)
   options = options or {}
   -- Classes that add options with dependencies should explicitly handle them, then exempt them from furthur processing.
-  -- The landscape option is handled explicitly before papersize, then the "rest" of options that are not interdependent.
+  -- The landscape and crop related options are handled explicitly before papersize, then the "rest" of options that are not interdependent.
   self.options.landscape = SU.boolean(options.landscape, false)
   options.landscape = nil
   self.options.papersize = options.papersize or "a4"
   options.papersize = nil
+  self.options.bleed = options.bleed or "0"
+  options.bleed = nil
+  self.options.sheetsize = options.sheetsize or nil
+  options.sheetsize = nil
   for option, value in pairs(options) do
     self.options[option] = value
   end
@@ -126,6 +130,33 @@ function class:declareOptions ()
       })
     end
     return self.papersize
+  end)
+  self:declareOption("sheetsize", function (_, size)
+    if size then
+      self.sheetsize = size
+      SILE.documentState.sheetSize = SILE.papersize(size, self.options.landscape)
+      if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1]
+        or SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] then
+        SU.error("Sheet size shall not be smaller than the paper size")
+      end
+      if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1] + SILE.documentState.bleed then
+        SU.debug("frames", "Sheet size width augmented to take page bleed into account")
+        SILE.documentState.sheetSize[1] = SILE.documentState.paperSize[1] + SILE.documentState.bleed
+      end
+      if SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] + SILE.documentState.bleed then
+        SU.debug("frames", "Sheet size height augmented to take page bleed into account")
+        SILE.documentState.sheetSize[2] = SILE.documentState.paperSize[2] + SILE.documentState.bleed
+      end
+    else
+      return self.sheetsize
+    end
+   end)
+  self:declareOption("bleed", function (_, dimen)
+    if dimen then
+      self.bleed = dimen
+      SILE.documentState.bleed = SU.cast("measurement", dimen):tonumber()
+    end
+    return self.bleed
   end)
 end
 
@@ -334,10 +365,35 @@ function class:registerCommands ()
 
   self:registerCommand("script", function (options, content)
     local packopts = packOptions(options)
+    local function _deprecated (original, suggested)
+      SU.deprecated("\\script", "\\lua or \\use", "0.15.0", "0.16.0", ([[
+      The \script function has been deprecated. It was overloaded to mean
+      too many different things and more targeted tools were introduced in
+      SILE v0.14.0. To load 3rd party modules designed for use with SILE,
+      replace \script[src=...] with \use[module=...]. To run arbitrary Lua
+      code inline use \lua{}, optionally with a require= parameter to load
+      a (non-SILE) Lua module using the Lua module path or src= to load a
+      file by file path.
+
+      For this use case consider replacing:
+
+          %s
+
+      with:
+
+          %s
+      ]]):format(original, suggested))
+    end
     if SU.ast.hasContent(content) then
+      _deprecated("\\script{...}", "\\lua{...}")
       return SILE.processString(content[1], options.format or "lua", nil, packopts)
     elseif options.src then
-      return SILE.require(options.src)
+      local module = options.src:gsub("%/", ".")
+      local original = (("\\script[src=%s]"):format(options.src))
+      local result = SILE.require(options.src)
+      local suggested = (result._name and "\\use[module=%s]" or "\\lua[require=%s]"):format(module)
+      _deprecated(original, suggested)
+      return result
     else
       SU.error("\\script function requires inline content or a src file path")
       return SILE.processString(content[1], options.format or "lua", nil, packopts)

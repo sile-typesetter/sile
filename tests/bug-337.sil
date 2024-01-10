@@ -1,8 +1,9 @@
-\begin[papersize=a7,class=book]{document}
+\begin[papersize=a7,class=book,sheetsize=a6]{document}
 \use[module=packages.retrograde,target=v0.15.0]
-\script[src=inc.bug-337]
-\define[command=crop:header]{tests/bug-337.sil}
-\crop:setup[papersize=a6]
+\use[module=packages.color]
+\use[module=inc.bug-337]
+\define[command=cropmarks:header]{tests/bug-337.sil}
+\cropmarks:setup
 \nofolios
 \set[parameter=document.parindent,value=0]
 

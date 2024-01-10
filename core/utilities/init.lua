@@ -39,7 +39,7 @@ utilities.error = function (message, isbug)
   io.stderr:flush()
   SILE.outputter:finish() -- Only really useful from the REPL but no harm in trying
   SILE.scratch.caughterror = true
-  error(message, 2)
+  error("", 2)
 end
 
 utilities.warn = function (message, isbug)
@@ -104,7 +104,7 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
   -- Hence we fake it ‘till we make it, all deprecations internally are warnings.
   local brackets = old:sub(1,1) == '\\' and "" or "()"
   local _new = new and "Please use " .. (new .. brackets) .. " instead." or "Plase don't use it."
-  local msg = (old .. brackets) .. " was deprecated in SILE v" .. tostring(warnat) .. ". " .. _new ..  (extra and "\n" .. extra .. "\n\n" or "")
+  local msg = (old .. brackets) .. " was deprecated in SILE v" .. tostring(warnat) .. ". " .. _new ..  (extra and ("\n\n" .. extra .. "\n") or "")
   if errorat and current >= errorat then
     SU.error(msg)
   elseif warnat and current >= warnat then
@@ -115,7 +115,7 @@ end
 utilities.debug = function (category, ...)
   if SILE.quiet then return end
   if utilities.debugging(category) then
-    local inputs = table.pack(...)
+    local inputs = pl.utils.pack(...)
     for i, input in ipairs(inputs) do
       if type(input) == "function" then
         local status, output = pcall(input)
@@ -261,7 +261,7 @@ end
 
 utilities.compress = function (items)
   local rv = {}
-  local max = math.max(table.unpack(pl.tablex.keys(items)))
+  local max = math.max(pl.utils.unpack(pl.tablex.keys(items)))
   for i = 1, max do if items[i] then rv[#rv+1] = items[i] end end
   return rv
 end

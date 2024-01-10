@@ -185,6 +185,10 @@ true value) and also \em{unset} the setting \autodoc:setting{document.spaceskip}
 unset it, just call \autodoc:command{\set} with no \autodoc:parameter{value} parameter:
 \autodoc:command{\set[parameter=document.spaceskip]}.
 
+Note that non-breaking spaces (U+00A0), following the guidelines of Unicode Annex 14 (UAX 14), are treated by default as stretchable or shrinkable akin to regular inter-word spaces, contributing to text justification and alignment for consistent layout.
+
+If you want to disable this behavior, the \autodoc:setting{languages.fixedNbsp} setting may be set to \code{true} to enforce fixed-width non-breaking spaces.
+
 \subsection{Letter spacing settings}
 
 You can also put spaces in between \em{letters} with the \autodoc:setting{document.letterspaceglue} setting.

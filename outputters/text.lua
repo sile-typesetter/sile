@@ -23,7 +23,7 @@ end
 
 function outputter:_writeline (...)
   self:_ensureInit()
-  local args = table.pack(...)
+  local args = pl.utils.pack(...)
   for i=1, #args do
     outfile:write(args[i])
   end

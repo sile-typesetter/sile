@@ -1,5 +1,18 @@
 \begin[papersize=a6,direction=RTL]{document}
 \use[module=packages.retrograde,target=v0.15.0]
+\begin{lua}
+  -- ICU 74 introduced a change that affects where SILE sees font
+  -- property changes in this text. Both outputs are fine, but we
+  -- don't have tooling to expect different outputs for the same
+  -- inputs yet, so this work around just allows this test to fail
+  -- on ICU 74. As of this commit our CI system uses ICU 70, so
+  -- only some local developer testing is affected. When CI ever
+  -- starts breaking we might make that the expectation and mark it
+  -- unsupported on other versions.
+  local icu = require("justenoughicu")
+  local icu74plus = tostring(icu.version()) >= "74.0"
+  if icu74plus then SILE.status.unsupported = true end
+\end{lua}
 \nofolios
 \font[family=Amiri Quran,size=20pt]
 \use[module=packages.linespacing]

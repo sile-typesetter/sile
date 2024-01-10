@@ -16,6 +16,9 @@ package.default_settings = {
       ["shaper.spaceenlargementfactor"] = 1.2,
       ["document.parindent"] = "20pt",
    },
+   ["0.9.5"] = {
+      ["font.family"] = "Gentium Basic",
+   },
 }
 
 function package:_init (options)
@@ -25,14 +28,18 @@ end
 
 function package:defaults (target)
   target = semver(target and target or SILE.version)
+  SU.debug("retrograde", ("Targeting default changes back as far as the release of SILE v%s."):format(target))
   local target_hit = false
   for version, settings in pl.tablex.sort(self.default_settings, semver_descending) do
      version = semver(version)
+     if target_hit then
+        SU.debug("retrograde", ("The next set of default changes is from the release of SILE v%s, stopping."):format(version))
+        break
+     end
      for parameter, value in pairs(settings) do
-        SU.debug("retrograde", ("Resetting '%s' to '%s' as it was prior to v%s"):format(parameter, tostring(value), version))
+        SU.debug("retrograde", ("Resetting '%s' to '%s' as it was prior to v%s."):format(parameter, tostring(value), version))
         SILE.settings:set(parameter, value, true)
      end
-     if target_hit then break end
      if version <= target then target_hit = true end
   end
 end
