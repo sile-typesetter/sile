@@ -5,7 +5,7 @@
 -- end
 
 SILE.settings:declare({ parameter = "shaper.variablespaces", type = "boolean", default = true })
-SILE.settings:declare({ parameter = "shaper.spaceenlargementfactor", type = "number or integer", default = 1.2 })
+SILE.settings:declare({ parameter = "shaper.spaceenlargementfactor", type = "number or integer", default = 1 })
 SILE.settings:declare({ parameter = "shaper.spacestretchfactor", type = "number or integer", default = 1/2 })
 SILE.settings:declare({ parameter = "shaper.spaceshrinkfactor", type = "number or integer", default = 1/3 })
 

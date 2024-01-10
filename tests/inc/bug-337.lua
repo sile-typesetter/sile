@@ -4,9 +4,9 @@ local package = pl.class(base)
 package._name = "bug-337"
 
 
-function package:_init ()
+function package:_init (options)
 
-  base._init(self)
+  base._init(self, options)
 
   self.class:defineMaster({
       id = "right",

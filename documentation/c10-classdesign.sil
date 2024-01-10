@@ -458,7 +458,7 @@ self:registerCommand("tocentry", function (options, content)
   SILE.call("info", {
     category = "toc",
     value = {
-      label = SU.stripContentPos(content), level = (options.level or 1)
+      label = SU.ast.stripContentPos(content), level = (options.level or 1)
     }
   })
 end)

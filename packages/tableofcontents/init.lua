@@ -57,7 +57,7 @@ local function _linkWrapper (dest, func)
 end
 
 -- Flatten a node list into just its string representation.
--- (Similar to SU.contentToString(), but allows passing typeset
+-- (Similar to SU.ast.contentToString(), but allows passing typeset
 -- objects to functions that need plain strings).
 local function _nodesToText (nodes)
   -- A real interword space width depends on several settings (depending on variable
@@ -174,7 +174,7 @@ function package:registerCommands ()
     SILE.call("info", {
       category = "toc",
       value = {
-        label = SU.stripContentPos(content),
+        label = SU.ast.stripContentPos(content),
         level = (options.level or 1),
         number = options.number,
         link = dest

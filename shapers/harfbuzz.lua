@@ -98,12 +98,15 @@ function shaper.getFace (opts)
     SU.debug("fonts", "Instanciated", _pretty_varitions(face), "as", face.tempfilename)
   elseif (face.variations ~= "") or (bitshim.rshift(face.index, 16) ~= 0) then
     if not SILE.features.font_variations then
-      SU.warn([[This build of SILE was compiled with font variations support disabled,
+      SU.warn([[
+  This build of SILE was compiled with font variations support disabled,
   likely due to not having the subsetter library included in HarfBuzz >= 6.
   This document specifies font variations which cannot be correctly rendered.
   Please rebuild SILE with the necessary library support. Alternatively to procede
   anyway *incorrectly* render this document run:
+
       sile -e 'SILE.features.font_variations = true' ....
+
   Or modify the document to remove variations options from font commands.]])
     end
     SU.error("Failed to instanciate: " .. _pretty_varitions(face))

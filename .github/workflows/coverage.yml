@@ -60,7 +60,7 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
-            --enable-developer LUACHECK=false NIX=false \
+            --enable-developer LUACHECK=false NIX=false DELTA=cat \
             --disable-font-variations \
             --without-manual
       - name: Make
