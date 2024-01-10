@@ -1,0 +1,4 @@
+\begin[papersize=a7]{document}
+\nofolios
+Before {\set[parameter=font.style,value=Italic]inside} after.
+\end{document}
