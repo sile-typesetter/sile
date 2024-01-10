@@ -104,7 +104,7 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
   -- Hence we fake it ‘till we make it, all deprecations internally are warnings.
   local brackets = old:sub(1,1) == '\\' and "" or "()"
   local _new = new and "Please use " .. (new .. brackets) .. " instead." or "Plase don't use it."
-  local msg = (old .. brackets) .. " was deprecated in SILE v" .. tostring(warnat) .. ". " .. _new ..  (extra and "\n" .. extra .. "\n\n" or "")
+  local msg = (old .. brackets) .. " was deprecated in SILE v" .. tostring(warnat) .. ". " .. _new ..  (extra and ("\n\n" .. extra .. "\n") or "")
   if errorat and current >= errorat then
     SU.error(msg)
   elseif warnat and current >= warnat then
