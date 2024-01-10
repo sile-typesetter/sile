@@ -1,5 +1,4 @@
 \begin[papersize=a6]{document}
-\use[module=packages.retrograde,target=v0.15.0]
 \nofolios
 \use[module=packages.lorem]
 \font[family=Libertinus Serif]

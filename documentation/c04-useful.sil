@@ -83,7 +83,7 @@ The full list of attributes to the \autodoc:command{\font} command are:
 
 It’s quite fiddly to be always changing font specifications manually;
     later we’ll see some ways to automate the process.
-SILE’s \autodoc:class{plain} class notably provides the \autodoc:command{\em{…}} command as a shortcut for \autodoc:command{\font[style=italic]{…}}, and the \autodoc:command{\strong{…}} command as a a shortcut for \autodoc:command{\font[weight=700]{…}}.
+SILE’s \autodoc:class{plain} class notably provides the \autodoc:command{\strong{…}} command as a a shortcut for \autodoc:command{\font[weight=700]{…}}, and the \autodoc:command{\em{…}} to emphasize text (switching between italic or regular style as needed).
 
 Note for parameters that accept multiple values, values may be separated with commas.
 Be sure to wrap the value in quotes so the commas don't get parsed as new parameters.
