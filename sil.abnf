@@ -12,7 +12,7 @@ document = *content
 content =  environment
 content =/ comment
 content =/ text
-content =/ braced_content
+content =/ braced-content
 content =/ command
 
 ; Environments come in two flavors, raw passthrough and regular. The difference
@@ -27,12 +27,12 @@ comment = "%" utf8-octets CRLF
 ; Input strings that are not wrapped in some SILE command.
 text = *text-char
 
-; Input content wrapped in braces can be attatched to a command or just used to
-; create a settings wrapper.
-braced_content = "{" content "}"
+; Input content wrapped in braces can be attatched to a command or used to
+; manually isolate chunks of content (e.g. to hinder ligatures).
+braced-content = "{" content "}"
 
 ; As with environments, can be raw passthrough or regular content depending on the command. With raw variants we require contents.
-command =  "\" command-id [ options ] [ braced_content ]
+command =  "\" command-id [ options ] [ braced-content ]
 command =/ "\" passthrough-command-id [ options ] braced-passthrough-content
 
 ; Building blocks
@@ -47,7 +47,7 @@ escaped-char = "\\" / "\%" / "\{" / "\}"
 
 ; non-ascii-char = %x80-D7FF / %xE000-10FFFF
 text-char =  %x0-24  ; omit %
-text-char =  %x26-5B ; omit \
+text-char =/ %x26-5B ; omit \
 text-char =/ %x5D-7A ; omit {
 text-char =/ %x7C    ; omit }
 text-char =/ %x7E-7F ; end of utf8-1

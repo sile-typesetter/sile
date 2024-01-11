@@ -71,7 +71,7 @@ function inputter._grammar (_ENV)
       eol^-1
     ) / ""
 
-  START "document"
+  START"document"
   document = V"content" * EOF"Unexpected character at end of input"
   content = Cg(
       V"environment" +
