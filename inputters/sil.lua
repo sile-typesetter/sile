@@ -68,33 +68,44 @@ local function getline (str, pos)
 end
 
 local function massage_ast (tree, doc)
-  -- Sort out pos
   if type(tree) == "string" then return tree end
   if tree.pos then
     tree.lno, tree.col = getline(doc, tree.pos)
+    tree.pos = nil
   end
-  if tree.id == "document"
-      or tree.id == "braced_content"
-      or tree.id == "passthrough_content"
-      or tree.id == "braced_passthrough_content"
-      or tree.id == "env_passthrough_content"
+  SU.debug("inputter", "Processing ID:", tree.id)
+  if false
+    or tree.id == "document"
+    or tree.id == "braced_content"
+    or tree.id == "passthrough_content"
+    or tree.id == "braced_passthrough_content"
+    or tree.id == "env_passthrough_content"
     then
-      return massage_ast(tree[1], doc)
-  end
-  if tree.id == "text"
+    SU.debug("inputter", "Re-massage subtree", tree.id)
+    return massage_ast(tree[1], doc)
+  elseif false
+    or tree.id == "text"
     or tree.id == "passthrough_text"
+    or tree.id == "braced_passthrough_text"
     or tree.id == "env_passthrough_text"
     then
-      return tree[1]
-  end
-  for key, val in ipairs(tree) do
-    if val.id == "content" then
-      SU.splice(tree, key, key, massage_ast(val, doc))
-    else
-      tree[key] = massage_ast(val, doc)
+    SU.debug("inputter", "  - Collapse subtree")
+    return tree[1]
+  elseif false
+    or tree.id == "content"
+    or tree.id == "environment"
+    or tree.id == "command" then
+    SU.debug("inputter", "  - Massage in place", tree.id)
+    for key, val in ipairs(tree) do
+      SU.debug("inputter", "    -", val.id)
+      if val.id == "content" then
+        SU.splice(tree, key, key, massage_ast(val, doc))
+      else
+        tree[key] = massage_ast(val, doc)
+      end
     end
+    return tree
   end
-  return tree
 end
 
 function inputter:rebuildParser ()
@@ -126,6 +137,7 @@ function inputter:parse (doc)
   if not tree then
     tree = { top, command = "document" }
   end
+  -- SU.dump(tree)
   return { tree }
 end
 

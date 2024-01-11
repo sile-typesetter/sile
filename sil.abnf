@@ -3,6 +3,11 @@
 ; Based on RFC 5234 (Augmented BNF for Syntax Specifications: ABNF)
 ; Uses RFC 7405 (Case-Sensitive String Support in ABNF)
 
+; NOTE: ABNF does not seem to have a way to express matching / balancing of
+; tags. The grammar below does not express SILE's ability to skip over
+; passthrough content until it hits the correct matching closing tag for
+; environments or the first unballanced brace for braced content.
+
 ; A master document can only have one top level content item, but we allow
 ; loading of fragments as well which can have any number of top level content
 ; items, hence valid grammar can be any number of content items.
@@ -15,35 +20,43 @@ content =/ text
 content =/ braced-content
 content =/ command
 
-; Environments come in two flavors, raw passthrough and regular. The difference
-; is what is allowed to terminate them and what escapes are needed for the
-; content in the middle.
-environment =  %s"\begin" [ options ] "{" command-id "}" content %s"\end{" command-id "}"
-environment =/ %s"\begin" [ options ] "{" passthrough-command-id "}" passthrough-content %s"\end{" passthrough-command-id "}"
+; Environments come in two flavors, passthrough (raw) and regular. The
+; difference is what is allowed to terminate them and what escapes are needed
+; for the content in the middle.
+environment =  %s"\\begin" [ options ] "{" command-id "}" content s"\\end{" command-id "}"
+environment =/ %s"\\begin" [ options ] "{" passthrough-command-id "}" env-passthrough-text s"\\end{" passthrough-command-id "}"
+
+; Passthrough (raw) environments can have any valid UTF-8 except the closing
+; delimiter matching the opening.
+env-passthrough-text = utf8-octets - ( %s"\\end{" passthrough-command-id "}" )
 
 ; Nothing to see here.
+; But potentially important because it eats newlines!
 comment = "%" utf8-octets CRLF
 
-; Input strings that are not wrapped in some SILE command.
-text = *text-char
+; Input strings that are not special
+text = *text-char / escaped-specials
 
 ; Input content wrapped in braces can be attatched to a command or used to
 ; manually isolate chunks of content (e.g. to hinder ligatures).
 braced-content = "{" content "}"
 
-; As with environments, can be raw passthrough or regular content depending on the command. With raw variants we require contents.
-command =  "\" command-id [ options ] [ braced-content ]
-command =/ "\" passthrough-command-id [ options ] braced-passthrough-content
+; As with environments, the content format may be passthrough (raw) or more sil
+; content depending on the command.
+command =  "\\" command-id [ options ] [ braced-content ]
+command =/ "\\" passthrough-command-id [ options ] [ braced-passthrough-text ]
+
+; Passthrough (raw) command text can have any valid UTF-8 except an unbalanced closing delimiter
+braced-passthrough-text = utf8-octets - "}"
 
 ; Building blocks
 options = "[" parameter *( "," parameter ) "]"
-parameter = *1( sil-identifier "=" value)
-value =
-quoted-value = DQUOTE *( *SP / value / "," ) DQUOTE
-s = *WS
-any = %x20-7F / valid-non-ascii / tab
+parameter = *( sil-identifier "=" ( value / quoted-value ) )
+value = utf8-octets - "," - "]"
+quoted-value = DQUOTE *( utf8-octets ) DQUOTE
 
-escaped-char = "\\" / "\%" / "\{" / "\}"
+specials = "\\" / "%" / "{" / "}"
+escaped-specials = "\\" specials
 
 ; non-ascii-char = %x80-D7FF / %xE000-10FFFF
 text-char =  %x0-24  ; omit %
