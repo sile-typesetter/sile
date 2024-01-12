@@ -75,6 +75,11 @@ local function massage_ast (tree, doc)
   end
   SU.debug("inputter", "Processing ID:", tree.id)
   if false
+    or tree.id == "comment"
+    then
+    SU.debug("inputter", ("Discarding comment:"), pl.stringx.strip(tree[1]))
+    return {}
+  elseif false
     or tree.id == "document"
     or tree.id == "braced_content"
     or tree.id == "passthrough_content"
@@ -100,7 +105,7 @@ local function massage_ast (tree, doc)
       SU.debug("inputter", "    -", val.id)
       if val.id == "content" then
         SU.splice(tree, key, key, massage_ast(val, doc))
-      else
+      elseif val.id then -- requiring an id discards nodes with no content such as comments
         tree[key] = massage_ast(val, doc)
       end
     end

@@ -58,13 +58,12 @@ local function grammar (_ENV)
   passthrough_text = C((1-S("{}"))^1)
   debraced_passthrough_text = C(V"braced_passthrough_text")
   braced_passthrough_text = P"{" * V"passthrough_content" * ( P"}" + E("} expected") )
-  local comment = P"%" * P(1-eol)^0 * eol^-1 / ""
 
   START"document"
   document = V"content" * EOF"Unexpected character at end of input"
   content = Cg(
       V"environment" +
-      comment +
+      V"comment" +
       V"text" +
       V"braced_content" +
       V"command"
@@ -79,6 +78,7 @@ local function grammar (_ENV)
       (Cmt(Cb"command", isPassthrough) * V"env_passthrough_content" * pass_end) +
       (Cmt(Cb"command", isNotPassthrough) * V"content" * notpass_end)
     )
+  comment = C( P"%" * P(1-eol)^0 * eol^-1 / "" )
   text = C((1 - specials + escaped_specials)^1) / unescapeSpecials
   braced_content = P"{" * V"content" * ( P"}" + E("} expected") )
   command = (
