@@ -102,12 +102,14 @@ function inputter:rebuildParser ()
 end
 
 function inputter:parse (doc)
-  local parsed = epnf.parsestring(self._parser, doc)[1]
-  if not parsed then
-    return SU.error("Unable to parse input document to an AST tree")
+  local status, result = pcall(epnf.parsestring, self._parser, doc)
+  if not status then
+    return SU.error(([[Unable to parse input document to an AST tree. Parser error:
+
+%s  thrown from document beginning]]):format(pl.stringx.indent(result, 6)))
   end
   resetCache()
-  local top = massage_ast(parsed, doc)
+  local top = massage_ast(result[1], doc)
   local tree
   -- Content not part of a tagged command could either be part of a document
   -- fragment or junk (e.g. comments, whitespace) outside of a document tag. We
