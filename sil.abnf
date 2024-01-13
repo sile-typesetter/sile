@@ -23,23 +23,23 @@ content =/ command
 ; Environments come in two flavors, passthrough (raw) and regular. The
 ; difference is what is allowed to terminate them and what escapes are needed
 ; for the content in the middle.
-environment =  %s"\\begin" [ options ] "{" passthrough-command-id "}"
+environment =  %s"\begin" [ options ] "{" passthrough-command-id "}"
                env-passthrough-text
-               s"\\end{" passthrough-command-id "}"
-environment =/ %s"\\begin" [ options ] "{" command-id "}"
+               %s"\end{" passthrough-command-id "}"
+environment =/ %s"\begin" [ options ] "{" command-id "}"
                content
-               s"\\end{" command-id "}"
+               %s"\end{" command-id "}"
 
 ; Passthrough (raw) environments can have any valid UTF-8 except the closing
 ; delimiter matching the opening, per the environment rule.
-env-passthrough-text = utf8-octets
+env-passthrough-text = utf8-text
 
 ; Nothing to see here.
 ; But potentially important because it eats newlines!
-comment = "%" utf8-octets CRLF
+comment = "%" utf8-text CRLF
 
 ; Input strings that are not special
-text = *text-char / escaped-specials
+text = *( text-char / escaped-specials )
 
 ; Input content wrapped in braces can be attatched to a command or used to
 ; manually isolate chunks of content (e.g. to hinder ligatures).
@@ -47,20 +47,20 @@ braced-content = "{" content "}"
 
 ; As with environments, the content format may be passthrough (raw) or more sil
 ; content depending on the command.
-command =  "\\" passthrough-command-id [ options ] [ braced-passthrough-text ]
-command =/ "\\" command-id [ options ] [ braced-content ]
+command =  "\" passthrough-command-id [ options ] [ braced-passthrough-text ]
+command =/ "\" command-id [ options ] [ braced-content ]
 
 ; Passthrough (raw) command text can have any valid UTF-8 except an unbalanced closing delimiter
-braced-passthrough-text = utf8-octets
+braced-passthrough-text = utf8-text
 
 ; Building blocks
-options = "[" parameter *( "," parameter ) [ "," ] "]"
-parameter = *( sil-identifier "=" ( value / quoted-value ) )
-value = utf8-octets
-quoted-value = DQUOTE utf8-octets DQUOTE
+options = "[" parameter *( "," parameter ) "]"
+parameter = sil-identifier "=" ( value / quoted-value )
+value = utf8-text
+quoted-value = DQUOTE utf8-text DQUOTE
 
-specials = "\\" / "%" / "{" / "}"
-escaped-specials = "\\" specials
+specials = "\" / "%" / "{" / "}"
+escaped-specials = "\" specials
 
 ; non-ascii-char = %x80-D7FF / %xE000-10FFFF
 text-char =  %x0-24  ; omit %
@@ -78,7 +78,7 @@ command-id = identifier ; - ( %s"begin" / %s"end" / passthrough-command-id )
 passthrough-command-id = %s"ftl" / %s"lua" / %s"math" / %s"raw" / %s"script" / %s"sil" / %s"use" / %s"xml"
 
 ; ASCII isn't good enough for us.
-utf8-octets = *utf8-char
+utf8-text = *utf8-char
 utf8-char   = utf8-1 / utf8-2 / utf8-3 / utf8-4
 utf8-1      = %x00-7F
 utf8-2      = %xC2-DF utf8-tail
