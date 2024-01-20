@@ -1,13 +1,12 @@
 local base = require("inputters.base")
 
-local epnf = require("epnf")
+local usere = SU.boolean(_G["SIL_USE_RE"], false)
+local parser = require("inputters.sil-" .. (usere and "lpeg-re" or "epnf"))
 
 local inputter = pl.class(base)
 inputter._name = "sil"
 
 inputter.order = 50
-
-inputter._grammar = require("inputters.sil-epnf")
 
 inputter.appropriate = function (round, filename, doc)
   if round == 1 then
@@ -17,8 +16,7 @@ inputter.appropriate = function (round, filename, doc)
     local promising = sniff:match("\\begin") or sniff:match("\\document") or sniff:match("\\sile")
     return promising and inputter.appropriate(3, filename, doc) or false
   elseif round == 3 then
-    local _parser = epnf.define(inputter._grammar)
-    local status, _ = pcall(epnf.parsestring, _parser, doc)
+    local status, _ = pcall(parser, doc)
     return status
   end
 end
@@ -26,7 +24,7 @@ end
 function inputter:_init ()
   -- Save time when parsing strings by only setting up the grammar once per
   -- instantiation then re-using it on every use.
-  self._parser = self:rebuildParser()
+  self._parser = parser
   base._init(self)
 end
 
@@ -113,12 +111,8 @@ local function massage_ast (tree, doc)
   end
 end
 
-function inputter:rebuildParser ()
-  return epnf.define(self._grammar)
-end
-
 function inputter:parse (doc)
-  local status, result = pcall(epnf.parsestring, self._parser, doc)
+  local status, result = pcall(self._parser, doc)
   if not status then
     return SU.error(([[Unable to parse input document to an AST tree. Parser error:
 
