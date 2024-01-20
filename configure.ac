@@ -217,6 +217,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         AX_PROGVAR([delta])
         AX_PROGVAR([diff])
         AX_PROGVAR([docker])
+        AX_PROGVAR([ebnf_convert], [ebnf-convert])
         AX_PROGVAR([git])
         AX_PROGVAR([grep])
         AX_PROGVAR([head])

@@ -76,7 +76,7 @@ EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL) $(FIGURES)
 EXTRA_DIST += src/embed.rs.in
-EXTRA_DIST += sil.abnf
+EXTRA_DIST += sil.abnf sil.ebnf
 
 BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
 
@@ -86,6 +86,11 @@ include $(top_srcdir)/build-aux/rust_boilerplate.mk
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@
+
+BUILT_SOURCES += sil.ebnf
+sil.ebnf: sil.abnf
+	$(EBNF_CONVERT) -f none $< |
+		$(SED) -E '1,2d;4,$$s/^([a-z])/\n\1/' > $@
 
 if EMBEDED_RESOURCES
 _EMBEDED_SOURCES = src/embed.rs src/embed-includes.rs

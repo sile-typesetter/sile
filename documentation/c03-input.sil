@@ -234,8 +234,8 @@ However, in some cases the environment form of the command will be easier to rea
 
 The official grammar for the SIL flavor is the LPEG reference implementation.
 That being said the reference implementation has some idiosyncrasies and is not the easiest to read.
-For convenience an ABNF grammar is also provided in the source tree, see \code{sil.abnf}.
-This grammar does not completely express the language as it cannot express the way SIL can embed other syntaxes, but it is a decent approximation.
+For convenience ABNF and EBNF format grammars are also provided in the source tree, see \code{sil.abnf} and \code{sil.ebnf}.
+These grammars do not completely express the language as they cannot express the way SIL can embed other syntaxes, but it is a decent approximation.
 
 The intent behind many of the syntax choices is to make it easy to have parity with XML flavors.
 This means limiting commands to valid XML identifiers (e.g. starting with an ASCII letter, not a digit or special character), requiring a single top level command as the document, and so forth.
