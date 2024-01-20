@@ -342,6 +342,25 @@ local speakerChangePattern = "^"
    .. luautf8.char(0x2014) -- emdash
    .. "[ " .. luautf8.char(0x00A0) .. luautf8.char(0x202F) -- regular space or NBSP or NNBSP
    .. "]+"
+local speakerChangeReplacement = luautf8.char(0x2014) .. " "
+
+-- Special unshaped node subclass to handle space after a speaker change in dialogues
+-- introduced by an em-dash.
+local speakerChangeNode = pl.class(SILE.nodefactory.unshaped)
+function speakerChangeNode:shape()
+  local node = self._base.shape(self)
+  local spc = node[2]
+  if spc and spc.is_glue then
+    -- Switch the variable space glue to a fixed kern
+    node[2] = SILE.nodefactory.kern({ width = spc.width.length })
+    node[2].parent = self.parent
+  else
+    -- Should not occur:
+    -- How could it possibly be shaped differently?
+    SU.warn("Speaker change logic met an unexpected case, this might be a bug.")
+  end
+  return node
+end
 
 -- Takes string, writes onto self.state.nodes
 function typesetter:setpar (text)
@@ -356,14 +375,12 @@ function typesetter:setpar (text)
       local speakerChange = false
       local dialogue = luautf8.gsub(text, speakerChangePattern, function ()
         speakerChange = true
-        return ""
+        return speakerChangeReplacement
       end)
       if speakerChange then
-        text = dialogue
-        local fontoptions = SILE.font.loadDefaults({})
-        local fiwsp = SILE.shaper:measureSpace(fontoptions).length -- fixed inter-word space
-        self:pushUnshaped({ text = luautf8.char(0x2014), options = fontoptions })
-        self:pushHorizontal(SILE.nodefactory.kern(fiwsp))
+        local node = speakerChangeNode({ text = dialogue, options = SILE.font.loadDefaults({})})
+        self:pushHorizontal(node)
+        return -- done here: speaker change space handling is done after nnode shaping
       end
     end
   end
