@@ -145,6 +145,13 @@ function typesetter.declareSettings(_)
     default = false,
     help = "When true, a warning is issued when a soft hyphen is encountered"
   })
+
+  SILE.settings:declare({
+    parameter = "typesetter.fixedSpacingAfterInitialEmdash",
+    type = "boolean",
+    default = true,
+    help = "When true, em-dash starting a paragraph is considered as a speaker change in a dialogue"
+  })
 end
 
 function typesetter:initState ()
@@ -330,6 +337,12 @@ function typesetter:endline ()
   SILE.documentState.documentClass.endPar(self)
 end
 
+-- Just compute once, to avoid unicode characters in source code.
+local speakerChangePattern = "^"
+   .. luautf8.char(0x2014) -- emdash
+   .. "[ " .. luautf8.char(0x00A0) .. luautf8.char(0x202F) -- regular space or NBSP or NNBSP
+   .. "]+"
+
 -- Takes string, writes onto self.state.nodes
 function typesetter:setpar (text)
   text = text:gsub("\r?\n", " "):gsub("\t", " ")
@@ -338,6 +351,21 @@ function typesetter:setpar (text)
       text = text:gsub("^%s+", "")
     end
     self:initline()
+
+    if SILE.settings:get("typesetter.fixedSpacingAfterInitialEmdash") and not SILE.settings:get("typesetter.obeyspaces") then
+      local speakerChange = false
+      local dialogue = luautf8.gsub(text, speakerChangePattern, function ()
+        speakerChange = true
+        return ""
+      end)
+      if speakerChange then
+        text = dialogue
+        local fontoptions = SILE.font.loadDefaults({})
+        local fiwsp = SILE.shaper:measureSpace(fontoptions).length -- fixed inter-word space
+        self:pushUnshaped({ text = luautf8.char(0x2014), options = fontoptions })
+        self:pushHorizontal(SILE.nodefactory.kern(fiwsp))
+      end
+    end
   end
   if #text >0 then
     self:pushUnshaped({ text = text, options= SILE.font.loadDefaults({})})
