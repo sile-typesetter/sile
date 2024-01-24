@@ -69,11 +69,11 @@ SILE.nodeMakers.base = pl.class({
     end,
 
     isPunctuation = function (self, char)
-      return self.isPunctuationType[self:charData(char).category]
+      return self.puctuationTypes[self:charData(char).category]
     end,
 
     isSpace = function (self, char)
-      return self.isSpaceType[self:charData(char).linebreak]
+      return self.spaceTypes[self:charData(char).linebreak]
     end,
 
     isNonBreakingSpace = function (self, char)
@@ -86,21 +86,21 @@ SILE.nodeMakers.base = pl.class({
     end,
 
     isBreaking = function (self, char)
-      return self.isBreakingType[self:charData(char).linebreak]
+      return self.breakingTypes[self:charData(char).linebreak]
     end,
     isQuote = function (self, char)
-      return self.isQuoteType[self:charData(char).linebreak]
+      return self.quoteTypes[self:charData(char).linebreak]
     end
 
   })
 
 SILE.nodeMakers.unicode = pl.class(SILE.nodeMakers.base)
 
-SILE.nodeMakers.unicode.isWordType = { cm = true }
-SILE.nodeMakers.unicode.isSpaceType = { sp = true }
-SILE.nodeMakers.unicode.isBreakingType = { ba = true, zw = true }
-SILE.nodeMakers.unicode.isPunctuationType = { po = true }
-SILE.nodeMakers.unicode.isQuoteType = {} -- quote linebreak category is ambiguous depending on the language
+SILE.nodeMakers.unicode.wordTypes = { cm = true }
+SILE.nodeMakers.unicode.spaceTypes = { sp = true }
+SILE.nodeMakers.unicode.breakingTypes = { ba = true, zw = true }
+SILE.nodeMakers.unicode.puctuationTypes = { po = true }
+SILE.nodeMakers.unicode.quoteTypes = {} -- quote linebreak category is ambiguous depending on the language
 
 function SILE.nodeMakers.unicode:dealWith (item)
   local char = item.text
@@ -119,7 +119,7 @@ function SILE.nodeMakers.unicode:dealWith (item)
   elseif self:isQuote(item.text) then
     self:addToken(char, item)
     self:makeToken()
-  elseif self.lasttype and (thistype and thistype ~= self.lasttype and not self.isWordType[thistype]) then
+  elseif self.lasttype and (thistype and thistype ~= self.lasttype and not self.wordTypes[thistype]) then
     self:addToken(char, item)
   else
     self:letterspace()
