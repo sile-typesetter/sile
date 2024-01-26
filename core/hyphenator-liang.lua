@@ -120,12 +120,18 @@ local hyphenateNode = function (node)
         SU.error("No hyphenation segment should ever be empty", true)
       end
       if node.options.language == "tr" then
-        -- leading apostrophe (on next segment) cancels when hyphenated
         local nextApostrophe = j < #segments and luautf8.match(segments[j+1], "^['’]")
         if nextApostrophe then
           segments[j+1] = luautf8.gsub(segments[j+1], "^['’]", "")
           local replacement = SILE.shaper:createNnodes(nextApostrophe, node.options)
-          specificDiscretionary = SILE.nodefactory.discretionary({ replacement = replacement, prebreak = hyphen })
+          if SILE.settings:get("languages.tr.replaceApostropheAtHyphenation") then
+            -- leading apostrophe (on next segment) cancels when hyphenated
+            specificDiscretionary = SILE.nodefactory.discretionary({ replacement = replacement, prebreak = hyphen })
+          else
+            -- hyphen character substituted for upcomming apostrophe
+            local kesme = SILE.shaper:createNnodes(nextApostrophe, node.options)
+            specificDiscretionary = SILE.nodefactory.discretionary({ replacement = replacement, prebreak = kesme })
+          end
         end
       elseif node.options.language == "ca" then
         -- punt volat (middle dot) cancels when hyphenated

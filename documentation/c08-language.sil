@@ -191,6 +191,13 @@ The size of these spaces is determined by
 According to Polish typography conventions, when a break occurs at an explicit hyphen, the hyphen gets repeated at the beginning of the new line.
 SILE automatically handles this.
 
+\subsection{Turkish}
+
+According to Turkish typography conventions, when a break occurs at an existing apostrophe, the break point is allowed but no hyphenation character is shown.
+SILE behaves this way default.
+Some publisher style guides suggest an alternative behavior replacing the apostrophe with the hyphenation character.
+This alternative behavior can be achieved by setting \autodoc:setting[check=false]{languages.tr.replaceApostropheAtHyphenation} to \code{true}.
+
 \subsection{Japanese / Chinese}
 
 SILE aims to conform with the W3G document “Requirements for Japanese Text Layout”\footnote{\url{https://www.w3.org/TR/jlreq/}} which describes the typographic conventions for Japanese (and also Chinese) text.

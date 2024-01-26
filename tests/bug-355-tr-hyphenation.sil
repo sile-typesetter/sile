@@ -3,56 +3,22 @@
 \neverindent
 \set[parameter=shaper.variablespaces, value=false]
 \set[parameter=linebreak.emergencyStretch,value=0]
-\language[main=tr]
-
+\font[size=20pt,language=tr]
 % Without stretchable spaces there is no variablility for SILE to do justification.
 % As as a result *most* lines in this test are expected to overflow.
 % What we hope to see is:
 % * The first available breakpoint being used after an overflow.
 % * ... even when that breakpoint is a special discretionary apostrophe.
-% * Break points at apostrophes replace the apostrophe entirely.
-% * Lines after hyphenation continue to break again even in the same word.
 
-% Some awkward apostrophes situations. Real words here but not real grammar.
-% Margins chosen to hit as many unique awkward break points as possible
-\set[parameter=document.lskip,value=9.6%pw]
-\set[parameter=document.rskip,value=9.6%pw]
+\kern[width=170pt]İsa'ya
+\kern[width=147pt]İsa'ya
 
-İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
-İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
-İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
-İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
-İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
-İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
-İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
-İstanbul'dan İsa'ya İzmir'de O'nu Müjdesi'nin İsa'nın Afyonkarahisar'danmış Can'a.
+% Same test but with curly apostrophes, both should work as discretionary breaks.
 
-\pagebreak
-
-% Test straight vs. curly apostrophes, both should work as discretionary breaks.
-% These two paragraphs should end up with 2 each replaced vs. untouched apostrophes.
-\set[parameter=document.lskip,value=0]
-\set[parameter=document.rskip,value=0]
-
-Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin Müjdesi'nin.
-
-Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin Müjdesi’nin.
+\kern[width=170pt]İsa’ya
+\kern[width=147pt]İsa’ya
 
 % Test that hyphenation continues to happen in long words that already broke a line.
-% These are real Turkish words so hyphenation patterns should work.
-% No words were harmed in the making of this document.
-Ayyıldızlıkırmızıbayraktaşıyankahramanoğullarındangillersizleştiricileştiriveremeyebileceklerimizdenmişsinizcesinedir.
 Afyonkarahisarlılaştırabildiklerimizdenmişsinizcesine.
-Kuyruksallayangillersizleştiricileştiriveremeyebileceklerimizdenmişsinizcesinedir.
 
-\pagebreak
-
-% Mix and match the above three tests with each other.
-% Includes other uses of quotation marks that are not discretionary.
-Kötü amaçların güdüldüğü bir öğretmen okulundayız.
-Yetiştirilen öğretmenlere öğrencileri nasıl muvaffakiyetsizleştirecekleri öğretiliyor.
-‘Yani’ öğretmenler birer muvaffakiyetsizleştirici olarak yetiştiriliyorlar.
-Fakat öğretmenlerden biri muvaffakiyetsizleştirici olmayı, 'yani' muvaffakiyetsizleştiricileştirilmeyi reddediyor, bu konuda ileri geri konuşuyor.
-Bütün öğretmenleri kolayca muvaffakiyetsizleştiricileştiriverebileceğini sanan okul müdürü bu duruma sinirleniyor, ve söz konusu öğretmeni makamına çağırıp ona diyor ki:
-“Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine laflar ediyormuşsunuz ha?”
 \end{document}
