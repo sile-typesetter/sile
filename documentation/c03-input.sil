@@ -186,7 +186,7 @@ The \code{\\begin} command at the start of the document is an example of this.%
 \end{raw}
 
 The parameters to a command are enclosed in square brackets and take the form \code{\em{key}=\em{value}};
-    multiple parameters are separated by commas or semicolons, as in \code{[key1=value1,key2=value2,…]}.
+    multiple parameters are separated by commas, as in \code{[key1=value1,key2=value2,…]}.
 Spaces around the keys are not significant;
     we could equally write that as \code{[key1 = value1; key2 = value2; …]}.
 If you need to include a comma or semicolon within the value to a parameter, you can enclose the value in quotes:
@@ -229,6 +229,16 @@ Hi there!
 \end{raw}
 
 However, in some cases the environment form of the command will be easier to read and will help you to be clearer on where the command begins and ends.
+
+\section{SIL flavor grammar specifications}
+
+The official grammar for the SIL flavor is the LPEG reference implementation.
+That being said the reference implementation has some idiosyncrasies and is not the easiest to read.
+For convenience an ABNF grammar is also provided in the source tree, see \code{sil.abnf}.
+This grammar does not completely express the language as it cannot express the way SIL can embed other syntaxes, but it is a decent approximation.
+
+The intent behind many of the syntax choices is to make it easy to have parity with XML flavors.
+This means limiting commands to valid XML identifiers (e.g. starting with an ASCII letter, not a digit or special character), requiring a single top level command as the document, and so forth.
 
 \section{The XML flavor}
 

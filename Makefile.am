@@ -76,6 +76,7 @@ EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL) $(FIGURES)
 EXTRA_DIST += src/embed.rs.in
+EXTRA_DIST += sil.abnf
 
 BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
 
