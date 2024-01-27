@@ -1,0 +1,13 @@
+\begin[papersize=a7]{document}
+\neverindent
+\nofolios
+\language[main=pl]
+\font[size=16pt]
+
+% Breaks at existing hyphens get a hyphen on the next line
+\kern[width=152pt]biało-czerwony
+
+% Breaks at other places just chill as usual
+\kern[width=120pt]biało-czerwony
+
+\end{document}

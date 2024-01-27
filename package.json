@@ -1,6 +1,6 @@
 {
   "name": "sile",
-  "version": "0.14.14",
+  "version": "0.14.15",
   "description": "The SILE Typesetter",
   "main": "sile",
   "scripts": {
@@ -21,7 +21,7 @@
   "devDependencies": {
     "@commitlint/cli": "^18.4",
     "@commitlint/config-conventional": "^18.1",
-    "@commitlint/prompt": "^17.6",
+    "@commitlint/prompt": "^18.4",
     "commitizen": "^4.3",
     "conventional-changelog-cli": "^4.1",
     "husky": "^8.0",

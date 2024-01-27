@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.14.15](https://github.com/sile-typesetter/sile/compare/v0.14.14...v0.14.15) (2024-01-27)
+
+
+### Features
+
+* **languages:** Accomodate alternate Turkish hyphenation guidelines at apostrophes ([92904fc](https://github.com/sile-typesetter/sile/commit/92904fcaf119cb95633c2865c2cdef89106803a1))
+* **typesetters:** Support for speaker change introduced by em-dash ([2afa4cb](https://github.com/sile-typesetter/sile/commit/2afa4cbf7eafcc9efef4ea5219c9508fff7989a8))
+
+
+### Bug Fixes
+
+* **languages:** Break at ela geminada in Catalan cancels the punt vola ([f8c4c1e](https://github.com/sile-typesetter/sile/commit/f8c4c1e46fecfb4f3bb7000ae0e87d04eb5d2738))
+* **languages:** Break at explicit hyphen in Polish repeats the hyphen ([0f8c7aa](https://github.com/sile-typesetter/sile/commit/0f8c7aa087c6fe447fc0a5d96944e9ca1b7f141e))
+* **languages:** Remove multiple repetitions of U+00A0 nbsp in French ([0356a49](https://github.com/sile-typesetter/sile/commit/0356a4977722c77e11ada667efb106d9ad70219a))
+* **languages:** U+00A0 nbsp in French causes unexpected word breaks ([b93975c](https://github.com/sile-typesetter/sile/commit/b93975c2d572d64afbc89c47cab8cc3ad4735445))
+
 ### [0.14.14](https://github.com/sile-typesetter/sile/compare/v0.14.13...v0.14.14) (2023-12-23)
 
 

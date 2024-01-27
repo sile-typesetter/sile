@@ -1,3 +1,14 @@
+-- Different years of TDK and various publisher style guides differ on this point.
+-- Current official guidance suggests dropping the hypenation mark if the break
+-- occurs at an apostrophe (kesme işareti). Some older guidance and some publishers
+-- suggest dropping the apostrophe instead.
+SILE.settings:declare({
+  parameter = "languages.tr.replaceApostropheAtHyphenation",
+  type = "boolean",
+  default = false,
+  help = "If enabled, substitute the apostophe for a hyphen at break points, otherwise keep the apostrophe and hide the hyphen."
+})
+
 -- Quotes may be part of a word in Turkish
 SILE.nodeMakers.tr = pl.class(SILE.nodeMakers.unicode)
 SILE.nodeMakers.tr.isWordType = { cm = true, qu = true }

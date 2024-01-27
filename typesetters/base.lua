@@ -153,6 +153,12 @@ function typesetter.declareSettings(_)
     help = "When true, a warning is issued when a soft hyphen is encountered"
   })
 
+  SILE.settings:declare({
+    parameter = "typesetter.fixedSpacingAfterInitialEmdash",
+    type = "boolean",
+    default = true,
+    help = "When true, em-dash starting a paragraph is considered as a speaker change in a dialogue"
+  })
 end
 
 function typesetter:initState ()
@@ -338,6 +344,31 @@ function typesetter:endline ()
   SILE.documentState.documentClass.endPar(self)
 end
 
+-- Just compute once, to avoid unicode characters in source code.
+local speakerChangePattern = "^"
+   .. luautf8.char(0x2014) -- emdash
+   .. "[ " .. luautf8.char(0x00A0) .. luautf8.char(0x202F) -- regular space or NBSP or NNBSP
+   .. "]+"
+local speakerChangeReplacement = luautf8.char(0x2014) .. " "
+
+-- Special unshaped node subclass to handle space after a speaker change in dialogues
+-- introduced by an em-dash.
+local speakerChangeNode = pl.class(SILE.nodefactory.unshaped)
+function speakerChangeNode:shape()
+  local node = self._base.shape(self)
+  local spc = node[2]
+  if spc and spc.is_glue then
+    -- Switch the variable space glue to a fixed kern
+    node[2] = SILE.nodefactory.kern({ width = spc.width.length })
+    node[2].parent = self.parent
+  else
+    -- Should not occur:
+    -- How could it possibly be shaped differently?
+    SU.warn("Speaker change logic met an unexpected case, this might be a bug.")
+  end
+  return node
+end
+
 -- Takes string, writes onto self.state.nodes
 function typesetter:setpar (text)
   text = text:gsub("\r?\n", " "):gsub("\t", " ")
@@ -346,6 +377,19 @@ function typesetter:setpar (text)
       text = text:gsub("^%s+", "")
     end
     self:initline()
+
+    if SILE.settings:get("typesetter.fixedSpacingAfterInitialEmdash") and not SILE.settings:get("typesetter.obeyspaces") then
+      local speakerChange = false
+      local dialogue = luautf8.gsub(text, speakerChangePattern, function ()
+        speakerChange = true
+        return speakerChangeReplacement
+      end)
+      if speakerChange then
+        local node = speakerChangeNode({ text = dialogue, options = SILE.font.loadDefaults({})})
+        self:pushHorizontal(node)
+        return -- done here: speaker change space handling is done after nnode shaping
+      end
+    end
   end
   if #text >0 then
     self:pushUnshaped({ text = text, options= SILE.font.loadDefaults({})})
