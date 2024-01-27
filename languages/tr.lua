@@ -11,9 +11,28 @@ SILE.settings:declare({
 
 -- Quotes may be part of a word in Turkish
 SILE.nodeMakers.tr = pl.class(SILE.nodeMakers.unicode)
-SILE.nodeMakers.tr.isWordType = { cm = true, qu = true }
+SILE.nodeMakers.tr.wordTypes = { cm = true, qu = true }
 
 SILE.hyphenator.languages["tr"] = {}
+
+SILE.hyphenator.languages["tr"].hyphenateSegments = function (node, segments, j)
+  local hyphenChar, replacement
+  local maybeNextApostrophe = #segments > j and luautf8.match(segments[j+1], "^['’]")
+  if maybeNextApostrophe then
+    segments[j+1] = luautf8.gsub(segments[j+1], "^['’]", "")
+    if SILE.settings:get("languages.tr.replaceApostropheAtHyphenation") then
+      hyphenChar = SILE.settings:get("font.hyphenchar")
+    else
+      hyphenChar = maybeNextApostrophe
+      replacement = SILE.shaper:createNnodes(maybeNextApostrophe, node.options)
+    end
+  else
+    hyphenChar = SILE.settings:get("font.hyphenchar")
+  end
+  local hyphen = SILE.shaper:createNnodes(hyphenChar, node.options)
+  return SILE.nodefactory.discretionary({ replacement = replacement, prebreak = hyphen }), segments
+end
+
 SILE.hyphenator.languages["tr"].patterns =
    {
 "2a1",

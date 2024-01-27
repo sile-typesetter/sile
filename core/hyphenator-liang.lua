@@ -95,10 +95,18 @@ SILE.hyphenator = {}
 SILE.hyphenator.languages = {}
 SILE._hyphenators = {}
 
+local function defaultHyphenateSegments (node, segments, _)
+  local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options)
+  return SILE.nodefactory.discretionary({ prebreak = hyphen }), segments
+end
+
 local initHyphenator = function (lang)
   if not SILE._hyphenators[lang] then
     SILE._hyphenators[lang] = { minWord = 5, leftmin = 2, rightmin = 2, trie = {}, exceptions = {}  }
     loadPatterns(SILE._hyphenators[lang], lang)
+  end
+  if SILE.hyphenator.languages[lang] and not SILE.hyphenator.languages[lang].hyphenateSegments then
+    SILE.hyphenator.languages[lang].hyphenateSegments = defaultHyphenateSegments
   end
 end
 
@@ -110,71 +118,25 @@ local hyphenateNode = function (node)
   end
   initHyphenator(node.language)
   local segments = SILE._hyphenate(SILE._hyphenators[node.language], node.text)
+  local hyphen
   if #segments > 1 then
-    local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options)
+    local hyphenateSegments = SILE.hyphenator.languages[node.language].hyphenateSegments
     local newnodes = {}
     for j, segment in ipairs(segments) do
-      local specificDiscretionary
       if segment == "" then
         SU.dump({ j, segments })
         SU.error("No hyphenation segment should ever be empty", true)
       end
-      if node.options.language == "tr" then
-        local nextApostrophe = j < #segments and luautf8.match(segments[j+1], "^['’]")
-        if nextApostrophe then
-          segments[j+1] = luautf8.gsub(segments[j+1], "^['’]", "")
-          local replacement = SILE.shaper:createNnodes(nextApostrophe, node.options)
-          if SILE.settings:get("languages.tr.replaceApostropheAtHyphenation") then
-            -- leading apostrophe (on next segment) cancels when hyphenated
-            specificDiscretionary = SILE.nodefactory.discretionary({ replacement = replacement, prebreak = hyphen })
-          else
-            -- hyphen character substituted for upcomming apostrophe
-            local kesme = SILE.shaper:createNnodes(nextApostrophe, node.options)
-            specificDiscretionary = SILE.nodefactory.discretionary({ replacement = replacement, prebreak = kesme })
-          end
-        end
-      elseif node.options.language == "ca" then
-        -- punt volat (middle dot) cancels when hyphenated
-        -- Catalan typists may use a punt volat or precomposed characters.
-        -- The shaper might behave differently depending on the font, so we need to
-        -- be consistent here with the typist's choice.
-        if luautf8.find(segment, "ŀ$") then -- U+0140
-          segment = luautf8.sub(segment, 1, -2)
-          local ldot = SILE.shaper:createNnodes("ŀ", node.options)
-          local lhyp = SILE.shaper:createNnodes("l" .. SILE.settings:get("font.hyphenchar"), node.options)
-          specificDiscretionary = SILE.nodefactory.discretionary({ replacement = ldot, prebreak = lhyp })
-        elseif luautf8.find(segment, "Ŀ$") then -- U+013F
-          segment = luautf8.sub(segment, 1, -2)
-          local ldot = SILE.shaper:createNnodes("Ŀ", node.options)
-          local lhyp = SILE.shaper:createNnodes("L" .. SILE.settings:get("font.hyphenchar"), node.options)
-          specificDiscretionary = SILE.nodefactory.discretionary({ replacement = ldot, prebreak = lhyp })
-        elseif luautf8.find(segment, "l·$") then -- l + U+00B7
-          segment = luautf8.sub(segment, 1, -3)
-          local ldot = SILE.shaper:createNnodes("l·", node.options)
-          local lhyp = SILE.shaper:createNnodes("l" .. SILE.settings:get("font.hyphenchar"), node.options)
-          specificDiscretionary = SILE.nodefactory.discretionary({ replacement = ldot, prebreak = lhyp })
-        elseif luautf8.find(segment, "L·$") then -- L + U+00B7
-          segment = luautf8.sub(segment, 1, -3)
-          local ldot = SILE.shaper:createNnodes("L·", node.options)
-          local lhyp = SILE.shaper:createNnodes("L" .. SILE.settings:get("font.hyphenchar"), node.options)
-          specificDiscretionary = SILE.nodefactory.discretionary({ replacement = ldot, prebreak = lhyp })
-        end
-      end
-      for _, newNode in ipairs(SILE.shaper:createNnodes(segment, node.options)) do
+      hyphen, segments = hyphenateSegments(node, segments, j)
+      for _, newNode in ipairs(SILE.shaper:createNnodes(segments[j], node.options)) do
         if newNode.is_nnode then
           newNode.parent = node
           table.insert(newnodes, newNode)
         end
       end
       if j < #segments then
-        if specificDiscretionary then
-          specificDiscretionary.parent = node
-          table.insert(newnodes, specificDiscretionary)
-        else
-          local newNode = SILE.nodefactory.discretionary({ prebreak = hyphen })
-          newNode.parent = node
-          table.insert(newnodes, newNode)
-        end
+        hyphen.parent = node
+        table.insert(newnodes, hyphen)
       end
     end
     node.children = newnodes
