@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.14.16](https://github.com/sile-typesetter/sile/compare/v0.14.15...v0.14.16) (2024-01-27)
+
+
+### Bug Fixes
+
+* **tooling:** Re-merge so release tag is on master branch ([e8eaf11](https://github.com/sile-typesetter/sile/commit/e8eaf11da6cd183168898eca08f6f789f46d599e))
+
 ### [0.14.15](https://github.com/sile-typesetter/sile/compare/v0.14.14...v0.14.15) (2024-01-27)
 
 

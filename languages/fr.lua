@@ -96,7 +96,7 @@ SILE.nodeMakers.fr.highPunctuations = { ";", "!", "?", "!!", "?!", "!?" }
 SILE.nodeMakers.fr.spaceExceptions = { "!", "?", ":", ".", "…", "(", "[", "{", "<", "«", "‹", "“", "‘", "?!", "!!", "!?" }
 
 -- overriden properties from parent class
-SILE.nodeMakers.fr.isQuoteType = { qu = true } -- split tokens at apostrophes &c.
+SILE.nodeMakers.fr.quoteTypes = { qu = true } -- split tokens at apostrophes &c.
 
 -- methods defined in this class
 

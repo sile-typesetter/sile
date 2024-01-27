@@ -1414,7 +1414,7 @@ dependencies = [
 
 [[package]]
 name = "sile"
-version = "0.14.14"
+version = "0.14.16"
 dependencies = [
  "anyhow",
  "clap",
