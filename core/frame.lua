@@ -38,19 +38,25 @@ SILE.framePrototype = pl.class({
             return SILE.measurement(instance_self.variables[method].value)
           end
         end
+
         -- Add definitions of width and height
-        if self.x and self.y then
-          self:constrain("left", self.x .. "-(" .. spec["width"] .. "/2)")
-          self:constrain("right", self.x .. "+(" .. spec["width"] .. "/2)")
-          self:constrain("top", self.y .. "-(" .. spec["height"] .. "/2)")
-          self:constrain("bottom", self.y .. "+(" .. spec["height"] .. "/2)")
-        else 
-          for method in pairs(alldims) do
-            if spec[method] then
-              self:constrain(method, spec[method])
-            end
+        for method in pairs(alldims) do
+          if spec[method] then
+            self:constrain(method, spec[method])
           end
         end
+
+        if self.x then
+          -- if not spec.width then spec.width = "" end
+          self:constrain("left", self.x .. "-(" .. spec.width .. "/2)")
+          self:constrain("right", self.x .. "+(" .. spec.width .. "/2)")
+        end
+        if self.y then
+          -- if not spec.height then spec.height = "" end
+          self:constrain("top", self.y .. "-(" .. spec.height .. "/2)")
+          self:constrain("bottom", self.y .. "+(" .. spec.height .. "/2)")
+        end
+
       end
     end,
 
