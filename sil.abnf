@@ -39,7 +39,7 @@ env-passthrough-text = utf8-text
 comment = "%" utf8-text CRLF
 
 ; Input strings that are not special
-text = *( text-char / escaped-specials )
+text = *text-char
 
 ; Input content wrapped in braces can be attatched to a command or used to
 ; manually isolate chunks of content (e.g. to hinder ligatures).
@@ -55,15 +55,28 @@ braced-passthrough-text = utf8-text
 
 ; Building blocks
 options = "[" parameter *( "," parameter ) "]"
-parameter = *WSP sil-identifier *WSP "=" *WSP ( value / quoted-value ) *WSP
-value = utf8-text
-quoted-value = DQUOTE utf8-text DQUOTE
+parameter = *WSP sil-identifier *WSP "=" *WSP ( quoted-value / value ) *WSP
+quoted-value = DQUOTE *quoted-value-char DQUOTE
+value = *value-char
 
-specials = "\" / "%" / "{" / "}"
-escaped-specials = "\" specials
+value-char =/ %x00-21 ; omit "
+value-char =/ %x23-2B ; omit ,
+value-char =/ %x2D-3A ; omit ;
+value-char =/ %x3C-5C ; omit ]
+value-char =/ %x3E-7F ; end of utf8-1
+value-char =/ utf8-2
+value-char =/ utf8-3
+value-char =/ utf8-4
 
-; non-ascii-char = %x80-D7FF / %xE000-10FFFF
-text-char =  %x0-24  ; omit %
+quoted-value-char = "\" %x22
+quoted-value-char =/ %x00-21 ; omit "
+quoted-value-char =/ %x23-7F ; end of utf8-1
+quoted-value-char =/ utf8-2
+quoted-value-char =/ utf8-3
+quoted-value-char =/ utf8-4
+
+text-char =  "\" ( %x5C / %x25 / %x7B / %x7D )
+text-char =/ %x00-24 ; omit %
 text-char =/ %x26-5B ; omit \
 text-char =/ %x5D-7A ; omit {
 text-char =/ %x7C    ; omit }
