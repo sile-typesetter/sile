@@ -1,4 +1,5 @@
-local bits = SILE.parserBits
+local epnf = require("epnf")
+local bits = require("core.parserbits")
 
 local passthroughCommands = {
   ftl = true,
@@ -25,7 +26,7 @@ end
 
 -- luacheck: push ignore
 ---@diagnostic disable: undefined-global, unused-local, lowercase-global
-local function grammar (_ENV)
+local function builder (_ENV)
   local _ = WS^0
   local eol = S"\r\n"
   local specials = S"\\{}%"
@@ -92,4 +93,10 @@ local function grammar (_ENV)
     )
 end
 
-return grammar
+local grammar = epnf.define(builder)
+
+local function parser (string)
+  return epnf.parsestring(grammar, string)
+end
+
+return parser
