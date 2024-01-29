@@ -55,7 +55,7 @@ braced-passthrough-text = utf8-text
 
 ; Building blocks
 options = "[" parameter *( "," parameter ) "]"
-parameter = sil-identifier "=" ( value / quoted-value )
+parameter = *WSP sil-identifier *WSP "=" *WSP ( value / quoted-value ) *WSP
 value = utf8-text
 quoted-value = DQUOTE utf8-text DQUOTE
 
