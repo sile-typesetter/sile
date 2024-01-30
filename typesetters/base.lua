@@ -166,6 +166,7 @@ function typesetter:initState ()
     nodes = {},
     outputQueue = {},
     lastBadness = awful_bad,
+    liners = {},
   }
 end
 
@@ -912,6 +913,177 @@ function typesetter.leadingFor (_, vbox, previous)
   end
 end
 
+-- Beggining of liner logic (contructs spanning over several lines)
+
+-- These two special nodes are used to track the current liner entry and exit.
+-- As Sith Lords, they are always two: they are local here, so no one can
+-- use one alone and break the balance of the Force.
+local linerEnterNode = pl.class(SILE.nodefactory.hbox)
+function linerEnterNode:_init(name, outputMethod)
+  SILE.nodefactory.hbox._init(self)
+  self.outputMethod = outputMethod
+  self.name = name
+  self.is_enter = true
+end
+function linerEnterNode:clone()
+  return linerEnterNode(self.name, self.outputMethod)
+end
+function linerEnterNode:outputYourself ()
+  SU.error("A liner enter node " .. tostring(self) .. "'' made it to output", true)
+end
+function linerEnterNode:__tostring ()
+  return "+L[" .. self.name .. "]"
+end
+local linerLeaveNode = pl.class(SILE.nodefactory.hbox)
+function linerLeaveNode:_init(name)
+  SILE.nodefactory.hbox._init(self)
+  self.name = name
+  self.is_leave = true
+end
+function linerLeaveNode:clone()
+  return linerLeaveNode(self.name)
+end
+function linerLeaveNode:outputYourself ()
+  SU.error("A liner leave node " .. tostring(self) .. "'' made it to output", true)
+end
+function linerLeaveNode:__tostring ()
+  return "-L[" .. self.name .. "]"
+end
+
+local linerBox = pl.class(SILE.nodefactory.hbox)
+function linerBox:_init (name, outputMethod)
+  SILE.nodefactory.hbox._init(self)
+  self.width = SILE.length()
+  self.height = SILE.length()
+  self.depth = SILE.length()
+  self.name = name
+  self.inner = {}
+  self.outputYourself = outputMethod
+end
+function linerBox:append (node)
+  self.inner[#self.inner+1] = node
+  self.width = self.width + node.width
+  self.height = SU.max(self.height, node.height)
+  self.depth = SU.max(self.depth, node.depth)
+end
+function linerBox:count ()
+  return #self.inner
+end
+function linerBox:outputContent (tsetter, line)
+  for _, node in ipairs(self.inner) do
+    node.outputYourself(node, tsetter, line)
+  end
+end
+function linerBox:__tostring ()
+  return "*L[" .. self.name .. "]H<" .. tostring(self.width) .. ">^" .. tostring(self.height) .. "-" .. tostring(self.depth) .. "v"
+end
+
+--- Any unclosed liner is reopened on the current line, so we clone and repeat
+-- it.
+-- An assumption is that the inserts are done after the current slice content,
+-- supposed to be just before meaningful (visible) content.
+---@param slice   table   Current line nodes
+---@return boolean        Whether a liner was reopened
+function typesetter:_repeatEnterLiners (slice)
+  local m = self.state.liners
+  if #m > 0 then
+    for i = 1, #m  do
+      local n = m[i]:clone()
+      slice[#slice+1] = n
+      SU.debug("typesetter.liner", "Reopening liner", n)
+    end
+    return true
+  end
+  return false
+end
+
+--- All pairs of liners are rebuilt as hboxes wrapping their content.
+-- Migrating content, however, must be kept outside the hboxes at top slice level.
+---@param  slice  table   Flat nodes from current line
+---@return table          New reboxed slice
+function typesetter._reboxLiners (_, slice)
+  local outSlice = {}
+  local migratingList = {}
+  local lboxStack = {}
+  for i = 1, #slice do
+    local node = slice[i]
+    if node.is_enter then
+      SU.debug("typesetter.liner", "Start reboxing", node)
+      local n = linerBox(node.name, node.outputMethod)
+      lboxStack[#lboxStack+1] = n
+    elseif node.is_leave then
+      if #lboxStack == 0 then
+        SU.error("Multiliner box stacking mismatch" .. node)
+      elseif #lboxStack == 1 then
+        SU.debug("typesetter.liner", "End reboxing", node,
+                 "(toplevel) =", lboxStack[1]:count(), "nodes")
+        if lboxStack[1]:count() > 0 then
+          outSlice[#outSlice+1] = lboxStack[1]
+        end
+      else
+        SU.debug("typesetter.liner", "End reboxing", node,
+                  "(sublevel) =", lboxStack[#lboxStack]:count(), "nodes")
+        if lboxStack[#lboxStack]:count() > 0 then
+          local hbox = lboxStack[#lboxStack - 1]
+          hbox:append(lboxStack[#lboxStack])
+        end
+      end
+      lboxStack[#lboxStack] = nil
+      pl.tablex.insertvalues(outSlice, migratingList)
+      migratingList = {}
+    else
+      if #lboxStack > 0 then
+        if not node.is_migrating then
+          local lbox = lboxStack[#lboxStack]
+          lbox:append(node)
+        else
+          migratingList[#migratingList+1] = node
+        end
+      else
+        outSlice[#outSlice+1] = node
+      end
+    end
+  end
+  return outSlice -- new reboxed slice
+end
+
+--- Check if a node is a liner, and process it if so, in a stack.
+---@param node  any          Current node
+---@return      boolean      Whether a liner was opened
+function typesetter:_processIfLiner(node)
+  local entered = false
+  if node.is_enter then
+    SU.debug("typesetter.liner", "Enter liner", node)
+    self.state.liners[#self.state.liners+1] = node
+    entered = true
+  elseif node.is_leave then
+    SU.debug("typesetter.liner", "Leave liner", node)
+    if #self.state.liners == 0 then
+      SU.error("Multiliner stack mismatch" .. node)
+    elseif self.state.liners[#self.state.liners].name == node.name then
+      self.state.liners[#self.state.liners].link = node -- for consistency check
+      self.state.liners[#self.state.liners] = nil
+    else
+      SU.error("Multiliner stack inconsistency"
+        .. self.state.liners[#self.state.liners] .. "vs. " .. node)
+    end
+  end
+  return entered
+end
+
+function typesetter:_repeatLeaveLiners(slice, insertIndex)
+  for _, v in ipairs(self.state.liners) do
+    if not v.link then
+      local n = linerLeaveNode(v.name)
+      SU.debug("typesetter.liner", "Closing liner", n)
+      table.insert(slice, insertIndex, n)
+    else
+      SU.error("Multiliner stack inconsistency" .. v)
+    end
+  end
+end
+-- End of liner logic
+
 function typesetter:addrlskip (slice, margins, hangLeft, hangRight)
   local LTR = self.frame:writingDirection() == "LTR"
   local rskip = margins[LTR and "rskip" or "lskip"]
@@ -944,17 +1116,34 @@ function typesetter:breakpointsToLines (breakpoints)
     if point.position ~= 0 then
       local slice = {}
       local seenNonDiscardable = false
+      local seenLiner = false
+      local lastContentNodeIndex
+
       for j = linestart, point.position do
-        if nodes[j].is_discretionary and nodes[j].used then
+        local currentNode = nodes[j]
+        if not currentNode.discardable
+          and not (currentNode.is_glue and not currentNode.explicit)
+          and not currentNode.is_zero then
+          -- actual visible content starts here
+          lastContentNodeIndex = #slice + 1
+        end
+        if not seenLiner and lastContentNodeIndex then
+          -- Any stacked liner (unclosed from a previous line) is reopened on
+          -- the current line.
+          seenLiner = self:_repeatEnterLiners(slice)
+          lastContentNodeIndex = #slice + 1
+        end
+        if currentNode.is_discretionary and currentNode.used then
           -- This is the used (prebreak) discretionary from a previous line,
           -- repeated. Replace it with a clone, changed to a postbreak.
-          nodes[j] = nodes[j]:cloneAsPostbreak()
+          currentNode = currentNode:cloneAsPostbreak()
         end
-        slice[#slice+1] = nodes[j]
-        if nodes[j] then
-          if not nodes[j].discardable then
+        slice[#slice+1] = currentNode
+        if currentNode then
+          if not currentNode.discardable then
             seenNonDiscardable = true
           end
+          seenLiner = self:_processIfLiner(currentNode) or seenLiner
         end
       end
       if not seenNonDiscardable then
@@ -972,12 +1161,23 @@ function typesetter:breakpointsToLines (breakpoints)
           linestart = point.position + 1
         end
 
+        -- Any unclosed liner is closed on the next line in reverse order.
+        if lastContentNodeIndex then
+          self:_repeatLeaveLiners(slice, lastContentNodeIndex + 1)
+        end
+
         -- Then only we can add some extra margin glue...
         local mrg = self:getMargins()
         self:addrlskip(slice, mrg, point.left, point.right)
 
         -- And compute the line...
         local ratio = self:computeLineRatio(point.width, slice)
+
+        -- Re-shuffle liners, if any, into their own boxes.
+        if seenLiner then
+          slice = self:_reboxLiners(slice)
+        end
+
         local thisLine = { ratio = ratio, nodes = slice }
         lines[#lines+1] = thisLine
       end
@@ -1157,6 +1357,40 @@ end
 function typesetter:pushHlist (hlist)
   for _, h in ipairs(hlist) do
     self:pushHorizontal(h)
+  end
+end
+
+--- A liner is a construct that may span multiple lines.
+-- This is the user-facing method for creating such liners in packages.
+-- The content may be line-broken, and each bit on each line will be wrapped
+-- into a box.
+-- These boxes will be formatted according to some output logic.
+-- The output method has the same signature as the outputYourself method
+-- of a box, and is responsible for outputting the liner inner content with the
+-- outputContent(typesetter, line) method, possibly surrounded by some additional
+-- effects.
+-- If we are already in horizontal-restricted mode, the liner is processed
+-- immediately, since line breaking won't occur then.
+---@param name            string    Name of the liner (usefull for debugging)
+---@param content         table     SILE AST to process
+---@param outputYourself  function  Output method for wrapped boxes
+function typesetter:liner (name, content, outputYourself)
+  if self.state.hmodeOnly then
+    SU.debug("typesetter.liner", "Applying liner in horizontal-restricted mode")
+    local hbox, hlist = self:makeHbox(content)
+    local lbox = linerBox(name, outputYourself)
+    lbox:append(hbox)
+    self:pushHorizontal(lbox)
+    self:pushHlist(hlist)
+  else
+    self.state.linerCount = (self.state.linerCount or 0) + 1
+    local uname = name .. "_" .. self.state.linerCount
+    SU.debug("typesetter.liner", "Applying liner in standard mode")
+    local enter = linerEnterNode(uname, outputYourself)
+    local leave = linerLeaveNode(uname)
+    self:pushHorizontal(enter)
+    SILE.process(content)
+    self:pushHorizontal(leave)
   end
 end
 
