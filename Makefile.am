@@ -77,6 +77,7 @@ EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL) $(FIGURES)
 EXTRA_DIST += src/embed.rs.in
 EXTRA_DIST += sil.abnf sil.ebnf build-aux/rfc-5234-core.abnf
+EXTRA_DIST += sil.c sil.h sil.js sil.py
 
 BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
 
@@ -91,6 +92,18 @@ BUILT_SOURCES += sil.ebnf
 sil.ebnf: sil.abnf
 	$(EBNF_CONVERT) -f none $< |
 		$(SED) -E '1,2d;4,$$s/^([a-z])/\n\1/' > $@
+
+BUILT_SOURCES += sil.c sil.h
+sil.c sil.h: sil.abnf build-aux/rfc-5234-core.abnf
+	$(APG_C) -i <(cat $^) -o $(basename $@)
+
+BUILT_SOURCES += sil.js
+sil.js: sil.abnf build-aux/rfc-5234-core.abnf
+	$(APG_JS) -i <(cat $^) -o $@
+
+BUILT_SOURCES += sil.py
+sil.py: sil.abnf build-aux/rfc-5234-core.abnf
+	$(APG_PY) -i <(cat $^) -o $@
 
 if EMBEDED_RESOURCES
 _EMBEDED_SOURCES = src/embed.rs src/embed-includes.rs

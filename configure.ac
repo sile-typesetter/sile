@@ -211,6 +211,9 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     ])
 
     AM_COND_IF([DEVELOPER], [
+        AX_PROGVAR([apg_c], [apg-c])
+        AX_PROGVAR([apg_js], [apg-js])
+        AX_PROGVAR([apg_py], [apg-py])
         AX_PROGVAR([busted])
         AX_PROGVAR([cmp])
         AX_PROGVAR([curl])
