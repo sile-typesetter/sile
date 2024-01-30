@@ -170,7 +170,7 @@ local function suggest_luarocks (module)
         SILE.lua_version,
         guessed_module_name,
         SILE.lua_version,
-        pl.stringx.join(" ", _G.arg)
+        pl.stringx.join(" ", _G.arg or {})
         )
 end
 

@@ -1,0 +1,23 @@
+\begin[papersize=a7]{document}
+\use[module=packages.retrograde,target=v0.15.0]
+\nofolios
+\neverindent
+\font[size=32pt,language=tr]
+\set[parameter=document.baselineskip,value=32]
+
+% A non-apostrophe break
+İstanbul'dansınız.
+
+% An apostrophe break point
+\kern[width=72pt]
+İstanbul'dansınız.
+
+% An apostrophe break point with curly quotes
+\kern[width=72pt]
+İstanbul’dansınız.
+
+\set[parameter=languages.tr.replaceApostropheAtHyphenation,value=true]
+\kern[width=72pt]
+İstanbul'dansınız.
+
+\end{document}

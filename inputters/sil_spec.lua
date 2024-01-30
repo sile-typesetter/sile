@@ -44,6 +44,12 @@ describe("#SIL #inputter", function ()
       assert.is.equal("bar", t[1][1])
     end)
 
+    it("commands with space around args and values", function()
+      local t = inputter:parse([[\foo[ baz = qiz qiz ]{bar}]])[1][1][1]
+      assert.is.equal("foo", t.command)
+      assert.is.equal("qiz qiz", t.options.baz)
+    end)
+
     it("commands with multiple quoted args", function()
       local t = inputter:parse([[\foo[baz="qiz, qiz",qiz="baz, baz"]{bar}]])[1][1][1]
       assert.is.equal("foo", t.command)

@@ -189,6 +189,11 @@ Note that non-breaking spaces (U+00A0), following the guidelines of Unicode Anne
 
 If you want to disable this behavior, the \autodoc:setting{languages.fixedNbsp} setting may be set to \code{true} to enforce fixed-width non-breaking spaces.
 
+Some typography conventions use an em-dash at the start of a paragraph line to denote a speaker change in a dialogue.
+This is the case in particular in French and Turkish typography.
+By default, all spaces following an em-dash at the beginning of a paragraph in your input are replaced by a single \em{fixed} inter-word space, so that subsequent dialogue lines all start identically, while other inter-word spaces may still be variable for justification purposes.
+To cancel this behavior, the \autodoc:setting{typesetter.fixedSpacingAfterInitialEmdash} setting may be set to \code{false}.
+
 \subsection{Letter spacing settings}
 
 You can also put spaces in between \em{letters} with the \autodoc:setting{document.letterspaceglue} setting.
