@@ -1,12 +1,13 @@
-; Formal grammar definition for SIL (SILE Input Language) files
+; Formal grammar specification for SIL (SILE Input Language) files
 ;
-; Based on RFC 5234 (Augmented BNF for Syntax Specifications: ABNF)
+; Uses RFC 5234 (Augmented BNF for Syntax Specifications: ABNF)
 ; Uses RFC 7405 (Case-Sensitive String Support in ABNF)
 
-; NOTE: ABNF does not seem to have a way to express matching / balancing of
-; tags. The grammar below does not express SILE's ability to skip over
-; passthrough content until it hits the correct matching closing tag for
-; environments or the first unballanced brace for braced content.
+; IMPORTANT CAVEAT:
+; Backus-Naur Form grammars (like ABNF and EBNF) do not have a way to
+; express matching opening and closing tags. The grammar below does
+; not express SILE's ability to skip over passthrough content until
+; it hits the matching closing tag for environments.
 
 ; A master document can only have one top level content item, but we allow
 ; loading of fragments as well which can have any number of top level content
@@ -26,9 +27,13 @@ content =/ command
 environment =  %s"\begin" [ options ] "{" passthrough-command-id "}"
                env-passthrough-text
                %s"\end{" passthrough-command-id "}"
+               ;         ^^^^^^^^^^^^^^^^^^^^^^
+               ; End command must match id used in begin, see caveat at top
 environment =/ %s"\begin" [ options ] "{" command-id "}"
                content
                %s"\end{" command-id "}"
+               ;         ^^^^^^^^^^
+               ; End command must match id used in begin, see caveat at top
 
 ; Passthrough (raw) environments can have any valid UTF-8 except the closing
 ; delimiter matching the opening, per the environment rule.
@@ -41,17 +46,20 @@ comment = "%" *utf8-char CRLF
 ; Input strings that are not special
 text = *text-char
 
-; Input content wrapped in braces can be attatched to a command or used to
+; Input content wrapped in braces can be attached to a command or used to
 ; manually isolate chunks of content (e.g. to hinder ligatures).
 braced-content = "{" content "}"
 
-; As with environments, the content format may be passthrough (raw) or more sil
+; As with environments, the content format may be passthrough (raw) or more SIL
 ; content depending on the command.
 command =  "\" passthrough-command-id [ options ] [ braced-passthrough-text ]
 command =/ "\" command-id [ options ] [ braced-content ]
 
-; Passthrough (raw) command text can have any valid UTF-8 except an unbalanced closing delimiter
-braced-passthrough-text = "{" *( *braced-passthrough-char / braced-passthrough-text ) "}"
+; Passthrough (raw) command text can have any valid UTF-8 except an unbalanced
+; closing delimiter
+braced-passthrough-text = "{"
+                          *( braced-passthrough-text / braced-passthrough-char )
+                          "}"
 
 braced-passthrough-char =  %x00-7A ; omit {
 braced-passthrough-char =/ %x7C    ; omit }
@@ -92,13 +100,25 @@ text-char =/ utf8-4
 
 letter = ALPHA / "_" / ":"
 identifier = letter *( letter / DIGIT / "-" / "." )
-passthrough-command-id = %s"ftl" / %s"lua" / %s"math" / %s"raw" / %s"script" / %s"sil" / %s"use" / %s"xml"
+passthrough-command-id = %s"ftl"
+                       / %s"lua"
+                       / %s"math"
+                       / %s"raw"
+                       / %s"script"
+                       / %s"sil"
+                       / %s"use"
+                       / %s"xml"
 command-id = identifier
 
 ; ASCII isn't good enough for us.
 utf8-char = utf8-1 / utf8-2 / utf8-3 / utf8-4
 utf8-1    = %x00-7F
 utf8-2    = %xC2-DF utf8-tail
-utf8-3    = %xE0 %xA0-BF utf8-tail / %xE1-EC 2utf8-tail / %xED %x80-9F utf8-tail / %xEE-EF 2utf8-tail
-utf8-4    = %xF0 %x90-BF 2utf8-tail / %xF1-F3 3utf8-tail / %xF4 %x80-8F 2utf8-tail
+utf8-3    = %xE0 %xA0-BF utf8-tail
+          / %xE1-EC 2utf8-tail
+          / %xED %x80-9F utf8-tail
+          / %xEE-EF 2utf8-tail
+utf8-4    = %xF0 %x90-BF 2utf8-tail
+          / %xF1-F3 3utf8-tail
+          / %xF4 %x80-8F 2utf8-tail
 utf8-tail = %x80-BF
