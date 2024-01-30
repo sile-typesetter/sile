@@ -72,9 +72,8 @@ quoted-value-char =/ utf8-3
 quoted-value-char =/ utf8-4
 
 value = *value-char
-value-char =/ %x00-21 ; omit "
+value-char =  %x00-21 ; omit "
 value-char =/ %x23-2B ; omit ,
-value-char =/ %x2D-3A ; omit ;
 value-char =/ %x3C-5C ; omit ]
 value-char =/ %x3E-7F ; end of utf8-1
 value-char =/ utf8-2
