@@ -65,7 +65,8 @@ local function process_ambles (ambles)
       local options = {}
       if amble.pack then amble, options = amble.pack, amble.options end
       if amble.type == "package" then
-        amble(options)
+        local class = SILE.documentState.documentClass
+        class:loadPackage(amble.pack, options)
       else
         SILE.documentState.documentClass:initPackage(amble, options)
       end
