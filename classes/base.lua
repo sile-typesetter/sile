@@ -182,9 +182,32 @@ function class.declareSettings (_)
 end
 
 function class:loadPackage (packname, options, reload)
-  local pack = require(("packages.%s"):format(packname))
-  if type(pack) == "table" and pack.type == "package" then -- new package
-    self.packages[pack._name] = pack(options, reload)
+  local pack
+  -- Allow loading by injecting whole packages as-is, otherwise try to load it with the usual packages path.
+  if type(packname) == "table" then
+    pack, packname = packname, packname._name
+  else
+    pack = require(("packages.%s"):format(packname))
+    if pack._name ~= packname then
+      SU.error(("Loaded module name '%s' does not match requested name '%s'"):format(pack._name, packname))
+    end
+  end
+  SILE.packages[packname] = pack
+  if type(pack) == "table" and pack.type == "package" then -- current package api
+    if self.packages[packname] then
+      -- If the same package name has been loaded before, we might be loading a modified version of the same package or
+      -- we might be re-loading the same package, or we might just be doubling up work because somebody called us twice.
+      -- The package itself should take care of the difference between load and reload based on the reload flag here,
+      -- but in addition to that we also want to avoid creating a new instance. We want to run the intitializer from the
+      -- (possibly different) new module, but not create a new instance ID and loose any connections it made.
+      -- To do this we add a create function that returns the current instance. This brings along the _initialized flag
+      -- and of course anything else already setup and running.
+      local current_instance = self.packages[packname]
+      pack._create = function () return current_instance end
+      pack(options, true)
+    else
+      self.packages[packname] = pack(options, reload)
+    end
   else -- legacy package
     self:initPackage(pack, options)
   end

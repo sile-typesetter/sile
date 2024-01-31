@@ -174,7 +174,7 @@ local function suggest_luarocks (module)
         )
 end
 
-SILE.use = function (module, options)
+SILE.use = function (module, options, reload)
   local status, pack
   if type(module) == "string" then
     status, pack = pcall(require, module)
@@ -211,9 +211,9 @@ SILE.use = function (module, options)
     SILE.pagebuilders[name] = pack
     SILE.pagebuilder = pack(options)
   elseif pack.type == "package" then
-    SILE.packages[name] = pack
+    SILE.packages[pack._name] = pack
     if class then
-      pack(options)
+       class:loadPackage(pack, options, reload)
     else
       table.insert(SILE.input.preambles, { pack = pack, options = options })
     end
