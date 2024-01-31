@@ -211,6 +211,7 @@ SILE.use = function (module, options, reload)
     SILE.pagebuilders[name] = pack
     SILE.pagebuilder = pack(options)
   elseif pack.type == "package" then
+    SILE.packages[pack._name] = pack
     if class then
        class:loadPackage(pack, options, reload)
     else
