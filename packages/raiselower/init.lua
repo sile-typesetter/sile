@@ -12,9 +12,6 @@ local function raise (height, content)
   SILE.process(content)
   SILE.typesetter:pushHbox({
     outputYourself = function (_, typesetter, _)
-      if (type(typesetter.state.cursorY)) == "table" then
-        typesetter.state.cursorY = typesetter.state.cursorY.length
-      end
       typesetter.frame:advancePageDirection(height)
     end
   })
