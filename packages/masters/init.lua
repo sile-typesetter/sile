@@ -5,20 +5,20 @@ package._name = "masters"
 
 local _currentMaster
 
-local function defineMaster (_, args)
-  SU.required(args, "id", "defining master")
-  SU.required(args, "frames", "defining master")
-  SU.required(args, "firstContentFrame", "defining master")
-  SILE.scratch.masters[args.id] = { frames = {}, firstContentFrame = nil }
-  for frame, spec in pairs(args.frames) do
+local function defineMaster (_, options)
+  SU.required(options, "id", "defining master")
+  SU.required(options, "frames", "defining master")
+  SU.required(options, "firstContentFrame", "defining master")
+  SILE.scratch.masters[options.id] = { frames = {}, firstContentFrame = nil }
+  for frame, spec in pairs(options.frames) do
     spec.id = frame
     if spec.solve then
-      SILE.scratch.masters[args.id].frames[frame] = spec
+      SILE.scratch.masters[options.id].frames[frame] = spec
     else
-      SILE.scratch.masters[args.id].frames[frame] = SILE.newFrame(spec)
+      SILE.scratch.masters[options.id].frames[frame] = SILE.newFrame(spec)
     end
   end
-  SILE.scratch.masters[args.id].firstContentFrame = SILE.scratch.masters[args.id].frames[args.firstContentFrame]
+  SILE.scratch.masters[options.id].firstContentFrame = SILE.scratch.masters[options.id].frames[options.firstContentFrame]
 end
 
 local function defineMasters (class, list)

@@ -1,6 +1,7 @@
 \begin[papersize=a5,class=book]{document}
+\use[module=packages.retrograde,target=v0.15.0]
 % Note: The failure case for this involves an infinite loop when it
-% erroniously matched penalty types that aren’t actually page breaks
+% erroneously matched penalty types that aren't actually page breaks
 \use[module=packages.linespacing]
 \set[parameter=linespacing.method,value=fit-font]
 \set[parameter=linespacing.fit-font.extra-space,value=15pt plus 0.5pt minus 0.5pt]

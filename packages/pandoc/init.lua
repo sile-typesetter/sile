@@ -3,10 +3,9 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "pandoc"
 
--- Process arguments that might not actually have that much to do with their
--- immediate function but affect the document in other ways, such as setting
--- bookmarks on anything tagged with an ID attribute.
-local handlePandocArgs = function (options)
+-- Process command options that are not actually intended to be options for a specific function but affect the document
+-- in other ways, such as setting bookmarks on anything tagged with an ID attribute.
+local handlePandocOptions = function (options)
   local wrapper = SILE.process
   if options.id then
     SU.debug("pandoc", "Set ID on tag")
@@ -69,16 +68,16 @@ function package:registerCommands ()
   end)
 
   self:registerCommand("BulletList", function (options, content)
-    local wrapper, args = handlePandocArgs(options)
+    local wrapper, options_ = handlePandocOptions(options)
     wrapper(function ()
-      SILE.call("itemize", args, content)
+      SILE.call("itemize", options_, content)
     end)
   end)
 
   self:registerCommand("CodeBlock", function (options, content)
-    local wrapper, args = handlePandocArgs(options)
+    local wrapper, options_ = handlePandocOptions(options)
     wrapper(function ()
-      SILE.call("verbatim", args, content)
+      SILE.call("verbatim", options_, content)
     end)
     SILE.typesetter:leaveHmode()
   end)
@@ -89,17 +88,17 @@ function package:registerCommands ()
   end)
 
   self:registerCommand("Div", function (options, content)
-    handlePandocArgs(options)(content)
+    handlePandocOptions(options)(content)
     SILE.typesetter:leaveHmode()
   end, "Generic block wrapper")
 
   self:registerCommand("Header", function (options, content)
     local analog = options.type
     options.level, options.type = nil, nil
-    local wrapper, args = handlePandocArgs(options)
+    local wrapper, options_ = handlePandocOptions(options)
     wrapper(function ()
       if analog and SILE.Commands[analog] then
-        SILE.call(analog, args, content)
+        SILE.call(analog, options_, content)
       else
         SILE.process(content)
       end
@@ -126,9 +125,9 @@ function package:registerCommands ()
   end)
 
   self:registerCommand("OrderedList", function (options, content)
-    local wrapper, args = handlePandocArgs(options)
+    local wrapper, options_ = handlePandocOptions(options)
     wrapper(function ()
-      SILE.call("enumerate", args, content)
+      SILE.call("enumerate", options_, content)
     end)
   end)
 
@@ -169,9 +168,9 @@ function package:registerCommands ()
   end, "Creates a Cite inline element")
 
   self:registerCommand("Code", function (options, content)
-    local wrapper, args = handlePandocArgs(options)
+    local wrapper, options_ = handlePandocOptions(options)
     wrapper(function ()
-      SILE.call("code", args, content)
+      SILE.call("code", options_, content)
     end)
   end, "Creates a Code inline element")
 
@@ -180,9 +179,9 @@ function package:registerCommands ()
   end, "Creates an inline element representing emphasised text.")
 
   self:registerCommand("Image", function (options, _)
-    local wrapper, args = handlePandocArgs(options)
+    local wrapper, options_ = handlePandocOptions(options)
     wrapper(function ()
-      SILE.call("img", args)
+      SILE.call("img", options_)
     end)
   end, "Creates a Image inline element")
 
@@ -191,9 +190,9 @@ function package:registerCommands ()
   end, "Create a LineBreak inline element")
 
   self:registerCommand("Link", function (options, content)
-    local wrapper, args = handlePandocArgs(options)
+    local wrapper, options_ = handlePandocOptions(options)
     wrapper(function ()
-      SILE.call("url", args, content)
+      SILE.call("url", options_, content)
     end)
   end, "Creates a link inline element, usually a hyperlink.")
 
@@ -229,7 +228,7 @@ function package:registerCommands ()
   end, "Creates text rendered in small caps")
 
   self:registerCommand("Span", function (options, content)
-    handlePandocArgs(options)(content)
+    handlePandocOptions(options)(content)
   end, "Creates a Span inline element")
 
   self:registerCommand("Strikeout", function (_, content)
@@ -272,9 +271,9 @@ function package:registerCommands ()
   -- Non native types
 
   self:registerCommand("ListItem", function (options, content)
-    local wrapper, args = handlePandocArgs(options)
+    local wrapper, options_ = handlePandocOptions(options)
     wrapper(function ()
-      SILE.call("item", args, content)
+      SILE.call("item", options_, content)
     end)
   end)
 

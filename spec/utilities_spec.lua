@@ -149,25 +149,34 @@ describe("SILE.utilities", function()
         assert.is.equal("2", SU.formatNumber(2, { system = "arabic" }))
       end)
 
-      it("should format roman number", function ()
+      it("should format roman numbers", function ()
         assert.is.equal("mcmlxxxiv", SU.formatNumber(1984, { system = "roman" }))
       end)
 
-      it("should format ROMAN number", function ()
+      it("should format ROMAN numbers", function ()
         assert.is.equal("MCMLXXXIV", SU.formatNumber(1984, { system = "ROMAN" }))
       end)
 
-      it("should format alpha number", function ()
+      it("should format alpha numbers", function ()
         assert.is.equal("b", SU.formatNumber(2, { system = "alpha" }))
       end)
 
-      it("should format ALPHA number", function ()
+      it("should format ALPHA numbers", function ()
         assert.is.equal("B", SU.formatNumber(2, { system = "Alpha" }))
       end)
 
       it("should format 'arab' numbers", function ()
         assert.is.equal("٢", SU.formatNumber(2, { system = "arab" }))
       end)
+
+      it("should format greek numbers", function ()
+        assert.is.equal("β", SU.formatNumber(2, { system = "greek" }))
+      end)
+
+      it("should format GREEK numbers", function ()
+        assert.is.equal("Β", SU.formatNumber(2, { system = "Greek" }))
+      end)
+
     end)
   end)
 

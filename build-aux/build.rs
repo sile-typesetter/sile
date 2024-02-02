@@ -1,17 +1,16 @@
-#[cfg(feature = "completions")]
-use clap::CommandFactory;
-#[cfg(feature = "completions")]
-use clap_complete::generator::generate_to;
-#[cfg(feature = "completions")]
-use clap_complete::shells::{Bash, Elvish, Fish, PowerShell, Zsh};
 #[cfg(feature = "manpage")]
 use clap_mangen::Man;
-#[cfg(feature = "completions")]
-use std::fs;
 #[cfg(any(feature = "static", feature = "completions"))]
 use std::path::Path;
 use std::{collections, env};
 use vergen::EmitBuilder;
+#[cfg(feature = "completions")]
+use {
+    clap::CommandFactory,
+    clap_complete::generator::generate_to,
+    clap_complete::shells::{Bash, Elvish, Fish, PowerShell, Zsh},
+    std::fs,
+};
 
 #[cfg(feature = "completions")]
 include!("../src/cli.rs");

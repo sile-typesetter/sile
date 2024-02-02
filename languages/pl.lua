@@ -1,3 +1,32 @@
+SILE.nodeMakers.pl = pl.class(SILE.nodeMakers.unicode)
+
+function SILE.nodeMakers.pl:handleWordBreak (item)
+  -- According to Polish rules, when a break occurs at an explicit hyphen,
+  -- the hyphen gets repeated at the beginning of the new line
+  if item.text == "-" then
+    self:addToken(item.text, item)
+    self:makeToken()
+    if self.lastnode ~= "discretionary" then
+      coroutine.yield(SILE.nodefactory.discretionary({
+        postbreak = SILE.shaper:createNnodes("-", self.options)
+      }))
+      self.lastnode = "discretionary"
+    end
+  else
+    self._base.handleWordBreak(self, item)
+  end
+end
+
+function SILE.nodeMakers.pl:handleLineBreak (item, subtype)
+  if self.lastnode == "discretionary" then
+    -- Initial word boundary after a discretionary:
+    -- Bypass it and just deal with the token.
+    self:dealWith(item)
+  else
+    self._base.handleLineBreak(self, item, subtype)
+  end
+end
+
 SILE.hyphenator.languages["pl"] = {}
 SILE.hyphenator.languages["pl"].patterns =
    {

@@ -1,0 +1,21 @@
+\begin[papersize=a7]{document}
+\nofolios
+\neverindent
+\language[main=ca]
+\font[size=16]
+
+% Demonstrate break points before, at, and after a geminated L
+% using both separate and precomposed glyphs.
+\kern[width=175pt]intel·ligent
+
+\kern[width=175pt]inteŀligent
+
+\kern[width=160pt]intel·ligent
+
+\kern[width=160pt]inteŀligent
+
+\kern[width=150pt]intel·ligent
+
+\kern[width=150pt]inteŀligent
+
+\end{document}

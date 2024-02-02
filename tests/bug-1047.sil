@@ -1,0 +1,10 @@
+\begin[class=jplain,papersize=a6]{document}
+\nofolios
+\neverindent
+\language[main=zh]
+\use[module=packages.ruby]
+\font:remove-fallback
+\font:add-fallback[family=Noto Serif CJK TC]
+\font[family=FRB Taiwanese Kana,size=40pt]
+\ruby[reading=タイ𚿳]{臺}
+\end{document}

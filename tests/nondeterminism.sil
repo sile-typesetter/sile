@@ -1,6 +1,7 @@
 \begin[papersize=a6]{document}
+\use[module=packages.retrograde,target=v0.15.0]
 \nofolios
 \font[size=11pt,family=Gentium Plus]
-\noindent{}Now that we understand some of what SILE is about and what it seeks to do, 
+\noindent{}Now that we understand some of what SILE is about and what it seeks to do,
 let’s dive into SILE itself.
 \end{document}

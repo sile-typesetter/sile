@@ -1,0 +1,17 @@
+\begin[papersize=a7]{document}
+\use[module=packages.retrograde,target=v0.15.0]
+\nofolios
+\neverindent
+\font[size=22pt]
+\set[parameter=linebreak.emergencyStretch, value=50pt]
+
+% Affect paragraph-leading em-dash but not later...
+— Lorem ipsum dolor sit. — Sed non risus.
+
+— Non.
+
+\set[parameter=typesetter.fixedSpacingAfterInitialEmdash, value=false]
+
+— Lorem ipsum dolor sit. — Sed non risus.
+
+\end{document}

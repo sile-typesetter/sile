@@ -1112,7 +1112,7 @@ function elements.table:_init (children, options)
   self.children = children
   self.options = options
   self.nrows = #self.children
-  self.ncols = math.max(table.unpack(mapList(function(_, row)
+  self.ncols = math.max(pl.utils.unpack(mapList(function(_, row)
     return #row.children end, self.children)))
   SU.debug("math", "self.ncols =", self.ncols)
   self.rowspacing = self.options.rowspacing and SILE.length(self.options.rowspacing)

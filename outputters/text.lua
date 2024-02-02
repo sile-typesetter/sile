@@ -23,7 +23,7 @@ end
 
 function outputter:_writeline (...)
   self:_ensureInit()
-  local args = table.pack(...)
+  local args = pl.utils.pack(...)
   for i=1, #args do
     outfile:write(args[i])
   end
@@ -36,6 +36,7 @@ end
 
 function outputter:finish ()
   self:_ensureInit()
+  self:runHooks("prefinish")
   outfile:close()
 end
 
@@ -79,6 +80,11 @@ function outputter:drawHbox (value, width)
     started = true
     cursorX = cursorX + width
   end
+end
+
+function outputter:drawRaw (literal)
+   self:_ensureInit()
+   outfile:write(literal)
 end
 
 return outputter

@@ -3,8 +3,8 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "boustrophedon"
 
-function package:_init (class)
-  base._init(self, class)
+function package:_init (options)
+  base._init(self, options)
   SILE.hyphenator.languages.grc = { patterns={} }
   SILE.nodeMakers.grc = pl.class(SILE.nodeMakers.unicode)
   function SILE.nodeMakers.grc.iterator (node, items)

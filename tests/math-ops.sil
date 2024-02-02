@@ -1,6 +1,7 @@
 \begin[papersize=a5]{document}
+\use[module=packages.retrograde,target=v0.15.0]
 
-\script[src=packages/math]
+\use[module=packages.math]
 
 Custom atom types:
 

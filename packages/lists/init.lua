@@ -164,7 +164,7 @@ function package.doNestedList (_, listType, options, content)
 
     local counter = options.start and (SU.cast("integer", options.start) - 1) or 0
     for i = 1, #content do
-      if type(content[i]) == "table" then
+      if type(content[i]) == "table" and #content[i] > 0 then
         if content[i].command == "item" or content[i].command == "ListItem" then
           counter = counter + 1
           -- Enrich the node with internal properties
@@ -182,6 +182,10 @@ function package.doNestedList (_, listType, options, content)
         else
           SILE.typesetter:leaveHmode()
         end
+         -- Whitespace left around comment nodes is fine too
+      elseif type(content[i]) == "table" and #content[i] == 0 then
+         -- ignore whitespace leaking in from in front of indented comments
+         assert(true)
       elseif type(content[i]) == "string" then
         -- All text nodes are ignored in structure tags, but just warn
         -- if there do not just consist in spaces.

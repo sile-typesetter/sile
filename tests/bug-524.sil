@@ -3,6 +3,7 @@
 \neverindent
 \show-hanmen
 \use[module=packages.ruby]
+\set[parameter=ruby.opentype,value=false]
 私は
 
 {}私は

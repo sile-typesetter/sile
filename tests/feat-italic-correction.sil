@@ -1,4 +1,5 @@
 \begin[papersize=a6]{document}
+\use[module=packages.retrograde,target=v0.15.0]
 \nofolios
 \neverindent
 \font[size=15pt]
@@ -43,7 +44,7 @@
 
 % Enabled
 \set[parameter=typesetter.italicCorrection, value=true]
-+ \em{fluff}! \em{fluff} fluff aaaaaaa aaaa aaaaaa \em{fluff} fluff 
++ \em{fluff}! \em{fluff} fluff aaaaaaa aaaa aaaaaa \em{fluff} fluff
 
 % Repeated with another font
 \font[family=Cormorant Infant]

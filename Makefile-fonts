@@ -34,6 +34,7 @@ TESTFONTFILES  = $(DOCSFONTFILES)
 TESTFONTFILES += Amiri-Regular.ttf
 TESTFONTFILES += AmiriQuran.ttf
 TESTFONTFILES += AwamiNastaliq-Regular.ttf
+TESTFONTFILES += FRBTaiwaneseKana.otf
 TESTFONTFILES += LibertinusSans-Bold.otf
 TESTFONTFILES += NotoNaskhArabic-Regular.ttf
 TESTFONTFILES += NotoSansKannada-Regular.ttf
@@ -72,6 +73,10 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 
 .fonts/TwemojiMozilla.ttf: | .fonts
 	$(CURL) -fsSL https://github.com/mozilla/twemoji-colr/releases/download/v0.5.1/$(notdir $@) -o $@
+
+.fonts/FRBTaiwaneseKana.otf: | .fonts
+	: $(CURL) -fsSL https://github.com/ctrlcctrlv/FRBTaiwaneseKana/releases/download/v1.1/$(notdir $@) -o $@
+	$(CURL) -fsSL https://raw.githubusercontent.com/ctrlcctrlv/FRBTaiwaneseKana/5c367e9ee5aefd54b5c9c9e996705f0561fe3d15/$(notdir $@) -o $@
 
 # Tell  make how to download font file bundles (when not downloadable individually)
 

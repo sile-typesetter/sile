@@ -83,7 +83,7 @@ The full list of attributes to the \autodoc:command{\font} command are:
 
 It’s quite fiddly to be always changing font specifications manually;
     later we’ll see some ways to automate the process.
-SILE’s \autodoc:class{plain} class notably provides the \autodoc:command{\em{…}} command as a shortcut for \autodoc:command{\font[style=italic]{…}}, and the \autodoc:command{\strong{…}} command as a a shortcut for \autodoc:command{\font[weight=700]{…}}.
+SILE’s \autodoc:class{plain} class notably provides the \autodoc:command{\strong{…}} command as a a shortcut for \autodoc:command{\font[weight=700]{…}}, and the \autodoc:command{\em{…}} to emphasize text (switching between italic or regular style as needed).
 
 Note for parameters that accept multiple values, values may be separated with commas.
 Be sure to wrap the value in quotes so the commas don't get parsed as new parameters.
@@ -268,41 +268,53 @@ To Sherlock Holmes she is always \em{the woman}.
 This is because every file is required to contain a valid XML tree, which wouldn’t be the case without a common root.
 
 SILE is written in the Lua programming language, and the Lua interpreter is available at runtime.
-Just as one can run Javascript code from within a HTML document using a \code{<script>} tag, one can run Lua code from within a SILE document using a \code{\\script} command.
-(It looks better in XML-flavor.)
-This command has two forms:
-    \code{\\script[src=\em{<filename>}]} which includes a Lua file, and \code{\\script\{…\}} which runs Lua code inline.
+Just as one can run Javascript code from within a HTML document using a \code{<script>} tag, one can run Lua code from within a SILE document using a \code{\\lua} command.
+(A \code{\\script} command exists, but is being deprecated beginning in SILE v0.15.0.)
+
+This command has three modes:
+\begin{itemize}
+\item{A Lua library may be loaded using the Lua package path, as in \code{\\lua[require=module.spec]}.}
+\item{A Lua script may run by giving a filesystem path, as in \code{\\lua[src=path/to/file.lua]}.}
+\item{Lua code can be provided as inline content, as in \code{\\lua\{SILE.typesetter:typeset("foo")\}}.}
+\end{itemize}
+
+\begin{autodoc:note}
+  Another former use case or \code{\\script[src=…]} was to load SILE packages.
+  This use case has been deprecated in favor of the more robust loader \code{\\use[module=…]}.
+  Be sure to use a module spec with period delimiters not a path with slashes (e.g. \code{packages.math} not \code{packages/math}).
+  This will ensure cross-platform compatibility as well as make sure packages don't get loaded multiple times.
+\end{autodoc:note}
 
 Doing anything interesting inline requires knowledge of the internals of SILE, (thankfully the code is not that hard to read) but to get you started, the Lua function \code{SILE.typesetter:typeset(…)} will add text to a page, \code{SILE.call("…")} will call a SILE command, and \code{SILE.typesetter:leaveHmode()} ends the current paragraph and outputs the text.
 For example:
 
 \begin[type=autodoc:codeblock]{raw}
-\begin{script}
+\begin{lua}
   for i=1,10 do
     SILE.typesetter:typeset(i .. " x " .. i .. " = " .. i*i .. ". ")
     SILE.typesetter:leaveHmode()
     SILE.call("smallskip")
   end
-\end{script}
+\end{lua}
 \end{raw}
 
 produces the following output:
 
 \begin{autodoc:example}
-\begin{script}
+\begin{lua}
   SILE.call("indent");SILE.typesetter:leaveHmode()
   for i=1,10 do
     SILE.typesetter:typeset(i .. " x " .. i .. " = " .. i*i .. ". ")
     SILE.typesetter:leaveHmode()
     SILE.call("smallskip")
   end
-\end{script}
+\end{lua}
 \end{autodoc:example}
 
 There is one notable caveat when embedding Lua code documents written with the TeX-flavor markup.
-Since SILE has to first parse the TeX markup to find the start and end of such script commands \em{without} understanding what’s in between, it is strictly necessary that no end tags appear inside the Lua code.
-This means that for the environment block version (\code{\\begin\{script\}}) there must be no instances of \code{\\end\{script\}} inside the Lua code block, even inside a string that would otherwise be valid Lua code (e.g., if it was inside a quoted string or Lua comment).
+Since SILE has to first parse the TeX markup to find the start and end of such lua commands \em{without} understanding what’s in between, it is strictly necessary that no end tags appear inside the Lua code.
+This means that for the environment block version (\code{\\begin\{lua\}}) there must be no instances of \code{\\end\{lua\}} inside the Lua code block, even inside a string that would otherwise be valid Lua code (e.g., if it was inside a quoted string or Lua comment).
 The first instance of such an end tag terminates the block, and there is currently no way to escape it.
-For the inline command form (\code{\\script}) an exact matching number of open and closing braces may appear in the Lua code—the next closing brace at the same level as the opening brace will close the tag, even if it happens to be inside some quoted string in the Lua code.
+For the inline command form (\code{\\lua}) an exact matching number of open and closing braces may appear in the Lua code—the next closing brace at the same level as the opening brace will close the tag, even if it happens to be inside some quoted string in the Lua code.
 Including any number of nested opening and closing braces is possible as long as they are balanced.
 \end{document}

@@ -118,8 +118,6 @@ in stdenv.mkDerivation (finalAttrs: {
 
   postPatch = ''
     patchShebangs build-aux/*.sh build-aux/git-version-gen
-  '' + lib.optionalString stdenv.isDarwin ''
-    sed -i -e 's|@import AppKit;|#import <AppKit/AppKit.h>|' src/macfonts.m
   '';
 
   NIX_LDFLAGS = lib.optionalString stdenv.isDarwin "-framework AppKit";
@@ -138,15 +136,6 @@ in stdenv.mkDerivation (finalAttrs: {
   # have to fix this race condition ourselves.
   postUnpack = ''
     touch source/build-aux/rust_boilerplate.mk
-  '';
-
-  # remove forbidden references to $TMPDIR
-  preFixup = lib.optionalString stdenv.isLinux ''
-    for f in "$out"/bin/*; do
-      if isELF "$f"; then
-        patchelf --shrink-rpath --allowed-rpath-prefixes "$NIX_STORE" "$f"
-      fi
-    done
   '';
 
   passthru = {

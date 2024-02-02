@@ -217,7 +217,8 @@ The available built-in display types are:
 \item{\code{alpha}, for lower-case alphabetic counting}
 \item{\code{Alpha}, for upper-case alphabetic counting}
 \item{\code{roman}, for lower-case Roman numerals}
-\item{\code{ROMAN} for upper-case Roman numerals}
+\item{\code{ROMAN}, for upper-case Roman numerals}
+\item{\code{greek}, for Greek letters in alphabetical order (not Greek numerals)}
 \end{itemize}
 
 The ICU library also provides ways of formatting numbers in global (non-Latin) scripts.

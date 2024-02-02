@@ -13,8 +13,9 @@ jobs:
       matrix:
         configuration:
           - [ 'dynamic', '' ]
-          - [ 'embeded', '--enable-embeded-resources' ]
           - [ 'system', '--with-system-lua-sources' ]
+          - [ 'embeded', '--enable-embeded-resources' ]
+          - [ 'static', '--enable-embeded-resources --disable-shared --enable-static' ]
     runs-on: ubuntu-22.04
     name: Build Ubuntu ${{ matrix.configuration[0] }}
     steps:
@@ -23,14 +24,14 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             lua_modules
@@ -52,27 +53,39 @@ jobs:
             ${{ matrix.configuration[1] }}
           echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
           echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
+          echo "CARCH=$(uname -m)" >> $GITHUB_ENV
       - name: Make
         run: |
           make
       - name: Package
         run: |
           make dist
-      - name: Upload artifacts
-        if: ${{ !contains(github.ref, 'refs/tags/v') }}
-        uses: actions/upload-artifact@v3
+      - name: Upload source dist artifact
+        if: ${{ matrix.configuration[0] == 'dynamic' && !contains(github.ref, 'refs/tags/v') }}
+        uses: actions/upload-artifact@v4
         with:
           name: sile-${{ env.VERSION }}
           path: sile-${{ env.VERSION }}.zip
+      - name: Append architecture to static binary
+        if: ${{ matrix.configuration[0] == 'static' }}
+        run: |
+          cp sile sile-${{ env.CARCH }}
+      - name: Upload static binary artifact
+        if: ${{ matrix.configuration[0] == 'static' && !contains(github.ref, 'refs/tags/v') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: sile-${{ env.CARCH }}
+          path: sile-${{ env.CARCH }}
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: github.repository == 'sile-typesetter/sile' && startsWith(github.ref, 'refs/tags/v')
+        if: matrix.configuration[0] == 'static' && github.repository == 'sile-typesetter/sile' && startsWith(github.ref, 'refs/tags/v')
         with:
           body_path: sile-${{ env.VERSION }}.md
           files: |
             sile-${{ env.VERSION }}.pdf
             sile-${{ env.VERSION }}.zip
             sile-${{ env.VERSION }}.tar.xz
+            sile-${{ env.CARCH }}
 
   build-nix:
     runs-on: ubuntu-22.04
@@ -83,21 +96,21 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v6
+        uses: DeterminateSystems/nix-installer-action@v9
       - name: Cache Nix dependencies
-        uses: DeterminateSystems/magic-nix-cache-action@v2
+        uses: DeterminateSystems/magic-nix-cache-action@v3
       - name: Setup developer environment
         run: |
           nix develop --command ./bootstrap.sh
           nix develop --configure
           nix develop --command make
-      - name: Run HB6+ only regressions
+      - name: Run regression tests for which Ubuntu can't provide deps
         run: |
-          nix develop --command make regressions TESTSRCS=tests/variations-axis.sil
+          nix develop --command make regressions TESTSRCS='tests/variations-axis.sil tests/feat-unicode-softhyphen.sil'

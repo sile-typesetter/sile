@@ -21,7 +21,7 @@ function settings:_init()
   self:declare({
     parameter = "document.parindent",
     type = "glue",
-    default = SILE.nodefactory.glue("20pt"),
+    default = SILE.nodefactory.glue("1bs"),
     help = "Glue at start of paragraph"
   })
 
@@ -75,7 +75,6 @@ function settings:_init()
   })
 
   SILE.registerCommand("set", function(options, content)
-    local parameter = SU.required(options, "parameter", "\\set command")
     local makedefault = SU.boolean(options.makedefault, false)
     local reset = SU.boolean(options.reset, false)
     local value = options.value
@@ -84,10 +83,14 @@ function settings:_init()
         SU.warn("Are you sure meant to set default settings *and* pass content to ostensibly apply them to temporarily?")
       end
       self:temporarily(function()
-        self:set(parameter, value, makedefault, reset)
+         if options.parameter then
+           local parameter = SU.required(options, "parameter", "\\set command")
+           self:set(parameter, value, makedefault, reset)
+        end
         SILE.process(content)
       end)
     else
+      local parameter = SU.required(options, "parameter", "\\set command")
       self:set(parameter, value, makedefault, reset)
     end
   end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)", nil, true)

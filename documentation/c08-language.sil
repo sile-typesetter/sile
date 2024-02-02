@@ -93,6 +93,18 @@ The command \autodoc:command{\nohyphenation{…}} is provided as a shortcut for 
 The hyphenator uses the same algorithm as TeX and can use TeX hyphenation pattern files if they are converted to Lua format.
 To implement hyphenation for a new language, first check to see if TeX hyphenation dictionaries are available; if not, work through the resources at \url{http://tug.org/docs/liang/}.
 
+\em{Note on Unicode soft hyphens} — By default, soft hyphens (U+00AD) are interpreted as discretionary breaks, allowing line-breaking at that point (using the current font’s hyphen character).
+
+However, issues may arise when soft hyphens are used in ligatures, causing breaks between constituent characters and disrupting the ligature’s integrity.
+Rather than relying on soft hyphens, for instances requiring hyphenation in unknown words, consider adding an exception to the hyphenation rules instead, with \autodoc:command{\hyphenator:add-exceptions{<text>}} (where the text is a lowercase representation of the word, with dashes where hyphenation is allowed).
+
+Moreover, typists sometimes manually insert soft hyphens to rectify line-breaking issues in other typesetting systems.
+In SILE, leveraging language-specific hyphenation rules tends to be more reliable.
+Setting \autodoc:setting{typesetter.softHyphen} to \code{false} ignores soft hyphens entirely in the text, alleviating potential issues arising from their manual insertion.
+
+Soft hyphens can be inadvertently inserted by text editors or software, remaining invisible in the source text and causing unexpected output.
+Setting \autodoc:setting{typesetter.softHyphenWarning} to \code{true} triggers warnings upon encountering soft hyphens, aiding users in identifying and rectifying such instances, regardless of the previous setting.
+
 \section{Localization}
 
 A small handful of strings may be programmatically added to documents depending on language, context, and options.
@@ -173,6 +185,18 @@ The size of these spaces is determined by
 	\autodoc:setting[check=false]{languages.fr.thinspace},
 	\autodoc:setting[check=false]{languages.fr.colonspace} and
 	\autodoc:setting[check=false]{languages.fr.guillspace}.
+
+\subsection{Polish}
+
+According to Polish typography conventions, when a break occurs at an explicit hyphen, the hyphen gets repeated at the beginning of the new line.
+SILE automatically handles this.
+
+\subsection{Turkish}
+
+According to Turkish typography conventions, when a break occurs at an existing apostrophe, the break point is allowed but no hyphenation character is shown.
+SILE behaves this way default.
+Some publisher style guides suggest an alternative behavior replacing the apostrophe with the hyphenation character.
+This alternative behavior can be achieved by setting \autodoc:setting[check=false]{languages.tr.replaceApostropheAtHyphenation} to \code{true}.
 
 \subsection{Japanese / Chinese}
 

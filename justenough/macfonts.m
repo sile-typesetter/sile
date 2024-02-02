@@ -1,4 +1,5 @@
-@import AppKit;
+#import <AppKit/AppKit.h>
+
 #include <stdio.h>
 #include <lua.h>
 #include <lauxlib.h>

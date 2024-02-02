@@ -21,7 +21,8 @@ local outputter = pl.class(base)
 outputter._name = "podofo"
 outputter.extension = "pdf"
 
-function outputter._init (_)
+function outputter:_init (_)
+  base._init(self)
   document = pdf.PdfMemDocument()
   pagesize = pdf.PdfRect()
   pagesize:SetWidth(SILE.documentState.paperSize[1])
@@ -39,6 +40,7 @@ end
 
 function outputter:finish ()
   painter:FinishPage()
+  self:runHooks("prefinish")
   local fname = self:getOutputFilename()
   document:Write(fname == "-" and "/dev/stdout" or fname)
 end
@@ -102,6 +104,12 @@ function outputter:debugHbox (hbox, scaledWidth)
   painter:Stroke()
   painter:SetColor(0, 0, 0)
   --cr:move_to(x, y)
+end
+
+-- untested
+function outputter:drawRaw (literal)
+  local x, y = self:getCursor()
+  painter:DrawText(x, y, literal, string.len(literal))
 end
 
 return outputter

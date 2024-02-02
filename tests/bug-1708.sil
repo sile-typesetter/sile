@@ -1,4 +1,5 @@
 \begin[papersize=a7,class=book]{document}
+\use[module=packages.retrograde,target=v0.15.0]
 \neverindent
 \nofolios
 \set[parameter=document.letterspaceglue, value=5pt]

@@ -6,6 +6,7 @@ SILE.features = require("core.features")
 
 -- Initialize Lua environment and global utilities
 SILE.lua_version = _VERSION:sub(-3)
+-- luacheck: ignore jit
 SILE.lua_isjit = type(jit) == "table"
 SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
 
@@ -144,10 +145,43 @@ SILE.init = function ()
   runEvals(SILE.input.evaluates, "evaluate")
 end
 
-SILE.use = function (module, options)
-  local pack
+local function suggest_luarocks (module)
+  local guessed_module_name = module:gsub(".*%.", "") .. ".sile"
+  return ([[
+
+    If the expected module is a 3rd party extension you may need to install it
+    using LuaRocks. The details of how to do this are highly dependent on
+    your system and preferred installation method, but as an example installing
+    a 3rd party SILE module to a project-local tree where might look like this:
+
+        luarocks --lua-version %s --tree lua_modules install %s
+
+    This will install the LuaRocks to your project, then you need to tell your
+    shell to pass along that info about available LuaRocks paths to SILE. This
+    only needs to be done once in each shell.
+
+        eval $(luarocks --lua-version %s --tree lua_modules path)
+
+    Thereafter running SILE again should work as expected:
+
+       sile %s
+
+    ]]):format(
+        SILE.lua_version,
+        guessed_module_name,
+        SILE.lua_version,
+        pl.stringx.join(" ", _G.arg or {})
+        )
+end
+
+SILE.use = function (module, options, reload)
+  local status, pack
   if type(module) == "string" then
-    pack = require(module)
+    status, pack = pcall(require, module)
+    if not status then
+      SU.error(("Unable to use '%s':\n%s%s")
+        :format(module, SILE.traceback and ("    Lua ".. pack) or "", suggest_luarocks(module)))
+    end
   elseif type(module) == "table" then
     pack = module
   end
@@ -177,9 +211,9 @@ SILE.use = function (module, options)
     SILE.pagebuilders[name] = pack
     SILE.pagebuilder = pack(options)
   elseif pack.type == "package" then
-    SILE.packages[name] = pack
+    SILE.packages[pack._name] = pack
     if class then
-      pack(options)
+       class:loadPackage(pack, options, reload)
     else
       table.insert(SILE.input.preambles, { pack = pack, options = options })
     end
@@ -242,9 +276,9 @@ SILE.process = function (ast)
       content()
     elseif SILE.Commands[content.command] then
       SILE.call(content.command, content.options, content)
-    elseif content.id == "texlike_stuff"
+    elseif content.id == "content"
       or (not content.command and not content.id) then
-      local pId = SILE.traceStack:pushContent(content, "texlike_stuff")
+      local pId = SILE.traceStack:pushContent(content, "content")
       SILE.process(content)
       SILE.traceStack:pop(pId)
     elseif type(content) ~= "nil" then
@@ -444,7 +478,7 @@ function SILE.registerUnit (unit, spec)
 end
 
 function SILE.paperSizeParser (size)
-  -- SU.deprecated("SILE.paperSizeParser", "SILE.papersize", "0.10.0", nil)
+  SU.deprecated("SILE.paperSizeParser", "SILE.papersize", "0.15.0", "0.16.0")
   return SILE.papersize(size)
 end
 

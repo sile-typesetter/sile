@@ -39,7 +39,7 @@ utilities.error = function (message, isbug)
   io.stderr:flush()
   SILE.outputter:finish() -- Only really useful from the REPL but no harm in trying
   SILE.scratch.caughterror = true
-  error(message, 2)
+  error("", 2)
 end
 
 utilities.warn = function (message, isbug)
@@ -104,7 +104,7 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
   -- Hence we fake it ‘till we make it, all deprecations internally are warnings.
   local brackets = old:sub(1,1) == '\\' and "" or "()"
   local _new = new and "Please use " .. (new .. brackets) .. " instead." or "Plase don't use it."
-  local msg = (old .. brackets) .. " was deprecated in SILE v" .. tostring(warnat) .. ". " .. _new ..  (extra and "\n" .. extra .. "\n\n" or "")
+  local msg = (old .. brackets) .. " was deprecated in SILE v" .. tostring(warnat) .. ". " .. _new ..  (extra and ("\n\n" .. extra .. "\n") or "")
   if errorat and current >= errorat then
     SU.error(msg)
   elseif warnat and current >= warnat then
@@ -115,7 +115,7 @@ end
 utilities.debug = function (category, ...)
   if SILE.quiet then return end
   if utilities.debugging(category) then
-    local inputs = table.pack(...)
+    local inputs = pl.utils.pack(...)
     for i, input in ipairs(inputs) do
       if type(input) == "function" then
         local status, output = pcall(input)
@@ -153,7 +153,7 @@ utilities.debugAST = function (ast, level)
             return out .. "\\" .. content.command .. " " .. pl.pretty.write(content.options, "")
           end)
           if (#content>=1) then utilities.debugAST(content, level+1) end
-        elseif content.id == "texlike_stuff" or (not content.command and not content.id) then
+        elseif content.id == "content" or (not content.command and not content.id) then
           utilities.debugAST(content, level+1)
         else
           SU.debug("ast", function ()
@@ -261,7 +261,7 @@ end
 
 utilities.compress = function (items)
   local rv = {}
-  local max = math.max(table.unpack(pl.tablex.keys(items)))
+  local max = math.max(pl.utils.unpack(pl.tablex.keys(items)))
   for i = 1, max do if items[i] then rv[#rv+1] = items[i] end end
   return rv
 end
@@ -341,76 +341,6 @@ utilities.cast = function (wantedType, value)
     return num
   else SU.error("Cannot cast to unrecognized type " .. wantedType)
   end
-end
-
-utilities.hasContent = function(content)
-  return type(content) == "function" or type(content) == "table" and #content > 0
-end
-
--- Flatten content trees into just the string components (allows passing
--- objects with complex structures to functions that need plain strings)
-utilities.contentToString = function (content)
-  local string = ""
-  for i = 1, #content do
-    if type(content[i]) == "table" and type(content[i][1]) == "string" then
-      string = string .. content[i][1]
-    elseif type(content[i]) == "string" then
-      -- Work around PEG parser returning env tags as content
-      -- TODO: refactor capture groups in PEG parser
-      if content.command == content[i] and content[i] == content[i+1] then
-        break
-      end
-      string = string .. content[i]
-    end
-  end
-  return string
-end
-
--- Strip the top level command off a content object and keep only the child
--- items — assuming that the current command is taking care of itself
-utilities.subContent = function (content)
-  local out = { id="stuff" }
-  for key, val in utilities.sortedpairs(content) do
-    if type(key) == "number" then
-      out[#out+1] = val
-    end
-  end
-  return out
-end
-
--- Call `action` on each content AST node, recursively, including `content` itself.
--- Not called on leaves, i.e. strings.
-utilities.walkContent = function (content, action)
-  if type(content) ~= "table" then
-    return
-  end
-  action(content)
-  for i = 1, #content do
-    utilities.walkContent(content[i], action)
-  end
-end
-
---- Strip position, line and column recursively from a content tree.
--- This can be used to remove position details where we do not want them,
--- e.g. in table of contents entries (referring to the original content,
--- regardless where it was exactly, for the purpose of checking whether
--- the table of contents changed.)
---
-utilities.stripContentPos = function (content)
-  if type(content) ~= "table" then
-    return content
-  end
-  local stripped = {}
-  for k, v in pairs(content) do
-    if type(v) == "table" then
-      v = SU.stripContentPos(v)
-    end
-    stripped[k] = v
-  end
-  if content.id or content.command then
-    stripped.pos, stripped.col, stripped.lno = nil, nil, nil
-  end
-  return stripped
 end
 
 utilities.rateBadness = function(inf_bad, shortfall, spring)
@@ -626,8 +556,36 @@ utilities.breadcrumbs = function ()
   return breadcrumbs
 end
 
-utilities.formatNumber = require("core.utilities-numbers")
+utilities.formatNumber = require("core.utilities.numbers")
 
-utilities.collatedSort = require("core.utilities-sorting")
+utilities.collatedSort = require("core.utilities.sorting")
+
+utilities.ast = require("core.utilities.ast")
+
+utilities.subContent = function (content)
+  SU.deprecated("SU.subContent", "SU.ast.subContent", "0.15.0", "0.17.0", [[
+    Note that the new implementation no longer introduces an id="stuff" key.]])
+  return utilities.ast.subContent(content)
+end
+
+utilities.hasContent = function(content)
+  SU.deprecated("SU.hasContent", "SU.ast.hasContent", "0.15.0", "0.17.0")
+  return SU.ast.hasContent(content)
+end
+
+utilities.contentToString = function (content)
+  SU.deprecated("SU.contentToString", "SU.ast.contentToString", "0.15.0", "0.17.0")
+  return SU.ast.contentToString(content)
+end
+
+utilities.walkContent = function (content, action)
+  SU.deprecated("SU.walkContent", "SU.ast.walkContent", "0.15.0", "0.17.0")
+  SU.ast.walkContent(content, action)
+end
+
+utilities.stripContentPos = function (content)
+  SU.deprecated("SU.stripContentPos", "SU.ast.stripContentPos", "0.15.0", "0.17.0")
+  return SU.ast.stripContentPos(content)
+end
 
 return utilities

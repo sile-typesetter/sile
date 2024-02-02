@@ -61,15 +61,16 @@ local shrink = bits.ws * P"minus" * bits.ws * Cg(amount, "shrink")
 bits.length = Ct(length * stretch^-1 * shrink^-1)
 bits.utf8char = utf8char
 
-local pairsep = S",;" * bits.ws
+local pairsep = S",;"
 local quote = P'"'
 local escaped_quote = B(P"\\") * quote
 local unescapeQuote = function (str) local a = str:gsub('\\"', '"'); return a end
-local quotedString = quote * C((1 - quote + escaped_quote)^1 / unescapeQuote) * quote
-local value = quotedString + (1-S",;]")^1
+local quotedValueString = quote * C((1 - quote + escaped_quote)^0 / unescapeQuote) * quote
+local valueString = (1-pairsep-quote-S"]")^0 / pl.stringx.strip
+local value = quotedValueString + valueString + P""
 local ID = C(bits.letter * (bits.letter + bits.digit)^0)
 bits.silidentifier = (ID + S":-")^1
-local pair = Cg(C(bits.silidentifier) * bits.ws * "=" * bits.ws * C(value)) * pairsep^-1 / unwrapper
+local pair = Cg(bits.ws * C(bits.silidentifier) * bits.ws * "=" * bits.ws * C(value) * bits.ws) * pairsep^-1 / unwrapper
 bits.parameters = Cf(Ct"" * pair^0, rawset)
 
 local wrapper = function (a) return type(a)=="table" and a or {} end

@@ -81,7 +81,7 @@ SILE.registerCommand("ftl", function (options, content)
   fluent:set_locale(locale)
   if options.src then
     fluent:load_file(options.src, locale)
-  elseif SU.hasContent(content) then
+  elseif SU.ast.hasContent(content) then
     local input = content[1]
     fluent:add_messages(input, locale)
   end

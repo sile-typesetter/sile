@@ -28,7 +28,6 @@ RUN build-aux/docker-bootstrap.sh
 RUN ./bootstrap.sh
 RUN ./configure --with-system-lua-sources --without-manual
 RUN make
-RUN make check
 RUN make install DESTDIR=/pkgdir
 
 # Work around BuiltKit / buildx bug, they can’t copy to symlinks only dirs

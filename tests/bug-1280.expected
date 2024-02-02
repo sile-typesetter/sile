@@ -1,5 +1,10 @@
 Set paper size 	425.196855	170.078742
 Begin page
+Set metadata	Author	Erwin Schrödinger
+Set metadata	Title	Erwin Schrödinger’s 猫🐈
+Set metadata	CreationDate	D:19990209153925 - 08 ' 00 '
+Set metadata	ModDate	should fail
+Set metadata	Trapped	should be skipped
 Mx 	21.2598
 My 	16.5739
 Set font 	;10;400;;normal;;;LTR;.fonts/NotoSerifCJK-Regular.ttc
