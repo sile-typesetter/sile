@@ -149,7 +149,7 @@ function SILE.nodeMakers.ja:iterator (items)
           intercharacterspace(lastcp, thiscp),
           stretchability(lastcp, thiscp),
           shrinkability(lastcp, thiscp)
-        )
+        ):absolute()
         if breakAllowed(lastcp, thiscp) then
           db = db .." G ".. tostring(length)
           coroutine.yield(SILE.nodefactory.glue(length))

@@ -54,32 +54,23 @@ function package:registerCommands ()
       borderwidth = borderwidth,
       borderoffset = borderoffset
     }
-    local x0, y0
-    SILE.typesetter:pushHbox({
-      value = nil,
-      height = 0,
-      width = 0,
-      depth = 0,
-      outputYourself = function (_, typesetter, _)
-        x0 = typesetter.frame.state.cursorX:tonumber()
-        y0 = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY):tonumber()
+
+    SILE.typesetter:liner("pdf:link", content,
+      function (box, typesetter, line)
+        local x0 = typesetter.frame.state.cursorX:tonumber()
+        local y0 = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY):tonumber()
         SILE.outputter:beginLink(dest, opts)
-      end
-    })
-    local hbox, hlist = SILE.typesetter:makeHbox(content) -- hack
-    SILE.typesetter:pushHbox(hbox)
-    SILE.typesetter:pushHbox({
-      value = nil,
-      height = 0,
-      width = 0,
-      depth = 0,
-      outputYourself = function (_, typesetter, _)
+
+        -- Build the content.
+        -- Cursor will be moved by the actual definitive size.
+        box:outputContent(typesetter, line)
         local x1 = typesetter.frame.state.cursorX:tonumber()
-        local y1 = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY + hbox.height):tonumber()
+        local y1 = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY + box.height):tonumber()
+
         SILE.outputter:endLink(dest, opts, x0, y0, x1, y1) -- Unstable API
       end
-    })
-    SILE.typesetter:pushHlist(hlist)
+    )
+
   end)
 
   self:registerCommand("pdf:metadata", function (options, _)

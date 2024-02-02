@@ -126,22 +126,14 @@ function package:registerCommands ()
   self:registerCommand("underline", function (_, content)
     local underlinePosition, underlineThickness = getUnderlineParameters()
 
-    local hbox, hlist = SILE.typesetter:makeHbox(content)
-    -- Re-wrap the hbox in another hbox responsible for boxing it at output
-    -- time, when we will know the line contribution and can compute the scaled width
-    -- of the box, taking into account possible stretching and shrinking.
-    SILE.typesetter:pushHbox({
-      inner = hbox,
-      width = hbox.width,
-      height = hbox.height,
-      depth = hbox.depth,
-      outputYourself = function (node, typesetter, line)
+    SILE.typesetter:liner("underline", content,
+      function (box, typesetter, line)
         local oldX = typesetter.frame.state.cursorX
         local Y = typesetter.frame.state.cursorY
 
-        -- Build the original hbox.
+        -- Build the content.
         -- Cursor will be moved by the actual definitive size.
-        node.inner:outputYourself(SILE.typesetter, line)
+        box:outputContent(typesetter, line)
         local newX = typesetter.frame.state.cursorX
 
         -- Output a line.
@@ -150,36 +142,28 @@ function package:registerCommands ()
         -- should expand downwards
         SILE.outputter:drawRule(oldX, Y - underlinePosition, newX - oldX, underlineThickness)
       end
-    })
-    SILE.typesetter:pushHlist(hlist)
+    )
   end, "Underlines some content")
 
   self:registerCommand("strikethrough", function (_, content)
     local yStrikeoutPosition, yStrikeoutSize = getStrikethroughParameters()
 
-    local hbox, hlist = SILE.typesetter:makeHbox(content)
-    -- Re-wrap the hbox in another hbox responsible for boxing it at output
-    -- time, when we will know the line contribution and can compute the scaled width
-    -- of the box, taking into account possible stretching and shrinking.
-    SILE.typesetter:pushHbox({
-      inner = hbox,
-      width = hbox.width,
-      height = hbox.height,
-      depth = hbox.depth,
-      outputYourself = function (node, typesetter, line)
+    SILE.typesetter:liner("strikethrough", content,
+      function (box, typesetter, line)
         local oldX = typesetter.frame.state.cursorX
         local Y = typesetter.frame.state.cursorY
-        -- Build the original hbox.
+
+        -- Build the content.
         -- Cursor will be moved by the actual definitive size.
-        node.inner:outputYourself(SILE.typesetter, line)
+        box:outputContent(typesetter, line)
         local newX = typesetter.frame.state.cursorX
+
         -- Output a line.
         -- NOTE: The OpenType spec is not explicit regarding how the size
         -- (thickness) affects the position. We opt to distribute evenly
         SILE.outputter:drawRule(oldX, Y - yStrikeoutPosition - yStrikeoutSize / 2, newX - oldX, yStrikeoutSize)
       end
-    })
-    SILE.typesetter:pushHlist(hlist)
+    )
   end, "Strikes out some content")
 
   self:registerCommand("boxaround", function (_, content)
@@ -236,6 +220,8 @@ So, they can appear in the middle of a paragraph, like this:
 The \autodoc:command{\underline} command \underline{underlines} its content.
 
 The \autodoc:command{\strikethrough} command \strikethrough{strikes} its content.
+
+Both commands support paragraph content spanning multiple lines.
 
 \autodoc:note{The position and thickness of the underlines and strikethroughs are based on the metrics of the current font, honoring the values defined by the type designer.}
 
