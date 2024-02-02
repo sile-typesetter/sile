@@ -116,7 +116,7 @@ We use the \code{SILE.typesetter:typeset} and \code{SILE.call} functions to outp
   end)
 \end{raw}
 
-Now, let’s design a (naive) \autodoc:environment[check=false]{blockquote} environment implementing indented (and possibly nested) quotations.
+Now, let’s (re-)design a \autodoc:environment[check=false]{blockquote} environment implementing indented (and possibly nested) quotations.
 You do remember, right, that an environment in SILE is not much different from a command?
 So a command be it, without any option this time, but playing with vertical skip, measurements, glue, (temporary) left and right margin settings.
 (If these concepts elude you, consider re-reading the previous chapters where they are introduced.)
@@ -129,14 +129,14 @@ So a command be it, without any option this time, but playing with vertical skip
       local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
       local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
       SILE.settings:set("document.lskip",
-        SILE.nodefactory.glue(lskip.width.length + indent))
+        SILE.nodefactory.glue(lskip.width + indent))
       SILE.settings:set("document.rskip",
-        SILE.nodefactory.glue(rskip.width.length + indent))
+        SILE.nodefactory.glue(rskip.width + indent))
       SILE.process(content)
       SILE.typesetter:leaveHmode() -- gather paragraphs now.
     end)
     SILE.call("smallskip")
-  end, "A naive blockquote environment")
+  end, "A blockquote environment")
 \end{raw}
 
 \subsection{Defining settings}
@@ -458,7 +458,7 @@ self:registerCommand("tocentry", function (options, content)
   SILE.call("info", {
     category = "toc",
     value = {
-      label = SU.stripContentPos(content), level = (options.level or 1)
+      label = SU.ast.stripContentPos(content), level = (options.level or 1)
     }
   })
 end)

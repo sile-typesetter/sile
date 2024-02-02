@@ -139,6 +139,26 @@ function typesetter.declareSettings(_)
     help = "Whether italic correction is activated or not"
   })
 
+  SILE.settings:declare({
+    parameter = "typesetter.softHyphen",
+    type = "boolean",
+    default = true,
+    help = "When true, soft hyphens are rendered as discretionary breaks, otherwise they are ignored"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.softHyphenWarning",
+    type = "boolean",
+    default = false,
+    help = "When true, a warning is issued when a soft hyphen is encountered"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.fixedSpacingAfterInitialEmdash",
+    type = "boolean",
+    default = true,
+    help = "When true, em-dash starting a paragraph is considered as a speaker change in a dialogue"
+  })
 end
 
 function typesetter:initState ()
@@ -283,7 +303,29 @@ function typesetter:typeset (text)
     if token.separator then
       self:endline()
     else
-      self:setpar(token.string)
+      if SILE.settings:get("typesetter.softHyphen") then
+        local warnedshy = false
+        for token2 in SU.gtoke(token.string, luautf8.char(0x00AD)) do
+          if token2.separator then -- soft hyphen support
+            local discretionary = SILE.nodefactory.discretionary({})
+            local hbox = SILE.typesetter:makeHbox({ SILE.settings:get("font.hyphenchar") })
+            discretionary.prebreak = { hbox }
+            table.insert(SILE.typesetter.state.nodes, discretionary)
+            if not warnedshy and SILE.settings:get("typesetter.softHyphenWarning") then
+              SU.warn("Soft hyphen encountered and replaced with discretionary")
+            end
+            warnedshy = true
+          else
+            self:setpar(token2.string)
+          end
+        end
+      else
+        if SILE.settings:get("typesetter.softHyphenWarning") and luautf8.match(token.string, luautf8.char(0x00AD)) then
+          SU.warn("Soft hyphen encountered and ignored")
+        end
+        text = luautf8.gsub(token.string, luautf8.char(0x00AD), "")
+        self:setpar(text)
+      end
     end
   end
   SILE.traceStack:pop(pId)
@@ -302,6 +344,31 @@ function typesetter:endline ()
   SILE.documentState.documentClass.endPar(self)
 end
 
+-- Just compute once, to avoid unicode characters in source code.
+local speakerChangePattern = "^"
+   .. luautf8.char(0x2014) -- emdash
+   .. "[ " .. luautf8.char(0x00A0) .. luautf8.char(0x202F) -- regular space or NBSP or NNBSP
+   .. "]+"
+local speakerChangeReplacement = luautf8.char(0x2014) .. " "
+
+-- Special unshaped node subclass to handle space after a speaker change in dialogues
+-- introduced by an em-dash.
+local speakerChangeNode = pl.class(SILE.nodefactory.unshaped)
+function speakerChangeNode:shape()
+  local node = self._base.shape(self)
+  local spc = node[2]
+  if spc and spc.is_glue then
+    -- Switch the variable space glue to a fixed kern
+    node[2] = SILE.nodefactory.kern({ width = spc.width.length })
+    node[2].parent = self.parent
+  else
+    -- Should not occur:
+    -- How could it possibly be shaped differently?
+    SU.warn("Speaker change logic met an unexpected case, this might be a bug.")
+  end
+  return node
+end
+
 -- Takes string, writes onto self.state.nodes
 function typesetter:setpar (text)
   text = text:gsub("\r?\n", " "):gsub("\t", " ")
@@ -310,6 +377,19 @@ function typesetter:setpar (text)
       text = text:gsub("^%s+", "")
     end
     self:initline()
+
+    if SILE.settings:get("typesetter.fixedSpacingAfterInitialEmdash") and not SILE.settings:get("typesetter.obeyspaces") then
+      local speakerChange = false
+      local dialogue = luautf8.gsub(text, speakerChangePattern, function ()
+        speakerChange = true
+        return speakerChangeReplacement
+      end)
+      if speakerChange then
+        local node = speakerChangeNode({ text = dialogue, options = SILE.font.loadDefaults({})})
+        self:pushHorizontal(node)
+        return -- done here: speaker change space handling is done after nnode shaping
+      end
+    end
   end
   if #text >0 then
     self:pushUnshaped({ text = text, options= SILE.font.loadDefaults({})})
@@ -501,7 +581,7 @@ function typesetter:boxUpNodes ()
   self:pushGlue(parfillskip)
   self:pushPenalty(-inf_bad)
   SU.debug("typesetter", function ()
-    return "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.contentToString(nodelist))
+    return "Boxed up "..(#nodelist > 500 and (#nodelist).." nodes" or SU.ast.contentToString(nodelist))
   end)
   local breakWidth = SILE.settings:get("typesetter.breakwidth") or self.frame:getLineWidth()
   local lines = self:breakIntoLines(nodelist, breakWidth)
@@ -865,6 +945,11 @@ function typesetter:breakpointsToLines (breakpoints)
       local slice = {}
       local seenNonDiscardable = false
       for j = linestart, point.position do
+        if nodes[j].is_discretionary and nodes[j].used then
+          -- This is the used (prebreak) discretionary from a previous line,
+          -- repeated. Replace it with a clone, changed to a postbreak.
+          nodes[j] = nodes[j]:cloneAsPostbreak()
+        end
         slice[#slice+1] = nodes[j]
         if nodes[j] then
           if not nodes[j].discardable then
@@ -877,10 +962,12 @@ function typesetter:breakpointsToLines (breakpoints)
         SU.debug("typesetter", "Skipping a line containing only discardable nodes")
         linestart = point.position + 1
       else
-        -- If the line ends with a discretionary, repeat it on the next line,
-        -- so as to account for a potential postbreak.
         if slice[#slice].is_discretionary then
+          -- The line ends, with a discretionary:
+          -- repeat it on the next line, so as to account for a potential postbreak.
           linestart = point.position
+          -- And mark it as used as prebreak for now.
+          slice[#slice]:markAsPrebreak()
         else
           linestart = point.position + 1
         end
@@ -905,49 +992,31 @@ function typesetter:breakpointsToLines (breakpoints)
 end
 
 function typesetter.computeLineRatio (_, breakwidth, slice)
-  -- This somewhat wrong, see #1362 and #1528
-  -- This is a somewhat partial workaround, at least made consistent with
-  -- the nnode and discretionary outputYourself routines
-  -- (which are somewhat wrong too, or to put it otherwise, the whole
-  -- logic here, marking nodes without removing/replacing them, likely makes
-  -- things more complex than they should).
-  -- TODO Possibly consider a full rewrite/refactor.
   local naturalTotals = SILE.length()
 
-  -- From the line end, check if the line is hyphenated (to account for a prebreak)
-  -- or contains extraneous glues (e.g. to account for spaces to ignore).
-  local n = #slice
-  while n > 1 do
-    if slice[n].is_glue or slice[n].is_zero then
-      -- Skip margin glues (they'll be accounted for in the loop below) and
-      -- zero boxes, so as to reach actual content...
-      if slice[n].value ~= "margin" then
-        -- ... but any other glue than a margin, at the end of a line, is actually
-        -- extraneous. It will however also be accounted for below, so subtract
-        -- them to cancel their width. Typically, if a line break occurred at
-        -- a space, the latter is then at the end of the line now, and must be
-        -- ignored.
-        naturalTotals:___sub(slice[n].width)
+  -- From the line end, account for the margin but skip any trailing
+  -- glues (spaces to ignore) and zero boxes until we reach actual content.
+  local npos = #slice
+  while npos > 1 do
+    if slice[npos].is_glue or slice[npos].is_zero then
+      if slice[npos].value == "margin" then
+        naturalTotals:___add(slice[npos].width)
       end
-    elseif slice[n].is_discretionary then
-      -- Stop as we reached an hyphenation, and account for the prebreak.
-      slice[n].used = true
-      if slice[n].parent then
-        slice[n].parent.hyphenated = true
-      end
-      naturalTotals:___add(slice[n]:prebreakWidth())
-      slice[n].height = slice[n]:prebreakHeight()
-      break
     else
-      -- Stop as we reached actual content.
       break
     end
-    n = n - 1
+    npos = npos - 1
   end
 
+  -- Due to discretionaries, keep track of seen parent nodes
   local seenNodes = {}
+  -- CODE SMELL: Not sure which node types were supposed to be skipped
+  -- at initial positions in the line!
   local skipping = true
-  for i, node in ipairs(slice) do
+
+  -- Until end of actual content
+  for i = 1, npos do
+    local node = slice[i]
     if node.is_box then
       skipping = false
       if node.parent and not node.parent.hyphenated then
@@ -963,27 +1032,23 @@ function typesetter.computeLineRatio (_, breakwidth, slice)
     elseif node.is_discretionary then
       skipping = false
       local seen = node.parent and seenNodes[node.parent]
-      if not seen and not node.used then
-        naturalTotals:___add(node:replacementWidth():absolute())
-        slice[i].height = slice[i]:replacementHeight():absolute()
+      if not seen then
+        if node.used then
+          if node.is_prebreak then
+            naturalTotals:___add(node:prebreakWidth())
+            node.height = node:prebreakHeight()
+          else
+            naturalTotals:___add(node:postbreakWidth())
+            node.height = node:postbreakHeight()
+          end
+        else
+          naturalTotals:___add(node:replacementWidth():absolute())
+          node.height = node:replacementHeight():absolute()
+        end
       end
     elseif not skipping then
       naturalTotals:___add(node.width)
     end
-  end
-
-  -- From the line start, skip glues and margins, and check if it then starts
-  -- with a used discretionary. If so, account for a postbreak.
-  n = 1
-  while n < #slice do
-    if slice[n].is_discretionary and slice[n].used then
-      naturalTotals:___add(slice[n]:postbreakWidth())
-      slice[n].height = slice[n]:postbreakHeight()
-      break
-    elseif not (slice[n].is_glue or slice[n].is_zero) then
-      break
-    end
-    n = n + 1
   end
 
   local _left = breakwidth:tonumber() - naturalTotals:tonumber()
@@ -1072,16 +1137,18 @@ function typesetter:makeHbox (content)
         local ox = atypesetter.frame.state.cursorX
         local oy = atypesetter.frame.state.cursorY
         SILE.outputter:setCursor(atypesetter.frame.state.cursorX, atypesetter.frame.state.cursorY)
+        SU.debug("hboxes", function ()
+          -- setCursor is also invoked by the internal (wrapped) hboxes etc.
+          -- so we must show our debug box before outputting its content.
+          SILE.outputter:debugHbox(box, box:scaledWidth(line))
+          return "Drew debug outline around hbox"
+        end)
         for _, node in ipairs(box.value) do
           node:outputYourself(atypesetter, line)
         end
         atypesetter.frame.state.cursorX = ox
         atypesetter.frame.state.cursorY = oy
         _post()
-        SU.debug("hboxes", function ()
-          SILE.outputter:debugHbox(box, box:scaledWidth(line))
-          return "Drew debug outline around hbox"
-        end)
       end
     })
   return hbox, migratingNodes

@@ -96,7 +96,7 @@ SILE.nodeMakers.fr.highPunctuations = { ";", "!", "?", "!!", "?!", "!?" }
 SILE.nodeMakers.fr.spaceExceptions = { "!", "?", ":", ".", "…", "(", "[", "{", "<", "«", "‹", "“", "‘", "?!", "!!", "!?" }
 
 -- overriden properties from parent class
-SILE.nodeMakers.fr.isQuoteType = { qu = true } -- split tokens at apostrophes &c.
+SILE.nodeMakers.fr.quoteTypes = { qu = true } -- split tokens at apostrophes &c.
 
 -- methods defined in this class
 
@@ -175,10 +175,11 @@ function SILE.nodeMakers.fr:mustRemove (i, items)
   -- Clear "manual" spaces we do not want, so that later we only have to
   -- insert the relevant kerns.
   local curr = items[i].text
-  if self:isSpace(curr) then
+  if self:isSpace(curr) or self:isNonBreakingSpace(curr) then
     if i < #items then
       local next = items[i+1].text
       if self:isSpace(next)
+          or self:isNonBreakingSpace(next)
           or self:isHighPunctuation(next)
           or self:isColonPunctuation(next)
           or self:isClosingQuote(next) then
@@ -226,9 +227,13 @@ function SILE.nodeMakers.fr:iterator (items)
   local removed = 0
   for k = 1, #items do
     if self:mustRemove(k, items) then
-      removed = removed + 1
+      -- the index is actually a character position in the byte stream.
+      -- So we need to take its actual byte length into account.
+      -- For instance, U+00A0 NBSP is 2 bytes long (0xC2 0xA0) in UTF-8.
+      removed = removed + string.len(items[k].text)
     else
-      items[k].index = items[k].index - removed -- index has changed due to removals
+      -- index has changed due to removals
+      items[k].index = items[k].index - removed
       table.insert(cleanItems, items[k])
     end
   end

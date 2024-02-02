@@ -80,11 +80,15 @@ end
 function class:setOptions (options)
   options = options or {}
   -- Classes that add options with dependencies should explicitly handle them, then exempt them from furthur processing.
-  -- The landscape option is handled explicitly before papersize, then the "rest" of options that are not interdependent.
+  -- The landscape and crop related options are handled explicitly before papersize, then the "rest" of options that are not interdependent.
   self.options.landscape = SU.boolean(options.landscape, false)
   options.landscape = nil
   self.options.papersize = options.papersize or "a4"
   options.papersize = nil
+  self.options.bleed = options.bleed or "0"
+  options.bleed = nil
+  self.options.sheetsize = options.sheetsize or nil
+  options.sheetsize = nil
   for option, value in pairs(options) do
     self.options[option] = value
   end
@@ -127,6 +131,33 @@ function class:declareOptions ()
     end
     return self.papersize
   end)
+  self:declareOption("sheetsize", function (_, size)
+    if size then
+      self.sheetsize = size
+      SILE.documentState.sheetSize = SILE.papersize(size, self.options.landscape)
+      if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1]
+        or SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] then
+        SU.error("Sheet size shall not be smaller than the paper size")
+      end
+      if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1] + SILE.documentState.bleed then
+        SU.debug("frames", "Sheet size width augmented to take page bleed into account")
+        SILE.documentState.sheetSize[1] = SILE.documentState.paperSize[1] + SILE.documentState.bleed
+      end
+      if SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] + SILE.documentState.bleed then
+        SU.debug("frames", "Sheet size height augmented to take page bleed into account")
+        SILE.documentState.sheetSize[2] = SILE.documentState.paperSize[2] + SILE.documentState.bleed
+      end
+    else
+      return self.sheetsize
+    end
+   end)
+  self:declareOption("bleed", function (_, dimen)
+    if dimen then
+      self.bleed = dimen
+      SILE.documentState.bleed = SU.cast("measurement", dimen):tonumber()
+    end
+    return self.bleed
+  end)
 end
 
 function class.declareSettings (_)
@@ -151,9 +182,32 @@ function class.declareSettings (_)
 end
 
 function class:loadPackage (packname, options, reload)
-  local pack = require(("packages.%s"):format(packname))
-  if type(pack) == "table" and pack.type == "package" then -- new package
-    self.packages[pack._name] = pack(options, reload)
+  local pack
+  -- Allow loading by injecting whole packages as-is, otherwise try to load it with the usual packages path.
+  if type(packname) == "table" then
+    pack, packname = packname, packname._name
+  else
+    pack = require(("packages.%s"):format(packname))
+    if pack._name ~= packname then
+      SU.error(("Loaded module name '%s' does not match requested name '%s'"):format(pack._name, packname))
+    end
+  end
+  SILE.packages[packname] = pack
+  if type(pack) == "table" and pack.type == "package" then -- current package api
+    if self.packages[packname] then
+      -- If the same package name has been loaded before, we might be loading a modified version of the same package or
+      -- we might be re-loading the same package, or we might just be doubling up work because somebody called us twice.
+      -- The package itself should take care of the difference between load and reload based on the reload flag here,
+      -- but in addition to that we also want to avoid creating a new instance. We want to run the intitializer from the
+      -- (possibly different) new module, but not create a new instance ID and loose any connections it made.
+      -- To do this we add a create function that returns the current instance. This brings along the _initialized flag
+      -- and of course anything else already setup and running.
+      local current_instance = self.packages[packname]
+      pack._create = function () return current_instance end
+      pack(options, true)
+    else
+      self.packages[packname] = pack(options, reload)
+    end
   else -- legacy package
     self:initPackage(pack, options)
   end
@@ -334,10 +388,35 @@ function class:registerCommands ()
 
   self:registerCommand("script", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
+    local function _deprecated (original, suggested)
+      SU.deprecated("\\script", "\\lua or \\use", "0.15.0", "0.16.0", ([[
+      The \script function has been deprecated. It was overloaded to mean
+      too many different things and more targeted tools were introduced in
+      SILE v0.14.0. To load 3rd party modules designed for use with SILE,
+      replace \script[src=...] with \use[module=...]. To run arbitrary Lua
+      code inline use \lua{}, optionally with a require= parameter to load
+      a (non-SILE) Lua module using the Lua module path or src= to load a
+      file by file path.
+
+      For this use case consider replacing:
+
+          %s
+
+      with:
+
+          %s
+      ]]):format(original, suggested))
+    end
+    if SU.ast.hasContent(content) then
+      _deprecated("\\script{...}", "\\lua{...}")
       return SILE.processString(content[1], options.format or "lua", nil, packopts)
     elseif options.src then
-      return SILE.require(options.src)
+      local module = options.src:gsub("%/", ".")
+      local original = (("\\script[src=%s]"):format(options.src))
+      local result = SILE.require(options.src)
+      local suggested = (result._name and "\\use[module=%s]" or "\\lua[require=%s]"):format(module)
+      _deprecated(original, suggested)
+      return result
     else
       SU.error("\\script function requires inline content or a src file path")
       return SILE.processString(content[1], options.format or "lua", nil, packopts)
@@ -346,8 +425,8 @@ function class:registerCommands ()
 
   self:registerCommand("include", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, options.format, nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, options.format, packopts)
@@ -358,8 +437,8 @@ function class:registerCommands ()
 
   self:registerCommand("lua", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, "lua", nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, "lua", packopts)
@@ -373,8 +452,8 @@ function class:registerCommands ()
 
   self:registerCommand("sil", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, "sil")
     elseif options.src then
       return SILE.processFile(options.src, "sil", packopts)
@@ -385,8 +464,8 @@ function class:registerCommands ()
 
   self:registerCommand("xml", function (options, content)
     local packopts = packOptions(options)
-    if SU.hasContent(content) then
-      local doc = SU.contentToString(content)
+    if SU.ast.hasContent(content) then
+      local doc = SU.ast.contentToString(content)
       return SILE.processString(doc, "xml", nil, packopts)
     elseif options.src then
       return SILE.processFile(options.src, "xml", packopts)
@@ -398,7 +477,7 @@ function class:registerCommands ()
   self:registerCommand("use", function (options, content)
     local packopts = packOptions(options)
     if content[1] and string.len(content[1]) > 0 then
-      local doc = SU.contentToString(content)
+      local doc = SU.ast.contentToString(content)
       SILE.processString(doc, "lua", nil, packopts)
     else
       if options.src then

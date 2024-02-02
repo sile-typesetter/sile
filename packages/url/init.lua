@@ -3,8 +3,6 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "url"
 
-local pdf
-
 -- URL escape sequence, URL fragment:
 local preferBreakBefore = "%#"
 -- URL path elements, URL query arguments, acceptable extras:
@@ -23,8 +21,7 @@ function package:_init ()
   base._init(self)
   self:loadPackage("verbatim")
   self:loadPackage("inputfilter")
-  pdf = SILE.outputter._name == "libtexpdf"
-  if pdf then self:loadPackage("pdf") end
+  self:loadPackage("pdf")
 end
 
 function package.declareSettings (_)
@@ -48,15 +45,6 @@ end
 function package:registerCommands ()
 
   self:registerCommand("href", function (options, content)
-    if not pdf then
-      if options.src then
-        SILE.process(content)
-      else
-        SILE.call("url", { language = options.language }, content)
-      end
-      return -- DONE.
-    end
-
     if options.src then
       SILE.call("pdf:link", { dest = options.src, external = true,
         borderwidth = options.borderwidth,

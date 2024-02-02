@@ -53,6 +53,7 @@ pub fn inject_version(lua: &Lua) {
     let sile: LuaTable = lua.globals().get("SILE").unwrap();
     let mut full_version: String = sile.get("full_version").unwrap();
     full_version.push_str(" [Rust]");
+    sile.set("full_version", full_version).unwrap();
 }
 
 pub fn load_sile(lua: &Lua) {
@@ -64,8 +65,7 @@ pub fn load_sile(lua: &Lua) {
 pub fn version() -> crate::Result<String> {
     let lua = start_luavm()?;
     let sile: LuaTable = lua.globals().get("SILE").unwrap();
-    let mut full_version: String = sile.get("full_version").unwrap();
-    full_version.push_str(" [Rust]");
+    let full_version: String = sile.get("full_version").unwrap();
     Ok(full_version)
 }
 

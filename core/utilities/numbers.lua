@@ -20,8 +20,29 @@ local formatNumber = {
         num = (num - num % 26) / 26
       until num < 1
       return out
+    end,
+    -- Greek is another special case:
+    -- There are books where one wants to number items with Greek letters in
+    -- sequence, e.g. annotations in biblical material etc.
+    -- as in "α β γ δ ε ζ η θ ι κ λ μ ν ξ ο π ρ σ τ υ φ χ ψ ω".
+    -- We can't use ICU "grek" or "greklow" numbering systems because they are
+    -- non-arithmetical, e.g. 6 is a digamma (ϝ´), 11 is iota alpha (ια´), etc.
+    -- and they are also all followed by a numeric marker ("keraia").
+    greek = function(num)
+      local out = ""
+      local a = SU.codepoint("α") -- alpha
+      if num < 18 then
+        -- alpha to rho
+        out = luautf8.char(num + a - 1)
+      elseif num < 25 then
+        -- sigma to omega (unicode has two sigmas here, we skip one)
+        out = luautf8.char(num + a)
+      else
+        -- Don't try to be too clever
+        SU.error("Greek numbering is only supported up to 24")
+      end
+      return out
     end
-
   }
 }
 
@@ -113,7 +134,7 @@ setmetatable (formatNumber, {
   New syntax is SU.formatNumber(num, options[, case]) with an options table,
   possibly containing:
     - system: a numbering system string, e.g. "latn" (= "arabic"), "roman", "arab", etc.
-      With the addition of "alpha".
+      With the addition of "alpha" and "greek".
       Casing is taken into account (e.g. roman, Roman, ROMAN) unless specified
     - style: a format style string, i.e. "default", "decimal", "ordinal", "string")
       E.g. in English and latin script:   1234        1,234     1,124th    one thousand...
@@ -176,7 +197,7 @@ setmetatable (formatNumber, {
       -- Global specific hooks exists: use them...
       result = self.und[system](num, options)
     elseif system and type(self["und"][system]) == "function" then
-      -- TRICK: Notably, special case for "alpha"
+      -- TRICK: Notably, special case for "alpha" and "greek"
       result = system and self.und[system](num, options)
     else
       --- Otherwise, rely on ICU...

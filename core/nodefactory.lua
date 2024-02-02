@@ -287,6 +287,28 @@ function nodefactory.discretionary:toText ()
   return self.used and "-" or "_"
 end
 
+function nodefactory.discretionary:markAsPrebreak ()
+  self.used = true
+  if self.parent then
+    self.parent.hyphenated = true
+  end
+  self.is_prebreak = true
+end
+
+function nodefactory.discretionary:cloneAsPostbreak ()
+  if not self.used then
+    SU.error("Cannot clone a non-used discretionary (previously marked as prebreak)")
+  end
+  return SILE.nodefactory.discretionary({
+    prebreak = self.prebreak,
+    postbreak = self.postbreak,
+    replacement = self.replacement,
+    parent = self.parent,
+    used = true,
+    is_prebreak = false,
+  })
+end
+
 function nodefactory.discretionary:outputYourself (typesetter, line)
   -- See typesetter:computeLineRatio() which implements the currently rather
   -- messy hyphenated checks.
@@ -300,22 +322,13 @@ function nodefactory.discretionary:outputYourself (typesetter, line)
 
   -- It's possible not to have a parent (e.g. on a discretionary directly
   -- added in the queue and not coming from the hyphenator logic).
-  -- Eiher that, or we have a hyphenate parent.
+  -- Eiher that, or we have a hyphenated parent.
   if self.used then
     -- This is the actual hyphenation point.
-    -- Skip margin glue and zero boxes.
-    -- If we then reach our discretionary, it means its the first in the line,
-    -- i.e. a postbreak. Otherwise, its a prebreak (near the end of the line,
-    -- notwithstanding glues etc.)
-    local i = 1
-    while (line.nodes[i].is_glue and line.nodes[i].value == "margin")
-      or line.nodes[i].type == "zerohbox" do
-      i = i + 1
-    end
-    if (line.nodes[i] == self) then
-      for _, node in ipairs(self.postbreak) do node:outputYourself(typesetter, line) end
-    else
+    if self.is_prebreak then
       for _, node in ipairs(self.prebreak) do node:outputYourself(typesetter, line) end
+    else
+      for _, node in ipairs(self.postbreak) do node:outputYourself(typesetter, line) end
     end
   else
     -- This is not the hyphenation point (but another discretionary in the queue)

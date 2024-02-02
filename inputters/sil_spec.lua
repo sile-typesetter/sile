@@ -44,6 +44,12 @@ describe("#SIL #inputter", function ()
       assert.is.equal("bar", t[1][1])
     end)
 
+    it("commands with space around args and values", function()
+      local t = inputter:parse([[\foo[ baz = qiz qiz ]{bar}]])[1][1][1]
+      assert.is.equal("foo", t.command)
+      assert.is.equal("qiz qiz", t.options.baz)
+    end)
+
     it("commands with multiple quoted args", function()
       local t = inputter:parse([[\foo[baz="qiz, qiz",qiz="baz, baz"]{bar}]])[1][1][1]
       assert.is.equal("foo", t.command)
@@ -72,27 +78,25 @@ describe("#SIL #inputter", function ()
   describe("should reject", function ()
 
     it("commands with bad characters", function()
-      assert.has_error(function() inputter:parse([[\"]]) end,
-        "parse error, Unexpected character at end of input\n\\\"\n^")
-      assert.has_error(function() inputter:parse([[\']]) end,
-        "parse error, Unexpected character at end of input\n\\'\n^")
-      assert.has_error(function() inputter:parse([[\"o]]) end,
-        "parse error, Unexpected character at end of input\n\\\"o\n^")
+      local pattern = "parse error, Unexpected character at end of input"
+      assert.has_error.match(function() inputter:parse([[\"]]) end, pattern)
+      assert.has_error.match(function() inputter:parse([[\']]) end, pattern)
+      assert.has_error.match(function() inputter:parse([[\"o]]) end, pattern)
     end)
 
-    it("commands with unclosed content", function()
-      assert.has_error(function() inputter:parse([[\foo{bar]]) end,
-        "parse error at <eof>, } expected")
+    it("unclosed commands", function()
+      assert.has_error.matches(function() inputter:parse([[\foo{bar]]) end,
+        "parse error at <eof>, %} expected")
     end)
 
     it("unclosed environments", function()
-      assert.has_error(function() inputter:parse([[\begin{foo}bar]]) end,
+      assert.has_error.matches(function() inputter:parse([[\begin{foo}bar]]) end,
         "parse error at <eof>, Environment begun but never ended")
     end)
 
     it("mismatched environments", function()
-      assert.has_error(function() inputter:parse([[\begin{foo}\begin{bar}baz\end{foo}\end{bar}]]) end,
-        "parse error, Environment mismatch\n\\begin{foo}\\begin{bar}baz\\end{foo}\\end{bar}\n                              ^")
+      assert.has_error.matches(function() inputter:parse([[\begin{foo}\begin{bar}baz\end{foo}\end{bar}]]) end,
+        "parse error, Environment mismatch")
     end)
 
   end)

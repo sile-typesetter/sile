@@ -18,7 +18,7 @@ jobs:
           - [ '5.2', 'MYCFLAGS=-fPIC' ]
           - [ '5.1', 'CFLAGS="-O2 -Wall -DLUA_USE_LINUX -fPIC"' ]
           - [ 'luajit', 'XCFLAGS=-fPIC' ]
-          # - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
+          - [ 'luajit-openresty', 'XCFLAGS=-fPIC' ]
     runs-on: ubuntu-22.04
     name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
@@ -27,14 +27,14 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             lua_modules
@@ -71,9 +71,10 @@ jobs:
           ./bootstrap.sh
           ./configure \
             ${{ matrix.luaVersion[1] }} \
-            --enable-developer LUACHECK=false NIX=false \
+            --enable-developer LUACHECK=false NIX=false DELTA=cat \
             --disable-font-variations \
             --with${{ !startsWith(matrix.luaVersion[0], 'luajit') && 'out' || '' }}-luajit \
+            --without-system-luarocks \
             --without-manual
       - name: Make
         run: |
@@ -95,7 +96,7 @@ jobs:
         run: |
           make cargo-test
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-${{ matrix.luaVersion[0] }}-actuals
           path: tests/*.actual
