@@ -27,9 +27,9 @@ end
 
 -- \hfill (from the "plain" class) and \leaders (from the "leaders" package) use glues,
 -- so we behave the same for hrulefill.
-local hrulefillglue = pl.class(SILE.nodefactory.hfillglue)
-hrulefillglue.raise = SILE.measurement()
-hrulefillglue.thickness = SILE.measurement("0.2pt")
+local hrulefillglue = pl.class(SILE.types.node.hfillglue)
+hrulefillglue.raise = SILE.types.measurement()
+hrulefillglue.thickness = SILE.types.measurement("0.2pt")
 
 function hrulefillglue:outputYourself (typesetter, line)
   local outputWidth = SU.rationWidth(self.width, self.width, line.ratio):tonumber()
@@ -99,7 +99,7 @@ function package:registerCommands ()
 
     SILE.typesetter:pushExplicitGlue(hrulefillglue({
       raise = raise,
-      thickness = thickness or SILE.measurement("0.2pt"),
+      thickness = thickness or SILE.types.measurement("0.2pt"),
     }))
   end, "Add a huge horizontal hrule glue")
 

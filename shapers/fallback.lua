@@ -57,7 +57,7 @@ function fallbackQueue:addRun (offset, start)
     end)
     local options = self:nextFallback()
     if not options then return false end
-    options.size = SILE.measurement(options.size):tonumber()
+    options.size = SILE.types.measurement(options.size):tonumber()
     self.pending = {
       options = options,
       offset = offset,

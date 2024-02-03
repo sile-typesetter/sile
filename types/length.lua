@@ -12,21 +12,21 @@ return pl.class({
 
     _init = function (self, spec, stretch, shrink)
       if stretch or shrink then
-        self.length = SILE.measurement(spec or 0)
-        self.stretch = SILE.measurement(stretch or 0)
-        self.shrink = SILE.measurement(shrink or 0)
+        self.length = SILE.types.measurement(spec or 0)
+        self.stretch = SILE.types.measurement(stretch or 0)
+        self.shrink = SILE.types.measurement(shrink or 0)
       elseif type(spec) == "number" then
-        self.length = SILE.measurement(spec)
+        self.length = SILE.types.measurement(spec)
       elseif SU.type(spec) == "measurement" then
         self.length = spec
       elseif SU.type(spec) == "glue" then
-        self.length = SILE.measurement(spec.width.length or 0)
-        self.stretch = SILE.measurement(spec.width.stretch or 0)
-        self.shrink = SILE.measurement(spec.width.shrink or 0)
+        self.length = SILE.types.measurement(spec.width.length or 0)
+        self.stretch = SILE.types.measurement(spec.width.stretch or 0)
+        self.shrink = SILE.types.measurement(spec.width.shrink or 0)
       elseif type(spec) == "table" then
-        self.length = SILE.measurement(spec.length or 0)
-        self.stretch = SILE.measurement(spec.stretch or 0)
-        self.shrink = SILE.measurement(spec.shrink or 0)
+        self.length = SILE.types.measurement(spec.length or 0)
+        self.stretch = SILE.types.measurement(spec.stretch or 0)
+        self.shrink = SILE.types.measurement(spec.shrink or 0)
       elseif type(spec) == "string" then
         local amount = tonumber(spec)
         if type(amount) == "number" then
@@ -37,13 +37,13 @@ return pl.class({
           self:_init(parsed)
         end
       end
-      if not self.length then self.length = SILE.measurement() end
-      if not self.stretch then self.stretch = SILE.measurement() end
-      if not self.shrink then self.shrink = SILE.measurement() end
+      if not self.length then self.length = SILE.types.measurement() end
+      if not self.stretch then self.stretch = SILE.types.measurement() end
+      if not self.shrink then self.shrink = SILE.types.measurement() end
     end,
 
     absolute = function (self)
-      return SILE.length(self.length:tonumber(), self.stretch:tonumber(), self.shrink:tonumber())
+      return SILE.types.length(self.length:tonumber(), self.stretch:tonumber(), self.shrink:tonumber())
     end,
 
     negate = function (self)
@@ -59,23 +59,23 @@ return pl.class({
     end,
 
     new = function (_)
-      SU.deprecated("SILE.length.new", "SILE.length", "0.10.0")
+      SU.deprecated("SILE.length.new", "SILE.types.length", "0.10.0")
     end,
 
     make = function (_)
-      SU.deprecated("SILE.length.make", "SILE.length", "0.10.0")
+      SU.deprecated("SILE.length.make", "SILE.types.length", "0.10.0")
     end,
 
     parse = function (_)
-      SU.deprecated("SILE.length.parse", "SILE.length", "0.10.0")
+      SU.deprecated("SILE.length.parse", "SILE.types.length", "0.10.0")
     end,
 
     fromLengthOrNumber = function (_, _)
-      SU.deprecated("SILE.length.fromLengthOrNumber", "SILE.length", "0.10.0")
+      SU.deprecated("SILE.length.fromLengthOrNumber", "SILE.types.length", "0.10.0")
     end,
 
     __index = function (_, key)
-      SU.deprecated("SILE.length." .. key, "SILE.length", "0.10.0")
+      SU.deprecated("SILE.length." .. key, "SILE.types.length", "0.10.0")
     end,
 
     __tostring = function (self)
@@ -88,12 +88,12 @@ return pl.class({
     __add = function (self, other)
       if type(self) == "number" then self, other = other, self end
       other = SU.cast("length", other)
-      return SILE.length(self.length + other.length,
+      return SILE.types.length(self.length + other.length,
         self.stretch + other.stretch,
         self.shrink + other.shrink)
     end,
 
-    -- See usage comments on SILE.measurement:___add()
+    -- See usage comments on SILE.types.measurement:___add()
     ___add = function (self, other)
       if SU.type(other) ~= "length" then
         self.length:___add(other)
@@ -106,7 +106,7 @@ return pl.class({
     end,
 
     __sub = function (self, other)
-      local result = SILE.length(self)
+      local result = SILE.types.length(self)
       other = SU.cast("length", other)
       result.length = result.length - other.length
       result.stretch = result.stretch - other.stretch
@@ -114,7 +114,7 @@ return pl.class({
       return result
     end,
 
-    -- See usage comments on SILE.measurement:___add()
+    -- See usage comments on SILE.types.measurement:___add()
     ___sub = function (self, other)
       self.length:___sub(other.length)
       self.stretch:___sub(other.stretch)
@@ -125,7 +125,7 @@ return pl.class({
     __mul = function (self, other)
       if type(self) == "number" then self, other = other, self end
       _error_if_not_number(other)
-      local result = SILE.length(self)
+      local result = SILE.types.length(self)
       result.length = result.length * other
       result.stretch = result.stretch * other
       result.shrink = result.shrink * other
@@ -133,7 +133,7 @@ return pl.class({
     end,
 
     __div = function (self, other)
-      local result = SILE.length(self)
+      local result = SILE.types.length(self)
       _error_if_not_number(other)
       result.length = result.length / other
       result.stretch = result.stretch / other
@@ -142,7 +142,7 @@ return pl.class({
     end,
 
     __unm = function (self)
-      local result = SILE.length(self)
+      local result = SILE.types.length(self)
       result.length = result.length:__unm()
       return result
     end,

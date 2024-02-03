@@ -12,7 +12,7 @@ local function buildPage (typesetter, independent)
   if not (frame.balanced == true) then return unbalanced_buildPage(typesetter, independent) end
 
   local colCount = 0
-  local target = SILE.length()
+  local target = SILE.types.length()
   while frame and frame.balanced == true do
     target = target + frame:height()
     colCount = colCount + 1
@@ -25,7 +25,7 @@ local function buildPage (typesetter, independent)
   -- of frame space on the page, and there are no magic requests to balance the
   -- columns, then we have a full page. Just send it out normally.
   local q = typesetter.state.outputQueue
-  local totalHeight = SILE.length()
+  local totalHeight = SILE.types.length()
   local mustBalance = 0
   for i = 1, #q do
     totalHeight = totalHeight + q[i].height + q[i].depth

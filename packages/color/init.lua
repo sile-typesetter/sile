@@ -6,7 +6,7 @@ package._name = "color"
 function package:registerCommands ()
 
   self:registerCommand("color", function (options, content)
-    local color = SILE.color(options.color or "black")
+    local color = SILE.types.color(options.color or "black")
     -- This is a bit of a hack to use a liner.
     -- (Due to how the color stack is currently handled)
     -- If the content spans multiple lines, and a page break occurs in between,

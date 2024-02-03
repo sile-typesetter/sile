@@ -5,7 +5,7 @@ typesetter._name = "firstfit"
 
 function typesetter:breakIntoLines (nl, breakWidth)
   local breaks = {}
-  local length = SILE.length()
+  local length = SILE.types.length()
   for i = 1,#nl do local n = nl[i]
     if n.is_box then
       SU.debug("break", n .. " " .. tostring(n:lineContribution()))
@@ -22,7 +22,7 @@ function typesetter:breakIntoLines (nl, breakWidth)
       if length:tonumber() >= breakWidth:tonumber() then
         SU.debug("break", "Breaking!")
         breaks[#breaks+1] = { position = i, width = breakWidth}
-        length = SILE.length()
+        length = SILE.types.length()
       end
     end
   end

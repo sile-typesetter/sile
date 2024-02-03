@@ -82,7 +82,7 @@ function shaper.getFace (opts)
   if not face or not face.filename then SU.error("Couldn't find face '"..opts.family.."'") end
   if SILE.makeDeps then SILE.makeDeps:add(face.filename) end
   face.variations = opts.variations or ""
-  face.pointsize = ("%g"):format(SILE.measurement(opts.size):tonumber())
+  face.pointsize = ("%g"):format(SILE.types.measurement(opts.size):tonumber())
   face.weight = ("%d"):format(opts.weight or 0)
 
   -- Try instanciating the font, hb.instanciate() will return nil if it is not

@@ -41,8 +41,8 @@ end
 function package:registerCommands ()
 
   self.class:registerCommand("printPageInPoints", function()
-    local w = SILE.measurement("100%pw"):tonumber()
-    local h = SILE.measurement("100%ph"):tonumber()
+    local w = SILE.types.measurement("100%pw"):tonumber()
+    local h = SILE.types.measurement("100%ph"):tonumber()
     SILE.typesetter:typeset(("%.0fpt × %.0fpt"):format(w, h))
   end)
 

@@ -2,7 +2,7 @@ local nodetypes = {}
 
 -- This infinity needs to be smaller than an actual infinity but bigger than the infinite stretch
 -- added by the typesetter. See https://github.com/sile-typesetter/sile/issues/227
-local infinity = SILE.measurement(1e13)
+local infinity = SILE.types.measurement(1e13)
 
 local function _maxnode (nodes, dim)
   local dims = SU.map(function (node)
@@ -11,7 +11,7 @@ local function _maxnode (nodes, dim)
     -- return node[dim]
     return SU.cast("length", node[dim])
   end, nodes)
-  return SU.max(SILE.length(0), pl.utils.unpack(dims))
+  return SU.max(SILE.types.length(0), pl.utils.unpack(dims))
 end
 
 local _dims = pl.Set { "width", "height", "depth" }
@@ -43,7 +43,7 @@ function nodetypes.box:_init (spec)
     SU.error("Unimplemented, creating " .. self.type .. " node from " .. SU.type(spec), 1)
   end
   for dim in pairs(_dims) do
-    if not self[dim] then self[dim] = SILE.length() end
+    if not self[dim] then self[dim] = SILE.types.length() end
   end
   self["is_"..self.type] = true
   self.is_box = self.is_hbox or self.is_vbox or self.is_zerohbox or self.is_alternative or self.is_nnode
@@ -341,21 +341,21 @@ end
 
 function nodetypes.discretionary:prebreakWidth ()
   if self.prebw then return self.prebw end
-  self.prebw = SILE.length()
+  self.prebw = SILE.types.length()
   for _, node in ipairs(self.prebreak) do self.prebw:___add(node.width) end
   return self.prebw
 end
 
 function nodetypes.discretionary:postbreakWidth ()
   if self.postbw then return self.postbw end
-  self.postbw = SILE.length()
+  self.postbw = SILE.types.length()
   for _, node in ipairs(self.postbreak) do self.postbw:___add(node.width) end
   return self.postbw
 end
 
 function nodetypes.discretionary:replacementWidth ()
   if self.replacew then return self.replacew end
-  self.replacew = SILE.length()
+  self.replacew = SILE.types.length()
   for _, node in ipairs(self.replacement) do self.replacew:___add(node.width) end
   return self.replacew
 end
@@ -434,7 +434,7 @@ end
 nodetypes.hfillglue = pl.class(nodetypes.glue)
 function nodetypes.hfillglue:_init (spec)
   self:super(spec)
-  self.width = SILE.length(self.width.length, infinity, self.width.shrink)
+  self.width = SILE.types.length(self.width.length, infinity, self.width.shrink)
 end
 
 -- A hssglue is just a glue with infinite stretch and shrink.
@@ -442,7 +442,7 @@ end
 nodetypes.hssglue = pl.class(nodetypes.glue)
 function nodetypes.hssglue:_init (spec)
   self:super(spec)
-  self.width = SILE.length(self.width.length, infinity, infinity)
+  self.width = SILE.types.length(self.width.length, infinity, infinity)
 end
 
 nodetypes.kern = pl.class(nodetypes.glue)
@@ -485,7 +485,7 @@ end
 nodetypes.vfillglue = pl.class(nodetypes.vglue)
 function nodetypes.vfillglue:_init (spec)
   self:super(spec)
-  self.height = SILE.length(self.width.length, infinity, self.width.shrink)
+  self.height = SILE.types.length(self.width.length, infinity, self.width.shrink)
 end
 
 -- A vssglue is just a vglue with infinite stretch and shrink.
@@ -493,7 +493,7 @@ end
 nodetypes.vssglue = pl.class(nodetypes.vglue)
 function nodetypes.vssglue:_init (spec)
   self:super(spec)
-  self.height = SILE.length(self.width.length, infinity, infinity)
+  self.height = SILE.types.length(self.width.length, infinity, infinity)
 end
 
 nodetypes.zerovglue = pl.class(nodetypes.vglue)
@@ -589,7 +589,7 @@ function nodetypes.vbox:append (box)
   end
   self.height = self.height:absolute()
   self.height:___add(self.depth)
-  local lastdepth = SILE.length()
+  local lastdepth = SILE.types.length()
   for i = 1, #nodes do
     table.insert(self.nodes, nodes[i])
     self.height:___add(nodes[i].height)

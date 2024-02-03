@@ -19,8 +19,8 @@ local supereject_penalty = 2 * -inf_bad
 
 -- Local helper class to compare pairs of margins
 local _margins = pl.class({
-    lskip = SILE.nodefactory.glue(),
-    rskip = SILE.nodefactory.glue(),
+    lskip = SILE.types.node.glue(),
+    rskip = SILE.types.node.glue(),
 
     _init = function (self, lskip, rskip)
       self.lskip, self.rskip = lskip, rskip
@@ -100,7 +100,7 @@ function typesetter.declareSettings(_)
   SILE.settings:declare({
     parameter = "typesetter.parfillskip",
     type = "glue",
-    default = SILE.nodefactory.glue("0pt plus 10000pt"),
+    default = SILE.types.node.glue("0pt plus 10000pt"),
     help = "Glue added at the end of a paragraph"
   })
 
@@ -114,14 +114,14 @@ function typesetter.declareSettings(_)
   SILE.settings:declare({
     parameter = "typesetter.underfulltolerance",
     type = "length or nil",
-    default = SILE.length("1em"),
+    default = SILE.types.length("1em"),
     help = "Amount a page can be underfull without warning"
   })
 
   SILE.settings:declare({
     parameter = "typesetter.overfulltolerance",
     type = "length or nil",
-    default = SILE.length("5pt"),
+    default = SILE.types.length("5pt"),
     help = "Amount a page can be overfull without warning"
   })
 
@@ -234,25 +234,25 @@ end
 function typesetter:pushHbox (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
   local ntype = SU.type(spec)
-  local node = (ntype == "hbox" or ntype == "zerohbox") and spec or SILE.nodefactory.hbox(spec)
+  local node = (ntype == "hbox" or ntype == "zerohbox") and spec or SILE.types.node.hbox(spec)
   return self:pushHorizontal(node)
 end
 
 function typesetter:pushUnshaped (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
-  local node = SU.type(spec) == "unshaped" and spec or SILE.nodefactory.unshaped(spec)
+  local node = SU.type(spec) == "unshaped" and spec or SILE.types.node.unshaped(spec)
   return self:pushHorizontal(node)
 end
 
 function typesetter:pushGlue (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
-  local node = SU.type(spec) == "glue" and spec or SILE.nodefactory.glue(spec)
+  local node = SU.type(spec) == "glue" and spec or SILE.types.node.glue(spec)
   return self:pushHorizontal(node)
 end
 
 function typesetter:pushExplicitGlue (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
-  local node = SU.type(spec) == "glue" and spec or SILE.nodefactory.glue(spec)
+  local node = SU.type(spec) == "glue" and spec or SILE.types.node.glue(spec)
   node.explicit = true
   node.discardable = false
   return self:pushHorizontal(node)
@@ -260,30 +260,30 @@ end
 
 function typesetter:pushPenalty (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
-  local node = SU.type(spec) == "penalty" and spec or SILE.nodefactory.penalty(spec)
+  local node = SU.type(spec) == "penalty" and spec or SILE.types.node.penalty(spec)
   return self:pushHorizontal(node)
 end
 
 function typesetter:pushMigratingMaterial (material)
-  local node = SILE.nodefactory.migrating({ material = material })
+  local node = SILE.types.node.migrating({ material = material })
   return self:pushHorizontal(node)
 end
 
 function typesetter:pushVbox (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
-  local node = SU.type(spec) == "vbox" and spec or SILE.nodefactory.vbox(spec)
+  local node = SU.type(spec) == "vbox" and spec or SILE.types.node.vbox(spec)
   return self:pushVertical(node)
 end
 
 function typesetter:pushVglue (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
-  local node = SU.type(spec) == "vglue" and spec or SILE.nodefactory.vglue(spec)
+  local node = SU.type(spec) == "vglue" and spec or SILE.types.node.vglue(spec)
   return self:pushVertical(node)
 end
 
 function typesetter:pushExplicitVglue (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
-  local node = SU.type(spec) == "vglue" and spec or SILE.nodefactory.vglue(spec)
+  local node = SU.type(spec) == "vglue" and spec or SILE.types.node.vglue(spec)
   node.explicit = true
   node.discardable = false
   return self:pushVertical(node)
@@ -291,7 +291,7 @@ end
 
 function typesetter:pushVpenalty (spec)
   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
-  local node = SU.type(spec) == "penalty" and spec or SILE.nodefactory.penalty(spec)
+  local node = SU.type(spec) == "penalty" and spec or SILE.types.node.penalty(spec)
   return self:pushVertical(node)
 end
 
@@ -308,7 +308,7 @@ function typesetter:typeset (text)
         local warnedshy = false
         for token2 in SU.gtoke(token.string, luautf8.char(0x00AD)) do
           if token2.separator then -- soft hyphen support
-            local discretionary = SILE.nodefactory.discretionary({})
+            local discretionary = SILE.types.node.discretionary({})
             local hbox = SILE.typesetter:makeHbox({ SILE.settings:get("font.hyphenchar") })
             discretionary.prebreak = { hbox }
             table.insert(SILE.typesetter.state.nodes, discretionary)
@@ -335,7 +335,7 @@ end
 function typesetter:initline ()
   if self.state.hmodeOnly then return end -- https://github.com/sile-typesetter/sile/issues/1718
   if (#self.state.nodes == 0) then
-    self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zerohbox()
+    self.state.nodes[#self.state.nodes+1] = SILE.types.node.zerohbox()
     SILE.documentState.documentClass.newPar(self)
   end
 end
@@ -354,13 +354,13 @@ local speakerChangeReplacement = luautf8.char(0x2014) .. " "
 
 -- Special unshaped node subclass to handle space after a speaker change in dialogues
 -- introduced by an em-dash.
-local speakerChangeNode = pl.class(SILE.nodefactory.unshaped)
+local speakerChangeNode = pl.class(SILE.types.node.unshaped)
 function speakerChangeNode:shape()
   local node = self._base.shape(self)
   local spc = node[2]
   if spc and spc.is_glue then
     -- Switch the variable space glue to a fixed kern
-    node[2] = SILE.nodefactory.kern({ width = spc.width.length })
+    node[2] = SILE.types.node.kern({ width = spc.width.length })
     node[2].parent = self.parent
   else
     -- Should not occur:
@@ -532,9 +532,9 @@ function typesetter.shapeAllNodes (_, nodelist, inplace)
           -- a glue too.
           -- Otherwise, the font change is considered to occur at a non-breaking
           -- point (e.g. "\em{proof}!") and the correction shall be a kern.
-          local makeItCorrNode = isGlue and SILE.nodefactory.glue or SILE.nodefactory.kern
+          local makeItCorrNode = isGlue and SILE.types.node.glue or SILE.types.node.kern
           newNodelist[#newNodelist+1] = makeItCorrNode({
-            width = SILE.length(itCorrOffset),
+            width = SILE.types.length(itCorrOffset),
             subtype = "itcorr"
           })
         end
@@ -600,7 +600,7 @@ function typesetter:boxUpNodes ()
         nodes[#nodes+1] = node
       end
     end
-    local vbox = SILE.nodefactory.vbox({ nodes = nodes, ratio = line.ratio })
+    local vbox = SILE.types.node.vbox({ nodes = nodes, ratio = line.ratio })
     local pageBreakPenalty = 0
     if (#lines > 1 and index == 1) then
       pageBreakPenalty = SILE.settings:get("typesetter.widowpenalty")
@@ -613,7 +613,7 @@ function typesetter:boxUpNodes ()
     self.state.previousVbox = vbox
     if pageBreakPenalty > 0 then
       SU.debug("typesetter", "adding penalty of", pageBreakPenalty, "after", vbox)
-      vboxes[#vboxes+1] = SILE.nodefactory.penalty(pageBreakPenalty)
+      vboxes[#vboxes+1] = SILE.types.node.penalty(pageBreakPenalty)
     end
   end
   return vboxes
@@ -678,8 +678,8 @@ end
 
 function typesetter:setVerticalGlue (pageNodeList, target)
   local glues = {}
-  local gTotal = SILE.length()
-  local totalHeight = SILE.length()
+  local gTotal = SILE.types.length()
+  local totalHeight = SILE.types.length()
 
   local pastTop = false
   for _, node in ipairs(pageNodeList) do
@@ -805,7 +805,7 @@ function typesetter:pushBack ()
       local discardedFistInitLine = false
       if (#self.state.nodes == 0) then
         -- Setup queue but avoid calling newPar
-        self.state.nodes[#self.state.nodes+1] = SILE.nodefactory.zerohbox()
+        self.state.nodes[#self.state.nodes+1] = SILE.types.node.zerohbox()
       end
       for i, node in ipairs(vbox.nodes) do
         if node.is_glue and not node.discardable then
@@ -897,7 +897,7 @@ function typesetter.leadingFor (_, vbox, previous)
   SU.debug("typesetter", "   Considering leading between two lines:")
   SU.debug("typesetter", "   1)", previous)
   SU.debug("typesetter", "   2)", vbox)
-  if not previous then return SILE.nodefactory.vglue() end
+  if not previous then return SILE.types.node.vglue() end
   local prevDepth = previous.depth
   SU.debug("typesetter", "   Depth of previous line was", prevDepth)
   local bls = SILE.settings:get("document.baselineskip")
@@ -907,9 +907,9 @@ function typesetter.leadingFor (_, vbox, previous)
   -- the lineskip setting is a vglue, but we need a version absolutized at this point, see #526
   local lead = SILE.settings:get("document.lineskip").height:absolute()
   if depth > lead then
-    return SILE.nodefactory.vglue(SILE.length(depth.length, bls.height.stretch, bls.height.shrink))
+    return SILE.types.node.vglue(SILE.types.length(depth.length, bls.height.stretch, bls.height.shrink))
   else
-    return SILE.nodefactory.vglue(lead)
+    return SILE.types.node.vglue(lead)
   end
 end
 
@@ -1087,23 +1087,23 @@ end
 function typesetter:addrlskip (slice, margins, hangLeft, hangRight)
   local LTR = self.frame:writingDirection() == "LTR"
   local rskip = margins[LTR and "rskip" or "lskip"]
-  if not rskip then rskip = SILE.nodefactory.glue(0) end
+  if not rskip then rskip = SILE.types.node.glue(0) end
   if hangRight and hangRight > 0 then
-    rskip = SILE.nodefactory.glue({ width = rskip.width:tonumber() + hangRight })
+    rskip = SILE.types.node.glue({ width = rskip.width:tonumber() + hangRight })
   end
   rskip.value = "margin"
   -- while slice[#slice].discardable do table.remove(slice, #slice) end
   table.insert(slice, rskip)
-  table.insert(slice, SILE.nodefactory.zerohbox())
+  table.insert(slice, SILE.types.node.zerohbox())
   local lskip = margins[LTR and "lskip" or "rskip"]
-  if not lskip then lskip = SILE.nodefactory.glue(0) end
+  if not lskip then lskip = SILE.types.node.glue(0) end
   if hangLeft and hangLeft > 0 then
-    lskip = SILE.nodefactory.glue({ width = lskip.width:tonumber() + hangLeft })
+    lskip = SILE.types.node.glue({ width = lskip.width:tonumber() + hangLeft })
   end
   lskip.value = "margin"
   while slice[1].discardable do table.remove(slice, 1) end
   table.insert(slice, 1, lskip)
-  table.insert(slice, 1, SILE.nodefactory.zerohbox())
+  table.insert(slice, 1, SILE.types.node.zerohbox())
 end
 
 function typesetter:breakpointsToLines (breakpoints)
@@ -1192,7 +1192,7 @@ function typesetter:breakpointsToLines (breakpoints)
 end
 
 function typesetter.computeLineRatio (_, breakwidth, slice)
-  local naturalTotals = SILE.length()
+  local naturalTotals = SILE.types.length()
 
   -- From the line end, account for the margin but skip any trailing
   -- glues (spaces to ignore) and zero boxes until we reach actual content.
@@ -1295,8 +1295,8 @@ function typesetter:makeHbox (content)
   local nodes = self:shapeAllNodes(self.state.nodes, false)
 
   -- Then we can process and measure the nodes.
-  local l = SILE.length()
-  local h, d = SILE.length(), SILE.length()
+  local l = SILE.types.length()
+  local h, d = SILE.types.length(), SILE.types.length()
   for i = 1, #nodes do
     local node = nodes[i]
     if node.is_migrating then
@@ -1327,7 +1327,7 @@ function typesetter:makeHbox (content)
   end
   self:popState()
 
-  local hbox = SILE.nodefactory.hbox({
+  local hbox = SILE.types.node.hbox({
       height = h,
       width = l,
       depth = d,

@@ -54,7 +54,7 @@ function package.declareSettings (_)
   SILE.settings:declare({
       parameter = "math.displayskip",
       type = "VGlue",
-      default = SILE.nodefactory.vglue("2ex plus 1pt")
+      default = SILE.types.node.vglue("2ex plus 1pt")
     })
 
 end

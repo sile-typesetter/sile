@@ -79,7 +79,7 @@ function package:_init ()
     for i=1, #run do
       options = pl.tablex.deepcopy(options)
       if run[i].color then
-        nodes[#nodes+1] = SILE.nodefactory.hbox({
+        nodes[#nodes+1] = SILE.types.node.hbox({
           outputYourself = function () SILE.outputter:pushColor(run[i].color) end
         })
       end
@@ -87,7 +87,7 @@ function package:_init ()
         nodes[#nodes+1] = node
       end
       if run[i].color then
-        nodes[#nodes+1] = SILE.nodefactory.hbox({
+        nodes[#nodes+1] = SILE.types.node.hbox({
           outputYourself = function () SILE.outputter:popColor() end
         })
       end

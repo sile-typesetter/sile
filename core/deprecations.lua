@@ -54,15 +54,15 @@ SILE.defaultTypesetter = function ()
 end
 
 SILE.toPoints = function (_, _)
-  SU.deprecated("SILE.toPoints", "SILE.measurement():tonumber", "0.10.0", "0.13.1")
+  SU.deprecated("SILE.toPoints", "SILE.types.measurement():tonumber", "0.10.0", "0.13.1")
 end
 
 SILE.toMeasurement = function (_, _)
-  SU.deprecated("SILE.toMeasurement", "SILE.measurement", "0.10.0", "0.13.1")
+  SU.deprecated("SILE.toMeasurement", "SILE.types.measurement", "0.10.0", "0.13.1")
 end
 
 SILE.toAbsoluteMeasurement = function (_, _)
-  SU.deprecated("SILE.toAbsoluteMeasurement", "SILE.measurement():absolute", "0.10.0", "0.13.1")
+  SU.deprecated("SILE.toAbsoluteMeasurement", "SILE.types.measurement():absolute", "0.10.0", "0.13.1")
 end
 
 SILE.readFile = function (filename)
@@ -118,9 +118,9 @@ SILE.units = setmetatable({}, {
   })
 
 SILE.colorparser = function (input)
-  SU.deprecated("SILE.colorparser", "SILE.color", "0.14.0", "0.16.0",
+  SU.deprecated("SILE.colorparser", "SILE.types.color", "0.14.0", "0.16.0",
     [[Color results are now color objects, not just tables with relevant values.]])
-  return SILE.color(input)
+  return SILE.types.color(input)
 end
 
 function SILE.doTexlike (doc)

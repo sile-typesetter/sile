@@ -469,10 +469,10 @@ end
 
 function SILE.registerUnit (unit, spec)
   -- If a unit exists already, clear it first so we get fresh meta table entries, see #1607
-  if SILE.units[unit] then
-    SILE.units[unit] = nil
+  if SILE.types.unit[unit] then
+    SILE.types.unit[unit] = nil
   end
-  SILE.units[unit] = spec
+  SILE.types.unit[unit] = spec
 end
 
 function SILE.paperSizeParser (size)

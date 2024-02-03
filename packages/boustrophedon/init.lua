@@ -13,7 +13,7 @@ function package:_init (options)
         node:addToken(items[i].text, items[i])
         node:makeToken()
         node:makePenalty()
-        coroutine.yield(SILE.nodefactory.glue("0pt plus 2pt"))
+        coroutine.yield(SILE.types.node.glue("0pt plus 2pt"))
       end
     end)
   end
@@ -44,7 +44,7 @@ function package:registerCommands ()
         end
       end
       if startdir == dir then
-        local restore = SILE.nodefactory.vbox({})
+        local restore = SILE.types.node.vbox({})
         restore.outputYourself = function (_, typesetter, _)
           typesetter.frame.direction = startdir
           typesetter.frame:newLine()

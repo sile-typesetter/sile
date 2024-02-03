@@ -41,9 +41,9 @@ function class:_init(options)
   self:loadPackage("rotate")
   self:registerPostinit(function ()
     SILE.call("language", { main = "bo" })
-    SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue())
-    SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
-    SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+    SILE.settings:set("document.lskip", SILE.types.node.hfillglue())
+    SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+    SILE.settings:set("document.parindent", SILE.types.node.glue())
   end)
 end
 

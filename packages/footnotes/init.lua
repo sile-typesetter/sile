@@ -15,9 +15,9 @@ function package:_init (options)
   self.class:initInsertionClass("footnote", {
     insertInto = options.insertInto or "footnotes",
     stealFrom = options.stealFrom or { "content" },
-    maxHeight = SILE.length("75%ph"),
-    topBox = SILE.nodefactory.vglue("2ex"),
-    interInsertionSkip = SILE.length("1ex"),
+    maxHeight = SILE.types.length("75%ph"),
+    topBox = SILE.types.node.vglue("2ex"),
+    interInsertionSkip = SILE.types.length("1ex"),
   })
 
 end
@@ -41,10 +41,10 @@ function package:registerCommands ()
 
   self:registerCommand("footnote:options", function (options, _)
     if options["maxHeight"] then
-      SILE.scratch.insertions.classes.footnote.maxHeight = SILE.length(options["maxHeight"])
+      SILE.scratch.insertions.classes.footnote.maxHeight = SILE.types.length(options["maxHeight"])
     end
     if options["interInsertionSkip"] then
-      SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length(options["interInsertionSkip"])
+      SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.types.length(options["interInsertionSkip"])
     end
   end)
 
@@ -54,7 +54,7 @@ function package:registerCommands ()
     local frame = opts.insertInto and SILE.getFrame(opts.insertInto.frame)
     local oldGetTargetLength = SILE.typesetter.getTargetLength
     local oldFrame = SILE.typesetter.frame
-    SILE.typesetter.getTargetLength = function () return SILE.length(0xFFFFFF) end
+    SILE.typesetter.getTargetLength = function () return SILE.types.length(0xFFFFFF) end
     SILE.settings:pushState()
     -- Restore the settings to the top of the queue, which should be the document #986
     SILE.settings:toplevelState()

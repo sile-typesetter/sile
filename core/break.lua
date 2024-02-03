@@ -51,12 +51,12 @@ local debugging = false
 function lineBreak:init()
   self:trimGlue() -- 842
   -- 849
-  self.activeWidth = SILE.length()
-  self.curActiveWidth = SILE.length()
-  self.breakWidth = SILE.length()
+  self.activeWidth = SILE.types.length()
+  self.curActiveWidth = SILE.types.length()
+  self.breakWidth = SILE.types.length()
   -- 853
-  local rskip = (SILE.settings:get("document.rskip") or SILE.nodefactory.glue()).width:absolute()
-  local lskip = (SILE.settings:get("document.lskip") or SILE.nodefactory.glue()).width:absolute()
+  local rskip = (SILE.settings:get("document.rskip") or SILE.types.node.glue()).width:absolute()
+  local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()).width:absolute()
   self.background = rskip + lskip
   -- 860
   self.bestInClass = {}
@@ -72,7 +72,7 @@ end
 function lineBreak:trimGlue() -- 842
   local nodes = self.nodes
   if nodes[#nodes].is_glue then nodes[#nodes] = nil end
-  nodes[#nodes+1] = SILE.nodefactory.penalty(inf_bad)
+  nodes[#nodes+1] = SILE.types.node.penalty(inf_bad)
 end
 
 -- NOTE FOR DEVELOPERS: this method is called when the linebreak.parShape
@@ -100,9 +100,9 @@ end
 local parShapeCache = {}
 
 local grantLeftoverWidth = function (hsize, l, w, r)
-  local width = SILE.measurement(w or hsize)
-  if not w and l then width = width - SILE.measurement(l) end
-  if not w and r then width = width - SILE.measurement(r) end
+  local width = SILE.types.measurement(w or hsize)
+  if not w and l then width = width - SILE.types.measurement(l) end
+  if not w and r then width = width - SILE.types.measurement(r) end
   local remaining = hsize:tonumber() - width:tonumber()
   local left = SU.cast("number", l or (r and (remaining - SU.cast("number", r))) or 0)
   local right = SU.cast("number", r or (l and (remaining - SU.cast("number", l))) or remaining)
@@ -162,7 +162,7 @@ function lineBreak:tryBreak() -- 855
   self.prev_r = self.activeListHead
   self.old_l = 0
   self.r = nil
-  self.curActiveWidth = SILE.length(self.activeWidth)
+  self.curActiveWidth = SILE.types.length(self.activeWidth)
   while true do
     while true do -- allows "break" to function as "continue"
       self.r = self.prev_r.next
@@ -328,7 +328,7 @@ function lineBreak:deactivateR() -- 886
     self.r = self.activeListHead.next
     if self.r.type == "delta" then
       self.activeWidth:___add(self.r.width)
-      self.curActiveWidth = SILE.length(self.activeWidth)
+      self.curActiveWidth = SILE.types.length(self.activeWidth)
       self.activeListHead.next = self.r.next
     end
     if debugging then SU.debug("break", "  Deactivate, branch 1"); end
@@ -405,7 +405,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
   if self.no_break_yet then
     -- 863
     self.no_break_yet = false
-    self.breakWidth = SILE.length(self.background)
+    self.breakWidth = SILE.types.length(self.background)
     local place = self.place
     local node = self.nodes[place]
     if node and node.is_discretionary then -- 866
@@ -429,7 +429,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     self.prev_r.width:___sub(self.curActiveWidth)
     self.prev_r.width:___add(self.breakWidth)
   elseif self.prev_r == self.activeListHead then
-    self.activeWidth = SILE.length(self.breakWidth)
+    self.activeWidth = SILE.types.length(self.breakWidth)
   else
     local newDelta = { next = self.r, type = "delta", width = self.breakWidth - self.curActiveWidth }
     if debugging then SU.debug("break", "Added new delta node = " .. tostring(newDelta.width)) end
@@ -605,7 +605,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
     }
 
     -- Not doing 1630
-    self.activeWidth = SILE.length(self.background)
+    self.activeWidth = SILE.types.length(self.background)
 
     self.place = 1
     while self.nodes[self.place] and self.activeListHead.next ~= self.activeListHead do
