@@ -233,15 +233,18 @@ Using this option also enables a number of targets that wouldn't normally be nee
 \end{autodoc:note}
 
 \begin{autodoc:note}
-SILE can be built to run using LuaJIT under which it runs nearly twice as fast!
-Because SILE lets your documents, classes, and packages use Lua code from your system—and because the ecosystem for Lua software is more developed around the regular Lua versions—SILE defaults to using the newest plain Lua installation found.
-If your system has LuaJIT and you prefer to use it, you can ask the configure process to use it like this:
+By default SILE looks for a LuaJIT installation at configure time.
+This default is because running it under LuaJIT is nearly twice as fast as under PUC Lua versions.
+That being said, all SILE's Lua code takes a lowest-common-denominator approach to Lua compatibility.
+Any of Lua 5.1, 5.2, 5.3, 5.4, or LuaJIT (2.0, 2.1, or OpenResty) are fully supported.
 
-\terminal{$ ./configure --with-luajit}
+If your system either does not have LuaJIT or you prefer to use a version of PUC lua, you can ask the configure process to pass on the LuaJIT detection:
 
-Keep in mind that any Lua code you write will need to be JIT compatible.
+\terminal{$ ./configure --without-luajit}
+
+Keep in mind that while SILE and all its dependencies are tested to work on any interpreter, any Lua code \emph{you write} for your project will need to be compatible with whatever version you choose.
+Several shims are provided to keeps things compatible, but it is also possible to write Lua expressions that only work in some VMs.
 The vast majority of Lua code will be fine, but there are a few limitations.
-See the documentation for your version of LuaJIT for details.
 \end{autodoc:note}
 
 If that command was successful, you can now build SILE itself:
