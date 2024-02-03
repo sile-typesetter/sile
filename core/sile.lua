@@ -81,8 +81,7 @@ SILE.packages = core_loader("packages")
 SILE.typesetters = core_loader("typesetters")
 SILE.pagebuilders = core_loader("pagebuilders")
 
--- Internal libraries that don't make assumptions on load, only use
-SILE.traceStack = require("core.tracestack")()
+-- Internal libraries that don't make assumptions on load, only provide something
 SILE.parserBits = require("core.parserbits")
 SILE.frameParser = require("core.frameparser")
 SILE.color = require("core.color")
@@ -501,8 +500,11 @@ function SILE.finish ()
   end
 end
 
--- Internal libraries that run core SILE functions on load
+-- Internal libraries that return classes, but we only ever use one instantiation
+SILE.traceStack = require("core.tracestack")()
 SILE.settings = require("core.settings")()
+
+-- Internal libraries that run core SILE functions on load
 require("core.hyphenator-liang")
 require("core.languages")
 SILE.linebreak = require("core.break")
