@@ -509,8 +509,6 @@ require("core.hyphenator-liang")
 require("core.languages")
 SILE.linebreak = require("core.break")
 require("core.frame")
-SILE.cli = require("core.cli")
-SILE.repl = require("core.repl")
 SILE.font = require("core.font")
 
 -- For warnings and shims scheduled for removal that are easier to keep track
