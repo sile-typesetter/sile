@@ -220,6 +220,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         AX_PROGVAR([git])
         AX_PROGVAR([grep])
         AX_PROGVAR([head])
+        AX_PROGVAR([ldoc])
         AX_PROGVAR([luacheck])
         AX_PROGVAR([luarocks])
         AX_PROGVAR([nix])
