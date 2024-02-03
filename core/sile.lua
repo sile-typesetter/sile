@@ -33,6 +33,11 @@ local lfs = require("lfs")
 -- Developer tooling profiler
 local ProFi
 
+-- For warnings and shims scheduled for removal that are easier to keep track
+-- of when they are not spread across so many locations...
+-- Loaded early to make it easier to manage migrations in core code.
+require("core/deprecations")
+
 SILE.utilities = require("core.utilities")
 SU = SILE.utilities -- regrettable global alias
 
@@ -510,9 +515,5 @@ require("core.languages")
 SILE.linebreak = require("core.break")
 require("core.frame")
 SILE.font = require("core.font")
-
--- For warnings and shims scheduled for removal that are easier to keep track
--- of when they are not spread across so many locations...
-require("core/deprecations")
 
 return SILE
