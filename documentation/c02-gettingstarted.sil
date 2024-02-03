@@ -220,10 +220,20 @@ Otherwise to go with default of bundling them, just run:
 \terminal{$ ./configure}
 
 \begin{autodoc:note}
-If you plan on developing SILE itself (whether just to hack on it for your own use or contribute upstream) there are two particularly useful configuration options.
-First, you can add \code{--datarootdir=$(cd ..;pwd)} which will enable the compiled binary to run directly from the source directory without being installed at all.
-Second, you can add \code{--enable-developer} to also check for tooling we expect SILE developers to have, such as tools used for testing.
-Using this option also enables a number of targets that wouldn't normally be needed by end-users, such as \code{make regressions}.
+Normally a source build will not actually \emph{run} until after it is installed.
+If you want to be able to run it from the source directory without installing it, it is important to configure it for that ahead of time.
+Setting up the run-time paths such that the source directory are checked allows SILE to run in place after building without installing.
+This is useful if you want to experiment with running SILE \strong{and/or} plan on modifying or developing SILE itself.
+Being able to tweak the sources and re-run SILE immediately to check the difference is much faster than having to install after each tweak.
+You can add \code{--datarootdir=$(cd ..;pwd)} which will enable the compiled binary to run directly from the source directory.
+
+Alternatively another useful option is \code{--enable-developer}.
+This will also accomplish the path handling change (so you don't have to use both) but takes it a few steps farther.
+It also enables checks on extra dependencies needed for \code{testing} SILE.
+These can be useful whether just to hack on it for your own use or contribute upstream, but also not all of the tooling is required.
+For example (among other things) you may not wish to rebuild the Docker image, lint the Lua files, or test the Flake.
+Individual checks can be skipped: \code{--enable-developer NIX=false DOCKER=false LUACHECK=false}.
+Using this the developer option also enables a number of targets that wouldn't normally be needed by end-users, such as \code{make regressions}.
 \end{autodoc:note}
 
 \begin{autodoc:note}
