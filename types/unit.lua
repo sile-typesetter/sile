@@ -1,16 +1,18 @@
-local units = {
+local bits = require("core.parserbits")
+
+local unittypes = {
   pt = {
     relative = false,
     value = 1
   }
 }
 
-setmetatable(units, {
+setmetatable(unittypes, {
     __newindex = function (self, unit, spec)
       local def = SU.required(spec, "definition", "registering unit " .. unit)
       local relative = SU.boolean(spec.relative, false)
       if type(def) == "string" then
-        local parsed = SILE.parserBits.measurement:match(def)
+        local parsed = bits.measurement:match(def)
         if not parsed then SU.error("Could not parse unit definition '"..def.."'") end
         if not self[parsed.unit] then
           SU.error("Unit " .. unit .. " defined in terms of unknown unit " .. parsed.unit)
@@ -36,36 +38,36 @@ setmetatable(units, {
     end
   })
 
-units["twip"] = {
+unittypes["twip"] = {
   definition = "0.05pt"
 }
 
-units["mm"] = {
+unittypes["mm"] = {
   definition = "2.8346457pt"
 }
 
-units["cm"] = {
+unittypes["cm"] = {
   definition = "10mm"
 }
 
-units["m"] = {
+unittypes["m"] = {
   definition = "100cm"
 }
 
-units["hm"] = {
+unittypes["hm"] = {
   definition = "0.01mm"
 }
 
-units["in"] = {
+unittypes["in"] = {
   definition = "72pt"
 }
 
-units["ft"] = {
+unittypes["ft"] = {
   definition = "12in"
 }
 
 -- Picas are 1/6 inch, used in Docbook images
-units["pc"] = {
+unittypes["pc"] = {
   definition = "0.166666667in"
 }
 
@@ -81,7 +83,7 @@ local checkFrameDefined = function ()
   end
 end
 
-units["%pw"] = {
+unittypes["%pw"] = {
   relative = true,
   definition = function (value)
     checkPaperDefined()
@@ -89,7 +91,7 @@ units["%pw"] = {
   end
 }
 
-units["%ph"] = {
+unittypes["%ph"] = {
   relative = true,
   definition = function (value)
     checkPaperDefined()
@@ -97,7 +99,7 @@ units["%ph"] = {
   end
 }
 
-units["%pmin"] = {
+unittypes["%pmin"] = {
   relative = true,
   definition = function (value)
     checkPaperDefined()
@@ -105,7 +107,7 @@ units["%pmin"] = {
   end
 }
 
-units["%pmax"] = {
+unittypes["%pmax"] = {
   relative = true,
   definition = function (value)
     checkPaperDefined()
@@ -113,7 +115,7 @@ units["%pmax"] = {
   end
 }
 
-units["%fw"] = {
+unittypes["%fw"] = {
   relative = true,
   definition = function (value)
     checkFrameDefined()
@@ -121,7 +123,7 @@ units["%fw"] = {
   end
 }
 
-units["%fh"] = {
+unittypes["%fh"] = {
   relative = true,
   definition = function (value)
     checkFrameDefined()
@@ -129,7 +131,7 @@ units["%fh"] = {
   end
 }
 
-units["%fmin"] = {
+unittypes["%fmin"] = {
   relative = true,
   definition = function (value)
     checkFrameDefined()
@@ -137,7 +139,7 @@ units["%fmin"] = {
   end
 }
 
-units["%fmax"] = {
+unittypes["%fmax"] = {
   relative = true,
   definition = function (value)
     checkFrameDefined()
@@ -145,7 +147,7 @@ units["%fmax"] = {
   end
 }
 
-units["%lw"] = {
+unittypes["%lw"] = {
   relative = true,
   definition = function (value)
     local lskip = SILE.settings:get("document.lskip")
@@ -157,7 +159,7 @@ units["%lw"] = {
   end
 }
 
-units["ps"] = {
+unittypes["ps"] = {
   relative = true,
   definition = function (value)
     local ps = SILE.settings:get("document.parskip")
@@ -166,7 +168,7 @@ units["ps"] = {
   end
 }
 
-units["bs"] = {
+unittypes["bs"] = {
   relative = true,
   definition = function (value)
     local bs = SILE.settings:get("document.baselineskip")
@@ -175,28 +177,28 @@ units["bs"] = {
   end
 }
 
-units["em"] = {
+unittypes["em"] = {
   relative = true,
   definition = function (value)
     return value * SILE.settings:get("font.size")
   end
 }
 
-units["ex"] = {
+unittypes["ex"] = {
   relative = true,
   definition = function (value)
     return value * SILE.shaper:measureChar("x").height
   end
 }
 
-units["spc"] = {
+unittypes["spc"] = {
   relative = true,
   definition = function (value)
     return value * SILE.shaper:measureChar(" ").width
   end
 }
 
-units["en"] = {
+unittypes["en"] = {
   relative = true,
   definition = "0.5em"
 }
@@ -205,7 +207,7 @@ units["en"] = {
 -- width of a full-width character. In SILE terms it isn't: measuring an "m" in
 -- a 10pt Japanese font gets you 5 points. So we measure a full-width character
 -- and use that as a unit. We call it zw following ptex (zenkaku width)
-units["zw"] = {
+unittypes["zw"] = {
   relative = true,
   definition = function (v)
     local zenkakuchar = SILE.settings:get("document.zenkakuchar")
@@ -220,4 +222,4 @@ units["zw"] = {
   end
 }
 
-return units
+return unittypes

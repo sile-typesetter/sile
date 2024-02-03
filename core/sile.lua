@@ -85,19 +85,13 @@ SILE.classes = core_loader("classes")
 SILE.packages = core_loader("packages")
 SILE.typesetters = core_loader("typesetters")
 SILE.pagebuilders = core_loader("pagebuilders")
+SILE.types = core_loader("types")
 
--- Internal libraries that don't make assumptions on load, only provide something
+-- Internal libraries that don't try to use anything on load, only provide something
 SILE.parserBits = require("core.parserbits")
 SILE.frameParser = require("core.frameparser")
-SILE.color = require("core.color")
-SILE.units = require("core.units")
 SILE.fontManager = require("core.fontmanager")
-
--- Internal libraries that assume globals, may be picky about load order
-SILE.measurement = require("core.measurement")
-SILE.length = require("core.length")
 SILE.papersize = require("core.papersize")
-SILE.nodefactory = require("core.nodefactory")
 
 -- NOTE:
 -- See remainaing internal libraries loaded at the end of this file because

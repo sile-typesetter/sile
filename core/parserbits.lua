@@ -5,8 +5,9 @@ local C, Cf, Cg, Ct, Cmt = lpeg.C, lpeg.Cf, lpeg.Cg, lpeg.Ct, lpeg.Cmt
 
 local function isaunit (_, _, unit)
   -- TODO: fix race condition so we can validate units
-  if not SILE or not SILE.units then return true end
-  return SILE.units[unit] and true or false
+  local factory = rawget(SILE.types, "unit")
+  if not SILE or not factory then return true end
+  return factory[unit] and true or false
 end
 
 local function inferpoints (number)
