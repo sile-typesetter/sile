@@ -2,7 +2,7 @@
 \neverindent
 \nofolios
 \set[parameter=shaper.spaceenlargementfactor, value=1]
-\script[src=packages/rules]
+\use[module=packages.rules]
 \font[size=14pt]
 % strikethrough and underline can span multiple lines
 % Here line-breaking (paragraphing) occurs in the underlined sequence.
