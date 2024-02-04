@@ -611,98 +611,36 @@ function nodetypes.migrating:__tostring ()
   return "<M: " .. tostring(self.material) .. ">"
 end
 
-local _deprecated_nodefactory = {}
-
-_deprecated_nodefactory.newHbox = function (spec)
-  return node.hbox(spec)
-end
-
-_deprecated_nodefactory.newNnode = function (spec)
-  return node.nnode(spec)
-end
-
-_deprecated_nodefactory.newUnshaped = function (spec)
-  return node.unshaped(spec)
-end
-
-_deprecated_nodefactory.newDisc = function (spec)
-  return node.discretionary(spec)
-end
-
-_deprecated_nodefactory.disc = function (spec)
-  return node.discretionary(spec)
-end
-
-_deprecated_nodefactory.newAlternative = function (spec)
-  return node.alternative(spec)
-end
-
-_deprecated_nodefactory.newGlue = function (spec)
-  return node.glue(spec)
-end
-
-_deprecated_nodefactory.newKern = function (spec)
-  return node.kern(spec)
-end
-
-_deprecated_nodefactory.newVglue = function (spec)
-  return node.vglue(spec)
-end
-
-_deprecated_nodefactory.newVKern = function (spec)
-  return node.vkern(spec)
-end
-
-_deprecated_nodefactory.newPenalty = function (spec)
-  return node.penalty(spec)
-end
-
-_deprecated_nodefactory.newDiscretionary = function (spec)
-  return node.discretionary(spec)
-end
-
-_deprecated_nodefactory.newVbox = function (spec)
-  return node.vbox(spec)
-end
-
-_deprecated_nodefactory.newMigrating = function (spec)
-  return node.migrating(spec)
-end
-
-_deprecated_nodefactory.zeroGlue = function ()
-  return node.glue()
-end
-
-_deprecated_nodefactory.hfillGlue = function ()
-  return node.hfillglue()
-end
-
-_deprecated_nodefactory.vfillGlue = function ()
-  return node.vfillglue()
-end
-
-_deprecated_nodefactory.hssGlue = function ()
-  return node.hssglue()
-end
-
-_deprecated_nodefactory.vssGlue = function ()
-  return node.vssglue()
-end
-
-_deprecated_nodefactory.zeroHbox = function ()
-  return node.zerohbox()
-end
-
-_deprecated_nodefactory.zeroVglue = function ()
-  return node.zerovglue()
-end
+local _deprecated_nodefactory = {
+  newHbox = true,
+  newNnode = true,
+  newUnshaped = true,
+  newDisc = true,
+  disc = true,
+  newAlternative = true,
+  newGlue = true,
+  newKern = true,
+  newVglue = true,
+  newVKern = true,
+  newPenalty = true,
+  newDiscretionary = true,
+  newVbox = true,
+  newMigrating = true,
+  zeroGlue = true,
+  hfillGlue = true,
+  vfillGlue = true,
+  hssGlue = true,
+  vssGlue = true,
+  zeroHbox = true,
+  zeroVglue = true,
+}
 
 setmetatable(nodetypes, {
     __index = function (_, prop)
       if _deprecated_nodefactory[prop] then
         SU.deprecated("SILE.types.node." .. prop, "SILE.types.node." .. prop:match("n?e?w?(.*)"):lower(), "0.10.0", "0.14.0")
       elseif type(prop) == "number" then -- luacheck: ignore 542
-        -- Likely at attempt to iterate (or dump) the table, sort of safe to ignore
+        -- Likely an attempt to iterate, inspect, or dump the table, sort of safe to ignore
       else
         SU.error("Attempt to access non-existent SILE.types.node." .. prop)
       end
