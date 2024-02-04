@@ -1,0 +1,35 @@
+Set paper size 	209.7637818	297.6377985
+Begin page
+Push color	0.5020	0.5020	0.5020
+Draw line	10.4882	14.8819	188.7874	34.5868
+Pop color
+Push color	0.5020	0.5020	0.5020
+Draw line	10.4882	53.2819	188.7874	34.5868
+Pop color
+Push color	0.5020	0.5020	0.5020
+Draw line	10.4882	91.6819	116.2969	34.5868
+Pop color
+Mx 	10.4882
+My 	154.3006
+Set font 	Gentium Plus;32;400;;normal;;;LTR
+T	79 82 74 76 16 w=59.8281	(logi-)
+Mx 	70.3163
+T	93 82 87 92 w=56.4688	(zoty)
+Mx 	139.4475
+T	79 82 74 76 16 w=59.8281	(logi-)
+Mx 	10.4882
+My 	192.7006
+T	16 w=10.7813	(-)
+Mx 	21.2694
+T	93 82 87 92 w=56.4688	(zoty)
+Mx 	82.9787
+T	79 82 74 76 16 w=59.8281	(logi-)
+Mx 	142.8068
+T	93 82 87 92 w=56.4688	(zoty)
+Mx 	10.4882
+My 	231.1006
+T	79 82 74 76 16 w=59.8281	(logi-)
+Mx 	70.3163
+T	93 82 87 92 w=56.4688	(zoty)
+End page
+Finish
