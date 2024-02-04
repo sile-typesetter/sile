@@ -962,7 +962,20 @@ function linerBox:_init (name, outputMethod)
 end
 function linerBox:append (node)
   self.inner[#self.inner+1] = node
-  self.width = self.width + node.width
+  if node.is_discretionary then
+    -- Discretionary nodes don't have a width of their own.
+    if node.used then
+      if node.is_prebreak then
+        self.width:___add(node:prebreakWidth())
+      else
+        self.width:___add(node:postbreakWidth())
+      end
+    else
+      self.width:___add(node:replacementWidth())
+    end
+  else
+    self.width:___add(node.width:absolute())
+  end
   self.height = SU.max(self.height, node.height)
   self.depth = SU.max(self.depth, node.depth)
 end
