@@ -27,16 +27,8 @@ local fluentglobal = function ()
   fluent_once = true
 end
 SILE.fluent = setmetatable({}, {
-  __call = function (_, ...)
-    fluentglobal()
-    SILE.fluent = fluent
-    return fluent(pl.utils.unpack({...}, 1, select("#", ...)))
-  end,
-  __index = function (_, key)
-    fluentglobal()
-    SILE.fluent = fluent
-    return fluent[key]
-  end
+  __call = fluentglobal,
+  __index = fluentglobal,
 })
 
 local nobaseclass = function ()
