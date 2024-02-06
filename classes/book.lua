@@ -167,10 +167,11 @@ function class:registerCommands ()
     SILE.call("nofoliothispage")
     -- English typography (notably) expects the first paragraph under a section
     -- not to be indented. Frenchies, don't use this class :)
-    SILE.call("noindent")
+    if lang == "en" then SILE.call("noindent") end
   end, "Begin a new chapter")
 
   self:registerCommand("section", function (options, content)
+    local lang = SILE.settings:get("document.language")
     SILE.typesetter:leaveHmode()
     SILE.call("goodbreak")
     SILE.call("bigskip")
@@ -181,7 +182,6 @@ function class:registerCommands ()
         toc = options.toc,
         level = 2
       }, content)
-      local lang = SILE.settings:get("document.language")
       local postcmd = "book:section:post"
       if SILE.Commands[postcmd .. ":" .. lang] then
         postcmd = postcmd .. ":" .. lang
@@ -209,11 +209,12 @@ function class:registerCommands ()
     SILE.call("novbreak")
     -- English typography (notably) expects the first paragraph under a section
     -- not to be indented. Frenchies, don't use this class :)
-    SILE.call("noindent")
+    if lang == "en" then SILE.call("noindent") end
     SILE.typesetter:inhibitLeading()
   end, "Begin a new section")
 
   self:registerCommand("subsection", function (options, content)
+    local lang = SILE.settings:get("document.language")
     SILE.typesetter:leaveHmode()
     SILE.call("goodbreak")
     SILE.call("noindent")
@@ -224,7 +225,6 @@ function class:registerCommands ()
             toc = options.toc,
             level = 3
           }, content)
-      local lang = SILE.settings:get("document.language")
       local postcmd = "book:subsection:post"
       if SILE.Commands[postcmd .. ":" .. lang] then
         postcmd = postcmd .. ":" .. lang
@@ -238,7 +238,7 @@ function class:registerCommands ()
     SILE.call("novbreak")
     -- English typography (notably) expects the first paragraph under a section
     -- not to be indented. Frenchies, don't use this class :)
-    SILE.call("noindent")
+    if lang == "en" then SILE.call("noindent") end
     SILE.typesetter:inhibitLeading()
   end, "Begin a new subsection")
 
