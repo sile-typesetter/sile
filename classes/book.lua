@@ -116,17 +116,68 @@ function class:registerCommands ()
     end
   end)
 
-  self:registerCommand("book:chapter:post", function (_, _)
+  SU.deprecated("book:volume:pre", "book:volume:prenumber")
+  self:registerCommand("book:volume:prenumber", function (options, content)
+  end)
+
+  SU.deprecated("book:volume:post", "book:volume:postnumber")
+  self:registerCommand("book:volume:postnumber", function (options, content)
     SILE.call("par")
     SILE.call("noindent")
   end)
 
-  self:registerCommand("book:section:post", function (_, _)
-    SILE.process({ " " })
+  SU.deprecated("book:part:pre", "book:part:prenumber")
+  self:registerCommand("book:part:prenumber", function (options, content)
   end)
 
-  self:registerCommand("book:subsection:post", function (_, _)
-    SILE.process({ " " })
+  SU.deprecated("book:part:post", "book:part:postnumber")
+  self:registerCommand("book:part:postnumber", function (options, content)
+    SILE.call("par")
+  end)
+
+  SU.deprecated("book:chapter:pre", "book:chapter:prenumber")
+  self:registerCommand("book:chapter:prenumber", function (options, content)
+  end)
+
+  SU.deprecated("book:chapter:post", "book:chapter:postnumber")
+  self:registerCommand("book:chapter:postnumber", function (options, content)
+    SILE.call("par")
+  end)
+
+  SU.deprecated("book:section:pre", "book:section:prenumber")
+  self:registerCommand("book:section:prenumber", function (options, content)
+  end)
+
+  SU.deprecated("book:section:post", "book:section:postnumber")
+  self:registerCommand("book:section:postnumber", function (options, content)
+    SILE.typesetter:typeset(" ")
+  end)
+
+  SU.deprecated("book:subsection:pre", "book:subsection:prenumber")
+  self:registerCommand("book:subsection:prenumber", function (options, content)
+  end)
+
+  SU.deprecated("book:subsection:post", "book:subsection:postnumber")
+  self:registerCommand("book:subsection:postnumber", function (options, content)
+    SILE.typesetter:typeset(" ")
+  end)
+
+  SU.deprecated("book:subsubsection:pre", "book:subsubsection:prenumber")
+  self:registerCommand("book:subsubsection:prenumber", function (options, content)
+  end)
+
+  SU.deprecated("book:subsubsection:post", "book:subsubsection:postnumber")
+  self:registerCommand("book:subsubsection:postnumber", function (options, content)
+    SILE.typesetter:typeset(" ")
+  end)
+
+  SU.deprecated("book:subsubsubsection:pre", "book:subsubsubsection:prenumber")
+  self:registerCommand("book:subsubsubsection:prenumber", function (options, content)
+  end)
+
+  SU.deprecated("book:subsubsubsection:post", "book:subsubsubsection:postnumber")
+  self:registerCommand("book:subsubsubsection:postnumber", function (options, content)
+    SILE.typesetter:typeset(" ")
   end)
 
   self:registerCommand("book:left-running-head-font", function (_, content)
@@ -137,27 +188,65 @@ function class:registerCommands ()
     SILE.call("font", { size = "9pt", style = "Italic" }, content)
   end)
 
+  self:registerCommand("volume", function (options, content)
+    SILE.call("open-double-page")
+    SILE.call("nofoliosthispage")
+    SILE.call("noindent")
+    SILE.call("center", {}, function ()
+      SILE.call("book:volume:font", {}, function ()
+        SILE.call("hbox")
+        SILE.call("vfill")
+        SILE.call("book:sectioning", {
+            numbering = options.numbering or false,
+            toc = options.toc,
+            level = 1,
+            msg = "book-volume-title",
+            prenumber = "book:volume:prenumber",
+            postnumber = "book:volume:postnumber"
+          }, content)
+        SILE.process(content)
+      end)
+    end)
+  end, "Begin a new volume");
+
+  self:registerCommand("part", function (options, content)
+    SILE.call("open-double-page")
+    SILE.call("nofoliosthispage")
+    SILE.call("noindent")
+    SILE.call("center", {}, function ()
+      SILE.call("book:part:font", {}, function ()
+        SILE.call("hbox")
+        SILE.call("vfill")
+        SILE.call("book:sectioning", {
+            numbering = options.numbering,
+            toc = options.toc,
+            level = 2,
+            msg = "book-part-title",
+            prenumber = "book:part:prenumber",
+            postnumber = "book:part:postnumber"
+          }, content)
+        SILE.process(content)
+      end)
+    end)
+  end, "Begin a new part");
+
   self:registerCommand("chapter", function (options, content)
     SILE.typesetter:leaveHmode()
     SILE.call("open-spread", { double = false })
     SILE.call("noindent")
     SILE.scratch.headers.right = nil
     SILE.call("set-counter", { id = "footnote", value = 1 })
-    SILE.call("book:chapterfont", {}, function ()
+    SILE.call("book:chapter:font", {}, function ()
       SILE.call("book:sectioning", {
-        numbering = options.numbering,
-        toc = options.toc,
-        level = 1,
-        msg = "book-chapter-title"
-      }, content)
+          numbering = options.numbering,
+          toc = options.toc,
+          level = 3,
+          msg = "book-chapter-title",
+          prenumber = "book:chapter:prenumber",
+          postnumber = "book:chapter:postnumber"
+        }, content)
+      SILE.process(content)
     end)
-    local lang = SILE.settings:get("document.language")
-    local postcmd = "book:chapter:post"
-    if SILE.Commands[postcmd .. ":" .. lang] then
-      postcmd = postcmd .. ":" .. lang
-    end
-    SILE.call(postcmd)
-    SILE.call("book:chapterfont", {}, content)
     SILE.call("left-running-head", {}, function ()
       SILE.settings:temporarily(function ()
         SILE.call("book:left-running-head-font", {}, content)
@@ -179,14 +268,11 @@ function class:registerCommands ()
       SILE.call("book:sectioning", {
         numbering = options.numbering,
         toc = options.toc,
-        level = 2
+        level = 4,
+        msg = "book-section-title",
+        prenumber = "book:section:prenumber",
+        postnumber = "book:section:postnumber"
       }, content)
-      local lang = SILE.settings:get("document.language")
-      local postcmd = "book:section:post"
-      if SILE.Commands[postcmd .. ":" .. lang] then
-        postcmd = postcmd .. ":" .. lang
-      end
-      SILE.call(postcmd)
       SILE.process(content)
     end)
     if not SILE.scratch.counters.folio.off then
@@ -222,14 +308,11 @@ function class:registerCommands ()
       SILE.call("book:sectioning", {
             numbering = options.numbering,
             toc = options.toc,
-            level = 3
+            level = 5,
+            msg = "book-subsection-title",
+            prenumber = "book:subsection:prenumber",
+            postnumber = "book:subsection:postnumber"
           }, content)
-      local lang = SILE.settings:get("document.language")
-      local postcmd = "book:subsection:post"
-      if SILE.Commands[postcmd .. ":" .. lang] then
-        postcmd = postcmd .. ":" .. lang
-      end
-      SILE.call(postcmd)
       SILE.process(content)
     end)
     SILE.typesetter:leaveHmode()
@@ -242,21 +325,82 @@ function class:registerCommands ()
     SILE.typesetter:inhibitLeading()
   end, "Begin a new subsection")
 
-  self:registerCommand("book:chapterfont", function (_, content)
-    SILE.settings:temporarily(function ()
-      SILE.call("font", { weight = 800, size = "22pt" }, content)
+  self:registerCommand("subsubsection", function (options, content)
+    SILE.typesetter:leaveHmode()
+    SILE.call("goodbreak")
+    SILE.call("noindent")
+    SILE.call("medskip")
+    SILE.call("book:subsection:font", {}, function ()
+      SILE.call("book:sectioning", {
+            numbering = options.numbering,
+            toc = options.toc,
+            level = 6,
+            msg = "book-subsubsection-title",
+            prenumber = "book:subsubsection:prenumber",
+            postnumber = "book:subsubsection:postnumber"
+          }, content)
+      SILE.process(content)
     end)
-  end)
-  self:registerCommand("book:sectionfont", function (_, content)
-    SILE.settings:temporarily(function ()
-      SILE.call("font", { weight = 800, size = "15pt" }, content)
+    SILE.typesetter:leaveHmode()
+    SILE.call("novbreak")
+    SILE.call("medskip")
+    SILE.call("novbreak")
+    SILE.typesetter:inhibitLeading()
+  end, "Begin a new subsubsection")
+
+  self:registerCommand("subsubsubsection", function (options, content)
+    SILE.typesetter:leaveHmode()
+    SILE.call("goodbreak")
+    SILE.call("noindent")
+    SILE.call("medskip")
+    SILE.call("book:subsection:font", {}, function ()
+      SILE.call("book:sectioning", {
+            numbering = options.numbering,
+            toc = options.toc,
+            level = 7,
+            msg = "book-subsubsubsection-title",
+            prenumber = "book:subsubsubsection:prenumber",
+            postnumber = "book:subsubsubsection:postnumber"
+          }, content)
+      SILE.process(content)
     end)
+    SILE.typesetter:leaveHmode()
+    SILE.call("novbreak")
+    SILE.call("medskip")
+    SILE.call("novbreak")
+    SILE.typesetter:inhibitLeading()
+  end, "Begin a new subsubsubsection")
+
+  SU.deprecated("\\book:chapterfont", "\\book:chapter:font", "0.9.6", "0.9.7")
+  SU.deprecated("\\book:sectionfont", "\\book:section:font", "0.9.6", "0.9.7")
+  SU.deprecated("\\book:subsectionfont", "\\book:subsection:font", "0.9.6", "0.9.7")
+
+  self:registerCommand("book:volume:font", function (_, content)
+    SILE.call("font", { weight = 800, size = "48pt" }, content)
   end)
 
-  self:registerCommand("book:subsectionfont", function (_, content)
-    SILE.settings:temporarily(function ()
-      SILE.call("font", { weight = 800, size = "12pt" }, content)
-    end)
+  self:registerCommand("book:part:font", function (_, content)
+    SILE.call("font", { weight = 800, size = "36pt" }, content)
+  end)
+
+  self:registerCommand("book:chapter:font", function (_, content)
+    SILE.call("font", { weight = 800, size = "22pt" }, content)
+  end)
+
+  self:registerCommand("book:section:font", function (_, content)
+    SILE.call("font", { weight = 800, size = "15pt" }, content)
+  end)
+
+  self:registerCommand("book:subsection:font", function (_, content)
+    SILE.call("font", { weight = 800, size = "12pt" }, content)
+  end)
+
+  self:registerCommand("book:subsubsection:font", function (_, content)
+    SILE.call("font", { weight = 800, size = "11pt" }, content)
+  end)
+
+  self:registerCommand("book:subsubsubsection:font", function (_, content)
+    SILE.call("font", { weight = 800, size = "10pt" }, content)
   end)
 
 end
