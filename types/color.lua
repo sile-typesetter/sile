@@ -163,11 +163,21 @@ local color = pl.class({
  })
 
 function color:_init (input)
-  local c = self:parse(input)
+  local c = type(input) == "string" and self:parse(input) or input
   for k, v in pairs(c) do
     self[k] = v
   end
   return self
+end
+
+function color:__tostring()
+   local p = {}
+   for _, k in pairs({"r", "g", "b", "c", "m", "y", "k", "l"}) do
+      if self[k] then
+         table.insert(p, k .. SU.debug_round(self[k]))
+      end
+   end
+   return ("C<%s>"):format(pl.pretty.write(p, ""):gsub('[{}"]', ""))
 end
 
 function color.parse (_, input)

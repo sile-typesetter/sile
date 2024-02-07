@@ -13,7 +13,7 @@ SILE.documentState.documentClass:registerCommand("advance-box-width", function (
       local height = SU.max(box.height:tonumber(), (1 - bsratio) * bs)
       local depth = SU.max(box.depth:tonumber(), bsratio * bs)
       local cx, cy = typesetter.frame.state.cursorX, typesetter.frame.state.cursorY
-      SILE.outputter:pushColor(SILE.color("gray"))
+      SILE.outputter:pushColor(SILE.types.color("gray"))
       SILE.outputter:drawRule(cx, cy - height, outputWidth, height + depth)
       SILE.outputter:popColor()
       typesetter.frame:advanceWritingDirection(outputWidth)

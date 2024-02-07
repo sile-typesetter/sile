@@ -1,12 +1,12 @@
 Set paper size 	209.7637818	297.6377985
 Begin page
-Push color	0.5020	0.5020	0.5020
+Push color	C<r0.5020,g0.5020,b0.5020>
 Draw line	10.4882	14.8819	188.7874	34.5868
 Pop color
-Push color	0.5020	0.5020	0.5020
+Push color	C<r0.5020,g0.5020,b0.5020>
 Draw line	10.4882	53.2819	188.7874	34.5868
 Pop color
-Push color	0.5020	0.5020	0.5020
+Push color	C<r0.5020,g0.5020,b0.5020>
 Draw line	10.4882	91.6819	116.2969	34.5868
 Pop color
 Mx 	10.4882

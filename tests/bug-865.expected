@@ -27,7 +27,7 @@ Mx 	38.0763
 T	81 82 81 88 80 92 w=34.3262	(nonumy)
 Mx 	75.0647
 T	72 76 85 80 82 71 w=29.5508	(eirmod)
-Push color	0.6000	0.6000	0.6000
+Push color	C<r0.6000,g0.6000,b0.6000>
 Mx 	14.8819
 My 	69.7847
 Set font 	Libertinus Serif;30;400;;normal;;;LTR
@@ -112,7 +112,7 @@ Mx 	94.4649
 T	81 82 81 88 80 92 w=34.3262	(nonumy)
 Mx 	131.4336
 T	72 76 85 80 82 71 w=29.5508	(eirmod)
-Push color	0.6000	0.6000	0.6000
+Push color	C<r0.6000,g0.6000,b0.6000>
 Mx 	271.5059
 My 	125.4747
 Set font 	Libertinus Serif;30;400;;normal;;;LTR

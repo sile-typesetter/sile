@@ -79,8 +79,9 @@ function package:_init ()
     for i=1, #run do
       options = pl.tablex.deepcopy(options)
       if run[i].color then
+        local color = SILE.types.color(run[i].color)
         nodes[#nodes+1] = SILE.types.node.hbox({
-          outputYourself = function () SILE.outputter:pushColor(run[i].color) end
+          outputYourself = function () SILE.outputter:pushColor(color) end
         })
       end
       for node in nodeMaker(options):iterator(run[i].slice, run[i].chunk) do
