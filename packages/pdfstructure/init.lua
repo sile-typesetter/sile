@@ -128,9 +128,9 @@ function package:registerCommands ()
     end
     SILE.typesetter:pushHbox({
       value = nil,
-      height = SILE.measurement(0),
-      width = SILE.measurement(0),
-      depth = SILE.measurement(0),
+      height = SILE.types.measurement(0),
+      width = SILE.types.measurement(0),
+      depth = SILE.types.measurement(0),
       outputYourself = function (_, _, _)
         SILE.outputter:drawRaw (content[1])
       end

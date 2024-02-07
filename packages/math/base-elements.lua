@@ -1,4 +1,4 @@
-local nodefactory = require("core.nodefactory")
+local nodefactory = require("types.node")
 local hb = require("justenoughharfbuzz")
 local ot = require("core.opentype-parser")
 local syms = require("packages.math.unicode-symbols")
@@ -192,7 +192,7 @@ local function getRightMostGlyphId(node)
   end
 end
 
--- Compares two SILE length, without considering shrink or stretch values, and
+-- Compares two SILE.types.length, without considering shrink or stretch values, and
 -- returns the biggest.
 local function maxLength(...)
   local arg = {...}
@@ -237,8 +237,8 @@ function elements.mbox:_init ()
   nodefactory.hbox._init(self)
   self.font = {}
   self.children = {} -- The child nodes
-  self.relX = SILE.length(0) -- x position relative to its parent box
-  self.relY = SILE.length(0) -- y position relative to its parent box
+  self.relX = SILE.types.length(0) -- x position relative to its parent box
+  self.relY = SILE.types.length(0) -- y position relative to its parent box
   self.value = {}
   self.mode = mathMode.display
   self.atom = atomType.ordinary
@@ -437,11 +437,11 @@ function elements.stackbox:shape ()
   -- 1. set self.width to max element width
   -- 2. set self.height
   -- And finally set children's relative coordinates
-  self.height = SILE.length(0)
-  self.depth = SILE.length(0)
+  self.height = SILE.types.length(0)
+  self.depth = SILE.types.length(0)
   if self.direction == "H" then
     for i, n in ipairs(self.children) do
-      n.relY = SILE.length(0)
+      n.relY = SILE.types.length(0)
       self.height = i == 1 and n.height or maxLength(self.height, n.height)
       self.depth = i == 1 and n.depth or maxLength(self.depth, n.depth)
     end
@@ -453,14 +453,14 @@ function elements.stackbox:shape ()
       end
     end
     -- Set self.width
-    self.width = SILE.length(0)
+    self.width = SILE.types.length(0)
     for i, n in ipairs(self.children) do
       n.relX = self.width
       self.width = i == 1 and n.width or self.width + n.width
     end
   else -- self.direction == "V"
     for i, n in ipairs(self.children) do
-      n.relX = SILE.length(0)
+      n.relX = SILE.types.length(0)
       self.width = i == 1 and n.width or maxLength(self.width, n.width)
     end
     -- Set self.height and self.depth
@@ -531,12 +531,12 @@ function elements.subscript:shape ()
   local constants = mathMetrics.constants
   local scaleDown = self:getScaleDown()
   if self.base then
-    self.base.relX = SILE.length(0)
-    self.base.relY = SILE.length(0)
+    self.base.relX = SILE.types.length(0)
+    self.base.relY = SILE.types.length(0)
     -- Use widthForSubscript of base, if available
     self.width = self.base.widthForSubscript or self.base.width
   else
-    self.width = SILE.length(0)
+    self.width = SILE.types.length(0)
   end
   local itCorr = self:calculateItalicsCorrection() * scaleDown
   local subShift
@@ -550,7 +550,7 @@ function elements.subscript:shape ()
       subShift = 0
     end
     self.sub.relX = self.width + subShift
-    self.sub.relY = SILE.length(math.max(
+    self.sub.relY = SILE.types.length(math.max(
       constants.subscriptShiftDown * scaleDown,
       --self.base.depth + constants.subscriptBaselineDropMin * scaleDown,
       (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
@@ -570,7 +570,7 @@ function elements.subscript:shape ()
       supShift = itCorr
     end
     self.sup.relX = self.width + supShift
-    self.sup.relY = SILE.length(math.max(
+    self.sup.relY = SILE.types.length(math.max(
       isCrampedMode(self.mode)
       and constants.superscriptShiftUpCramped * scaleDown
       or constants.superscriptShiftUp * scaleDown, -- or cramped
@@ -601,18 +601,18 @@ function elements.subscript:shape ()
     end
   end
   self.width = self.width + maxLength(
-    self.sub and self.sub.width + subShift or SILE.length(0),
-    self.sup and self.sup.width + supShift or SILE.length(0)
+    self.sub and self.sub.width + subShift or SILE.types.length(0),
+    self.sup and self.sup.width + supShift or SILE.types.length(0)
   ) + constants.spaceAfterScript * scaleDown
   self.height = maxLength(
-    self.base and self.base.height or SILE.length(0),
-    self.sub and (self.sub.height - self.sub.relY) or SILE.length(0),
-    self.sup and (self.sup.height - self.sup.relY) or SILE.length(0)
+    self.base and self.base.height or SILE.types.length(0),
+    self.sub and (self.sub.height - self.sub.relY) or SILE.types.length(0),
+    self.sup and (self.sup.height - self.sup.relY) or SILE.types.length(0)
   )
   self.depth = maxLength(
-    self.base and self.base.depth or SILE.length(0),
-    self.sub and (self.sub.depth + self.sub.relY) or SILE.length(0),
-    self.sup and (self.sup.depth + self.sup.relY) or SILE.length(0)
+    self.base and self.base.depth or SILE.types.length(0),
+    self.sub and (self.sub.depth + self.sub.relY) or SILE.types.length(0),
+    self.sup and (self.sup.depth + self.sup.relY) or SILE.types.length(0)
   )
 end
 
@@ -656,15 +656,15 @@ function elements.underOver:shape ()
   local scaleDown = self:getScaleDown()
   -- Determine relative Ys
   if self.base then
-    self.base.relY = SILE.length(0)
+    self.base.relY = SILE.types.length(0)
   end
   if self.sub then
-    self.sub.relY = self.base.depth + SILE.length(math.max(
+    self.sub.relY = self.base.depth + SILE.types.length(math.max(
     (self.sub.height + constants.lowerLimitGapMin * scaleDown):tonumber(),
     constants.lowerLimitBaselineDropMin * scaleDown))
   end
   if self.sup then
-    self.sup.relY = 0 - self.base.height - SILE.length(math.max(
+    self.sup.relY = 0 - self.base.height - SILE.types.length(math.max(
     (constants.upperLimitGapMin * scaleDown + self.sup.depth):tonumber(),
     constants.upperLimitBaselineRiseMin * scaleDown))
   end
@@ -699,7 +699,7 @@ function elements.underOver:shape ()
       b = nil
     end
   end
-  widest.relX = SILE.length(0)
+  widest.relX = SILE.types.length(0)
   local c = widest.width / 2
   if a then a.relX = c - a.width / 2 end
   if b then b.relX = c - b.width / 2 end
@@ -708,9 +708,9 @@ function elements.underOver:shape ()
   if self.sub then self.sub.relX = self.sub.relX - itCorr / 2 end
   -- Determine width and height
   self.width = maxLength(
-  self.base and self.base.width or SILE.length(0),
-  self.sub and self.sub.width or SILE.length(0),
-  self.sup and self.sup.width or SILE.length(0)
+  self.base and self.base.width or SILE.types.length(0),
+  self.sub and self.sub.width or SILE.types.length(0),
+  self.sup and self.sup.width or SILE.types.length(0)
   )
   if self.sup then
     self.height = 0 - self.sup.relY + self.sup.height
@@ -777,14 +777,14 @@ local function getStandardLength (value)
       direction = -1
     end
     if value == "thin" then
-      return SILE.length("3mu") * direction
+      return SILE.types.length("3mu") * direction
     elseif value == "med" then
-      return SILE.length("4mu plus 2mu minus 4mu") * direction
+      return SILE.types.length("4mu plus 2mu minus 4mu") * direction
     elseif value == "thick" then
-      return SILE.length("5mu plus 5mu") * direction
+      return SILE.types.length("5mu plus 5mu") * direction
     end
   end
-  return SILE.length(value)
+  return SILE.types.length(value)
 end
 
 function elements.space:_init (width, height, depth)
@@ -900,8 +900,8 @@ function elements.text:shape ()
     for i = 1, #glyphs do
       table.insert(self.value.glyphString, glyphs[i].gid)
     end
-    self.width = SILE.length(0)
-    self.widthForSubscript = SILE.length(0)
+    self.width = SILE.types.length(0)
+    self.widthForSubscript = SILE.types.length(0)
     for i = #glyphs, 1, -1 do
       self.width = self.width + glyphs[i].glyphAdvance
     end
@@ -912,13 +912,13 @@ function elements.text:shape ()
       self.width = self.width + itCorr * self:getScaleDown()
     end
     for i = 1, #glyphs do
-      self.height = i == 1 and SILE.length(glyphs[i].height) or SILE.length(math.max(self.height:tonumber(), glyphs[i].height))
-      self.depth = i == 1 and SILE.length(glyphs[i].depth) or SILE.length(math.max(self.depth:tonumber(), glyphs[i].depth))
+      self.height = i == 1 and SILE.types.length(glyphs[i].height) or SILE.types.length(math.max(self.height:tonumber(), glyphs[i].height))
+      self.depth = i == 1 and SILE.types.length(glyphs[i].depth) or SILE.types.length(math.max(self.depth:tonumber(), glyphs[i].depth))
     end
   else
-    self.width = SILE.length(0)
-    self.height = SILE.length(0)
-    self.depth = SILE.length(0)
+    self.width = SILE.types.length(0)
+    self.height = SILE.types.length(0)
+    self.depth = SILE.types.length(0)
   end
 end
 
@@ -970,9 +970,9 @@ function elements.text:stretchyReshape (depth, height)
       glyphs[1].height = dimen.height
       glyphs[1].depth = dimen.depth
       glyphs[1].glyphAdvance = dimen.glyphAdvance
-      self.width = SILE.length(dimen.glyphAdvance)
-      self.depth = SILE.length(dimen.depth)
-      self.height = SILE.length(dimen.height)
+      self.width = SILE.types.length(dimen.glyphAdvance)
+      self.depth = SILE.types.length(dimen.depth)
+      self.height = SILE.types.length(dimen.height)
       SILE.shaper:preAddNodes(glyphs, self.value)
       self.value.items = glyphs
       self.value.glyphString = {glyphs[1].gid}
@@ -986,7 +986,7 @@ function elements.text:output (x, y, line)
   if isDisplayMode(self.mode)
       and self.atom == atomType.bigOperator
       and self.value.items[1].fontDepth then
-    compensatedY = SILE.length(y.length + self.value.items[1].depth - self.value.items[1].fontDepth)
+    compensatedY = SILE.types.length(y.length + self.value.items[1].depth - self.value.items[1].fontDepth)
   else
     compensatedY = y
   end
@@ -1027,7 +1027,7 @@ function elements.fraction:shape ()
   else
     widest, other = self.numerator, self.denominator
   end
-  widest.relX = SILE.length(0)
+  widest.relX = SILE.types.length(0)
   other.relX = (widest.width - other.width) / 2
   self.width = widest.width
   -- Determine relative ordinates and height
@@ -1036,24 +1036,24 @@ function elements.fraction:shape ()
   self.axisHeight = constants.axisHeight * scaleDown
   self.ruleThickness = constants.fractionRuleThickness * scaleDown
   if isDisplayMode(self.mode) then
-    self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
+    self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.types.length(math.max(
       (constants.fractionNumDisplayStyleGapMin*scaleDown + self.numerator.depth):tonumber(),
       constants.fractionNumeratorDisplayStyleShiftUp * scaleDown
         - self.axisHeight - self.ruleThickness/2))
   else
-    self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.length(math.max(
+    self.numerator.relY = -self.axisHeight - self.ruleThickness/2 - SILE.types.length(math.max(
       (constants.fractionNumeratorGapMin*scaleDown + self.numerator.depth):tonumber(),
       constants.fractionNumeratorShiftUp * scaleDown - self.axisHeight
         - self.ruleThickness/2))
   end
   if isDisplayMode(self.mode) then
-    self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
+    self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.types.length(math.max(
       (constants.fractionDenomDisplayStyleGapMin * scaleDown
         + self.denominator.height):tonumber(),
       constants.fractionDenominatorDisplayStyleShiftDown * scaleDown
         + self.axisHeight - self.ruleThickness/2))
   else
-    self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.length(math.max(
+    self.denominator.relY = -self.axisHeight + self.ruleThickness/2 + SILE.types.length(math.max(
       (constants.fractionDenominatorGapMin * scaleDown
         + self.denominator.height):tonumber(),
       constants.fractionDenominatorShiftDown * scaleDown
@@ -1115,10 +1115,10 @@ function elements.table:_init (children, options)
   self.ncols = math.max(pl.utils.unpack(mapList(function(_, row)
     return #row.children end, self.children)))
   SU.debug("math", "self.ncols =", self.ncols)
-  self.rowspacing = self.options.rowspacing and SILE.length(self.options.rowspacing)
-    or SILE.length("7pt")
-  self.columnspacing = self.options.columnspacing and SILE.length(self.options.columnspacing)
-    or SILE.length("6pt")
+  self.rowspacing = self.options.rowspacing and SILE.types.length(self.options.rowspacing)
+    or SILE.types.length("7pt")
+  self.columnspacing = self.options.columnspacing and SILE.types.length(self.options.columnspacing)
+    or SILE.types.length("6pt")
   -- Pad rows that do not have enough cells by adding cells to the
   -- right.
   for i,row in ipairs(self.children) do
@@ -1167,30 +1167,30 @@ function elements.table:shape ()
   -- height (resp. depth) among its elements. Then we only need to add it to
   -- the table's height and center every cell vertically.
   for _,row in ipairs(self.children) do
-    row.height = SILE.length(0)
-    row.depth = SILE.length(0)
+    row.height = SILE.types.length(0)
+    row.depth = SILE.types.length(0)
     for _,cell in ipairs(row.children) do
       row.height = maxLength(row.height, cell.height)
       row.depth = maxLength(row.depth, cell.depth)
     end
   end
-  self.vertSize = SILE.length(0)
+  self.vertSize = SILE.types.length(0)
   for i, row in ipairs(self.children) do
     self.vertSize = self.vertSize + row.height + row.depth +
-      (i == self.nrows and SILE.length(0) or self.rowspacing) -- Spacing
+      (i == self.nrows and SILE.types.length(0) or self.rowspacing) -- Spacing
   end
-  local rowHeightSoFar = SILE.length(0)
+  local rowHeightSoFar = SILE.types.length(0)
   for i, row in ipairs(self.children) do
     row.relY = rowHeightSoFar + row.height - self.vertSize
     rowHeightSoFar = rowHeightSoFar + row.height + row.depth +
-      (i == self.nrows and SILE.length(0) or self.rowspacing) -- Spacing
+      (i == self.nrows and SILE.types.length(0) or self.rowspacing) -- Spacing
   end
-  self.width = SILE.length(0)
-  local thisColRelX = SILE.length(0)
+  self.width = SILE.types.length(0)
+  local thisColRelX = SILE.types.length(0)
   -- For every column...
   for i = 1,self.ncols do
     -- Determine its width
-    local columnWidth = SILE.length(0)
+    local columnWidth = SILE.types.length(0)
     for j = 1,self.nrows do
       if self.children[j].children[i].width > columnWidth then
         columnWidth = self.children[j].children[i].width
@@ -1210,7 +1210,7 @@ function elements.table:shape ()
       end
     end
     thisColRelX = thisColRelX + columnWidth +
-      (i == self.ncols and SILE.length(0) or self.columnspacing) -- Spacing
+      (i == self.ncols and SILE.types.length(0) or self.columnspacing) -- Spacing
   end
   self.width = thisColRelX
   -- Center myself vertically around the axis, and update relative Ys of rows accordingly

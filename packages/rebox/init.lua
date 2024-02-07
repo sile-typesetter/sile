@@ -7,9 +7,9 @@ function package:registerCommands ()
 
   self:registerCommand("rebox", function (options, content)
     local hbox, hlist = SILE.typesetter:makeHbox(content)
-    if options.width then hbox.width = SILE.length(options.width) end
-    if options.height then hbox.height = SILE.length(options.height) end
-    if options.depth then hbox.depth = SILE.length(options.depth) end
+    if options.width then hbox.width = SILE.types.length(options.width) end
+    if options.height then hbox.height = SILE.types.length(options.height) end
+    if options.depth then hbox.depth = SILE.types.length(options.depth) end
     if options.phantom then
       hbox.outputYourself = function (node, typesetter, line)
         typesetter.frame:advanceWritingDirection(node:scaledWidth(line))

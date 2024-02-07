@@ -30,9 +30,9 @@ function package:registerCommands ()
     local level = SU.cast("integer", options.level or 1)
     SILE.typesetter:pushHbox({
       value = nil,
-      height = SILE.measurement(0),
-      width = SILE.measurement(0),
-      depth = SILE.measurement(0),
+      height = SILE.types.measurement(0),
+      width = SILE.types.measurement(0),
+      depth = SILE.types.measurement(0),
       outputYourself = function ()
         SILE.outputter:setBookmark(dest, title, level)
       end
@@ -45,7 +45,7 @@ function package:registerCommands ()
     local dest = SU.required(options, "dest", "pdf:link")
     local external = SU.boolean(options.external, false)
     local borderwidth = options.borderwidth and SU.cast("measurement", options.borderwidth):tonumber() or 0
-    local bordercolor = SILE.color(options.bordercolor or "blue")
+    local bordercolor = SILE.types.color(options.bordercolor or "blue")
     local borderoffset = SU.cast("measurement", options.borderoffset or "1pt"):tonumber()
     local opts = {
       external = external,

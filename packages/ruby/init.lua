@@ -40,14 +40,14 @@ function package.declareSettings (_)
   SILE.settings:declare({
     parameter = "ruby.height",
     type = "measurement",
-    default = SILE.measurement("1zw"),
+    default = SILE.types.measurement("1zw"),
     help = "Vertical offset between the ruby and the main text"
   })
 
   SILE.settings:declare({
     parameter = "ruby.latinspacer",
     type = "glue",
-    default = SILE.nodefactory.glue("0.25em"),
+    default = SILE.types.node.glue("0.25em"),
     help = "Glue added between consecutive Latin ruby"
   })
 
@@ -103,17 +103,17 @@ function package:registerCommands ()
     if cbox:lineContribution() > rubybox:lineContribution() then
       SU.debug("ruby", "Base is longer, offsetting ruby to fit")
       -- This is actually the offset against the base
-      rubybox.width = SILE.length(cbox:lineContribution() - rubybox:lineContribution())/2
+      rubybox.width = SILE.types.length(cbox:lineContribution() - rubybox:lineContribution())/2
     else
       local diff = rubybox:lineContribution() - cbox:lineContribution()
-      local to_insert = SILE.length(diff / 2)
+      local to_insert = SILE.types.length(diff / 2)
       SU.debug("ruby", "Ruby is longer, inserting", to_insert, "either side of base")
       cbox.width = rubybox:lineContribution()
       rubybox.height = 0
       rubybox.width = 0
       -- add spaces at beginning and end
-      table.insert(cbox.value, 1, SILE.nodefactory.glue(to_insert))
-      table.insert(cbox.value, SILE.nodefactory.glue(to_insert))
+      table.insert(cbox.value, 1, SILE.types.node.glue(to_insert))
+      table.insert(cbox.value, SILE.types.node.glue(to_insert))
     end
     SILE.scratch.lastRubyBox = rubybox
     SILE.scratch.lastRubyText = reading

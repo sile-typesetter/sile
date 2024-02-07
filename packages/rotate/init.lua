@@ -97,7 +97,7 @@ function package:registerCommands ()
       depth  = 0.5*(h-h*ct-w*st)
     end
     depth = -depth
-    if depth < SILE.length(0) then depth = SILE.length(0) end
+    if depth < SILE.types.length(0) then depth = SILE.types.length(0) end
     SILE.typesetter:pushHbox({
       value = { orig = origbox, theta = theta},
       height = height,

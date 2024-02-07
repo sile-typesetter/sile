@@ -22,28 +22,28 @@ function settings:_init()
   self:declare({
     parameter = "document.parindent",
     type = "glue",
-    default = SILE.nodefactory.glue("1bs"),
+    default = SILE.types.node.glue("1bs"),
     help = "Glue at start of paragraph"
   })
 
   self:declare({
     parameter = "document.baselineskip",
     type = "vglue",
-    default = SILE.nodefactory.vglue("1.2em plus 1pt"),
+    default = SILE.types.node.vglue("1.2em plus 1pt"),
     help = "Leading"
   })
 
   self:declare({
     parameter = "document.lineskip",
     type = "vglue",
-    default = SILE.nodefactory.vglue("1pt"),
+    default = SILE.types.node.vglue("1pt"),
     help = "Leading"
   })
 
   self:declare({
     parameter = "document.parskip",
     type = "vglue",
-    default = SILE.nodefactory.vglue("0pt plus 1pt"),
+    default = SILE.types.node.vglue("0pt plus 1pt"),
     help = "Leading"
   })
 

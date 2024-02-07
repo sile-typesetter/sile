@@ -9,7 +9,7 @@ package._name = "infonode"
 -- Check out SILE.scratch.info.thispage in your end-of-page routine and see what nodes
 -- are there.
 
-local _info = pl.class(SILE.nodefactory.zerohbox)
+local _info = pl.class(SILE.types.node.zerohbox)
 _info.type = "info"
 
 function _info:__tostring ()

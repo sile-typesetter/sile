@@ -33,6 +33,11 @@ local lfs = require("lfs")
 -- Developer tooling profiler
 local ProFi
 
+-- For warnings and shims scheduled for removal that are easier to keep track
+-- of when they are not spread across so many locations...
+-- Loaded early to make it easier to manage migrations in core code.
+require("core/deprecations")
+
 SILE.utilities = require("core.utilities")
 SU = SILE.utilities -- regrettable global alias
 
@@ -80,19 +85,13 @@ SILE.classes = core_loader("classes")
 SILE.packages = core_loader("packages")
 SILE.typesetters = core_loader("typesetters")
 SILE.pagebuilders = core_loader("pagebuilders")
+SILE.types = core_loader("types")
 
--- Internal libraries that don't make assumptions on load, only provide something
+-- Internal libraries that don't try to use anything on load, only provide something
 SILE.parserBits = require("core.parserbits")
 SILE.frameParser = require("core.frameparser")
-SILE.color = require("core.color")
-SILE.units = require("core.units")
 SILE.fontManager = require("core.fontmanager")
-
--- Internal libraries that assume globals, may be picky about load order
-SILE.measurement = require("core.measurement")
-SILE.length = require("core.length")
 SILE.papersize = require("core.papersize")
-SILE.nodefactory = require("core.nodefactory")
 
 -- NOTE:
 -- See remainaing internal libraries loaded at the end of this file because
@@ -470,10 +469,10 @@ end
 
 function SILE.registerUnit (unit, spec)
   -- If a unit exists already, clear it first so we get fresh meta table entries, see #1607
-  if SILE.units[unit] then
-    SILE.units[unit] = nil
+  if SILE.types.unit[unit] then
+    SILE.types.unit[unit] = nil
   end
-  SILE.units[unit] = spec
+  SILE.types.unit[unit] = spec
 end
 
 function SILE.paperSizeParser (size)
@@ -510,9 +509,5 @@ require("core.languages")
 SILE.linebreak = require("core.break")
 require("core.frame")
 SILE.font = require("core.font")
-
--- For warnings and shims scheduled for removal that are easier to keep track
--- of when they are not spread across so many locations...
-require("core/deprecations")
 
 return SILE

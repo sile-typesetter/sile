@@ -11,7 +11,7 @@ function package:_init ()
     -- Find last penalty
     local q = typesetter.state.outputQueue
     local lastpenalty = -1
-    local cHeight = SILE.length()
+    local cHeight = SILE.types.length()
     for j = #q,1,-1 do
       if q[j].is_penalty and lastpenalty == -1 then
         lastpenalty = q[j].penalty

@@ -245,7 +245,7 @@ function outputter:debugHbox (hbox, scaledWidth)
   self:drawRule(x-_dl/2, y-hbox.height-_dl/2, _dl, hbox.height+hbox.depth+_dl)
   self:drawRule(x-_dl/2, y-_dl/2, scaledWidth+_dl, _dl)
   self:drawRule(x+scaledWidth-_dl/2, y-hbox.height-_dl/2, _dl, hbox.height+hbox.depth+_dl)
-  if hbox.depth > SILE.length(0) then
+  if hbox.depth > SILE.types.length(0) then
     self:drawRule(x-_dl/2, y+hbox.depth-_dl/2, scaledWidth+_dl, _dl)
   end
   self:popColor()

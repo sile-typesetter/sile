@@ -18,8 +18,8 @@ local _drawSVG = function (svgdata, width, height, density, drop)
   elseif height then
     scalefactor = height:tonumber() / svgheight
   end
-  width = SILE.measurement(svgwidth * scalefactor)
-  height = SILE.measurement(svgheight * scalefactor)
+  width = SILE.types.measurement(svgwidth * scalefactor)
+  height = SILE.types.measurement(svgheight * scalefactor)
   scalefactor = scalefactor * density / 72
   SILE.typesetter:pushHbox({
       value = nil,

@@ -58,7 +58,7 @@ local function getToleranceDepth ()
     bsratio = computeBaselineRatio()
     SU.debug("dropcaps", "Using computed descender baseline ratio", bsratio)
   end
-  return bsratio * SILE.measurement("1bs"):tonumber()
+  return bsratio * SILE.types.measurement("1bs"):tonumber()
 end
 
 function package:registerCommands ()
@@ -97,7 +97,7 @@ function package:registerCommands ()
     -- Note this only works for the default linespace mechanism.
     -- We determine the height of the first line by measuring the size the initial content *would have* been.
     local tmpHbox = shapeHbox(options, content)
-    local extraHeight = SILE.measurement((lines - 1).."bs"):tonumber()
+    local extraHeight = SILE.types.measurement((lines - 1).."bs"):tonumber()
     local curHeight = tmpHbox.height:tonumber() + depthAdjustment
     local targetHeight = (curHeight - depthAdjustment) * scale + extraHeight
     if strict then
@@ -108,7 +108,7 @@ function package:registerCommands ()
 
     -- Now we need to figure out how to scale the dropcap font to get an initial of targetHeight.
     -- From that we can also figure out the width it will be at that height.
-    local curSize = SILE.measurement(SILE.settings:get("font.size")):tonumber()
+    local curSize = SILE.types.measurement(SILE.settings:get("font.size")):tonumber()
     local curWidth = tmpHbox.width:tonumber()
     options.size = size and size:tonumber() or (targetHeight / curHeight * curSize)
     local targetWidth = curWidth / curSize * options.size
@@ -129,7 +129,7 @@ function package:registerCommands ()
       local toleranceDepth = getToleranceDepth()
       if extraDepth > toleranceDepth then
         SU.debug("dropcaps", "Extra depth", extraDepth, "> tolerance", toleranceDepth)
-        local extraLines = math.ceil((extraDepth - toleranceDepth) / SILE.measurement("1bs"):tonumber())
+        local extraLines = math.ceil((extraDepth - toleranceDepth) / SILE.types.measurement("1bs"):tonumber())
         lines = lines + extraLines
         SU.debug("dropcaps", "Extra lines needed to fit", extraLines)
       else

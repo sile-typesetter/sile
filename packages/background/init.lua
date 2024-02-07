@@ -40,7 +40,7 @@ function package:registerCommands ()
 
     local allpages = SU.boolean(options.allpages, true)
     background.allpages = allpages
-    local color = options.color and SILE.color(options.color)
+    local color = options.color and SILE.types.color(options.color)
     local src = options.src
     if src then
       background.bg = src and SILE.resolveFile(src) or SU.error("Couldn't find file "..src)
