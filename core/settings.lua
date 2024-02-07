@@ -10,6 +10,7 @@ function settings:_init()
   self.declarations = {}
   self.stateQueue = {}
   self.defaults = {}
+  self.hooks = {}
 
   self:declare({
     parameter = "document.language",
@@ -105,7 +106,16 @@ end
 
 function settings:popState ()
   if not self then return deprecator() end
+  local previous = self.state
   self.state = table.remove(self.stateQueue)
+  for parameter, oldvalue in pairs(previous) do
+    if self.hooks[parameter] then
+      local newvalue = self.state[parameter]
+      if oldvalue ~= newvalue then
+        self:runHooks(parameter, newvalue)
+      end
+    end
+  end
 end
 
 function settings:declare (spec)
@@ -118,6 +128,10 @@ function settings:declare (spec)
     return
   end
   self.declarations[spec.parameter] = spec
+  self.hooks[spec.parameter] = {}
+  if spec.hook then
+     self:registerHook(spec.parameter, spec.hook)
+  end
   self:set(spec.parameter, spec.default, true)
 end
 
@@ -201,6 +215,20 @@ function settings:set (parameter, value, makedefault, reset)
   self.state[parameter] = value
   if makedefault then
     self.defaults[parameter] = value
+  end
+  self:runHooks(parameter, value)
+end
+
+function settings:registerHook (parameter, func)
+   table.insert(self.hooks[parameter], func)
+end
+
+function settings:runHooks (parameter, value)
+  if self.hooks[parameter] then
+    for _, func in ipairs(self.hooks[parameter]) do
+      SU.debug("classhooks", "Running seting hook for", parameter)
+      func(value)
+    end
   end
 end
 
