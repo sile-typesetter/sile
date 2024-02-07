@@ -69,21 +69,21 @@ end
 
 function outputter:setColor (color)
   if color.r then
-    self:_writeline("Set color", _round(color.r), _round(color.g), _round(color.b))
+    self:_writeline("Set color", tostring(color))
   elseif color.c then
-    self:_writeline("Set color", _round(color.c), _round(color.m), _round(color.y), _round(color.k))
+    self:_writeline("Set color", tostring(color))
   elseif color.l then
-    self:_writeline("Set color", _round(color.l))
+    self:_writeline("Set color", tostring(color))
   end
 end
 
 function outputter:pushColor (color)
   if color.r then
-    self:_writeline("Push color", _round(color.r), _round(color.g), _round(color.b))
+    self:_writeline("Push color", tostring(color))
   elseif color.c then
-    self:_writeline("Push color (CMYK)", _round(color.c), _round(color.m), _round(color.y), _round(color.k))
+    self:_writeline("Push color (CMYK)", tostring(color))
   elseif color.l then
-    self:_writeline("Push color (grayscale)", _round(color.l))
+    self:_writeline("Push color (grayscale)", tostring(color))
   end
 end
 
