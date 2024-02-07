@@ -170,6 +170,16 @@ function color:_init (input)
   return self
 end
 
+function color:__tostring()
+   local p = {}
+   for _, k in pairs({"r", "g", "b", "c", "m", "y", "k", "l"}) do
+      if self[k] then
+         table.insert(p, k .. SU.debug_round(self[k]))
+      end
+   end
+   return ("C<%s>"):format(pl.pretty.write(p, ""):gsub('[{}"]', ""))
+end
+
 function color.parse (_, input)
   local r, g, b, c, m, y, k, l
   if not input or type(input) ~= "string" then
