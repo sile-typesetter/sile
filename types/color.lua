@@ -163,7 +163,7 @@ local color = pl.class({
  })
 
 function color:_init (input)
-  local c = self:parse(input)
+  local c = type(input) == "string" and self:parse(input) or input
   for k, v in pairs(c) do
     self[k] = v
   end

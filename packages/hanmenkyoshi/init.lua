@@ -79,7 +79,8 @@ function package:registerCommands ()
     if not frame.hanmen then
       SU.error("show-hanmen called on a frame with no hanmen")
     end
-    SILE.outputter:pushColor({r = 1, g= 0.9, b = 0.9 })
+    local color = SILE.types.color({r = 1, g= 0.9, b = 0.9 })
+    SILE.outputter:pushColor(color)
     if frame:writingDirection() == "TTB" then
       showHanmenTate(frame)
     else
