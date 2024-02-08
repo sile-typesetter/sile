@@ -39,6 +39,7 @@ rules:
     - inputters
     - installation
     - languages
+    - api
     - manpage
     - manual
     - math
