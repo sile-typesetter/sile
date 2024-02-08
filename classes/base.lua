@@ -272,7 +272,7 @@ end
 
 function class:runHooks (category, options)
   for _, func in ipairs(self.hooks[category]) do
-    SU.debug("classhooks", "Running hook from", category, options and "with options " .. #options)
+    SU.debug("classhooks", "Running hook from", category, options and "with options #" .. #options)
     func(self, options)
   end
 end

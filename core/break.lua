@@ -156,7 +156,7 @@ function lineBreak:tryBreak() -- 855
   if not node then pi = ejectPenalty; breakType = "hyphenated"
   elseif node.is_discretionary then breakType = "hyphenated"; pi = param("hyphenPenalty")
   else breakType = "unhyphenated"; pi = node.penalty or 0 end
-  if debugging then SU.debug("break", "Trying a ", breakType, "break p =", pi) end
+  if debugging then SU.debug("break", "Trying a", breakType, "break p =", pi) end
   self.no_break_yet = true -- We have to store all this state crap in the object, or it's global variables all the way
   self.prev_prev_r = nil
   self.prev_r = self.activeListHead
@@ -176,7 +176,7 @@ function lineBreak:tryBreak() -- 855
       end
       -- 861
       if self.r.lineNumber > self.old_l then
-        if debugging then SU.debug("break", "Minimum demerits = " .. self.minimumDemerits) end
+        if debugging then SU.debug("break", "Minimum demerits =", self.minimumDemerits) end
         if self.minimumDemerits < awful_bad and (self.old_l ~= self.easy_line or self.r == self.activeListHead) then
           self:createNewActiveNodes(breakType)
         end
@@ -199,16 +199,16 @@ function lineBreak:tryBreak() -- 855
             self.lineWidth = self.firstWidth
           end
         end
-        if debugging then SU.debug("break", "line width = " .. tostring(self.lineWidth)) end
+        if debugging then SU.debug("break", "line width =",  self.lineWidth) end
       end
       if debugging then
-        SU.debug("break", " ---> (2) cuaw is " .. tostring(self.curActiveWidth))
-        SU.debug("break", " ---> aw is " .. tostring(self.activeWidth))
+        SU.debug("break", " ---> (2) cuaw is", self.curActiveWidth)
+        SU.debug("break", " ---> aw is", self.activeWidth)
       end
       self:considerDemerits(pi, breakType)
       if debugging then
-        SU.debug("break", " <--- cuaw is " .. tostring(self.curActiveWidth))
-        SU.debug("break", " <--- aw is " .. tostring(self.activeWidth))
+        SU.debug("break", " <--- cuaw is", self.curActiveWidth)
+        SU.debug("break", " <--- aw is ", self.activeWidth)
       end
     end
   end
@@ -269,7 +269,7 @@ function lineBreak:tryAlternatives(from, to)
     local ss = shortfall - addWidth
     -- Warning, assumes abosolute
     local badness = SU.rateBadness(inf_bad, ss.length.amount, self.curActiveWidth[ss > 0 and "stretch" or "shrink"].length.amount)
-    if debugging then SU.debug("break", "  badness of " .. ss .. " (" .. self.curActiveWidth .. ") is " .. badness) end
+    if debugging then SU.debug("break", "  badness of", ss, "(", self.curActiveWidth, ") is", badness) end
     if badness < localMinimum then
       self.r.alternates = alternates
       self.r.altSelections = combination
@@ -293,7 +293,7 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
   end
   shortfall = self.lineWidth - self.curActiveWidth
   self.badness, self.fitClass = fitclass(self, shortfall)
-  if debugging then SU.debug("break", self.badness .. " " .. self.fitClass) end
+  if debugging then SU.debug("break", self.badness, self.fitClass) end
   if (self.badness > inf_bad or pi == ejectPenalty) then
     if self.finalpass and self.minimumDemerits == awful_bad and self.r.next == self.activeListHead and self.prev_r == self.activeListHead then
       self.artificialDemerits = true
@@ -382,11 +382,11 @@ function lineBreak:recordFeasible(pi, breakType) -- 881
   local demerit = lineBreak:computeDemerits(pi, breakType)
   if debugging then
     if self.nodes[self.place] then
-      SU.debug("break", "@" .. self.nodes[self.place] .. " via @@" .. (self.r.serial or "0")  .. " badness=" .. self.badness .. " demerit=".. demerit) -- 882
+      SU.debug("break", "@", self.nodes[self.place], "via @@", (self.r.serial or "0"), "badness =", self.badness, "demerit =", demerit) -- 882
     else
       SU.debug("break", "@ \\par via @@")
     end
-    SU.debug("break", " fit class = "..self.fitClass)
+    SU.debug("break", " fit class =", self.fitClass)
   end
   demerit = demerit + self.r.totalDemerits
   if demerit <= self.bestInClass[self.fitClass].minimalDemerits then
@@ -422,7 +422,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
       end
       place = place + 1
     end
-    if debugging then SU.debug("break", "Value of breakWidth = " .. tostring(self.breakWidth)) end
+    if debugging then SU.debug("break", "Value of breakWidth =", self.breakWidth) end
   end
   -- 869 (Add a new delta node)
   if self.prev_r.type == "delta" then
@@ -432,7 +432,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     self.activeWidth = SILE.types.length(self.breakWidth)
   else
     local newDelta = { next = self.r, type = "delta", width = self.breakWidth - self.curActiveWidth }
-    if debugging then SU.debug("break", "Added new delta node = " .. tostring(newDelta.width)) end
+    if debugging then SU.debug("break", "Added new delta node =", newDelta.width) end
     self.prev_r.next = newDelta
     self.prev_prev_r = self.prev_r
     self.prev_r = newDelta
@@ -447,7 +447,7 @@ function lineBreak:createNewActiveNodes(breakType) -- 862
     local class = classes[i]
     local best = self.bestInClass[class]
     local value = best.minimalDemerits
-    if debugging then SU.debug("break", "Class is "..class.." Best value here is " .. value) end
+    if debugging then SU.debug("break", "Class is", class, "Best value here is", value) end
 
     if value <= self.minimumDemerits then
       -- 871: this is what creates new active notes
@@ -489,7 +489,7 @@ function lineBreak.dumpBreakNode(_, node)
 end
 
 function lineBreak:describeBreakNode(node)
-  --print("@@" .. b.serial .. ": line " .. (b.lineNumber -1) .. "." .. b.fitness .. " " .. b.type .. " t=".. b.totalDemerits .. " -> @@ " .. (b.prevBreak and b.prevBreak.serial or "0") )
+  --SU.debug("break", "@@", b.serial, ": line", b.lineNumber - 1, ".", b.fitness, b.type, "t=", b.totalDemerits, "-> @@", b.prevBreak and b.prevBreak.serial or "0")
   if node.sentinel then return node.sentinel end
   if node.type == "delta" then return "delta "..node.width.."pt" end
   local before = self.nodes[node.curBreak-1]
@@ -582,7 +582,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
   end
   -- 889
   while 1 do
-    if debugging then SU.debug("break", "@" .. self.pass .. "pass") end
+    if debugging then SU.debug("break", "@", self.pass, "pass") end
     if self.threshold > inf_bad then self.threshold = inf_bad end
     if self.pass == "second" then
       self.nodes = SILE.hyphenate(self.nodes)

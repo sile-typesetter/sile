@@ -955,7 +955,7 @@ function elements.text:stretchyReshape (depth, height)
         m = diff
       end
     end
-    SU.debug("math", "stretch: closestI =", tostring(closestI))
+    SU.debug("math", "stretch: closestI =", closestI)
     if closest then
       -- Now we have to re-shape the glyph chain. We will assume there
       -- is only one glyph.

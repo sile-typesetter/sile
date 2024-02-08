@@ -119,7 +119,7 @@ utilities.debug = function (category, ...)
     for i, input in ipairs(inputs) do
       if type(input) == "function" then
         local status, output = pcall(input)
-        inputs[i] = status and tostring(output) or SU.warn(("Output of %s debug function was an error: %s"):format(category, output))
+        inputs[i] = status and output or SU.warn(("Output of %s debug function was an error: %s"):format(category, output))
       elseif type(input) ~= "string" then
          inputs[i] = tostring(input)
       end
