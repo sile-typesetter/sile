@@ -1,7 +1,19 @@
+--- The core SILE library
+--- @module SILE
+
 -- Initialize SILE internals
 SILE = {}
 
+--- Current version of SILE, prefixed with v
 SILE.version = require("core.version")
+
+--- Status information about what options SILE was compiled with
+--- @field appkit boolean
+--- @field font_variations boolean
+--- @field fontconfig boolean
+--- @field harfbuzz boolean
+--- @field icu boolean
+--- @table SILE.features
 SILE.features = require("core.features")
 
 -- Initialize Lua environment and global utilities
@@ -113,6 +125,7 @@ local function runEvals (evals, arg)
   end
 end
 
+--- initialize sile
 SILE.init = function ()
   if not SILE.backend then
     SILE.backend = "libtexpdf"

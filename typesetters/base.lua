@@ -1,12 +1,9 @@
---- SILE typesetter (default/base) class.
---
--- @copyright License: MIT
--- @module typesetters.base
---
+--- SILE typesetter base class.
+--- @module SILE.typesetters.base
 
--- Typesetter base class
-
+--- @type typesetter
 local typesetter = pl.class()
+
 typesetter.type = "typesetter"
 typesetter._name = "base"
 
@@ -46,6 +43,8 @@ function typesetter:init (frame)
   self:_init(frame)
 end
 
+--- Constructor
+-- @param frame A initial frame to attach the typesetter to.
 function typesetter:_init (frame)
   self:declareSettings()
   self.hooks = {}
@@ -60,6 +59,7 @@ function typesetter:_init (frame)
   return self
 end
 
+--- Declare new setting types
 function typesetter.declareSettings(_)
 
   -- Settings common to any typesetter instance.

@@ -1,5 +1,7 @@
 --- SILE AST utilities
---
+--- @module SU.ast
+
+--- @type ast
 local ast = {}
 
 --- Find a command node in a SILE AST tree,

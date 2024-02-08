@@ -1,11 +1,22 @@
+--- SILE.Utilities (aliased as SU)
+--- @module SU
+--- alias SU.utilities
+
 local bitshim = require("bitshim")
 local luautf8 = require("lua-utf8")
 local semver = require("semver")
 
+--- @type utilities
 local utilities = {}
 
 local epsilon = 1E-12
 
+--- Require that an option table contains a specific value, otherwise raise an error.
+--- @param options Input table of options.
+--- @param name Name of the required option.
+--- @param context User friendly name of the function or calling context.
+--- @param required_type The name of a data type that the option must sucessfully cast to.
+-- SU.required
 utilities.required = function (options, name, context, required_type)
   if not options[name] then utilities.error(context.." needs a "..name.." parameter") end
   if required_type then
