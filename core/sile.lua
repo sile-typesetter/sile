@@ -328,7 +328,7 @@ end
 -- --- Content loader like Lua's `require()` but whith special path handling for loading SILE resource files.
 -- -- Used for example by commands that load data via a `src=file.name` option.
 -- -- @tparam string dependency Lua spec
-local SILE.require (dependency, pathprefix, deprecation_ack)
+function SILE.require (dependency, pathprefix, deprecation_ack)
   if pathprefix and not deprecation_ack then
     local notice = string.format([[
   Please don't use the path prefix mechanism; it was intended to provide
@@ -635,20 +635,20 @@ end
 --- Finalize document processing
 -- Signals that all the `SILE.process()` calls have been made and SILE should move on to finish up the output
 --
--- 1. Stops logging dependecies and writes them to a makedepends file if requested.
--- 2. Tells the document class to run its `:finish()` method. This method is typically responsible for calling the
+-- 1. Tells the document class to run its `:finish()` method. This method is typically responsible for calling the
 -- `:finish()` method of the outputter module in the appropriate sequence.
--- 3. Closes out anything in active memory we don't need like font instances.
--- 4. Evaluate any snippets in SILE.input.evalAfter table.
+-- 2. Closes out anything in active memory we don't need like font instances.
+-- 3. Evaluate any snippets in SILE.input.evalAfter table.
+-- 4. Stops logging dependecies and writes them to a makedepends file if requested.
 -- 5. Close out the Lua profiler if it was running.
 -- 6. Output version information if versions debug flag is set.
 function SILE.finish ()
-  if SILE.makeDeps then
-    SILE.makeDeps:write()
-  end
   SILE.documentState.documentClass:finish()
   SILE.font.finish()
   runEvals(SILE.input.evaluateAfters, "evaluate-after")
+  if SILE.makeDeps then
+    SILE.makeDeps:write()
+  end
   if not SILE.quiet then
     io.stderr:write("\n")
   end
