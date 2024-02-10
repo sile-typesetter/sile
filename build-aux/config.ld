@@ -7,5 +7,4 @@ file = {
 	"../core",
 	"../typesetters",
 }
-multimodule = true
 merge = true
