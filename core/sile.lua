@@ -71,7 +71,7 @@ SU = SILE.utilities -- regrettable global alias
 
 -- On demand loader, allows modules to be loaded into a specific scope but
 -- only when/if accessed.
-local core_loader = function (scope)
+local function core_loader (scope)
   return setmetatable({}, {
     __index = function (self, key)
       -- local var = rawget(self, key)
@@ -211,7 +211,7 @@ end
 -- 6. Runs any code snippents passed with `--eval`.
 --
 -- Does not move on to processing input document(s).
-SILE.init = function ()
+function SILE.init ()
   if not SILE.backend then
     SILE.backend = "libtexpdf"
   end
@@ -279,7 +279,7 @@ end
 --   a module that has already been loaded.
 -- @tparam[opt] table options Startup options as key/value pairs passed to the module when initialized.
 -- @tparam[opt=false] boolean reload whether or not to reload a module that has been loaded and initialized before.
-SILE.use = function (module, options, reload)
+function SILE.use (module, options, reload)
   local status, pack
   if type(module) == "string" then
     status, pack = pcall(require, module)
@@ -328,7 +328,7 @@ end
 -- --- Content loader like Lua's `require()` but whith special path handling for loading SILE resource files.
 -- -- Used for example by commands that load data via a `src=file.name` option.
 -- -- @tparam string dependency Lua spec
-SILE.require = function (dependency, pathprefix, deprecation_ack)
+local SILE.require (dependency, pathprefix, deprecation_ack)
   if pathprefix and not deprecation_ack then
     local notice = string.format([[
   Please don't use the path prefix mechanism; it was intended to provide
@@ -375,7 +375,7 @@ end
 -- This is the main 'action' SILE does. Once input files are parsed into an abstract syntax tree, then we recursively
 -- iterate through the tree handling each item in the order encountered.
 -- @tparam table ast SILE content in abstract syntax tree format (a table of strings, functions, or more AST trees).
-SILE.process = function (ast)
+function SILE.process (ast)
   if not ast then return end
   if SU.debugging("ast") then
     SU.debugAST(ast, 0)
@@ -514,7 +514,7 @@ end
 
 -- TODO: this probably needs deprecating, moved here just to get out of the way so
 -- typesetters classing works as expected
-SILE.typesetNaturally = function (frame, func)
+function SILE.typesetNaturally (frame, func)
   local saveTypesetter = SILE.typesetter
   if SILE.typesetter.frame then SILE.typesetter.frame:leave(SILE.typesetter) end
   SILE.typesetter = SILE.typesetters.base(frame)
@@ -608,7 +608,7 @@ end
 -- called. Calling options still take precidence.
 -- @tparam string command Name of command to overwride.
 -- @tparam table options Options to set as updated defaults.
-function SILE.setCommandDefaults (command, defaults)
+function SILE.setCommandDefaults (command, options)
   local oldCommand = SILE.Commands[command]
   SILE.Commands[command] = function (defaults, content)
     for k, v in pairs(options) do
