@@ -22,9 +22,9 @@ package.default_settings = {
 }
 
 local function _v14_aligns (content)
-  SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
-  SILE.settings:set("document.parindent", SILE.nodefactory.glue())
-  SILE.settings:set("document.spaceskip", SILE.length("1spc", 0, 0))
+  SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+  SILE.settings:set("document.parindent", SILE.types.node.glue())
+  SILE.settings:set("document.spaceskip", SILE.types.length("1spc", 0, 0))
   SILE.process(content)
   SILE.call("par")
 end
@@ -37,8 +37,8 @@ package.shim_commands = {
           SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
         end
         SILE.settings:temporarily(function ()
-          SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue())
-          SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue())
+          SILE.settings:set("document.rskip", SILE.types.node.hfillglue())
+          SILE.settings:set("document.lskip", SILE.types.node.hfillglue())
           _v14_aligns(content)
         end)
       end
@@ -46,7 +46,7 @@ package.shim_commands = {
     ["raggedright"] = function (_)
       return function (_, content)
         SILE.settings:temporarily(function ()
-          SILE.settings:set("document.rskip", SILE.nodefactory.hfillglue())
+          SILE.settings:set("document.rskip", SILE.types.node.hfillglue())
           _v14_aligns(content)
         end)
       end
@@ -54,7 +54,7 @@ package.shim_commands = {
     ["raggedleft"] = function (_)
       return function (_, content)
         SILE.settings:temporarily(function ()
-          SILE.settings:set("document.lskip", SILE.nodefactory.hfillglue())
+          SILE.settings:set("document.lskip", SILE.types.node.hfillglue())
           _v14_aligns(content)
         end)
       end

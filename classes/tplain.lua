@@ -24,7 +24,7 @@ function class:_t_common ()
   end)
   self.defaultFrameset.content.tate = self.options.layout == "tate"
   self:declareHanmenFrame("content", self.defaultFrameset.content)
-  SILE.settings:set("document.parindent", SILE.nodefactory.glue("10pt"))
+  SILE.settings:set("document.parindent", SILE.types.node.glue("10pt"))
 end
 
 function class:_init (options)

@@ -45,7 +45,7 @@ SILE.nodeMakers.base = pl.class({
 
     makePenalty = function (self, p)
       if self.lastnode ~= "penalty" and self.lastnode ~= "glue" then
-        coroutine.yield( SILE.nodefactory.penalty({ penalty = p or 0 }) )
+        coroutine.yield( SILE.types.node.penalty({ penalty = p or 0 }) )
       end
       self.lastnode = "penalty"
     end,
@@ -53,7 +53,7 @@ SILE.nodeMakers.base = pl.class({
     makeNonBreakingSpace = function (self)
       -- Unicode Line Breaking Algorithm (UAX 14) specifies that U+00A0
       -- (NO-BREAK SPACE) is expanded or compressed like a normal space.
-      coroutine.yield(SILE.nodefactory.kern(SILE.shaper:measureSpace(self.options)))
+      coroutine.yield(SILE.types.node.kern(SILE.shaper:measureSpace(self.options)))
       self.lastnode = "glue"
       self.lasttype = "sp"
     end,
@@ -149,7 +149,7 @@ function SILE.nodeMakers.unicode:letterspace ()
   if self.lastnode and self.lastnode ~= "glue" then
     local w = SILE.settings:get("document.letterspaceglue").width
     SU.debug("tokenizer", "Letter space glue:", w)
-    coroutine.yield(SILE.nodefactory.kern({ width = w }))
+    coroutine.yield(SILE.types.node.kern({ width = w }))
     self.lastnode = "glue"
     self.lasttype = "sp"
   end
@@ -193,6 +193,23 @@ function SILE.nodeMakers.unicode:handleWordBreak (item)
   end
 end
 
+function SILE.nodeMakers.unicode:_handleWordBreakRepeatHyphen (item)
+  -- According to some language rules, when a break occurs at an explicit hyphen,
+  -- the hyphen gets repeated at the beginning of the new line
+  if item.text == "-" then
+    self:addToken(item.text, item)
+    self:makeToken()
+    if self.lastnode ~= "discretionary" then
+      coroutine.yield(SILE.nodefactory.discretionary({
+        postbreak = SILE.shaper:createNnodes("-", self.options)
+      }))
+      self.lastnode = "discretionary"
+    end
+  else
+    SILE.nodeMakers.unicode.handleWordBreak(self, item)
+  end
+end
+
 function SILE.nodeMakers.unicode:handleLineBreak (item, subtype)
   -- Because we are in charge of paragraphing, we
   -- will override space-type line breaks, and treat
@@ -209,6 +226,16 @@ function SILE.nodeMakers.unicode:handleLineBreak (item, subtype)
   self:addToken(char, item)
   local cp = SU.codepoint(char)
   self.lasttype = chardata[cp] and chardata[cp].linebreak
+end
+
+function SILE.nodeMakers.unicode:_handleLineBreakRepeatHyphen (item, subtype)
+  if self.lastnode == "discretionary" then
+    -- Initial word boundary after a discretionary:
+    -- Bypass it and just deal with the token.
+    self:dealWith(item)
+  else
+    SILE.nodeMakers.unicode.handleLineBreak(self, item, subtype)
+  end
 end
 
 function SILE.nodeMakers.unicode:iterator (items)

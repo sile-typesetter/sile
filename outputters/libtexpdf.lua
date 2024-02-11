@@ -215,7 +215,7 @@ end
 
 function outputter:debugFrame (frame)
   self:_ensureInit()
-  self:pushColor({ r = 0.8, g = 0, b = 0 })
+  self:pushColor(SILE.types.color({ r = 0.8, g = 0, b = 0 }))
   self:drawRule(frame:left()-_dl/2, frame:top()-_dl/2, frame:width()+_dl, _dl)
   self:drawRule(frame:left()-_dl/2, frame:top()-_dl/2, _dl, frame:height()+_dl)
   self:drawRule(frame:right()-_dl/2, frame:top()-_dl/2, _dl, frame:height()+_dl)
@@ -237,7 +237,7 @@ end
 
 function outputter:debugHbox (hbox, scaledWidth)
   self:_ensureInit()
-  self:pushColor({ r = 0.8, g = 0.3, b = 0.3 })
+  self:pushColor(SILE.types.color({ r = 0.8, g = 0.3, b = 0.3 }))
   local paperY = SILE.documentState.paperSize[2]
   local x, y = self:getCursor()
   y = paperY - y
@@ -245,7 +245,7 @@ function outputter:debugHbox (hbox, scaledWidth)
   self:drawRule(x-_dl/2, y-hbox.height-_dl/2, _dl, hbox.height+hbox.depth+_dl)
   self:drawRule(x-_dl/2, y-_dl/2, scaledWidth+_dl, _dl)
   self:drawRule(x+scaledWidth-_dl/2, y-hbox.height-_dl/2, _dl, hbox.height+hbox.depth+_dl)
-  if hbox.depth > SILE.length(0) then
+  if hbox.depth > SILE.types.length(0) then
     self:drawRule(x-_dl/2, y+hbox.depth-_dl/2, scaledWidth+_dl, _dl)
   end
   self:popColor()

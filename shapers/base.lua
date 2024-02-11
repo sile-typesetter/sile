@@ -30,7 +30,7 @@ local function shapespace (spacewidth)
   local length = spacewidth * SILE.settings:get("shaper.spaceenlargementfactor")
   local stretch = absoluteSpaceWidth * SILE.settings:get("shaper.spacestretchfactor")
   local shrink = absoluteSpaceWidth * SILE.settings:get("shaper.spaceshrinkfactor")
-  return SILE.length(length, stretch, shrink)
+  return SILE.types.length(length, stretch, shrink)
 end
 
 local shaper = pl.class()
@@ -55,7 +55,7 @@ function shaper:measureSpace (options)
   local items, width = self:shapeToken(" ", options)
   if not width and not items[1] then
     SU.warn("Could not measure the width of a space")
-    return SILE.length()
+    return SILE.types.length()
   end
   return shapespace(width and width.length or items[1].width)
 end
@@ -130,14 +130,14 @@ function shaper:formNnode (contents, token, options)
     end
     self:addShapedGlyphToNnodeValue(nnodeValue, glyph)
   end
-  table.insert(nnodeContents, SILE.nodefactory.hbox({
+  table.insert(nnodeContents, SILE.types.node.hbox({
         depth = totalDepth,
         height = totalHeight,
         misfit = misfit,
-        width = SILE.length(totalWidth),
+        width = SILE.types.length(totalWidth),
         value = nnodeValue
     }))
-  return SILE.nodefactory.nnode({
+  return SILE.types.node.nnode({
       nodes = nnodeContents,
       text = token,
       misfit = misfit,
@@ -153,7 +153,7 @@ function shaper.makeSpaceNode (_, options, item)
   else
     width = SILE.shaper:measureSpace(options)
   end
-  return SILE.nodefactory.glue(width)
+  return SILE.types.node.glue(width)
 end
 
 function shaper.debugVersions (_) end

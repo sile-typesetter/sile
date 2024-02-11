@@ -184,7 +184,9 @@ pub fn run(
         let finish: LuaFunction = sile.get("finish")?;
         finish.call::<_, _>(())?;
     } else {
-        let repl: LuaTable = sile.get("repl")?;
+        let repl_module: LuaString = lua.create_string("core.repl")?;
+        let r#require: LuaFunction = lua.globals().get("require")?;
+        let repl: LuaTable = r#require.call::<LuaString, LuaTable>(repl_module)?;
         repl.call_method::<_, _>("enter", ())?;
     }
     Ok(())

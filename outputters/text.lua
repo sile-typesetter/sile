@@ -46,8 +46,8 @@ end
 
 function outputter:setCursor (x, y, relative)
   self:_ensureInit()
-  local bs = SILE.measurement("0.8bs"):tonumber()
-  local spc = SILE.measurement("0.8spc"):tonumber()
+  local bs = SILE.types.measurement("0.8bs"):tonumber()
+  local spc = SILE.types.measurement("0.8spc"):tonumber()
   local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
   local newx, newy = offset.x + x, offset.y - y
   if started then

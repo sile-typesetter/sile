@@ -64,14 +64,14 @@ local measurement = pl.class({
         if not parsed then SU.error("Could not parse measurement '"..amount.."'") end
         self.amount, self.unit = parsed.amount, parsed.unit
       end
-      local _su = SILE.units[self.unit]
+      local _su = SILE.types.unit[self.unit]
       if not _su then SU.error("Unknown unit: " .. unit) end
       self.relative = _su.relative
       if self.unit == "pt" then self._mutable = true end
     end,
 
     absolute = function (self)
-      return SILE.measurement(self:tonumber())
+      return SILE.types.measurement(self:tonumber())
     end,
 
     tostring = function (self)
@@ -79,7 +79,7 @@ local measurement = pl.class({
     end,
 
     tonumber = function (self)
-      local def = SILE.units[self.unit]
+      local def = SILE.types.unit[self.unit]
       local amount = def.converter and def.converter(self.amount) or (self.amount * def.value)
       return amount
     end,
@@ -94,10 +94,10 @@ local measurement = pl.class({
 
     __add = function (self, other)
       if _similarunit(self, other) then
-        return SILE.measurement(_amount(self) + _amount(other), _unit(self, other))
+        return SILE.types.measurement(_amount(self) + _amount(other), _unit(self, other))
       else
         _error_if_relative(self, other)
-        return SILE.measurement(_tonumber(self) + _tonumber(other))
+        return SILE.types.measurement(_tonumber(self) + _tonumber(other))
       end
     end,
 
@@ -116,14 +116,14 @@ local measurement = pl.class({
 
     __sub = function (self, other)
       if _similarunit(self, other) then
-        return SILE.measurement(_amount(self) - _amount(other), _unit(self, other))
+        return SILE.types.measurement(_amount(self) - _amount(other), _unit(self, other))
       else
         _error_if_relative(self, other)
-        return SILE.measurement(_tonumber(self) - _tonumber(other))
+        return SILE.types.measurement(_tonumber(self) - _tonumber(other))
       end
     end,
 
-    -- See usage comments on SILE.measurement:___add()
+    -- See usage comments on SILE.types.measurement:___add()
     ___sub = function (self, other)
       _error_if_immutable(self)
       self.amount = self.amount - _pt_amount(other)
@@ -132,42 +132,42 @@ local measurement = pl.class({
 
     __mul = function (self, other)
       if _hardnumber(self, other) then
-        return SILE.measurement(_amount(self) * _amount(other), _unit(self, other))
+        return SILE.types.measurement(_amount(self) * _amount(other), _unit(self, other))
       else
         _error_if_relative(self, other)
-        return SILE.measurement(_tonumber(self) * _tonumber(other))
+        return SILE.types.measurement(_tonumber(self) * _tonumber(other))
       end
     end,
 
     __pow = function (self, other)
       if _hardnumber(self, other) then
-        return SILE.measurement(_amount(self) ^ _amount(other), self.unit)
+        return SILE.types.measurement(_amount(self) ^ _amount(other), self.unit)
       else
         _error_if_relative(self, other)
-        return SILE.measurement(_tonumber(self) ^ _tonumber(other))
+        return SILE.types.measurement(_tonumber(self) ^ _tonumber(other))
       end
     end,
 
     __div = function (self, other)
       if _hardnumber(self, other) then
-        return SILE.measurement(_amount(self) / _amount(other), self.unit)
+        return SILE.types.measurement(_amount(self) / _amount(other), self.unit)
       else
         _error_if_relative(self, other)
-        return SILE.measurement(_tonumber(self) / _tonumber(other))
+        return SILE.types.measurement(_tonumber(self) / _tonumber(other))
       end
     end,
 
     __mod = function (self, other)
       if _hardnumber(self, other) then
-        return SILE.measurement(_amount(self) % _amount(other), self.unit)
+        return SILE.types.measurement(_amount(self) % _amount(other), self.unit)
       else
         _error_if_relative(self, other)
-        return SILE.measurement(_tonumber(self) % _tonumber(other))
+        return SILE.types.measurement(_tonumber(self) % _tonumber(other))
       end
     end,
 
     __unm = function (self)
-      local ret = SILE.measurement(self)
+      local ret = SILE.types.measurement(self)
       ret.amount = self.amount * -1
       return ret
     end,

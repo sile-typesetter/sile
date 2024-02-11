@@ -1,0 +1,13 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\set[parameter=shaper.spaceenlargementfactor, value=1]
+\use[module=packages.rules]
+\font[size=14pt]
+% strikethrough and underline can span multiple lines
+% Here line-breaking (paragraphing) occurs in the underlined sequence.
+\strikethrough{strike strike strike strike
+\underline{underline underline underline} strike.}
+
+\end{document}
+

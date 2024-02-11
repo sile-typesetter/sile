@@ -272,7 +272,7 @@ end
 
 function class:runHooks (category, options)
   for _, func in ipairs(self.hooks[category]) do
-    SU.debug("classhooks", "Running hook from", category, options and "with options " .. #options)
+    SU.debug("classhooks", "Running hook from", category, options and "with options #" .. #options)
     func(self, options)
   end
 end
@@ -522,7 +522,7 @@ function class:registerCommands ()
   end, "Inserts a penalty node. Option is penalty= for the size of the penalty.")
 
   self:registerCommand("discretionary", function (options, _)
-    local discretionary = SILE.nodefactory.discretionary({})
+    local discretionary = SILE.types.node.discretionary({})
     if options.prebreak then
       local hbox = SILE.typesetter:makeHbox({ options.prebreak })
       discretionary.prebreak = { hbox }
@@ -545,12 +545,12 @@ function class:registerCommands ()
 
   self:registerCommand("kern", function (options, _)
     local width = SU.cast("length", options.width):absolute()
-    SILE.typesetter:pushHorizontal(SILE.nodefactory.kern(width))
+    SILE.typesetter:pushHorizontal(SILE.types.node.kern(width))
   end, "Inserts a glue node. The width option denotes the glue dimension.")
 
   self:registerCommand("skip", function (options, _)
     options.discardable = SU.boolean(options.discardable, false)
-    options.height = SILE.length(options.height):absolute()
+    options.height = SILE.types.length(options.height):absolute()
     SILE.typesetter:leaveHmode()
     if options.discardable then
       SILE.typesetter:pushVglue(options)

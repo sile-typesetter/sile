@@ -401,8 +401,8 @@ following SILE functions access the settings system from inside Lua:
 You should note that, while in the SILE layer, the \autodoc:command{\set} command does its
 best to turn the textual description of a type into the appropriate Lua type
 for the value. \code{SILE.settings:set} does not do that; it expects the value
-to be of the appropriate type: lengths need to be a \code{SILE.length} object,
-glue must be \code{SILE.nodefactory.glue} and so on.}}
+to be of the appropriate type: lengths need to be a \code{SILE.types.length} object,
+glue must be \code{SILE.types.node.glue} and so on.}}
 
 \item{\code{SILE.settings:get(\em{⟨parameter⟩})}: retrieves the current
       setting of the parameter.}

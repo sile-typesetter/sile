@@ -23,7 +23,7 @@ local widthToFrameEdge = function (frame)
   return w
 end
 
-local leader = pl.class(SILE.nodefactory.glue)
+local leader = pl.class(SILE.types.node.glue)
 
 function leader:outputYourself (typesetter, line)
   local outputWidth = SU.rationWidth(self.width, self.width, line.ratio):tonumber()
@@ -86,7 +86,7 @@ end
 function package:registerCommands ()
 
   self:registerCommand("leaders", function(options, content)
-    local width = options.width and SU.cast("glue", options.width) or SILE.nodefactory.hfillglue()
+    local width = options.width and SU.cast("glue", options.width) or SILE.types.node.hfillglue()
     local hbox, hlist = SILE.typesetter:makeHbox(content)
     if #hlist > 0 then
       SU.error("Forbidden migrating content in leaders")
@@ -102,10 +102,10 @@ function package:registerCommands ()
     -- though in older times it was sometimes up to 1em and could be distributed
     -- differently. Anyhow, it is also the approach taken by LaTeX, with a
     -- \@dotsep space of 4.5mu (where 18mu = 1em, so indeed leading to 0.25em).
-    SILE.call("leaders", { width = SILE.nodefactory.hfillglue() }, function()
-      SILE.call("kern", { width = SILE.length("0.25em") })
+    SILE.call("leaders", { width = SILE.types.node.hfillglue() }, function()
+      SILE.call("kern", { width = SILE.types.length("0.25em") })
       SILE.typesetter:typeset(".")
-      SILE.call("kern", {width = SILE.length("0.25em") })
+      SILE.call("kern", {width = SILE.types.length("0.25em") })
     end)
   end)
 

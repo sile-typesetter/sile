@@ -27,16 +27,8 @@ local fluentglobal = function ()
   fluent_once = true
 end
 SILE.fluent = setmetatable({}, {
-  __call = function (_, ...)
-    fluentglobal()
-    SILE.fluent = fluent
-    return fluent(pl.utils.unpack({...}, 1, select("#", ...)))
-  end,
-  __index = function (_, key)
-    fluentglobal()
-    SILE.fluent = fluent
-    return fluent[key]
-  end
+  __call = fluentglobal,
+  __index = fluentglobal,
 })
 
 local nobaseclass = function ()
@@ -54,15 +46,15 @@ SILE.defaultTypesetter = function ()
 end
 
 SILE.toPoints = function (_, _)
-  SU.deprecated("SILE.toPoints", "SILE.measurement():tonumber", "0.10.0", "0.13.1")
+  SU.deprecated("SILE.toPoints", "SILE.types.measurement():tonumber", "0.10.0", "0.13.1")
 end
 
 SILE.toMeasurement = function (_, _)
-  SU.deprecated("SILE.toMeasurement", "SILE.measurement", "0.10.0", "0.13.1")
+  SU.deprecated("SILE.toMeasurement", "SILE.types.measurement", "0.10.0", "0.13.1")
 end
 
 SILE.toAbsoluteMeasurement = function (_, _)
-  SU.deprecated("SILE.toAbsoluteMeasurement", "SILE.measurement():absolute", "0.10.0", "0.13.1")
+  SU.deprecated("SILE.toAbsoluteMeasurement", "SILE.types.measurement():absolute", "0.10.0", "0.13.1")
 end
 
 SILE.readFile = function (filename)
@@ -70,10 +62,57 @@ SILE.readFile = function (filename)
   return SILE.processFile(filename)
 end
 
+local usetypes = function (type)
+  SU.deprecated(("SILE.%s"):format(type), ("SILE.types.%s"):format(type), "0.15.0", "0.16.0", ([[
+  In order to keep things tidy internally, more easily allow 3rd party
+  packages to override core functions, and substitute some slow bits
+  with Rust modules, internal types have been moved from the top level
+  SILE global to a types namespace.
+
+  Please substitute 'SILE.%s()' with 'SILE.types.%s()'.
+  ]]):format(type, type))
+  return SILE.types[type]
+end
+
+SILE.color = setmetatable({}, {
+    __call = function (_, ...) return usetypes("color")(...) end,
+    __index = function () return usetypes("color") end,
+  })
+
+SILE.measurement = setmetatable({}, {
+    __call = function (_, ...) return usetypes("measurement")(...) end,
+    __index = function () return usetypes("measurement") end,
+  })
+
+SILE.length = setmetatable({}, {
+    __call = function (_, ...) return usetypes("length")(...) end,
+    __index = function () return usetypes("length") end,
+  })
+
+local usetypes2 = function (old, new, type)
+  SU.deprecated(("SILE.%s.%s"):format(old, type), ("SILE.types.%s.%s"):format(new, type), "0.15.0", "0.16.0", ([[
+  In order to keep things tidy internally, more easily allow 3rd party
+  packages to override core functions, and substitute some slow bits
+  with Rust modules, internal types have been moved from the top level
+  SILE global to a types namespace.
+
+  Please substitute 'SILE.%s.%s()' with 'SILE.types.%s.%s()'.
+  ]]):format(old, type, new, type))
+  return SILE.types[new][type]
+end
+
+SILE.nodefactory = setmetatable({}, {
+    __index = function (_, type) return usetypes2("nodefactory", "node", type) end,
+  })
+
+SILE.units = setmetatable({}, {
+    __index = function (_, type) return usetypes2("units", "unit", type) end,
+  })
+
 SILE.colorparser = function (input)
-  SU.deprecated("SILE.colorparser", "SILE.color", "0.14.0", "0.16.0",
+  SU.deprecated("SILE.colorparser", "SILE.types.color", "0.14.0", "0.16.0",
     [[Color results are now color objects, not just tables with relevant values.]])
-  return SILE.color(input)
+  return SILE.types.color(input)
 end
 
 function SILE.doTexlike (doc)

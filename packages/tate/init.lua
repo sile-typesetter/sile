@@ -25,21 +25,21 @@ end
 
 local outputLatinInTate = function (self, typesetter, line)
   -- My baseline moved
-  typesetter.frame:advanceWritingDirection(SILE.measurement("-0.5zw"))
-  typesetter.frame:advancePageDirection(SILE.measurement("0.25zw"))
+  typesetter.frame:advanceWritingDirection(SILE.types.measurement("-0.5zw"))
+  typesetter.frame:advancePageDirection(SILE.types.measurement("0.25zw"))
 
   local vorigin = -typesetter.frame.state.cursorY
   self:oldOutputYourself(typesetter,line)
   typesetter.frame.state.cursorY = -vorigin
   typesetter.frame:advanceWritingDirection(self:lineContribution())
   -- My baseline moved
-  typesetter.frame:advanceWritingDirection(SILE.measurement("0.5zw") )
-  typesetter.frame:advancePageDirection(-SILE.measurement("0.25zw"))
+  typesetter.frame:advanceWritingDirection(SILE.types.measurement("0.5zw") )
+  typesetter.frame:advancePageDirection(-SILE.types.measurement("0.25zw"))
 end
 
 local outputTateChuYoko = function (self, typesetter, line)
   -- My baseline moved
-  local em = SILE.measurement("1zw")
+  local em = SILE.types.measurement("1zw")
   typesetter.frame:advanceWritingDirection(-em + em/4 - self:lineContribution()/2)
   typesetter.frame:advancePageDirection(2*self.height - self.width/2)
   self:oldOutputYourself(typesetter,line)
@@ -83,7 +83,7 @@ function package:registerCommands ()
     end)
     SILE.typesetter = oldT
     SILE.typesetter:pushGlue({
-      width = SILE.length("0.5zw", "0.25zw", "0.25zw"):absolute()
+      width = SILE.types.length("0.5zw", "0.25zw", "0.25zw"):absolute()
     })
     for i = 1, #nodes do
       if SILE.typesetter.frame:writingDirection() ~= "TTB" or nodes[i].is_glue then
@@ -107,7 +107,7 @@ function package:registerCommands ()
   self:registerCommand("tate-chu-yoko", function (_, content)
     if SILE.typesetter.frame:writingDirection() ~= "TTB" then return SILE.process(content) end
     -- SILE.typesetter:pushGlue({
-    --   width = SILE.length.new({length = SILE.toPoints("0.5zw"),
+    --   width = SILE.types.length.new({length = SILE.toPoints("0.5zw"),
     --                            stretch = SILE.toPoints("0.25zw"),
     --                             shrink = SILE.toPoints("0.25zw")
     --                           })
@@ -124,7 +124,7 @@ function package:registerCommands ()
 
     end)
     -- SILE.typesetter:pushGlue({
-    --   width = SILE.length.new({length = SILE.toPoints("0.5zw"),
+    --   width = SILE.types.length.new({length = SILE.toPoints("0.5zw"),
     --                            stretch = SILE.toPoints("0.25zw"),
     --                             shrink = SILE.toPoints("0.25zw")
     --                           })

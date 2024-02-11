@@ -14,6 +14,7 @@ function settings:_init()
   self.declarations = {}
   self.stateQueue = {}
   self.defaults = {}
+  self.hooks = {}
 
   self:declare({
     parameter = "document.language",
@@ -25,28 +26,28 @@ function settings:_init()
   self:declare({
     parameter = "document.parindent",
     type = "glue",
-    default = SILE.nodefactory.glue("1bs"),
+    default = SILE.types.node.glue("1bs"),
     help = "Glue at start of paragraph"
   })
 
   self:declare({
     parameter = "document.baselineskip",
     type = "vglue",
-    default = SILE.nodefactory.vglue("1.2em plus 1pt"),
+    default = SILE.types.node.vglue("1.2em plus 1pt"),
     help = "Leading"
   })
 
   self:declare({
     parameter = "document.lineskip",
     type = "vglue",
-    default = SILE.nodefactory.vglue("1pt"),
+    default = SILE.types.node.vglue("1pt"),
     help = "Leading"
   })
 
   self:declare({
     parameter = "document.parskip",
     type = "vglue",
-    default = SILE.nodefactory.vglue("0pt plus 1pt"),
+    default = SILE.types.node.vglue("0pt plus 1pt"),
     help = "Leading"
   })
 
@@ -111,7 +112,16 @@ end
 --- Return the most recently pushed set of values in the setting stack
 function settings:popState ()
   if not self then return deprecator() end
+  local previous = self.state
   self.state = table.remove(self.stateQueue)
+  for parameter, oldvalue in pairs(previous) do
+    if self.hooks[parameter] then
+      local newvalue = self.state[parameter]
+      if oldvalue ~= newvalue then
+        self:runHooks(parameter, newvalue)
+      end
+    end
+  end
 end
 
 --- Declare a new setting
@@ -122,10 +132,14 @@ function settings:declare (spec)
     SU.deprecated("'name' argument of SILE.settings:declare", "'parameter' argument of SILE.settings:declare", "0.10.10", "0.11.0")
   end
   if self.declarations[spec.parameter] then
-    SU.debug("settings", "Attempt to re-declare setting: " .. spec.parameter)
+    SU.debug("settings", "Attempt to re-declare setting:", spec.parameter)
     return
   end
   self.declarations[spec.parameter] = spec
+  self.hooks[spec.parameter] = {}
+  if spec.hook then
+     self:registerHook(spec.parameter, spec.hook)
+  end
   self:set(spec.parameter, spec.default, true)
 end
 
@@ -216,6 +230,20 @@ function settings:set (parameter, value, makedefault, reset)
   self.state[parameter] = value
   if makedefault then
     self.defaults[parameter] = value
+  end
+  self:runHooks(parameter, value)
+end
+
+function settings:registerHook (parameter, func)
+   table.insert(self.hooks[parameter], func)
+end
+
+function settings:runHooks (parameter, value)
+  if self.hooks[parameter] then
+    for _, func in ipairs(self.hooks[parameter]) do
+      SU.debug("classhooks", "Running seting hook for", parameter)
+      func(value)
+    end
   end
 end
 

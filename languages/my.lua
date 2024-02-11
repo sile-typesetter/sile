@@ -33,8 +33,8 @@ end
 
 -- "Syllable Based Dual Weight Algorithm for Line Breaking in Myanmar Unicode"
 -- Keith Stribley, http://thanlwinsoft.github.io/www.thanlwinsoft.org/ThanLwinSoft/MyanmarUnicode/Parsing/my2weightLineBreakAlg1_1.pdf
-local p2 = SILE.nodefactory.penalty({ penalty = -25 })
-local p1 = SILE.nodefactory.penalty({ penalty = -50 })
+local p2 = SILE.types.node.penalty({ penalty = -25 })
+local p1 = SILE.types.node.penalty({ penalty = -50 })
 
 local penaltyFor = function (ca, cb)
   if ca == "WJ" or ca == "LQ" then return end

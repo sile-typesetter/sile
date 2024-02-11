@@ -5,7 +5,7 @@ package._name = "frametricks"
 
 local breakFrameHorizontalAt = function (offset)
   local cFrame = SILE.typesetter.frame
-  if not offset or not (offset > SILE.length(0)) then
+  if not offset or not (offset > SILE.types.length(0)) then
     SILE.typesetter:chuck()
     offset = SILE.typesetter.frame.state.cursorX
   end
@@ -32,16 +32,17 @@ end
 
 local shiftframeedge = function (frame, options)
   if options.left then
-    frame:constrain("left", frame:left() + SILE.length(options.left))
+    frame:constrain("left", frame:left() + SILE.types.length(options.left))
   end
   if options.right then
-    frame:constrain("right", frame:right() + SILE.length(options.right))
+    frame:constrain("right", frame:right() + SILE.types.length(options.right))
   end
 end
 
 local makecolumns = function (options)
   local cFrame = SILE.typesetter.frame
   local cols = options.columns
+  local balanced = SU.boolean(options.balanced, true)
   local gutterWidth = options.gutter or "3%pw"
   local right = cFrame:right()
   local origId = cFrame.id
@@ -58,8 +59,8 @@ local makecolumns = function (options)
       bottom = cFrame:bottom(),
       id = origId .. "_col"..i
     })
-    newFrame.balanced = true
-    cFrame.balanced = true
+    newFrame.balanced = balanced
+    cFrame.balanced = balanced
     gutter:constrain("right", "left("..newFrame.id..")")
     newFrame:constrain("left", "right("..gutter.id..")")
     -- In the future we may way to allow for unequal columns
@@ -103,7 +104,7 @@ function package.breakFrameVertical (_, after)
   if after then
     totalHeight = after
   else
-    totalHeight = SILE.length(0)
+    totalHeight = SILE.types.length(0)
     SILE.typesetter:leaveHmode(1)
     local queue = SILE.typesetter.state.outputQueue
     for i = 1, #queue do
@@ -209,22 +210,22 @@ function package:registerCommands ()
     SILE.typesetter:leaveHmode()
     local hbox = SILE.typesetter:makeHbox(content) -- HACK What about migrating nodes here?
     local heightOfPageSoFar = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue).height
-    local overshoot = SILE.length(heightOfPageSoFar + hbox.height - SILE.typesetter:getTargetLength())
-    if overshoot > SILE.length(0) then
+    local overshoot = SILE.types.length(heightOfPageSoFar + hbox.height - SILE.typesetter:getTargetLength())
+    if overshoot > SILE.types.length(0) then
       SILE.call("eject")
       SILE.typesetter:leaveHmode()
     end
     self:breakFrameVertical()
-    local boundary = hbox.width + SILE.length(options.rightboundary):absolute()
+    local boundary = hbox.width + SILE.types.length(options.rightboundary):absolute()
     breakFrameHorizontalAt(boundary)
     SILE.typesetNaturally(SILE.typesetter.frame.previous, function ()
       table.insert(SILE.typesetter.state.nodes, hbox)
     end)
-    -- SILE.settings:set("document.baselineskip", SILE.length("1ex") - SILE.settings:get("document.baselineskip").height)
+    -- SILE.settings:set("document.baselineskip", SILE.types.length("1ex") - SILE.settings:get("document.baselineskip").height)
     -- undoSkip.stretch = hbox.height
     -- SILE.typesetter:pushHbox({ value = {} })
     -- SILE.typesetter:pushVglue({ height = undoSkip })
-    self:breakFrameVertical(hbox.height + SILE.length(options.bottomboundary):absolute())
+    self:breakFrameVertical(hbox.height + SILE.types.length(options.bottomboundary):absolute())
     shiftframeedge(SILE.getFrame(SILE.typesetter.frame.next), { left = -boundary })
     --SILE.outputter:debugFrame(SILE.typesetter.frame)
   end, "Sets the given content in its own frame, flowing the remaining content around it")
@@ -243,7 +244,7 @@ function package:registerCommands ()
       SU.error("Can't find frame "..options.frame.." to fit")
     end
     local frame = SILE.frames[options.frame]
-    local height = SILE.length()
+    local height = SILE.types.length()
     SILE.typesetNaturally(frame, function ()
       SILE.typesetter:leaveHmode()
       for i = 1, #SILE.typesetter.state.outputQueue do
