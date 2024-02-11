@@ -1,5 +1,6 @@
 project = "SILE"
 description = "The SILE Typesetter"
+readme = "../README.md"
 dir = "../lua-api-docs"
 format = "discount"
 file = {
