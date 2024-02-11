@@ -1,3 +1,6 @@
+--- SILE color type.
+-- @classmod SILE.types.color
+
 local colornames = {
   aliceblue = { 240, 248, 255 },
   antiquewhite = { 250, 235, 215 },

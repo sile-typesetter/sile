@@ -1,5 +1,5 @@
---- SILE typesetter base class.
---- @module SILE.typesetters.base
+--- SILE typesetter class.
+-- @classmod SILE.typesetters
 
 --- @type typesetter
 local typesetter = pl.class()

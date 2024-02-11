@@ -1,7 +1,30 @@
 --- The core SILE library
 -- @module SILE
 
--- Placeholder for SILE internals
+--- Global library provisions.
+-- @section globals
+-- Loading SILE foo
+
+--- Penlight.
+-- On-demand module loader, provided for SILE and document usage
+pl = require("pl.import_into")()
+
+-- For developer testing only, usually in CI
+if os.getenv("SILE_COVERAGE") then require("luacov") end
+
+--- UTF-8 String handler.
+-- Lua 5.3+ has a UTF-8 safe string function module but it is somewhat
+-- underwhelming. This module includes more functions and supports older Lua
+-- versions. Docs: https://github.com/starwing/luautf8
+luautf8 = require("lua-utf8")
+
+--- Fluent localization library.
+fluent = require("fluent")()
+
+-- Reserve global scope placeholder for profiler (developer tooling)
+local ProFi
+
+-- Placeholder for SILE internals table
 SILE = {}
 
 --- Fields
@@ -41,26 +64,6 @@ SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit a
 
 -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 if not SILE.lua_isjit and SILE.lua_version < "5.3" then require("compat53") end
-
--- Penlight on-demand module loader, provided for SILE and document usage
-pl = require("pl.import_into")()
-
--- For developer testing only, usually in CI
-if os.getenv("SILE_COVERAGE") then require("luacov") end
-
--- Lua 5.3+ has a UTF-8 safe string function module but it is somewhat
--- underwhelming. This module includes more functions and supports older Lua
--- versions. Docs: https://github.com/starwing/luautf8
-luautf8 = require("lua-utf8")
-
--- Localization library, provided as global
-fluent = require("fluent")()
-
--- Includes for _this_ scope
-local lfs = require("lfs")
-
--- Developer tooling profiler
-local ProFi
 
 -- For warnings and shims scheduled for removal that are easier to keep track
 -- of when they are not spread across so many locations...
@@ -157,8 +160,8 @@ SILE.input = {
   evaluateAfters = {},
   uses = {},
   options = {},
-  preambles = {},
-  postambles = {},
+  preambles = {}, -- deprecated, undocumented
+  postambles = {}, -- deprecated, undocumented
 }
 
 -- Internal libraries that are idempotent and return classes that need instantiation
@@ -469,6 +472,7 @@ end
 -- @tparam[opt] nil|string format The name of the formatter. If nil, defaults to using each intputter's auto detection.
 -- @tparam[opt] nil|table options Options to pass to the inputter instance when instantiated.
 function SILE.processFile (filename, format, options)
+  local lfs = require("lfs")
   local doc
   if filename == "-" then
     filename = "STDIN"
@@ -588,6 +592,8 @@ end
 -- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
 -- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
 -- messages. Usually auto-detected.
+-- @see SILE.classes
+-- @see SILE.packages
 function SILE.registerCommand (name, func, help, pack, cheat)
   local class = SILE.documentState.documentClass
   if not cheat then

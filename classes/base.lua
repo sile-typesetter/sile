@@ -1,3 +1,6 @@
+--- SILE document class class.
+-- @classmod SILE.classes
+
 local class = pl.class()
 class.type = "class"
 class._name = "base"

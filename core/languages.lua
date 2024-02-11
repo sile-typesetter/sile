@@ -1,3 +1,6 @@
+--- SILE language class.
+-- @classmod SILE.languages
+
 local loadkit = require("loadkit")
 local cldr = require("cldr")
 

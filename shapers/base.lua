@@ -1,3 +1,6 @@
+--- SILE shaper class.
+-- @classmod SILE.shapers
+
 -- local smallTokenSize = 20 -- Small words will be cached
 -- local shapeCache = {}
 -- local _key = function (options)

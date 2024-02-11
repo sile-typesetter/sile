@@ -1,3 +1,6 @@
+--- SILE pagebuilder class.
+-- @classmod SILE.pagebuilders
+
 local pagebuilder = pl.class()
 pagebuilder.type = "pagebuilder"
 pagebuilder._name = "base"

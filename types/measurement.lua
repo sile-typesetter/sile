@@ -1,3 +1,7 @@
+--- SILE measurement type.
+-- @classmod SILE.types.measurement
+--
+
 local function _tonumber (amount)
   return SU.cast("number", amount)
 end

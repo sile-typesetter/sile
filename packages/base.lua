@@ -1,3 +1,6 @@
+--- SILE package class.
+-- @classmod SILE.packages
+
 local package = pl.class()
 package.type = "package"
 package._name = "base"

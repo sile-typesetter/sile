@@ -1,3 +1,6 @@
+--- SILE inputter class.
+-- @classmod SILE.inputters
+
 local _deprecated = [[
   You appear to be using a document class '%s' programmed for SILE <= v0.12.5.
   This system was refactored in v0.13.0 and the shims trying to make it
