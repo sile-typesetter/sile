@@ -18,14 +18,14 @@ local epsilon = 1E-12
 -- include functions, other tables, data types, etc.
 -- @tparam table array Input.
 -- @tparam[opt=" "] string separator Separator.
-utilities.concat = function (array, separator)
+function utilities.concat (array, separator)
   return table.concat(utilities.map(tostring, array), separator)
 end
 
 --- Execute a callback function on each value in a table.
 -- @tparam function func Function to run on each value.
 -- @tparam table array Input list-like table.
-utilities.map = function (func, array)
+function utilities.map (func, array)
   local new_array = {}
   local last = #array
   for i = 1, last do
@@ -39,7 +39,7 @@ end
 -- @param name Name of the required option.
 -- @param context User friendly name of the function or calling context.
 -- @param required_type The name of a data type that the option must sucessfully cast to.
-utilities.required = function (options, name, context, required_type)
+function utilities.required (options, name, context, required_type)
   if not options[name] then utilities.error(context.." needs a "..name.." parameter") end
   if required_type then
     return utilities.cast(required_type, options[name])
@@ -52,7 +52,7 @@ end
 -- of `pairs` that will iterate through the values in the order of their *sorted* keys.
 -- @tparam table input Input table.
 -- @usage for val in SU.sortedpairs({ b: "runs second", a: "runs first" ) do print(val) end
-utilities.sortedpairs = function (input)
+function utilities.sortedpairs (input)
   local keys = {}
   for k, _ in pairs(input) do
     keys[#keys+1] = k
@@ -76,7 +76,7 @@ end
 -- @tparam integer stop Last key to replace.
 -- @tparam table replacement Table from which to pull key/values plairs to inject in array.
 -- @treturn table array First input array modified with values from replacement.
-utilities.splice = function (array, start, stop, replacement)
+function utilities.splice (array, start, stop, replacement)
   local ptr = start
   local room = stop - start + 1
   local last = replacement and #replacement or 0
@@ -97,7 +97,7 @@ utilities.splice = function (array, start, stop, replacement)
 end
 
 -- TODO: Unused, now deprecated?
-utilities.inherit = function (orig, spec)
+function utilities.inherit (orig, spec)
   local new = pl.tablex.deepcopy(orig)
   if spec then
     for k,v in pairs(spec) do new[k] = v end
@@ -120,7 +120,7 @@ end
 -- @tparam nil|bool|string value Input value such as a string to evaluate for thruthyness.
 -- @tparam[opt=false] boolean default Whether to assume inputs that don't specifically evaluate to something should be true or false.
 -- @treturn boolean
-utilities.boolean = function (value, default)
+function utilities.boolean (value, default)
   if value == false then return false end
   if value == true then return true end
   if value == "false" then return false end
@@ -139,7 +139,7 @@ end
 -- a SILE.types.node.glue, but not a SILE.types.color.
 -- @tparam string wantedType Expected type.
 -- @return A value of the type wantedType.
-utilities.cast = function (wantedType, value)
+function utilities.cast (wantedType, value)
   local actualType = SU.type(value)
   wantedType = string.lower(wantedType)
   if wantedType:match(actualType)     then return value
@@ -182,7 +182,7 @@ end
 -- @tparam any value Any input value. If a table is one of SILE's classes or types, report on it's internal type.
 -- Otherwise use the output of `type`.
 -- @treturn string
-utilities.type = function(value)
+function utilities.type (value)
   if type(value) == "number" then
     return math.floor(value) == value and "integer" or "number"
   elseif type(value) == "table" and value.prototype then
@@ -208,7 +208,7 @@ end
 --    > glue = SILE.types.node.glue("6em")
 --    > SU.debug("foo", "A glue node", glue)
 --    [foo] A glue node G<6em>
-utilities.debug = function (category, ...)
+function utilities.debug (category, ...)
   if SILE.quiet then return end
   if utilities.debugging(category) then
     local inputs = pl.utils.pack(...)
@@ -228,7 +228,7 @@ end
 --- Determine if a specific debug flag is set.
 -- @tparam string category Name of the flag status to check, e.g. "frames".
 -- @treturn boolean
-utilities.debugging = function (category)
+function utilities.debugging (category)
   return SILE.debugFlags.all and category ~= "profile" or SILE.debugFlags[category]
 end
 
@@ -241,7 +241,7 @@ end
 -- a shim.
 -- @tparam string errorat The first release where the interface is no longer functional even with a shim.
 -- @tparam string extra Longer-form help to include in output separate from the expected one-liner of warning messages.
-utilities.deprecated = function (old, new, warnat, errorat, extra)
+function utilities.deprecated (old, new, warnat, errorat, extra)
   warnat, errorat = semver(warnat or 0), semver(errorat or 0)
   local current = SILE.version and semver(SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)")) or warnat
   -- SILE.version is defined *after* most of SILE loads. It’s available at
@@ -262,7 +262,7 @@ end
 --- Dump the contents of a any Lua type.
 -- For quick debugging, can be used on any number of any type of Lua value. Pretty-prints tables.
 -- @tparam any ... Any number of values
-utilities.dump = function (...)
+function utilities.dump (...)
   local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
   pl.pretty.dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
 end
@@ -273,7 +273,7 @@ local _skip_traceback_levels = 2
 -- Outputs a warning message via `warn`, then finishes up anything it can without processing more content, then exits.
 -- @tparam string message The error message to give.
 -- @tparam boolean isbug Whether or not hitting this error is expected to be a code bug (as opposed to misakes in user input).
-utilities.error = function (message, isbug)
+function utilities.error (message, isbug)
   _skip_traceback_levels = 3
   utilities.warn(message, isbug)
   _skip_traceback_levels = 2
@@ -286,7 +286,7 @@ end
 --- Output an information message.
 -- Basically like `warn`, except to source tracing information is added.
 -- @tparam string message
-utilities.msg = function (message)
+function utilities.msg (message)
   if SILE.quiet then return end
   io.stderr:write("\n! " .. message .. "\n")
 end
@@ -295,7 +295,7 @@ end
 -- Outputs a warning message including identifying where in the processing SILE is at when the warning is given.
 -- @tparam string message The error message to give.
 -- @tparam boolean isbug Whether or not hitting this warning is expected to be a code bug (as opposed to misakes in user input).
-utilities.warn = function (message, isbug)
+function utilities.warn (message, isbug)
   utilities.msg(message)
   if SILE.traceback or isbug then
     io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
@@ -318,7 +318,7 @@ end
 -- @tparam float lhs
 -- @tparam float rhs
 -- @treturn boolean
-utilities.feq = function (lhs, rhs)
+function utilities.feq (lhs, rhs)
   lhs = SU.cast("number", lhs)
   rhs = SU.cast("number", rhs)
   local abs = math.abs
@@ -328,7 +328,7 @@ end
 --- Add up all the values in a table.
 -- @tparam table array Input list-like table.
 -- @treturn number Sum of all values.
-utilities.sum = function (array)
+function utilities.sum (array)
   local total = 0
   local last = #array
   for i = 1, last do
@@ -340,7 +340,7 @@ end
 --- Return maximum value of inputs.
 -- `math.max`, but works on SILE types such as SILE.types.measurement.
 -- Lua <= 5.2 can't handle math operators on objects.
-utilities.max = function (...)
+function utilities.max (...)
   local input = pl.utils.pack(...)
   local max = table.remove(input, 1)
   for _, val in ipairs(input) do
@@ -352,7 +352,7 @@ end
 --- Return minimum value of inputs.
 -- `math.min`, but works on SILE types such as SILE.types.measurement.
 -- Lua <= 5.2 can't handle math operators on objects.
-utilities.min = function (...)
+function utilities.min (...)
   local input = pl.utils.pack(...)
   local min = input[1]
   for _, val in ipairs(input) do
@@ -372,7 +372,7 @@ end
 -- whereas normal LUA VMs can be cooerced.
 -- @tparam number input Input value.
 -- @treturn string Four-digit precision foating point.
-utilities.debug_round = function (input)
+function utilities.debug_round (input)
   if input > 0 then input = input + .00000000000001 end
   if input < 0 then input = input - .00000000000001 end
   return string.format("%.4f", input)
@@ -383,7 +383,7 @@ end
 -- { 1 = "a", 2 = "b" } which can be iterated using `ipairs` without stopping after 1.
 -- @tparam table items List-like table potentially with holes.
 -- @treturn table List like table without holes.
-utilities.compress = function (items)
+function utilities.compress (items)
   local rv = {}
   local max = math.max(pl.utils.unpack(pl.tablex.keys(items)))
   for i = 1, max do if items[i] then rv[#rv+1] = items[i] end end
@@ -392,7 +392,7 @@ end
 
 --- Reverse the order of a list-like table.
 -- @tparam table tbl Input list-like table.
-utilities.flip_in_place = function (tbl)
+function utilities.flip_in_place (tbl)
   local tmp, j
   for i = 1, math.floor(#tbl / 2) do
     tmp = tbl[i]
@@ -403,7 +403,7 @@ utilities.flip_in_place = function (tbl)
 end
 
 -- TODO: Before documenting, consider whether this should be private to the one existing usage.
-utilities.allCombinations = function (options)
+function utilities.allCombinations (options)
   local count = 1
   for i=1,#options do count = count * options[i] end
   return coroutine.wrap(function()
@@ -421,13 +421,13 @@ utilities.allCombinations = function (options)
 end
 
 
-utilities.rateBadness = function(inf_bad, shortfall, spring)
+function utilities.rateBadness (inf_bad, shortfall, spring)
   if spring == 0 then return inf_bad end
   local bad = math.floor(100 * math.abs(shortfall / spring) ^ 3)
   return math.min(inf_bad, bad)
 end
 
-utilities.rationWidth = function (target, width, ratio)
+function utilities.rationWidth (target, width, ratio)
   if ratio < 0 and width.shrink:tonumber() > 0 then
     target:___add(width.shrink:tonumber() * ratio)
   elseif ratio > 0 and width.stretch:tonumber() > 0 then
@@ -444,7 +444,7 @@ end
 -- @tparam string pattern Pattern on which to split the input.
 -- @treturn function An iterator function
 -- @usage for str in SU.gtoke("foo-bar-baz", "-") do print(str) end
-utilities.gtoke = function (string, pattern)
+function utilities.gtoke (string, pattern)
   string = string and tostring(string) or ''
   pattern = pattern and tostring(pattern) or "%s+"
   local length = #string
@@ -469,7 +469,7 @@ end
 --- Convert a Unicode character to its corresponding codepoint.
 -- @tparam string uchar A single inicode character.
 -- @return number The Unicode code point where uchar is encoded.
-utilities.codepoint = function (uchar)
+function utilities.codepoint (uchar)
   local seq = 0
   local val = -1
   for i = 1, #uchar do
@@ -491,7 +491,7 @@ end
 --- Covert a code point to a Unicode character.
 -- @tparam number|string codepoint Input code point value, either as a number or a string representing the decimal value "U+NNNN" or hex value "0xFFFF".
 -- @treturn string The character replestened by a codepoint descriptions.
-utilities.utf8charfromcodepoint = function (codepoint)
+function utilities.utf8charfromcodepoint (codepoint)
   local val = codepoint
   local cp = val
   local hex = (cp:match("[Uu]%+(%x+)") or cp:match("0[xX](%x+)"))
@@ -512,7 +512,7 @@ end
 -- @tparam string ustr Input string.
 -- @tparam string endian Either "le" or "be" depending on the enconding endedness.
 -- @treturn string Serious of hex encoded code points.
-utilities.utf16codes = function (ustr, endian)
+function utilities.utf16codes (ustr, endian)
   local pos = 1
   return function()
     if pos > #ustr then
@@ -550,7 +550,7 @@ end
 -- to split it into 1, 2, 3, or 4 byte grups matching the UTF-8 encoding.
 -- @tparam string str Input UTF-8 encoded string.
 -- @treturn table A list-like table of UTF8 strings each representing a Unicode char from the input string.
-utilities.splitUtf8 = function (str)
+function utilities.splitUtf8 (str)
   local rv = {}
   for _, cp in luautf8.next, str do
     table.insert(rv, luautf8.char(cp))
@@ -563,7 +563,7 @@ end
 -- more than one byte.
 -- @tparam string str Input string.
 -- @treturn string A single Unicode character.
-utilities.lastChar = function (str)
+function utilities.lastChar (str)
   local chars = utilities.splitUtf8(str)
   return chars[#chars]
 end
@@ -573,7 +573,7 @@ end
 -- more than one byte.
 -- @tparam string str Input string.
 -- @treturn string A single Unicode character.
-utilities.firstChar = function (str)
+function utilities.firstChar (str)
   local chars = utilities.splitUtf8(str)
   return chars[1]
 end
@@ -586,7 +586,7 @@ local byte, floor, reverse = string.byte, math.floor, string.reverse
 -- @tparam string str Input string.
 -- @tparam number index Index of character to return.
 -- @treturn string A single Unicode character.
-utilities.utf8charat = function (str, index)
+function utilities.utf8charat (str, index)
   return str:sub(index):match("([%z\1-\127\194-\244][\128-\191]*)")
 end
 
@@ -597,7 +597,7 @@ end
 --- Encode a string to a hexidecimal replesentation.
 -- @tparam string str Input UTF-8 string
 -- @treturn string Hexidecimal replesentation of str.
-utilities.hexencoded = function (str)
+function utilities.hexencoded (str)
   local ustr = ""
   for i = 1, #str do
     ustr = ustr..string.format("%02x", byte(str, i, i+1))
@@ -608,7 +608,7 @@ end
 --- Decode a hexidecimal replesentation into a string.
 -- @tparam string str Input hexidecimal encoded string.
 -- @treturn string UTF-8 string.
-utilities.hexdecoded = function (str)
+function utilities.hexdecoded (str)
   if #str % 2 == 1 then SU.error("Cannot decode hex string with odd len") end
   local ustr = ""
   for i = 1, #str, 2 do
@@ -640,22 +640,22 @@ end
 --- Convert a UTF-8 string to big-endian UTF-16.
 -- @tparam string str UTF-8 encoded string.
 -- @treturn string Big-endian UTF-16 encoded string.
-utilities.utf8_to_utf16be = function (str) return utf8_to_utf16(str, "be") end
+function utilities.utf8_to_utf16be (str) return utf8_to_utf16(str, "be") end
 
 --- Convert a UTF-8 string to little-endian UTF-16.
 -- @tparam string str UTF-8 encoded string.
 -- @treturn string Little-endian UTF-16 encoded string.
-utilities.utf8_to_utf16le = function (str) return utf8_to_utf16(str, "le") end
+function utilities.utf8_to_utf16le (str) return utf8_to_utf16(str, "le") end
 
 --- Convert a UTF-8 string to big-endian UTF-16, then encode in hex.
 -- @tparam string str UTF-8 encoded string.
 -- @treturn string Hexidecimal representation of a big-endian UTF-16 encoded string.
-utilities.utf8_to_utf16be_hexencoded = function (str) return utilities.hexencoded(utilities.utf8_to_utf16be(str)) end
+function utilities.utf8_to_utf16be_hexencoded (str) return utilities.hexencoded(utilities.utf8_to_utf16be(str)) end
 
 --- Convert a UTF-8 string to little-endian UTF-16, then encode in hex.
 -- @tparam string str UTF-8 encoded string.
 -- @treturn string Hexidecimal representation of a little-endian UTF-16 encoded string.
-utilities.utf8_to_utf16le_hexencoded = function (str) return utilities.hexencoded(utilities.utf8_to_utf16le(str)) end
+function utilities.utf8_to_utf16le_hexencoded (str) return utilities.hexencoded(utilities.utf8_to_utf16le(str)) end
 
 local utf16_to_utf8 = function (str, endianness)
   local bom = utf16bom(endianness)
@@ -671,14 +671,14 @@ end
 --- Convert a big-endian UTF-16 string to UTF-8.
 -- @tparam string str Big-endian UTF-16 encoded string.
 -- @treturn string UTF-8 encoded string.
-utilities.utf16be_to_utf8 = function (str) return utf16_to_utf8(str, "be") end
+function utilities.utf16be_to_utf8 (str) return utf16_to_utf8(str, "be") end
 
 --- Convert a little-endian UTF-16 string to UTF-8.
 -- @tparam string str Little-endian UTF-16 encoded string.
 -- @treturn string UTF-8 encoded string.
-utilities.utf16le_to_utf8 = function (str) return utf16_to_utf8(str, "le") end
+function utilities.utf16le_to_utf8 (str) return utf16_to_utf8(str, "le") end
 
-utilities.breadcrumbs = function ()
+function utilities.breadcrumbs ()
   local breadcrumbs = {}
 
   setmetatable (breadcrumbs, {
@@ -720,28 +720,28 @@ utilities.collatedSort = require("core.utilities.sorting")
 utilities.ast = require("core.utilities.ast")
 utilities.debugAST = utilities.ast.debug
 
-utilities.subContent = function (content)
+function utilities.subContent (content)
   SU.deprecated("SU.subContent", "SU.ast.subContent", "0.15.0", "0.17.0", [[
     Note that the new implementation no longer introduces an id="stuff" key.]])
   return utilities.ast.subContent(content)
 end
 
-utilities.hasContent = function(content)
+function utilities.hasContent (content)
   SU.deprecated("SU.hasContent", "SU.ast.hasContent", "0.15.0", "0.17.0")
   return SU.ast.hasContent(content)
 end
 
-utilities.contentToString = function (content)
+function utilities.contentToString (content)
   SU.deprecated("SU.contentToString", "SU.ast.contentToString", "0.15.0", "0.17.0")
   return SU.ast.contentToString(content)
 end
 
-utilities.walkContent = function (content, action)
+function utilities.walkContent (content, action)
   SU.deprecated("SU.walkContent", "SU.ast.walkContent", "0.15.0", "0.17.0")
   SU.ast.walkContent(content, action)
 end
 
-utilities.stripContentPos = function (content)
+function utilities.stripContentPos (content)
   SU.deprecated("SU.stripContentPos", "SU.ast.stripContentPos", "0.15.0", "0.17.0")
   return SU.ast.stripContentPos(content)
 end
