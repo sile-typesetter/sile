@@ -36,9 +36,10 @@ utilities.boolean = function (value, default)
   if value == "true" then return true end
   if value == "no" then preferbool(); return false end
   if value == "yes" then preferbool(); return true end
-  if value == nil then return default end
+  if value == nil then return default == true end
+  if value == "" then return default == true end
   SU.error("Expecting a boolean value but got '" .. value .. "'")
-  return default
+  return default == true
 end
 
 local _skip_traceback_levels = 2
