@@ -73,7 +73,8 @@ require("core/deprecations")
 --- Modules
 -- @section modules
 
---- Utilities module, aliased as `SU`.
+--- Utilities module, typically accessed via `SU` alias.
+-- @see SU
 SILE.utilities = require("core.utilities")
 SU = SILE.utilities -- regrettable global alias
 

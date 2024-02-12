@@ -1,15 +1,16 @@
---- SILE AST utilities
---- @module SU.ast
+--- AST utilities.
+-- Functions for working with SILE's Abstract Syntax Trees.
+-- @module SU.ast
 
---- @type ast
+-- @type SU.ast
 local ast = {}
 
 --- Find a command node in a SILE AST tree,
---- looking only at the first level.
---- (We're not reimplementing XPath here.)
----@param tree      table       AST tree
----@param command   string      command name
----@return          table|nil   AST command node
+-- looking only at the first level.
+-- (We're not reimplementing XPath here.)
+-- @tparam table tree AST tree
+-- @tparam string command command name
+-- @treturn table|nil AST command node
 function ast.findInTree (tree, command)
   for i=1, #tree do
     if type(tree[i]) == "table" and tree[i].command == command then
@@ -19,10 +20,10 @@ function ast.findInTree (tree, command)
 end
 
 --- Find and extract (remove) a command node in a SILE AST tree,
---- looking only at the first level.
----@param tree      table       AST tree
----@param command   string      command name
----@return          table|nil   AST command node
+-- looking only at the first level.
+-- @tparam table tree AST tree
+-- @tparam string command command name
+-- @treturn table|nil AST command node
 function ast.removeFromTree (tree, command)
   for i=1, #tree do
     if type(tree[i]) == "table" and tree[i].command == command then
@@ -32,12 +33,12 @@ function ast.removeFromTree (tree, command)
 end
 
 --- Create a command from a simple content tree.
---- It encapsulates the content in a command node.
----@param command   string      command name
----@param options   table       command options
----@param content   table       child AST tree
----@param position  table       position in source (or parent AST command node)
----@return          table       AST command node
+-- It encapsulates the content in a command node.
+-- @tparam string command command name
+-- @tparam table options command options
+-- @tparam table content child AST tree
+-- @tparam table position position in source (or parent AST command node)
+-- @treturn table       AST command node
 function ast.createCommand (command, options, content, position)
   local result = { content }
   result.options = options or {}
@@ -56,12 +57,12 @@ function ast.createCommand (command, options, content, position)
 end
 
 --- Create a command from a structured content tree.
---- The content is normally a table of an already prepared content list.
----@param command   string    command name
----@param options   table     command options
----@param content   table     child AST tree
----@param position  table     position in source (or parent AST command node)
----@return          table     AST command node
+-- The content is normally a table of an already prepared content list.
+-- @tparam string command command name
+-- @tparam table options command options
+-- @tparam table content child AST tree
+-- @tparam table position position in source (or parent AST command node)
+-- @treturn table AST command node
 function ast.createStructuredCommand (command, options, content, position)
   local result = type(content) == "table" and content or { content }
   result.options = options or {}
@@ -80,9 +81,9 @@ function ast.createStructuredCommand (command, options, content, position)
 end
 
 --- Extract the sub-content tree from a (command) node,
---- that is the child nodes of the (command) node.
----@param content   table   AST tree
----@return          table   AST tree
+-- that is the child nodes of the (command) node.
+-- @tparam table content AST tree
+-- @treturn table AST tree
 function ast.subContent (content)
   local out = {}
   for _, val in ipairs(content) do
@@ -101,8 +102,8 @@ end
 
 --- Content tree trimming: remove leading and trailing spaces, but from
 --- a content tree i.e. possibly containing several elements.
----@param content   table   AST tree
----@return          table   AST tree
+-- @tparam table content AST tree
+-- @treturn table AST tree
 function ast.trimSubContent (content)
   if #content == 0 then
     return
@@ -123,10 +124,10 @@ function ast.trimSubContent (content)
 end
 
 --- Process the AST walking through content nodes as a "structure":
---- Text nodes are ignored (e.g. usually just spaces due to indentation)
---- Command options are enriched with their "true" node position, so we can later
---- refer to it (as with an XPath pos()).
----@param content   table   AST tree
+-- Text nodes are ignored (e.g. usually just spaces due to indentation)
+-- Command options are enriched with their "true" node position, so we can later
+-- refer to it (as with an XPath pos()).
+-- @tparam table content AST tree
 function ast.processAsStructure (content)
   local iElem = 0
   local nElem = 0
@@ -147,9 +148,9 @@ function ast.processAsStructure (content)
 end
 
 --- Call `action` on each content AST node, recursively, including `content` itself.
---- Not called on leaves, i.e. strings.
----@param content   table       AST tree
----@param action    function    function to call on each node
+-- Not called on leaves, i.e. strings.
+-- @tparam table content AST tree
+-- @tparam function action A function to call on each node
 function ast.walkContent (content, action)
   if type(content) ~= "table" then
     return
@@ -161,12 +162,12 @@ function ast.walkContent (content, action)
 end
 
 --- Strip position, line and column recursively from a content tree.
---- This can be used to remove position details where we do not want them,
---- e.g. in table of contents entries (referring to the original content,
---- regardless where it was exactly, for the purpose of checking whether
---- the table of contents changed.)
----@param content   table   AST tree
----@return          table   AST tree
+-- This can be used to remove position details where we do not want them,
+-- e.g. in table of contents entries (referring to the original content,
+-- regardless where it was exactly, for the purpose of checking whether
+-- the table of contents changed.)
+-- @param table content AST tree
+-- @treturn table AST tree
 function ast.stripContentPos (content)
   if type(content) ~= "table" then
     return content
@@ -185,9 +186,9 @@ function ast.stripContentPos (content)
 end
 
 --- Flatten content trees into just the string components (allows passing
---- objects with complex structures to functions that need plain strings)
---- @param content   table   AST tree
---- @return          string  string representation of content
+-- objects with complex structures to functions that need plain strings)
+-- @tparam table content AST tree
+-- @treturn string A string representation of content
 function ast.contentToString (content)
   local string = ""
   for i = 1, #content do
@@ -206,8 +207,8 @@ function ast.contentToString (content)
 end
 
 --- Check whether a content AST tree is empty.
----@param content   table     AST tree
----@return          boolean   true if content is not empty
+-- @tparam table content AST tree
+-- @treturn boolean true if content is not empty
 function ast.hasContent (content)
   return type(content) == "function" or type(content) == "table" and #content > 0
 end

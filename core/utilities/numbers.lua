@@ -1,6 +1,5 @@
---- Number formatting utilities
---- @submodule SU
---- submodule SU
+--- Number formatting utilities.
+--- @module SU.numbers
 
 local icu = require("justenoughicu")
 

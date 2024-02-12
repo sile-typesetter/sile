@@ -1,22 +1,23 @@
---- SILE.Utilities (aliased as SU)
---- @module SU
---- alias SU.utilities
+--- SILE.utilities (aliased as SU)
+-- @module SU
+-- @alias utilities
 
 local bitshim = require("bitshim")
 local luautf8 = require("lua-utf8")
 local semver = require("semver")
 
---- @type utilities
 local utilities = {}
 
 local epsilon = 1E-12
 
+--- Generic
+-- @section generic
+
 --- Require that an option table contains a specific value, otherwise raise an error.
---- @param options Input table of options.
---- @param name Name of the required option.
---- @param context User friendly name of the function or calling context.
---- @param required_type The name of a data type that the option must sucessfully cast to.
--- SU.required
+-- @param options Input table of options.
+-- @param name Name of the required option.
+-- @param context User friendly name of the function or calling context.
+-- @param required_type The name of a data type that the option must sucessfully cast to.
 utilities.required = function (options, name, context, required_type)
   if not options[name] then utilities.error(context.." needs a "..name.." parameter") end
   if required_type then
@@ -29,6 +30,13 @@ local function preferbool ()
   utilities.warn("Please use boolean values or strings such as 'true' and 'false' instead of 'yes' and 'no'.")
 end
 
+--- Cast user intput into a boolean type.
+-- User input content such as options typed into documents will return string values such as "true" or "false rather
+-- than true or false types. This evaluates those strings or other inputs ane returns a consistent boolean type in
+-- return.
+-- @tparam nil|bool|string value Input value such as a string to evaluate for thruthyness.
+-- @tparam[opt=false] boolean default Whether to assume inputs that don't specifically evaluate to something should be true or false.
+-- @treturn boolean
 utilities.boolean = function (value, default)
   if value == false then return false end
   if value == true then return true end
@@ -44,6 +52,10 @@ end
 
 local _skip_traceback_levels = 2
 
+--- Raise an error and exit.
+-- Outputs a warning message via `warn`, then finishes up anything it can without processing more content, then exits.
+-- @tparam string message The error message to give.
+-- @tparam boolean isbug Whether or not hitting this error is expected to be a code bug (as opposed to misakes in user input).
 utilities.error = function (message, isbug)
   _skip_traceback_levels = 3
   utilities.warn(message, isbug)
@@ -54,6 +66,10 @@ utilities.error = function (message, isbug)
   error("", 2)
 end
 
+--- Output a warning.
+-- Outputs a warning message including identifying where in the processing SILE is at when the warning is given.
+-- @tparam string message The error message to give.
+-- @tparam boolean isbug Whether or not hitting this warning is expected to be a code bug (as opposed to misakes in user input).
 utilities.warn = function (message, isbug)
   if SILE.quiet then return end
   io.stderr:write("\n! " .. message)
@@ -68,22 +84,42 @@ utilities.warn = function (message, isbug)
   io.stderr:write("\n")
 end
 
+--- Output an information message.
+-- @tparam string message
 utilities.msg = function (message)
   if SILE.quiet then return end
   io.stderr:write("\n! " .. message .. "\n")
 end
 
+--- Determine if a specific debug flag is set.
+-- @tparam string category Name of the flag status to check, e.g. "frames".
+-- @treturn boolean
 utilities.debugging = function (category)
   return SILE.debugFlags.all and category ~= "profile" or SILE.debugFlags[category]
 end
 
-utilities.feq = function (lhs, rhs) -- Float point equal
+--- Math
+-- @section math
+
+--- Check equality of floating point values.
+-- Comparing floating point numbers using math functions in Lua may give different and unexpected answers depending on
+-- the Lua VM and other environmental factors. This normalizes them using our standard internal epsilon value and
+-- compares the absolute intereger value to avoid floating point number wierdness.
+-- @tparam float lhs
+-- @tparam float rhs
+-- @treturn boolean
+utilities.feq = function (lhs, rhs)
   lhs = SU.cast("number", lhs)
   rhs = SU.cast("number", rhs)
   local abs = math.abs
   return abs(lhs - rhs) <= epsilon * (abs(lhs) + abs(rhs))
 end
 
+--- Iterate over a string split into tokens via a pattern.
+-- @tparam string string Input string.
+-- @tparam string pattern Pattern on which to split the input.
+-- @treturn function An iterator function
+-- @usage for str in SU.gtoke("foo-bar-baz", "-") do print(str) end
 utilities.gtoke = function (string, pattern)
   string = string and tostring(string) or ''
   pattern = pattern and tostring(pattern) or "%s+"
@@ -106,6 +142,15 @@ utilities.gtoke = function (string, pattern)
   end)
 end
 
+--- Warn about use of a deprecated feature.
+-- Checks the current version and decides whether to warn or error, then oatputs a message with as much useful
+-- information as possible to make it easy for end users to update their usage.
+-- @tparam string old The name of the deprecated interface.
+-- @tparam string new A name of a suggested replacement interface.
+-- @tparam string warnat The first release where the interface is considered deprecated, at which point their might be
+-- a shim.
+-- @tparam string errorat The first release where the interface is no longer functional even with a shim.
+-- @tparam string extra Longer-form help to include in output separate from the expected one-liner of warning messages.
 utilities.deprecated = function (old, new, warnat, errorat, extra)
   warnat, errorat = semver(warnat or 0), semver(errorat or 0)
   local current = SILE.version and semver(SILE.version:match("v([0-9]*.[0-9]*.[0-9]*)")) or warnat
@@ -124,6 +169,17 @@ utilities.deprecated = function (old, new, warnat, errorat, extra)
   end
 end
 
+--- Output a debug message only if debugging for a specific category is enabled.
+-- Importantly passing siries of strings, functions, or tables is more effecient than trying to formulate a full message
+-- using concatentation and tostring() methods in the original code because it doesn't have to even run if the relevant
+-- debug flag is not enabled.
+-- @tparam text category Category flag for which this message should be output.
+-- @tparam string|function|table ... Each argument will be returned separated by spaces, strings directly, functions by
+-- evaluating them and assuming the return value is a string, and tables by using their internal :__tostring() methods.
+-- @usage
+--    > glue = SILE.types.node.glue("6em")
+--    > SU.debug("foo", "A glue node", glue)
+--    [foo] A glue node G<6em>
 utilities.debug = function (category, ...)
   if SILE.quiet then return end
   if utilities.debugging(category) then
@@ -141,6 +197,9 @@ utilities.debug = function (category, ...)
   end
 end
 
+--- Output developer friendly debugging view of an AST.
+-- @tparam table ast Abstract Syntax Tree.
+-- @tparam integer level Starting level to review.
 utilities.debugAST = function (ast, level)
   if not ast then
     SU.error("debugAST called with nil", true)
@@ -180,15 +239,24 @@ utilities.debugAST = function (ast, level)
   if level == 0 then SU.debug("ast", "]") end
 end
 
+--- Dump the contents of a any Lua type.
+-- For quick debugging, can be used on any number of any type of Lua value. Pretty-prints tables.
+-- @tparam any ... Any number of values
 utilities.dump = function (...)
   local arg = { ... } -- Avoid things that Lua stuffs in arg like args to self()
   pl.pretty.dump(#arg == 1 and arg[1] or arg, "/dev/stderr")
 end
 
+--- Concatenate values from a table using a given separator.
+-- Differs from `table.concat` in that all values are explicitly cast to strings, allowing debugging of tables that
+-- include functions, other tables, data types, etc.
+-- @tparam table array Input.
+-- @tparam[opt=" "] string separator Separator.
 utilities.concat = function (array, separator)
   return table.concat(utilities.map(tostring, array), separator)
 end
 
+-- TODO: Unused, now deprecated?
 utilities.inherit = function (orig, spec)
   local new = pl.tablex.deepcopy(orig)
   if spec then
@@ -198,6 +266,9 @@ utilities.inherit = function (orig, spec)
   return new
 end
 
+--- Execute a callback function on each value in a table.
+-- @tparam function func Function to run on each value.
+-- @tparam table array Input list-like table.
 utilities.map = function (func, array)
   local new_array = {}
   local last = #array
@@ -207,6 +278,11 @@ utilities.map = function (func, array)
   return new_array
 end
 
+--- Iterate over key/value pairs in sequence of the sorted keys.
+-- Table iteration order with `pairs` is non-deterministic. This function returns an iterator that can be used in plais
+-- of `pairs` that will iterate through the values in the order of their *sorted* keys.
+-- @tparam table input Input table.
+-- @usage for val in SU.sortedpairs({ b: "runs second", a: "runs first" ) do print(val) end
 utilities.sortedpairs = function (input)
   local keys = {}
   for k, _ in pairs(input) do
@@ -225,6 +301,12 @@ utilities.sortedpairs = function (input)
   end)
 end
 
+--- Substitute a range of value(s) in one table with values from another.
+-- @tparam table array Table to modify.
+-- @tparam integer start First key to replace.
+-- @tparam integer stop Last key to replace.
+-- @tparam table replacement Table from which to pull key/values plairs to inject in array.
+-- @treturn table array First input array modified with values from replacement.
 utilities.splice = function (array, start, stop, replacement)
   local ptr = start
   local room = stop - start + 1
@@ -245,6 +327,9 @@ utilities.splice = function (array, start, stop, replacement)
   return array
 end
 
+--- Add up all the values in a table.
+-- @tparam table array Input list-like table.
+-- @treturn number Sum of all values.
 utilities.sum = function (array)
   local total = 0
   local last = #array
@@ -254,7 +339,9 @@ utilities.sum = function (array)
   return total
 end
 
--- Lua <= 5.2 can't handle objects in math functions
+--- Return maximum value of inputs.
+-- `math.max`, but works on SILE types such as SILE.types.measurement.
+-- Lua <= 5.2 can't handle math operators on objects.
 utilities.max = function (...)
   local input = pl.utils.pack(...)
   local max = table.remove(input, 1)
@@ -264,6 +351,9 @@ utilities.max = function (...)
   return max
 end
 
+--- Return minimum value of inputs.
+-- `math.min`, but works on SILE types such as SILE.types.measurement.
+-- Lua <= 5.2 can't handle math operators on objects.
 utilities.min = function (...)
   local input = pl.utils.pack(...)
   local min = input[1]
@@ -273,6 +363,7 @@ utilities.min = function (...)
   return min
 end
 
+--- Round and normalize a number for debugging.
 -- LuaJIT 2.1 betas (and inheritors such as OpenResty and Moonjit) are biased
 -- towards rounding 0.5 up to 1, all other Lua interpreters are biased
 -- towards rounding such floating point numbers down.  This hack shaves off
@@ -281,12 +372,19 @@ end
 -- inherent to the floating point type. Also note we are erroring in favor of
 -- the *less* common option because the LuaJIT VMS are hopelessly broken
 -- whereas normal LUA VMs can be cooerced.
+-- @tparam number input Input value.
+-- @treturn string Four-digit precision foating point.
 utilities.debug_round = function (input)
   if input > 0 then input = input + .00000000000001 end
   if input < 0 then input = input - .00000000000001 end
   return string.format("%.4f", input)
 end
 
+--- Remove empty spaces from list-like tables
+-- Iterating list-like tables is hard if some values have been removed. This converts { 1 = "a", 3 = "b" } into
+-- { 1 = "a", 2 = "b" } which can be iterated using `ipairs()` without stopping after 1.
+-- @tparam table items List-like table potentially with holes.
+-- @treturn table List like table without holes.
 utilities.compress = function (items)
   local rv = {}
   local max = math.max(pl.utils.unpack(pl.tablex.keys(items)))
@@ -294,6 +392,8 @@ utilities.compress = function (items)
   return rv
 end
 
+--- Reverse the order of a list-like table.
+-- @tparam table tbl Input list-like table.
 utilities.flip_in_place = function (tbl)
   local tmp, j
   for i = 1, math.floor(#tbl / 2) do
@@ -304,6 +404,7 @@ utilities.flip_in_place = function (tbl)
   end
 end
 
+-- TODO: Before documenting, consider whether this should be private to the one existing usage.
 utilities.allCombinations = function (options)
   local count = 1
   for i=1,#options do count = count * options[i] end
@@ -321,6 +422,11 @@ utilities.allCombinations = function (options)
   end)
 end
 
+--- Return the type of an object
+-- Like `type`, but also handles various SILE user data types.
+-- @tparam any value Any input value. If a table is one of SILE's classes or types, report on it's internal type.
+-- Otherwise use the output of `type`.
+-- @treturn string
 utilities.type = function(value)
   if type(value) == "number" then
     return math.floor(value) == value and "integer" or "number"
@@ -333,6 +439,12 @@ utilities.type = function(value)
   end
 end
 
+--- Cast user intput to an expected type.
+-- If possible, converts input from one type to another. Not all types can be cast. For example "four" can't be cast to
+-- a number, but "4" or 4 can. Likewise "6pt" or 6 can be cast to a SILE.types.measurement, SILE.types.length, or even
+-- a SILE.types.node.glue, but not a SILE.types.color.
+-- @tparam string wantedType Expected type.
+-- @return A value of the type wantedType.
 utilities.cast = function (wantedType, value)
   local actualType = SU.type(value)
   wantedType = string.lower(wantedType)
@@ -386,12 +498,17 @@ utilities.rationWidth = function (target, width, ratio)
   return target
 end
 
--- Unicode-related utilities
+--- Unicode
+-- @section utf8
+
 utilities.utf8char = function (c)
   utilities.deprecated("SU.utf8char", "luautf8.char", "0.11.0", "0.12.0")
   return luautf8.char(c)
 end
 
+--- Convert a Unicode character to its corresponding codepoint.
+-- @tparam string uchar A single inicode character.
+-- @return number The Unicode code point where uchar is encoded.
 utilities.codepoint = function (uchar)
   local seq = 0
   local val = -1
@@ -411,6 +528,9 @@ utilities.codepoint = function (uchar)
   return val
 end
 
+--- Covert a code point to a Unicode character.
+-- @tparam number|string codepoint Input code point value, either as a number or a string representing the decimal value "U+NNNN" or hex value "0xFFFF".
+-- @treturn string The character replestened by a codepoint descriptions.
 utilities.utf8charfromcodepoint = function (codepoint)
   local val = codepoint
   local cp = val

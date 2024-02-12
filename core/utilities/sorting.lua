@@ -1,7 +1,6 @@
---
--- Table sorting with language-dependent collation
--- MIT License (c) 2022 SILE organization
---
+--- Table sorting with language-dependent collation.
+-- @module SU.sorting
+
 local icu = require("justenoughicu")
 
 local collatedSort = {
