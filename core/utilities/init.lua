@@ -232,48 +232,6 @@ utilities.debugging = function (category)
   return SILE.debugFlags.all and category ~= "profile" or SILE.debugFlags[category]
 end
 
---- Output developer friendly debugging view of an AST.
--- @tparam table ast Abstract Syntax Tree.
--- @tparam integer level Starting level to review.
-utilities.debugAST = function (ast, level)
-  if not ast then
-    SU.error("debugAST called with nil", true)
-  end
-  local out = string.rep("  ", 1+level)
-  if level == 0 then
-    SU.debug("ast", function ()
-      return "[" .. SILE.currentlyProcessingFile
-    end)
-  end
-  if type(ast) == "function" then
-    SU.debug("ast", function ()
-      return out .. tostring(ast)
-    end)
-  elseif type(ast) == "table" then
-    for _, content in ipairs(ast) do
-      if type(content) == "string" then
-        SU.debug("ast", function ()
-          return out .. "[" .. content .. "]"
-        end)
-      elseif type(content) == "table" then
-        if SILE.Commands[content.command] then
-          SU.debug("ast", function ()
-            return out .. "\\" .. content.command .. " " .. pl.pretty.write(content.options, "")
-          end)
-          if (#content>=1) then utilities.debugAST(content, level+1) end
-        elseif content.id == "content" or (not content.command and not content.id) then
-          utilities.debugAST(content, level+1)
-        else
-          SU.debug("ast", function ()
-            return out .. "?\\" .. (content.command or content.id)
-          end)
-        end
-      end
-    end
-  end
-  if level == 0 then SU.debug("ast", "]") end
-end
-
 --- Warn about use of a deprecated feature.
 -- Checks the current version and decides whether to warn or error, then oatputs a message with as much useful
 -- information as possible to make it easy for end users to update their usage.
@@ -760,6 +718,7 @@ utilities.formatNumber = require("core.utilities.numbers")
 utilities.collatedSort = require("core.utilities.sorting")
 
 utilities.ast = require("core.utilities.ast")
+utilities.debugAST = utilities.ast.debug
 
 utilities.subContent = function (content)
   SU.deprecated("SU.subContent", "SU.ast.subContent", "0.15.0", "0.17.0", [[

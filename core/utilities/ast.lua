@@ -5,6 +5,48 @@
 -- @type SU.ast
 local ast = {}
 
+--- Output developer friendly debugging view of an AST.
+-- @tparam table tree Abstract Syntax Tree.
+-- @tparam integer level Starting level to review.
+function ast.debug (tree, level)
+  if not tree then
+    SU.error("debugAST called with nil", true)
+  end
+  local out = string.rep("  ", 1+level)
+  if level == 0 then
+    SU.debug("ast", function ()
+      return "[" .. SILE.currentlyProcessingFile
+    end)
+  end
+  if type(tree) == "function" then
+    SU.debug("ast", function ()
+      return out .. tostring(tree)
+    end)
+  elseif type(tree) == "table" then
+    for _, content in ipairs(tree) do
+      if type(content) == "string" then
+        SU.debug("ast", function ()
+          return out .. "[" .. content .. "]"
+        end)
+      elseif type(content) == "table" then
+        if SILE.Commands[content.command] then
+          SU.debug("ast", function ()
+            return out .. "\\" .. content.command .. " " .. pl.pretty.write(content.options, "")
+          end)
+          if (#content>=1) then ast.debug(content, level+1) end
+        elseif content.id == "content" or (not content.command and not content.id) then
+          ast.debug(content, level+1)
+        else
+          SU.debug("ast", function ()
+            return out .. "?\\" .. (content.command or content.id)
+          end)
+        end
+      end
+    end
+  end
+  if level == 0 then SU.debug("ast", "]") end
+end
+
 --- Find a command node in a SILE AST tree,
 -- looking only at the first level.
 -- (We're not reimplementing XPath here.)
