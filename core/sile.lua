@@ -65,11 +65,6 @@ SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit a
 -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 if not SILE.lua_isjit and SILE.lua_version < "5.3" then require("compat53") end
 
--- For warnings and shims scheduled for removal that are easier to keep track
--- of when they are not spread across so many locations...
--- Loaded early to make it easier to manage migrations in core code.
-require("core/deprecations")
-
 --- Modules
 -- @section modules
 
@@ -77,6 +72,11 @@ require("core/deprecations")
 -- @see SU
 SILE.utilities = require("core.utilities")
 SU = SILE.utilities -- regrettable global alias
+
+-- For warnings and shims scheduled for removal that are easier to keep track
+-- of when they are not spread across so many locations...
+-- Loaded early to make it easier to manage migrations in core code.
+require("core/deprecations")
 
 -- On demand loader, allows modules to be loaded into a specific scope but
 -- only when/if accessed.

@@ -501,11 +501,6 @@ end
 --- Unicode
 -- @section utf8
 
-utilities.utf8char = function (c)
-  utilities.deprecated("SU.utf8char", "luautf8.char", "0.11.0", "0.12.0")
-  return luautf8.char(c)
-end
-
 --- Convert a Unicode character to its corresponding codepoint.
 -- @tparam string uchar A single inicode character.
 -- @return number The Unicode code point where uchar is encoded.
@@ -545,11 +540,6 @@ utilities.utf8charfromcodepoint = function (codepoint)
     val = luautf8.char(cp)
   end
   return val
-end
-
-utilities.utf8codes = function (ustr)
-  utilities.deprecated("SU.utf8codes", "luautf8.codes", "0.11.0", "0.12.0")
-  return luautf8.codes(ustr)
 end
 
 utilities.utf16codes = function (ustr, endian)
