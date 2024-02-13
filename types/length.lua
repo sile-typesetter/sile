@@ -75,26 +75,6 @@ function length:tonumber ()
   return self.length:tonumber()
 end
 
-function length.new (_)
-  SU.deprecated("SILE.length.new", "SILE.types.length", "0.10.0")
-end
-
-function length.make (_)
-  SU.deprecated("SILE.length.make", "SILE.types.length", "0.10.0")
-end
-
-function length.parse (_)
-  SU.deprecated("SILE.length.parse", "SILE.types.length", "0.10.0")
-end
-
-function length.fromLengthOrNumber (_, _)
-  SU.deprecated("SILE.length.fromLengthOrNumber", "SILE.types.length", "0.10.0")
-end
-
-function length.__index (_, key)
-  SU.deprecated("SILE.length." .. key, "SILE.types.length", "0.10.0")
-end
-
 function length:__tostring ()
   local str = tostring(self.length)
   if self.stretch.amount ~= 0 then str = str .. " plus " .. tostring(self.stretch) end
