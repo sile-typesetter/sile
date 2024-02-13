@@ -60,6 +60,7 @@ measurement._mutable = false
 --- Constructor.
 -- @tparam number|length|measurement|string amount Amount of units or a string with the amount and unit.
 -- @tparam[opt=pt] string unit Name of unit.
+-- @treturn measurement
 -- @usage
 -- SILE.types.measurement(3, "em")
 -- SILE.types.measurement("2%fw")
@@ -86,7 +87,7 @@ function measurement:_init (amount, unit)
 end
 
 --- Convert relative measurements to absolute values and return a measurement.
--- Resolves relative measurements (like em relevant to the currrent font size) into absolute measurements.
+-- Resolves relative measurements (like em relevant to the current font size) into absolute measurements.
 -- @treturn measurement A new measurement in pt with any relative values resolved.
 -- @usage
 -- > a = SILE.types.measurement("1.2em")
