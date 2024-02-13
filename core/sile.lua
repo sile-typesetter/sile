@@ -1,4 +1,7 @@
---- The core SILE library
+--- The core SILE library.
+-- Depending on how SILE was loaded, everything in here will probably be available under a top level `SILE` global. Note
+-- that an additional global `SU` is typically available as an alias to `SILE.utilities`. Also some 3rd party Lua
+-- libraries are always made available in the global scope, see `globals`.
 -- @module SILE
 
 -- Placeholder for 3rd party Lua libraries SILE always provides as globals
