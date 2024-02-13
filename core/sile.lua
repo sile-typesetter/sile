@@ -576,8 +576,8 @@ end
 -- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
 -- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
 -- messages. Usually auto-detected.
--- @see SILE.classes
--- @see SILE.packages
+-- @see SILE.classes:registerCommand
+-- @see SILE.packages:registerCommand
 function SILE.registerCommand (name, func, help, pack, cheat)
   local class = SILE.documentState.documentClass
   if not cheat then

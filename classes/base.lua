@@ -280,6 +280,18 @@ function class:runHooks (category, options)
   end
 end
 
+--- Register a function as a SILE command.
+-- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
+-- nodes identified with the command name.
+--
+-- Note that this should only be used to register commands supplied directly by a document class. A similar method is
+-- available for packages, `packages:registerCommand`.
+-- @tparam string name Name of cammand to register.
+-- @tparam function func Callback function to use as command handler.
+-- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
+-- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
+-- messages. Usually auto-detected.
+-- @see SILE.packages:registerCommand
 function class.registerCommand (_, name, func, help, pack)
   SILE.Commands[name] = func
   if not pack then
