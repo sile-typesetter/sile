@@ -1,5 +1,5 @@
 --- SILE color type.
--- @classmod SILE.types.color
+-- @types color
 
 local colornames = {
   aliceblue = { 240, 248, 255 },

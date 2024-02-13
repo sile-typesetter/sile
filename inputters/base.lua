@@ -1,5 +1,5 @@
 --- SILE inputter class.
--- @classmod SILE.inputters
+-- @interfaces inputters
 
 local _deprecated = [[
   You appear to be using a document class '%s' programmed for SILE <= v0.12.5.

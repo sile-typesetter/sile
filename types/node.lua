@@ -1,5 +1,5 @@
 --- SILE node type.
--- @classmod SILE.types.node
+-- @types node
 
 local nodetypes = {}
 

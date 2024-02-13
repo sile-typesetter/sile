@@ -1,6 +1,5 @@
 --- SILE length type.
--- @classmod SILE.types.length
--- @within Types
+-- @types length
 
 local function _error_if_not_number (a)
   if type(a) ~= "number" then

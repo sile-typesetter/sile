@@ -1,5 +1,5 @@
 --- French language rules
--- @submodule SILE.languages
+-- @submodule languages
 
 local computeSpaces = function()
   -- Computes:

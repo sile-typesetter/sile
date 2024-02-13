@@ -1,5 +1,5 @@
 --- SILE package class.
--- @classmod SILE.packages
+-- @interfaces packages
 
 local package = pl.class()
 package.type = "package"

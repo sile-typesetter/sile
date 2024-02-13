@@ -1,5 +1,5 @@
 --- SILE outputter class.
--- @classmod SILE.outputters
+-- @interfaces outputters
 
 local outputter = pl.class()
 outputter.type = "outputter"

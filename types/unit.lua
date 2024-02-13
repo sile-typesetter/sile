@@ -1,5 +1,5 @@
 --- SILE unit type.
--- @classmod SILE.types.unit
+-- @types unit
 
 local bits = require("core.parserbits")
 

@@ -1,5 +1,5 @@
 --- SILE document class class.
--- @classmod SILE.classes
+-- @interfaces classes
 
 local class = pl.class()
 class.type = "class"

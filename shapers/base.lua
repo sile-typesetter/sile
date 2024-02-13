@@ -1,5 +1,5 @@
 --- SILE shaper class.
--- @classmod SILE.shapers
+-- @interfaces shapers
 
 -- local smallTokenSize = 20 -- Small words will be cached
 -- local shapeCache = {}
