@@ -1,27 +1,10 @@
 --- The core SILE library
 -- @module SILE
 
---- Global library provisions.
--- @section globals
--- Loading SILE foo
+-- Placeholder for 3rd party Lua libraries SILE always provides as globals
+require("core.globals")
 
---- Penlight.
--- On-demand module loader, provided for SILE and document usage
-pl = require("pl.import_into")()
-
--- For developer testing only, usually in CI
-if os.getenv("SILE_COVERAGE") then require("luacov") end
-
---- UTF-8 String handler.
--- Lua 5.3+ has a UTF-8 safe string function module but it is somewhat
--- underwhelming. This module includes more functions and supports older Lua
--- versions. Docs: https://github.com/starwing/luautf8
-luautf8 = require("lua-utf8")
-
---- Fluent localization library.
-fluent = require("fluent")()
-
--- Reserve global scope placeholder for profiler (developer tooling)
+-- Reserve scope placeholder for profiler (developer tooling)
 local ProFi
 
 -- Placeholder for SILE internals table
