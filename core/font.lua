@@ -1,3 +1,5 @@
+--- font
+-- @module SILE.font
 local icu = require("justenoughicu")
 
 local lastshaper

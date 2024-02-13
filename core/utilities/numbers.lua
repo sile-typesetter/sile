@@ -1,9 +1,9 @@
---
--- Number formatting utilities
--- MIT License (c) 2022 SILE organization
---
+--- Number formatting utilities.
+--- @module SU.numbers
+
 local icu = require("justenoughicu")
 
+--- @type formatNumber
 -- Language-specific number formatters add functions to this table,
 -- see e.g. languages/eo.lua
 local formatNumber = {

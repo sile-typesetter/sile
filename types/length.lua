@@ -1,3 +1,6 @@
+--- SILE length type.
+-- @types length
+
 local function _error_if_not_number (a)
   if type(a) ~= "number" then
     SU.error("We tried to do impossible arithmetic on a " .. SU.type(a) .. ". (That's a bug)", true)

@@ -47,6 +47,8 @@ let
     # lua packages needed for testing
     busted
     luacheck
+    # packages needed for building api docs
+    ldoc
   # NOTE: Add lua packages here, to change the luaEnv also read by `flake.nix`
   ] ++ lib.optionals (lib.versionOlder lua.luaversion "5.2") [
     bit32

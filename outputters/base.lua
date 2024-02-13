@@ -1,3 +1,6 @@
+--- SILE outputter class.
+-- @interfaces outputters
+
 local outputter = pl.class()
 outputter.type = "outputter"
 outputter._name = "base"

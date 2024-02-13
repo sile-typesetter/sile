@@ -1,12 +1,9 @@
---- SILE typesetter (default/base) class.
---
--- @copyright License: MIT
--- @module typesetters.base
---
+--- SILE typesetter class.
+-- @interfaces typesetters
 
--- Typesetter base class
-
+--- @type typesetter
 local typesetter = pl.class()
+
 typesetter.type = "typesetter"
 typesetter._name = "base"
 
@@ -46,6 +43,8 @@ function typesetter:init (frame)
   self:_init(frame)
 end
 
+--- Constructor
+-- @param frame A initial frame to attach the typesetter to.
 function typesetter:_init (frame)
   self:declareSettings()
   self.hooks = {}
@@ -60,6 +59,7 @@ function typesetter:_init (frame)
   return self
 end
 
+--- Declare new setting types
 function typesetter.declareSettings(_)
 
   -- Settings common to any typesetter instance.
@@ -991,12 +991,11 @@ function linerBox:__tostring ()
   return "*L[" .. self.name .. "]H<" .. tostring(self.width) .. ">^" .. tostring(self.height) .. "-" .. tostring(self.depth) .. "v"
 end
 
---- Any unclosed liner is reopened on the current line, so we clone and repeat
--- it.
+--- Any unclosed liner is reopened on the current line, so we clone and repeat it.
 -- An assumption is that the inserts are done after the current slice content,
 -- supposed to be just before meaningful (visible) content.
----@param slice   table   Current line nodes
----@return boolean        Whether a liner was reopened
+-- @tparam slice slice
+-- @treturn boolean Whether a liner was reopened
 function typesetter:_repeatEnterLiners (slice)
   local m = self.state.liners
   if #m > 0 then
@@ -1012,8 +1011,8 @@ end
 
 --- All pairs of liners are rebuilt as hboxes wrapping their content.
 -- Migrating content, however, must be kept outside the hboxes at top slice level.
----@param  slice  table   Flat nodes from current line
----@return table          New reboxed slice
+-- @tparam table slice Flat nodes from current line
+-- @treturn table New reboxed slice
 function typesetter._reboxLiners (_, slice)
   local outSlice = {}
   local migratingList = {}
@@ -1061,8 +1060,8 @@ function typesetter._reboxLiners (_, slice)
 end
 
 --- Check if a node is a liner, and process it if so, in a stack.
----@param node  any          Current node
----@return      boolean      Whether a liner was opened
+-- @tparam table node Current node (any type)
+-- @treturn boolean Whether a liner was opened
 function typesetter:_processIfLiner(node)
   local entered = false
   if node.is_enter then
@@ -1384,9 +1383,9 @@ end
 -- effects.
 -- If we are already in horizontal-restricted mode, the liner is processed
 -- immediately, since line breaking won't occur then.
----@param name            string    Name of the liner (usefull for debugging)
----@param content         table     SILE AST to process
----@param outputYourself  function  Output method for wrapped boxes
+-- @tparam string name Name of the liner (usefull for debugging)
+-- @tparam table content SILE AST to process
+-- @tparam function outputYourself Output method for wrapped boxes
 function typesetter:liner (name, content, outputYourself)
   if self.state.hmodeOnly then
     SU.debug("typesetter.liner", "Applying liner in horizontal-restricted mode")

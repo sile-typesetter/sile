@@ -1,4 +1,5 @@
--- French language rules
+--- French language rules
+-- @submodule languages
 
 local computeSpaces = function()
   -- Computes:

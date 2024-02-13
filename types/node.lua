@@ -1,3 +1,6 @@
+--- SILE node type.
+-- @types node
+
 local nodetypes = {}
 
 -- This infinity needs to be smaller than an actual infinity but bigger than the infinite stretch

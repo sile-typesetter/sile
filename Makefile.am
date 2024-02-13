@@ -70,7 +70,7 @@ dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE.md
 EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += Makefile-distfiles
-EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
+EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/config.ld build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
 EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
@@ -173,7 +173,13 @@ selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS)
 	$(PDFINFO) $$output | $(GREP) "SILE v$(VERSION)"
 
 .PHONY: docs
-docs: $(_MANUAL)
+docs: $(_MANUAL) lua-api-docs
+
+.PHONY: lua-api-docs
+lua-api-docs: lua-api-docs/index.html
+
+lua-api-docs/index.html: build-aux/config.ld
+	$(LDOC) -c build-aux/config.ld .
 
 .PHONY: docs-figures
 docs-figures: $(FIGURES)

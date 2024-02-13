@@ -1,7 +1,11 @@
+--- core settings instance
+--- @module SILE.settings
+
 local deprecator = function ()
   SU.deprecated("SILE.settings.*", "SILE.settings:*", "0.13.0", "0.15.0")
 end
 
+--- @type settings
 local settings = pl.class()
 
 function settings:_init()
@@ -98,12 +102,14 @@ function settings:_init()
 
 end
 
+--- Stash the current values of all settings in a stack to be returned to later
 function settings:pushState ()
   if not self then return deprecator() end
   table.insert(self.stateQueue, self.state)
   self.state = pl.tablex.copy(self.state)
 end
 
+--- Return the most recently pushed set of values in the setting stack
 function settings:popState ()
   if not self then return deprecator() end
   local previous = self.state
@@ -118,6 +124,8 @@ function settings:popState ()
   end
 end
 
+--- Declare a new setting
+--- @tparam table specs { parameter, type, default, help, hook, ... } declaration specification
 function settings:declare (spec)
   if not spec then return deprecator() end
   if spec.name then
@@ -135,7 +143,7 @@ function settings:declare (spec)
   self:set(spec.parameter, spec.default, true)
 end
 
---- Reset all settings to their default value.
+--- Reset all settings to their registered default values.
 function settings:reset ()
   if not self then return deprecator() end
   for k,_ in pairs(self.state) do
@@ -144,8 +152,7 @@ function settings:reset ()
 end
 
 --- Restore all settings to the value they had in the top-level state,
--- that is at the head of the settings stack (normally the document
--- level).
+-- that is at the tap of the settings stack (normally the document level).
 function settings:toplevelState ()
   if not self then return deprecator() end
   if #self.stateQueue ~= 0 then
@@ -158,6 +165,9 @@ function settings:toplevelState ()
   end
 end
 
+--- Get the value of a setting
+-- @tparam string parameter The full name of the setting to fetch.
+-- @return Value of setting
 function settings:get (parameter)
   -- HACK FIXME https://github.com/sile-typesetter/sile/issues/1699
   -- See comment on set() below.
@@ -175,6 +185,11 @@ function settings:get (parameter)
   end
 end
 
+--- Set the value of a setting
+-- @tparam string parameter The full name of the setting to change.
+-- @param value The new value to change it to.
+-- @tparam[opt=false] boolean makedefault Whether to make this the new default value.
+-- @tparam[opt=false] boolean reset Whether to reset the value to the current default value.
 function settings:set (parameter, value, makedefault, reset)
   -- HACK FIXME https://github.com/sile-typesetter/sile/issues/1699
   -- Anything dubbed current.xxx should likely NOT be a "setting" (subject
@@ -219,10 +234,16 @@ function settings:set (parameter, value, makedefault, reset)
   self:runHooks(parameter, value)
 end
 
+--- Register a callback hook to be run when a setting changes.
+-- @tparam string parameter Name of the setting to add a hook to.
+-- @tparam function func Callback function accepting one argument (the new value).
 function settings:registerHook (parameter, func)
    table.insert(self.hooks[parameter], func)
 end
 
+--- Trigger execution of callback hooks for a given setting.
+-- @tparam string parameter The name of the parameter changes.
+-- @param value The new value of the setting, passed as the first argument to the hook function.
 function settings:runHooks (parameter, value)
   if self.hooks[parameter] then
     for _, func in ipairs(self.hooks[parameter]) do
@@ -232,6 +253,9 @@ function settings:runHooks (parameter, value)
   end
 end
 
+--- Isolate a block of processing so that setting changes made during the block don't last past the block.
+-- (Under the hood this just uses `:pushState()`, the processes the function, then runs `:popState()`)
+-- @tparam function func A function wrapping the actions to take without affecting settings for future use.
 function settings:temporarily (func)
   if not func then return deprecator() end
   self:pushState()
@@ -239,7 +263,10 @@ function settings:temporarily (func)
   self:popState()
 end
 
-function settings:wrap () -- Returns a closure which applies the current state, later
+--- Create a settings wrapper function that applies current settings to later content processing.
+--- @treturn function a closure fuction accepting one argument (content) to process using
+--- typesetter settings as they are at the time of closure creation.
+function settings:wrap ()
   if not self then return deprecator() end
   local clSettings = pl.tablex.copy(self.state)
   return function(content)

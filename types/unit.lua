@@ -1,3 +1,6 @@
+--- SILE unit type.
+-- @types unit
+
 local bits = require("core.parserbits")
 
 local unittypes = {

@@ -1,3 +1,6 @@
+--- SILE measurement type.
+-- @types measurement
+
 local function _tonumber (amount)
   return SU.cast("number", amount)
 end

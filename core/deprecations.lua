@@ -138,6 +138,14 @@ setmetatable(SILE.PackageManager, {
   __index = nopackagemanager
 })
 
+SU.utf8char = function ()
+  SU.deprecated("SU.utf8char", "luautf8.char", "0.11.0", "0.12.0")
+end
+
+SU.utf8codes = function ()
+  SU.deprecated("SU.utf8codes", "luautf8.codes", "0.11.0", "0.12.0")
+end
+
 -- luacheck: ignore updatePackage
 -- luacheck: ignore installPackage
 updatePackage = nopackagemanager
