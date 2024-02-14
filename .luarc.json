@@ -10,6 +10,12 @@
         "executablePath",
         "extendSilePath"
     ],
+    "Lua.workspace.ignoreDir": [
+        "languages",
+        "lua-libraries",
+        "spec",
+        "tests"
+    ],
     "Lua.workspace.preloadFileSize": 5120,
     "Lua.workspace.checkThirdParty": false
 }
