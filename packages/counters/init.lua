@@ -49,7 +49,7 @@ function package:formatMultilevelCounter (counter, options)
   options = options or {}
   local maxlevel = options.level and SU.min(SU.cast("integer", options.level), #counter.value) or #counter.value
   -- Option minlevel is undocumented and should perhaps be deprecated: is there a real use case for it?
-  local minlevel = options.minlevel and SU.min(SU.cast("integer", options.minlevel, #counter.value)) or 1
+  local minlevel = options.minlevel and SU.min(SU.cast("integer", options.minlevel), #counter.value) or 1
   local out = {}
   if SU.boolean(options.noleadingzeros, false) then
     while counter.value[minlevel] == 0 do minlevel = minlevel + 1 end -- skip leading zeros

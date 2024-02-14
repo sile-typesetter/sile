@@ -65,7 +65,7 @@ function package:registerCommands ()
     local mode = (options and options.mode) and options.mode or 'text'
     local mbox
     xpcall(function()
-      mbox = self:ConvertMathML(content, mbox)
+      mbox = self:ConvertMathML(content)
     end, function(err) print(err); print(debug.traceback()) end)
     self:handleMath(mbox, mode)
   end)

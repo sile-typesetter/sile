@@ -49,7 +49,7 @@ function package:registerCommands ()
     else
       SU.error("background requires a color or an image src parameter")
     end
-    outputBackground(SILE.scratch.background)
+    outputBackground()
   end, "Output a solid background color <color> or an image <src> on pages after initialization.")
 
 end

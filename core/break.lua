@@ -289,7 +289,7 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
   -- self:dumpActiveRing()
   local shortfall = self.lineWidth - self.curActiveWidth
   if self.seenAlternatives then
-    self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.r.curBreak and self.r.curBreak or 1, shortfall)
+    self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.r.curBreak and self.r.curBreak or 1)
   end
   shortfall = self.lineWidth - self.curActiveWidth
   self.badness, self.fitClass = fitclass(self, shortfall)
