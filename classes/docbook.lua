@@ -1,3 +1,6 @@
+--- docbook document class.
+-- @use classes.docbook
+
 local plain = require("classes.plain")
 
 local class = pl.class(plain)

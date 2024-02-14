@@ -1,4 +1,4 @@
---- SILE document class class.
+--- SILE document class interface.
 -- @interfaces classes
 
 local class = pl.class()

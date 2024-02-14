@@ -1,4 +1,6 @@
---
+--- pdf package
+--- @use packages.pdf
+
 -- This package and its commands are perhaps ill-named:
 -- Exception made of the pdf:literal command below, the concepts of links
 -- (anchor, target), bookmarks, and metadata are not specific to PDF.

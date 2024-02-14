@@ -1,3 +1,6 @@
+--- tplain document class.
+-- @use classes.tplain
+
 -- Basic! Transitional! In development! Not very good! Don't use it!
 local plain = require("classes.plain")
 

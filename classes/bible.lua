@@ -1,3 +1,6 @@
+--- bible document class.
+-- @use classes.bible
+
 local plain = require("classes.plain")
 
 local class = pl.class(plain)

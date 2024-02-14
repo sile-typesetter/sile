@@ -1,3 +1,6 @@
+--- book document class.
+-- @use classes.book
+
 local plain = require("classes.plain")
 
 local class = pl.class(plain)

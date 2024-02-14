@@ -1,3 +1,6 @@
+--- triglot document class.
+-- @use classes.triglot
+
 local book = require("classes.book")
 
 local class = pl.class(book)

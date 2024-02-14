@@ -1,3 +1,6 @@
+--- tbook document class.
+-- @use classes.tbook
+
 local book = require("classes.book")
 local tplain = require("classes.tplain")
 

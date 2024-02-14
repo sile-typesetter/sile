@@ -1,3 +1,6 @@
+--- letter document class.
+-- @use classes.letter
+
 local plain = require("classes.plain")
 
 local class = pl.class(plain)

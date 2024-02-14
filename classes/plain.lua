@@ -1,3 +1,6 @@
+--- plain document class.
+-- @use classes.plain
+
 local base = require("classes.base")
 
 local class = pl.class(base)
