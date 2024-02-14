@@ -287,11 +287,10 @@ function lineBreak:considerDemerits(pi, breakType) -- 877
   self.artificialDemerits = false
   local nodeStaysActive = false
   -- self:dumpActiveRing()
-  local shortfall = self.lineWidth - self.curActiveWidth
   if self.seenAlternatives then
     self:tryAlternatives(self.r.prevBreak and self.r.prevBreak.curBreak or 1, self.r.curBreak and self.r.curBreak or 1)
   end
-  shortfall = self.lineWidth - self.curActiveWidth
+  local shortfall = self.lineWidth - self.curActiveWidth
   self.badness, self.fitClass = fitclass(self, shortfall)
   if debugging then SU.debug("break", self.badness, self.fitClass) end
   if (self.badness > inf_bad or pi == ejectPenalty) then
