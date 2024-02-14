@@ -176,7 +176,21 @@ selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS)
 docs: $(_MANUAL) lua-api-docs
 
 .PHONY: lua-api-docs
-lua-api-docs: lua-api-docs/index.html
+lua-api-docs: lua-api-docs/index.html documentation/lsp.html
+
+documentation/lsp.html:
+	$(LSP) --doc $(top_srcdir) |
+		$(GREP) ': ' |
+		$(AWK) -F'[][]' '{ print $$2 }' |
+		while read resource; do
+			case $$resource in
+				*.json) cp $$resource $(@D) ;;
+				*.md)
+					$(PANDOC) $$resource --wrap none -o $(basename $(@F)).md
+					$(PANDOC) $$resource -s -o $@
+					;;
+			esac
+		done
 
 lua-api-docs/index.html: build-aux/config.ld
 	$(LDOC) -c build-aux/config.ld .
