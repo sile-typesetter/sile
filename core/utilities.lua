@@ -617,8 +617,9 @@ utilities.breadcrumbs = function ()
   end
 
   function breadcrumbs:contains (needle)
-    for i, command in ipairs(self) do
-      if command == needle then return true, #self - i end
+    for i = 0, #SILE.traceStack - 1 do
+      local frame = SILE.traceStack[#SILE.traceStack-i]
+      if frame.command == needle then return true, #self - i end
     end
     return false, -1
   end
