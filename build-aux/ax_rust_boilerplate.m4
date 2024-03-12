@@ -3,6 +3,13 @@ AC_DEFUN_ONCE([AX_RUST_BOILERPLATE], [
         AX_TRANSFORM_PACKAGE_NAME
         AX_SHELL_COMPLETION_DIRS
 
+        AC_ARG_ENABLE([developer],
+                AS_HELP_STRING([--enable-developer],
+                        [Check for and enable tooling required only for developers. Also enables debugging profile.]))
+        AM_CONDITIONAL([DEVELOPER], [test "x$enable_developer" = "xyes"])
+
+        AM_COND_IF([DEVELOPER], [enable_debug=yes ])
+
         AC_ARG_ENABLE(debug,
                 AS_HELP_STRING([--enable-debug],
                         [Build Rust code with debugging information]))
@@ -12,11 +19,6 @@ AC_DEFUN_ONCE([AX_RUST_BOILERPLATE], [
                 AS_HELP_STRING([--disable-dependency-checks],
                         [Disable build tooling dependency checks]))
         AM_CONDITIONAL([DEPENDENCY_CHECKS], [test "x$enable_dependency_checks" != "xno"])
-
-        AC_ARG_ENABLE([developer],
-                AS_HELP_STRING([--enable-developer],
-                        [Check for and enable tooling required only for developers]))
-        AM_CONDITIONAL([DEVELOPER], [test "x$enable_developer" = "xyes"])
 
         AC_MSG_NOTICE([checking for tools used by automake to build Rust projects])
         AC_PROG_INSTALL
