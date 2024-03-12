@@ -6,7 +6,7 @@ AC_DEFUN_ONCE([AX_RUST_BOILERPLATE], [
         AC_ARG_ENABLE(debug,
                 AS_HELP_STRING([--enable-debug],
                         [Build Rust code with debugging information]))
-        AM_CONDITIONAL([DEBUG_RELEASE], [test "x$debug_release" = "xyes"])
+        AM_CONDITIONAL([DEBUG_RELEASE], [test "x$enable_debug" = "xyes"])
 
         AC_ARG_ENABLE([dependency-checks],
                 AS_HELP_STRING([--disable-dependency-checks],
