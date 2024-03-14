@@ -189,6 +189,8 @@ function class:loadPackage (packname, options, reload)
   -- Allow loading by injecting whole packages as-is, otherwise try to load it with the usual packages path.
   if type(packname) == "table" then
     pack, packname = packname, packname._name
+  elseif type(packname) == "nil" or packname == "nil" or pl.stringx.strip(packname) == "" then
+    SU.error(("Attempted to load package with an invalid packname '%s'"):format(packname))
   else
     pack = require(("packages.%s"):format(packname))
     if pack._name ~= packname then
