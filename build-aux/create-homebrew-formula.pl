@@ -13,7 +13,6 @@ my %rocks = load_rockspec();
 
 my %rock_url_templates = (
     cassowary   => "https://github.com/sile-typesetter/cassowary.lua/archive/vVERSION.tar.gz",
-    cosmo       => "https://github.com/mascarenhas/cosmo/archive/vVERSION.tar.gz",
     linenoise   => "https://github.com/hoelzro/lua-linenoise/archive/VERSION.tar.gz",
     lpeg        => "http://www.inf.puc-rio.br/~roberto/lpeg/lpeg-VERSION.tar.gz",
     lua_cliargs => "https://github.com/amireh/lua_cliargs/archive/vUNSTRIPPEDVERSION.tar.gz",

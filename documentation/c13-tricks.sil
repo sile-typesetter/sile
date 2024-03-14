@@ -149,7 +149,7 @@ We add some infinitely tall glue to the other typesetter’s queue to help the p
 
 \begin[type=autodoc:codeblock]{raw}
 function diglot:finish ()
-  table.insert(SILE.typesetter.other.state.outputQueue, SILE.nodefactory.vfillglue())
+  table.insert(SILE.typesetter.other.state.outputQueue, SILE.types.node.vfillglue())
   SILE.typesetter.other:chuck()
   plain.finish(self)
 end
@@ -313,13 +313,13 @@ Now we can output the cross-reference itself.
 
 \begin[type=autodoc:codeblock]{raw}
   SILE.settings:temporarily(function()
-    SILE.settings:set("document.baselineskip", SILE.nodefactory.vglue("7pt"))
+    SILE.settings:set("document.baselineskip", SILE.types.node.vglue("7pt"))
     SILE.call("font", {size = "6pt", family="Helvetica", weight="800"}, {})
     self.innerTypesetter:typeset(SILE.scratch.chapter..":"..SILE.scratch.verse.." ")
     SILE.call("font", {size = "6pt", family="Helvetica", weight="200"}, {})
     self.innerTypesetter:typeset(xref)
     self.innerTypesetter:leaveHmode()
-    self.innerTypesetter:pushVglue({ height = SILE.length({length = 4})})
+    self.innerTypesetter:pushVglue({ height = SILE.types.length({length = 4})})
   end)
 end
 \end{raw}
@@ -448,7 +448,7 @@ If you call SILE with no input file names, it enters the REPL:
 
 \begin{autodoc:codeblock}
 \sileversion
-> \em{l = SILE.length.parse("22mm")}
+> \em{l = SILE.types.length.parse("22mm")}
 > \em{l.length}
 62.3622054
 \end{autodoc:codeblock}

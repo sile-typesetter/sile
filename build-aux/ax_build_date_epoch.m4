@@ -53,18 +53,15 @@
 
 #serial 2
 
-AC_DEFUN([AX_BUILD_DATE_EPOCH],
-[dnl
-AC_MSG_CHECKING([for build time])
-ax_date_fmt="m4_default($2,%s)"
-AS_IF([test x"$SOURCE_DATE_EPOCH" = x],
- [$1=`date "+$ax_date_fmt"`],
- [ax_build_date=`date -u -d "@$SOURCE_DATE_EPOCH" "+$ax_date_fmt" 2>/dev/null \
-                 || date -u -r "$SOURCE_DATE_EPOCH" "+$ax_date_fmt" 2>/dev/null`
-  AS_IF([test x"$ax_build_date" = x],
-   [m4_ifval([$3],
-      [$3],
-      [AC_MSG_ERROR([malformed SOURCE_DATE_EPOCH])])],
-   [$1=$ax_build_date])])
-AC_MSG_RESULT([$$1])
+AC_DEFUN([AX_BUILD_DATE_EPOCH], [dnl
+        AC_MSG_CHECKING([for build time])
+        ax_date_fmt="m4_default($2,%s)"
+        AS_IF([test x"$SOURCE_DATE_EPOCH" = x],
+                [$1=`date "+$ax_date_fmt"`],
+                [ax_build_date=`date -u -d "@$SOURCE_DATE_EPOCH" "+$ax_date_fmt" 2>/dev/null \
+                        || date -u -r "$SOURCE_DATE_EPOCH" "+$ax_date_fmt" 2>/dev/null`
+        AS_IF([test x"$ax_build_date" = x],
+                [m4_ifval([$3], [$3], [AC_MSG_ERROR([malformed SOURCE_DATE_EPOCH])])],
+                [$1=$ax_build_date])])
+        AC_MSG_RESULT([$$1])
 ])dnl AX_BUILD_DATE_EPOCH

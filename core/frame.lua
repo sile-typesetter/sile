@@ -35,7 +35,7 @@ SILE.framePrototype = pl.class({
           self.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method })
           self[method] = function (instance_self)
             instance_self:solve()
-            return SILE.measurement(instance_self.variables[method].value)
+            return SILE.types.measurement(instance_self.variables[method].value)
           end
         end
         -- Add definitions of width and height
@@ -49,7 +49,7 @@ SILE.framePrototype = pl.class({
 
     -- This gets called by us in typesetter before we start to use the frame
     init = function (self, typesetter)
-      self.state = { totals = { height = SILE.measurement(0) } }
+      self.state = { totals = { height = SILE.types.measurement(0) } }
       self:enter(typesetter)
       self:newLine(typesetter)
       if self:pageAdvanceDirection() == "TTB" then

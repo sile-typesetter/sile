@@ -1,7 +1,7 @@
 \begin[papersize=a6]{document}
 \nofolios
 \neverindent
-\script[src=packages.font-fallback]
+\use[module=packages.font-fallback]
 \font[family=Libertinus Serif,size=50pt]
 \font:add-fallback[family=Libertinus Sans,size=6pt]
 \font:add-fallback[family=Symbola,size=.2en]

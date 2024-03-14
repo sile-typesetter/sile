@@ -4,11 +4,11 @@ local package = pl.class(base)
 package._name = "bug-337"
 
 
-function package:_init (class)
+function package:_init (options)
 
-  base._init(self, class)
+  base._init(self, options)
 
-  class:defineMaster({
+  self.class:defineMaster({
       id = "right",
       firstContentFrame = "content",
       frames = {
@@ -26,23 +26,23 @@ function package:_init (class)
         }
       }
     })
-  class:defineMaster({
+  self.class:defineMaster({
       id = "left",
       firstContentFrame = "content",
       frames = {}
     })
-  class:mirrorMaster("right", "left")
-  class:switchMasterOnePage("right")
+  self.class:mirrorMaster("right", "left")
+  self.class:switchMasterOnePage("right")
 
-  class:loadPackage("cropmarks")
+  self.class:loadPackage("cropmarks")
 
 end
 
 function package:registerCommands ()
 
   self.class:registerCommand("printPageInPoints", function()
-    local w = SILE.measurement("100%pw"):tonumber()
-    local h = SILE.measurement("100%ph"):tonumber()
+    local w = SILE.types.measurement("100%pw"):tonumber()
+    local h = SILE.types.measurement("100%ph"):tonumber()
     SILE.typesetter:typeset(("%.0fpt × %.0fpt"):format(w, h))
   end)
 

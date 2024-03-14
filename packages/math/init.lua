@@ -54,7 +54,7 @@ function package.declareSettings (_)
   SILE.settings:declare({
       parameter = "math.displayskip",
       type = "VGlue",
-      default = SILE.nodefactory.vglue("2ex plus 1pt")
+      default = SILE.types.node.vglue("2ex plus 1pt")
     })
 
 end
@@ -65,7 +65,7 @@ function package:registerCommands ()
     local mode = (options and options.mode) and options.mode or 'text'
     local mbox
     xpcall(function()
-      mbox = self:ConvertMathML(content, mbox)
+      mbox = self:ConvertMathML(content)
     end, function(err) print(err); print(debug.traceback()) end)
     self:handleMath(mbox, mode)
   end)

@@ -27,7 +27,7 @@ end
 function inputter:process (doc)
   local tree = self:parse(doc)()
   if type(tree) == "string" then
-    return SILE.processString(tree, nil, nil, self.args)
+    return SILE.processString(tree, nil, nil, self.options)
   elseif type(tree) == "function" then
     SILE.process(tree)
   elseif type(tree) == "table" then
@@ -36,7 +36,7 @@ function inputter:process (doc)
       self:requireClass(tree)
       return SILE.process(tree)
     else
-      SILE.use(tree, self.args)
+      SILE.use(tree, self.options)
     end
   end
 end

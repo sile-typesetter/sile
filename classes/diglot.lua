@@ -1,3 +1,6 @@
+--- diglot document class.
+-- @use classes.diglot
+
 local plain = require("classes.plain")
 
 local class = pl.class(plain)

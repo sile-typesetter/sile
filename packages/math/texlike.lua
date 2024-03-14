@@ -86,8 +86,8 @@ local mathGrammar = function (_ENV)
         return pl.utils.unpack(t)
       end
 
-  START "texlike_math"
-  texlike_math = V"mathlist" * EOF"Unexpected character at end of math code"
+  START "math"
+  math = V"mathlist" * EOF"Unexpected character at end of math code"
   mathlist = (comment + (WS * _) + element)^0
   supsub = element_no_infix * _ * P"^" * _ * element_no_infix * _ *
     P"_" * _ * element_no_infix
@@ -254,7 +254,7 @@ local function compileToMathML_aux (_, arg_env, tree)
     return accumulator
   end
   tree = fold_pairs(compile_and_insert, tree)
-  if tree.id == "texlike_math" then
+  if tree.id == "math" then
     tree.command = "math"
     -- If the outermost `mrow` contains only other `mrow`s, remove it
     -- (allowing vertical stacking).

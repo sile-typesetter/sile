@@ -4,7 +4,7 @@ local cassowary = require("cassowary")
 local P, C, V = lpeg.P, lpeg.C, lpeg.V
 
 local function resolveMeasurement (str)
-  return SILE.measurement(str):tonumber()
+  return SILE.types.measurement(str):tonumber()
 end
 
 local functionOfFrame = function (dim, id)

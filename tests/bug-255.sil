@@ -1,10 +1,11 @@
 \begin[papersize=a6]{document}
+\use[module=packages.retrograde,target=v0.15.0]
 \use[module=packages.frametricks]
 \script{
   SILE.registerCommand("donothing", function (options, content)
     SILE.settings:pushState()
     SILE.settings:temporarily(function ()
-      SILE.settings:set("document.lskip", SILE.nodefactory.glue("0pt"))
+      SILE.settings:set("document.lskip", SILE.types.node.glue("0pt"))
       SILE.process(content)
       SILE.call("par")
     end)

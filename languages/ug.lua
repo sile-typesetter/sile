@@ -12,7 +12,7 @@ SILE.settings:declare({
   parameter = "languages.ug.hyphenoffset",
   help = "Space added between text and hyphen",
   type = "glue or nil",
-  default = SILE.nodefactory.glue("1pt")
+  default = SILE.types.node.glue("1pt")
 })
 
 local transliteration = {
@@ -150,15 +150,15 @@ SILE.hyphenator.languages.ug = function(n)
   local prebreak = SILE.shaper:createNnodes(items[1] .. (lastjoinable(items[1]) and zwj or ""), state)
   if SILE.settings:get("languages.ug.hyphenoffset") then
     local w = SILE.settings:get("languages.ug.hyphenoffset").width
-    prebreak[#prebreak+1] = SILE.nodefactory.kern({ width = w })
+    prebreak[#prebreak+1] = SILE.types.node.kern({ width = w })
   end
   local hnodes = SILE.shaper:createNnodes(hyphen, state)
   prebreak[#prebreak+1] = hnodes[1]
   local postbreak = SILE.shaper:createNnodes((lastjoinable(items[1]) and zwj or "")..items[2], state)
-  local d = SILE.nodefactory.discretionary({
+  local d = SILE.types.node.discretionary({
     replacement = {n},
     prebreak = prebreak,
     postbreak = postbreak
   })
-  return { SILE.nodefactory.zerohbox(), d }
+  return { SILE.types.node.zerohbox(), d }
 end

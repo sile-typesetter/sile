@@ -58,8 +58,8 @@ local declareHanmenFrame = function (class, id, spec)
                   spec.hanmen.linegap * ( spec.hanmen.linecount -1 )
   end
   local skip = spec.hanmen.linegap + spec.hanmen.gridsize
-  SILE.settings:set("document.baselineskip", SILE.nodefactory.vglue(skip))
-  SILE.settings:set("document.parskip", SILE.nodefactory.vglue())
+  SILE.settings:set("document.baselineskip", SILE.types.node.vglue(skip))
+  SILE.settings:set("document.parskip", SILE.types.node.vglue())
   local frame = SILE.newFrame(spec, spec.tate and SILE.tateFramePrototype or SILE.framePrototype)
   if spec.id then
     class.pageTemplate.frames[spec.id] = frame
@@ -79,7 +79,8 @@ function package:registerCommands ()
     if not frame.hanmen then
       SU.error("show-hanmen called on a frame with no hanmen")
     end
-    SILE.outputter:pushColor({r = 1, g= 0.9, b = 0.9 })
+    local color = SILE.types.color({r = 1, g= 0.9, b = 0.9 })
+    SILE.outputter:pushColor(color)
     if frame:writingDirection() == "TTB" then
       showHanmenTate(frame)
     else

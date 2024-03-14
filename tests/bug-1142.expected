@@ -4,14 +4,14 @@ Mx 	14.8819
 My 	28.9764
 Set font 	;10;400;;normal;;;LTR;tests/TestCLR-Regular.ttf
 T	3 w=10.0000	(a)
-Push color	1.0000	0.8784	0.5412
+Push color	C<r1.0000,g0.8784,b0.5412>
 Mx 	24.8819
 T	7 a=10.0000	()
 Pop color
-Push color	0.8980	0.6078	0.1451
+Push color	C<r0.8980,g0.6078,b0.1451>
 T	8 a=10.0000	()
 Pop color
-Push color	0.5176	0.2196	0.0510
+Push color	C<r0.5176,g0.2196,b0.0510>
 T	9 w=10.0000	(☺)
 Pop color
 Mx 	34.8819

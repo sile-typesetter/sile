@@ -25,14 +25,8 @@ function package:transformContent (content, transformFunction, extraArgs)
 end
 
 function package.createCommand (_, pos, col, lno, command, options, content)
-  local result = { content }
-  result.col = col
-  result.lno = lno
-  result.pos = pos
-  result.options = options
-  result.command = command
-  result.id = "command"
-  return result
+  local position = { lno = lno, col = col, pos = pos }
+  return SU.ast.createCommand(command, options, content, position)
 end
 
 function package:_init ()

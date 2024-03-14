@@ -11,12 +11,12 @@ function pagebuilder.findBestBreak (_, options)
   local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")
   local target   = SU.required(options, "target", "in findBestBreak")
   local i = 0
-  local totalHeight = SILE.length()
+  local totalHeight = SILE.types.length()
   local bestBreak = 0
   SU.debug("pagebuilder", "Page builder for frame", SILE.typesetter.frame.id, "called with", #vboxlist, "nodes,", target)
   if SU.debugging("vboxes") then
     for j, box in ipairs(vboxlist) do
-      SU.debug("vboxes", (j == i and " >" or "  ") .. j .. ": " .. box)
+      SU.debug("vboxes", function () return (j == i and " >" or "  ") .. j .. ": " .. box end)
     end
   end
   while i < #vboxlist do

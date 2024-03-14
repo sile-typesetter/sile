@@ -97,7 +97,7 @@ SILE._hyphenators = {}
 
 local function defaultHyphenateSegments (node, segments, _)
   local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options)
-  return SILE.nodefactory.discretionary({ prebreak = hyphen }), segments
+  return SILE.types.node.discretionary({ prebreak = hyphen }), segments
 end
 
 local initHyphenator = function (lang)

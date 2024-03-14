@@ -45,7 +45,7 @@ SILE.nodeMakers.base = pl.class({
 
     makePenalty = function (self, p)
       if self.lastnode ~= "penalty" and self.lastnode ~= "glue" then
-        coroutine.yield( SILE.nodefactory.penalty({ penalty = p or 0 }) )
+        coroutine.yield( SILE.types.node.penalty({ penalty = p or 0 }) )
       end
       self.lastnode = "penalty"
     end,
@@ -53,7 +53,7 @@ SILE.nodeMakers.base = pl.class({
     makeNonBreakingSpace = function (self)
       -- Unicode Line Breaking Algorithm (UAX 14) specifies that U+00A0
       -- (NO-BREAK SPACE) is expanded or compressed like a normal space.
-      coroutine.yield(SILE.nodefactory.kern(SILE.shaper:measureSpace(self.options)))
+      coroutine.yield(SILE.types.node.kern(SILE.shaper:measureSpace(self.options)))
       self.lastnode = "glue"
       self.lasttype = "sp"
     end,
@@ -149,7 +149,7 @@ function SILE.nodeMakers.unicode:letterspace ()
   if self.lastnode and self.lastnode ~= "glue" then
     local w = SILE.settings:get("document.letterspaceglue").width
     SU.debug("tokenizer", "Letter space glue:", w)
-    coroutine.yield(SILE.nodefactory.kern({ width = w }))
+    coroutine.yield(SILE.types.node.kern({ width = w }))
     self.lastnode = "glue"
     self.lasttype = "sp"
   end

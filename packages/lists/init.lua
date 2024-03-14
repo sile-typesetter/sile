@@ -72,8 +72,8 @@ local trim = function (str)
 end
 
 local enforceListType = function (cmd)
-  if cmd ~= "enumerate" and cmd ~= "itemize" then
-    SU.error("Only 'enumerate', 'itemize' or 'item' are accepted in lists, found '"..cmd.."'")
+  if cmd ~= "enumerate" and cmd ~= "itemize" and cmd ~= "BulletedList" and cmd ~= "OrderedList" then
+    SU.error("Only items or lists are allowed as content in lists, found '"..cmd.."'")
   end
 end
 
@@ -121,7 +121,7 @@ function package:doItem (options, content)
   -- appearing twice in output... but we can avoid it:
   -- reboxing an hbox was dumb anyway. We just need to fix its width before
   -- reinserting it in the text flow.
-  mark.width = SILE.length(stepback)
+  mark.width = SILE.types.length(stepback)
   SILE.typesetter:pushHbox(mark)
   SILE.process(content)
 end
@@ -147,7 +147,7 @@ function package.doNestedList (_, listType, options, content)
   end
 
   -- indent
-  local baseIndent = (depth == 1) and SILE.settings:get("document.parindent").width:absolute() or SILE.measurement("0pt")
+  local baseIndent = (depth == 1) and SILE.settings:get("document.parindent").width:absolute() or SILE.types.measurement("0pt")
   local listIndent = SILE.settings:get("lists."..listType..".leftmargin"):absolute()
 
   -- processing
@@ -156,16 +156,16 @@ function package.doNestedList (_, listType, options, content)
   end
   SILE.settings:temporarily(function ()
     SILE.settings:set("lists.current."..listType..".depth", depth)
-    SILE.settings:set("current.parindent", SILE.nodefactory.glue())
-    SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+    SILE.settings:set("current.parindent", SILE.types.node.glue())
+    SILE.settings:set("document.parindent", SILE.types.node.glue())
     SILE.settings:set("document.parskip", SILE.settings:get("lists.parskip"))
-    local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
-    SILE.settings:set("document.lskip", SILE.nodefactory.glue(lskip.width + (baseIndent + listIndent)))
+    local lskip = SILE.settings:get("document.lskip") or SILE.types.node.glue()
+    SILE.settings:set("document.lskip", SILE.types.node.glue(lskip.width + (baseIndent + listIndent)))
 
     local counter = options.start and (SU.cast("integer", options.start) - 1) or 0
     for i = 1, #content do
-      if type(content[i]) == "table" then
-        if content[i].command == "item" then
+      if type(content[i]) == "table" and #content[i] > 0 then
+        if content[i].command == "item" or content[i].command == "ListItem" then
           counter = counter + 1
           -- Enrich the node with internal properties
           content[i]._lists_ = {
@@ -182,6 +182,10 @@ function package.doNestedList (_, listType, options, content)
         else
           SILE.typesetter:leaveHmode()
         end
+         -- Whitespace left around comment nodes is fine too
+      elseif type(content[i]) == "table" and #content[i] == 0 then
+         -- ignore whitespace leaking in from in front of indented comments
+         assert(true)
       elseif type(content[i]) == "string" then
         -- All text nodes are ignored in structure tags, but just warn
         -- if there do not just consist in spaces.
@@ -230,28 +234,28 @@ function package.declareSettings (_)
   SILE.settings:declare({
     parameter = "lists.enumerate.leftmargin",
     type = "measurement",
-    default = SILE.measurement("2em"),
+    default = SILE.types.measurement("2em"),
     help = "Left margin (indentation) for enumerations"
   })
 
   SILE.settings:declare({
     parameter = "lists.enumerate.labelindent",
     type = "measurement",
-    default = SILE.measurement("0.5em"),
+    default = SILE.types.measurement("0.5em"),
     help = "Label indentation for enumerations"
   })
 
   SILE.settings:declare({
     parameter = "lists.itemize.leftmargin",
     type = "measurement",
-    default = SILE.measurement("1.5em"),
+    default = SILE.types.measurement("1.5em"),
     help = "Left margin (indentation) for bullet lists (itemize)"
   })
 
   SILE.settings:declare({
     parameter = "lists.parskip",
     type = "vglue",
-    default = SILE.nodefactory.vglue("0pt plus 1pt"),
+    default = SILE.types.node.vglue("0pt plus 1pt"),
     help = "Leading between paragraphs and items in a list"
   })
 

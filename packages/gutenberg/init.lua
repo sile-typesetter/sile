@@ -18,7 +18,7 @@ function package:registerCommands ()
       end
       table.insert(alts, hbox)
     end
-    local alternative = SILE.nodefactory.alternative({
+    local alternative = SILE.types.node.alternative({
       options = alts,
       selected = 1
       })

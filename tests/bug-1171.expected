@@ -1,29 +1,29 @@
 Set paper size 	595.275597	841.8897729
 Begin page
-Push color	1.0000	0.8000	0.3020
+Push color	C<r1.0000,g0.8000,b0.3020>
 Mx 	542.4079
 My 	97.6592
 Set font 	Twemoji Mozilla;10;400;;normal;;;TTB
 T	7876 a=10.0000	()
 Pop color
-Push color	0.4000	0.2706	0.0000
+Push color	C<r0.4000,g0.2706,b0.0000>
 T	7893 a=10.0000	()
 T	7894 w=10.0000	(😉)
 Pop color
-Push color	1.0000	0.7961	0.2980
+Push color	C<r1.0000,g0.7961,b0.2980>
 My 	107.6592
 T	9105 a=10.0000	()
 Pop color
-Push color	0.3961	0.2784	0.1059
+Push color	C<r0.3961,g0.2784,b0.1059>
 T	9106 a=10.0000	()
 Pop color
-Push color	1.0000	1.0000	1.0000
+Push color	C<r1.0000,g1.0000,b1.0000>
 T	9107 a=10.0000	()
 Pop color
-Push color	0.3961	0.2784	0.1059
+Push color	C<r0.3961,g0.2784,b0.1059>
 T	9108 a=10.0000	()
 Pop color
-Push color	0.3922	0.6667	0.8667
+Push color	C<r0.3922,g0.6667,b0.8667>
 T	9109 w=10.0000	(🤣)
 Pop color
 End page

@@ -1,4 +1,5 @@
 .PHONY: installrocks
+
 LUAMODSPEC := sile-dev-1.rockspec
 if !SYSTEM_LUAROCKS
 LUAMODLOCK := sile-dev-1.rockslock

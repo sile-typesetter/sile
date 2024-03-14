@@ -221,7 +221,9 @@ saying that anyone who would letterspace lowercase would steal sheep.\footnote{H
 \section{Typesetter settings}
 
 The settings which affect SILE’s spacing controls have the most obvious effect
-on a document; the typesetter itself has some knobs that can be twiddled:
+on a document; the typesetter itself has some knobs that can be twiddled.
+
+\subsection{Paragraphing}
 
 \autodoc:setting{typesetter.widowpenalty} and \autodoc:setting{typesetter.orphanpenalty}\footnote{TeX
 users, please notice the renaming.} affect how strongly SILE is averse to
@@ -269,7 +271,41 @@ off the filling glue at the end of the paragraph.
 \par
 \end{autodoc:example}
 
-\medskip
+\subsection{Automated italic correction}
+
+When an italicized word is followed or preceded by non-italicized text, the spacing may need to be adjusted, or “corrected”, so that the characters do not overlap.
+You might thus want to insert some additional space between italicized words and non-italicized ones.
+
+Here is some gibberish exemplifying the issue.
+
+\begin{autodoc:example}%
+\quad{}(\em{fluff}) ¡\em{fancyful proof}! [\em{puff}] \em{fluff}ⁿ
+\par
+\end{autodoc:example}
+
+Inserting the necessary spaces manually is quite tedious, not to say impractical.
+However, the concept of italic correction does not exist in OpenType fonts, and they do not provide the metrics that would allow a typesetting system to implement it easily.\footnote{%
+This would apply to Graphite fonts too.
+More generally, there is no known font format supporting kerning across font style changes.
+(Well, some TeX fonts have such a possibility, but it does not really help here.)}
+A heuristic approach is to use the difference between a glyph’s bounding box and its advance width (when switching from italics to roman) or its bearing width (the other way round).
+Assuming italics is slanted forward (in left-to-right writing direction) and that italicized glyphs usually reach their maximum extent to the right towards their top (and towards their bottom, on their left side), then it is possible to approximate a fairly decent correction.
+
+Be aware, nevertheless, that this solution cannot be made perfect, even assuming a reasonable choice of fonts.
+Pathological cases may still occur, even in latin scripts, for which there is no solution but using manual kerning.
+
+To enable automated italic correction, you can set the \autodoc:setting{typesetter.italicCorrection} setting to \code{true}.
+Let’s turn it on and check how our previous gibberish now behaves.
+
+\begin{autodoc:example}%
+\set[parameter=typesetter.italicCorrection, value=true]{%
+\quad{}(\em{fluff}) ¡\em{fancyful proof}! [\em{puff}] \em{fluff}ⁿ
+\par}
+\end{autodoc:example}
+
+Note that this setting only works on full paragraphs, or with horizontal boxes constructed  with \autodoc:command{\hbox{<content>}}.\footnote{%
+That is, when characters are actually \em{shaped}, so that SILE knows their properties and metrics.}
+In other terms, turning it on or off around just a few words in a sentence will not have the intended effect.
 
 \section{Linebreaking settings}
 
@@ -365,8 +401,8 @@ following SILE functions access the settings system from inside Lua:
 You should note that, while in the SILE layer, the \autodoc:command{\set} command does its
 best to turn the textual description of a type into the appropriate Lua type
 for the value. \code{SILE.settings:set} does not do that; it expects the value
-to be of the appropriate type: lengths need to be a \code{SILE.length} object,
-glue must be \code{SILE.nodefactory.glue} and so on.}}
+to be of the appropriate type: lengths need to be a \code{SILE.types.length} object,
+glue must be \code{SILE.types.node.glue} and so on.}}
 
 \item{\code{SILE.settings:get(\em{⟨parameter⟩})}: retrieves the current
       setting of the parameter.}

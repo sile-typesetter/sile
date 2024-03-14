@@ -30,7 +30,7 @@ SILE.hyphenator.languages["tr"].hyphenateSegments = function (node, segments, j)
     hyphenChar = SILE.settings:get("font.hyphenchar")
   end
   local hyphen = SILE.shaper:createNnodes(hyphenChar, node.options)
-  return SILE.nodefactory.discretionary({ replacement = replacement, prebreak = hyphen }), segments
+  return SILE.types.node.discretionary({ replacement = replacement, prebreak = hyphen }), segments
 end
 
 SILE.hyphenator.languages["tr"].patterns =

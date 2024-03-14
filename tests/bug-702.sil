@@ -1,4 +1,5 @@
 \begin[papersize=a6]{document}
+\use[module=packages.retrograde,target=v0.15.0]
 \language[main=fr]
 Il était une fois, dans un pays très lointain (dont le nom périlleux ne doit pas être prononcé), vivait Bernadette, qui nous disait « Rien d’important! » As-tu entendu?
 \end{document}
