@@ -206,12 +206,16 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
     ])
 
     AM_COND_IF([DEVELOPER], [
+        AX_PROGVAR([apg_c], [apg-c])
+        AX_PROGVAR([apg_js], [apg-js])
+        AX_PROGVAR([apg_py], [apg-py])
         AX_PROGVAR([busted])
         AX_PROGVAR([cmp])
         AX_PROGVAR([curl])
         AX_PROGVAR([delta])
         AX_PROGVAR([diff])
         AX_PROGVAR([docker])
+        AX_PROGVAR([ebnf_convert], [ebnf-convert])
         AX_PROGVAR([git])
         AX_PROGVAR([grep])
         AX_PROGVAR([head])
