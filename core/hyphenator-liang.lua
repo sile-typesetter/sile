@@ -95,9 +95,25 @@ SILE.hyphenator = {}
 SILE.hyphenator.languages = {}
 SILE._hyphenators = {}
 
-local function defaultHyphenateSegments (node, segments, _)
-  local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options)
+-- BUG ALERT: This implementation is known to not account for font.hyphenchar being changed midway through a document.
+-- If the font also changed the node options would be different anyway so in 99%+ of cases this cheat is expected to
+-- work but technically the memoization should include the setting or the ID of the current setting stack or something.
+
+local lastoptions, lasthyphen
+
+local _defaultHyphenateSegments = pl.utils.memoize(function (hash)
+  local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), lastoptions)
   return SILE.nodefactory.discretionary({ prebreak = hyphen }), segments
+end)
+
+local function defaultHyphenateSegments (node, segments, _)
+  if lastoptions ~= node.options then
+    lastoptions = node.options
+    local hash = pl.pretty.write(node.options, "", true)
+    local discretionary = _defaultHyphenateSegments(hash)
+    lasthyphen = discretionary
+  end
+  return lasthyphen, segments
 end
 
 local initHyphenator = function (lang)
