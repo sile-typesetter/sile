@@ -60,7 +60,13 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
-            --enable-developer LDOC=false LUACHECK=false NIX=false DELTA=cat \
+            --enable-developer \
+              DELTA=cat \
+              LDOC=false \
+              LSP=false \
+              LUACHECK=false \
+              NIX=false \
+              PANDOC=false \
             --disable-font-variations \
             --without-manual
       - name: Make
