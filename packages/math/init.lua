@@ -16,6 +16,7 @@ function package:_init ()
       return value * SILE.settings:get("math.font.size") / 18
     end
   })
+  self:loadPackage("counters")
 end
 
 function package.declareSettings (_)
@@ -64,20 +65,34 @@ function package:registerCommands ()
   self:registerCommand("mathml", function (options, content)
     local mode = (options and options.mode) and options.mode or 'text'
     local mbox
+    local counter = SU.boolean(options.numbered, false) and "equation"
+    counter = options.counter or counter  -- overrides the default "equation" counter
     xpcall(function()
       mbox = self:ConvertMathML(content, mbox)
     end, function(err) print(err); print(debug.traceback()) end)
-    self:handleMath(mbox, mode)
+    self:handleMath(mbox, mode, counter)
   end)
 
   self:registerCommand("math", function (options, content)
     local mode = (options and options.mode) and options.mode or "text"
     local mbox
+    local counter = SU.boolean(options.numbered, false) and "equation"
+    counter = options.counter or counter  -- overrides the default "equation" counter
     xpcall(function()
       mbox = self:ConvertMathML(self:compileToMathML({}, self:convertTexlike(content)))
     end, function(err) print(err); print(debug.traceback()) end)
-    self:handleMath(mbox, mode)
+    self:handleMath(mbox, mode, counter)
   end)
+
+  self:registerCommand("math:numberingstyle", function (options, _)
+    SILE.typesetter:typeset("(")
+    SILE.call("show-counter", { id=options.id })
+    SILE.typesetter:typeset(")")
+  end)
+
+
+
+
 
 end
 
@@ -343,6 +358,18 @@ Finally, here is a little secret. This notation:
 \end{raw}
 
 \noindent In other words, the notation using \code{&} and \code{\\\\} is only a syntactic sugar for a two-dimensional array constructed with braces.
+
+\paragraph{Numbered equations}
+Equations can be numbered in display mode adding the options \autodoc:parameter{numbered} and \autodoc:parameter{counter}.
+When \autodoc:parameter{numbered=true}, the equations are numbered using a default "equation" counter.
+A different counter may be set by using the option \autodoc:parameter{counter=id}, and this setting will also enable numbering. 
+The default numbering format is "(xx)", but this style may be overriden by defining a custom \autodoc:command{\math:numberingstyle} function, e.g.
+
+\begin[type=autodoc:codeblock]{raw}
+\define[command=math:numberingstyle]{(\show-counter[id="equation"])}
+\end{raw}
+
+
 
 \paragraph{Missing features}
 This package still lacks support for some mathematical constructs, but hopefully we’ll get there.

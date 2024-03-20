@@ -126,7 +126,7 @@ function ConvertMathML (_, content)
   end
 end
 
-local function handleMath (_, mbox, mode)
+local function handleMath (_, mbox, mode, counter)
   if mode == 'display' then
     mbox.mode = b.mathMode.display
   elseif mode == 'text' then
@@ -144,9 +144,13 @@ local function handleMath (_, mbox, mode)
   if mode == "display" then
     SILE.typesetter:endline()
     SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
-    SILE.call("center", {}, function()
-      SILE.typesetter:pushHorizontal(mbox)
-    end)
+    SILE.typesetter:pushGlue(SILE.nodefactory.hfillglue())
+    SILE.typesetter:pushHorizontal(mbox)
+    SILE.typesetter:pushExplicitGlue(SILE.nodefactory.hfillglue())
+    if counter then
+      SILE.call("increment-counter", { id=counter } )
+      SILE.call("math:numberingstyle", { id=counter } )
+    end
     SILE.typesetter:endline()
     SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
   else
