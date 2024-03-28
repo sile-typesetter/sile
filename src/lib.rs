@@ -29,9 +29,10 @@ pub fn inject_paths(lua: &Lua) {
     lua.load(r#"require("core.pathsetup")"#).exec().unwrap();
     #[cfg(not(feature = "static"))]
     {
+        let datadir = env!("CONFIGURE_DATADIR").to_string();
         let sile_path = match env::var("SILE_PATH") {
-            Ok(val) => val,
-            Err(_) => env!("CONFIGURE_DATADIR").to_string(),
+            Ok(val) => format!("{datadir};{val}"),
+            Err(_) => datadir,
         };
         let sile_path: LuaString = lua.create_string(&sile_path).unwrap();
         lua.load(chunk! {
