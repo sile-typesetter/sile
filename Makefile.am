@@ -61,7 +61,7 @@ bin_SCRIPTS = sile-lua
 dist_man_MANS = sile-lua.1
 sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
 EXTRA_sile_SOURCES =
-if !EMBEDED_RESOURCES
+if !EMBEDDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = $(BUILT_LUA_SOURCES) $(LUAMODULES)
 endif
@@ -87,11 +87,11 @@ include $(top_srcdir)/build-aux/rust_boilerplate.mk
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@
 
-if EMBEDED_RESOURCES
-_EMBEDED_SOURCES = src/embed.rs src/embed-includes.rs
-nodist_sile_SOURCES = $(_EMBEDED_SOURCES)
-BUILT_SOURCES += $(_EMBEDED_SOURCES)
-CLEANFILES += $(_EMBEDED_SOURCES)
+if EMBEDDED_RESOURCES
+_EMBEDDED_SOURCES = src/embed.rs src/embed-includes.rs
+nodist_sile_SOURCES = $(_EMBEDDED_SOURCES)
+BUILT_SOURCES += $(_EMBEDDED_SOURCES)
+CLEANFILES += $(_EMBEDDED_SOURCES)
 $(CARGO_BIN): justenough/.libs/fontmetrics.a
 $(CARGO_BIN): justenough/.libs/justenoughfontconfig.a
 $(CARGO_BIN): justenough/.libs/justenoughharfbuzz.a
@@ -115,7 +115,7 @@ src/embed.rs: src/embed.rs.in src/embed-includes.rs
 		-e '/@INCLUDE_EMDED_INCLUDES@/r $(word 2,$^)' \
 		-e '/@INCLUDE_EMDED_INCLUDES@/d' \
 		$< > $@
-endif EMBEDED_RESOURCES
+endif EMBEDDED_RESOURCES
 
 if LUAJIT
 MLUAVER = luajit
@@ -128,7 +128,7 @@ if !SYSTEM_LUA_SOURCES
 CARGO_FEATURE_ARGS += --features vendored
 endif
 
-if EMBEDED_RESOURCES
+if EMBEDDED_RESOURCES
 CARGO_FEATURE_ARGS += --features static
 endif
 

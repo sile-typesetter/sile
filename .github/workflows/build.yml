@@ -14,8 +14,8 @@ jobs:
         configuration:
           - [ 'dynamic', '' ]
           - [ 'system', '--with-system-lua-sources' ]
-          - [ 'embeded', '--enable-embeded-resources' ]
-          - [ 'static', '--enable-embeded-resources --disable-shared --enable-static' ]
+          - [ 'embedded', '--enable-embedded-resources' ]
+          - [ 'static', '--enable-embedded-resources --disable-shared --enable-static' ]
     runs-on: ubuntu-22.04
     name: Build Ubuntu ${{ matrix.configuration[0] }}
     steps:

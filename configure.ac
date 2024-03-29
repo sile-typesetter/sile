@@ -34,10 +34,10 @@ AM_CONDITIONAL([DEPENDENCY_CHECKS], [test "x$enable_dependency_checks" != "xno"]
 AM_CONDITIONAL([SHARED], [test "x$enable_shared" = "xyes"])
 AM_CONDITIONAL([STATIC], [test "x$enable_static" = "xyes"])
 
-AC_ARG_ENABLE([embeded],
-              AS_HELP_STRING([--enable-embeded-resources],
+AC_ARG_ENABLE([embedded],
+              AS_HELP_STRING([--enable-embedded-resources],
                              [Compile resources such as Lua module files directly into the Rust CLI binary]))
-AM_CONDITIONAL([EMBEDED_RESOURCES], [test "x$enable_embeded_resources" = "xyes"])
+AM_CONDITIONAL([EMBEDDED_RESOURCES], [test "x$enable_embedded_resources" = "xyes"])
 
 AC_ARG_ENABLE([font-variations],
               AS_HELP_STRING([--disable-font-variations],

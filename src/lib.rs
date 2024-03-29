@@ -17,7 +17,7 @@ pub type Result<T> = anyhow::Result<T>;
 pub fn start_luavm() -> crate::Result<Lua> {
     let lua = unsafe { Lua::unsafe_new() };
     #[cfg(feature = "static")]
-    crate::embed::inject_embeded_loader(&lua);
+    crate::embed::inject_embedded_loader(&lua);
     inject_paths(&lua);
     load_sile(&lua);
     inject_version(&lua);
