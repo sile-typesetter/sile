@@ -22,15 +22,15 @@ AC_DEFUN_ONCE([AX_RUST_BOILERPLATE], [
 
         AC_MSG_NOTICE([checking for tools used by automake to build Rust projects])
         AC_PROG_INSTALL
-        AX_PROGVAR([cargo])
-        AX_PROGVAR([jq])
-        AX_PROGVAR([rustc])
-        AX_PROGVAR([cmp])
-        AX_PROGVAR([xargs])
+        QUE_PROGVAR([cargo])
+        QUE_PROGVAR([jq])
+        QUE_PROGVAR([rustc])
+        QUE_PROGVAR([cmp])
+        QUE_PROGVAR([xargs])
         AM_COND_IF([DEPENDENCY_CHECKS], [
                 AM_COND_IF([DEVELOPER], [
-                        AX_PROGVAR([git])
-                        AX_PROGVAR([rustfmt])
+                        QUE_PROGVAR([git])
+                        QUE_PROGVAR([rustfmt])
                 ])
         ])
 

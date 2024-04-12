@@ -2,11 +2,11 @@ AC_PREREQ([2.69])
 AC_INIT([sile], [m4_esyscmd(build-aux/git-version-gen .tarball-version)], [caleb@alerque.com])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux])
-AM_INIT_AUTOMAKE([foreign tar-pax dist-xz dist-zip no-dist-gzip color-tests subdir-objects])
+AM_INIT_AUTOMAKE([foreign tar-pax dist-zstd dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
 AX_GIT_VERSION
-AX_TRANSFORM_PACKAGE_NAME
+QUE_TRANSFORM_PACKAGE_NAME
 
 AM_CONDITIONAL([IS_SDIST], [test ! -e .gitignore])
 
@@ -17,7 +17,10 @@ AC_PROG_OBJC
 AC_PROG_AWK
 AC_PROG_GREP
 AC_PROG_SED
-AX_PROGVAR([find])
+
+QUE_PROGVAR([cmp])
+QUE_PROGVAR([git])
+QUE_PROGVAR([find])
 
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
@@ -93,14 +96,14 @@ AC_SUBST([FONT_DOWNLOAD_TOOLS])
 AM_COND_IF([DEPENDENCY_CHECKS], [
     AC_MSG_NOTICE([checking for SILE specific build dependencies])
 
-    AX_FONT(Gentium Plus)
+    QUE_FONT(Gentium Plus)
 
-    AX_PROGVAR([pdfinfo])
-    AX_PROGVAR([jq])
-    AX_PROGVAR([xargs])
+    QUE_PROGVAR([pdfinfo])
+    QUE_PROGVAR([jq])
+    QUE_PROGVAR([xargs])
     AM_COND_IF([MANUAL], [
-                AX_PROGVAR([dot])
-                AX_PROGVAR([gs])
+                QUE_PROGVAR([dot])
+                QUE_PROGVAR([gs])
                 ])
 
     AC_MSG_CHECKING([for OS X])
@@ -195,34 +198,34 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         AX_LUA_MODULE([pl], [penlight])
         AX_LUA_MODULE([vstruct], [vstruct])
     ], [
-        AX_PROGVAR([luarocks])
+        QUE_PROGVAR([luarocks])
     ])
 
     # Required for downloading fonts for the manual and for tests
     # Since the source tarball includes a prebuilt manual we only need this for Git source builds
     AM_COND_IF([FONT_DOWNLOAD_TOOLS], [
-        AX_PROGVAR([curl])
-        AX_PROGVAR([bsdtar])
+        QUE_PROGVAR([curl])
+        QUE_PROGVAR([bsdtar])
     ])
 
     AM_COND_IF([DEVELOPER], [
-        AX_PROGVAR([busted])
-        AX_PROGVAR([cmp])
-        AX_PROGVAR([curl])
-        AX_PROGVAR([delta])
-        AX_PROGVAR([diff])
-        AX_PROGVAR([docker])
-        AX_PROGVAR([git])
-        AX_PROGVAR([grep])
-        AX_PROGVAR([head])
-        AX_PROGVAR([ldoc])
-        AX_PROGVAR([luacheck])
-        AX_PROGVAR([luarocks])
-        AX_PROGVAR([nix])
-        AX_PROGVAR([npm])
-        AX_PROGVAR([perl])
-        AX_PROGVAR([sort])
-        AX_PROGVAR([tr])
+        QUE_PROGVAR([busted])
+        QUE_PROGVAR([cmp])
+        QUE_PROGVAR([curl])
+        QUE_PROGVAR([delta])
+        QUE_PROGVAR([diff])
+        QUE_PROGVAR([docker])
+        QUE_PROGVAR([git])
+        QUE_PROGVAR([grep])
+        QUE_PROGVAR([head])
+        QUE_PROGVAR([ldoc])
+        QUE_PROGVAR([luacheck])
+        QUE_PROGVAR([luarocks])
+        QUE_PROGVAR([nix])
+        QUE_PROGVAR([npm])
+        QUE_PROGVAR([perl])
+        QUE_PROGVAR([sort])
+        QUE_PROGVAR([tr])
     ])
 
 ])
@@ -285,15 +288,13 @@ AC_SUBST([SILE_LIB_PATH])
 AC_SUBST([ROCKSPECWARNING], ["DO NOT EDIT! Modify template sile.rockspec.in"])
 AC_SUBST([ROCKREV], [1])
 
-AX_SUBST_MAN_DATE
+QUE_SUBST_MAN_DATE
 
 AC_CONFIG_FILES([build-aux/list-dist-files.sh], [chmod +x build-aux/list-dist-files.sh])
 AC_CONFIG_FILES([Makefile justenough/Makefile sile-lua.1 core/features.lua core/pathsetup.lua core/version.lua])
 AC_CONFIG_FILES([sile-lua:sile.in], [chmod +x sile-lua])
 AC_CONFIG_FILES([tests/regressions.pl], [chmod +x tests/regressions.pl])
 AC_CONFIG_FILES([sile-dev-1.rockspec:sile.rockspec.in])
-
-AC_ARG_PROGRAM
 
 AC_OUTPUT
 
