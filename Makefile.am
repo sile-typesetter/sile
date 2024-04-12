@@ -1,4 +1,5 @@
 ACLOCAL_AMFLAGS = -I build-aux
+AM_DISTCHECK_CONFIGURE_FLAGS = --enable-developer-mode
 
 .ONESHELL:
 .SECONDARY:
@@ -82,7 +83,16 @@ BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
 
 CLEANFILES = $(MANUAL)
 
-include $(top_srcdir)/build-aux/rust_boilerplate.mk
+DISTCLEANFILES = @AMINCLUDE@
+
+# A classical use of the autoconf-archive include macro would expand
+# INC_AMINCLUDE here, but the perl script that inlines include statements
+# runs before the automake that organizes logic and performs substitution.
+# Consequentially with a substitution here it becomes impossible to use
+# automake conditionals and substitutions in the included Makefile fragments.
+# By entering the expanded value directly we are ready in time for the inlining
+# functionality and hence can use conditionals in included makefile fragments.
+include $(top_srcdir)/aminclude.am
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@
@@ -257,13 +267,13 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS
 .PHONY: force
 force: ;
 
-PHONY_DEVELOPER_TARGETS = busted compare coverage docker docker-build-push \
+PHONY_DEVELOPER_TARGETS = busted compare coverage \
 	docker-dep-check docker-ghcr-to-hub gource.webm lint luacheck luarocks-lint \
 	prerelease regression_previews regressions release release-preview tagrelease \
 	test update_expecteds update_libtexpdf
 .PHONY: $(PHONY_DEVELOPER_TARGETS)
 
-if DEVELOPER
+if DEVELOPER_MODE
 
 RELTYPE ?=
 
@@ -382,9 +392,6 @@ export DOCKER_REGISTRY ?= docker.io
 export DOCKER_REPO ?= siletypesetter/$(TRANSFORMED_PACKAGE_NAME)
 export DOCKER_TAG ?= HEAD
 
-docker: Dockerfile hooks/build .version
-	./hooks/build $(VERSION)
-
 docker-dep-check: .docker_deps .aur_deps
 	$(DIFF) -u $^
 
@@ -403,26 +410,9 @@ CLEANFILES += .docker_deps
 
 CLEANFILES += .aur_deps
 
-define docker_push =
-	test -z "$(DOCKER_PAT)" || \
-		$(DOCKER) login https://$(DOCKER_REGISTRY) -u $(DOCKER_USERNAME) -p $(DOCKER_PAT)
-	$(DOCKER) push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
-	if [[ "$(DOCKER_TAG)" == v*.*.* ]]; then \
-		tag=$(DOCKER_TAG) ; \
-		$(DOCKER) tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
-		$(DOCKER) tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
-		$(DOCKER) push $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
-		$(DOCKER) push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
-	fi
-endef
-
 docker-ghcr-to-hub:
 	$(DOCKER) pull $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG)
 	$(DOCKER) tag  $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
-	$(docker_push)
-
-docker-build-push: docker
-	$(DOCKER) tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
 	$(docker_push)
 
 gource.webm:
@@ -437,9 +427,9 @@ gource.webm:
 	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - | \
 		ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libvpx -b 10000K $@
 
-else !DEVELOPER
+else !DEVELOPER_MODE
 
 $(PHONY_DEVELOPER_TARGETS):
 	@: $(error "Please reconfigure using --enable-developer to use developer tooling")
 
-endif !DEVELOPER
+endif !DEVELOPER_MODE

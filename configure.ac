@@ -5,10 +5,10 @@ AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-zstd dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
-AX_GIT_VERSION
+QUE_GIT_VERSION
 QUE_TRANSFORM_PACKAGE_NAME
-
-AM_CONDITIONAL([IS_SDIST], [test ! -e .gitignore])
+QUE_DEVELOPER_MODE
+QUE_DIST_CHECKSUMS
 
 # Checks for programs.
 AC_PROG_CC
@@ -27,12 +27,8 @@ LT_INIT([dlopen])
 
 AC_CANONICAL_HOST
 
-AX_RUST_BOILERPLATE
-
-AC_ARG_ENABLE([dependency-checks],
-              AS_HELP_STRING([--disable-dependency-checks],
-                             [Disable dependency checks]))
-AM_CONDITIONAL([DEPENDENCY_CHECKS], [test "x$enable_dependency_checks" != "xno"])
+QUE_RUST_BOILERPLATE
+QUE_DOCKER_BOILERPLATE
 
 AM_CONDITIONAL([SHARED], [test "x$enable_shared" = "xyes"])
 AM_CONDITIONAL([STATIC], [test "x$enable_static" = "xyes"])
@@ -90,144 +86,140 @@ AC_ARG_WITH([manual],
                            [Rebuild manual and install to system’s PDF documentation directory]))
 AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
 
-AM_CONDITIONAL([FONT_DOWNLOAD_TOOLS], [test -z ${DEVELOPER_TRUE} || (test -z ${MANUAL_TRUE} && test -z ${IS_SDIST_FALSE})])
+AM_CONDITIONAL([FONT_DOWNLOAD_TOOLS], [test -z ${DEVELOPER_MODE_TRUE} || (test -z ${MANUAL_TRUE} && test -z ${SOURCE_IS_DIST_FALSE})])
 AC_SUBST([FONT_DOWNLOAD_TOOLS])
 
-AM_COND_IF([DEPENDENCY_CHECKS], [
-    AC_MSG_NOTICE([checking for SILE specific build dependencies])
+AC_MSG_NOTICE([checking for SILE specific build dependencies])
 
-    QUE_FONT(Gentium Plus)
+QUE_FONT(Gentium Plus)
 
-    QUE_PROGVAR([pdfinfo])
-    QUE_PROGVAR([jq])
-    QUE_PROGVAR([xargs])
-    AM_COND_IF([MANUAL], [
-                QUE_PROGVAR([dot])
-                QUE_PROGVAR([gs])
-                ])
-
-    AC_MSG_CHECKING([for OS X])
-    have_appkit=no
-    case $host_os in
-        darwin*)
-            AC_MSG_RESULT([yes])
-            AC_MSG_CHECKING([for AppKit works])
-            save_LIBS="$LIBS"
-            LIBS="$LIBS -framework AppKit  -fmodules"
-            AC_LANG_PUSH([Objective C])
-            AC_LINK_IFELSE([AC_LANG_PROGRAM([[@import AppKit;]],[[]])],
-            [
-                have_appkit=yes
-                AC_MSG_RESULT([yes])
-            ], [
-                have_appkit=no
-                AC_MSG_RESULT([no])
+QUE_PROGVAR([pdfinfo])
+QUE_PROGVAR([jq])
+QUE_PROGVAR([xargs])
+AM_COND_IF([MANUAL], [
+            QUE_PROGVAR([dot])
+            QUE_PROGVAR([gs])
             ])
-            AC_LANG_POP([Objective C])
-            LIBS="$save_LIBS"
-            ;;
-        *)
+
+AC_MSG_CHECKING([for OS X])
+have_appkit=no
+case $host_os in
+    darwin*)
+        AC_MSG_RESULT([yes])
+        AC_MSG_CHECKING([for AppKit works])
+        save_LIBS="$LIBS"
+        LIBS="$LIBS -framework AppKit  -fmodules"
+        AC_LANG_PUSH([Objective C])
+        AC_LINK_IFELSE([AC_LANG_PROGRAM([[@import AppKit;]],[[]])],
+        [
+            have_appkit=yes
+            AC_MSG_RESULT([yes])
+        ], [
+            have_appkit=no
             AC_MSG_RESULT([no])
-            ;;
-    esac
-
-    AM_COND_IF([FONTCONFIG],
-               [PKG_CHECK_MODULES(FONTCONFIG, [fontconfig],
-                                  [],
-                                  [AC_MSG_FAILURE([Fontconfig package not found])])])
-
-    AM_COND_IF([HARFBUZZ],
-               [PKG_CHECK_MODULES(HARFBUZZ, [harfbuzz >= 2.7.4],
-                                  [],
-                                  [AC_MSG_FAILURE([--with-harfbuzz was given, but harfbuzz not found])]) ])
-
-    AM_COND_IF([FONT_VARIATIONS],
-               [PKG_CHECK_MODULES(HARFBUZZ_SUBSET, [harfbuzz-subset >= 6.0.0],
-                                  [AC_DEFINE(HAVE_HARFBUZZ_SUBSET, [1], [Have harfbuzz-subset library])],
-                                  [AC_MSG_FAILURE([--enable-font-variations was given, but harfbuzz version not new enough to include required subset library functions])])])
-
-    AM_COND_IF([SYSTEM_LIBTEXPDF],
-               [AC_CHECK_LIB([texpdf], [texpdf_doc_set_verbose],
-                             [],
-                             [AC_MSG_FAILURE([--with-system-libtexpdf was given, but test for libtexpdf failed])])],
-               [AC_CONFIG_SUBDIRS([libtexpdf])])
-
-    PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
-        with_icu=yes
-    ],[
-        AC_CHECK_TOOL(ICU_CONFIG, icu-config, no)
-        AC_MSG_CHECKING([for ICU by using icu-config fallback])
-        if test "$ICU_CONFIG" != "no" && "$ICU_CONFIG" --version >/dev/null; then
-            ICU_LIBS=`icu-config  --ldflags-libsonly --ldflags-icuio`
-            ICU_CFLAGS=`icu-config --cppflags`
-            with_icu=yes
-            AC_MSG_RESULT([yes])
-        else
-            AC_MSG_FAILURE([Required ICU library not found])
-        fi
-    ])
-
-    AX_PROG_LUA([5.1])
-    AX_LUA_HEADERS
-    AX_LUA_LIBS
-
-    AM_COND_IF([SYSTEM_LUAROCKS], [
-        AS_IF([test "$LUA_SHORT_VERSION" -lt 52], [
-            AM_COND_IF([LUAJIT], [], [
-                AX_LUA_MODULE([bit32], [bit32])
-            ])
         ])
-        AX_LUA_MODULE([cassowary], [cassowary])
-        AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
-            AX_LUA_MODULE([compat53], [compat53])
-        )
-        AX_LUA_MODULE([cldr], [cldr])
-        AX_LUA_MODULE([fluent], [fluent])
-        AX_LUA_MODULE([linenoise], [linenoise])
-        AX_LUA_MODULE([loadkit], [loadkit])
-        AX_LUA_MODULE([lpeg], [lpeg])
-        AX_LUA_MODULE([zlib], [lua-zlib])
-        AX_LUA_MODULE([cliargs], [lua_cliargs])
-        AX_LUA_MODULE([epnf], [luaepnf])
-        AX_LUA_MODULE([lxp], [luaexpat])
-        AX_LUA_MODULE([lfs], [luafilesystem])
-        AX_LUA_MODULE([repl], [luarepl])
-        AX_LUA_MODULE([ssl], [luasec])
-        AX_LUA_MODULE([socket], [luasocket])
-        AX_LUA_MODULE([lua-utf8], [luautf8])
-        AX_LUA_MODULE([pl], [penlight])
-        AX_LUA_MODULE([vstruct], [vstruct])
-    ], [
-        QUE_PROGVAR([luarocks])
-    ])
+        AC_LANG_POP([Objective C])
+        LIBS="$save_LIBS"
+        ;;
+    *)
+        AC_MSG_RESULT([no])
+        ;;
+esac
 
-    # Required for downloading fonts for the manual and for tests
-    # Since the source tarball includes a prebuilt manual we only need this for Git source builds
-    AM_COND_IF([FONT_DOWNLOAD_TOOLS], [
-        QUE_PROGVAR([curl])
-        QUE_PROGVAR([bsdtar])
-    ])
+AM_COND_IF([FONTCONFIG],
+            [PKG_CHECK_MODULES(FONTCONFIG, [fontconfig],
+                                [],
+                                [AC_MSG_FAILURE([Fontconfig package not found])])])
 
-    AM_COND_IF([DEVELOPER], [
-        QUE_PROGVAR([busted])
-        QUE_PROGVAR([cmp])
-        QUE_PROGVAR([curl])
-        QUE_PROGVAR([delta])
-        QUE_PROGVAR([diff])
-        QUE_PROGVAR([docker])
-        QUE_PROGVAR([git])
-        QUE_PROGVAR([grep])
-        QUE_PROGVAR([head])
-        QUE_PROGVAR([ldoc])
-        QUE_PROGVAR([luacheck])
-        QUE_PROGVAR([luarocks])
-        QUE_PROGVAR([nix])
-        QUE_PROGVAR([npm])
-        QUE_PROGVAR([perl])
-        QUE_PROGVAR([sort])
-        QUE_PROGVAR([tr])
-    ])
+AM_COND_IF([HARFBUZZ],
+            [PKG_CHECK_MODULES(HARFBUZZ, [harfbuzz >= 2.7.4],
+                                [],
+                                [AC_MSG_FAILURE([--with-harfbuzz was given, but harfbuzz not found])]) ])
 
+AM_COND_IF([FONT_VARIATIONS],
+            [PKG_CHECK_MODULES(HARFBUZZ_SUBSET, [harfbuzz-subset >= 6.0.0],
+                                [AC_DEFINE(HAVE_HARFBUZZ_SUBSET, [1], [Have harfbuzz-subset library])],
+                                [AC_MSG_FAILURE([--enable-font-variations was given, but harfbuzz version not new enough to include required subset library functions])])])
+
+AM_COND_IF([SYSTEM_LIBTEXPDF],
+            [AC_CHECK_LIB([texpdf], [texpdf_doc_set_verbose],
+                            [],
+                            [AC_MSG_FAILURE([--with-system-libtexpdf was given, but test for libtexpdf failed])])],
+            [AC_CONFIG_SUBDIRS([libtexpdf])])
+
+PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
+    with_icu=yes
+],[
+    AC_CHECK_TOOL(ICU_CONFIG, icu-config, no)
+    AC_MSG_CHECKING([for ICU by using icu-config fallback])
+    if test "$ICU_CONFIG" != "no" && "$ICU_CONFIG" --version >/dev/null; then
+        ICU_LIBS=`icu-config  --ldflags-libsonly --ldflags-icuio`
+        ICU_CFLAGS=`icu-config --cppflags`
+        with_icu=yes
+        AC_MSG_RESULT([yes])
+    else
+        AC_MSG_FAILURE([Required ICU library not found])
+    fi
+])
+
+AX_PROG_LUA([5.1])
+AX_LUA_HEADERS
+AX_LUA_LIBS
+
+AM_COND_IF([SYSTEM_LUAROCKS], [
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 52], [
+        AM_COND_IF([LUAJIT], [], [
+            AX_LUA_MODULE([bit32], [bit32])
+        ])
+    ])
+    AX_LUA_MODULE([cassowary], [cassowary])
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
+        AX_LUA_MODULE([compat53], [compat53])
+    )
+    AX_LUA_MODULE([cldr], [cldr])
+    AX_LUA_MODULE([fluent], [fluent])
+    AX_LUA_MODULE([linenoise], [linenoise])
+    AX_LUA_MODULE([loadkit], [loadkit])
+    AX_LUA_MODULE([lpeg], [lpeg])
+    AX_LUA_MODULE([zlib], [lua-zlib])
+    AX_LUA_MODULE([cliargs], [lua_cliargs])
+    AX_LUA_MODULE([epnf], [luaepnf])
+    AX_LUA_MODULE([lxp], [luaexpat])
+    AX_LUA_MODULE([lfs], [luafilesystem])
+    AX_LUA_MODULE([repl], [luarepl])
+    AX_LUA_MODULE([ssl], [luasec])
+    AX_LUA_MODULE([socket], [luasocket])
+    AX_LUA_MODULE([lua-utf8], [luautf8])
+    AX_LUA_MODULE([pl], [penlight])
+    AX_LUA_MODULE([vstruct], [vstruct])
+], [
+    QUE_PROGVAR([luarocks])
+])
+
+# Required for downloading fonts for the manual and for tests
+# Since the source tarball includes a prebuilt manual we only need this for Git source builds
+AM_COND_IF([FONT_DOWNLOAD_TOOLS], [
+    QUE_PROGVAR([curl])
+    QUE_PROGVAR([bsdtar])
+])
+
+AM_COND_IF([DEVELOPER_MODE], [
+    QUE_PROGVAR([busted])
+    QUE_PROGVAR([cmp])
+    QUE_PROGVAR([curl])
+    QUE_PROGVAR([delta])
+    QUE_PROGVAR([diff])
+    QUE_PROGVAR([git])
+    QUE_PROGVAR([grep])
+    QUE_PROGVAR([head])
+    QUE_PROGVAR([ldoc])
+    QUE_PROGVAR([luacheck])
+    QUE_PROGVAR([luarocks])
+    QUE_PROGVAR([nix])
+    QUE_PROGVAR([npm])
+    QUE_PROGVAR([perl])
+    QUE_PROGVAR([sort])
+    QUE_PROGVAR([tr])
 ])
 
 AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
@@ -262,7 +254,7 @@ AC_SUBST([LUAROCKSARGS])
 
 # Avoid need for `--datarootdir=$(cd ..; pwd)` hack to run locally for
 # tests/manual build when developer mode is enabled
-AM_COND_IF([DEVELOPER], [
+AM_COND_IF([DEVELOPER_MODE], [
     adl_RECURSIVE_EVAL(["$(pwd)"], [SILE_PATH])
     datarootdir="$(cd ..; pwd)"
 ],[
