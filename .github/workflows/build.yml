@@ -61,7 +61,7 @@ jobs:
           files: |
             sile-${{ env.VERSION }}.pdf
             sile-${{ env.VERSION }}.zip
-            sile-${{ env.VERSION }}.tar.xz
+            sile-${{ env.VERSION }}.tar.zst
 
   build-nix:
     runs-on: ubuntu-22.04
