@@ -48,6 +48,8 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
+            --enable-developer-mode \
+            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false \
             --disable-font-variations \
             --with-manual \
             ${{ matrix.configuration[1] }}

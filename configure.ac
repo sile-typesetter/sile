@@ -87,7 +87,7 @@ AC_ARG_WITH([manual],
                            [Rebuild manual and install to system’s PDF documentation directory]))
 AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
 
-AM_CONDITIONAL([FONT_DOWNLOAD_TOOLS], [test -z ${DEVELOPER_MODE_TRUE} || (test -z ${MANUAL_TRUE} && test -z ${SOURCE_IS_DIST_FALSE})])
+AM_CONDITIONAL([FONT_DOWNLOAD_TOOLS], [test -z ${DEVELOPER_MODE_TRUE} || (test -z ${SOURCE_IS_DIST_TRUE} && test -z ${MANUAL_TRUE})])
 AC_SUBST([FONT_DOWNLOAD_TOOLS])
 
 AC_MSG_NOTICE([checking for SILE specific build dependencies])
@@ -206,12 +206,9 @@ AM_COND_IF([FONT_DOWNLOAD_TOOLS], [
 
 AM_COND_IF([DEVELOPER_MODE], [
     QUE_PROGVAR([busted])
-    QUE_PROGVAR([cmp])
     QUE_PROGVAR([curl])
     QUE_PROGVAR([delta])
     QUE_PROGVAR([diff])
-    QUE_PROGVAR([git])
-    QUE_PROGVAR([grep])
     QUE_PROGVAR([head])
     QUE_PROGVAR([ldoc])
     QUE_PROGVAR([luacheck])
