@@ -234,7 +234,7 @@ $ ./bootstrap.sh
 
 If you just plan on installing and using SILE, the default configure options (plus any Lua related options discussed above) should be fine.
 If you plan on developing SILE itself (whether to just tinker with it for your own use or contribute upstream) there is one particularly useful configuration option.
-You can add `--enable-developer` will set the 'installed data' directory to the source location which will enable the compiled binary to run directly from the source directory without being installed at all.
+You can add `--enable-developer-mode` will set the 'installed data' directory to the source location which will enable the compiled binary to run directly from the source directory without being installed at all.
 Additionally it will enable checks for tooling we expect SILE contributors to have such as tools used for testing.
 Using this options also enables a number of targets that wouldn’t normally be needed by end users such as `make regressions`.
 
@@ -245,7 +245,7 @@ $ ./configure
 $ make
 ```
 
-If you just want to mess with SILE locally you can stop here (especially if you used `--enable-developer`).
+If you just want to mess with SILE locally you can stop here (especially if you used `--enable-developer-mode`).
 However to actually install, you will need to run the installation command with system permissions.
 
 ```console

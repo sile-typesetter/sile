@@ -77,7 +77,7 @@
             nativeCheckInputs
             FONTCONFIG_FILE
           ;
-          configureFlags =  sile.configureFlags ++ [ "--enable-developer" ];
+          configureFlags =  sile.configureFlags ++ [ "--enable-developer-mode" "--with-manual" ];
           nativeBuildInputs = sile.nativeBuildInputs ++ [
             pkgs.luarocks
             # For regression test diff highlighting

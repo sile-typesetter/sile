@@ -132,12 +132,10 @@ in stdenv.mkDerivation (finalAttrs: {
 
   enableParallelBuilding = true;
 
-  # Autoconf wants to check that Makefile imports are valid files even before
-  # it potentially generates said files from substitution templates. The
-  # upstream project uses a bootstrap.sh to create this. Since we skip that, we
-  # have to fix this race condition ourselves.
+  # See commentary in bootstrap.sh; we're getting AMINCCLUDE stuff inlined
+  # instead of included but need to avoid a file not found error on first run.
   postUnpack = ''
-    touch source/build-aux/rust_boilerplate.mk
+    touch source/aminclude.am
   '';
 
   passthru = {

@@ -11,12 +11,14 @@ if !DEBUG_RELEASE
 CARGO_RELEASE_ARGS += --release --locked
 endif
 
-CARGO_ENV = CARGO_TARGET_DIR=@abs_top_builddir@/target
-CARGO_BIN = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/$(PACKAGE_NAME)
-_RUST_OUT = @abs_top_builddir@/target/@RUST_TARGET_SUBDIR@/.cargo_out_dir
+CARGO_ENV = CARGO_TARGET_DIR=@builddir@/target
+CARGO_BIN = @builddir@/target/@RUST_TARGET_SUBDIR@/$(PACKAGE_NAME)
+_RUST_OUT = @builddir@/target/@RUST_TARGET_SUBDIR@/.cargo_out_dir
 
-include $(top_srcdir)/build-aux/git_version.mk
-include $(top_srcdir)/build-aux/shell_completion_dirs.mk
+distclean-local: distclean-local-rust
+
+distclean-local-rust:
+	-rm -rf @builddir@/target
 
 @PACKAGE_NAME@$(EXEEXT): $(CARGO_BIN)
 	$(INSTALL) $< $@
@@ -53,7 +55,6 @@ $(COMPLETIONS_OUT_DIR)/_$(TRANSFORMED_PACKAGE_NAME): $(CARGO_BIN) | $(COMPLETION
 	$(INSTALL) -m755 $$(cat $(_RUST_OUT))/$(COMPLETIONS_OUT_DIR)/_$(PACKAGE_NAME) $@
 
 $(_RUST_OUT) $(CARGO_BIN): $(@PACKAGE_VAR@_SOURCES) $(EXTRA_@PACKAGE_VAR@_SOURCES)
-	cd $(top_srcdir)
 	set -e
 	export AUTOTOOLS_DEPENDENCIES="$^"
 	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(CARGO_FEATURE_ARGS) $(CARGO_RELEASE_ARGS)
@@ -63,7 +64,7 @@ $(_RUST_OUT) $(CARGO_BIN): $(@PACKAGE_VAR@_SOURCES) $(EXTRA_@PACKAGE_VAR@_SOURCE
 RUST_DEVELOPER_TARGETS = cargo-test clippy rustfmt
 .PHONY: $(RUST_DEVELOPER_TARGETS)
 
-if DEVELOPER
+if DEVELOPER_MODE
 
 test: cargo-test
 lint: rustfmt clippy
@@ -74,22 +75,19 @@ rustfmt:
 	$(GIT) ls-files '*.rs' '*.rs.in' | $(XARGS) $(RUSTFMT) --check --config skip_children=true
 
 clippy:
-	cd $(srcdir)
 	$(CARGO_ENV) $(CARGO) $(CARGO_VERBOSE) clippy $(CARGO_FEATURE_ARGS) -- -D warnings
 
 clean-cargo:
-	cd $(top_srcdir)
 	$(CARGO_ENV) $(CARGO) $(CARGO_VERBOSE) clean
 
 cargo-test: $(PACKAGE_NAME)$(EXEEXT)
-	cd $(srcdir)
 	$(CARGO_ENV) $(CARGO) $(CARGO_VERBOSE) test $(CARGO_FEATURE_ARGS) --locked
 
-else !DEVELOPER
+else !DEVELOPER_MODE
 
 $(RUST_DEVELOPER_TARGETS):
-	@: $(error "Please reconfigure using --enable-developer to use developer tooling")
+	@: $(error "Please reconfigure using --enable-developer-mode to use developer tooling")
 
-endif !DEVELOPER
+endif !DEVELOPER_MODE
 
 # vim: ft=automake
