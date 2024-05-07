@@ -1,0 +1,45 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\use[module=packages.lorem]
+\use[module=packages.math]
+\font[size=11pt]
+% Test numbered display math for all options
+% and in all alignments
+
+Begin justified
+\math[mode=display, numbered=true]{e^{i\pi} = -1}
+End justified.
+
+\begin{center}
+Begin centered
+\math[mode=display, numbered=true]{e^{i\pi} = -1}
+End centered
+\end{center}
+
+\begin{raggedright}
+Begin left-aligned
+\math[mode=display, numbered=true]{e^{i\pi} = -1}
+End left-aligned.
+\end{raggedright}
+
+\begin{raggedleft}
+Begin right-aligned
+\math[mode=display, numbered=true]{e^{i\pi} = -1}
+End right-aligned
+\end{raggedleft}
+
+Custom counter
+\set-counter[id=my-counter, display=alpha]
+\begin[mode=display, counter=my-counter]{math}
+    \{
+    \table[columnalign=right center left]{
+        u_0 &=& C \\
+        u_n &=& r \times u_{n−1}, \forall n ⩾ 1 \\
+    }
+\end{math}
+
+Direct numbering
+\math[mode=display, number=5C]{1 = -e^{i\pi}}
+
+\end{document}
