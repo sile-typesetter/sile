@@ -381,7 +381,7 @@ SILE is distributed under the [MIT licence][license].
   [linuxbrew]: https://docs.brew.sh/Homebrew-on-Linux
   [list-en]: https://groups.google.com/d/forum/sile-users
   [luarocks]: http://luarocks.org/en/Download
-  [nix-flakes]: https://nixos.wiki/wiki/Flakes#Installing_flakes
+  [nix-flakes]: https://wiki.nixos.org/wiki/Flakes#Installing_flakes
   [nix]: https://nixos.org/nix
   [ports]: http://ports.su/print/sile
   [ppa]: https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile
