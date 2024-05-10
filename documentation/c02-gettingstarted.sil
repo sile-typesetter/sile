@@ -1,67 +1,26 @@
 \begin{document}
 \chapter{Getting Started}
 
-Now that we understand some of what SILE is about and what it seeks to do, let’s dive into SILE itself.
-
-Before we show you how to use SILE, let’s have a quick look at an example SILE document.
-This is the input that we’re going to feed to SILE, which it is going to process and turn into a PDF file.
-Each of the examples can be saved as a text file and then use them as input to SILE.
-
-\section{Selecting a text editor}
-
-A SILE document is just a \em{plain text} file.
-When you create your own SILE files, you will need to create them in a plain text editor.
-Trying to create these files in a word processor such as Word will not work, as they will be saved with the word processor’s formatting codes rather than as plain text.
-
-Lots of good text editors exist (many of them for free) and any of them will work for SILE documents so which one you use is entirely a matter of preference.
-You can get started with even the most basic text editors built into your desktop environment such as Notepad on Windows, \nohyphenation{TextEdit} on macOS, \nohyphenation{Gedit} on Gnome, Kate on KDE, etc.
-However more advanced text editors (sometimes categorized as \em{code editors)} can offer a lot of features that make the editing process more robust.
-Editors are typically either graphical (GUI) or terminal (TUI) oriented and range from relatively simple to extremely complex integrated development environments (IDE).
-Examples of popular cross-platform GUI oriented editors include VS Code, Sublime Text, and Atom\footnote{Still relatively popular, but was discontinued in late 2022.}.
-Examples of popular terminal based editors include VIM\footnote{VIM & NeoVIM users can benefit from syntax highlighting and other features via the \code{vim-sile} plugin at \url{https://github.com/sile-typesetter/vim-sile}.}, Emacs, and GNU Nano.
-Depending on your operating system there may be platform-specific editors to consider such as Notepad++ on Windows or TextMate on macOS.
-Many more niche options abound: Lapce, Lite XL, Micro, Geany, BBEdit, UltraEdit, Eclipse, JetBrains IDE(s), Netbrains, Bluefish, CudaText, Leafpad, etc.
-
-For comparisons of editors see \url{https://alternativeto.net/category/developer-tools/code-editor/} and select your platform.
-
-\section{A basic SILE document}
-
-Once you have an editor, it’s time to consider a SILE input file.
-There are several different input formats that could be used including SIL and XML.
-For the purpose of this documentation we'll mostly use the SIL input format, but all examples translate 1-to-1 to XML.
-To begin with, here’s the most basic SILE file of all:
-
-\begin[type=autodoc:codeblock]{raw}
-\begin{document}
-Hello SILE!
-\end{document}
-\end{raw}
-
-We’ll pick apart this document in the next chapter, but for now take it for granted
-that this is what a SILE document looks like.
-
-This is going to produce an A4-sized PDF
-document, with the text \autodoc:example{Hello SILE} at the top left, and the page
-number (1) centered at the bottom. How are we going to get to that PDF?
+To begin harnessing the power of SILE, now that we have covered some of its key aspects and objectives, let’s dive into installing it on your computer, and set up everything you need to start typesetting documents.
 
 \section{Installing SILE}
 
-First of all, we need to get SILE running on our computer.
-Ready to use packages are available for macOS and many Linux distributions.
+Ready-to-use packages are available for macOS and many Linux distributions.
 Details for those we know about are listed in the sections below.
-Many other Linux distributions without native packages can also take advantage of either Linuxbrew or Nix packaging.
-For all other systems you will need to follow the steps to download and compile the source yourself.
-Alternatively, Docker containers are also available for use on any system that can run them.
+If your Linux distribution doesn’t have native packages, fear not!
+You can also use either Linuxbrew or Nix packaging.
+
+For other operating systems, you will need to download and compile the source code yourself, following the steps outlined below.
+Alternatively, Docker containers are available for use on any compatible system.
 
 \subsection{macOS}
 
-For macOS, the recommended way to install SILE is through the Homebrew package manager.
-Once you have Homebrew running (see \url{http://brew.sh}), installing SILE is as easy as running:
+For macOS users, the recommended method for installing SILE is through the Homebrew package manager.
+Once Homebrew is up and running (see \url{http://brew.sh}), you can install SILE effortlessly by running:
 
 \terminal{$ brew install sile}
 
-The formula also has an option that can compile SILE from the current Git HEAD version.
-To test the latest unreleased code you can install using:
+Additionally, you have the option to compile SILE from the latest (unreleased) source code:
 
 \terminal{$ brew install sile --HEAD}
 
@@ -121,6 +80,7 @@ $ pkgin install sile
 \subsection{NixOS or under Nix on any platform}
 
 In addition to NixOS, the \code{nix} package manager is available as a standalone package manager on many platforms including most Linux and BSD distributions, macOS, and even for Windows via WSL, and so presents an alternative way to run SILE on most systems.
+
 The \code{sile} package is available in both the stable and unstable channels, the unstable channel having the latest stable SILE releases and the stable channel being frozen on NixOS releases.
 You can use all the usual Nix tricks, including adding SILE into a \code{nix shell} environment or executing it directly with \code{nix run}.
 
@@ -229,7 +189,7 @@ Otherwise to go with default of bundling them, just run:
 If you plan on developing SILE itself (whether just to hack on it for your own use or contribute upstream) there are two particularly useful configuration options.
 First, you can add \code{--datarootdir=$(cd ..;pwd)} which will enable the compiled binary to run directly from the source directory without being installed at all.
 Second, you can add \code{--enable-developer-mode} to also check for tooling we expect SILE developers to have, such as tools used for testing.
-Using this option also enables a number of targets that wouldn't normally be needed by end-users, such as \code{make regressions}.
+Using this option also enables a number of targets that wouldn’t normally be needed by end-users, such as \code{make regressions}.
 \end{autodoc:note}
 
 \begin{autodoc:note}
@@ -285,18 +245,49 @@ According to the rumors, SILE may be built on Windows using CMake and Visual Stu
 Additionally some Windows executables are supposed to be generated using Azure for every commit.
 You may download these executables by selecting the latest build from \url{https://simoncozens-github.visualstudio.com/sile/_build} and downloading the “sile” artifact from the Artifacts drop down.
 
+\section{Selecting a text editor}
+
+A SILE document is just a \em{plain text} file.
+When you create your own SILE files, you will need to create them in a plain text editor.
+Trying to create these files in a word processor such as Word will not work, as they will be saved with the word processor’s formatting codes rather than as plain text.
+
+Lots of good text editors exist (many of them for free) and any of them will work for SILE documents so which one you use is entirely a matter of preference.
+You can get started with even the most basic text editors built into your desktop environment such as Notepad on Windows, \nohyphenation{TextEdit} on macOS, \nohyphenation{Gedit} on Gnome, Kate on KDE, etc.
+However more advanced text editors (sometimes categorized as \em{code editors}) can offer a lot of features that make the editing process more robust.
+Editors are typically either graphical (GUI) or terminal (TUI) oriented and range from relatively simple to extremely complex integrated development environments (IDE).
+Examples of popular cross-platform GUI oriented editors include VS Code, Sublime Text, and Atom\footnote{Still relatively popular, but was discontinued in late 2022.}.
+Examples of popular terminal based editors include VIM\footnote{VIM & NeoVIM users can benefit from syntax highlighting and other features via the \code{vim-sile} plugin at \url{https://github.com/sile-typesetter/vim-sile}.}, Emacs, and GNU Nano.
+Depending on your operating system there may be platform-specific editors to consider such as Notepad++ on Windows or TextMate on macOS.
+Many more niche options abound: Lapce, Lite XL, Micro, Geany, BBEdit, UltraEdit, Eclipse, JetBrains IDE(s), Netbrains, Bluefish, CudaText, Leafpad, etc.
+
+For comparisons of editors see \url{https://alternativeto.net/category/developer-tools/code-editor/} and select your platform.
+
 \section{Running SILE}
 
-Let’s move to a new directory, and in a text editor, create the file \code{hello.sil}.
-Copy in the content above and save the file.
+Once you have set up an editor, it’s time to consider a SILE input file.
+
+\subsection{A basic document}
+
+Let’s move to a new directory, and in a text editor, create a file \code{hello.sil}.
+Copy in the following content and save the file.
+
+\begin[type=autodoc:codeblock]{raw}
+\begin{document}
+Hello SILE!
+\end{document}
+\end{raw}
+
+It is a the most basic document file of all, in “TeX-like” SIL syntax (more on that later).
+
 Then, at your command line type:
 
 \terminal{$ sile hello.sil}
 
-Once again, this should produce an output file \code{hello.pdf}.
+This produces an A4-sized PDF document \code{hello.pdf}, with the text \autodoc:example{Hello SILE} at the top left, and the page number (1) centered at the bottom.
+
 Congratulations—you have just typeset your first document with SILE!
 
-All the available CLI options are documented both in the help output (\code{sile --help}) and in the man page (\code{man sile}).
+All the available command-line options are documented both in the help output (\code{sile --help}) and in the man page (\code{man sile}).
 This manual will only mention a few in passing as they come up in other other topics.
 
 \begin{autodoc:note}
@@ -306,7 +297,7 @@ If you want to write to a different filename altogether, use the \code{--output 
 You can use \code{--output -} to write the output directly to the system IO stream—useful if you wish to use SILE as part of a pipeline.
 \end{autodoc:note}
 
-\section{Let’s do something cool}
+\subsection{Let’s do something cool}
 
 In \url{https://sile-typesetter.org/examples/docbook.xml}, you will find a typical DocBook 5.0 article.
 Normally turning DocBook to print involves a complicated dance of XSLT processors, format object processors, and/or strange LaTeX packages.
@@ -326,13 +317,13 @@ The \autodoc:class{docbook} class will provide the commands necessary to process
 
 In Chapter 9, we’ll look at how the \autodoc:class{docbook} class works, and how you can define processing expectations for other XML formats.
 
-\section{Running SILE remotely as a CI job}
+\subsection{Running SILE remotely as a CI job}
 
 It may be useful for some work flows to run SILE remotely on a CI server as part of a job that renders documents automatically from sources.
 This comes with the caveats mentioned in the section \em{Running via Docker} above, but if you plan ahead and arrange your projects properly it can be quite useful.
 
 There are actually many ways to run SILE remotely as part of a CI work flow.
-Because packages are available for many platforms, one way would be to just use your platform's native package installation system to pull them into whatever CI-runner environment you already use.
+Because packages are available for many platforms, one way would be to just use your platform’s native package installation system to pull them into whatever CI-runner environment you already use.
 Another way is to pull in the prebuilt Docker container and run that.
 
 As a case study, here is how a workflow could be setup in GitHub Actions:
@@ -384,7 +375,7 @@ First you make add \code{--tree ./} to install them in the current directory.
 In this case, assuming this is the same directory as your document, SILE will automatically find such plugins.
 Additionally you may install them to your user profile by adding \code{--local} when installing.
 In this case you will also need to modify your user environment to check for plugins in that path since Lua does not do so by default.
-This can be done by running \code{eval $(luarocks path)} before running SILE (or from your shell's initialization script).
+This can be done by running \code{eval $(luarocks path)} before running SILE (or from your shell’s initialization script).
 
 \subsection{Finding Lua version in use for running SILE}
 

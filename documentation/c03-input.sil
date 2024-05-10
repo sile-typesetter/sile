@@ -1,40 +1,56 @@
 \begin{document}
 \chapter{SILE’s Input}
 
-First, we need to clear some air.
-In our own earlier documentation we gave the impression the primary way to feed content into SILE was a propriatry language.
-This was \em{never} really true since XML was always fully supported as an alternative.
-It is even less true now that 3rd party plugins can add their own input formats.
+As mentioned earlier, a SILE document is essentially a plain text file.
+However, you will need some markup to guide SILE in formatting the text.
+Such markup allows you to emphasize some words, start a new paragraph, introduce a chapter, and so forth.
 
-Hence this chanpter has been renamed.
-The original chapter title was "SILE’s Input Language", as if there was only one.
-The truth is there \em{is} an input syntax we call "SIL", but even that is perhaps best thought of as a structured data syntax rather than a unique language.
-The input strings \code{\\em\{foo\}} in SIL input syntax is 100\% equivalent to \code{<em>foo</em>} in XML input syntax.
-The SIL input syntax is provided as an easier to type alternative than XML which can be a bit verbose and tedious to work with by hand.
-On the other hand if you're handling data written by some other program, XML might be a much better solution.
+\section{Concerning input formats}
 
-3rd party packages can also add their own input formats.
-The stipulation is that an inputter parses some content and returns an AST with content tags and options recognized by SILE.
-Markdown, Djot, and others have packages available that provide inputters, allowing them to be first class input candidates.
-Many others like Dockbook and TEI are just XML with a special tag schema.
-SILE can be extended to cover any tag schema.
+The default SILE distribution includes support for a proprietary input language known as SIL, which comes in two different “flavors,” right out of the box:
 
-With that in mind, lets go back and reconsider the first SILE file we saw that was in SIL input syntax.
+\begin{itemize}
+\item{A “TeX-like” SIL syntax, loosely inspired by LaTeX but with notable deviations and different design choices.
+It looks like this: \autodoc:command{\em{content}}, producing \autodoc:example{\em{content}}.}
+\item{An “XML flavor” which is equivalent to the TeX-like syntax but (quite obviously) presented in XML form.
+The previous example, in XML format, look like this: \code{<em>content</em>}.}
+\end{itemize}
+
+For the purpose of this documentation, we will mostly use the SIL TeX-like input format.
+The SIL input syntax offers a more convenient and user-friendly alternative to XML, which can often be verbose and tedious to work with by hand.
+On the other hand, if you are handling data written by some other program, XML might be a much better solution.
+
+But before moving forward, it is essential to note that SILE can actually accept other input markup languages.
+Third-party packages can also add their own input formats.
+Thus, SILE is quite versatile and not tied to the default SIL syntax, whether in its TeX-like or XML flavor.
+
+Arbitrary XML schemas may be processed, with appropriate package support.\footnote{It sounds easy when put in those terms, and it is quite true.
+But of course, most XML-based document formats are fairly large and complex specifications.
+Thus, implementing support for them may not be as straightforward as it initially appears.}
+The SILE distribution ships with support for (a subset of) the DocBook specification.
+There are also existing 3rd-party packages providing support for other XML schemas; such as the TEI (Tex Initiative Encoding) specifications, USX (Unified Scripture XML), and others.
+
+SILE is flexible and can be extended to support other markup languages, beyond XML.
+For instance, there are 3rd-party collections of modules for the lightweight markup languages Markdown and Djot, and others.
+
+The stipulation is that an “inputter” component parses the content and produces an AST (Abstract Syntax Tree) recognized by SILE.
+With the right inputter, any markup language could potentially be supported and elevated to the status of a first-class input candidate within SILE.
+
+With that being acknowledged, let’s get back to the SIL syntax.
 
 \section{The SIL flavor}
 
-In the Getting Started chapter we looked at this document:
+The first SILE file we saw in the Getting Started chapter was in SIL TeX-like input syntax (which we will just refer to as “SIL” from now on).
+Let’s take reconsider it:
 
-\begin[type=autodoc:codeblock]{raw}
 \begin{document}
 Hello SILE!
 \end{document}
-\end{raw}
-
-\section{Defining the paper size}
 
 A document starts with a \code{\\begin\{document\}} command and ends with \code{\\end\{document\}}.
 In between, SILE documents are made up of two elements: text to be typeset on the page, such as “Hello SILE!” in our example, and commands.
+
+\subsection{Defining the paper size}
 
 The default paper size is A4, although each class may override this value.
 To manually change the paper size, an optional argument may be added to the document declaration:
@@ -63,7 +79,7 @@ In Chapter 4 we will meet more of these relative units, and in Chapter 7 we will
 
 \subsection{Setting orientation as landscape}
 
-The orientation of the page is defined as "portrait" by default, but if you want to set it as landscape there is an option for that:
+The orientation of the page is defined as “portrait” by default, but if you want to set it as landscape there is an option for that:
 
 \begin[type=autodoc:codeblock]{raw}
 \begin[landscape=true]{document}
@@ -90,7 +106,7 @@ Finally, there is also the case when the actual paper sheets available to you ar
 
 For instance, \code{papersize=6in x 9in, sheetsize=a4} produces an A4-dimensioned document, but with you content formatted as a 6 per 9 inches US trade book. You may, obviously, combine these options and also specify a bleed area.
 
-\section{Ordinary text}
+\subsection{Ordinary text}
 
 On the whole, ordinary text isn’t particularly interesting—it’s just typeset.
 
@@ -173,7 +189,7 @@ If you specifically want to break up the ligatures, insert empty groups (using t
     \code{af\{\}f\{\}luent f\{\}ishing}: ‘\autodoc:example{af{}f{}luent f{}ishing}’.
 See the section on the \autodoc:package{features} package for more information on how to control the display of ligatures and other font features.
 
-\section{Commands}
+\subsection{Commands}
 
 Typically (and we’ll unpack that statement later), SILE commands are made up of a backslash followed by a command name, and a document starts with a \code{\\begin\{document\}} command and ends with \code{\\end\{document\}}.
 
@@ -210,7 +226,7 @@ Here are a few more examples of SILE commands:
 
 \font[family=Times,size=10pt]{Hi there!} % Parameters and argument
 \end{raw}%
-\section{Environments}
+\subsection{Environments}
 
 Commands like \autodoc:command{\chapter} (to start a chapter) and \autodoc:command{\em} (to emphasise text) are normally used to enclose a relatively small piece of text—a few lines at most.
 Where you want to enclose a larger piece of the document, you can use an \em{environment}.
@@ -230,19 +246,18 @@ Hi there!
 
 However, in some cases the environment form of the command will be easier to read and will help you to be clearer on where the command begins and ends.
 
-\section{SIL flavor grammar specifications}
+\subsection{SIL grammar specifications}
 
-The official grammar for the SIL flavor is the LPEG reference implementation.
+The official grammar for the SIL syntax is the LPEG reference implementation.
 That being said the reference implementation has some idiosyncrasies and is not the easiest to read.
 For convenience an ABNF grammar is also provided in the source tree, see \code{sil.abnf}.
 This grammar does not completely express the language as it cannot express the way SIL can embed other syntaxes, but it is a decent approximation.
 
-The intent behind many of the syntax choices is to make it easy to have parity with XML flavors.
+The intent behind many of the syntax choices is to make it easy to have parity with SXML flavors.
 This means limiting commands to valid XML identifiers (e.g. starting with an ASCII letter, not a digit or special character), requiring a single top level command as the document, and so forth.
 
-\section{The XML flavor}
+\section{The XML syntax}
 
-As mentioned at the start of the chapter, SILE can actually process its input in a completely different file format.
 What we’ve seen so far has been SILE’s “TeX-like” SIL syntax flavor, but it can also directly read and process XML files.
 (If it isn’t well-formed XML, then SILE will get very upset.)
 
@@ -264,7 +279,7 @@ The example above, in XML flavor, would look like this:
 <font family="Times" size="10pt">Hi there!</font>
 \end{raw}
 
-We don’t expect humans to write their documents in SILE’s XML flavor—the TeX-like SIL flavor is much better for that—but having an XML flavor allows for computers to deal with SILE a lot more easily.
+We don’t expect humans to write their documents in SILE’s XML flavor—the SIL flavor is much better for that—but having an XML flavor allows for computers to deal with SILE a lot more easily.
 One could create graphical user interfaces to edit SILE documents, or convert other XML formats to SILE.
 
 However, there is an even smarter way of processing XML with SILE.
