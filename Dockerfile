@@ -55,6 +55,9 @@ ARG RUNTIME_DEPS
 ARG VERSION
 ARG REVISION
 
+# Allow `su` with no root password so non-priv users can install dependencies
+RUN sed -i -e '/.so$/s/$/ nullok/' /etc/pam.d/su
+
 # Set system locale to something other than 'C' that resolves to a real language
 ENV LANG=en_US.UTF-8
 
