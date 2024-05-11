@@ -86,7 +86,7 @@ It’s quite fiddly to be always changing font specifications manually;
 SILE’s \autodoc:class{plain} class notably provides the \autodoc:command{\strong{…}} command as a a shortcut for \autodoc:command{\font[weight=700]{…}}, and the \autodoc:command{\em{…}} to emphasize text (switching between italic or regular style as needed).
 
 Note for parameters that accept multiple values, values may be separated with commas.
-Be sure to wrap the value in quotes so the commas don't get parsed as new parameters.
+Be sure to wrap the value in quotes so the commas don’t get parsed as new parameters.
 For example \autodoc:command{\font[features="+calt,+ss01"]} will enable OpenType feature flags for both contextual alternatives and alternative style set 1.
 Similarly values that are themselves key=value pairs the quotation marks will keep them separate from other parameters.
 For example \autodoc:command{\font[variations="wght=150,wdth=122"]} can be used to set both the weight and width axis values.
@@ -282,7 +282,7 @@ This command has three modes:
   Another former use case or \code{\\script[src=…]} was to load SILE packages.
   This use case has been deprecated in favor of the more robust loader \code{\\use[module=…]}.
   Be sure to use a module spec with period delimiters not a path with slashes (e.g. \code{packages.math} not \code{packages/math}).
-  This will ensure cross-platform compatibility as well as make sure packages don't get loaded multiple times.
+  This will ensure cross-platform compatibility as well as make sure packages don’t get loaded multiple times.
 \end{autodoc:note}
 
 Doing anything interesting inline requires knowledge of the internals of SILE, (thankfully the code is not that hard to read) but to get you started, the Lua function \code{SILE.typesetter:typeset(…)} will add text to a page, \code{SILE.call("…")} will call a SILE command, and \code{SILE.typesetter:leaveHmode()} ends the current paragraph and outputs the text.
@@ -317,4 +317,37 @@ This means that for the environment block version (\code{\\begin\{lua\}}) there 
 The first instance of such an end tag terminates the block, and there is currently no way to escape it.
 For the inline command form (\code{\\lua}) an exact matching number of open and closing braces may appear in the Lua code—the next closing brace at the same level as the opening brace will close the tag, even if it happens to be inside some quoted string in the Lua code.
 Including any number of nested opening and closing braces is possible as long as they are balanced.
+
+\section{Including raw inline content}
+
+When parsing a SIL file, SILE invokes an “inputter” module, which implements the SIL language grammar and constructs an abstract syntax tree (AST) for processing.
+This implies that the content of any command or environment is in SIL syntax.
+
+However, there are cases when you may need to pass raw content that should remain unparsed — or, more properly, later parsed by a \em{different} grammar.
+While you could escape all special characters in your content with backslashes to prevent them from being interpreted as SIL constructs, this approach is tedious and cumbersome.
+
+This issue already arises in several scenarios.
+For instance, the \code{\\lua} command (and the legacy \code{\\script} command) described above fall into this category.
+In these cases, one expects to use Lua code without the need for escaping it.
+
+Similarly, the content of the \code{\\math} command (for the \autodoc:package{math} package) falls outside the scope of the SIL language syntax and requires a different grammar.
+After all, its content follows the TeX math syntax, with commands with multiple arguments, special use of brackets, and so on.
+Therefore, we need to instruct the SIL parser that this content should not be interpreted,but rather extracted as a raw string.
+Later, it will be fed to another dedicated inputter for parsing.\footnote{In the case of math, it is currently a \em{pseudo}-inputter, but that is an implementation detail.}
+
+The SIL inputter reserves a few special keywords: \code{\\lua}, \code{\\script}; but also \code{\\ftl}, \code{\\math}, \code{\\sil}, \code{\\use}, \code{\\xml}; and finally \code{\\raw}, which we will discuss here.
+
+It is obvious that we can’t reserve too many keywords in advance.
+However, they must be known \em{before} parsing a file, which means they can’t be dynamic.
+The reserved keywords can’t be overridden or redefined afterwards.
+So, how can we achieve extensibility?
+
+SILE provides a mechanism to address this: \em{raw handlers}.
+Through the Lua interface, packages and classes can register a function that gets called when a raw command is encountered in the input stream.
+From within a SIL file, the \code{\\raw[type=…]} command can then be used to invoke that handler, passing the raw content.\footnote{In a certain sense, all things equal, raw handlers are similar to the concept of “CDATA sections” in XML.}
+
+Raw handlers are identified by the \autodoc:parameter{type} parameter.
+By default, SILE comes with a \code{text} raw handler, which simply typesets its content“verbatim” (as a string) without interpreting it.
+Packages and classes can register their own additional raw handlers to fulfill specific needs.
+
 \end{document}
