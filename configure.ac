@@ -292,6 +292,7 @@ AC_CONFIG_FILES([Makefile justenough/Makefile sile-lua.1 core/features.lua core/
 AC_CONFIG_FILES([sile-lua:sile.in], [chmod +x sile-lua])
 AC_CONFIG_FILES([tests/regressions.pl], [chmod +x tests/regressions.pl])
 AC_CONFIG_FILES([sile-dev-1.rockspec:sile.rockspec.in])
+AC_CONFIG_FILES([src/sile-entry.sh], [chmod +x src/sile-entry.sh])
 
 AC_ARG_PROGRAM
 

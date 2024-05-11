@@ -156,7 +156,7 @@ This makes the actual invocation command quite a mouthful.
 For most shells, a single alias can be created to hide that complexity and make it pretty simple to run:
 
 \begin{terminal}
-$ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
+$ alias sile='docker run -it --volume "$(pwd):/data" siletypesetter/sile:latest'
 $ sile input.sil
 \end{terminal}
 
@@ -171,7 +171,7 @@ You can see where fonts are found on your system using \code{fc-list}.
 The path of your choosing from the host system should be mounted as a volume on \code{/fonts} inside the container like this:
 
 \begin{terminal}
-$ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest
+$ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" siletypesetter/sile:latest
 \end{terminal}
 
 Armed with commands (or aliases) like these to take care of the actual invocation, you should be able to use all other aspects of SILE as documented in the rest of the manual.
