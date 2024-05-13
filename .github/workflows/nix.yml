@@ -18,7 +18,7 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v10
       - name: Cache Nix dependencies
-        uses: DeterminateSystems/magic-nix-cache-action@v4
+        uses: DeterminateSystems/magic-nix-cache-action@v6
       # Upstream package sometimes has flags set that disable flake checking
       - name: Setup test env
         run: |
