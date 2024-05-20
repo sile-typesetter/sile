@@ -25,7 +25,7 @@ use std::str;
 #[exclude = "src/*"]
 #[exclude = "target/*"]
 #[exclude = "tests/*"]
-// @INCLUDE_EMDED_INCLUDES@ -- this marker line gets replaced by a list of includes
+// @EMBEDED_INCLUDE_LIST@ -- this marker line gets replaced by a list of includes
 pub struct SileModules;
 
 // Link Lua loader functions from C modules that Lua would otherwise be loading externally that

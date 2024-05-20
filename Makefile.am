@@ -122,8 +122,8 @@ src/embed-includes.rs: Makefile-distfiles
 
 src/embed.rs: src/embed.rs.in src/embed-includes.rs
 	$(SED) \
-		-e '/@INCLUDE_EMDED_INCLUDES@/r $(word 2,$^)' \
-		-e '/@INCLUDE_EMDED_INCLUDES@/d' \
+		-e '/@EMBEDED_INCLUDE_LIST@/r $(word 2,$^)' \
+		-e '/@EMBEDED_INCLUDE_LIST@/d' \
 		$< > $@
 endif EMBEDDED_RESOURCES
 
