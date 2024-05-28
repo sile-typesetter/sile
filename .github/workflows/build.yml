@@ -78,7 +78,7 @@ jobs:
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v10
+        uses: DeterminateSystems/nix-installer-action@v11
       - name: Cache Nix dependencies
         uses: DeterminateSystems/magic-nix-cache-action@v6
       - name: Setup developer environment
