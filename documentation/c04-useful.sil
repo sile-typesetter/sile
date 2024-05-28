@@ -339,7 +339,7 @@ The SIL inputter reserves a few special keywords: \code{\\lua}, \code{\\script};
 
 It is obvious that we can’t reserve too many keywords in advance.
 However, they must be known \em{before} parsing a file, which means they can’t be dynamic.
-The reserved keywords can’t be overridden or redefined afterwards.
+The reserved keywords can’t be overridden or redefined after document parsing has begun.
 So, how can we achieve extensibility?
 
 SILE provides a mechanism to address this: \em{raw handlers}.
