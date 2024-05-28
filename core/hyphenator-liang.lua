@@ -55,12 +55,13 @@ local function loadPatterns(hyphenator, language)
 end
 
 SILE._hyphenate = function (self, text)
-  if string.len(text) < self.minWord then return { text } end
-  local points = self.exceptions[text:lower()]
+  if luautf8.len(text) < self.minWord then return { text } end
+  local lowertext = luautf8.lower(text)
+  local points = self.exceptions[lowertext]
   local word = SU.splitUtf8(text)
   if not points then
-    points = SU.map(function ()return 0 end, word)
-    local work = SU.map(string.lower, word)
+    points = SU.map(function () return 0 end, word)
+    local work = SU.map(luautf8.lower, word)
     table.insert(work, ".")
     table.insert(work, 1, ".")
     table.insert(points, 1, 0)
