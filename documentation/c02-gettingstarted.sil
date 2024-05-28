@@ -130,7 +130,7 @@ $ sile <arguments>
 $ nix run nixpkgs/nixpkgs-unstable#sile -- <arguments>
 \end{terminal}
 
-The SILE source repository is also a valid Nix Flake\footnote{\url{https://nixos.wiki/wiki/Flakes#Installing_flakes}} which means you can run any specific version or the latest unreleased development code directly:
+The SILE source repository is also a valid Nix Flake\footnote{\url{https://wiki.nixos.org/wiki/Flakes#Installing_flakes}} which means you can run any specific version or the latest unreleased development code directly:
 
 \begin{terminal}
 $ nix run github:sile-typesetter/sile/v0.14.3 -- <arguments>
