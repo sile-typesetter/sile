@@ -13,102 +13,101 @@ local symbols = syms.symbols
 -- stylua: ignore start
 ---@diagnostic disable: undefined-global, unused-local, lowercase-global
 local mathGrammar = function (_ENV)
-  local _ = WS^0
-  local eol = S"\r\n"
-  local digit = R("09")
-  local natural = digit^1 / tostring
-  local pos_natural = R("19") * digit^0 / tonumber
-  local ctrl_word = R("AZ", "az")^1
-  local ctrl_symbol = P(1) - S"{}\\"
-  local ctrl_sequence_name = C(ctrl_word + ctrl_symbol) / 1
-  local comment = (
-      P"%" *
-      P(1-eol)^0 *
-      eol^-1
-    )
-  local utf8cont = R("\128\191")
-  local utf8code = lpeg.R("\0\127")
-    + lpeg.R("\194\223") * utf8cont
-    + lpeg.R("\224\239") * utf8cont * utf8cont
-    + lpeg.R("\240\244") * utf8cont * utf8cont * utf8cont
-  -- Identifiers inside \mo and \mi tags
-  local sileID = C(bits.identifier + P(1)) / 1
-  local mathMLID = (utf8code - S"\\{}%")^1 / function (...)
-      local ret = ""
-      local t = {...}
-      for _,b in ipairs(t) do
-        ret = ret .. b
+   local _ = WS^0
+   local eol = S"\r\n"
+   local digit = R("09")
+   local natural = digit^1 / tostring
+   local pos_natural = R("19") * digit^0 / tonumber
+   local ctrl_word = R("AZ", "az")^1
+   local ctrl_symbol = P(1) - S"{}\\"
+   local ctrl_sequence_name = C(ctrl_word + ctrl_symbol) / 1
+   local comment = (
+         P"%" *
+         P(1-eol)^0 *
+         eol^-1
+      )
+   local utf8cont = R("\128\191")
+   local utf8code = lpeg.R("\0\127")
+      + lpeg.R("\194\223") * utf8cont
+      + lpeg.R("\224\239") * utf8cont * utf8cont
+      + lpeg.R("\240\244") * utf8cont * utf8cont * utf8cont
+   -- Identifiers inside \mo and \mi tags
+   local sileID = C(bits.identifier + P(1)) / 1
+   local mathMLID = (utf8code - S"\\{}%")^1 / function (...)
+         local ret = ""
+         local t = {...}
+         for _,b in ipairs(t) do
+         ret = ret .. b
+         end
+         return ret
       end
-      return ret
-    end
-  local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
-  local element_no_infix =
-    V"def" +
-    V"command" +
-    group +
-    V"argument" +
-    V"atom"
-  local element =
-    V"supsub" +
-    V"subsup" +
-    V"sup" +
-    V"sub" +
-    element_no_infix
-  local sep = S",;" * _
-  local quotedString = (P'"' * C((1-P'"')^1) * P'"')
-  local value = ( quotedString + (1-S",;]")^1 )
-  local pair = Cg(sileID * _ * "=" * _ * C(value)) * sep^-1 / function (...)
+   local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
+   local element_no_infix =
+      V"def" +
+      V"command" +
+      group +
+      V"argument" +
+      V"atom"
+   local element =
+      V"supsub" +
+      V"subsup" +
+      V"sup" +
+      V"sub" +
+      element_no_infix
+   local sep = S",;" * _
+   local quotedString = (P'"' * C((1-P'"')^1) * P'"')
+   local value = ( quotedString + (1-S",;]")^1 )
+   local pair = Cg(sileID * _ * "=" * _ * C(value)) * sep^-1 / function (...)
       local t = {...}; return t[1], t[#t]
-    end
-  local list = Cf(Ct"" * pair^0, rawset)
-  local parameters = (
-      P"[" *
-      list *
-      P"]"
-    )^-1 / function (a)
-        return type(a)=="table" and a or {}
+   end
+   local list = Cf(Ct"" * pair^0, rawset)
+   local parameters = (
+         P"[" *
+         list *
+         P"]"
+      )^-1 / function (a)
+            return type(a)=="table" and a or {}
+         end
+   local dim2_arg_inner = Ct(V"mathlist" * (P"&" * V"mathlist")^0) /
+      function (t)
+         t.id = "mathlist"
+         return t
       end
+   local dim2_arg =
+      Cg(P"{" *
+         dim2_arg_inner *
+         (P"\\\\" * dim2_arg_inner)^1 *
+         (P"}" + E("`}` expected"))
+         ) / function (...)
+            local t = {...}
+            -- Remove the last mathlist if empty. This way,
+            -- `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
+            if not t[#t][1] or not t[#t][1][1] then table.remove(t) end
+            return pl.utils.unpack(t)
+         end
 
-  local dim2_arg_inner = Ct(V"mathlist" * (P"&" * V"mathlist")^0) /
-    function (t)
-      t.id = "mathlist"
-      return t
-    end
-  local dim2_arg =
-    Cg(P"{" *
-       dim2_arg_inner *
-       (P"\\\\" * dim2_arg_inner)^1 *
-       (P"}" + E("`}` expected"))
-      ) / function (...)
-        local t = {...}
-        -- Remove the last mathlist if empty. This way,
-        -- `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
-        if not t[#t][1] or not t[#t][1][1] then table.remove(t) end
-        return pl.utils.unpack(t)
-      end
-
-  START "texlike_math"
-  texlike_math = V"mathlist" * EOF"Unexpected character at end of math code"
-  mathlist = (comment + (WS * _) + element)^0
-  supsub = element_no_infix * _ * P"^" * _ * element_no_infix * _ *
-    P"_" * _ * element_no_infix
-  subsup = element_no_infix * _ * P"_" * _ * element_no_infix * _ *
-    P"^" * _ * element_no_infix
-  sup = element_no_infix * _ * P"^" * _ * element_no_infix
-  sub = element_no_infix * _ * P"_" * _ * element_no_infix
-  atom = natural + C(utf8code - S"\\{}%^_&") +
-    (P"\\{" + P"\\}") / function (s) return string.sub(s, -1) end
-  command = (
-      P"\\" *
-      Cg(ctrl_sequence_name, "command") *
-      Cg(parameters, "options") *
-      (dim2_arg + group^0)
-    )
-  def = P"\\def" * _ * P"{" *
-    Cg(ctrl_sequence_name, "command-name") * P"}" * _ *
-    --P"[" * Cg(digit^1, "arity") * P"]" * _ *
-    P"{" * V"mathlist" * P"}"
-  argument = P"#" * Cg(pos_natural, "index")
+   START "texlike_math"
+   texlike_math = V"mathlist" * EOF"Unexpected character at end of math code"
+   mathlist = (comment + (WS * _) + element)^0
+   supsub = element_no_infix * _ * P"^" * _ * element_no_infix * _ *
+      P"_" * _ * element_no_infix
+   subsup = element_no_infix * _ * P"_" * _ * element_no_infix * _ *
+      P"^" * _ * element_no_infix
+   sup = element_no_infix * _ * P"^" * _ * element_no_infix
+   sub = element_no_infix * _ * P"_" * _ * element_no_infix
+   atom = natural + C(utf8code - S"\\{}%^_&") +
+      (P"\\{" + P"\\}") / function (s) return string.sub(s, -1) end
+   command = (
+         P"\\" *
+         Cg(ctrl_sequence_name, "command") *
+         Cg(parameters, "options") *
+         (dim2_arg + group^0)
+      )
+   def = P"\\def" * _ * P"{" *
+      Cg(ctrl_sequence_name, "command-name") * P"}" * _ *
+      --P"[" * Cg(digit^1, "arity") * P"]" * _ *
+      P"{" * V"mathlist" * P"}"
+   argument = P"#" * Cg(pos_natural, "index")
 end
 -- luacheck: pop
 -- stylua: ignore end

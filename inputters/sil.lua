@@ -46,81 +46,81 @@ end
 -- stylua: ignore start
 ---@diagnostic disable: undefined-global, unused-local, lowercase-global
 function inputter._grammar (_ENV)
-  local isPassthrough = function (_, _, command)
-    return inputter.passthroughCommands[command] or false
-  end
-  local isNotPassthrough = function (...)
-    return not isPassthrough(...)
-  end
-  local isMatchingEndEnv = function (a, b, thisCommand, lastCommand)
-    return thisCommand == lastCommand
-  end
-  local _ = WS^0
-  local eol = S"\r\n"
-  local specials = S"{}%\\"
-  local escaped_specials = P"\\" * specials
-  local unescapeSpecials = function (str)
-    return str:gsub('\\([{}%%\\])', '%1')
-  end
-  local myID = C(bits.silidentifier) / 1
-  local cmdID = myID - P"beign" - P"end"
-  local wrapper = function (a) return type(a)=="table" and a or {} end
-  local parameters = (P"[" * bits.parameters * P"]")^-1 / wrapper
-  local comment = (
-      P"%" *
-      P(1-eol)^0 *
-      eol^-1
-    ) / ""
+   local isPassthrough = function (_, _, command)
+      return inputter.passthroughCommands[command] or false
+   end
+   local isNotPassthrough = function (...)
+      return not isPassthrough(...)
+   end
+   local isMatchingEndEnv = function (a, b, thisCommand, lastCommand)
+      return thisCommand == lastCommand
+   end
+   local _ = WS^0
+   local eol = S"\r\n"
+   local specials = S"{}%\\"
+   local escaped_specials = P"\\" * specials
+   local unescapeSpecials = function (str)
+      return str:gsub('\\([{}%%\\])', '%1')
+   end
+   local myID = C(bits.silidentifier) / 1
+   local cmdID = myID - P"beign" - P"end"
+   local wrapper = function (a) return type(a)=="table" and a or {} end
+   local parameters = (P"[" * bits.parameters * P"]")^-1 / wrapper
+   local comment = (
+         P"%" *
+         P(1-eol)^0 *
+         eol^-1
+      ) / ""
 
-  START "document"
-  document = V"texlike_stuff" * EOF"Unexpected character at end of input"
-  texlike_stuff = Cg(
-      V"environment" +
-      comment +
-      V"texlike_text" +
-      V"texlike_braced_stuff" +
-      V"texlike_command"
-    )^0
-  passthrough_stuff = C(Cg(
-      V"passthrough_text" +
-      V"passthrough_debraced_stuff"
-    )^0)
-  passthrough_env_stuff = Cg(
-      V"passthrough_env_text"
-    )^0
-  texlike_text = C((1 - specials + escaped_specials)^1) / unescapeSpecials
-  passthrough_text = C((1-S("{}"))^1)
-  passthrough_env_text = C((1 - (P"\\end{" * Cmt(cmdID * Cb"command", isMatchingEndEnv) * P"}"))^1)
-  texlike_braced_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
-  passthrough_braced_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
-  passthrough_debraced_stuff = C(V"passthrough_braced_stuff")
-  texlike_command = (
-      P"\\" *
-      Cg(cmdID, "command") *
-      Cg(parameters, "options") *
-      (
-        (Cmt(Cb"command", isPassthrough) * V"passthrough_braced_stuff") +
-        (Cmt(Cb"command", isNotPassthrough) * V"texlike_braced_stuff")
+   START "document"
+   document = V"texlike_stuff" * EOF"Unexpected character at end of input"
+   texlike_stuff = Cg(
+         V"environment" +
+         comment +
+         V"texlike_text" +
+         V"texlike_braced_stuff" +
+         V"texlike_command"
       )^0
-    )
-  local notpass_end =
-      P"\\end{" *
-      ( Cmt(cmdID * Cb"command", isMatchingEndEnv) + E"Environment mismatch") *
-      ( P"}" * _ ) + E"Environment begun but never ended"
-  local pass_end =
-      P"\\end{" *
-      ( cmdID * Cb"command" ) *
-      ( P"}" * _ ) + E"Environment begun but never ended"
-  environment =
-    P"\\begin" *
-    Cg(parameters, "options") *
-    P"{" *
-    Cg(cmdID, "command") *
-    P"}" *
-    (
-      (Cmt(Cb"command", isPassthrough) * V"passthrough_env_stuff" * pass_end) +
-      (Cmt(Cb"command", isNotPassthrough) * V"texlike_stuff" * notpass_end)
-    )
+   passthrough_stuff = C(Cg(
+         V"passthrough_text" +
+         V"passthrough_debraced_stuff"
+      )^0)
+   passthrough_env_stuff = Cg(
+         V"passthrough_env_text"
+      )^0
+   texlike_text = C((1 - specials + escaped_specials)^1) / unescapeSpecials
+   passthrough_text = C((1-S("{}"))^1)
+   passthrough_env_text = C((1 - (P"\\end{" * Cmt(cmdID * Cb"command", isMatchingEndEnv) * P"}"))^1)
+   texlike_braced_stuff = P"{" * V"texlike_stuff" * ( P"}" + E("} expected") )
+   passthrough_braced_stuff = P"{" * V"passthrough_stuff" * ( P"}" + E("} expected") )
+   passthrough_debraced_stuff = C(V"passthrough_braced_stuff")
+   texlike_command = (
+         P"\\" *
+         Cg(cmdID, "command") *
+         Cg(parameters, "options") *
+         (
+         (Cmt(Cb"command", isPassthrough) * V"passthrough_braced_stuff") +
+         (Cmt(Cb"command", isNotPassthrough) * V"texlike_braced_stuff")
+         )^0
+      )
+   local notpass_end =
+         P"\\end{" *
+         ( Cmt(cmdID * Cb"command", isMatchingEndEnv) + E"Environment mismatch") *
+         ( P"}" * _ ) + E"Environment begun but never ended"
+   local pass_end =
+         P"\\end{" *
+         ( cmdID * Cb"command" ) *
+         ( P"}" * _ ) + E"Environment begun but never ended"
+   environment =
+      P"\\begin" *
+      Cg(parameters, "options") *
+      P"{" *
+      Cg(cmdID, "command") *
+      P"}" *
+      (
+         (Cmt(Cb"command", isPassthrough) * V"passthrough_env_stuff" * pass_end) +
+         (Cmt(Cb"command", isNotPassthrough) * V"texlike_stuff" * notpass_end)
+      )
 end
 -- luacheck: pop
 -- stylua: ignore end
