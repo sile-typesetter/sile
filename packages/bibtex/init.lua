@@ -10,6 +10,7 @@ local Bibliography
 
 local identifier = (SILE.parserBits.identifier + lpeg.S":-")^1
 
+-- stylua: ignore start
 local balanced = lpeg.C{ "{" * lpeg.P(" ")^0 * lpeg.C(((1 - lpeg.S"{}") + lpeg.V(1))^0) * "}" } / function (...) local t={...}; return t[2] end
 local doubleq = lpeg.C( lpeg.P '"' * lpeg.C(((1 - lpeg.S '"\r\n\f\\') + (lpeg.P '\\' * 1)) ^ 0) * '"' )
 
@@ -36,6 +37,7 @@ local bibtexparser = epnf.define(function (_ENV)
   entry = Ct( P("@") * Cg(myTag, "type") * _ * P("{") * _ * Cg(myID, "label") * _ * sep * list * P("}") * _ )
 end)
 -- luacheck: pop
+-- stylua: ignore end
 ---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
 local parseBibtex = function (fn)

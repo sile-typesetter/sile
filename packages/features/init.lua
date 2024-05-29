@@ -105,6 +105,8 @@ local function tagpos (pos, k, v)
   return k, { posneg = pos, value = v }
 end
 
+-- stylua: ignore start
+
 -- Parser for feature strings
 local featurename = C((1 - S",;:=")^1)
 local value = C(SILE.parserBits.integer)
@@ -123,6 +125,8 @@ local fontspeclist = ws * P"{" *
                      P"}" * ws
 
 local otFeatures = pl.class(pl.Map)
+
+-- stylua: ignore end
 
 function otFeatures:_init ()
   self:super()

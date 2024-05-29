@@ -15,6 +15,7 @@ local functionOfFrame = function (dim, id)
   return SILE.frames[id].variables[dim]
 end
 
+-- stylua: ignore start
 local number = SILE.parserBits.number
 local identifier = SILE.parserBits.identifier
 local measurement = SILE.parserBits.measurement / resolveMeasurement
@@ -41,3 +42,4 @@ return P{
   divide = ws * V"primary" * ws * P"/" * ws * V"multiplicative" * ws / cassowary.divide,
   braced = ws * P"(" * ws * V"additive" * ws * P")" * ws
 }
+-- stylua: ignore end

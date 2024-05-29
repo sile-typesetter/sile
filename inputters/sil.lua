@@ -43,6 +43,7 @@ function inputter:_init ()
 end
 
 -- luacheck: push ignore
+-- stylua: ignore start
 ---@diagnostic disable: undefined-global, unused-local, lowercase-global
 function inputter._grammar (_ENV)
   local isPassthrough = function (_, _, command)
@@ -122,6 +123,7 @@ function inputter._grammar (_ENV)
     )
 end
 -- luacheck: pop
+-- stylua: ignore end
 ---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
 local linecache = {}
