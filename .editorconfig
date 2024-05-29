@@ -13,6 +13,7 @@ max_line_length = 120
 
 # StyLua keys
 collapse_simple_statement = never
+space_after_functions = definitions
 
 # EmmyLuaCodeStyle keys
 continuation_indent = 6
