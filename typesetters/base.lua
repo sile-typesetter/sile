@@ -132,6 +132,26 @@ function typesetter.declareSettings(_)
     help = "Width to break lines at"
   })
 
+  SILE.settings:declare({
+    parameter = "typesetter.softHyphen",
+    type = "boolean",
+    default = true,
+    help = "When true, soft hyphens are rendered as discretionary breaks, otherwise they are ignored"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.softHyphenWarning",
+    type = "boolean",
+    default = false,
+    help = "When true, a warning is issued when a soft hyphen is encountered"
+  })
+
+  SILE.settings:declare({
+    parameter = "typesetter.fixedSpacingAfterInitialEmdash",
+    type = "boolean",
+    default = true,
+    help = "When true, em-dash starting a paragraph is considered as a speaker change in a dialogue"
+  })
 end
 
 function typesetter:initState ()
@@ -276,7 +296,29 @@ function typesetter:typeset (text)
     if token.separator then
       self:endline()
     else
-      self:setpar(token.string)
+      if SILE.settings:get("typesetter.softHyphen") then
+        local warnedshy = false
+        for token2 in SU.gtoke(token.string, luautf8.char(0x00AD)) do
+          if token2.separator then -- soft hyphen support
+            local discretionary = SILE.nodefactory.discretionary({})
+            local hbox = SILE.typesetter:makeHbox({ SILE.settings:get("font.hyphenchar") })
+            discretionary.prebreak = { hbox }
+            table.insert(SILE.typesetter.state.nodes, discretionary)
+            if not warnedshy and SILE.settings:get("typesetter.softHyphenWarning") then
+              SU.warn("Soft hyphen encountered and replaced with discretionary")
+            end
+            warnedshy = true
+          else
+            self:setpar(token2.string)
+          end
+        end
+      else
+        if SILE.settings:get("typesetter.softHyphenWarning") and luautf8.match(token.string, luautf8.char(0x00AD)) then
+          SU.warn("Soft hyphen encountered and ignored")
+        end
+        text = luautf8.gsub(token.string, luautf8.char(0x00AD), "")
+        self:setpar(text)
+      end
     end
   end
   SILE.traceStack:pop(pId)
@@ -295,6 +337,31 @@ function typesetter:endline ()
   SILE.documentState.documentClass.endPar(self)
 end
 
+-- Just compute once, to avoid unicode characters in source code.
+local speakerChangePattern = "^"
+   .. luautf8.char(0x2014) -- emdash
+   .. "[ " .. luautf8.char(0x00A0) .. luautf8.char(0x202F) -- regular space or NBSP or NNBSP
+   .. "]+"
+local speakerChangeReplacement = luautf8.char(0x2014) .. " "
+
+-- Special unshaped node subclass to handle space after a speaker change in dialogues
+-- introduced by an em-dash.
+local speakerChangeNode = pl.class(SILE.nodefactory.unshaped)
+function speakerChangeNode:shape()
+  local node = self._base.shape(self)
+  local spc = node[2]
+  if spc and spc.is_glue then
+    -- Switch the variable space glue to a fixed kern
+    node[2] = SILE.nodefactory.kern({ width = spc.width.length })
+    node[2].parent = self.parent
+  else
+    -- Should not occur:
+    -- How could it possibly be shaped differently?
+    SU.warn("Speaker change logic met an unexpected case, this might be a bug.")
+  end
+  return node
+end
+
 -- Takes string, writes onto self.state.nodes
 function typesetter:setpar (text)
   text = text:gsub("\r?\n", " "):gsub("\t", " ")
@@ -303,6 +370,19 @@ function typesetter:setpar (text)
       text = text:gsub("^%s+", "")
     end
     self:initline()
+
+    if SILE.settings:get("typesetter.fixedSpacingAfterInitialEmdash") and not SILE.settings:get("typesetter.obeyspaces") then
+      local speakerChange = false
+      local dialogue = luautf8.gsub(text, speakerChangePattern, function ()
+        speakerChange = true
+        return speakerChangeReplacement
+      end)
+      if speakerChange then
+        local node = speakerChangeNode({ text = dialogue, options = SILE.font.loadDefaults({})})
+        self:pushHorizontal(node)
+        return -- done here: speaker change space handling is done after nnode shaping
+      end
+    end
   end
   if #text >0 then
     self:pushUnshaped({ text = text, options= SILE.font.loadDefaults({})})

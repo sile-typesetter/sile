@@ -39,7 +39,7 @@ utilities.error = function (message, isbug)
   io.stderr:flush()
   SILE.outputter:finish() -- Only really useful from the REPL but no harm in trying
   SILE.scratch.caughterror = true
-  error(message, 2)
+  error("", 2)
 end
 
 utilities.warn = function (message, isbug)
@@ -616,9 +616,11 @@ utilities.breadcrumbs = function ()
     return self[#SILE.traceStack-(count or 1)]
   end
 
-  function breadcrumbs:contains (needle)
-    for i, command in ipairs(self) do
-      if command == needle then return true, #self - i end
+  function breadcrumbs:contains (needle, startdepth)
+    startdepth = startdepth or 0
+    for i = startdepth, #SILE.traceStack - 1 do
+      local frame = SILE.traceStack[#SILE.traceStack-i]
+      if frame.command == needle then return true, #self - i end
     end
     return false, -1
   end

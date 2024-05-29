@@ -2,6 +2,13 @@ local icu = require("justenoughicu")
 
 local chardata = require("char-def")
 
+SILE.settings:declare({
+  parameter = "languages.fixedNbsp",
+  type = "boolean",
+  default = false,
+  help = "Whether to treat U+00A0 (NO-BREAK SPACE) as a fixed-width space"
+})
+
 SILE.nodeMakers.base = pl.class({
 
     _init = function (self, options)
@@ -43,6 +50,14 @@ SILE.nodeMakers.base = pl.class({
       self.lastnode = "penalty"
     end,
 
+    makeNonBreakingSpace = function (self)
+      -- Unicode Line Breaking Algorithm (UAX 14) specifies that U+00A0
+      -- (NO-BREAK SPACE) is expanded or compressed like a normal space.
+      coroutine.yield(SILE.nodefactory.kern(SILE.shaper:measureSpace(self.options)))
+      self.lastnode = "glue"
+      self.lasttype = "sp"
+    end,
+
     iterator = function (_, _)
       SU.error("Abstract function nodemaker:iterator called", true)
     end,
@@ -53,30 +68,44 @@ SILE.nodeMakers.base = pl.class({
       return chardata[cp]
     end,
 
-    isPunctuation = function (self, char)
-      return self.isPunctuationType[self:charData(char).category]
-    end,
-
-    isSpace = function (self, char)
-      return self.isSpaceType[self:charData(char).linebreak]
+    isActiveNonBreakingSpace = function (self, char)
+      return self:isNonBreakingSpace(char) and not SILE.settings:get("languages.fixedNbsp")
     end,
 
     isBreaking = function (self, char)
-      return self.isBreakingType[self:charData(char).linebreak]
+      return self.breakingTypes[self:charData(char).linebreak]
     end,
+
+    isNonBreakingSpace = function (self, char)
+      local c = self:charData(char)
+      return c.contextname and c.contextname == "nobreakspace"
+    end,
+
+    isPunctuation = function (self, char)
+      return self.puctuationTypes[self:charData(char).category]
+    end,
+
+    isSpace = function (self, char)
+      return self.spaceTypes[self:charData(char).linebreak]
+    end,
+
     isQuote = function (self, char)
-      return self.isQuoteType[self:charData(char).linebreak]
-    end
+      return self.quoteTypes[self:charData(char).linebreak]
+    end,
+
+    isWord = function (self, char)
+      return self.wordTypes[self:charData(char).linebreak]
+    end,
 
   })
 
 SILE.nodeMakers.unicode = pl.class(SILE.nodeMakers.base)
 
-SILE.nodeMakers.unicode.isWordType = { cm = true }
-SILE.nodeMakers.unicode.isSpaceType = { sp = true }
-SILE.nodeMakers.unicode.isBreakingType = { ba = true, zw = true }
-SILE.nodeMakers.unicode.isPunctuationType = { po = true }
-SILE.nodeMakers.unicode.isQuoteType = {} -- quote linebreak category is ambiguous depending on the language
+SILE.nodeMakers.unicode.breakingTypes = { ba = true, zw = true }
+SILE.nodeMakers.unicode.puctuationTypes = { po = true }
+SILE.nodeMakers.unicode.quoteTypes = {} -- quote linebreak category is ambiguous depending on the language
+SILE.nodeMakers.unicode.spaceTypes = { sp = true }
+SILE.nodeMakers.unicode.wordTypes = { cm = true }
 
 function SILE.nodeMakers.unicode:dealWith (item)
   local char = item.text
@@ -85,6 +114,9 @@ function SILE.nodeMakers.unicode:dealWith (item)
   if self:isSpace(item.text) then
     self:makeToken()
     self:makeGlue(item)
+  elseif self:isActiveNonBreakingSpace(item.text) then
+    self:makeToken()
+    self:makeNonBreakingSpace()
   elseif self:isBreaking(item.text) then
     self:addToken(char, item)
     self:makeToken()
@@ -92,7 +124,7 @@ function SILE.nodeMakers.unicode:dealWith (item)
   elseif self:isQuote(item.text) then
     self:addToken(char, item)
     self:makeToken()
-  elseif self.lasttype and (thistype and thistype ~= self.lasttype and not self.isWordType[thistype]) then
+  elseif self.lasttype and (thistype and thistype ~= self.lasttype and not self:isWord(thistype)) then
     self:addToken(char, item)
   else
     self:letterspace()
@@ -152,8 +184,29 @@ function SILE.nodeMakers.unicode:handleWordBreak (item)
   if self:isSpace(item.text) then
     -- Spacing word break
     self:makeGlue(item)
-  else -- a word break which isn't a space
+  elseif self:isActiveNonBreakingSpace(item.text) then
+    -- Non-breaking space word break
+    self:makeNonBreakingSpace()
+  else
+     -- a word break which isn't a space
     self:addToken(item.text, item)
+  end
+end
+
+function SILE.nodeMakers.unicode:_handleWordBreakRepeatHyphen (item)
+  -- According to some language rules, when a break occurs at an explicit hyphen,
+  -- the hyphen gets repeated at the beginning of the new line
+  if item.text == "-" then
+    self:addToken(item.text, item)
+    self:makeToken()
+    if self.lastnode ~= "discretionary" then
+      coroutine.yield(SILE.nodefactory.discretionary({
+        postbreak = SILE.shaper:createNnodes("-", self.options)
+      }))
+      self.lastnode = "discretionary"
+    end
+  else
+    SILE.nodeMakers.unicode.handleWordBreak(self, item)
   end
 end
 
@@ -161,7 +214,7 @@ function SILE.nodeMakers.unicode:handleLineBreak (item, subtype)
   -- Because we are in charge of paragraphing, we
   -- will override space-type line breaks, and treat
   -- them just as ordinary word spaces.
-  if self:isSpace(item.text) then
+  if self:isSpace(item.text) or self:isActiveNonBreakingSpace(item.text) then
     self:handleWordBreak(item)
     return
   end
@@ -173,6 +226,16 @@ function SILE.nodeMakers.unicode:handleLineBreak (item, subtype)
   self:addToken(char, item)
   local cp = SU.codepoint(char)
   self.lasttype = chardata[cp] and chardata[cp].linebreak
+end
+
+function SILE.nodeMakers.unicode:_handleLineBreakRepeatHyphen (item, subtype)
+  if self.lastnode == "discretionary" then
+    -- Initial word boundary after a discretionary:
+    -- Bypass it and just deal with the token.
+    self:dealWith(item)
+  else
+    SILE.nodeMakers.unicode.handleLineBreak(self, item, subtype)
+  end
 end
 
 function SILE.nodeMakers.unicode:iterator (items)

@@ -42,6 +42,7 @@ end
 local makecolumns = function (options)
   local cFrame = SILE.typesetter.frame
   local cols = options.columns
+  local balanced = SU.boolean(options.balanced, true)
   local gutterWidth = options.gutter or "3%pw"
   local right = cFrame:right()
   local origId = cFrame.id
@@ -58,8 +59,8 @@ local makecolumns = function (options)
       bottom = cFrame:bottom(),
       id = origId .. "_col"..i
     })
-    newFrame.balanced = true
-    cFrame.balanced = true
+    newFrame.balanced = balanced
+    cFrame.balanced = balanced
     gutter:constrain("right", "left("..newFrame.id..")")
     newFrame:constrain("left", "right("..gutter.id..")")
     -- In the future we may way to allow for unequal columns

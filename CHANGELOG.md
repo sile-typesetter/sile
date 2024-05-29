@@ -2,6 +2,58 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.14.17](https://github.com/sile-typesetter/sile/compare/v0.14.16...v0.14.17) (2024-02-07)
+
+
+### Features
+
+* **languages:** Enable explicit hyphen repetition handling in Croatian ([c29545d](https://github.com/sile-typesetter/sile/commit/c29545dd6f60bc01dc71de82f88274feff3b0fdf))
+* **languages:** Enable explicit hyphen repetition handling in Czech ([b05d621](https://github.com/sile-typesetter/sile/commit/b05d6211b2c3daf9d8a69d7c4db75f430a86eea6))
+* **languages:** Enable explicit hyphen repetition handling in Portuguese ([2a58d96](https://github.com/sile-typesetter/sile/commit/2a58d9684848ad7475e879191058d0c59de8e3c5))
+* **languages:** Enable explicit hyphen repetition handling in Slovak ([82640b0](https://github.com/sile-typesetter/sile/commit/82640b03cdc82356a1ea9bbffbb4f5fd2471e3a2))
+* **languages:** Enable explicit hyphen repetition handling in Spanish ([8db7f23](https://github.com/sile-typesetter/sile/commit/8db7f238fb63c86ee0d49bd34afd6a35a03f8eb8))
+* **packages:** Add balancing option to makecolums command ([#1950](https://github.com/sile-typesetter/sile/issues/1950)) ([b5ce8e6](https://github.com/sile-typesetter/sile/commit/b5ce8e615c5e22c087ea8c8c6f7e30266e0f8634))
+
+### [0.14.16](https://github.com/sile-typesetter/sile/compare/v0.14.15...v0.14.16) (2024-01-27)
+
+
+### Bug Fixes
+
+* **tooling:** Re-merge so release tag is on master branch ([e8eaf11](https://github.com/sile-typesetter/sile/commit/e8eaf11da6cd183168898eca08f6f789f46d599e))
+
+### [0.14.15](https://github.com/sile-typesetter/sile/compare/v0.14.14...v0.14.15) (2024-01-27)
+
+
+### Features
+
+* **languages:** Accomodate alternate Turkish hyphenation guidelines at apostrophes ([92904fc](https://github.com/sile-typesetter/sile/commit/92904fcaf119cb95633c2865c2cdef89106803a1))
+* **typesetters:** Support for speaker change introduced by em-dash ([2afa4cb](https://github.com/sile-typesetter/sile/commit/2afa4cbf7eafcc9efef4ea5219c9508fff7989a8))
+
+
+### Bug Fixes
+
+* **languages:** Break at ela geminada in Catalan cancels the punt vola ([f8c4c1e](https://github.com/sile-typesetter/sile/commit/f8c4c1e46fecfb4f3bb7000ae0e87d04eb5d2738))
+* **languages:** Break at explicit hyphen in Polish repeats the hyphen ([0f8c7aa](https://github.com/sile-typesetter/sile/commit/0f8c7aa087c6fe447fc0a5d96944e9ca1b7f141e))
+* **languages:** Remove multiple repetitions of U+00A0 nbsp in French ([0356a49](https://github.com/sile-typesetter/sile/commit/0356a4977722c77e11ada667efb106d9ad70219a))
+* **languages:** U+00A0 nbsp in French causes unexpected word breaks ([b93975c](https://github.com/sile-typesetter/sile/commit/b93975c2d572d64afbc89c47cab8cc3ad4735445))
+
+### [0.14.14](https://github.com/sile-typesetter/sile/compare/v0.14.13...v0.14.14) (2023-12-23)
+
+
+### Features
+
+* **cli:** Change module load error to suggestion for how to install 3rd party modules ([c280050](https://github.com/sile-typesetter/sile/commit/c2800505eda2ee1630eea931f88efb07f6892d00))
+* **languages:** U+00A0 non-breaking space must be stretchable by default ([b769a63](https://github.com/sile-typesetter/sile/commit/b769a633069db4f32746d920dc9696296c7ab7db))
+* **typesetters:** Support U+00AD soft hyphen as discretionary break ([285507e](https://github.com/sile-typesetter/sile/commit/285507e5fddf3b0c752bb2b5bf81e8bf7f19144a))
+
+
+### Bug Fixes
+
+* **backends:** Fix plain text backend to work in LuaJIT/Lua 5.1 ([b185d49](https://github.com/sile-typesetter/sile/commit/b185d4972a5f29e7441f7af34e1ac49f49e6747f))
+* **cli:** Stop outputting error messages twice on failure to process main file ([da5d609](https://github.com/sile-typesetter/sile/commit/da5d60902a4129deb79ae4658ba82757d7277b85))
+* **core:** Use nil-safe and Lua-version-robust table utils ([2405b23](https://github.com/sile-typesetter/sile/commit/2405b23f0f448b217a066ecb34cae54f3e63aa64))
+* **packages:** Adjust dropcap logic for letters with a depth ([fd6963d](https://github.com/sile-typesetter/sile/commit/fd6963d226cc6a3b325dd796414936d200ae1ed2))
+
 ### [0.14.13](https://github.com/sile-typesetter/sile/compare/v0.14.12...v0.14.13) (2023-10-30)
 
 

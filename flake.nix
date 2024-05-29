@@ -16,7 +16,7 @@
     flake = false;
   };
 
-  # https://nixos.wiki/wiki/Flakes#Using_flakes_project_from_a_legacy_Nix
+  # https://wiki.nixos.org/wiki/Flakes#Using_flakes_with_stable_Nix
   inputs.flake-compat = {
     url = "github:edolstra/flake-compat";
     flake = false;
