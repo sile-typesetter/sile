@@ -3,38 +3,35 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "bibtex"
 
-local lpeg = require("lpeg")
 local epnf = require("epnf")
 
 local Bibliography
 
-local identifier = (SILE.parserBits.identifier + lpeg.S":-")^1
-
--- stylua: ignore start
-local balanced = lpeg.C{ "{" * lpeg.P(" ")^0 * lpeg.C(((1 - lpeg.S"{}") + lpeg.V(1))^0) * "}" } / function (...) local t={...}; return t[2] end
-local doubleq = lpeg.C( lpeg.P '"' * lpeg.C(((1 - lpeg.S '"\r\n\f\\') + (lpeg.P '\\' * 1)) ^ 0) * '"' )
-
 -- luacheck: push ignore
+-- stylua: ignore start
 ---@diagnostic disable: undefined-global, unused-local, lowercase-global
 local bibtexparser = epnf.define(function (_ENV)
-  local _ = WS^0
-  local sep = lpeg.S(",;") * _
-  local myID = C(identifier + lpeg.P(1)) / function (t) return t end
-  local myTag = C(identifier + lpeg.P(1)) / function (t) return t:lower() end
-  local value = balanced + doubleq + myID
-  local pair = lpeg.Cg(myTag * _ * "=" * _ * C(value)) * _ * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
-  local list = lpeg.Cf(lpeg.Ct("") * pair^0, rawset)
-  local commentKey = lpeg.Cmt(R("az", "AZ")^1, function(_, _, a)
-    return a:lower() == "comment"
-  end)
+   local identifier = (SILE.parserBits.identifier + S":-")^1
+   local balanced = C{ "{" * P" "^0 * C(((1 - S"{}") + V(1))^0) * "}" } / function (...) local t={...}; return t[2] end
+   local doubleq = C( P'"' * C(((1 - S'"\r\n\f\\') + (P'\\' * 1)) ^ 0) * '"' )
+   local _ = WS^0
+   local sep = S",;" * _
+   local myID = C(identifier + P(1)) / function (t) return t end
+   local myTag = C(identifier + P(1)) / function (t) return t:lower() end
+   local value = balanced + doubleq + myID
+   local pair = Cg(myTag * _ * "=" * _ * C(value)) * _ * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
+   local list = Cf(Ct("") * pair^0, rawset)
+   local commentKey = Cmt(R("az", "AZ")^1, function(_, _, a)
+      return a:lower() == "comment"
+   end)
 
-  START "document"
-  document = (V"comment" + V"entry")^1 -- order important: @comment must have precedence over @other
-    * (-1 + E("Unexpected character at end of input"))
-  comment  = WS +
-    ( V"blockcomment" + (P("%") * (1-lpeg.S("\r\n"))^0 * lpeg.S("\r\n")) /function () return "" end) -- Don't bother telling me about comments
-  blockcomment = (P("@") * commentKey) + balanced/function () return "" end -- Don't bother telling me about comments
-  entry = Ct( P("@") * Cg(myTag, "type") * _ * P("{") * _ * Cg(myID, "label") * _ * sep * list * P("}") * _ )
+   START "document"
+   document = (V"comment" + V"entry")^1 -- order important: @comment must have precedence over @other
+      * (-1 + E("Unexpected character at end of input"))
+   comment  = WS +
+      ( V"blockcomment" + (P"%" * (1-S"\r\n")^0 * S"\r\n") / function () return "" end) -- Don't bother telling me about comments
+   blockcomment = (P("@") * commentKey) + balanced / function () return "" end -- Don't bother telling me about comments
+   entry = Ct( P("@") * Cg(myTag, "type") * _ * P("{") * _ * Cg(myID, "label") * _ * sep * list * P("}") * _ )
 end)
 -- luacheck: pop
 -- stylua: ignore end
