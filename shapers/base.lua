@@ -141,7 +141,7 @@ function shaper:formNnode (contents, token, options)
       nodes = nnodeContents,
       text = token,
       misfit = misfit,
-      options = options,
+      options = pl.tablex.copy(options),
       language = options.language
     })
 end
