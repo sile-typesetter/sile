@@ -4,36 +4,38 @@ local R, S, P, B = lpeg.R, lpeg.S, lpeg.P, lpeg.B
 local C, Cf, Cg, Ct, Cmt = lpeg.C, lpeg.Cf, lpeg.Cg, lpeg.Ct, lpeg.Cmt
 
 local function isaunit (_, _, unit)
-  -- TODO: fix race condition so we can validate units
-  local factory = rawget(SILE.types, "unit")
-  if not SILE or not factory then return true end
-  return factory[unit] and true or false
+   -- TODO: fix race condition so we can validate units
+   local factory = rawget(SILE.types, "unit")
+   if not SILE or not factory then
+      return true
+   end
+   return factory[unit] and true or false
 end
 
 local function inferpoints (number)
-  return { amount = number, unit = "pt" }
+   return { amount = number, unit = "pt" }
 end
 
 local function unwrapper (...)
-  local tbl = {...}
-  return tbl[1], tbl[#tbl]
+   local tbl = { ... }
+   return tbl[1], tbl[#tbl]
 end
 
 -- UTF-8 characters
 -- decode a two-byte UTF-8 sequence
 local function f2 (s)
-  local c1, c2 = string.byte(s, 1, 2)
-  return c1 * 64 + c2 - 12416
+   local c1, c2 = string.byte(s, 1, 2)
+   return c1 * 64 + c2 - 12416
 end
 -- decode a three-byte UTF-8 sequence
 local function f3 (s)
-  local c1, c2, c3 = string.byte(s, 1, 3)
-  return (c1 * 64 + c2) * 64 + c3 - 925824
+   local c1, c2, c3 = string.byte(s, 1, 3)
+   return (c1 * 64 + c2) * 64 + c3 - 925824
 end
 -- decode a four-byte UTF-8 sequence
 local function f4 (s)
-  local c1, c2, c3, c4 = string.byte(s, 1, 4)
-  return ((c1 * 64 + c2) * 64 + c3) * 64 + c4 - 63447168
+   local c1, c2, c3, c4 = string.byte(s, 1, 4)
+   return ((c1 * 64 + c2) * 64 + c3) * 64 + c4 - 63447168
 end
 
 -- stylua: ignore start

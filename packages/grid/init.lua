@@ -6,65 +6,65 @@ package._name = "grid"
 local oldPagebuilderType, oldTypesetterType
 
 local function startGridInFrame (typesetter)
-  if not SILE.typesetter.state.grid then return end -- Ensure the frame hook isn't effective when grid is off
-  local queue = typesetter.state.outputQueue
-  typesetter.frame.state.totals.gridCursor = SILE.types.measurement(0)
-  if #queue == 0 then
-    typesetter.state.previousVbox = typesetter:pushVbox()
-    return
-  end
-  while queue[1] and (queue[1].discardable or queue[1].gridleading) do
-    table.remove(queue, 1)
-  end
-  if queue[1] then
-    table.insert(queue, 1, SILE.types.node.vbox())
-    table.insert(queue, 2, SILE.typesetter:leadingFor(queue[2], queue[1]))
-  end
+   if not SILE.typesetter.state.grid then
+      return
+   end -- Ensure the frame hook isn't effective when grid is off
+   local queue = typesetter.state.outputQueue
+   typesetter.frame.state.totals.gridCursor = SILE.types.measurement(0)
+   if #queue == 0 then
+      typesetter.state.previousVbox = typesetter:pushVbox()
+      return
+   end
+   while queue[1] and (queue[1].discardable or queue[1].gridleading) do
+      table.remove(queue, 1)
+   end
+   if queue[1] then
+      table.insert(queue, 1, SILE.types.node.vbox())
+      table.insert(queue, 2, SILE.typesetter:leadingFor(queue[2], queue[1]))
+   end
 end
 
 function package:_init (options)
-  self.spacing = SU.cast("measurement", options.spacing or "1bs"):absolute()
-  base._init(self)
+   self.spacing = SU.cast("measurement", options.spacing or "1bs"):absolute()
+   base._init(self)
 end
 
 function package:registerCommands ()
-
-  self:registerCommand("grid:debug", function (options, _)
-    local spacing = SU.cast("measurement", options.spacing or self.spacing):absolute()
-    local debugGrid = function ()
-      local frame = SILE.typesetter.frame
-      local gridCursor = spacing
-      while gridCursor < frame:height() do
-        SILE.outputter:drawRule(frame:left(), frame:top() + gridCursor, frame:width(), 0.1)
-        gridCursor = gridCursor + spacing
+   self:registerCommand("grid:debug", function (options, _)
+      local spacing = SU.cast("measurement", options.spacing or self.spacing):absolute()
+      local debugGrid = function ()
+         local frame = SILE.typesetter.frame
+         local gridCursor = spacing
+         while gridCursor < frame:height() do
+            SILE.outputter:drawRule(frame:left(), frame:top() + gridCursor, frame:width(), 0.1)
+            gridCursor = gridCursor + spacing
+         end
       end
-    end
-    debugGrid()
-    SILE.typesetter:registerNewFrameHook(debugGrid)
-  end)
+      debugGrid()
+      SILE.typesetter:registerNewFrameHook(debugGrid)
+   end)
 
-  self:registerCommand("grid", function (options, _)
-    if options.spacing then
-      self.spacing = SU.cast("measurement", options.spacing):absolute()
-    end
-    SILE.typesetter.state.grid = true
-    oldPagebuilderType = SILE.pagebuilder._name
-    oldTypesetterType = SILE.typesetter._name
-    SILE.pagebuilders.grid:cast(SILE.pagebuilder)
-    SILE.typesetters.grid:cast(SILE.typesetter)
-    SILE.typesetter.options = { spacing = self.spacing }
-    if SILE.typesetter.frame then
-      startGridInFrame(SILE.typesetter)
-    end
-    SILE.typesetter:registerNewFrameHook(startGridInFrame)
-  end, "Begins typesetting on a grid spaced at <spacing> intervals.")
+   self:registerCommand("grid", function (options, _)
+      if options.spacing then
+         self.spacing = SU.cast("measurement", options.spacing):absolute()
+      end
+      SILE.typesetter.state.grid = true
+      oldPagebuilderType = SILE.pagebuilder._name
+      oldTypesetterType = SILE.typesetter._name
+      SILE.pagebuilders.grid:cast(SILE.pagebuilder)
+      SILE.typesetters.grid:cast(SILE.typesetter)
+      SILE.typesetter.options = { spacing = self.spacing }
+      if SILE.typesetter.frame then
+         startGridInFrame(SILE.typesetter)
+      end
+      SILE.typesetter:registerNewFrameHook(startGridInFrame)
+   end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
-  self:registerCommand("no-grid", function (_, _)
-    SILE.typesetter.state.grid = false
-    SILE.typesetters[oldTypesetterType]:cast(SILE.typesetter)
-    SILE.pagebuilders[oldPagebuilderType]:cast(SILE.pagebuilder)
-  end, "Stops grid typesetting.")
-
+   self:registerCommand("no-grid", function (_, _)
+      SILE.typesetter.state.grid = false
+      SILE.typesetters[oldTypesetterType]:cast(SILE.typesetter)
+      SILE.pagebuilders[oldPagebuilderType]:cast(SILE.pagebuilder)
+   end, "Stops grid typesetting.")
 end
 
 package.documentation = [[

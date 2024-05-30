@@ -4,37 +4,37 @@ local package = pl.class(base)
 package._name = "complex-spaces"
 
 function package:_init ()
-  base._init(self)
-  if not SILE.languageSupport.languages["x-spaces-are-nodes"] then
-    local xsan = pl.class(SILE.nodeMakers.unicode)
-    function xsan.makeGlue (node, item)
-      node:addToken(" ", item)
-      node:makeToken()
-    end
-    SILE.nodeMakers["x-spaces-are-nodes"] = xsan
-    SILE.languageSupport.languages["x-spaces-are-nodes"] = true
-  end
-  if SILE.shaper and not SILE.shaper.noncomplex_SpaceNode then
-    SILE.shaper.noncomplex_SpaceNode = SILE.shaper.makeSpaceNode
-    SILE.shaper.makeSpaceNode = function (_, options, item)
-      if SILE.settings:get("shaper.complexspaces") then
-        local myoptions = pl.tablex.deepcopy(options)
-        myoptions.language = "x-spaces-are-nodes"
-        local nnodes = SILE.shaper:createNnodes( " ", myoptions)
-        return SILE.types.node.discretionary({ replacement=nnodes })
+   base._init(self)
+   if not SILE.languageSupport.languages["x-spaces-are-nodes"] then
+      local xsan = pl.class(SILE.nodeMakers.unicode)
+      function xsan.makeGlue (node, item)
+         node:addToken(" ", item)
+         node:makeToken()
       end
-      return SILE.shaper.noncomplex_SpaceNode(_, options, item)
-    end
-  end
+      SILE.nodeMakers["x-spaces-are-nodes"] = xsan
+      SILE.languageSupport.languages["x-spaces-are-nodes"] = true
+   end
+   if SILE.shaper and not SILE.shaper.noncomplex_SpaceNode then
+      SILE.shaper.noncomplex_SpaceNode = SILE.shaper.makeSpaceNode
+      SILE.shaper.makeSpaceNode = function (_, options, item)
+         if SILE.settings:get("shaper.complexspaces") then
+            local myoptions = pl.tablex.deepcopy(options)
+            myoptions.language = "x-spaces-are-nodes"
+            local nnodes = SILE.shaper:createNnodes(" ", myoptions)
+            return SILE.types.node.discretionary({ replacement = nnodes })
+         end
+         return SILE.shaper.noncomplex_SpaceNode(_, options, item)
+      end
+   end
 end
 
 function package.declareSettings (_)
-  SILE.settings:declare({
-    parameter = "shaper.complexspaces",
-    default = true,
-    type = "boolean",
-    help = "Whether the font's space glyph should be emitted, rather than a glue"
-  })
+   SILE.settings:declare({
+      parameter = "shaper.complexspaces",
+      default = true,
+      type = "boolean",
+      help = "Whether the font's space glyph should be emitted, rather than a glue",
+   })
 end
 
 package.documentation = [[

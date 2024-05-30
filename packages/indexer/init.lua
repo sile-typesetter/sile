@@ -4,80 +4,90 @@ local package = pl.class(base)
 package._name = "indexer"
 
 function package:buildIndex ()
-  local nodes = SILE.scratch.info.thispage.index
-  local thisPage = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
-  if not nodes then return end
-  for _, node in ipairs(nodes) do
-    if not SILE.scratch.index[node.index] then SILE.scratch.index[node.index] = {} end
-    local thisIndex = SILE.scratch.index[node.index]
-    if not thisIndex[node.label] then thisIndex[node.label] = {} end
-    if not(#(thisIndex[node.label])) or (thisIndex[node.label])[#(thisIndex[node.label])] ~= thisPage then
-      table.insert(thisIndex[node.label], thisPage)
-    end
-  end
+   local nodes = SILE.scratch.info.thispage.index
+   local thisPage = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
+   if not nodes then
+      return
+   end
+   for _, node in ipairs(nodes) do
+      if not SILE.scratch.index[node.index] then
+         SILE.scratch.index[node.index] = {}
+      end
+      local thisIndex = SILE.scratch.index[node.index]
+      if not thisIndex[node.label] then
+         thisIndex[node.label] = {}
+      end
+      if not #thisIndex[node.label] or (thisIndex[node.label])[#thisIndex[node.label]] ~= thisPage then
+         table.insert(thisIndex[node.label], thisPage)
+      end
+   end
 end
-  -- if content then
-  --   for i = 1, #content do
-  --     if not SILE.scratch.index.commands[content[i].label] then
-  --       SILE.scratch.index.commands[content[i].label] = {}
-  --     end
-  --     SILE.scratch.index.commands[content[i].label][class:formatCounter(SILE.scratch.counters.folio)] = 1
-  --   end
-  -- end
+-- if content then
+--   for i = 1, #content do
+--     if not SILE.scratch.index.commands[content[i].label] then
+--       SILE.scratch.index.commands[content[i].label] = {}
+--     end
+--     SILE.scratch.index.commands[content[i].label][class:formatCounter(SILE.scratch.counters.folio)] = 1
+--   end
+-- end
 
 function package:_init ()
-  base._init(self)
-  if not SILE.scratch.index then
-    SILE.scratch.index = {}
-  end
-  self:deprecatedExport("buildIndex", self.buildIndex)
+   base._init(self)
+   if not SILE.scratch.index then
+      SILE.scratch.index = {}
+   end
+   self:deprecatedExport("buildIndex", self.buildIndex)
 end
 
 function package:registerCommands ()
-
-  self:registerCommand("indexentry", function (options, content)
-    if not options.label then
-      -- Reconstruct the text.
-      SILE.typesetter:pushState()
-      SILE.process(content)
-      local text = ""
-      local nl = SILE.typesetter.state.nodes
-      for i = 2, #nl do
-        text = text .. nl[i]:toText()
+   self:registerCommand("indexentry", function (options, content)
+      if not options.label then
+         -- Reconstruct the text.
+         SILE.typesetter:pushState()
+         SILE.process(content)
+         local text = ""
+         local nl = SILE.typesetter.state.nodes
+         for i = 2, #nl do
+            text = text .. nl[i]:toText()
+         end
+         options.label = text
+         SILE.typesetter:popState()
       end
-      options.label = text
-      SILE.typesetter:popState()
-    end
-    if not options.index then options.index = "main" end
-    SILE.call("info", { category ="index", value = { index = options.index, label = options.label }})
-  end)
+      if not options.index then
+         options.index = "main"
+      end
+      SILE.call("info", { category = "index", value = { index = options.index, label = options.label } })
+   end)
 
-  self:registerCommand("printindex", function (options, _)
-    self:buildIndex()
-    if not options.index then options.index = "main" end
-    local index = SILE.scratch.index[options.index]
-    local sortedIndex = {}
-    for n in pairs(index) do table.insert(sortedIndex, n) end
-    table.sort(sortedIndex)
-    SILE.call("bigskip")
-    for _, k in ipairs(sortedIndex) do
-      local pageno = table.concat(index[k], ", ")
-      SILE.call("index:item", { pageno = pageno }, { k })
-    end
-  end)
+   self:registerCommand("printindex", function (options, _)
+      self:buildIndex()
+      if not options.index then
+         options.index = "main"
+      end
+      local index = SILE.scratch.index[options.index]
+      local sortedIndex = {}
+      for n in pairs(index) do
+         table.insert(sortedIndex, n)
+      end
+      table.sort(sortedIndex)
+      SILE.call("bigskip")
+      for _, k in ipairs(sortedIndex) do
+         local pageno = table.concat(index[k], ", ")
+         SILE.call("index:item", { pageno = pageno }, { k })
+      end
+   end)
 
-  self:registerCommand("index:item", function (options, content)
-    SILE.settings:temporarily(function ()
-      SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
-      SILE.settings:set("current.parindent", SILE.types.node.glue())
-      SILE.call("code", {}, content)
-      -- Ideally, leaders
-      SILE.call("hss")
-      SILE.typesetter:typeset(options.pageno)
-      SILE.call("smallskip")
-    end)
-  end)
-
+   self:registerCommand("index:item", function (options, content)
+      SILE.settings:temporarily(function ()
+         SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+         SILE.settings:set("current.parindent", SILE.types.node.glue())
+         SILE.call("code", {}, content)
+         -- Ideally, leaders
+         SILE.call("hss")
+         SILE.typesetter:typeset(options.pageno)
+         SILE.call("smallskip")
+      end)
+   end)
 end
 
 package.documentation = [[

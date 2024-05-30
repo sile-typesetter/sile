@@ -4,21 +4,25 @@ local package = pl.class(base)
 package._name = "rebox"
 
 function package:registerCommands ()
-
-  self:registerCommand("rebox", function (options, content)
-    local hbox, hlist = SILE.typesetter:makeHbox(content)
-    if options.width then hbox.width = SILE.types.length(options.width) end
-    if options.height then hbox.height = SILE.types.length(options.height) end
-    if options.depth then hbox.depth = SILE.types.length(options.depth) end
-    if options.phantom then
-      hbox.outputYourself = function (node, typesetter, line)
-        typesetter.frame:advanceWritingDirection(node:scaledWidth(line))
+   self:registerCommand("rebox", function (options, content)
+      local hbox, hlist = SILE.typesetter:makeHbox(content)
+      if options.width then
+         hbox.width = SILE.types.length(options.width)
       end
-    end
-    SILE.typesetter:pushHbox(hbox)
-    SILE.typesetter:pushHlist(hlist)
-  end, "Place the output within a hbox of specified width, height, depth and visibility")
-
+      if options.height then
+         hbox.height = SILE.types.length(options.height)
+      end
+      if options.depth then
+         hbox.depth = SILE.types.length(options.depth)
+      end
+      if options.phantom then
+         hbox.outputYourself = function (node, typesetter, line)
+            typesetter.frame:advanceWritingDirection(node:scaledWidth(line))
+         end
+      end
+      SILE.typesetter:pushHbox(hbox)
+      SILE.typesetter:pushHlist(hlist)
+   end, "Place the output within a hbox of specified width, height, depth and visibility")
 end
 
 package.documentation = [[

@@ -23,4 +23,6 @@ _G.luautf8 = require("lua-utf8")
 _G.fluent = require("fluent")()
 
 -- For developer testing only, usually in CI
-if os.getenv("SILE_COVERAGE") then require("luacov") end
+if os.getenv("SILE_COVERAGE") then
+   require("luacov")
+end

@@ -11,80 +11,75 @@ local package = pl.class(base)
 package._name = "pdf"
 
 function package:registerCommands ()
+   self:registerCommand("pdf:destination", function (options, _)
+      local name = SU.required(options, "name", "pdf:destination")
+      SILE.typesetter:pushHbox({
+         outputYourself = function (_, typesetter, line)
+            local state = typesetter.frame.state
+            typesetter.frame:advancePageDirection(-line.height)
+            local x, y = state.cursorX, state.cursorY
+            typesetter.frame:advancePageDirection(line.height)
+            local _y = SILE.documentState.paperSize[2] - y
+            SILE.outputter:setLinkAnchor(name, x, _y)
+         end,
+      })
+   end)
 
-  self:registerCommand("pdf:destination", function (options, _)
-    local name = SU.required(options, "name", "pdf:destination")
-    SILE.typesetter:pushHbox({
-      outputYourself = function (_, typesetter, line)
-        local state = typesetter.frame.state
-        typesetter.frame:advancePageDirection(-line.height)
-        local x, y = state.cursorX, state.cursorY
-        typesetter.frame:advancePageDirection(line.height)
-        local _y = SILE.documentState.paperSize[2] - y
-        SILE.outputter:setLinkAnchor(name, x, _y)
+   self:registerCommand("pdf:bookmark", function (options, _)
+      local dest = SU.required(options, "dest", "pdf:bookmark")
+      local title = SU.required(options, "title", "pdf:bookmark")
+      local level = SU.cast("integer", options.level or 1)
+      SILE.typesetter:pushHbox({
+         value = nil,
+         height = SILE.types.measurement(0),
+         width = SILE.types.measurement(0),
+         depth = SILE.types.measurement(0),
+         outputYourself = function ()
+            SILE.outputter:setBookmark(dest, title, level)
+         end,
+      })
+   end)
+
+   -- TODO: Shim to pdfannotations package
+   -- self:registerCommand("pdf:literal", function (_, content)
+   self:registerCommand("pdf:link", function (options, content)
+      local dest = SU.required(options, "dest", "pdf:link")
+      local external = SU.boolean(options.external, false)
+      local borderwidth = options.borderwidth and SU.cast("measurement", options.borderwidth):tonumber() or 0
+      local bordercolor = SILE.types.color(options.bordercolor or "blue")
+      local borderoffset = SU.cast("measurement", options.borderoffset or "1pt"):tonumber()
+      local opts = {
+         external = external,
+         borderstyle = options.borderstyle,
+         bordercolor = bordercolor,
+         borderwidth = borderwidth,
+         borderoffset = borderoffset,
+      }
+
+      SILE.typesetter:liner("pdf:link", content, function (box, typesetter, line)
+         local x0 = typesetter.frame.state.cursorX:tonumber()
+         local y0 = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY):tonumber()
+         SILE.outputter:beginLink(dest, opts)
+
+         -- Build the content.
+         -- Cursor will be moved by the actual definitive size.
+         box:outputContent(typesetter, line)
+         local x1 = typesetter.frame.state.cursorX:tonumber()
+         local y1 = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY + box.height):tonumber()
+
+         SILE.outputter:endLink(dest, opts, x0, y0, x1, y1) -- Unstable API
+      end)
+   end)
+
+   self:registerCommand("pdf:metadata", function (options, _)
+      local key = SU.required(options, "key", "pdf:metadata")
+      if options.val ~= nil then
+         SU.deprecated("\\pdf:metadata[…, val=…]", "\\pdf:metadata[…, value=…]", "0.12.0", "0.13.0")
       end
-    })
-  end)
+      local value = SU.required(options, "value", "pdf:metadata")
 
-  self:registerCommand("pdf:bookmark", function (options, _)
-    local dest = SU.required(options, "dest", "pdf:bookmark")
-    local title = SU.required(options, "title", "pdf:bookmark")
-    local level = SU.cast("integer", options.level or 1)
-    SILE.typesetter:pushHbox({
-      value = nil,
-      height = SILE.types.measurement(0),
-      width = SILE.types.measurement(0),
-      depth = SILE.types.measurement(0),
-      outputYourself = function ()
-        SILE.outputter:setBookmark(dest, title, level)
-      end
-    })
-  end)
-
-  -- TODO: Shim to pdfannotations package
-  -- self:registerCommand("pdf:literal", function (_, content)
-  self:registerCommand("pdf:link", function (options, content)
-    local dest = SU.required(options, "dest", "pdf:link")
-    local external = SU.boolean(options.external, false)
-    local borderwidth = options.borderwidth and SU.cast("measurement", options.borderwidth):tonumber() or 0
-    local bordercolor = SILE.types.color(options.bordercolor or "blue")
-    local borderoffset = SU.cast("measurement", options.borderoffset or "1pt"):tonumber()
-    local opts = {
-      external = external,
-      borderstyle = options.borderstyle,
-      bordercolor = bordercolor,
-      borderwidth = borderwidth,
-      borderoffset = borderoffset
-    }
-
-    SILE.typesetter:liner("pdf:link", content,
-      function (box, typesetter, line)
-        local x0 = typesetter.frame.state.cursorX:tonumber()
-        local y0 = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY):tonumber()
-        SILE.outputter:beginLink(dest, opts)
-
-        -- Build the content.
-        -- Cursor will be moved by the actual definitive size.
-        box:outputContent(typesetter, line)
-        local x1 = typesetter.frame.state.cursorX:tonumber()
-        local y1 = (SILE.documentState.paperSize[2] - typesetter.frame.state.cursorY + box.height):tonumber()
-
-        SILE.outputter:endLink(dest, opts, x0, y0, x1, y1) -- Unstable API
-      end
-    )
-
-  end)
-
-  self:registerCommand("pdf:metadata", function (options, _)
-    local key = SU.required(options, "key", "pdf:metadata")
-    if options.val ~= nil then
-      SU.deprecated("\\pdf:metadata[…, val=…]", "\\pdf:metadata[…, value=…]", "0.12.0", "0.13.0")
-    end
-    local value = SU.required(options, "value", "pdf:metadata")
-
-    SILE.outputter:setMetadata(key, value)
-  end)
-
+      SILE.outputter:setMetadata(key, value)
+   end)
 end
 
 package.documentation = [[

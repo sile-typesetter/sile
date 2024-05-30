@@ -4,21 +4,19 @@ local package = pl.class(base)
 package._name = "ifattop"
 
 function package:registerCommands ()
+   self:registerCommand("ifattop", function (_, content)
+      SILE.typesetter:leaveHmode()
+      if #SILE.typesetter.state.outputQueue == 0 then
+         SILE.process(content)
+      end
+   end)
 
-  self:registerCommand("ifattop", function (_, content)
-    SILE.typesetter:leaveHmode()
-    if #(SILE.typesetter.state.outputQueue) == 0 then
-      SILE.process(content)
-    end
-  end)
-
-  self:registerCommand("ifnotattop", function (_, content)
-    SILE.typesetter:leaveHmode()
-    if #(SILE.typesetter.state.outputQueue) ~= 0 then
-      SILE.process(content)
-    end
-  end)
-
+   self:registerCommand("ifnotattop", function (_, content)
+      SILE.typesetter:leaveHmode()
+      if #SILE.typesetter.state.outputQueue ~= 0 then
+         SILE.process(content)
+      end
+   end)
 end
 
 package.documentation = [[

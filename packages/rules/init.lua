@@ -4,25 +4,25 @@ local package = pl.class(base)
 package._name = "rules"
 
 local function getUnderlineParameters ()
-  local ot = require("core.opentype-parser")
-  local fontoptions = SILE.font.loadDefaults({})
-  local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
-  local font = ot.parseFont(face)
-  local upem = font.head.unitsPerEm
-  local underlinePosition = font.post.underlinePosition / upem * fontoptions.size
-  local underlineThickness = font.post.underlineThickness / upem * fontoptions.size
-  return underlinePosition, underlineThickness
+   local ot = require("core.opentype-parser")
+   local fontoptions = SILE.font.loadDefaults({})
+   local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+   local font = ot.parseFont(face)
+   local upem = font.head.unitsPerEm
+   local underlinePosition = font.post.underlinePosition / upem * fontoptions.size
+   local underlineThickness = font.post.underlineThickness / upem * fontoptions.size
+   return underlinePosition, underlineThickness
 end
 
 local function getStrikethroughParameters ()
-  local ot = require("core.opentype-parser")
-  local fontoptions = SILE.font.loadDefaults({})
-  local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
-  local font = ot.parseFont(face)
-  local upem = font.head.unitsPerEm
-  local yStrikeoutPosition = font.os2.yStrikeoutPosition / upem * fontoptions.size
-  local yStrikeoutSize = font.os2.yStrikeoutSize / upem * fontoptions.size
-  return yStrikeoutPosition, yStrikeoutSize
+   local ot = require("core.opentype-parser")
+   local fontoptions = SILE.font.loadDefaults({})
+   local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+   local font = ot.parseFont(face)
+   local upem = font.head.unitsPerEm
+   local yStrikeoutPosition = font.os2.yStrikeoutPosition / upem * fontoptions.size
+   local yStrikeoutSize = font.os2.yStrikeoutSize / upem * fontoptions.size
+   return yStrikeoutPosition, yStrikeoutSize
 end
 
 -- \hfill (from the "plain" class) and \leaders (from the "leaders" package) use glues,
@@ -32,179 +32,173 @@ hrulefillglue.raise = SILE.types.measurement()
 hrulefillglue.thickness = SILE.types.measurement("0.2pt")
 
 function hrulefillglue:outputYourself (typesetter, line)
-  local outputWidth = SU.rationWidth(self.width, self.width, line.ratio):tonumber()
-  local oldx = typesetter.frame.state.cursorX
-  typesetter.frame:advancePageDirection(-self.raise)
-  typesetter.frame:advanceWritingDirection(outputWidth)
-  local newx = typesetter.frame.state.cursorX
-  local newy = typesetter.frame.state.cursorY
-  SILE.outputter:drawRule(oldx, newy, newx - oldx, self.thickness)
-  typesetter.frame:advancePageDirection(self.raise)
+   local outputWidth = SU.rationWidth(self.width, self.width, line.ratio):tonumber()
+   local oldx = typesetter.frame.state.cursorX
+   typesetter.frame:advancePageDirection(-self.raise)
+   typesetter.frame:advanceWritingDirection(outputWidth)
+   local newx = typesetter.frame.state.cursorX
+   local newy = typesetter.frame.state.cursorY
+   SILE.outputter:drawRule(oldx, newy, newx - oldx, self.thickness)
+   typesetter.frame:advancePageDirection(self.raise)
 end
 
 function package:_init ()
-  base._init(self)
-  self:loadPackage("raiselower")
-  self:loadPackage("rebox")
+   base._init(self)
+   self:loadPackage("raiselower")
+   self:loadPackage("rebox")
 end
 
 function package:registerCommands ()
+   self:registerCommand("hrule", function (options, _)
+      local width = SU.cast("length", options.width)
+      local height = SU.cast("length", options.height)
+      local depth = SU.cast("length", options.depth)
+      SILE.typesetter:pushHbox({
+         width = width:absolute(),
+         height = height:absolute(),
+         depth = depth:absolute(),
+         value = options.src,
+         outputYourself = function (node, typesetter, line)
+            local outputWidth = SU.rationWidth(node.width, node.width, line.ratio)
+            typesetter.frame:advancePageDirection(-node.height)
+            local oldx = typesetter.frame.state.cursorX
+            local oldy = typesetter.frame.state.cursorY
+            typesetter.frame:advanceWritingDirection(outputWidth)
+            typesetter.frame:advancePageDirection(node.height + node.depth)
+            local newx = typesetter.frame.state.cursorX
+            local newy = typesetter.frame.state.cursorY
+            SILE.outputter:drawRule(oldx, oldy, newx - oldx, newy - oldy)
+            typesetter.frame:advancePageDirection(-node.depth)
+         end,
+      })
+   end, "Draws a blob of ink of width <width>, height <height> and depth <depth>")
 
-  self:registerCommand("hrule", function (options, _)
-    local width = SU.cast("length", options.width)
-    local height = SU.cast("length", options.height)
-    local depth = SU.cast("length", options.depth)
-    SILE.typesetter:pushHbox({
-      width = width:absolute(),
-      height = height:absolute(),
-      depth = depth:absolute(),
-      value = options.src,
-      outputYourself = function (node, typesetter, line)
-        local outputWidth = SU.rationWidth(node.width, node.width, line.ratio)
-        typesetter.frame:advancePageDirection(-node.height)
-        local oldx = typesetter.frame.state.cursorX
-        local oldy = typesetter.frame.state.cursorY
-        typesetter.frame:advanceWritingDirection(outputWidth)
-        typesetter.frame:advancePageDirection(node.height + node.depth)
-        local newx = typesetter.frame.state.cursorX
-        local newy = typesetter.frame.state.cursorY
-        SILE.outputter:drawRule(oldx, oldy, newx - oldx, newy - oldy)
-        typesetter.frame:advancePageDirection(-node.depth)
+   self:registerCommand("hrulefill", function (options, _)
+      local raise
+      local thickness
+      if options.position and options.raise then
+         SU.error("hrulefill cannot have both position and raise parameters")
       end
-    })
-  end, "Draws a blob of ink of width <width>, height <height> and depth <depth>")
+      if options.thickness then
+         thickness = SU.cast("measurement", options.thickness)
+      end
+      if options.position == "underline" then
+         local underlinePosition, underlineThickness = getUnderlineParameters()
+         thickness = thickness or underlineThickness
+         raise = underlinePosition
+      elseif options.position == "strikethrough" then
+         local yStrikeoutPosition, yStrikeoutSize = getStrikethroughParameters()
+         thickness = thickness or yStrikeoutSize
+         raise = yStrikeoutPosition + thickness / 2
+      elseif options.position then
+         SU.error("Unknown hrulefill position '" .. options.position .. "'")
+      else
+         raise = SU.cast("measurement", options.raise or "0")
+      end
 
-  self:registerCommand("hrulefill", function (options, _)
-    local raise
-    local thickness
-    if options.position and options.raise then
-      SU.error("hrulefill cannot have both position and raise parameters")
-    end
-    if options.thickness then
-      thickness = SU.cast("measurement", options.thickness)
-    end
-    if options.position == "underline" then
+      SILE.typesetter:pushExplicitGlue(hrulefillglue({
+         raise = raise,
+         thickness = thickness or SILE.types.measurement("0.2pt"),
+      }))
+   end, "Add a huge horizontal hrule glue")
+
+   self:registerCommand("fullrule", function (options, _)
+      local thickness = SU.cast("measurement", options.thickness or "0.2pt")
+      local raise = SU.cast("measurement", options.raise or "0.5em")
+
+      if options.height then
+         SU.deprecated("\\fullrule[…, height=…]", "\\fullrule[…, thickness=…]", "0.13.1", "0.15.0")
+      end
+      if not SILE.typesetter:vmode() then
+         SU.deprecated("\\fullrule in horizontal mode", "\\hrule or \\hrulefill", "0.13.1", "0.15.0")
+      end
+      if options.width then
+         SU.deprecated("\\fullrule with width", "\\hrule and \\raise", "0.13.1 ", "0.15.0")
+      end
+
+      SILE.typesetter:leaveHmode()
+      SILE.call("noindent")
+      SILE.call("hrulefill", { raise = raise, thickness = thickness })
+      SILE.typesetter:leaveHmode()
+   end, "Draw a full width hrule centered on the current line")
+
+   self:registerCommand("underline", function (_, content)
       local underlinePosition, underlineThickness = getUnderlineParameters()
-      thickness = thickness or underlineThickness
-      raise = underlinePosition
-    elseif options.position == "strikethrough" then
+
+      SILE.typesetter:liner("underline", content, function (box, typesetter, line)
+         local oldX = typesetter.frame.state.cursorX
+         local Y = typesetter.frame.state.cursorY
+
+         -- Build the content.
+         -- Cursor will be moved by the actual definitive size.
+         box:outputContent(typesetter, line)
+         local newX = typesetter.frame.state.cursorX
+
+         -- Output a line.
+         -- NOTE: According to the OpenType specs, underlinePosition is "the suggested distance of
+         -- the top of the underline from the baseline" so it seems implied that the thickness
+         -- should expand downwards
+         SILE.outputter:drawRule(oldX, Y - underlinePosition, newX - oldX, underlineThickness)
+      end)
+   end, "Underlines some content")
+
+   self:registerCommand("strikethrough", function (_, content)
       local yStrikeoutPosition, yStrikeoutSize = getStrikethroughParameters()
-      thickness = thickness or yStrikeoutSize
-      raise = yStrikeoutPosition + thickness / 2
-    elseif options.position then
-      SU.error("Unknown hrulefill position '"..options.position.."'")
-    else
-      raise = SU.cast("measurement", options.raise or "0")
-    end
 
-    SILE.typesetter:pushExplicitGlue(hrulefillglue({
-      raise = raise,
-      thickness = thickness or SILE.types.measurement("0.2pt"),
-    }))
-  end, "Add a huge horizontal hrule glue")
+      SILE.typesetter:liner("strikethrough", content, function (box, typesetter, line)
+         local oldX = typesetter.frame.state.cursorX
+         local Y = typesetter.frame.state.cursorY
 
-  self:registerCommand("fullrule", function (options, _)
-    local thickness = SU.cast("measurement", options.thickness or "0.2pt")
-    local raise = SU.cast("measurement", options.raise or "0.5em")
+         -- Build the content.
+         -- Cursor will be moved by the actual definitive size.
+         box:outputContent(typesetter, line)
+         local newX = typesetter.frame.state.cursorX
 
-    if options.height then
-      SU.deprecated("\\fullrule[…, height=…]", "\\fullrule[…, thickness=…]", "0.13.1", "0.15.0")
-    end
-    if not SILE.typesetter:vmode() then
-      SU.deprecated("\\fullrule in horizontal mode", "\\hrule or \\hrulefill", "0.13.1", "0.15.0")
-    end
-    if options.width then
-      SU.deprecated("\\fullrule with width", "\\hrule and \\raise", "0.13.1 ", "0.15.0")
-    end
+         -- Output a line.
+         -- NOTE: The OpenType spec is not explicit regarding how the size
+         -- (thickness) affects the position. We opt to distribute evenly
+         SILE.outputter:drawRule(oldX, Y - yStrikeoutPosition - yStrikeoutSize / 2, newX - oldX, yStrikeoutSize)
+      end)
+   end, "Strikes out some content")
 
-    SILE.typesetter:leaveHmode()
-    SILE.call("noindent")
-    SILE.call("hrulefill", { raise = raise, thickness = thickness })
-    SILE.typesetter:leaveHmode()
-  end, "Draw a full width hrule centered on the current line")
+   self:registerCommand("boxaround", function (_, content)
+      -- This command was not documented and lacks feature.
+      -- Plan replacement with a better suited package.
+      SU.deprecated("\\boxaround (undocumented)", "\\framebox (package)", "0.12.0")
 
-  self:registerCommand("underline", function (_, content)
-    local underlinePosition, underlineThickness = getUnderlineParameters()
+      local hbox, hlist = SILE.typesetter:makeHbox(content)
+      -- Re-wrap the hbox in another hbox responsible for boxing it at output
+      -- time, when we will know the line contribution and can compute the scaled width
+      -- of the box, taking into account possible stretching and shrinking.
+      SILE.typesetter:pushHbox({
+         inner = hbox,
+         width = hbox.width,
+         height = hbox.height,
+         depth = hbox.depth,
+         outputYourself = function (node, typesetter, line)
+            local oldX = typesetter.frame.state.cursorX
+            local Y = typesetter.frame.state.cursorY
 
-    SILE.typesetter:liner("underline", content,
-      function (box, typesetter, line)
-        local oldX = typesetter.frame.state.cursorX
-        local Y = typesetter.frame.state.cursorY
+            -- Build the original hbox.
+            -- Cursor will be moved by the actual definitive size.
+            node.inner:outputYourself(SILE.typesetter, line)
+            local newX = typesetter.frame.state.cursorX
 
-        -- Build the content.
-        -- Cursor will be moved by the actual definitive size.
-        box:outputContent(typesetter, line)
-        local newX = typesetter.frame.state.cursorX
+            -- Output a border
+            -- NOTE: Drawn inside the hbox, so borders overlap with inner content.
+            local w = newX - oldX
+            local h = node.height:tonumber()
+            local d = node.depth:tonumber()
+            local thickness = 0.5
 
-        -- Output a line.
-        -- NOTE: According to the OpenType specs, underlinePosition is "the suggested distance of
-        -- the top of the underline from the baseline" so it seems implied that the thickness
-        -- should expand downwards
-        SILE.outputter:drawRule(oldX, Y - underlinePosition, newX - oldX, underlineThickness)
-      end
-    )
-  end, "Underlines some content")
-
-  self:registerCommand("strikethrough", function (_, content)
-    local yStrikeoutPosition, yStrikeoutSize = getStrikethroughParameters()
-
-    SILE.typesetter:liner("strikethrough", content,
-      function (box, typesetter, line)
-        local oldX = typesetter.frame.state.cursorX
-        local Y = typesetter.frame.state.cursorY
-
-        -- Build the content.
-        -- Cursor will be moved by the actual definitive size.
-        box:outputContent(typesetter, line)
-        local newX = typesetter.frame.state.cursorX
-
-        -- Output a line.
-        -- NOTE: The OpenType spec is not explicit regarding how the size
-        -- (thickness) affects the position. We opt to distribute evenly
-        SILE.outputter:drawRule(oldX, Y - yStrikeoutPosition - yStrikeoutSize / 2, newX - oldX, yStrikeoutSize)
-      end
-    )
-  end, "Strikes out some content")
-
-  self:registerCommand("boxaround", function (_, content)
-    -- This command was not documented and lacks feature.
-    -- Plan replacement with a better suited package.
-    SU.deprecated("\\boxaround (undocumented)", "\\framebox (package)", "0.12.0")
-
-    local hbox, hlist = SILE.typesetter:makeHbox(content)
-    -- Re-wrap the hbox in another hbox responsible for boxing it at output
-    -- time, when we will know the line contribution and can compute the scaled width
-    -- of the box, taking into account possible stretching and shrinking.
-    SILE.typesetter:pushHbox({
-      inner = hbox,
-      width = hbox.width,
-      height = hbox.height,
-      depth = hbox.depth,
-      outputYourself = function (node, typesetter, line)
-        local oldX = typesetter.frame.state.cursorX
-        local Y = typesetter.frame.state.cursorY
-
-        -- Build the original hbox.
-        -- Cursor will be moved by the actual definitive size.
-        node.inner:outputYourself(SILE.typesetter, line)
-        local newX = typesetter.frame.state.cursorX
-
-        -- Output a border
-        -- NOTE: Drawn inside the hbox, so borders overlap with inner content.
-        local w = newX - oldX
-        local h = node.height:tonumber()
-        local d = node.depth:tonumber()
-        local thickness = 0.5
-
-        SILE.outputter:drawRule(oldX, Y + d - thickness, w, thickness)
-        SILE.outputter:drawRule(oldX, Y - h, w, thickness)
-        SILE.outputter:drawRule(oldX, Y - h, thickness, h + d)
-        SILE.outputter:drawRule(oldX + w - thickness, Y - h, thickness, h + d)
-      end
-    })
-    SILE.typesetter:pushHlist(hlist)
-  end, "Draws a box around some content")
-
+            SILE.outputter:drawRule(oldX, Y + d - thickness, w, thickness)
+            SILE.outputter:drawRule(oldX, Y - h, w, thickness)
+            SILE.outputter:drawRule(oldX, Y - h, thickness, h + d)
+            SILE.outputter:drawRule(oldX + w - thickness, Y - h, thickness, h + d)
+         end,
+      })
+      SILE.typesetter:pushHlist(hlist)
+   end, "Draws a box around some content")
 end
 
 package.documentation = [[

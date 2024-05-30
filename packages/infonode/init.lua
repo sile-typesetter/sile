@@ -13,23 +13,23 @@ local _info = pl.class(SILE.types.node.zerohbox)
 _info.type = "info"
 
 function _info:__tostring ()
-  return "I<" .. self.category .. "|" .. tostring(self.value) .. ">"
+   return "I<" .. self.category .. "|" .. tostring(self.value) .. ">"
 end
 
 function _info:outputYourself ()
-  if not SILE.scratch.info.thispage[self.category] then
-    SILE.scratch.info.thispage[self.category] = {self.value}
-  else
-    local i = #(SILE.scratch.info.thispage[self.category]) + 1
-    SILE.scratch.info.thispage[self.category][i] = self.value
-  end
+   if not SILE.scratch.info.thispage[self.category] then
+      SILE.scratch.info.thispage[self.category] = { self.value }
+   else
+      local i = #SILE.scratch.info.thispage[self.category] + 1
+      SILE.scratch.info.thispage[self.category][i] = self.value
+   end
 end
 
 local function newPageInfo (_)
-  SILE.scratch.info = { thispage = {} }
+   SILE.scratch.info = { thispage = {} }
 end
 
-local _deprecate  = [[
+local _deprecate = [[
   Directly calling info node handling functions is no longer necessary. All the
   SILE core classes and anything inheriting from them will take care of this
   automatically using hooks. Custom classes that override the class:endPage()
@@ -38,27 +38,28 @@ local _deprecate  = [[
 ]]
 
 function package:_init ()
-  base._init(self)
-  if not SILE.scratch.info then
-    SILE.scratch.info = { thispage = {} }
-  end
-  self.class:registerHook("newpage", newPageInfo)
-  self:deprecatedExport("newPageInfo", function ()
-    SU.deprecated("class:newPageInfo", nil, "0.13.0", "0.15.0", _deprecate)
-  end)
+   base._init(self)
+   if not SILE.scratch.info then
+      SILE.scratch.info = { thispage = {} }
+   end
+   self.class:registerHook("newpage", newPageInfo)
+   self:deprecatedExport("newPageInfo", function ()
+      SU.deprecated("class:newPageInfo", nil, "0.13.0", "0.15.0", _deprecate)
+   end)
 end
 
 function package:registerCommands ()
-
-  self:registerCommand("info", function (options, _)
-    SU.required(options, "category", "info node")
-    SU.required(options, "value", "info node")
-    table.insert(SILE.typesetter.state.nodes, _info({
-          category = options.category,
-          value = options.value
-      }))
-  end, "Inserts an info node onto the current page")
-
+   self:registerCommand("info", function (options, _)
+      SU.required(options, "category", "info node")
+      SU.required(options, "value", "info node")
+      table.insert(
+         SILE.typesetter.state.nodes,
+         _info({
+            category = options.category,
+            value = options.value,
+         })
+      )
+   end, "Inserts an info node onto the current page")
 end
 
 package.documentation = [[

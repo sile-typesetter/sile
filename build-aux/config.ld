@@ -4,17 +4,17 @@ readme = "../README.md"
 dir = "../lua-api-docs"
 format = "discount"
 file = {
-  "../sile-lua",
-  "../core/",
-  "../classes/",
-  "../inputters/",
-  "../languages/",
-  "../outputters/",
-  "../packages/",
-  "../pagebuilders/",
-  "../shapers/",
-  "../types/",
-  "../typesetters/",
+   "../sile-lua",
+   "../core/",
+   "../classes/",
+   "../inputters/",
+   "../languages/",
+   "../outputters/",
+   "../packages/",
+   "../pagebuilders/",
+   "../shapers/",
+   "../types/",
+   "../typesetters/",
 }
 merge = true
 no_space_before_args = true

@@ -38,78 +38,82 @@ end)
 ---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
 local parseBibtex = function (fn)
-  fn = SILE.resolveFile(fn) or SU.error("Unable to resolve Bibtex file "..fn)
-  local fh, e = io.open(fn)
-  if e then SU.error("Error reading bibliography file: "..e) end
-  local doc = fh:read("*all")
-  local t = epnf.parsestring(bibtexparser, doc)
-  if not t or not t[1] or t.id ~= "document" then
-    SU.error("Error parsing bibtex")
-  end
-  local entries = {}
-  for i =1,#t do
-    if t[i].id == "entry" then
-      local ent = t[i][1]
-      entries[ent.label] = {type = ent.type, attributes = ent[1]}
-    end
-  end
-  return entries
+   fn = SILE.resolveFile(fn) or SU.error("Unable to resolve Bibtex file " .. fn)
+   local fh, e = io.open(fn)
+   if e then
+      SU.error("Error reading bibliography file: " .. e)
+   end
+   local doc = fh:read("*all")
+   local t = epnf.parsestring(bibtexparser, doc)
+   if not t or not t[1] or t.id ~= "document" then
+      SU.error("Error parsing bibtex")
+   end
+   local entries = {}
+   for i = 1, #t do
+      if t[i].id == "entry" then
+         local ent = t[i][1]
+         entries[ent.label] = { type = ent.type, attributes = ent[1] }
+      end
+   end
+   return entries
 end
 
 function package:_init ()
-  base._init(self)
-  SILE.scratch.bibtex = { bib = {} }
-  Bibliography = require("packages.bibtex.bibliography")
+   base._init(self)
+   SILE.scratch.bibtex = { bib = {} }
+   Bibliography = require("packages.bibtex.bibliography")
 end
 
 function package.declareSettings (_)
-  SILE.settings:declare({
-    parameter = "bibtex.style",
-    type = "string",
-    default = "chicago",
-    help = "BibTeX style"
-  })
+   SILE.settings:declare({
+      parameter = "bibtex.style",
+      type = "string",
+      default = "chicago",
+      help = "BibTeX style",
+   })
 end
 
 function package:registerCommands ()
+   self:registerCommand("loadbibliography", function (options, _)
+      local file = SU.required(options, "file", "loadbibliography")
+      SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
+   end)
 
-  self:registerCommand("loadbibliography", function (options, _)
-    local file = SU.required(options, "file", "loadbibliography")
-    SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
-  end)
+   self:registerCommand("bibstyle", function (_, _)
+      SU.deprecated("\\bibstyle", "\\set[parameter=bibtex.style]", "0.13.2", "0.14.0")
+   end)
 
-  self:registerCommand("bibstyle", function (_, _)
-    SU.deprecated("\\bibstyle", '\\set[parameter=bibtex.style]', "0.13.2", "0.14.0")
-  end)
+   self:registerCommand("cite", function (options, content)
+      if not options.key then
+         options.key = SU.ast.contentToString(content)
+      end
+      local style = SILE.settings:get("bibtex.style")
+      local bibstyle = require("packages.bibtex.styles." .. style)
+      local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
+      if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
+         SU.warn("Unknown reference in citation " .. options.key)
+         return
+      end
+      SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+   end)
 
-  self:registerCommand("cite", function (options, content)
-    if not options.key then options.key = SU.ast.contentToString(content) end
-    local style = SILE.settings:get("bibtex.style")
-    local bibstyle = require("packages.bibtex.styles." .. style)
-    local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
-    if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
-      SU.warn("Unknown reference in citation "..options.key)
-      return
-    end
-    SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
-  end)
-
-  self:registerCommand("reference", function (options, content)
-    if not options.key then options.key = SU.ast.contentToString(content) end
-    local style = SILE.settings:get("bibtex.style")
-    local bibstyle = require("packages.bibtex.styles." .. style)
-    local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
-    if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
-      SU.warn("Unknown reference in citation " .. tostring(options.key))
-      return
-    end
-    if cite == Bibliography.Errors.UNKNOWN_TYPE then
-      SU.warn("Unknown type @"..err.." in citation for reference "..options.key)
-      return
-    end
-    SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
-  end)
-
+   self:registerCommand("reference", function (options, content)
+      if not options.key then
+         options.key = SU.ast.contentToString(content)
+      end
+      local style = SILE.settings:get("bibtex.style")
+      local bibstyle = require("packages.bibtex.styles." .. style)
+      local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
+      if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
+         SU.warn("Unknown reference in citation " .. tostring(options.key))
+         return
+      end
+      if cite == Bibliography.Errors.UNKNOWN_TYPE then
+         SU.warn("Unknown type @" .. err .. " in citation for reference " .. options.key)
+         return
+      end
+      SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+   end)
 end
 
 package.documentation = [[

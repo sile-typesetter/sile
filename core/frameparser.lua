@@ -4,15 +4,15 @@ local cassowary = require("cassowary")
 local P, C, V = lpeg.P, lpeg.C, lpeg.V
 
 local function resolveMeasurement (str)
-  return SILE.types.measurement(str):tonumber()
+   return SILE.types.measurement(str):tonumber()
 end
 
 local functionOfFrame = function (dim, id)
-  if not SILE.frames[id] then
-    -- TODO: Fix this race condition properly!
-    SILE.newFrame({ id = id })
-  end
-  return SILE.frames[id].variables[dim]
+   if not SILE.frames[id] then
+      -- TODO: Fix this race condition properly!
+      SILE.newFrame({ id = id })
+   end
+   return SILE.frames[id].variables[dim]
 end
 
 -- stylua: ignore start

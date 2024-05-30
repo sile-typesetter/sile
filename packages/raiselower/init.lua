@@ -4,31 +4,29 @@ local package = pl.class(base)
 package._name = "raiselower"
 
 local function raise (height, content)
-  SILE.typesetter:pushHbox({
-    outputYourself = function (_, typesetter, _)
-      typesetter.frame:advancePageDirection(-height)
-    end
-  })
-  SILE.process(content)
-  SILE.typesetter:pushHbox({
-    outputYourself = function (_, typesetter, _)
-      typesetter.frame:advancePageDirection(height)
-    end
-  })
+   SILE.typesetter:pushHbox({
+      outputYourself = function (_, typesetter, _)
+         typesetter.frame:advancePageDirection(-height)
+      end,
+   })
+   SILE.process(content)
+   SILE.typesetter:pushHbox({
+      outputYourself = function (_, typesetter, _)
+         typesetter.frame:advancePageDirection(height)
+      end,
+   })
 end
 
 function package:registerCommands ()
+   self:registerCommand("raise", function (options, content)
+      local height = SU.cast("measurement", options.height)
+      raise(height:absolute(), content)
+   end, "Raises the contents of the command by the amount specified in the <height> option")
 
-  self:registerCommand("raise", function (options, content)
-    local height = SU.cast("measurement", options.height)
-    raise(height:absolute(), content)
-  end, "Raises the contents of the command by the amount specified in the <height> option")
-
-  self:registerCommand("lower", function (options, content)
-    local height = SU.cast("measurement", options.height)
-    raise(-height:absolute(), content)
-  end, "Lowers the contents of the command by the amount specified in the <height> option")
-
+   self:registerCommand("lower", function (options, content)
+      local height = SU.cast("measurement", options.height)
+      raise(-height:absolute(), content)
+   end, "Lowers the contents of the command by the amount specified in the <height> option")
 end
 
 package.documentation = [[

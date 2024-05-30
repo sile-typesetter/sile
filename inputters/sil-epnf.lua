@@ -2,26 +2,26 @@ local epnf = require("epnf")
 local bits = require("core.parserbits")
 
 local passthroughCommands = {
-  ftl = true,
-  lua = true,
-  math = true,
-  raw = true,
-  script = true,
-  sil = true,
-  use = true,
-  xml = true
+   ftl = true,
+   lua = true,
+   math = true,
+   raw = true,
+   script = true,
+   sil = true,
+   use = true,
+   xml = true,
 }
 
 local isPassthrough = function (_, _, command)
-  return passthroughCommands[command] or false
+   return passthroughCommands[command] or false
 end
 
 local isNotPassthrough = function (...)
-  return not isPassthrough(...)
+   return not isPassthrough(...)
 end
 
 local isMatchingEndEnv = function (_, _, thisCommand, lastCommand)
-  return thisCommand == lastCommand
+   return thisCommand == lastCommand
 end
 
 -- luacheck: push ignore
@@ -100,7 +100,7 @@ end
 local grammar = epnf.define(builder)
 
 local function parser (string)
-  return epnf.parsestring(grammar, string)
+   return epnf.parsestring(grammar, string)
 end
 
 return parser
