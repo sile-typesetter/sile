@@ -4,122 +4,127 @@ local package = pl.class(base)
 package._name = "chordmode"
 
 function package:_init ()
-  base._init(self)
-  self:loadPackage("raiselower")
-  self:loadPackage("inputfilter")
+   base._init(self)
+   self:loadPackage("raiselower")
+   self:loadPackage("inputfilter")
 end
 
 function package.declareSettings (_)
-
-  SILE.settings:declare({
-    parameter = "chordmode.offset",
-    type = "length",
-    default = SILE.length("2ex"),
-    help = "Vertical offset between the chord name and the text."
-  })
-
+   SILE.settings:declare({
+      parameter = "chordmode.offset",
+      type = "length",
+      default = SILE.length("2ex"),
+      help = "Vertical offset between the chord name and the text.",
+   })
 end
 
 function package:registerCommands ()
+   self:registerCommand("ch", function (options, content)
+      local chordBox = SILE.typesetter:makeHbox(function ()
+         SILE.call("chordmode:chordfont", {}, { options.name })
+      end)
+      local origWidth = chordBox.width
+      chordBox.width = SILE.length()
 
-  self:registerCommand("ch", function (options, content)
-    local chordBox = SILE.typesetter:makeHbox(function ()
-      SILE.call("chordmode:chordfont", {}, { options.name })
-    end)
-    local origWidth = chordBox.width
-    chordBox.width = SILE.length()
+      SILE.call("raise", { height = SILE.settings:get("chordmode.offset") }, function ()
+         SILE.typesetter:pushHbox(chordBox)
+      end)
 
-    SILE.call("raise", { height = SILE.settings:get("chordmode.offset") }, function ()
-      SILE.typesetter:pushHbox(chordBox)
-    end)
-
-    local lyricBox = SILE.call("hbox", {}, content)
-    if lyricBox.width < origWidth then
-      lyricBox.width = origWidth + SILE.length("0.5em"):absolute()
-    end
-    local chordLineHeight = chordBox.height + SILE.settings:get("chordmode.offset"):absolute()
-    if chordLineHeight > lyricBox.height then
-      lyricBox.height = chordLineHeight
-    end
-  end, "Insert a chord name above the text")
-
-  local function _addChords (text, content)
-    local result = {}
-    local chordName
-    local currentText = ""
-    local process
-    local processText, processChordName, processChordText
-
-    local function insertChord()
-      table.insert(result, self.class.packages.inputfilter:createCommand(
-      content.pos, content.col, content.lno,
-      "ch", { name = chordName }, currentText
-      ))
-      chordName = nil
-    end
-
-    local function insertText()
-      if #currentText > 0 then table.insert(result, currentText) end
-      currentText = ""
-    end
-
-    local function ignore(separator)
-      currentText = currentText .. separator
-    end
-
-    processText = {
-      ["<"] = function (_)
-        insertText()
-        process = processChordName
+      local lyricBox = SILE.call("hbox", {}, content)
+      if lyricBox.width < origWidth then
+         lyricBox.width = origWidth + SILE.length("0.5em"):absolute()
       end
-    }
-
-    processChordName = {
-      [">"] = function (_)
-        chordName = currentText
-        currentText = ""
-        process = processChordText
+      local chordLineHeight = chordBox.height + SILE.settings:get("chordmode.offset"):absolute()
+      if chordLineHeight > lyricBox.height then
+         lyricBox.height = chordLineHeight
       end
-    }
+   end, "Insert a chord name above the text")
 
-    processChordText = {
-      ["<"] = function (_)
-        insertChord()
-        currentText = ""
-        process = processChordName
-      end,
-      ["\n"] = function (separator)
-        insertChord()
-        currentText = separator
-        process = processText
-      end,
-    }
-    process = processText
+   local function _addChords (text, content)
+      local result = {}
+      local chordName
+      local currentText = ""
+      local process
+      local processText, processChordName, processChordText
 
-    for token in SU.gtoke(text, "[<\n>]") do
-      if(token.string) then
-        currentText = currentText .. token.string
+      local function insertChord ()
+         table.insert(
+            result,
+            self.class.packages.inputfilter:createCommand(
+               content.pos,
+               content.col,
+               content.lno,
+               "ch",
+               { name = chordName },
+               currentText
+            )
+         )
+         chordName = nil
+      end
+
+      local function insertText ()
+         if #currentText > 0 then
+            table.insert(result, currentText)
+         end
+         currentText = ""
+      end
+
+      local function ignore (separator)
+         currentText = currentText .. separator
+      end
+
+      processText = {
+         ["<"] = function (_)
+            insertText()
+            process = processChordName
+         end,
+      }
+
+      processChordName = {
+         [">"] = function (_)
+            chordName = currentText
+            currentText = ""
+            process = processChordText
+         end,
+      }
+
+      processChordText = {
+         ["<"] = function (_)
+            insertChord()
+            currentText = ""
+            process = processChordName
+         end,
+         ["\n"] = function (separator)
+            insertChord()
+            currentText = separator
+            process = processText
+         end,
+      }
+      process = processText
+
+      for token in SU.gtoke(text, "[<\n>]") do
+         if token.string then
+            currentText = currentText .. token.string
+         else
+            (process[token.separator] or ignore)(token.separator)
+         end
+      end
+
+      if chordName ~= nil then
+         insertChord()
       else
-        (process[token.separator] or ignore)(token.separator)
+         insertText()
       end
-    end
+      return result
+   end
 
-    if (chordName ~= nil) then
-      insertChord()
-    else
-      insertText()
-    end
-    return result
-  end
+   self:registerCommand("chordmode", function (_, content)
+      SILE.process(self.class.packages.inputfilter:transformContent(content, _addChords))
+   end, "Transform embedded chords to 'ch' commands")
 
-  self:registerCommand("chordmode", function (_, content)
-    SILE.process(self.class.packages.inputfilter:transformContent(content, _addChords))
-  end, "Transform embedded chords to 'ch' commands")
-
-  self:registerCommand("chordmode:chordfont", function (_, content)
-    SILE.process(content)
-  end, "Override this command to change chord style.")
-
+   self:registerCommand("chordmode:chordfont", function (_, content)
+      SILE.process(content)
+   end, "Override this command to change chord style.")
 end
 
 package.documentation = [[

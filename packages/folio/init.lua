@@ -4,79 +4,84 @@ local package = pl.class(base)
 package._name = "folio"
 
 function package.incrementFolio (_)
-  SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
+   SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
 end
 
 function package:outputFolio (frame)
-  if not frame then frame = "folio" end
-  local folio = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
-  if not SILE.quiet then
-    io.stderr:write("[" .. folio .. "] ")
-  end
-  if SILE.scratch.counters.folio.off then
-    if SILE.scratch.counters.folio.off == 2 then
-      SILE.scratch.counters.folio.off = false
-    end
-  else
-    local folioFrame = SILE.getFrame(frame)
-    if (folioFrame) then
-      SILE.typesetNaturally(folioFrame, function ()
-        SILE.settings:pushState()
-        -- Restore the settings to the top of the queue, which should be the document #986
-        SILE.settings:toplevelState()
+   if not frame then
+      frame = "folio"
+   end
+   local folio = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
+   if not SILE.quiet then
+      io.stderr:write("[" .. folio .. "] ")
+   end
+   if SILE.scratch.counters.folio.off then
+      if SILE.scratch.counters.folio.off == 2 then
+         SILE.scratch.counters.folio.off = false
+      end
+   else
+      local folioFrame = SILE.getFrame(frame)
+      if folioFrame then
+         SILE.typesetNaturally(folioFrame, function ()
+            SILE.settings:pushState()
+            -- Restore the settings to the top of the queue, which should be the document #986
+            SILE.settings:toplevelState()
 
-        -- Reset settings the document may have but should not be applied to footnotes
-        -- See also same resets in footnote package
-        for _, v in ipairs({
-          "current.hangAfter",
-          "current.hangIndent",
-          "linebreak.hangAfter",
-          "linebreak.hangIndent" }) do
-          SILE.settings:set(v, SILE.settings.defaults[v])
-        end
+            -- Reset settings the document may have but should not be applied to footnotes
+            -- See also same resets in footnote package
+            for _, v in ipairs({
+               "current.hangAfter",
+               "current.hangIndent",
+               "linebreak.hangAfter",
+               "linebreak.hangIndent",
+            }) do
+               SILE.settings:set(v, SILE.settings.defaults[v])
+            end
 
-        SILE.call("foliostyle", {}, { folio })
-        SILE.typesetter:leaveHmode()
-        SILE.settings:popState()
-      end)
-    end
-  end
+            SILE.call("foliostyle", {}, { folio })
+            SILE.typesetter:leaveHmode()
+            SILE.settings:popState()
+         end)
+      end
+   end
 end
 
 function package:_init (options)
-  base._init(self)
-  self:loadPackage("counters")
-  SILE.scratch.counters.folio = { value = 1, display = "arabic" }
-  self.class:registerHook("newpage", function() self:incrementFolio() end)
-  self.class:registerHook("endpage", function () self:outputFolio(options and options.frame) end)
-  self:export("outputFolio", self.outputFolio)
+   base._init(self)
+   self:loadPackage("counters")
+   SILE.scratch.counters.folio = { value = 1, display = "arabic" }
+   self.class:registerHook("newpage", function ()
+      self:incrementFolio()
+   end)
+   self.class:registerHook("endpage", function ()
+      self:outputFolio(options and options.frame)
+   end)
+   self:export("outputFolio", self.outputFolio)
 end
 
 function package:registerCommands ()
+   self:registerCommand("folios", function (_, _)
+      SILE.scratch.counters.folio.off = false
+   end)
 
-  self:registerCommand("folios", function (_, _)
-    SILE.scratch.counters.folio.off = false
-  end)
+   self:registerCommand("nofolios", function (_, _)
+      SILE.scratch.counters.folio.off = true
+   end)
 
-  self:registerCommand("nofolios", function (_, _)
-    SILE.scratch.counters.folio.off = true
-  end)
+   self:registerCommand("nofoliothispage", function (_, _)
+      SILE.scratch.counters.folio.off = 2
+   end)
 
-  self:registerCommand("nofoliothispage", function (_, _)
-    SILE.scratch.counters.folio.off = 2
-  end)
+   self:registerCommand("nofoliosthispage", function (_, _)
+      SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
+   end, "Deprecated")
 
-  self:registerCommand("nofoliosthispage", function (_, _)
-    SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
-  end, "Deprecated")
-
-  self:registerCommand("foliostyle", function (_, content)
-    SILE.call("center", {}, content)
-  end)
-
+   self:registerCommand("foliostyle", function (_, content)
+      SILE.call("center", {}, content)
+   end)
 end
 
-package.documentation= [[
+package.documentation = [[
 \begin{document}
 The \autodoc:package{folio} package (which is automatically loaded by the \autodoc:class{plain} class, and therefore by nearly every SILE class) controls the output of folios—the old-time typesetter word for page numbers.
 

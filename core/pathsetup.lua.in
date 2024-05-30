@@ -7,33 +7,33 @@ package.path = package.path:gsub("/%./", "/")
 package.cpath = package.cpath:gsub("/%./", "/")
 
 local function prepend_and_dedup (segment, path)
-  local escaped = segment:gsub('[%-%.%+%[%]%(%)%$%^%%%?%*]','%%%1') -- copied from pl.utils.escape() which we can't load yet
-  local striped = path:gsub(("^%s"):format(escaped), ""):gsub((";%s"):format(escaped), "")
-  return ("%s;%s"):format(segment, striped)
+   local escaped = segment:gsub("[%-%.%+%[%]%(%)%$%^%%%?%*]", "%%%1") -- copied from pl.utils.escape() which we can't load yet
+   local striped = path:gsub(("^%s"):format(escaped), ""):gsub((";%s"):format(escaped), "")
+   return ("%s;%s"):format(segment, striped)
 end
 
 local function prependPath (path)
-  package.path  = prepend_and_dedup(path .. "/?/init.lua", package.path)
-  package.path  = prepend_and_dedup(path .. "/?.lua", package.path)
+   package.path = prepend_and_dedup(path .. "/?/init.lua", package.path)
+   package.path = prepend_and_dedup(path .. "/?.lua", package.path)
 end
 
 local function prependCPath (path)
-  package.cpath = prepend_and_dedup(path .. "/?.@SHARED_LIB_EXT@", package.cpath)
+   package.cpath = prepend_and_dedup(path .. "/?.@SHARED_LIB_EXT@", package.cpath)
 end
 
 local function extendPaths (path, ours)
-  prependCPath(path)
-  prependPath(path)
-  if ours then
-    prependPath(path .. "/lua-libraries")
-    if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
-      prependCPath(path .. "/lua_modules/lib/lua/" .. luaversion)
-      prependPath(path .. "/lua_modules/share/lua/" .. luaversion)
-    end
-  else
-    prependCPath(path .. "/sile")
-    prependPath(path .. "/sile")
-  end
+   prependCPath(path)
+   prependPath(path)
+   if ours then
+      prependPath(path .. "/lua-libraries")
+      if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
+         prependCPath(path .. "/lua_modules/lib/lua/" .. luaversion)
+         prependPath(path .. "/lua_modules/share/lua/" .. luaversion)
+      end
+   else
+      prependCPath(path .. "/sile")
+      prependPath(path .. "/sile")
+   end
 end
 
 -- Facilitate loading SILE classes & packages from system LuaRocks
@@ -41,8 +41,8 @@ end
 local luapath = {}
 local extpath = {}
 for path in package.path:gmatch("[^;]+") do
-  table.insert(extpath, tostring(path:gsub("%?", "sile/?")))
-  table.insert(luapath, path)
+   table.insert(extpath, tostring(path:gsub("%?", "sile/?")))
+   table.insert(luapath, path)
 end
 package.path = table.concat(luapath, ";")
 
@@ -53,19 +53,21 @@ package.path = table.concat(extpath, ";") .. ";" .. package.path
 
 local pathvar = os.getenv("SILE_PATH")
 if pathvar then
-  for path in string.gmatch(pathvar, "[^;]+") do
-    if not path:match("^./") and path:len() >= 1 then
-      extendPaths(path)
-    end
-  end
+   for path in string.gmatch(pathvar, "[^;]+") do
+      if not path:match("^./") and path:len() >= 1 then
+         extendPaths(path)
+      end
+   end
 end
 
 local cwd = executable:gsub("(.*)(/.*)", "%1")
 if cwd:match("^@") then -- Consider "ours" for the sake of Nix Flake
-  extendPaths(".", true)
+   extendPaths(".", true)
 else
-  if cwd ~= "./" then extendPaths(cwd) end
-  extendPaths(".")
+   if cwd ~= "./" then
+      extendPaths(cwd)
+   end
+   extendPaths(".")
 end
 
 _G.extendSilePath = extendPaths

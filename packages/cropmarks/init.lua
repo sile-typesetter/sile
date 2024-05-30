@@ -6,96 +6,98 @@ package._name = "cropmarks"
 local outcounter = 1
 
 local function outputMarks ()
-  local page = SILE.getFrame("page")
-  SILE.outputter:drawRule(page:left() - 10, page:top(), -10, 0.5)
-  SILE.outputter:drawRule(page:left(), page:top() - 10, 0.5, -10)
-  SILE.outputter:drawRule(page:right() + 10, page:top(), 10, 0.5)
-  SILE.outputter:drawRule(page:right(), page:top() - 10, 0.5, -10)
-  SILE.outputter:drawRule(page:left() - 10, page:bottom(), -10, 0.5)
-  SILE.outputter:drawRule(page:left(), page:bottom() + 10, 0.5, 10)
-  SILE.outputter:drawRule(page:right() + 10, page:bottom(), 10, 0.5)
-  SILE.outputter:drawRule(page:right(), page:bottom() + 10, 0.5, 10)
+   local page = SILE.getFrame("page")
+   SILE.outputter:drawRule(page:left() - 10, page:top(), -10, 0.5)
+   SILE.outputter:drawRule(page:left(), page:top() - 10, 0.5, -10)
+   SILE.outputter:drawRule(page:right() + 10, page:top(), 10, 0.5)
+   SILE.outputter:drawRule(page:right(), page:top() - 10, 0.5, -10)
+   SILE.outputter:drawRule(page:left() - 10, page:bottom(), -10, 0.5)
+   SILE.outputter:drawRule(page:left(), page:bottom() + 10, 0.5, 10)
+   SILE.outputter:drawRule(page:right() + 10, page:bottom(), 10, 0.5)
+   SILE.outputter:drawRule(page:right(), page:bottom() + 10, 0.5, 10)
 
-  local hbox, hlist = SILE.typesetter:makeHbox(function ()
-    SILE.settings:temporarily(function ()
-      SILE.call("noindent")
-      SILE.call("font", { size="6pt" })
-      SILE.call("crop:header")
-    end)
-  end)
-  if #hlist > 0 then
-    SU.error("Forbidden migrating content in crop header")
-  end
+   local hbox, hlist = SILE.typesetter:makeHbox(function ()
+      SILE.settings:temporarily(function ()
+         SILE.call("noindent")
+         SILE.call("font", { size = "6pt" })
+         SILE.call("crop:header")
+      end)
+   end)
+   if #hlist > 0 then
+      SU.error("Forbidden migrating content in crop header")
+   end
 
-  SILE.typesetter.frame.state.cursorX = page:left() + 10
-  SILE.typesetter.frame.state.cursorY = page:top() - 13
-  outcounter = outcounter + 1
+   SILE.typesetter.frame.state.cursorX = page:left() + 10
+   SILE.typesetter.frame.state.cursorY = page:top() - 13
+   outcounter = outcounter + 1
 
-  if hbox then
-    for i = 1, #(hbox.value) do hbox.value[i]:outputYourself(SILE.typesetter, { ratio = 1 }) end
-  end
+   if hbox then
+      for i = 1, #hbox.value do
+         hbox.value[i]:outputYourself(SILE.typesetter, { ratio = 1 })
+      end
+   end
 end
 
 local function reconstrainFrameset (fs)
-  for n, f in pairs(fs) do
-    if n ~= "page" then
-      if f:isAbsoluteConstraint("right") then
-        f.constraints.right = "left(page) + (" .. f.constraints.right .. ")"
+   for n, f in pairs(fs) do
+      if n ~= "page" then
+         if f:isAbsoluteConstraint("right") then
+            f.constraints.right = "left(page) + (" .. f.constraints.right .. ")"
+         end
+         if f:isAbsoluteConstraint("left") then
+            f.constraints.left = "left(page) + (" .. f.constraints.left .. ")"
+         end
+         if f:isAbsoluteConstraint("top") then
+            f.constraints.top = "top(page) + (" .. f.constraints.top .. ")"
+         end
+         if f:isAbsoluteConstraint("bottom") then
+            f.constraints.bottom = "top(page) + (" .. f.constraints.bottom .. ")"
+         end
+         f:invalidate()
       end
-      if f:isAbsoluteConstraint("left") then
-        f.constraints.left = "left(page) + (" .. f.constraints.left .. ")"
-      end
-      if f:isAbsoluteConstraint("top") then
-        f.constraints.top = "top(page) + (" .. f.constraints.top .. ")"
-      end
-      if f:isAbsoluteConstraint("bottom") then
-        f.constraints.bottom = "top(page) + (" .. f.constraints.bottom .. ")"
-      end
-      f:invalidate()
-    end
-  end
+   end
 end
 
 function package:_init ()
-  base._init(self)
-  self:loadPackage("date")
+   base._init(self)
+   self:loadPackage("date")
 end
 
 function package:registerCommands ()
+   self:registerCommand("crop:header", function (_, _)
+      local info = SILE.input.filenames[1] .. " - " .. self.class:date("%x %X") .. " -  " .. outcounter
+      SILE.typesetter:typeset(info)
+   end)
 
-  self:registerCommand("crop:header", function (_, _)
-    local info = SILE.input.filenames[1] .. " - " .. self.class:date("%x %X") .. " -  " .. outcounter
-    SILE.typesetter:typeset(info)
-  end)
-
-  self:registerCommand("crop:setup", function (options, _)
-    local papersize = SU.required(options, "papersize", "setting up crop marks")
-    local landscape = SU.boolean(options.landscape, self.class.options.landscape)
-    local size = SILE.papersize(papersize, landscape)
-    local oldsize = SILE.documentState.paperSize
-    SILE.documentState.paperSize = size
-    local offsetx = ( SILE.documentState.paperSize[1] - oldsize[1] ) /2
-    local offsety = ( SILE.documentState.paperSize[2] - oldsize[2] ) /2
-    local page = SILE.getFrame("page")
-    page:constrain("right", page:right() + offsetx)
-    page:constrain("left", offsetx)
-    page:constrain("bottom", page:bottom() + offsety)
-    page:constrain("top", offsety)
-    if SILE.scratch.masters then
-      for _, v in pairs(SILE.scratch.masters) do
-        reconstrainFrameset(v.frames)
+   self:registerCommand("crop:setup", function (options, _)
+      local papersize = SU.required(options, "papersize", "setting up crop marks")
+      local landscape = SU.boolean(options.landscape, self.class.options.landscape)
+      local size = SILE.papersize(papersize, landscape)
+      local oldsize = SILE.documentState.paperSize
+      SILE.documentState.paperSize = size
+      local offsetx = (SILE.documentState.paperSize[1] - oldsize[1]) / 2
+      local offsety = (SILE.documentState.paperSize[2] - oldsize[2]) / 2
+      local page = SILE.getFrame("page")
+      page:constrain("right", page:right() + offsetx)
+      page:constrain("left", offsetx)
+      page:constrain("bottom", page:bottom() + offsety)
+      page:constrain("top", offsety)
+      if SILE.scratch.masters then
+         for _, v in pairs(SILE.scratch.masters) do
+            reconstrainFrameset(v.frames)
+         end
+      else
+         reconstrainFrameset(SILE.documentState.documentClass.pageTemplate.frames)
       end
-    else
-      reconstrainFrameset(SILE.documentState.documentClass.pageTemplate.frames)
-    end
-    if SILE.typesetter.frame then SILE.typesetter.frame:init() end
-    local oldEndPage = SILE.documentState.documentClass.endPage
-    SILE.documentState.documentClass.endPage = function (self_)
-      oldEndPage(self_)
-      outputMarks()
-    end
-  end)
-
+      if SILE.typesetter.frame then
+         SILE.typesetter.frame:init()
+      end
+      local oldEndPage = SILE.documentState.documentClass.endPage
+      SILE.documentState.documentClass.endPage = function (self_)
+         oldEndPage(self_)
+         outputMarks()
+      end
+   end)
 end
 
 package.documentation = [[

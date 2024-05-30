@@ -1,7 +1,7 @@
 return {
-  appkit = "@APPKIT_TRUE@" ~= "#",
-  font_variations = "@FONT_VARIATIONS_TRUE@" ~= "#",
-  fontconfig = "@FONTCONFIG_TRUE@" ~= "#",
-  harfbuzz = "@HARFBUZZ_TRUE@" ~= "#",
-  icu = "@ICU_TRUE@" ~= "#"
+   appkit = "@APPKIT_TRUE@" ~= "#",
+   font_variations = "@FONT_VARIATIONS_TRUE@" ~= "#",
+   fontconfig = "@FONTCONFIG_TRUE@" ~= "#",
+   harfbuzz = "@HARFBUZZ_TRUE@" ~= "#",
+   icu = "@ICU_TRUE@" ~= "#",
 }

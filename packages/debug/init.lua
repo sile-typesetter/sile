@@ -4,17 +4,15 @@ local package = pl.class(base)
 package._name = "debug"
 
 function package:registerCommands ()
+   self:registerCommand("debug", function (options, _)
+      for k, v in pairs(options) do
+         SILE.debugFlags[k] = SU.boolean(v, true)
+      end
+   end)
 
-  self:registerCommand("debug", function (options, _)
-    for k, v in pairs(options) do
-      SILE.debugFlags[k] = SU.boolean(v, true)
-    end
-  end)
-
-  self:registerCommand("disable-pushback", function (_, _)
-    SILE.typesetter.pushBack = function() end
-  end)
-
+   self:registerCommand("disable-pushback", function (_, _)
+      SILE.typesetter.pushBack = function () end
+   end)
 end
 
 package.documentation = [[

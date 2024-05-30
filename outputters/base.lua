@@ -35,19 +35,19 @@ function outputter.debugFrame (_, _, _) end
 function outputter.debugHbox (_, _, _) end
 
 function outputter:getOutputFilename ()
-  local fname
-  if SILE.outputFilename then
-    fname = SILE.outputFilename
-  elseif SILE.input.filenames[1] then
-    fname = pl.path.splitext(SILE.input.filenames[1])
-    if self.extension then
-      fname = fname .. "." .. self.extension
-    end
-  end
-  if not fname then
-    SU.error("Cannot guess output filename without an input name")
-  end
-  return fname
+   local fname
+   if SILE.outputFilename then
+      fname = SILE.outputFilename
+   elseif SILE.input.filenames[1] then
+      fname = pl.path.splitext(SILE.input.filenames[1])
+      if self.extension then
+         fname = fname .. "." .. self.extension
+      end
+   end
+   if not fname then
+      SU.error("Cannot guess output filename without an input name")
+   end
+   return fname
 end
 
 return outputter

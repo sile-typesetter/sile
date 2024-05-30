@@ -6,6 +6,6 @@ exclude = {
 	"home/runner",
 	"usr/share",
 	".+_spec",
-	"tests"
+	"tests",
 }
 includeuntestedfiles = true
