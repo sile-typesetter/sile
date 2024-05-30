@@ -138,7 +138,21 @@ Just be aware when it comes to things like fonts, images, or other resources abo
 
 Downloads of SILE can be obtained from the home page at \silehp.
 
-SILE requires a number of other software packages to be installed on the computer before it can work, a Lua interpreter and the \code{harfbuzz} text shaping library.
+SILE is completely programmable using the Lua programming language.
+As of v0.15.0, the CLI you actually execute is a Rust binary with a Lua VM built in.
+(For compatiblity and demonstration purposes a pure Lua version of the CLI is still available as \code{sile-lua}.)
+The Rust binary can be built based on your system’s Lua sources or use its own vendored Lua sources.
+All SILE’s Lua code takes a lowest-common-denominator approach to Lua compatibility.
+Any of Lua 5.1, 5.2, 5.3, 5.4, or LuaJIT (2.0, 2.1, or OpenResty) are fully supported.
+Compiling it to match your system’s Lua version has the advantage of making it easy to access system installed Lua Rocks, but this is not a requirement.
+
+Compiling from sources will require both a Rust toolchain and Lua sources.
+At runtime no Rust tooling is required, and the system Lua interpreter is not actually used.
+
+It also relies on external libraries to access fonts and write PDF files.
+HarfBuzz (minimum version 2.7.4) should be available from your operating system’s package manager.
+For HarfBuzz to work you will also need \code{fontconfig} installed.
+SILE also requires the \code{icu} libraries for Unicode handling.
 SILE provides its own PDF creation library, which has its own requirements: \code{fontconfig}, \code{zlib} and \code{libpng}.
 
 Even if building SILE from source, we suggest you use your distributions’s package manager to install as many of the dependencies as possible.
@@ -146,7 +160,8 @@ Most distros will have all of the system library dependencies and some of them w
 The \code{./configure} script will prompt for any dependencies that are missing, but it well only suggest the generic names of tools and libraries you will need.
 You will need to search the package repositories for the correct package names.
 Note that many distributions separate "development" or "library" packages from main ones.
-For example if your distro has "icu" and "libicu-dev", for the purpose of building SILE you’ll need the latter.
+For example if your distro has "icu" and "libicu-dev" — for the purpose of building SILE you’ll need the latter;
+  Once you have built it, it will only need the former to run.
 
 There are a large number of Lua dependencies required to run SILE.
 You may either install them to your system using your system’s package manager or \code{luarocks}, or let the SILE build process fetch and bundle them for you.
@@ -175,6 +190,13 @@ If you supplied all the Lua dependencies yourself, run:
 Otherwise to go with default of bundling them, just run:
 
 \terminal{$ ./configure}
+
+Also note that by default, the build process will use a vendored copy of fresh Lua sources.
+This will probably result in a different version of Lua than the default on your system.
+In the event you want it to exactly match, you'll need to have the development headers instaled matching your system Lua.
+Once available, add this flag to your configuration:
+
+\terminal{$ ./configure --with-system-lua-sources}
 
 \begin{autodoc:note}
 Normally a source build will not actually \emph{run} until after it is installed.
