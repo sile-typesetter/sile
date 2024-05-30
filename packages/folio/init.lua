@@ -7,6 +7,8 @@ function package.incrementFolio (_)
   SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
 end
 
+local isFolioFrame, folioFrame = nil, {} 
+
 function package:outputFolio (frame)
   if not frame then frame = "folio" end
   local folio = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
@@ -18,8 +20,8 @@ function package:outputFolio (frame)
       SILE.scratch.counters.folio.off = false
     end
   else
-    local folioFrame = SILE.getFrame(frame)
-    if (folioFrame) then
+    isFolioFrame, folioFrame = pcall(SILE.getFrame(frame))
+    if isFolioFrame then
       SILE.typesetNaturally(folioFrame, function ()
         SILE.settings:pushState()
         -- Restore the settings to the top of the queue, which should be the document #986
@@ -48,7 +50,7 @@ function package:_init (options)
   self:loadPackage("counters")
   SILE.scratch.counters.folio = { value = 1, display = "arabic" }
   self.class:registerHook("newpage", function() self:incrementFolio() end)
-  self.class:registerHook("endpage", function () self:outputFolio(options and options.frame) end)
+  self.class:registerHook("endpage", function () if isFolioFrame then self:outputFolio(options and options.frame) end end)
   self:export("outputFolio", self.outputFolio)
 end
 
