@@ -35,11 +35,13 @@ local function f4 (s)
   local c1, c2, c3, c4 = string.byte(s, 1, 4)
   return ((c1 * 64 + c2) * 64 + c3) * 64 + c4 - 63447168
 end
+
+-- stylua: ignore start
 local cont = lpeg.R("\128\191")   -- continuation byte
 local utf8char = lpeg.R("\0\127") / string.byte
-  + lpeg.R("\194\223") * cont / f2
-  + lpeg.R("\224\239") * cont * cont / f3
-  + lpeg.R("\240\244") * cont * cont * cont / f4
+   + lpeg.R("\194\223") * cont / f2
+   + lpeg.R("\224\239") * cont * cont / f3
+   + lpeg.R("\240\244") * cont * cont * cont / f4
 
 local bits = {}
 
@@ -79,5 +81,6 @@ local useparams = (P"[" * bits.parameters * P"]")^-1 / wrapper
 local modpart = C((1 - P"." - P"/" - P"[")^1)
 local module = C(modpart * (P"." * modpart)^0)
 bits.cliuse = Ct(Cg(module, "module") * Cg(useparams^-1, "options"))
+-- stylua: ignore end
 
 return bits

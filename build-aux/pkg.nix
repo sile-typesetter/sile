@@ -23,6 +23,7 @@
 , makeFontsConf
 , gentium
 , runCommand
+, stylua
 }:
 
 let
@@ -94,6 +95,7 @@ in stdenv.mkDerivation (finalAttrs: {
     icu
     fontconfig
     libiconv
+    stylua
   ] ++ lib.optionals stdenv.isDarwin [
     darwin.apple_sdk.frameworks.AppKit
   ];

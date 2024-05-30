@@ -217,6 +217,7 @@ AM_COND_IF([DEVELOPER_MODE], [
     QUE_PROGVAR([npm])
     QUE_PROGVAR([perl])
     QUE_PROGVAR([sort])
+    QUE_PROGVAR([stylua])
     QUE_PROGVAR([tr])
 ])
 

@@ -231,7 +231,7 @@ end
 function class:initPackage (pack, options)
   SU.deprecated("class:initPackage(options)", "package(options)", "0.14.0", "0.16.0", [[
   This package appears to be a legacy format package. It returns a table
-  an expects SILE to guess a bit about what to do. New packages inherit
+  and expects SILE to guess about what to do. New packages inherit
   from the base class and have a constructor function (_init) that
   automatically handles setup.]])
   if type(pack) == "table" then

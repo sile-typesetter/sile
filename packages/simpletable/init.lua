@@ -101,10 +101,10 @@ This implements (badly) a very simple table formatting class.
 It should be called as so:
 
 \begin[type=autodoc:codeblock]{raw}
-myclass:loadpackage("simpletable", {
- tabletag = "a",
- trtag = "b",
- tdtag = "c"
+myclass:loadPackage("simpletable", {
+ tableTag = "a",
+ trTag = "b",
+ tdTag = "c"
 })
 \end{raw}
 
