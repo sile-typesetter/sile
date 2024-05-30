@@ -4,30 +4,28 @@ local package = pl.class(base)
 package._name = "date"
 
 local localeify = function (lang)
-  lang = lang == "en-u-va-posix" and "en" or lang
-  return lang .. "_" .. string.upper(lang) ..  ".utf-8"
+   lang = lang == "en-u-va-posix" and "en" or lang
+   return lang .. "_" .. string.upper(lang) .. ".utf-8"
 end
 
 function package.date (_, options)
-  options.format = options.format or "%c"
-  options.time = options.time or os.time()
-  options.locale = options.locale or localeify(SILE.settings:get("document.language"))
-  os.setlocale(options.locale, "time")
-  return os.date(options.format, options.time)
+   options.format = options.format or "%c"
+   options.time = options.time or os.time()
+   options.locale = options.locale or localeify(SILE.settings:get("document.language"))
+   os.setlocale(options.locale, "time")
+   return os.date(options.format, options.time)
 end
 
 function package:_init ()
-  base._init(self)
-  self:deprecatedExport("date", self.date)
+   base._init(self)
+   self:deprecatedExport("date", self.date)
 end
 
 function package:registerCommands ()
-
-  self:registerCommand("date", function (options, _)
-    local datestring = self:date(options)
-    SILE.typesetter:typeset(datestring)
-  end, "Output a timestamp using the system date function")
-
+   self:registerCommand("date", function (options, _)
+      local datestring = self:date(options)
+      SILE.typesetter:typeset(datestring)
+   end, "Output a timestamp using the system date function")
 end
 
 package.documentation = [[

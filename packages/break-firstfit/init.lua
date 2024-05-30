@@ -8,8 +8,8 @@ package._name = "break-firstfit"
 -- typesetting. Oh, and it's really fast too.
 
 function package:_init ()
-  base._init(self)
-  SILE.typesetters.firstfit:cast(SILE.typesetter)
+   base._init(self)
+   SILE.typesetters.firstfit:cast(SILE.typesetter)
 end
 
 package.documentation = [[

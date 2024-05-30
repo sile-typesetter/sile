@@ -22,7 +22,8 @@ end
 SILE = require("core.sile")
 SILE.full_version = SILE.full_version .. " [Lua]"
 
-SILE.cli:parseArguments()
+local cli = require("core.cli")
+cli:parseArguments()
 
 if not os.getenv 'LUA_REPL_RLWRAP' and not SILE.quiet then
   io.stderr:write(SILE.full_version .. '\n')
@@ -52,7 +53,8 @@ if SILE.input.filenames and #SILE.input.filenames >= 1 then
   SILE.finish()
 
 else
-  SILE.repl:enter()
+  local repl = require("core.repl")
+  repl:enter()
 end
 
 -- vim: ft=lua

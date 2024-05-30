@@ -5,7 +5,7 @@ version = "dev-@ROCKREV@"
 
 source = {
    url = "git+https://github.com/sile-typesetter/sile.git",
-   branch = "develop"
+   branch = "develop",
 }
 
 description = {
@@ -20,7 +20,7 @@ description = {
    homepage = "https://github.com/sile-typesetter/fontproof",
    issues_url = "https://github.com/sile-typesetter/fontproof/issues",
    maintainer = "Caleb Maclennan <caleb@alerque.com>",
-   labels = { "typesetting" }
+   labels = { "typesetting" },
 }
 
 dependencies = {
@@ -43,10 +43,10 @@ dependencies = {
    "luasocket == 3.1.0-1",
    "luautf8 == 0.1.5-2",
    "penlight == 1.13.1-1",
-   "vstruct == 2.1.1-1"
+   "vstruct == 2.1.1-1",
 }
 
 build = {
    type = "builtin",
-   modules = {}
+   modules = {},
 }

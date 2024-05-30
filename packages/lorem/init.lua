@@ -72,32 +72,30 @@ ipsum dolor sit amet
 local _, nwords = lorem:gsub("%S+", "")
 
 function package:registerCommands ()
+   self:registerCommand("lorem", function (options, _)
+      local words = tonumber(options.words) or 50
+      local counter = SU.boolean(options.counter, false)
 
-  self:registerCommand("lorem", function (options, _)
-    local words = tonumber(options.words) or 50
-    local counter = SU.boolean(options.counter, false)
-
-    local times = math.floor(words/nwords)
-    words = words - times*nwords
-    local pos = 0
-    for _ = 1, words do
-      _, pos = lorem:find("%S+", pos + 1)
-    end
-    local text = string.rep(lorem, times) .. lorem:sub(1, pos)
-    if counter then
-      SU.deprecated("\\lorem with counter", nil, "0.14.10", "0.16.0")
-      local c = 0
-      text = string.gsub(text, "(%s+)", function (_)
-        c = c + 1
-        return " " .. c .. " "
+      local times = math.floor(words / nwords)
+      words = words - times * nwords
+      local pos = 0
+      for _ = 1, words do
+         _, pos = lorem:find("%S+", pos + 1)
+      end
+      local text = string.rep(lorem, times) .. lorem:sub(1, pos)
+      if counter then
+         SU.deprecated("\\lorem with counter", nil, "0.14.10", "0.16.0")
+         local c = 0
+         text = string.gsub(text, "(%s+)", function (_)
+            c = c + 1
+            return " " .. c .. " "
+         end)
+      end
+      SILE.settings:temporarily(function ()
+         SILE.settings:set("document.language", "la")
+         SILE.typesetter:typeset(text)
       end)
-    end
-    SILE.settings:temporarily(function ()
-      SILE.settings:set("document.language", "la")
-      SILE.typesetter:typeset(text)
-    end)
-  end)
-
+   end)
 end
 
 package.documentation = [[

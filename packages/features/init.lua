@@ -9,101 +9,103 @@ local R, S, P, C = lpeg.R, lpeg.S, lpeg.P, lpeg.C
 local Cf, Ct = lpeg.Cf, lpeg.Ct
 
 local otFeatureMap = {
-  Ligatures = {
-    Required = "rlig",
-    Common = "liga",
-    Contextual = "clig",
-    Rare = "dlig",
-    Discretionary = "dlig",
-    Historic = "hlig"
-  },
-  Fractions = {
-    On = "frac",
-    Alternate = "afrc"
-  },
-  StylisticSet = function (i)
-    return string.format("ss%02i", tonumber(i))
-  end,
-  CharacterVariant = function (i)
-    return string.format("cv%02i", tonumber(i))
-  end,
-  Letters = {
-    Uppercase = "case",
-    SmallCaps = "smcp",
-    PetiteCaps = "pcap",
-    UppercaseSmallCaps = "c2sc",
-    UppercasePetiteCaps = "c2pc",
-    Unicase = "unic"
-  },
-  Numbers = {
-    Uppercase = "lnum",
-    Lining = "lnum",
-    LowerCase = "onum",
-    OldStyle = "onum",
-    Proportional = "pnum",
-    monospaced = "tnum",
-    SlashedZero = "zero",
-    Arabic = "anum"
-  },
-  Contextuals = {
-    Swash = "cswh",
-    Alternate = "calt",
-    WordInitial = "init",
-    WordFinal = "fina",
-    LineFinal = "falt",
-    Inner = "medi"
-  },
-  VerticalPosition = {
-    Superior = "sups",
-    Inferior = "subs",
-    Numerator = "numr",
-    Denominator = "dnom",
-    ScientificInferior = "sinf",
-    Ordinal = "ordn"
-  },
-  Style = {
-    Alternate = "salt",
-    Italic = "ital",
-    Ruby = "ruby",
-    Swash = "swsh",
-    Historic = "hist",
-    TitlingCaps = "titl",
-    HorizontalKana = "hkna",
-    VerticalKana = "vkna"
-  },
-  Diacritics = {
-    MarkToBase = "mark",
-    MarkToMark = "mkmk",
-    AboveBase = "abvm",
-    BelowBase = "blwm"
-  },
-  Kerning = {
-    Uppercase = "cpsp",
-    On = "kern"
-  },
-  CJKShape = {
-    Traditional = "trad",
-    Simplified = "smpl",
-    JIS1978 = "jp78",
-    JIS1983 = "jp83",
-    JIS1990 = "jp90",
-    Expert = "expt",
-    NLC = "nlck"
-  },
-  CharacterWidth = {
-    Proportional = "pwid",
-    Full = "fwid",
-    Half = "hwid",
-    Third = "twid",
-    Quarter = "qwid",
-    AlternateProportional = "palt",
-    AlternateHalf = "halt"
-  }
+   Ligatures = {
+      Required = "rlig",
+      Common = "liga",
+      Contextual = "clig",
+      Rare = "dlig",
+      Discretionary = "dlig",
+      Historic = "hlig",
+   },
+   Fractions = {
+      On = "frac",
+      Alternate = "afrc",
+   },
+   StylisticSet = function (i)
+      return string.format("ss%02i", tonumber(i))
+   end,
+   CharacterVariant = function (i)
+      return string.format("cv%02i", tonumber(i))
+   end,
+   Letters = {
+      Uppercase = "case",
+      SmallCaps = "smcp",
+      PetiteCaps = "pcap",
+      UppercaseSmallCaps = "c2sc",
+      UppercasePetiteCaps = "c2pc",
+      Unicase = "unic",
+   },
+   Numbers = {
+      Uppercase = "lnum",
+      Lining = "lnum",
+      LowerCase = "onum",
+      OldStyle = "onum",
+      Proportional = "pnum",
+      monospaced = "tnum",
+      SlashedZero = "zero",
+      Arabic = "anum",
+   },
+   Contextuals = {
+      Swash = "cswh",
+      Alternate = "calt",
+      WordInitial = "init",
+      WordFinal = "fina",
+      LineFinal = "falt",
+      Inner = "medi",
+   },
+   VerticalPosition = {
+      Superior = "sups",
+      Inferior = "subs",
+      Numerator = "numr",
+      Denominator = "dnom",
+      ScientificInferior = "sinf",
+      Ordinal = "ordn",
+   },
+   Style = {
+      Alternate = "salt",
+      Italic = "ital",
+      Ruby = "ruby",
+      Swash = "swsh",
+      Historic = "hist",
+      TitlingCaps = "titl",
+      HorizontalKana = "hkna",
+      VerticalKana = "vkna",
+   },
+   Diacritics = {
+      MarkToBase = "mark",
+      MarkToMark = "mkmk",
+      AboveBase = "abvm",
+      BelowBase = "blwm",
+   },
+   Kerning = {
+      Uppercase = "cpsp",
+      On = "kern",
+   },
+   CJKShape = {
+      Traditional = "trad",
+      Simplified = "smpl",
+      JIS1978 = "jp78",
+      JIS1983 = "jp83",
+      JIS1990 = "jp90",
+      Expert = "expt",
+      NLC = "nlck",
+   },
+   CharacterWidth = {
+      Proportional = "pwid",
+      Full = "fwid",
+      Half = "hwid",
+      Third = "twid",
+      Quarter = "qwid",
+      AlternateProportional = "palt",
+      AlternateHalf = "halt",
+   },
 }
 
 local function tagpos (pos, k, v)
-  return k, { posneg = pos, value = v }
+   return k, { posneg = pos, value = v }
 end
+
+-- stylua: ignore start
 
 -- Parser for feature strings
 local featurename = C((1 - S",;:=")^1)
@@ -124,43 +126,48 @@ local fontspeclist = ws * P"{" *
 
 local otFeatures = pl.class(pl.Map)
 
+-- stylua: ignore end
+
 function otFeatures:_init ()
-  self:super()
-  local str = SILE.settings:get("font.features")
-  local tbl = featurestring:match(str)
-  if not tbl then
-    SU.error("Unparsable Opentype feature string '"..str.."'")
-  end
-  for feat, flag in pairs(tbl) do
-    self:set(feat, flag.posneg == "+")
-  end
+   self:super()
+   local str = SILE.settings:get("font.features")
+   local tbl = featurestring:match(str)
+   if not tbl then
+      SU.error("Unparsable Opentype feature string '" .. str .. "'")
+   end
+   for feat, flag in pairs(tbl) do
+      self:set(feat, flag.posneg == "+")
+   end
 end
 
 function otFeatures:__tostring ()
-  local ret = {}
-  for _, f in ipairs(self:items()) do
-    ret[#ret+1] = (f[2] and "+" or "-") .. f[1]
-  end
-  return table.concat(ret, ";")
+   local ret = {}
+   for _, f in ipairs(self:items()) do
+      ret[#ret + 1] = (f[2] and "+" or "-") .. f[1]
+   end
+   return table.concat(ret, ";")
 end
 
 function otFeatures:loadOption (name, val, invert)
-  local posneg = not invert
-  local key = otFeatureMap[name]
-  if not key then
-    SU.warn("Unknown OpenType feature " .. name)
-  else
-    local matches = lpeg.match(fontspeclist, val)
-    for _, v in ipairs(matches or { val }) do
-      v = v:gsub("^No", function () posneg = false; return "" end)
-      local feat = type(key) == "function" and key(v) or key[v]
-      if not feat then
-        SU.warn("Bad OpenType value " .. v .. " for feature " .. name)
-      else
-        self:set(feat, posneg)
+   local posneg = not invert
+   local key = otFeatureMap[name]
+   if not key then
+      SU.warn("Unknown OpenType feature " .. name)
+   else
+      local matches = lpeg.match(fontspeclist, val)
+      for _, v in ipairs(matches or { val }) do
+         v = v:gsub("^No", function ()
+            posneg = false
+            return ""
+         end)
+         local feat = type(key) == "function" and key(v) or key[v]
+         if not feat then
+            SU.warn("Bad OpenType value " .. v .. " for feature " .. name)
+         else
+            self:set(feat, posneg)
+         end
       end
-    end
-  end
+   end
 end
 
 -- Input like {Ligatures = Historic} or {Ligatures = "{Historic, Discretionary}"}
@@ -170,50 +177,48 @@ end
 -- Stylistic Sets and Character Variations, many of which make sense to enable
 -- simultaneously.
 function otFeatures:loadOptions (options, invert)
-  SU.debug("features", "Features was", self)
-  for k, v in pairs(options) do
-    self:loadOption(k, v, invert)
-  end
-  SU.debug("features", "Features interpreted as", self)
+   SU.debug("features", "Features was", self)
+   for k, v in pairs(options) do
+      self:loadOption(k, v, invert)
+   end
+   SU.debug("features", "Features interpreted as", self)
 end
 
 function otFeatures:unloadOptions (options)
-  self:loadOptions(options, true)
+   self:loadOptions(options, true)
 end
 
 local fontfn = SILE.Commands.font
 
 function package:registerCommands ()
+   self:registerCommand("add-font-feature", function (options, _)
+      local otfeatures = otFeatures()
+      otfeatures:loadOptions(options)
+      SILE.settings:set("font.features", tostring(otfeatures))
+   end)
 
-  self:registerCommand("add-font-feature", function (options, _)
-    local otfeatures = otFeatures()
-    otfeatures:loadOptions(options)
-    SILE.settings:set("font.features", tostring(otfeatures))
-  end)
+   self:registerCommand("remove-font-feature", function (options, _)
+      local otfeatures = otFeatures()
+      otfeatures:unloadOptions(options)
+      SILE.settings:set("font.features", tostring(otfeatures))
+   end)
 
-  self:registerCommand("remove-font-feature", function(options, _)
-    local otfeatures = otFeatures()
-    otfeatures:unloadOptions(options)
-    SILE.settings:set("font.features", tostring(otfeatures))
-  end)
-
-  self:registerCommand("font", function (options, content)
-    local otfeatures = otFeatures()
-    -- It is guaranteed that future releases of SILE will not implement non-OT \font
-    -- features with capital letters.
-    -- Cf. https://github.com/sile-typesetter/sile/issues/992#issuecomment-665575353
-    -- So, we reserve 'em all. ⍩⃝
-    for k, v in pairs(options) do
-      if k:match('^[A-Z]') then
-        otfeatures:loadOption(k, v)
-        options[k] = nil
+   self:registerCommand("font", function (options, content)
+      local otfeatures = otFeatures()
+      -- It is guaranteed that future releases of SILE will not implement non-OT \font
+      -- features with capital letters.
+      -- Cf. https://github.com/sile-typesetter/sile/issues/992#issuecomment-665575353
+      -- So, we reserve 'em all. ⍩⃝
+      for k, v in pairs(options) do
+         if k:match("^[A-Z]") then
+            otfeatures:loadOption(k, v)
+            options[k] = nil
+         end
       end
-    end
-    SU.debug("features", "Font features parsed as:", otfeatures)
-    options.features = (options.features and options.features .. ";" or "") .. tostring(otfeatures)
-    return fontfn(options, content)
-  end, tostring(SILE.Help.font) .. " (overridden)")
-
+      SU.debug("features", "Font features parsed as:", otfeatures)
+      options.features = (options.features and options.features .. ";" or "") .. tostring(otfeatures)
+      return fontfn(options, content)
+   end, tostring(SILE.Help.font) .. " (overridden)")
 end
 
 package.documentation = [[

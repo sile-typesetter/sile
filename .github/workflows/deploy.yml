@@ -21,11 +21,27 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libluajit-5.1-dev luajit luarocks
       - name: Configure
         run: |
           echo "REF=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV
           ./bootstrap.sh
-          ./configure --disable-dependency-checks --enable-developer DOCKER=docker
+          ./configure \
+            --enable-developer-mode \
+            --without-harfbuzz \
+            --disable-font-variations \
+            BSDTAR=false \
+            BUSTED=false \
+            DELTA=false \
+            FCMATCH=true \
+            LDOC=false \
+            LUACHECK=false \
+            LUAROCKS=false \
+            NIX=false \
+            PDFINFO=false
       - name: Publish Docker Image to GH Container Registry
         run: |
           make docker-build-push

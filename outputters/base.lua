@@ -1,3 +1,6 @@
+--- SILE outputter class.
+-- @interfaces outputters
+
 local outputter = pl.class()
 outputter.type = "outputter"
 outputter._name = "base"
@@ -8,22 +11,26 @@ function outputter:_init ()
 end
 
 function outputter:registerHook (category, func)
-   if not self.hooks[category] then self.hooks[category] = {} end
+   if not self.hooks[category] then
+      self.hooks[category] = {}
+   end
    table.insert(self.hooks[category], func)
 end
 
 function outputter:runHooks (category, data)
-  if not self.hooks[category] then return nil end
-  for _, func in ipairs(self.hooks[category]) do
-    data = func(self, data)
-  end
-  return data
+   if not self.hooks[category] then
+      return nil
+   end
+   for _, func in ipairs(self.hooks[category]) do
+      data = func(self, data)
+   end
+   return data
 end
 
 function outputter.newPage () end
 
 function outputter:finish ()
-  self:runHooks("prefinish")
+   self:runHooks("prefinish")
 end
 
 function outputter.getCursor () end
@@ -65,19 +72,19 @@ function outputter.setBookmark (_, _, _) end
 function outputter.drawRaw (_) end
 
 function outputter:getOutputFilename ()
-  local fname
-  if SILE.outputFilename then
-    fname = SILE.outputFilename
-  elseif SILE.input.filenames[1] then
-    fname = pl.path.splitext(SILE.input.filenames[1])
-    if self.extension then
-      fname = fname .. "." .. self.extension
-    end
-  end
-  if not fname then
-    SU.error("Cannot guess output filename without an input name")
-  end
-  return fname
+   local fname
+   if SILE.outputFilename then
+      fname = SILE.outputFilename
+   elseif SILE.input.filenames[1] then
+      fname = pl.path.splitext(SILE.input.filenames[1])
+      if self.extension then
+         fname = fname .. "." .. self.extension
+      end
+   end
+   if not fname then
+      SU.error("Cannot guess output filename without an input name")
+   end
+   return fname
 end
 
 return outputter

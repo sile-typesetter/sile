@@ -41,243 +41,253 @@ package._name = "lists"
 --
 
 local styles = {
-  enumerate = {
-    { display = "arabic", after = "." },
-    { display = "roman", after = "." },
-    { display = "alpha", after = ")" },
-    { display = "arabic", after = ")" },
-    { display = "roman", after = ")" },
-    { display = "alpha", after = "." },
-  },
-  itemize = {
-    { bullet = "•" }, -- black bullet
-    { bullet = "◦" }, -- circle bullet
-    { bullet = "–" }, -- en-dash
-    { bullet = "•" }, -- black bullet
-    { bullet = "◦" }, -- circle bullet
-    { bullet = "–" }, -- en-dash
-  }
+   enumerate = {
+      { display = "arabic", after = "." },
+      { display = "roman", after = "." },
+      { display = "alpha", after = ")" },
+      { display = "arabic", after = ")" },
+      { display = "roman", after = ")" },
+      { display = "alpha", after = "." },
+   },
+   itemize = {
+      { bullet = "•" }, -- black bullet
+      { bullet = "◦" }, -- circle bullet
+      { bullet = "–" }, -- en-dash
+      { bullet = "•" }, -- black bullet
+      { bullet = "◦" }, -- circle bullet
+      { bullet = "–" }, -- en-dash
+   },
 }
 
 local trimLeft = function (str)
-  return str:gsub("^%s*", "")
+   return str:gsub("^%s*", "")
 end
 
 local trimRight = function (str)
-  return str:gsub("%s*$", "")
+   return str:gsub("%s*$", "")
 end
 
 local trim = function (str)
-  return trimRight(trimLeft(str))
+   return trimRight(trimLeft(str))
 end
 
 local enforceListType = function (cmd)
-  if cmd ~= "enumerate" and cmd ~= "itemize" and cmd ~= "BulletedList" and cmd ~= "OrderedList" then
-    SU.error("Only items or lists are allowed as content in lists, found '"..cmd.."'")
-  end
+   if cmd ~= "enumerate" and cmd ~= "itemize" and cmd ~= "BulletedList" and cmd ~= "OrderedList" then
+      SU.error("Only items or lists are allowed as content in lists, found '" .. cmd .. "'")
+   end
 end
 
 function package:doItem (options, content)
-  local enumStyle = content._lists_.style
-  local counter = content._lists_.counter
-  local indent = content._lists_.indent
+   local enumStyle = content._lists_.style
+   local counter = content._lists_.counter
+   local indent = content._lists_.indent
 
-  if not SILE.typesetter:vmode() then
-    SILE.call("par")
-  end
+   if not SILE.typesetter:vmode() then
+      SILE.call("par")
+   end
 
-  local mark = SILE.typesetter:makeHbox(function ()
-    if enumStyle.display then
-      if enumStyle.before then SILE.typesetter:typeset(enumStyle.before) end
-      SILE.typesetter:typeset(self.class.packages.counters:formatCounter({
-        value = counter,
-        display = enumStyle.display })
-      )
-      if enumStyle.after then SILE.typesetter:typeset(enumStyle.after) end
-    else
-      local bullet = options.bullet or enumStyle.bullet
-      SILE.typesetter:typeset(bullet)
-    end
-  end)
+   local mark = SILE.typesetter:makeHbox(function ()
+      if enumStyle.display then
+         if enumStyle.before then
+            SILE.typesetter:typeset(enumStyle.before)
+         end
+         SILE.typesetter:typeset(self.class.packages.counters:formatCounter({
+            value = counter,
+            display = enumStyle.display,
+         }))
+         if enumStyle.after then
+            SILE.typesetter:typeset(enumStyle.after)
+         end
+      else
+         local bullet = options.bullet or enumStyle.bullet
+         SILE.typesetter:typeset(bullet)
+      end
+   end)
 
-  local stepback
-  if enumStyle.display then
-    -- The positioning is quite tentative... LaTeX would right justify the
-    -- number (at least for roman numerals), i.e.
-    --   i. Text
-    --  ii. Text
-    -- iii. Text.
-    -- Other Office software do not do that...
-    local labelIndent = SILE.settings:get("lists.enumerate.labelindent"):absolute()
-    stepback = indent - labelIndent
-  else
-    -- Center bullets in the indentation space
-    stepback = indent / 2 + mark.width / 2
-  end
+   local stepback
+   if enumStyle.display then
+      -- The positioning is quite tentative... LaTeX would right justify the
+      -- number (at least for roman numerals), i.e.
+      --   i. Text
+      --  ii. Text
+      -- iii. Text.
+      -- Other Office software do not do that...
+      local labelIndent = SILE.settings:get("lists.enumerate.labelindent"):absolute()
+      stepback = indent - labelIndent
+   else
+      -- Center bullets in the indentation space
+      stepback = indent / 2 + mark.width / 2
+   end
 
-  SILE.call("kern", { width = -stepback })
-  -- reinsert the mark with modified length
-  -- using \rebox caused an issue sometimes, not sure why, with the bullets
-  -- appearing twice in output... but we can avoid it:
-  -- reboxing an hbox was dumb anyway. We just need to fix its width before
-  -- reinserting it in the text flow.
-  mark.width = SILE.length(stepback)
-  SILE.typesetter:pushHbox(mark)
-  SILE.process(content)
+   SILE.call("kern", { width = -stepback })
+   -- reinsert the mark with modified length
+   -- using \rebox caused an issue sometimes, not sure why, with the bullets
+   -- appearing twice in output... but we can avoid it:
+   -- reboxing an hbox was dumb anyway. We just need to fix its width before
+   -- reinserting it in the text flow.
+   mark.width = SILE.types.length(stepback)
+   SILE.typesetter:pushHbox(mark)
+   SILE.process(content)
 end
 
 function package.doNestedList (_, listType, options, content)
-  -- depth
-  local depth = SILE.settings:get("lists.current."..listType..".depth") + 1
+   -- depth
+   local depth = SILE.settings:get("lists.current." .. listType .. ".depth") + 1
 
-  -- styling
-  local enumStyle = styles[listType][depth]
-  if not enumStyle then SU.error("List nesting is too deep") end
-  -- options may override the default styling
-  enumStyle = pl.tablex.copy(enumStyle) -- shallow copy for possible overrides
-  if enumStyle.display then
-    if options.before or options.after then
-      -- for before/after, don't mix default style and options
-      enumStyle.before = options.before or ""
-      enumStyle.after = options.after or ""
-    end
-    if options.display then enumStyle.display = options.display end
-  else
-    enumStyle.bullet = options.bullet or enumStyle.bullet
-  end
-
-  -- indent
-  local baseIndent = (depth == 1) and SILE.settings:get("document.parindent").width:absolute() or SILE.measurement("0pt")
-  local listIndent = SILE.settings:get("lists."..listType..".leftmargin"):absolute()
-
-  -- processing
-  if not SILE.typesetter:vmode() then
-    SILE.call("par")
-  end
-  SILE.settings:temporarily(function ()
-    SILE.settings:set("lists.current."..listType..".depth", depth)
-    SILE.settings:set("current.parindent", SILE.nodefactory.glue())
-    SILE.settings:set("document.parindent", SILE.nodefactory.glue())
-    SILE.settings:set("document.parskip", SILE.settings:get("lists.parskip"))
-    local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
-    SILE.settings:set("document.lskip", SILE.nodefactory.glue(lskip.width + (baseIndent + listIndent)))
-
-    local counter = options.start and (SU.cast("integer", options.start) - 1) or 0
-    for i = 1, #content do
-      if type(content[i]) == "table" and #content[i] > 0 then
-        if content[i].command == "item" or content[i].command == "ListItem" then
-          counter = counter + 1
-          -- Enrich the node with internal properties
-          content[i]._lists_ = {
-            style = enumStyle,
-            counter = counter,
-            indent = listIndent,
-          }
-        else
-          enforceListType(content[i].command)
-        end
-        SILE.process({ content[i] })
-        if not SILE.typesetter:vmode() then
-          SILE.call("par")
-        else
-          SILE.typesetter:leaveHmode()
-        end
-         -- Whitespace left around comment nodes is fine too
-      elseif type(content[i]) == "table" and #content[i] == 0 then
-         -- ignore whitespace leaking in from in front of indented comments
-         assert(true)
-      elseif type(content[i]) == "string" then
-        -- All text nodes are ignored in structure tags, but just warn
-        -- if there do not just consist in spaces.
-        local text = trim(content[i])
-        if text ~= "" then SU.warn("Ignored standalone text ("..text..")") end
-      else
-        SU.error("List structure error")
+   -- styling
+   local enumStyle = styles[listType][depth]
+   if not enumStyle then
+      SU.error("List nesting is too deep")
+   end
+   -- options may override the default styling
+   enumStyle = pl.tablex.copy(enumStyle) -- shallow copy for possible overrides
+   if enumStyle.display then
+      if options.before or options.after then
+         -- for before/after, don't mix default style and options
+         enumStyle.before = options.before or ""
+         enumStyle.after = options.after or ""
       end
-    end
-  end)
+      if options.display then
+         enumStyle.display = options.display
+      end
+   else
+      enumStyle.bullet = options.bullet or enumStyle.bullet
+   end
 
-  if not SILE.typesetter:vmode() then
+   -- indent
+   local baseIndent = (depth == 1) and SILE.settings:get("document.parindent").width:absolute()
+      or SILE.types.measurement("0pt")
+   local listIndent = SILE.settings:get("lists." .. listType .. ".leftmargin"):absolute()
+
+   -- processing
+   if not SILE.typesetter:vmode() then
       SILE.call("par")
-  else
-    SILE.typesetter:leaveHmode()
-    if not((SILE.settings:get("lists.current.itemize.depth")
-        + SILE.settings:get("lists.current.enumerate.depth")) > 0)
-    then
-      local g = SILE.settings:get("document.parskip").height:absolute() - SILE.settings:get("lists.parskip").height:absolute()
-      SILE.typesetter:pushVglue(g)
-    end
-  end
+   end
+   SILE.settings:temporarily(function ()
+      SILE.settings:set("lists.current." .. listType .. ".depth", depth)
+      SILE.settings:set("current.parindent", SILE.types.node.glue())
+      SILE.settings:set("document.parindent", SILE.types.node.glue())
+      SILE.settings:set("document.parskip", SILE.settings:get("lists.parskip"))
+      local lskip = SILE.settings:get("document.lskip") or SILE.types.node.glue()
+      SILE.settings:set("document.lskip", SILE.types.node.glue(lskip.width + (baseIndent + listIndent)))
+
+      local counter = options.start and (SU.cast("integer", options.start) - 1) or 0
+      for i = 1, #content do
+         if type(content[i]) == "table" and #content[i] > 0 then
+            if content[i].command == "item" or content[i].command == "ListItem" then
+               counter = counter + 1
+               -- Enrich the node with internal properties
+               content[i]._lists_ = {
+                  style = enumStyle,
+                  counter = counter,
+                  indent = listIndent,
+               }
+            else
+               enforceListType(content[i].command)
+            end
+            SILE.process({ content[i] })
+            if not SILE.typesetter:vmode() then
+               SILE.call("par")
+            else
+               SILE.typesetter:leaveHmode()
+            end
+         -- Whitespace left around comment nodes is fine too
+         elseif type(content[i]) == "table" and #content[i] == 0 then
+            -- ignore whitespace leaking in from in front of indented comments
+            assert(true)
+         elseif type(content[i]) == "string" then
+            -- All text nodes are ignored in structure tags, but just warn
+            -- if there do not just consist in spaces.
+            local text = trim(content[i])
+            if text ~= "" then
+               SU.warn("Ignored standalone text (" .. text .. ")")
+            end
+         else
+            SU.error("List structure error")
+         end
+      end
+   end)
+
+   if not SILE.typesetter:vmode() then
+      SILE.call("par")
+   else
+      SILE.typesetter:leaveHmode()
+      if
+         not (
+            (SILE.settings:get("lists.current.itemize.depth") + SILE.settings:get("lists.current.enumerate.depth")) > 0
+         )
+      then
+         local g = SILE.settings:get("document.parskip").height:absolute()
+            - SILE.settings:get("lists.parskip").height:absolute()
+         SILE.typesetter:pushVglue(g)
+      end
+   end
 end
 
 function package:_init ()
-  base._init(self)
-  self:loadPackage("counters")
+   base._init(self)
+   self:loadPackage("counters")
 end
 
 function package.declareSettings (_)
+   SILE.settings:declare({
+      parameter = "lists.current.enumerate.depth",
+      type = "integer",
+      default = 0,
+      help = "Current enumerate depth (nesting) - internal",
+   })
 
-  SILE.settings:declare({
-    parameter = "lists.current.enumerate.depth",
-    type = "integer",
-    default = 0,
-    help = "Current enumerate depth (nesting) - internal"
-  })
+   SILE.settings:declare({
+      parameter = "lists.current.itemize.depth",
+      type = "integer",
+      default = 0,
+      help = "Current itemize depth (nesting) - internal",
+   })
 
-  SILE.settings:declare({
-    parameter = "lists.current.itemize.depth",
-    type = "integer",
-    default = 0,
-    help = "Current itemize depth (nesting) - internal"
-  })
+   SILE.settings:declare({
+      parameter = "lists.enumerate.leftmargin",
+      type = "measurement",
+      default = SILE.types.measurement("2em"),
+      help = "Left margin (indentation) for enumerations",
+   })
 
-  SILE.settings:declare({
-    parameter = "lists.enumerate.leftmargin",
-    type = "measurement",
-    default = SILE.measurement("2em"),
-    help = "Left margin (indentation) for enumerations"
-  })
+   SILE.settings:declare({
+      parameter = "lists.enumerate.labelindent",
+      type = "measurement",
+      default = SILE.types.measurement("0.5em"),
+      help = "Label indentation for enumerations",
+   })
 
-  SILE.settings:declare({
-    parameter = "lists.enumerate.labelindent",
-    type = "measurement",
-    default = SILE.measurement("0.5em"),
-    help = "Label indentation for enumerations"
-  })
+   SILE.settings:declare({
+      parameter = "lists.itemize.leftmargin",
+      type = "measurement",
+      default = SILE.types.measurement("1.5em"),
+      help = "Left margin (indentation) for bullet lists (itemize)",
+   })
 
-  SILE.settings:declare({
-    parameter = "lists.itemize.leftmargin",
-    type = "measurement",
-    default = SILE.measurement("1.5em"),
-    help = "Left margin (indentation) for bullet lists (itemize)"
-  })
-
-  SILE.settings:declare({
-    parameter = "lists.parskip",
-    type = "vglue",
-    default = SILE.nodefactory.vglue("0pt plus 1pt"),
-    help = "Leading between paragraphs and items in a list"
-  })
-
+   SILE.settings:declare({
+      parameter = "lists.parskip",
+      type = "vglue",
+      default = SILE.types.node.vglue("0pt plus 1pt"),
+      help = "Leading between paragraphs and items in a list",
+   })
 end
 
 function package:registerCommands ()
+   self:registerCommand("enumerate", function (options, content)
+      self:doNestedList("enumerate", options, content)
+   end)
 
-  self:registerCommand("enumerate", function (options, content)
-    self:doNestedList("enumerate", options, content)
-  end)
+   self:registerCommand("itemize", function (options, content)
+      self:doNestedList("itemize", options, content)
+   end)
 
-  self:registerCommand("itemize", function (options, content)
-    self:doNestedList("itemize", options, content)
-  end)
-
-  self:registerCommand("item", function (options, content)
-    if not content._lists_ then
-      SU.error("The item command shall not be called outside a list")
-    end
-    self:doItem(options, content)
-  end)
-
+   self:registerCommand("item", function (options, content)
+      if not content._lists_ then
+         SU.error("The item command shall not be called outside a list")
+      end
+      self:doItem(options, content)
+   end)
 end
 
 package.documentation = [[

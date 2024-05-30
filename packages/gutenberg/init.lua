@@ -4,28 +4,26 @@ local package = pl.class(base)
 package._name = "gutenberg"
 
 function package:registerCommands ()
+   self:registerCommand("alt", function (_, _)
+      SU.deprecated("\\alt", "\\alternative", "0.10.0", "0.14.0")
+   end, "Deprecated")
 
-  self:registerCommand("alt", function (_, _)
-    SU.deprecated("\\alt", "\\alternative", "0.10.0", "0.14.0")
-  end, "Deprecated")
-
-  self:registerCommand("alternative", function (_, content)
-    local alts = {}
-    for _, fragment in ipairs(content) do
-      local hbox, hlist = SILE.typesetter:makeHbox({ fragment })
-      if #hlist > 0 then
-        SU.error("Forbidden migrating content in alternative")
+   self:registerCommand("alternative", function (_, content)
+      local alts = {}
+      for _, fragment in ipairs(content) do
+         local hbox, hlist = SILE.typesetter:makeHbox({ fragment })
+         if #hlist > 0 then
+            SU.error("Forbidden migrating content in alternative")
+         end
+         table.insert(alts, hbox)
       end
-      table.insert(alts, hbox)
-    end
-    local alternative = SILE.nodefactory.alternative({
-      options = alts,
-      selected = 1
+      local alternative = SILE.types.node.alternative({
+         options = alts,
+         selected = 1,
       })
-    alternative.width = nil
-    SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes+1] = alternative
-  end)
-
+      alternative.width = nil
+      SILE.typesetter.state.nodes[#SILE.typesetter.state.nodes + 1] = alternative
+   end)
 end
 
 package.documentation = [[

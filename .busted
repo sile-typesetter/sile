@@ -1,6 +1,6 @@
 return {
-  default = {
-    cpath = "./core/?.so;./core/?/init.so;./lua_modules/lib/lua/5.3/?.so;;",
-    lpath = "./lua_modules/share/lua/5.3/?.lua;./lua_modules/share/lua/5.3/?/init.lua;./lua-libraries/?.lua;./lua-libraries/?/init.lua;;"
-  }
+   default = {
+      cpath = "./core/?.so;./core/?/init.so;./lua_modules/lib/lua/5.3/?.so;;",
+      lpath = "./lua_modules/share/lua/5.3/?.lua;./lua_modules/share/lua/5.3/?/init.lua;./lua-libraries/?.lua;./lua-libraries/?/init.lua;;",
+   },
 }

@@ -17,7 +17,7 @@ pub type Result<T> = anyhow::Result<T>;
 pub fn start_luavm() -> crate::Result<Lua> {
     let lua = unsafe { Lua::unsafe_new() };
     #[cfg(feature = "static")]
-    crate::embed::inject_embeded_loader(&lua);
+    crate::embed::inject_embedded_loader(&lua);
     inject_paths(&lua);
     load_sile(&lua);
     inject_version(&lua);
@@ -29,9 +29,10 @@ pub fn inject_paths(lua: &Lua) {
     lua.load(r#"require("core.pathsetup")"#).exec().unwrap();
     #[cfg(not(feature = "static"))]
     {
+        let datadir = env!("CONFIGURE_DATADIR").to_string();
         let sile_path = match env::var("SILE_PATH") {
-            Ok(val) => val,
-            Err(_) => env!("CONFIGURE_DATADIR").to_string(),
+            Ok(val) => format!("{datadir};{val}"),
+            Err(_) => datadir,
         };
         let sile_path: LuaString = lua.create_string(&sile_path).unwrap();
         lua.load(chunk! {
@@ -184,7 +185,9 @@ pub fn run(
         let finish: LuaFunction = sile.get("finish")?;
         finish.call::<_, _>(())?;
     } else {
-        let repl: LuaTable = sile.get("repl")?;
+        let repl_module: LuaString = lua.create_string("core.repl")?;
+        let r#require: LuaFunction = lua.globals().get("require")?;
+        let repl: LuaTable = r#require.call::<LuaString, LuaTable>(repl_module)?;
         repl.call_method::<_, _>("enter", ())?;
     }
     Ok(())

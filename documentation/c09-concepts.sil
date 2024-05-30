@@ -11,21 +11,21 @@ we will also explain how to interact with these components at the Lua level.}
 
 Before dabbling into more advanced topics, let’s introduce “measurements” and “lengths” in SILE, the two available Lua constructs for representing dimensions.
 
-Measurements are specified in terms of \code{SILE.measurement} objects.
+Measurements are specified in terms of \code{SILE.types.measurement} objects.
 It is a basic construct with an amount and a unit. Let us illustrate two common ways for creating such an object in Lua (from a string, with same syntax as in command parameters; or from a Lua table).
 
 \begin[type=autodoc:codeblock]{raw}
-local m1 = SILE.measurement("10pt")
-local m2 = SILE.measurement({ amount = 10, unit = "pt" })
+local m1 = SILE.types.measurement("10pt")
+local m2 = SILE.types.measurement({ amount = 10, unit = "pt" })
 \end{raw}
 
-SILE also provides a more advanced construct specified in terms of \code{SILE.length} objects;
+SILE also provides a more advanced construct specified in terms of \code{SILE.types.length} objects;
 these are “three-dimensional” dimensions, in that they consist in a base measurement plus stretch and shrink measurements.
-They are therefore composed of three \code{SILE.measurement}.
+They are therefore composed of three \code{SILE.types.measurement}.
 
 \begin[type=autodoc:codeblock]{raw}
-local l1 = SILE.length("10pt plus 2pt minus 1pt")
-local l2 = SILE.length({ length = "1Opt", stretch = "2pt", shrink = "1pt" })
+local l1 = SILE.types.length("10pt plus 2pt minus 1pt")
+local l2 = SILE.types.length({ length = "1Opt", stretch = "2pt", shrink = "1pt" })
 \end{raw}
 
 Both of these are used for various purposes.
@@ -35,8 +35,8 @@ casting a length to a measurement returns just the base measurement and discards
 casting a measurement to a length sets its stretch and shrink properties to zero.
 
 \begin[type=autodoc:codeblock]{raw}
-local l3 = SILE.length(SILE.measurement("10pt")) -- 10pt, without stretch and shrink
-local m3 = SILE.measurement(SILE.length("10pt plus 2pt minus 1pt")) -- 10pt
+local l3 = SILE.types.length(SILE.types.measurement("10pt")) -- 10pt, without stretch and shrink
+local m3 = SILE.types.measurement(SILE.types.length("10pt plus 2pt minus 1pt")) -- 10pt
 \end{raw}
 
 Proper casting is important, for your code to remain portable across the various versions of the Lua language.
@@ -81,12 +81,12 @@ One reason for doing so would be to explicitly avoid material being broken up by
 another reason for doing so would be that once you box some material up, you then know how wide or tall it is.
 The \autodoc:command{\hbox} and \autodoc:command{\vbox} commands put their contents into a box.
 
-At a Lua coding level, SILE’s Lua interface contains a \code{nodefactory} for creating boxes and glue.
+At a Lua coding level, SILE’s Lua interface contains a \code{types.node} for creating boxes and glue.
 Here is one way (among others) for you to construct horizontal and vertical glue:
 
 \begin[type=autodoc:codeblock]{raw}
-local glue  = SILE.nodefactory.glue({ width = l })
-local vglue = SILE.nodefactory.vglue({ height = l })
+local glue  = SILE.types.node.glue({ width = l })
+local vglue = SILE.types.node.vglue({ height = l })
 \end{raw}
 
 \section{Kerns}
