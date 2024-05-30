@@ -17,7 +17,7 @@ indent_size = 8
 [*.md]
 trim_trailing_whitespace = false
 
-[{*.lua,*.lua.in,sile.in,*.rockspec,*.rockspec.in,.busted,.luacheckrc,config.ld}]
+[{*.lua,*.lua.in,sile.in,*.rockspec,*.rockspec.in,.busted,.luacov,.luacheckrc,config.ld}]
 indent_style = space
 indent_size = 3
 max_line_length = 120
