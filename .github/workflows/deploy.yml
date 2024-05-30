@@ -41,7 +41,8 @@ jobs:
             LUACHECK=false \
             LUAROCKS=false \
             NIX=false \
-            PDFINFO=false
+            PDFINFO=false \
+            STYLUA=false
       - name: Publish Docker Image to GH Container Registry
         run: |
           make docker-build-push
