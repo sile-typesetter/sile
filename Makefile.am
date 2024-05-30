@@ -208,7 +208,7 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(DEPDIRS) $(LUAMODLOCK) 
 .PHONY: force
 force: ;
 
-PHONY_DEVELOPER_TARGETS = regressions test lint luarocks-lint luacheck busted coverage benchmark compare update_expecteds regression_previews docker docker-dep-check docker-ghcr-to-hub docker-build-push gource.webm
+PHONY_DEVELOPER_TARGETS = regressions test lint luarocks-lint luacheck stylua busted coverage benchmark compare update_expecteds regression_previews docker docker-dep-check docker-ghcr-to-hub docker-build-push gource.webm
 .PHONY: $(PHONY_DEVELOPER_TARGETS)
 
 if DEVELOPER
@@ -218,13 +218,16 @@ regressions: $(TESTSRCS) $(ACTUALS)
 
 test: regressions busted
 
-lint: luacheck luarocks-lint
+lint: luacheck luarocks-lint stylua
 
 luarocks-lint: $(LUAMODSPEC)
 	$(LUAROCKS) lint $(LUAMODSPEC)
 
 luacheck:
 	$(LUACHECK) -j$(shell nproc) -q .
+
+stylua:
+	$(STYLUA) --check --respect-ignores -g '*.lua' -g '*.lua.in' -g '*.rockspec.in' .busted .luacov .luacheckrc .
 
 busted: $(SILE) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'

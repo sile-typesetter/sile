@@ -115,6 +115,7 @@
           # Add here inputs needed for development, and not for Nixpkgs' build.
           pkgs.libarchive
           pkgs.perl
+          pkgs.stylua
           # This line, along with the `pkgs.list.drop 1` line afterwards,
           # replaces the luaEnv originated in `oldAttr.buildInputs`.
           luaEnv

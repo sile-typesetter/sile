@@ -200,6 +200,7 @@ AM_COND_IF([DEPENDENCY_CHECKS], [
         QUE_PROGVAR([luarocks])
         QUE_PROGVAR([nix])
         QUE_PROGVAR([perl])
+        QUE_PROGVAR([stylua])
     ])
 
 ])

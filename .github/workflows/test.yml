@@ -66,7 +66,7 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
-            --enable-developer LUACHECK=false NIX=false \
+            --enable-developer LUACHECK=false NIX=false STYLUA=false \
             --disable-font-variations \
             --without-system-luarocks \
             --with${{ !startsWith(matrix.luaVersion[0], 'luajit') && 'out' || '' }}-luajit \
