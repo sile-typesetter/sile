@@ -82,7 +82,7 @@ The \code{sile} package is available in both the stable and unstable channels, t
 You can use all the usual Nix tricks, including adding SILE into a \code{nix shell} environment or executing it directly with \code{nix run}.
 
 \begin{terminal}
-$ nix shell nippkgs/nixpkgs-unstable#sile
+$ nix shell nixpkgs/nixpkgs-unstable#sile
 $ sile <arguments>
 $ nix run nixpkgs/nixpkgs-unstable#sile -- <arguments>
 \end{terminal}
@@ -90,7 +90,7 @@ $ nix run nixpkgs/nixpkgs-unstable#sile -- <arguments>
 The SILE source repository is also a valid Nix Flake\footnote{\url{https://wiki.nixos.org/wiki/Flakes#Installing_flakes}} which means you can run any specific version or the latest unreleased development code directly:
 
 \begin{terminal}
-$ nix run github:sile-typesetter/sile/v0.14.3 -- <arguments>
+$ nix run github:sile-typesetter/sile/v0.15.0 -- <arguments>
 $ nix run github:sile-typesetter/sile -- <arguments>
 \end{terminal}
 
@@ -117,7 +117,7 @@ $ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" 
 $ sile input.sil
 \end{terminal}
 
-Docker images are tagged to match releases (e.g. \code{v0.10.0}).
+Docker images are tagged to match releases (e.g. \code{v0.15.0}).
 Additionally the latest release will be tagged \code{latest}, and a \code{master} tag is also available with the freshest development build.
 You can substitute \code{latest} in the alias above to run a specific version.
 
