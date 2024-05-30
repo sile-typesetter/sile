@@ -33,11 +33,8 @@ Arch Linux (and derivatives such as Manjaro, Parabola, and others) have prebuilt
 
 \terminal{$ pacman -S sile}
 
-The official package builds use Lua 5.4.
-Alternatively, a package that uses LuaJIT may be built manually from the Arch User Repository using \code{sile-luajit}.
-See the note about LuaJIT in the section \em{Installing From Source} for applicable caveats.
 A VCS package is also available as \code{sile-git} to build from the latest Git commit.
-These may be built and installed like any other AUR\footnote{\url{https://wiki.archlinux.org/title/Arch_User_Repository}} package.
+This may be built and installed like any other AUR\footnote{\url{https://wiki.archlinux.org/title/Arch_User_Repository}} package.
 
 \subsection{Fedora}
 
