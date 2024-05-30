@@ -1,0 +1,4 @@
+\begin{document}
+\set[parameter=folio.style, value=mirror]
+\eject
+\end{document}
