@@ -199,7 +199,7 @@ Once available, add this flag to your configuration:
 \terminal{$ ./configure --with-system-lua-sources}
 
 \begin{autodoc:note}
-Normally a source build will not actually \emph{run} until after it is installed.
+Normally a source build will not actually \em{run} until after it is installed.
 If you want to be able to run it from the source directory without installing it, it is important to configure it for that ahead of time.
 Setting up the run-time paths such that the source directory are checked allows SILE to run in place after building without installing.
 This is useful if you want to experiment with running SILE \strong{and/or} plan on modifying or developing SILE itself.
@@ -225,7 +225,7 @@ If your system either does not have LuaJIT or you prefer to use a version of PUC
 
 \terminal{$ ./configure --without-luajit}
 
-Keep in mind that while SILE and all its dependencies are tested to work on any interpreter, any Lua code \emph{you write} for your project will need to be compatible with whatever version you choose.
+Keep in mind that while SILE and all its dependencies are tested to work on any interpreter, any Lua code \em{you write} for your project will need to be compatible with whatever version you choose.
 Several shims are provided to keeps things compatible, but it is also possible to write Lua expressions that only work in some VMs.
 The vast majority of Lua code will be fine, but there are a few limitations.
 \end{autodoc:note}
