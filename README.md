@@ -138,12 +138,12 @@ Additionally the latest release will be tagged `latest`, and a `master` tag is a
 In order to be useful you need to tell the Docker run command a way to reach your source documents.
 This is done by mounting your project directory inside the container.
 This also gives SILE a place to write the output.
-For ownership and permissions of output generated inside the container to match the host, the expected user ids need to be passed as well.
+The user and group IDs of the Docker user will be automatically adjusted to match those of the directory you mounted.
 
 You may find it easiest to do all this with an alias like this:
 
 ```console
-$ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
+$ alias sile='docker run -it --volume "$(pwd):/data" siletypesetter/sile:latest'
 $ sile input.sil
 ```
 
@@ -154,7 +154,7 @@ You can see where fonts are found on your system using `fc-list`.
 The path of your choosing from the host system should be mounted as a volume on `/fonts` inside the container like this:
 
 ```console
-$ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest
+$ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" siletypesetter/sile:latest
 ```
 
 #### Nix
