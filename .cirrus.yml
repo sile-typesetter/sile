@@ -3,7 +3,7 @@ task:
   freebsd_instance:
     matrix:
       - image_family: freebsd-14-0
-      - image_family: freebsd-13-2
+      - image_family: freebsd-13-3
   env:
     MAKEFLAGS: -j$(nproc) -Otarget
     CFLAGS: -I/usr/local/include -fPIC
