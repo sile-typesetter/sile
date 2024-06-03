@@ -28,7 +28,6 @@ end
 -- stylua: ignore start
 ---@diagnostic disable: undefined-global, unused-local, lowercase-global
 local function builder (_ENV)
-   local _ = WS^0
    local eol = S"\r\n"
    local specials = S"\\{}%"
    local escaped_specials = P"\\" * specials
@@ -43,11 +42,11 @@ local function builder (_ENV)
    local pass_end =
          P"\\end{" *
          ( cmdID * Cb"command" ) *
-         ( P"}" * _ ) + E"Environment begun but never ended"
+         ( P"}" ) + E"Environment begun but never ended"
    local notpass_end =
          P"\\end{" *
          ( Cmt(cmdID * Cb"command", isMatchingEndEnv) + E"Environment mismatch") *
-         ( P"}" * _ ) + E"Environment begun but never ended"
+         ( P"}" ) + E"Environment begun but never ended"
 
    env_passthrough_content = Cg(
          V"env_passthrough_text"
