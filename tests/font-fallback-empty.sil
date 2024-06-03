@@ -1,8 +1,19 @@
 \begin[papersize=a6]{document}
 \nofolios
-\noindent
+\neverindent
 \use[module=packages.font-fallback]
+
+% Adding Noto as a fallback should make this character render
 \font:add-fallback[family=Noto Serif CJK JP]
+ん
+
+% But removing it should give us tofu
 \font:remove-fallback
 ん
+
+% Also clearing all fallbacks should result in tofu
+\font:add-fallback[family=Noto Serif CJK JP]
+\font:clear-fallbacks
+ん
+
 \end{document}
