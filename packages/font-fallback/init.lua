@@ -9,7 +9,7 @@ function package:registerCommands ()
    self:registerCommand("font:clear-fallbacks", function ()
       if SILE.shaper._name == "fallback" and lastShaperType then
          SU.debug("font-fallback", "Clearing fallbacks, switching from fallback enabled back to previous shaper")
-         SILE.shapers:clearFallbacks()
+         SILE.shaper:clearFallbacks()
          SILE.typesetter:leaveHmode(true)
          SILE.shapers[lastShaperType]:cast(SILE.shaper)
          lastShaperType = nil
