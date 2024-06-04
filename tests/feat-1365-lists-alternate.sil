@@ -1,15 +1,17 @@
 \begin[papersize=a6, class=book]{document}
-\use[module=packages.retrograde,target=v0.15.0]
-\use[module=packages.lists]
-\font[family=Libertinus Serif]% Default Gentium lacks the white circle.
+% Default Gentium lacks the white circle.
+\font[family=Libertinus Serif]
 \nofolios
-\neverindent
-\set[parameter=document.parskip, value=5pt]%
-\set[parameter=lists.parskip, value=2pt]%
-% Test case: Nested itemize and enumerate with specified skips, alternate nesting method.
+\use[module=packages.lists]
+\set[parameter=document.parskip, value=10pt]
+\set[parameter=lists.parskip, value=5pt]
+% Test case: Nested itemize and enumerate with specified skips,
+% alternate nesting method.
 
-Text flow before.
+Text flow with no paragraph break before list.
+Long enough to wrap so we see can visualize indentation.
 \begin{enumerate}
+  \item{Level 1 Item}
   \item{Level 1 Enum
     \begin{itemize}
       \item{Level 2 Item
@@ -18,9 +20,11 @@ Text flow before.
         \end{enumerate}}
     \end{itemize}}
 \end{enumerate}
-Text flow after, just longer to be closer to the last list level.
+Text flow after list with no paragraph break.
+Long enough to wrap so we see can visualize indentation.
 
-Text flow before.
+Text flow before list with paragraph break.
+Long enough to wrap so we see can visualize indentation.
 
 \begin{enumerate}
   \item{Level 1 Enum
@@ -34,6 +38,7 @@ Text flow before.
   Back to level 1 Enum}
 \end{enumerate}
 
-Text flow after, just longer to be closer to the last list level.
+Text flow after list with a paragraph break.
+Long enough to wrap so we see can visualize indentation.
 
 \end{document}
