@@ -59,18 +59,6 @@ local styles = {
    },
 }
 
-local trimLeft = function (str)
-   return str:gsub("^%s*", "")
-end
-
-local trimRight = function (str)
-   return str:gsub("%s*$", "")
-end
-
-local trim = function (str)
-   return trimRight(trimLeft(str))
-end
-
 local enforceListType = function (cmd)
    if cmd ~= "enumerate" and cmd ~= "itemize" and cmd ~= "BulletedList" and cmd ~= "OrderedList" then
       SU.error("Only items or lists are allowed as content in lists, found '" .. cmd .. "'")
@@ -198,7 +186,7 @@ function package.doNestedList (_, listType, options, content)
          elseif type(content[i]) == "string" then
             -- All text nodes are ignored in structure tags, but just warn
             -- if there do not just consist in spaces.
-            local text = trim(content[i])
+            local text = pl.stringx.strip(content[i])
             if text ~= "" then
                SU.warn("Ignored standalone text (" .. text .. ")")
             end
