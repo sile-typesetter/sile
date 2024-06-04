@@ -44,10 +44,10 @@ local styles = {
    enumerate = {
       { display = "arabic", after = "." },
       { display = "roman", after = "." },
-      { display = "alpha", after = ")" },
+      { display = "alpha", after = "." },
       { display = "arabic", after = ")" },
       { display = "roman", after = ")" },
-      { display = "alpha", after = "." },
+      { display = "alpha", after = ")" },
    },
    itemize = {
       { bullet = "•" }, -- black bullet
@@ -77,14 +77,58 @@ local enforceListType = function (cmd)
    end
 end
 
+local lastListSpacing
+
+local function getNestedDepth ()
+   local itemize_level = SILE.settings:get("lists.current.itemize.depth")
+   local enumerate_level = SILE.settings:get("lists.current.enumerate.depth")
+   return itemize_level + enumerate_level
+end
+
+-- Push some list separation space provided we don't already have some
+local function pushListSpacing ()
+   if #SILE.typesetter.state.outputQueue ~= lastListSpacing then
+      SILE.typesetter:pushVglue(SILE.settings:get("lists.parskip"))
+      lastListSpacing = #SILE.typesetter.state.outputQueue
+   end
+end
+
+-- Remove the last list separation space so it doen't interfere with parskip
+local function popListSpacing ()
+   if lastListSpacing then
+      local node = SILE.typesetter.state.outputQueue[lastListSpacing]
+      if not node.is_vglue then
+         SU.error("Attempted to pop something other than vertical spacing", true)
+      end
+      table.remove(SILE.typesetter.state.outputQueue, lastListSpacing)
+   end
+end
+
+local function maybeAddListSpacing (islist, entering, counter)
+   -- Observed nesting depth for lists is zero based and hence N-1 vs. items in those lists
+   local depth = getNestedDepth() + (islist and 1 or 0)
+   local isitem = not islist
+   local leaving = not entering
+   SILE.typesetter:leaveHmode()
+   -- All list items except the first one in the outermost list get leading space
+   if entering and isitem and (counter ~= 1 or depth >= 2) then
+      pushListSpacing()
+   end
+   -- All lists get trailing space (to cover nesting)
+   if leaving and islist then
+      pushListSpacing()
+      if depth == 1 then
+         popListSpacing()
+      end
+   end
+end
+
 function package:doItem (options, content)
    local enumStyle = content._lists_.style
    local counter = content._lists_.counter
    local indent = content._lists_.indent
 
-   if not SILE.typesetter:vmode() then
-      SILE.call("par")
-   end
+   maybeAddListSpacing(false, true, counter)
 
    local mark = SILE.typesetter:makeHbox(function ()
       if enumStyle.display then
@@ -128,6 +172,11 @@ function package:doItem (options, content)
    mark.width = SILE.types.length(stepback)
    SILE.typesetter:pushHbox(mark)
    SILE.process(content)
+
+   -- In the event the list ends but paragraph continues we don't want a paragraph
+   -- indent applied just because we yielded to the typesetter in vmode.
+   SILE.settings:set("current.parindent", SILE.types.node.glue())
+   maybeAddListSpacing(false, false, counter)
 end
 
 function package.doNestedList (_, listType, options, content)
@@ -159,15 +208,11 @@ function package.doNestedList (_, listType, options, content)
       or SILE.types.measurement("0pt")
    local listIndent = SILE.settings:get("lists." .. listType .. ".leftmargin"):absolute()
 
-   -- processing
-   if not SILE.typesetter:vmode() then
-      SILE.call("par")
-   end
+   maybeAddListSpacing(true, true, nil)
    SILE.settings:temporarily(function ()
       SILE.settings:set("lists.current." .. listType .. ".depth", depth)
       SILE.settings:set("current.parindent", SILE.types.node.glue())
       SILE.settings:set("document.parindent", SILE.types.node.glue())
-      SILE.settings:set("document.parskip", SILE.settings:get("lists.parskip"))
       local lskip = SILE.settings:get("document.lskip") or SILE.types.node.glue()
       SILE.settings:set("document.lskip", SILE.types.node.glue(lskip.width + (baseIndent + listIndent)))
 
@@ -186,11 +231,6 @@ function package.doNestedList (_, listType, options, content)
                enforceListType(content[i].command)
             end
             SILE.process({ content[i] })
-            if not SILE.typesetter:vmode() then
-               SILE.call("par")
-            else
-               SILE.typesetter:leaveHmode()
-            end
          -- Whitespace left around comment nodes is fine too
          elseif type(content[i]) == "table" and #content[i] == 0 then
             -- ignore whitespace leaking in from in front of indented comments
@@ -207,21 +247,7 @@ function package.doNestedList (_, listType, options, content)
          end
       end
    end)
-
-   if not SILE.typesetter:vmode() then
-      SILE.call("par")
-   else
-      SILE.typesetter:leaveHmode()
-      if
-         not (
-            (SILE.settings:get("lists.current.itemize.depth") + SILE.settings:get("lists.current.enumerate.depth")) > 0
-         )
-      then
-         local g = SILE.settings:get("document.parskip").height:absolute()
-            - SILE.settings:get("lists.parskip").height:absolute()
-         SILE.typesetter:pushVglue(g)
-      end
-   end
+   maybeAddListSpacing(true, false, nil)
 end
 
 function package:_init ()
@@ -269,7 +295,7 @@ function package.declareSettings (_)
       parameter = "lists.parskip",
       type = "vglue",
       default = SILE.types.node.vglue("0pt plus 1pt"),
-      help = "Leading between paragraphs and items in a list",
+      help = "Leading between items in a list",
    })
 end
 
@@ -394,8 +420,8 @@ The way they do is best illustrated by an example.
 \novbreak
 
 \indent
-The package tries to ensure a paragraph is enforced before and after a list.
-In most cases, this implies paragraph skips to be inserted, with the usual \autodoc:setting{document.parskip} glue, whatever value it has at these points in the surrounding context of your document.
+The package outputs lists starting after a line break, but it does not enforce a paragraph break before or after the list.
+If you want the usual value of \autodoc:setting{document.parskip} to apply before and/or after your list leave a blank line in your source document separating paragraphs as usual.
 Between list items, however, the paragraph skip is switched to the value of the \autodoc:setting{lists.parskip} setting.
 
 \smallskip
