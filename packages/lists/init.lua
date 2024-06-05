@@ -59,18 +59,6 @@ local styles = {
    },
 }
 
-local trimLeft = function (str)
-   return str:gsub("^%s*", "")
-end
-
-local trimRight = function (str)
-   return str:gsub("%s*$", "")
-end
-
-local trim = function (str)
-   return trimRight(trimLeft(str))
-end
-
 local enforceListType = function (cmd)
    if cmd ~= "enumerate" and cmd ~= "itemize" and cmd ~= "BulletedList" and cmd ~= "OrderedList" then
       SU.error("Only items or lists are allowed as content in lists, found '" .. cmd .. "'")
@@ -184,10 +172,7 @@ function package.doNestedList (_, listType, options, content)
    local depth = SILE.settings:get("lists.current." .. listType .. ".depth") + 1
 
    -- styling
-   local enumStyle = styles[listType][depth]
-   if not enumStyle then
-      SU.error("List nesting is too deep")
-   end
+   local enumStyle = styles[listType][(depth - 1) % 6 + 1]
    -- options may override the default styling
    enumStyle = pl.tablex.copy(enumStyle) -- shallow copy for possible overrides
    if enumStyle.display then
@@ -238,7 +223,7 @@ function package.doNestedList (_, listType, options, content)
          elseif type(content[i]) == "string" then
             -- All text nodes are ignored in structure tags, but just warn
             -- if there do not just consist in spaces.
-            local text = trim(content[i])
+            local text = pl.stringx.strip(content[i])
             if text ~= "" then
                SU.warn("Ignored standalone text (" .. text .. ")")
             end
@@ -343,8 +328,6 @@ Any other element causes an error to be reported, and any text content is ignore
     \end{itemize}
 \end{itemize}
 
-The current implementation supports up to six indentation levels.
-
 On each level, the indentation is defined by the \autodoc:setting{lists.itemize.leftmargin} setting (defaults to \code{1.5em}) and the bullet is centered in that margin.
 Note that if your document has a paragraph indent enabled at this point, it is also added to the first list level.
 
@@ -372,8 +355,6 @@ The enumeration starts at one, unless you specify the \autodoc:parameter{start=<
         \end{enumerate}
     \end{enumerate}
 \end{enumerate}
-
-The current implementation supports up to six indentation levels.
 
 On each level, the indentation is defined by the \autodoc:setting{lists.enumerate.leftmargin} setting (defaults to \code{2em}).
 Note, again, that if your document has a paragraph indent enabled at this point, it is also added to the first list level.
