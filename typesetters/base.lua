@@ -343,7 +343,7 @@ function typesetter:initline ()
       return
    end -- https://github.com/sile-typesetter/sile/issues/1718
    if #self.state.nodes == 0 then
-      self.state.nodes[#self.state.nodes + 1] = SILE.types.node.zerohbox()
+      table.insert(self.state.nodes, SILE.types.node.zerohbox())
       SILE.documentState.documentClass.newPar(self)
    end
 end

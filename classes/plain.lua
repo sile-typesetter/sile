@@ -114,7 +114,6 @@ function class:registerCommands ()
    end, "Add huge vertical glue")
 
    self:registerCommand("hss", function (_, _)
-      SILE.typesetter:initline()
       SILE.typesetter:pushGlue(SILE.types.node.hssglue())
       table.insert(SILE.typesetter.state.nodes, SILE.types.node.zerohbox())
    end, "Add glue which stretches and shrinks horizontally (good for centering)")

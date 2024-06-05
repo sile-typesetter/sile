@@ -684,7 +684,6 @@ function class.newPar (typesetter)
    -- new frame context. However, defining a parindent in such a unit is quite
    -- unlikely. And anyway pushback() has plenty of other issues.
    typesetter:pushGlue(parindent:absolute())
-   SILE.settings:set("current.parindent", nil)
    local hangIndent = SILE.settings:get("current.hangIndent")
    if hangIndent then
       SILE.settings:set("linebreak.hangIndent", hangIndent)
@@ -697,6 +696,7 @@ end
 
 -- WARNING: not called as class method
 function class.endPar (typesetter)
+   SILE.settings:set("current.parindent", nil)
    typesetter:pushVglue(SILE.settings:get("document.parskip"))
    if SILE.settings:get("current.hangIndent") then
       SILE.settings:set("current.hangIndent", nil)

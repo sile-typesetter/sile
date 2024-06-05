@@ -62,6 +62,32 @@ package.shim_commands = {
    },
 }
 
+package.shim_shims = {
+   ["0.15.0"] = {
+      ["classes.base.newPar"] = function ()
+         local newPar = SILE.documentState.documentClass.newPar
+         SILE.documentState.documentClass.newPar = function (typesetter)
+            newPar(typesetter)
+            SILE.settings:set("current.parindent", nil)
+         end
+         return function ()
+            SILE.classes.book.newPar = newPar
+         end
+      end,
+      ["classes.base.endPar"] = function ()
+         local endPar = SILE.documentState.documentClass.endPar
+         SILE.documentState.documentClass.endPar = function (typesetter)
+            local current_parindent = SILE.settings:get("current.parindent")
+            endPar(typesetter)
+            SILE.settings:set("current.parindent", current_parindent)
+         end
+         return function ()
+            SILE.classes.book.endPar = endPar
+         end
+      end,
+   },
+}
+
 function package:_init (options)
    base._init(self, options)
    self:recede(options.target)
@@ -69,6 +95,7 @@ end
 
 function package:recede (target)
    self:recede_defaults(target)
+   self:recede_shims(target)
    self:recede_commands(target)
 end
 
@@ -102,6 +129,32 @@ function package:recede_defaults (target)
       end
       if version <= semvertarget then
          target_hit = true
+      end
+   end
+end
+
+function package:recede_shims (target)
+   local semvertarget, terminal = self:_prep(target, "default")
+   local reverters = {}
+   local target_hit = false
+   for version, callbacks in pl.tablex.sort(self.shim_shims, semver_descending) do
+      version = semver(version)
+      if target_hit then
+         terminal()
+         break
+      end
+      for widget, callback in pairs(callbacks) do
+         SU.debug("retrograde", ("Shimming '%s' to behavior similar to prior to v%s."):format(widget, version))
+         local reverter = callback()
+         reverters[widget] = reverter
+      end
+      if version <= semvertarget then
+         target_hit = true
+      end
+   end
+   return function ()
+      for _, reverter in pairs(reverters) do
+         reverter()
       end
    end
 end
@@ -147,6 +200,18 @@ function package:registerCommands ()
          end)
       else
          self:recede_defaults(options.target)
+      end
+   end)
+
+   self:registerCommand("recede-shims", function (options, content)
+      if content then
+         SILE.settings:temporarily(function ()
+            local reverter = self:recede_shims(options.target)
+            SILE.process(content)
+            reverter()
+         end)
+      else
+         self:recede_shims(options.target)
       end
    end)
 
