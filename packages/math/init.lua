@@ -4,81 +4,92 @@ local package = pl.class(base)
 package._name = "math"
 
 function package:_init ()
-  base._init(self)
-  local typesetter = require("packages.math.typesetter")
-  self.ConvertMathML, self.handleMath = typesetter[1], typesetter[2]
-  local texlike = require("packages.math.texlike")
-  self.convertTexlike, self.compileToMathML = texlike[1], texlike[2]
-  -- Register a new unit that is 1/18th of the current math font size
-  SILE.registerUnit("mu", {
-    relative = true,
-    definition = function (value)
-      return value * SILE.settings:get("math.font.size") / 18
-    end
-  })
+   base._init(self)
+   local typesetter = require("packages.math.typesetter")
+   self.ConvertMathML, self.handleMath = typesetter[1], typesetter[2]
+   local texlike = require("packages.math.texlike")
+   self.convertTexlike, self.compileToMathML = texlike[1], texlike[2]
+   -- Register a new unit that is 1/18th of the current math font size
+   SILE.registerUnit("mu", {
+      relative = true,
+      definition = function (value)
+         return value * SILE.settings:get("math.font.size") / 18
+      end,
+   })
+   self:loadPackage("counters")
 end
 
 function package.declareSettings (_)
-
-  SILE.settings:declare({
+   SILE.settings:declare({
       parameter = "math.font.family",
       type = "string",
-      default = "Libertinus Math"
-    })
-  SILE.settings:declare({
+      default = "Libertinus Math",
+   })
+   SILE.settings:declare({
       parameter = "math.font.style",
       type = "string",
-      default = "Regular"
-    })
-  SILE.settings:declare({
+      default = "Regular",
+   })
+   SILE.settings:declare({
       parameter = "math.font.weight",
       type = "integer",
-      default = 400
-    })
-  SILE.settings:declare({
+      default = 400,
+   })
+   SILE.settings:declare({
       parameter = "math.font.filename",
       type = "string",
-      default = ""
-    })
-  SILE.settings:declare({
+      default = "",
+   })
+   SILE.settings:declare({
       parameter = "math.font.size",
       type = "integer",
-      default = 10
-    })
-  -- Whether to show debug boxes around mboxes
-  SILE.settings:declare({
+      default = 10,
+   })
+   -- Whether to show debug boxes around mboxes
+   SILE.settings:declare({
       parameter = "math.debug.boxes",
       type = "boolean",
-      default = false
-    })
-  SILE.settings:declare({
+      default = false,
+   })
+   SILE.settings:declare({
       parameter = "math.displayskip",
       type = "VGlue",
-      default = SILE.nodefactory.vglue("2ex plus 1pt")
-    })
-
+      default = SILE.types.node.vglue("2ex plus 1pt"),
+   })
 end
 
 function package:registerCommands ()
+   self:registerCommand("mathml", function (options, content)
+      local mbox
+      xpcall(function ()
+         mbox = self:ConvertMathML(content)
+      end, function (err)
+         print(err)
+         print(debug.traceback())
+      end)
+      self:handleMath(mbox, options)
+   end)
 
-  self:registerCommand("mathml", function (options, content)
-    local mode = (options and options.mode) and options.mode or 'text'
-    local mbox
-    xpcall(function()
-      mbox = self:ConvertMathML(content, mbox)
-    end, function(err) print(err); print(debug.traceback()) end)
-    self:handleMath(mbox, mode)
-  end)
+   self:registerCommand("math", function (options, content)
+      local mbox
+      xpcall(function ()
+         mbox = self:ConvertMathML(self:compileToMathML({}, self:convertTexlike(content)))
+      end, function (err)
+         print(err)
+         print(debug.traceback())
+      end)
+      self:handleMath(mbox, options)
+   end)
 
-  self:registerCommand("math", function (options, content)
-    local mode = (options and options.mode) and options.mode or "text"
-    local mbox
-    xpcall(function()
-      mbox = self:ConvertMathML(self:compileToMathML({}, self:convertTexlike(content)))
-    end, function(err) print(err); print(debug.traceback()) end)
-    self:handleMath(mbox, mode)
-  end)
-
+   self:registerCommand("math:numberingstyle", function (options, _)
+      SILE.typesetter:typeset("(")
+      if options.counter then
+         SILE.call("show-counter", { id = options.counter })
+      elseif options.number then
+         SILE.typesetter:typeset(options.number)
+      end
+      SILE.typesetter:typeset(")")
+   end)
 end
 
 package.documentation = [[
@@ -343,6 +354,19 @@ Finally, here is a little secret. This notation:
 \end{raw}
 
 \noindent In other words, the notation using \code{&} and \code{\\\\} is only a syntactic sugar for a two-dimensional array constructed with braces.
+
+\paragraph{Numbered equations}
+Equations can be numbered in display mode.
+
+When \autodoc:parameter{numbered=true}, equations are numbered using a default “equation” counter:
+\math[mode=display, numbered=true]{e^{i\pi} = -1}
+
+A different counter can be set by using the option \autodoc:parameter{counter=<id>}, and this setting will also enable numbering.
+
+It is also possible to impose direct numbering using the \autodoc:parameter{number=<value>} option.
+
+The default numbering format is \autodoc:example{(n)}, but this style may be overridden by defining a custom \autodoc:command{\math:numberingstyle} command.
+The \code{counter} or the direct value \code{number} is passed as a parameter to this hook, as well as any other options.
 
 \paragraph{Missing features}
 This package still lacks support for some mathematical constructs, but hopefully we’ll get there.

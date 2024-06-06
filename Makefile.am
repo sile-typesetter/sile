@@ -1,4 +1,5 @@
 ACLOCAL_AMFLAGS = -I build-aux
+AM_DISTCHECK_CONFIGURE_FLAGS = --enable-developer-mode
 
 .ONESHELL:
 .SECONDARY:
@@ -61,7 +62,7 @@ bin_SCRIPTS = sile-lua
 dist_man_MANS = sile-lua.1
 sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
 EXTRA_sile_SOURCES =
-if !EMBEDED_RESOURCES
+if !EMBEDDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = $(BUILT_LUA_SOURCES) $(LUAMODULES)
 endif
@@ -70,27 +71,37 @@ dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE.md
 EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += Makefile-distfiles
-EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
+EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/config.ld build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
 EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(MANUAL) $(FIGURES)
 EXTRA_DIST += src/embed.rs.in
+EXTRA_DIST += sil.abnf
 
 BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
 
 CLEANFILES = $(MANUAL)
 
-include $(top_srcdir)/build-aux/rust_boilerplate.mk
+DISTCLEANFILES = @AMINCLUDE@
+
+# A classical use of the autoconf-archive include macro would expand
+# INC_AMINCLUDE here, but the perl script that inlines include statements
+# runs before the automake that organizes logic and performs substitution.
+# Consequentially with a substitution here it becomes impossible to use
+# automake conditionals and substitutions in the included Makefile fragments.
+# By entering the expanded value directly we are ready in time for the inlining
+# functionality and hence can use conditionals in included makefile fragments.
+include $(top_srcdir)/aminclude.am
 
 Makefile-distfiles: $(wildcard .version .tarball-version) | $(LUAMODLOCK)
 	$(SHELL) build-aux/list-dist-files.sh > $@
 
-if EMBEDED_RESOURCES
-_EMBEDED_SOURCES = src/embed.rs src/embed-includes.rs
-nodist_sile_SOURCES = $(_EMBEDED_SOURCES)
-BUILT_SOURCES += $(_EMBEDED_SOURCES)
-CLEANFILES += $(_EMBEDED_SOURCES)
+if EMBEDDED_RESOURCES
+_EMBEDDED_SOURCES = src/embed.rs src/embed-includes.rs
+nodist_sile_SOURCES = $(_EMBEDDED_SOURCES)
+BUILT_SOURCES += $(_EMBEDDED_SOURCES)
+CLEANFILES += $(_EMBEDDED_SOURCES)
 $(CARGO_BIN): justenough/.libs/fontmetrics.a
 $(CARGO_BIN): justenough/.libs/justenoughfontconfig.a
 $(CARGO_BIN): justenough/.libs/justenoughharfbuzz.a
@@ -111,10 +122,10 @@ src/embed-includes.rs: Makefile-distfiles
 
 src/embed.rs: src/embed.rs.in src/embed-includes.rs
 	$(SED) \
-		-e '/@INCLUDE_EMDED_INCLUDES@/r $(word 2,$^)' \
-		-e '/@INCLUDE_EMDED_INCLUDES@/d' \
+		-e '/@EMBEDED_INCLUDE_LIST@/r $(word 2,$^)' \
+		-e '/@EMBEDED_INCLUDE_LIST@/d' \
 		$< > $@
-endif EMBEDED_RESOURCES
+endif EMBEDDED_RESOURCES
 
 if LUAJIT
 MLUAVER = luajit
@@ -127,7 +138,7 @@ if !SYSTEM_LUA_SOURCES
 CARGO_FEATURE_ARGS += --features vendored
 endif
 
-if EMBEDED_RESOURCES
+if EMBEDDED_RESOURCES
 CARGO_FEATURE_ARGS += --features static
 endif
 
@@ -171,7 +182,13 @@ selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS)
 	$(PDFINFO) $$output | $(GREP) "SILE v$(VERSION)"
 
 .PHONY: docs
-docs: $(_MANUAL)
+docs: $(_MANUAL) lua-api-docs
+
+.PHONY: lua-api-docs
+lua-api-docs: lua-api-docs/index.html
+
+lua-api-docs/index.html: build-aux/config.ld
+	$(LDOC) -c build-aux/config.ld .
 
 .PHONY: docs-figures
 docs-figures: $(FIGURES)
@@ -249,13 +266,13 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS
 .PHONY: force
 force: ;
 
-PHONY_DEVELOPER_TARGETS = busted compare coverage docker docker-build-push \
+PHONY_DEVELOPER_TARGETS = busted compare coverage \
 	docker-dep-check docker-ghcr-to-hub gource.webm lint luacheck luarocks-lint \
-	prerelease regression_previews regressions release release-preview tagrelease \
+	prerelease regression_previews regressions release release-preview stylua tagrelease \
 	test update_expecteds update_libtexpdf
 .PHONY: $(PHONY_DEVELOPER_TARGETS)
 
-if DEVELOPER
+if DEVELOPER_MODE
 
 RELTYPE ?=
 
@@ -292,13 +309,16 @@ regressions: $(TESTSRCS) $(ACTUALS)
 
 test: regressions busted
 
-lint: luacheck luarocks-lint
+lint: luacheck luarocks-lint stylua
 
 luarocks-lint: $(LUAMODSPEC)
 	$(LUAROCKS) lint $(LUAMODSPEC)
 
 luacheck:
 	$(LUACHECK) -j$(shell nproc) -q .
+
+stylua:
+	$(STYLUA) --check --respect-ignores -g '*.lua' -g '*.lua.in' -g '*.rockspec.in' .busted .luacov .luacheckrc build-aux/config.ld .
 
 busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'
@@ -374,9 +394,6 @@ export DOCKER_REGISTRY ?= docker.io
 export DOCKER_REPO ?= siletypesetter/$(TRANSFORMED_PACKAGE_NAME)
 export DOCKER_TAG ?= HEAD
 
-docker: Dockerfile hooks/build .version
-	./hooks/build $(VERSION)
-
 docker-dep-check: .docker_deps .aur_deps
 	$(DIFF) -u $^
 
@@ -395,26 +412,9 @@ CLEANFILES += .docker_deps
 
 CLEANFILES += .aur_deps
 
-define docker_push =
-	test -z "$(DOCKER_PAT)" || \
-		$(DOCKER) login https://$(DOCKER_REGISTRY) -u $(DOCKER_USERNAME) -p $(DOCKER_PAT)
-	$(DOCKER) push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
-	if [[ "$(DOCKER_TAG)" == v*.*.* ]]; then \
-		tag=$(DOCKER_TAG) ; \
-		$(DOCKER) tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
-		$(DOCKER) tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
-		$(DOCKER) push $(DOCKER_REGISTRY)/$(DOCKER_REPO):latest ; \
-		$(DOCKER) push $(DOCKER_REGISTRY)/$(DOCKER_REPO):$${tag//.*} ; \
-	fi
-endef
-
 docker-ghcr-to-hub:
 	$(DOCKER) pull $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG)
 	$(DOCKER) tag  $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
-	$(docker_push)
-
-docker-build-push: docker
-	$(DOCKER) tag $(DOCKER_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
 	$(docker_push)
 
 gource.webm:
@@ -429,9 +429,9 @@ gource.webm:
 	gource -a 0.2 -s 0.2 -i 0 --logo /tmp/sile-logo.jpg -b 000000 --max-file-lag 5 --hide filenames --date-format '%Y-%m-%d' --user-image-dir /tmp/gravatars --user-filter simoncozens --key -1920x1080 -o - | \
 		ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libvpx -b 10000K $@
 
-else !DEVELOPER
+else !DEVELOPER_MODE
 
 $(PHONY_DEVELOPER_TARGETS):
 	@: $(error "Please reconfigure using --enable-developer to use developer tooling")
 
-endif !DEVELOPER
+endif !DEVELOPER_MODE

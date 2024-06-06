@@ -22,7 +22,8 @@ end
 SILE = require("core.sile")
 SILE.full_version = SILE.full_version .. " [Lua]"
 
-SILE.cli:parseArguments()
+local cli = require("core.cli")
+cli:parseArguments()
 
 if not os.getenv 'LUA_REPL_RLWRAP' and not SILE.quiet then
   io.stderr:write(SILE.full_version .. '\n')
@@ -31,19 +32,6 @@ end
 SILE.init()
 
 if SILE.input.filenames and #SILE.input.filenames >= 1 then
-
-  -- Deprecated, notice given in core.cli when argument used
-  for _, path in ipairs(SILE.input.includes) do
-    if not SILE.quiet then
-      io.stderr:write("Loading "..path.."\n")
-    end
-    local c = SILE.resolveFile(path, "classes")
-    if c then
-      SILE.processFile(c)
-    else
-      SILE.require(path, "classes")
-    end
-  end
 
   for _, spec in ipairs(SILE.input.uses) do
     SILE.use(spec.module, spec.options)
@@ -65,7 +53,8 @@ if SILE.input.filenames and #SILE.input.filenames >= 1 then
   SILE.finish()
 
 else
-  SILE.repl:enter()
+  local repl = require("core.repl")
+  repl:enter()
 end
 
 -- vim: ft=lua

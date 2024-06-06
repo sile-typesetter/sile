@@ -17,12 +17,24 @@ indent_size = 8
 [*.md]
 trim_trailing_whitespace = false
 
-[{*.lua,*.lua.in,sile.in,*rockspec,.busted,.luacheckrc}]
+[{*.lua,*.lua.in,sile.in,*.rockspec,*.rockspec.in,.busted,.luacov,.luacheckrc,config.ld}]
 indent_style = space
 indent_size = 3
 max_line_length = 120
 
-[*rockspec]
+# StyLua keys
+collapse_simple_statement = never
+space_after_functions = definitions
+
+# EmmyLuaCodeStyle keys
+continuation_indent = 6
+quote_style = double,
+call_arg_parentheses = keep,
+trailing_table_separator = always,
+align_call_args = true,
+end_statement_with_semicolon = same_line
+
+[{*.rockspec,*.rockspec.in}]
 max_line_length = 190
 
 [*.pl]

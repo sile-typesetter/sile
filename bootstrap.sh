@@ -36,11 +36,14 @@ else
 fi
 
 # Autoreconf uses a perl script to inline includes from Makefile.am into
-# Makefile.in before ./configure is even run ... which is where we're going to
-# use AC_SUBST to setup project specific build options. We need to pre-seed
-# a file to avoid a file not found error on first run. The configure process
-# will rebuild this and also re-include it into the final Makefile.
-touch build-aux/rust_boilerplate.mk
+# Makefile.in before ./configure is ever run even once ... which typically means
+# AX_AUTOMAKE_MACROS forfeit access to substitutions or conditional logic
+# because they enter the picture after those steps. We're intentially using the
+# expanded value of @INC_AMINCLUDE@ directly so the include will be inlined. To
+# bootstrap we must pre-seed an empty file to avoid a 'file not found' error on
+# first run. Subsequently running ./configure will generate the correct content
+# based on the configuration flags and also get re-inlined into Makefile.in.
+touch aminclude.am
 
 autoreconf --install
 

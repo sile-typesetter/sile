@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.14.17](https://github.com/sile-typesetter/sile/compare/v0.14.16...v0.14.17) (2024-02-07)
+
+
+### Features
+
+* **languages:** Enable explicit hyphen repetition handling in Croatian ([c29545d](https://github.com/sile-typesetter/sile/commit/c29545dd6f60bc01dc71de82f88274feff3b0fdf))
+* **languages:** Enable explicit hyphen repetition handling in Czech ([b05d621](https://github.com/sile-typesetter/sile/commit/b05d6211b2c3daf9d8a69d7c4db75f430a86eea6))
+* **languages:** Enable explicit hyphen repetition handling in Portuguese ([2a58d96](https://github.com/sile-typesetter/sile/commit/2a58d9684848ad7475e879191058d0c59de8e3c5))
+* **languages:** Enable explicit hyphen repetition handling in Slovak ([82640b0](https://github.com/sile-typesetter/sile/commit/82640b03cdc82356a1ea9bbffbb4f5fd2471e3a2))
+* **languages:** Enable explicit hyphen repetition handling in Spanish ([8db7f23](https://github.com/sile-typesetter/sile/commit/8db7f238fb63c86ee0d49bd34afd6a35a03f8eb8))
+* **packages:** Add balancing option to makecolums command ([#1950](https://github.com/sile-typesetter/sile/issues/1950)) ([b5ce8e6](https://github.com/sile-typesetter/sile/commit/b5ce8e615c5e22c087ea8c8c6f7e30266e0f8634))
+
+### [0.14.16](https://github.com/sile-typesetter/sile/compare/v0.14.15...v0.14.16) (2024-01-27)
+
+
+### Bug Fixes
+
+* **tooling:** Re-merge so release tag is on master branch ([e8eaf11](https://github.com/sile-typesetter/sile/commit/e8eaf11da6cd183168898eca08f6f789f46d599e))
+
+### [0.14.15](https://github.com/sile-typesetter/sile/compare/v0.14.14...v0.14.15) (2024-01-27)
+
+
+### Features
+
+* **languages:** Accomodate alternate Turkish hyphenation guidelines at apostrophes ([92904fc](https://github.com/sile-typesetter/sile/commit/92904fcaf119cb95633c2865c2cdef89106803a1))
+* **typesetters:** Support for speaker change introduced by em-dash ([2afa4cb](https://github.com/sile-typesetter/sile/commit/2afa4cbf7eafcc9efef4ea5219c9508fff7989a8))
+
+
+### Bug Fixes
+
+* **languages:** Break at ela geminada in Catalan cancels the punt vola ([f8c4c1e](https://github.com/sile-typesetter/sile/commit/f8c4c1e46fecfb4f3bb7000ae0e87d04eb5d2738))
+* **languages:** Break at explicit hyphen in Polish repeats the hyphen ([0f8c7aa](https://github.com/sile-typesetter/sile/commit/0f8c7aa087c6fe447fc0a5d96944e9ca1b7f141e))
+* **languages:** Remove multiple repetitions of U+00A0 nbsp in French ([0356a49](https://github.com/sile-typesetter/sile/commit/0356a4977722c77e11ada667efb106d9ad70219a))
+* **languages:** U+00A0 nbsp in French causes unexpected word breaks ([b93975c](https://github.com/sile-typesetter/sile/commit/b93975c2d572d64afbc89c47cab8cc3ad4735445))
+
 ### [0.14.14](https://github.com/sile-typesetter/sile/compare/v0.14.13...v0.14.14) (2023-12-23)
 
 

@@ -5,7 +5,7 @@
   SILE.registerCommand("donothing", function (options, content)
     SILE.settings:pushState()
     SILE.settings:temporarily(function ()
-      SILE.settings:set("document.lskip", SILE.nodefactory.glue("0pt"))
+      SILE.settings:set("document.lskip", SILE.types.node.glue("0pt"))
       SILE.process(content)
       SILE.call("par")
     end)

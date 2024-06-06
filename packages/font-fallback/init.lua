@@ -6,37 +6,35 @@ package._name = "font-fallback"
 local lastShaperType
 
 function package:registerCommands ()
+   self:registerCommand("font:clear-fallbacks", function ()
+      if SILE.shaper._name == "fallback" and lastShaperType then
+         SU.debug("font-fallback", "Clearing fallbacks, switching from fallback enabled back to previous shaper")
+         SILE.shaper:clearFallbacks()
+         SILE.typesetter:leaveHmode(true)
+         SILE.shapers[lastShaperType]:cast(SILE.shaper)
+         lastShaperType = nil
+      end
+   end)
 
-  self:registerCommand("font:clear-fallbacks", function ()
-    if SILE.shaper._name == "fallback" and lastShaperType then
-      SU.debug("font-fallback", "Clearing fallbacks, switching from fallback enabled back to previous shaper")
-      SILE.shapers:clearFallbacks()
-      SILE.typesetter:leaveHmode(true)
-      SILE.shapers[lastShaperType]:cast(SILE.shaper)
-      lastShaperType = nil
-    end
-  end)
+   self:registerCommand("font:add-fallback", function (options, _)
+      if SILE.shaper._name ~= "fallback" then
+         SU.debug("font-fallback", "Switching to fallback enabaled shaper")
+         SILE.typesetter:leaveHmode(true)
+         lastShaperType = SILE.shaper._name
+         SILE.shapers.fallback:cast(SILE.shaper)
+      end
+      SILE.shaper:addFallback(options)
+   end)
 
-  self:registerCommand("font:add-fallback", function (options, _)
-    if SILE.shaper._name ~= "fallback" then
-      SU.debug("font-fallback", "Switching to fallback enabaled shaper")
-      SILE.typesetter:leaveHmode(true)
-      lastShaperType = SILE.shaper._name
-      SILE.shapers.fallback:cast(SILE.shaper)
-    end
-    SILE.shaper:addFallback(options)
-  end)
-
-  self:registerCommand("font:remove-fallback", function ()
-    SILE.shaper:removeFallback()
-    if #SILE.shaper:dumpFallbacks() == 0 and SILE.shaper._name == "fallback" and lastShaperType then
-      SU.debug("font-fallback", "Fallback list empty, switching from fallback enabled back to previous shaper")
-      SILE.typesetter:leaveHmode(true)
-      SILE.shapers[lastShaperType]:cast(SILE.shaper)
-      lastShaperType = nil
-    end
-  end, "Pop last added fallback from fallback stack")
-
+   self:registerCommand("font:remove-fallback", function ()
+      SILE.shaper:removeFallback()
+      if #SILE.shaper:dumpFallbacks() == 0 and SILE.shaper._name == "fallback" and lastShaperType then
+         SU.debug("font-fallback", "Fallback list empty, switching from fallback enabled back to previous shaper")
+         SILE.typesetter:leaveHmode(true)
+         SILE.shapers[lastShaperType]:cast(SILE.shaper)
+         lastShaperType = nil
+      end
+   end, "Pop last added fallback from fallback stack")
 end
 
 package.documentation = [[

@@ -9,6 +9,7 @@ Makefile.in
 /autom4te.cache
 /config.status
 /configure
+/aminclude.am
 build-aux/compile
 build-aux/config.guess
 build-aux/config.sub

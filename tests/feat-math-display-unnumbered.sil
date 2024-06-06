@@ -1,0 +1,35 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\use[module=packages.lorem]
+\use[module=packages.math]
+\font[size=11pt]
+% Test default (unnumbered) display math
+% within a blockquote (to check it honors margin skips)
+% and in all alignments
+
+\begin{blockquote}
+Begin justified
+\math[mode=display]{e^{i\pi} = -1}
+End justified.
+
+\begin{center}
+Begin centered
+\math[mode=display]{e^{i\pi} = -1}
+End centered
+\end{center}
+
+\begin{raggedright}
+Begin left-aligned
+\math[mode=display]{e^{i\pi} = -1}
+End left-aligned.
+\end{raggedright}
+
+\begin{raggedleft}
+Begin right-aligned
+\math[mode=display]{e^{i\pi} = -1}
+End right-aligned
+\end{raggedleft}
+\end{blockquote}
+
+\end{document}

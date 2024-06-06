@@ -14,8 +14,8 @@ jobs:
         configuration:
           - [ 'dynamic', '' ]
           - [ 'system', '--with-system-lua-sources' ]
-          - [ 'embeded', '--enable-embeded-resources' ]
-          - [ 'static', '--enable-embeded-resources --disable-shared --enable-static' ]
+          - [ 'embedded', '--enable-embedded-resources' ]
+          - [ 'static', '--enable-embedded-resources --disable-shared --enable-static' ]
     runs-on: ubuntu-22.04
     name: Build Ubuntu ${{ matrix.configuration[0] }}
     steps:
@@ -24,14 +24,14 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             lua_modules
@@ -48,6 +48,8 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
+            --enable-developer-mode \
+            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false \
             --disable-font-variations \
             --with-manual \
             ${{ matrix.configuration[1] }}
@@ -70,6 +72,7 @@ jobs:
         if: ${{ matrix.configuration[0] == 'static' }}
         run: |
           cp sile sile-${{ env.CARCH }}
+          sha256sum sile-${{ env.CARCH }} | tee -a sile-${{ env.VERSION }}.sha256.txt
       - name: Upload static binary artifact
         if: ${{ matrix.configuration[0] == 'static' && !contains(github.ref, 'refs/tags/v') }}
         uses: actions/upload-artifact@v4
@@ -77,15 +80,16 @@ jobs:
           name: sile-${{ env.CARCH }}
           path: sile-${{ env.CARCH }}
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: matrix.configuration[0] == 'static' && github.repository == 'sile-typesetter/sile' && startsWith(github.ref, 'refs/tags/v')
         with:
           body_path: sile-${{ env.VERSION }}.md
           files: |
             sile-${{ env.VERSION }}.pdf
             sile-${{ env.VERSION }}.zip
-            sile-${{ env.VERSION }}.tar.xz
+            sile-${{ env.VERSION }}.tar.zst
             sile-${{ env.CARCH }}
+            sile-${{ env.VERSION }}.sha256.txt
 
   build-nix:
     runs-on: ubuntu-22.04
@@ -96,16 +100,16 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v9
+        uses: DeterminateSystems/nix-installer-action@v11
       - name: Cache Nix dependencies
-        uses: DeterminateSystems/magic-nix-cache-action@v2
+        uses: DeterminateSystems/magic-nix-cache-action@v6
       - name: Setup developer environment
         run: |
           nix develop --command ./bootstrap.sh

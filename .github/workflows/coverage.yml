@@ -20,14 +20,14 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             lua_modules
@@ -60,7 +60,7 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
-            --enable-developer LUACHECK=false NIX=false DELTA=cat \
+            --enable-developer-mode LDOC=false LUACHECK=false NIX=false DELTA=cat STYLUA=false \
             --disable-font-variations \
             --without-manual
       - name: Make

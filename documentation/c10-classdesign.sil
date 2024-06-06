@@ -125,13 +125,13 @@ So a command be it, without any option this time, but playing with vertical skip
   self:registerCommand("blockquote", function (_, content)
     SILE.call("smallskip")
     SILE.settings:temporarily(function ()
-      local indent = SILE.measurement("2em"):absolute()
-      local lskip = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
-      local rskip = SILE.settings:get("document.rskip") or SILE.nodefactory.glue()
+      local indent = SILE.types.measurement("2em"):absolute()
+      local lskip = SILE.settings:get("document.lskip") or SILE.types.node.glue()
+      local rskip = SILE.settings:get("document.rskip") or SILE.types.node.glue()
       SILE.settings:set("document.lskip",
-        SILE.nodefactory.glue(lskip.width + indent))
+        SILE.types.node.glue(lskip.width + indent))
       SILE.settings:set("document.rskip",
-        SILE.nodefactory.glue(rskip.width + indent))
+        SILE.types.node.glue(rskip.width + indent))
       SILE.process(content)
       SILE.typesetter:leaveHmode() -- gather paragraphs now.
     end)
@@ -161,7 +161,7 @@ function package:declareSettings ()
   SILE.settings:declare({
     parameter = "mypkg.blockindent",
     type = "measurement",
-    default = SILE.measurement("2em"),
+    default = SILE.types.measurement("2em"),
     help = "Blockquote indentation"
   })
 end

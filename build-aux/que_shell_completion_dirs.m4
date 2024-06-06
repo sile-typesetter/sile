@@ -1,6 +1,6 @@
-AC_DEFUN_ONCE([AX_SHELL_COMPLETION_DIRS], [
+AC_DEFUN_ONCE([QUE_SHELL_COMPLETION_DIRS], [
 
-        AX_TRANSFORM_PACKAGE_NAME
+        QUE_TRANSFORM_PACKAGE_NAME
 
         AC_ARG_WITH([bash-completion-dir],
                 AS_HELP_STRING([--with-bash-completion-dir[=PATH]],
@@ -43,5 +43,12 @@ AC_DEFUN_ONCE([AX_SHELL_COMPLETION_DIRS], [
                 [ZSH_COMPLETION_DIR="$datadir/zsh/site-functions"],
                 [ZSH_COMPLETION_DIR="$with_zsh_completion_dir"])
         AC_SUBST([ZSH_COMPLETION_DIR])
+
+        AC_REQUIRE([AX_AM_MACROS])
+        AX_ADD_AM_MACRO([dnl
+EXTRA_DIST += build-aux/que_shell_completion_dirs.am
+
+$(cat build-aux/que_shell_completion_dirs.am)
+])dnl
 
 ])

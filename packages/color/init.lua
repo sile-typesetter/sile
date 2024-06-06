@@ -4,18 +4,19 @@ local package = pl.class(base)
 package._name = "color"
 
 function package:registerCommands ()
-
-  self:registerCommand("color", function (options, content)
-    local color = SILE.color(options.color or "black")
-    SILE.typesetter:pushHbox({
-      outputYourself = function () SILE.outputter:pushColor(color) end
-    })
-    SILE.process(content)
-    SILE.typesetter:pushHbox({
-      outputYourself = function () SILE.outputter:popColor() end
-    })
-  end, "Changes the active ink color to the color <color>.")
-
+   self:registerCommand("color", function (options, content)
+      local color = SILE.types.color(options.color or "black")
+      -- This is a bit of a hack to use a liner.
+      -- (Due to how the color stack is currently handled)
+      -- If the content spans multiple lines, and a page break occurs in between,
+      -- this avoids the color being propagated to other page content.
+      -- (folio, footnotes, etc.)
+      SILE.typesetter:liner("color", content, function (box, typesetter, line)
+         SILE.outputter:pushColor(color)
+         box:outputContent(typesetter, line)
+         SILE.outputter:popColor()
+      end)
+   end, "Changes the active ink color to the color <color>.")
 end
 
 package.documentation = [[

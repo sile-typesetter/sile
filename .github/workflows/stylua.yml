@@ -1,0 +1,16 @@
+name: StyLua
+
+on: [ workflow_dispatch ]
+
+jobs:
+
+  stylua:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: JohnnyMorganz/stylua-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: latest
+          args: --check --respect-ignores -g '*.lua' -g '*.lua.in' -g '*.rockspec.in' .busted .luacov .luacheckrc build-aux/config.ld .

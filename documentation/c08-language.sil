@@ -163,6 +163,19 @@ The default is \code{left}.
 \set[parameter=languages.am.justification,value=centered]
 \font[family=Noto Sans Ethiopic,language=am]{ሰላም፡ልዑል}
 
+\begin[command=document-repeated-hyphen]{define}
+According to \process typography conventions, when a break occurs at an explicit hyphen, the hyphen gets repeated at the beginning of the new line.
+SILE automatically handles this.
+\end{define}
+
+\subsection{Croatian}
+
+\document-repeated-hyphen{Croatian}
+
+\subsection{Czech}
+
+\document-repeated-hyphen{Czech}
+
 \subsection{Esperanto}
 
 \define[command=eo]{\font[language=eo]{\process}}
@@ -185,6 +198,29 @@ The size of these spaces is determined by
 	\autodoc:setting[check=false]{languages.fr.thinspace},
 	\autodoc:setting[check=false]{languages.fr.colonspace} and
 	\autodoc:setting[check=false]{languages.fr.guillspace}.
+
+\subsection{Polish}
+
+\document-repeated-hyphen{Polish}
+
+\subsection{Portuguese}
+
+\document-repeated-hyphen{Portuguese}
+
+\subsection{Slovak}
+
+\document-repeated-hyphen{Slovak}
+
+\subsection{Spanish}
+
+\document-repeated-hyphen{Spanish}
+
+\subsection{Turkish}
+
+According to Turkish typography conventions, when a break occurs at an existing apostrophe, the break point is allowed but no hyphenation character is shown.
+SILE behaves this way default.
+Some publisher style guides suggest an alternative behavior replacing the apostrophe with the hyphenation character.
+This alternative behavior can be achieved by setting \autodoc:setting[check=false]{languages.tr.replaceApostropheAtHyphenation} to \code{true}.
 
 \subsection{Japanese / Chinese}
 

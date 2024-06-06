@@ -3,8 +3,8 @@
 \use[module=packages.lorem]
 \use[module=packages.rules]
 \begin{script}
-SILE.scratch.insertions.classes.footnote.topSkip = SILE.length("5pt")
-SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.length("24pt")
+SILE.scratch.insertions.classes.footnote.topSkip = SILE.types.length("5pt")
+SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.types.length("24pt")
 \end{script}
 \lorem[words=50]\footnote{\hrule[width=2pt, height=19.82421875pt]}
 
