@@ -22,6 +22,7 @@
     "@commitlint/cli": "^19.3",
     "@commitlint/config-conventional": "^19.2",
     "@commitlint/prompt": "^19.3",
+    "@iarna/toml": "^2.2",
     "commitizen": "^4.3",
     "conventional-changelog-cli": "^5.0",
     "husky": "^9.0",
