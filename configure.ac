@@ -209,6 +209,7 @@ AM_COND_IF([DEVELOPER_MODE], [
     QUE_PROGVAR([curl])
     QUE_PROGVAR([delta])
     QUE_PROGVAR([diff])
+    QUE_PROGVAR([gitcliff], [git-cliff])
     QUE_PROGVAR([head])
     QUE_PROGVAR([ldoc])
     QUE_PROGVAR([luacheck])
