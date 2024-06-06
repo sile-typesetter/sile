@@ -76,7 +76,7 @@ from another package, responsible for correct initialization.]])
       end
       -- Fixed leading here is obviously a bug, but n-way leading calculations
       -- get very complicated...
-      -- typesetterPool[frame].leadingFor = function() return SILE.nodefactory.vglue(SILE.settings:get("document.lineskip")) end
+      -- typesetterPool[frame].leadingFor = function() return SILE.types.node.vglue(SILE.settings:get("document.lineskip")) end
       local fontcommand = frame .. ":font"
       self:registerCommand(frame, function (_, _) -- \left ...
          SILE.typesetter = typesetterPool[frame]
@@ -116,7 +116,7 @@ end
 function package:registerCommands ()
    self:registerCommand("sync", function (_, _)
       local anybreak = false
-      local maxheight = SILE.length()
+      local maxheight = SILE.types.length()
       SU.debug("parallel", "Trying a sync")
       allTypesetters(function (_, typesetter)
          SU.debug("parallel", "Leaving hmode on", typesetter.id)
@@ -136,7 +136,7 @@ function package:registerCommands ()
       end
 
       allTypesetters(function (frame, typesetter)
-         calculations[frame].heightOfNewMaterial = SILE.length()
+         calculations[frame].heightOfNewMaterial = SILE.types.length()
          for i = calculations[frame].mark + 1, #typesetter.state.outputQueue do
             local thisHeight = typesetter.state.outputQueue[i].height + typesetter.state.outputQueue[i].depth
             calculations[frame].heightOfNewMaterial = calculations[frame].heightOfNewMaterial + thisHeight

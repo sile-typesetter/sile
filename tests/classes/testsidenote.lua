@@ -23,9 +23,9 @@ function testsidenote:_init (options)
    self:loadPackage("insertions")
    self:loadPackage("footnotes")
    self:initInsertionClass("footnote", {
-      maxHeight = SILE.length("75%ph"):absolute(),
-      topBox = SILE.nodefactory.zerovglue(),
-      interInsertionSkip = SILE.length("1ex"),
+      maxHeight = SILE.types.length("75%ph"):absolute(),
+      topBox = SILE.types.node.zerovglue(),
+      interInsertionSkip = SILE.types.length("1ex"),
       insertInto = { frame = "sidenotes", ratio = 0 },
       stealFrom = {},
    })

@@ -290,7 +290,7 @@ local function shrinkability (before, after)
    return 0
 end
 
--- local okbreak = SILE.nodefactory.penalty(0)
+-- local okbreak = SILE.types.node.penalty(0)
 
 SILE.nodeMakers.ja = pl.class(SILE.nodeMakers.base)
 
@@ -310,17 +310,15 @@ function SILE.nodeMakers.ja:iterator (items)
             db = db .. " S"
             coroutine.yield(SILE.shaper:makeSpaceNode(options, item))
          else
-            local length = SILE.length(
-               intercharacterspace(lastcp, thiscp),
-               stretchability(lastcp, thiscp),
-               shrinkability(lastcp, thiscp)
-            )
+            local length = SILE.types
+               .length(intercharacterspace(lastcp, thiscp), stretchability(lastcp, thiscp), shrinkability(lastcp, thiscp))
+               :absolute()
             if breakAllowed(lastcp, thiscp) then
                db = db .. " G " .. tostring(length)
-               coroutine.yield(SILE.nodefactory.glue(length))
+               coroutine.yield(SILE.types.node.glue(length))
             elseif length.length ~= 0 or length.stretch ~= 0 or length.shrink ~= 0 then
                db = db .. " K " .. tostring(length)
-               coroutine.yield(SILE.nodefactory.kern(length))
+               coroutine.yield(SILE.types.node.kern(length))
             else
                db = db .. " N"
             end

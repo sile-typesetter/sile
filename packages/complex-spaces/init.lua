@@ -21,7 +21,7 @@ function package:_init ()
             local myoptions = pl.tablex.deepcopy(options)
             myoptions.language = "x-spaces-are-nodes"
             local nnodes = SILE.shaper:createNnodes(" ", myoptions)
-            return SILE.nodefactory.discretionary({ replacement = nnodes })
+            return SILE.types.node.discretionary({ replacement = nnodes })
          end
          return SILE.shaper.noncomplex_SpaceNode(_, options, item)
       end

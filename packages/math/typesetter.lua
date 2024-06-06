@@ -137,7 +137,11 @@ function ConvertMathML (_, content)
    end
 end
 
-local function handleMath (_, mbox, mode)
+local function handleMath (_, mbox, options)
+   local mode = options and options.mode or "text"
+   local counter = SU.boolean(options.numbered, false) and "equation"
+   counter = options.counter or counter -- overrides the default "equation" counter
+
    if mode == "display" then
       mbox.mode = b.mathMode.display
    elseif mode == "text" then
@@ -155,10 +159,28 @@ local function handleMath (_, mbox, mode)
    if mode == "display" then
       SILE.typesetter:endline()
       SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
-      SILE.call("center", {}, function ()
+      SILE.settings:temporarily(function ()
+         -- Center the equation in the space available up to the counter (if any),
+         -- respecting the fixed part of the left and right skips.
+         local lskip = SILE.settings:get("document.lskip") or SILE.types.node.glue()
+         local rskip = SILE.settings:get("document.rskip") or SILE.types.node.glue()
+         SILE.settings:set("document.parindent", SILE.types.node.glue())
+         SILE.settings:set("current.parindent", SILE.types.node.glue())
+         SILE.settings:set("document.lskip", SILE.types.node.hfillglue(lskip.width.length))
+         SILE.settings:set("document.rskip", SILE.types.node.glue(rskip.width.length))
+         SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+         SILE.settings:set("document.spaceskip", SILE.types.length("1spc", 0, 0))
          SILE.typesetter:pushHorizontal(mbox)
+         SILE.typesetter:pushExplicitGlue(SILE.nodefactory.hfillglue())
+         if counter then
+            options.counter = counter
+            SILE.call("increment-counter", { id = counter })
+            SILE.call("math:numberingstyle", options)
+         elseif options.number then
+            SILE.call("math:numberingstyle", options)
+         end
+         SILE.typesetter:endline()
       end)
-      SILE.typesetter:endline()
       SILE.typesetter:pushExplicitVglue(SILE.settings:get("math.displayskip"))
    else
       SILE.typesetter:pushHorizontal(mbox)

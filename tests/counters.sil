@@ -1,5 +1,6 @@
 \begin[papersize=a6]{document}
 \nofolios
+\use[module=packages.retrograde,target=v0.15.0]
 \set[parameter=document.parindent,value=0pt]
 \font[family=Libertinus Serif]
 \use[module=packages.counters]

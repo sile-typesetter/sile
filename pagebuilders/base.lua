@@ -1,3 +1,6 @@
+--- SILE pagebuilder class.
+-- @interfaces pagebuilders
+
 local pagebuilder = pl.class()
 pagebuilder.type = "pagebuilder"
 pagebuilder._name = "base"
@@ -10,7 +13,7 @@ function pagebuilder:_init ()
 end
 
 function pagebuilder.collateVboxes (_, vboxlist)
-   local output = SILE.nodefactory.vbox()
+   local output = SILE.types.node.vbox()
    output:append(vboxlist)
    return output
 end
@@ -27,7 +30,7 @@ function pagebuilder:findBestBreak (options)
    local restart = options.restart or false
    local force = options.force or false
    local i = 0
-   local totalHeight = SILE.length()
+   local totalHeight = SILE.types.length()
    local bestBreak = nil
    local started = false
    if restart and restart.target == target then

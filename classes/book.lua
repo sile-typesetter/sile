@@ -1,3 +1,6 @@
+--- book document class.
+-- @use classes.book
+
 local plain = require("classes.plain")
 
 local class = pl.class(plain)
@@ -59,20 +62,20 @@ function class:endPage ()
       if self:oddPage() and SILE.scratch.headers.right then
          SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
             SILE.settings:toplevelState()
-            SILE.settings:set("current.parindent", SILE.nodefactory.glue())
-            SILE.settings:set("document.lskip", SILE.nodefactory.glue())
-            SILE.settings:set("document.rskip", SILE.nodefactory.glue())
-            -- SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+            SILE.settings:set("current.parindent", SILE.types.node.glue())
+            SILE.settings:set("document.lskip", SILE.types.node.glue())
+            SILE.settings:set("document.rskip", SILE.types.node.glue())
+            -- SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
             SILE.process(SILE.scratch.headers.right)
             SILE.call("par")
          end)
       elseif not self:oddPage() and SILE.scratch.headers.left then
          SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
             SILE.settings:toplevelState()
-            SILE.settings:set("current.parindent", SILE.nodefactory.glue())
-            SILE.settings:set("document.lskip", SILE.nodefactory.glue())
-            SILE.settings:set("document.rskip", SILE.nodefactory.glue())
-            -- SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
+            SILE.settings:set("current.parindent", SILE.types.node.glue())
+            SILE.settings:set("document.lskip", SILE.types.node.glue())
+            SILE.settings:set("document.rskip", SILE.types.node.glue())
+            -- SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
             SILE.process(SILE.scratch.headers.left)
             SILE.call("par")
          end)
@@ -112,7 +115,7 @@ function class:registerCommands ()
          number = self.packages.counters:formatMultilevelCounter(self:getMultilevelCounter("sectioning"))
       end
       if SU.boolean(options.toc, true) then
-         SILE.call("tocentry", { level = level, number = number }, SU.subContent(content))
+         SILE.call("tocentry", { level = level, number = number }, SU.ast.subContent(content))
       end
       if SU.boolean(options.numbering, true) then
          if options.msg then

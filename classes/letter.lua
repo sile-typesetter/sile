@@ -1,3 +1,6 @@
+--- letter document class.
+-- @use classes.letter
+
 local plain = require("classes.plain")
 
 local class = pl.class(plain)
@@ -26,8 +29,8 @@ function class:registerCommands ()
    plain.registerCommands(self)
 
    self:registerCommand("letter", function (_, content)
-      SILE.settings:set("current.parindent", SILE.nodefactory.glue())
-      SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+      SILE.settings:set("current.parindent", SILE.types.node.glue())
+      SILE.settings:set("document.parindent", SILE.types.node.glue())
       SILE.call("raggedright", {}, function ()
          SILE.call("letter:format:date")
          SILE.call("bigskip")

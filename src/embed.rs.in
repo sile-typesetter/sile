@@ -1,0 +1,136 @@
+use mlua::chunk;
+use mlua::prelude::*;
+use rust_embed::{EmbeddedFile, RustEmbed};
+use std::str;
+
+/// Embed everything that would otherwise be installed to datadir
+#[derive(RustEmbed)]
+#[folder = "."]
+#[exclude = ".*"]
+#[exclude = "*~"]
+#[exclude = "*.in"]
+#[exclude = "Make*"]
+#[exclude = "autom4te.cache/*"]
+#[exclude = "build-aux/*"]
+#[exclude = "cmake/*"]
+#[exclude = "completions/*"]
+#[exclude = "documentation/*"]
+#[exclude = "justenough/*"]
+#[exclude = "libtexpdf/*"]
+#[exclude = "libtexpdf/*"]
+#[exclude = "libtool"]
+#[exclude = "node_modules/*"]
+#[exclude = "rust-toolchain"]
+#[exclude = "sile*"]
+#[exclude = "src/*"]
+#[exclude = "target/*"]
+#[exclude = "tests/*"]
+// @EMBEDED_INCLUDE_LIST@ -- this marker line gets replaced by a list of includes
+pub struct SileModules;
+
+// Link Lua loader functions from C modules that Lua would otherwise be loading externally that
+// we've linked into the CLI binary. Linking happens in build-aux/build.rs.
+extern "C-unwind" {
+    fn luaopen_fontmetrics(lua: *mut mlua::lua_State) -> i32;
+    fn luaopen_justenoughfontconfig(lua: *mut mlua::lua_State) -> i32;
+    fn luaopen_justenoughharfbuzz(lua: *mut mlua::lua_State) -> i32;
+    fn luaopen_justenoughicu(lua: *mut mlua::lua_State) -> i32;
+    fn luaopen_justenoughlibtexpdf(lua: *mut mlua::lua_State) -> i32;
+    fn luaopen_svg(lua: *mut mlua::lua_State) -> i32;
+}
+
+/// Register a Lua function in the loaders/searchers table to return C modules linked into the CLI
+/// binary and another to return embedded Lua resources as Lua modules. See discussion in mlua:
+/// https://github.com/khvzak/mlua/discussions/322
+pub fn inject_embedded_loader(lua: &Lua) {
+    let package: LuaTable = lua.globals().get("package").unwrap();
+    let loaders: LuaTable = match package.get("loaders").unwrap() {
+        LuaValue::Table(loaders) => loaders,
+        LuaValue::Nil => package.get("searchers").unwrap(),
+        _ => panic!("Unable to find approprate interface to inject embedded loader"),
+    };
+    loaders
+        .push(LuaFunction::wrap(|lua, module: String| unsafe {
+            match module.as_str() {
+                "fontmetrics" => lua
+                    .create_c_function(luaopen_fontmetrics)
+                    .map(LuaValue::Function),
+                "justenoughfontconfig" => lua
+                    .create_c_function(luaopen_justenoughfontconfig)
+                    .map(LuaValue::Function),
+                "justenoughharfbuzz" => lua
+                    .create_c_function(luaopen_justenoughharfbuzz)
+                    .map(LuaValue::Function),
+                "justenoughicu" => lua
+                    .create_c_function(luaopen_justenoughicu)
+                    .map(LuaValue::Function),
+                "justenoughlibtexpdf" => lua
+                    .create_c_function(luaopen_justenoughlibtexpdf)
+                    .map(LuaValue::Function),
+                "svg" => lua.create_c_function(luaopen_svg).map(LuaValue::Function),
+                _ => format!("C Module '{module}' is not linked in Rust binary").into_lua(lua),
+            }
+        }))
+        .unwrap();
+    loaders
+        .push(LuaFunction::wrap(|lua, module: String| {
+            let module_path = module.replace('.', "/");
+            let luaversion: LuaString = lua
+                .load(chunk! {
+                  return _VERSION:match("%d+%.%d+")
+                })
+                .eval()
+                .unwrap();
+            let luaversion: &str = luaversion.to_str().unwrap();
+            let mut package_epath: Vec<&str> = vec!["?/init.lua", "?.lua", "lua-libraries/?.lua"];
+            let path = format!("lua_modules/lib/lua/{}/?/init.lua", luaversion);
+            package_epath.push(&path);
+            let path = format!("lua_modules/lib/lua/{}/?.lua", luaversion);
+            package_epath.push(&path);
+            let path = format!("lua_modules/share/lua/{}/?/init.lua", luaversion);
+            package_epath.push(&path);
+            let path = format!("lua_modules/share/lua/{}/?.lua", luaversion);
+            package_epath.push(&path);
+            let mut resource_option: Option<EmbeddedFile> = None;
+            for pattern in &package_epath {
+                let path = pattern.replace('?', &module_path);
+                let embedded = SileModules::get(&path);
+                if embedded.is_some() {
+                    resource_option = embedded;
+                    break;
+                }
+            }
+            match resource_option {
+                Some(module) => {
+                    return LuaFunction::wrap(move |lua, ()| {
+                        let data = str::from_utf8(module.data.as_ref())
+                            .expect("Embedded content is not valid UTF-8");
+                        lua.load(data).call::<_, LuaValue>(())
+                    })
+                    .into_lua(lua)
+                }
+                None => format!("Module '{module}' is not embedded in Rust binary").into_lua(lua),
+            }
+        }))
+        .unwrap();
+    loaders
+        .push(LuaFunction::wrap(|lua, module: String| {
+            let module_path = module.replace('.', "/");
+            let pattern = "?.ftl";
+            let path = pattern.replace('?', &module_path);
+            match SileModules::get(&path) {
+                Some(module) => LuaFunction::wrap(move |lua, ()| {
+                    let data = str::from_utf8(module.data.as_ref())
+                        .expect("Embedded content is not valid UTF-8");
+                    lua.load(chunk! {
+                        return assert(fluent:add_messages($data))
+                    })
+                    .call::<_, LuaValue>(())
+                })
+                .into_lua(lua),
+                None => format!("FTL resource '{module_path}' is not embedded in Rust binary")
+                    .into_lua(lua),
+            }
+        }))
+        .unwrap();
+}

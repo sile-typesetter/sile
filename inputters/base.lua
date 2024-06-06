@@ -1,3 +1,6 @@
+--- SILE inputter class.
+-- @interfaces inputters
+
 local _deprecated = [[
   You appear to be using a document class '%s' programmed for SILE <= v0.12.5.
   This system was refactored in v0.13.0 and the shims trying to make it
@@ -12,9 +15,7 @@ inputter._name = "base"
 inputter._docclass = nil
 
 function inputter:_init (options)
-   if options then
-      self.options = options
-   end
+   self.options = options or {}
 end
 
 function inputter:classInit (options)
@@ -51,13 +52,9 @@ function inputter:process (doc)
    return SILE.process(tree)
 end
 
--- Just a simple one-level find. We're not reimplementing XPath here.
 function inputter.findInTree (_, tree, command)
-   for i = 1, #tree do
-      if type(tree[i]) == "table" and tree[i].command == command then
-         return tree[i]
-      end
-   end
+   SU.deprecated("SILE.inputter:findInTree", "SU.ast.findInTree", "0.15.0", "0.17.0")
+   return SU.ast.findInTree(tree, command)
 end
 
 local function process_ambles (ambles)
@@ -75,7 +72,8 @@ local function process_ambles (ambles)
             amble, options = amble.pack, amble.options
          end
          if amble.type == "package" then
-            amble(options)
+            local class = SILE.documentState.documentClass
+            class:loadPackage(amble, options)
          else
             SILE.documentState.documentClass:initPackage(amble, options)
          end

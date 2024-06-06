@@ -10,7 +10,7 @@ local function startGridInFrame (typesetter)
       return
    end -- Ensure the frame hook isn't effective when grid is off
    local queue = typesetter.state.outputQueue
-   typesetter.frame.state.totals.gridCursor = SILE.measurement(0)
+   typesetter.frame.state.totals.gridCursor = SILE.types.measurement(0)
    if #queue == 0 then
       typesetter.state.previousVbox = typesetter:pushVbox()
       return
@@ -19,7 +19,7 @@ local function startGridInFrame (typesetter)
       table.remove(queue, 1)
    end
    if queue[1] then
-      table.insert(queue, 1, SILE.nodefactory.vbox())
+      table.insert(queue, 1, SILE.types.node.vbox())
       table.insert(queue, 2, SILE.typesetter:leadingFor(queue[2], queue[1]))
    end
 end

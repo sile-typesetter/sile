@@ -3,8 +3,8 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "boustrophedon"
 
-function package:_init (class)
-   base._init(self, class)
+function package:_init (options)
+   base._init(self, options)
    SILE.hyphenator.languages.grc = { patterns = {} }
    SILE.nodeMakers.grc = pl.class(SILE.nodeMakers.unicode)
    function SILE.nodeMakers.grc.iterator (node, items)
@@ -13,7 +13,7 @@ function package:_init (class)
             node:addToken(items[i].text, items[i])
             node:makeToken()
             node:makePenalty()
-            coroutine.yield(SILE.nodefactory.glue("0pt plus 2pt"))
+            coroutine.yield(SILE.types.node.glue("0pt plus 2pt"))
          end
       end)
    end
@@ -43,7 +43,7 @@ function package:registerCommands ()
             end
          end
          if startdir == dir then
-            local restore = SILE.nodefactory.vbox({})
+            local restore = SILE.types.node.vbox({})
             restore.outputYourself = function (_, typesetter, _)
                typesetter.frame.direction = startdir
                typesetter.frame:newLine()

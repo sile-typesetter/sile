@@ -101,10 +101,10 @@ local function typesetAST (options, content)
          else
             seenCommandWithoutArg = true
          end
-      elseif ast.id == "texlike_stuff" or (not ast.command and not ast.id) then
+      elseif ast.id == "content" or (not ast.command and not ast.id) then
          -- Due to the way it is implemented, the SILE-inputter may generate such
          -- nodes in the AST. It's poorly documented, so it's not clear why they
-         -- are even kept there (esp. the "texlike_stuff" nodes), but anyhow, as
+         -- are even kept there (esp. the "content" nodes), but anyhow, as
          -- far as autodoc is concerned for presentation purposes, just
          -- recurse into them.
          typesetAST(options, ast)
@@ -139,7 +139,7 @@ end
 
 function package:registerRawHandlers ()
    self:registerRawHandler("autodoc:codeblock", function (options, content)
-      SILE.call("autodoc:codeblock", options, { content[1] }) -- Still issues with SU.contentToString() witb raw content
+      SILE.call("autodoc:codeblock", options, { content[1] }) -- Still issues with SU.ast.contentToString() witb raw content
    end)
 end
 
@@ -379,14 +379,14 @@ function package:registerCommands ()
          -- (and try to better enforce novbreak points of insertion)
          SILE.call("verbatim:font")
          -- Rather than absolutizing 4 different values, just do it once and cache it
-         local ex = SILE.measurement("1ex"):absolute()
+         local ex = SILE.types.measurement("1ex"):absolute()
          SILE.typesetter:leaveHmode()
          SILE.settings:set("typesetter.parseppattern", "\n")
          SILE.settings:set("typesetter.obeyspaces", true)
-         SILE.settings:set("document.parindent", SILE.nodefactory.glue())
-         SILE.settings:set("document.parskip", SILE.nodefactory.vglue(0.3 * ex))
-         SILE.settings:set("document.baselineskip", SILE.nodefactory.glue(2.3 * ex))
-         SILE.settings:set("document.spaceskip", SILE.length("1spc"))
+         SILE.settings:set("document.parindent", SILE.types.node.glue())
+         SILE.settings:set("document.parskip", SILE.types.node.vglue(0.3 * ex))
+         SILE.settings:set("document.baselineskip", SILE.types.node.glue(2.3 * ex))
+         SILE.settings:set("document.spaceskip", SILE.types.length("1spc"))
          SILE.settings:set("shaper.variablespaces", false)
          SILE.settings:set("document.language", "und")
          SILE.typesetter:leaveHmode()
@@ -421,12 +421,12 @@ function package:registerCommands ()
 
    self:registerCommand("autodoc:note", function (_, content)
       -- Replacing the \note command from the original SILE manual...
-      local linedimen = SILE.length("0.75em")
-      local linethickness = SILE.length("0.3pt")
-      local ls = SILE.settings:get("document.lskip") or SILE.nodefactory.glue()
+      local linedimen = SILE.types.length("0.75em")
+      local linethickness = SILE.types.length("0.3pt")
+      local ls = SILE.settings:get("document.lskip") or SILE.types.node.glue()
       local p = SILE.settings:get("document.parindent")
       local leftindent = (p.width:absolute() + ls.width:absolute()).length -- fixed part
-      local innerindent = SILE.measurement("1em"):absolute()
+      local innerindent = SILE.types.measurement("1em"):absolute()
       SILE.settings:temporarily(function ()
          SILE.settings:set("document.lskip", leftindent)
          SILE.settings:set("document.rskip", leftindent)
@@ -442,8 +442,8 @@ function package:registerCommands ()
             SILE.call("noindent")
             SILE.call("novbreak")
             SILE.settings:temporarily(function ()
-               SILE.settings:set("document.lskip", SILE.nodefactory.glue(leftindent + innerindent))
-               SILE.settings:set("document.rskip", SILE.nodefactory.glue(leftindent + innerindent))
+               SILE.settings:set("document.lskip", SILE.types.node.glue(leftindent + innerindent))
+               SILE.settings:set("document.rskip", SILE.types.node.glue(leftindent + innerindent))
                SILE.call("font", { size = "0.95em", style = "italic " }, content)
                SILE.call("novbreak")
             end)

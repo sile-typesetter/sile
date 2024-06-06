@@ -22,6 +22,7 @@ outputter._name = "cairo"
 outputter.extension = "pdf"
 
 function outputter:_init ()
+   base._init(self)
    local fname = self:getOutputFilename()
    local surface = cairolgi.PdfSurface.create(
       fname == "-" and "/dev/stdout" or fname,
@@ -133,6 +134,11 @@ function outputter:debugHbox (hbox, scaledWidth)
    cr:stroke()
    cr:set_source_rgb(0, 0, 0)
    cr:move_to(x, y)
+end
+
+-- untested
+function outputter.drawRaw (_, literal)
+   cr:show_text(literal)
 end
 
 return outputter

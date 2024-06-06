@@ -1,6 +1,8 @@
 \begin[papersize=a5,class=book]{document}
+\nofolios
+\neverindent
 \use[module=packages.frametricks]
-\right-running-head{First Line of Header\skip[height=8mm] Second Line of Header}
+\right-running-head{First Line of Header\skip[height=6pt] Second Line of Header}
 \showframe[id=all]
 
 First page text

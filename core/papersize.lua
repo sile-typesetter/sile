@@ -67,7 +67,7 @@ setmetatable(papersize, {
       local geometry
       local _, _, x, y = string.find(size, "(.+)%s+x%s+(.+)")
       if x and y then
-         geometry = { SILE.measurement(x):tonumber(), SILE.measurement(y):tonumber() }
+         geometry = { SILE.types.measurement(x):tonumber(), SILE.types.measurement(y):tonumber() }
       else
          local preset_name = string.lower(size:gsub("[-%s]+", ""))
          geometry = self[preset_name]

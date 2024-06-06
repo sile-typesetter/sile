@@ -14,7 +14,7 @@ local function buildPage (typesetter, independent)
    end
 
    local colCount = 0
-   local target = SILE.length()
+   local target = SILE.types.length()
    while frame and frame.balanced == true do
       target = target + frame:height()
       colCount = colCount + 1
@@ -33,7 +33,7 @@ local function buildPage (typesetter, independent)
    -- of frame space on the page, and there are no magic requests to balance the
    -- columns, then we have a full page. Just send it out normally.
    local q = typesetter.state.outputQueue
-   local totalHeight = SILE.length()
+   local totalHeight = SILE.types.length()
    local mustBalance = 0
    for i = 1, #q do
       totalHeight = totalHeight + q[i].height + q[i].depth
@@ -69,7 +69,7 @@ local function buildPage (typesetter, independent)
    end
    typesetter.state.lastPenalty = 0
    local oldPageBuilder = SILE.pagebuilder
-   SILE.pagebuilder = require("core.pagebuilder")()
+   SILE.pagebuilder = SILE.pagebuilders.base()
    while typesetter.frame and typesetter.frame.balanced do
       unbalanced_buildPage(typesetter, true)
       if typesetter.frame.next and SILE.getFrame(typesetter.frame.next).balanced == true then
@@ -86,8 +86,8 @@ local function buildPage (typesetter, independent)
    return true
 end
 
-function package:_init (class)
-   base._init(self, class)
+function package:_init (options)
+   base._init(self, options)
    self.class:registerPostinit(function (_)
       if not unbalanced_buildPage then
          unbalanced_buildPage = SILE.typesetter.buildPage

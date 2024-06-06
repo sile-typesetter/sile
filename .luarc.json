@@ -7,10 +7,14 @@
         "luautf8",
         "pl",
         "fluent",
-        "extendSilePath",
         "executablePath",
-        "SYSTEM_SILE_PATH",
-        "SHARED_LIB_EXT"
+        "extendSilePath"
+    ],
+    "Lua.workspace.ignoreDir": [
+        "languages",
+        "lua-libraries",
+        "spec",
+        "tests"
     ],
     "workspace.preloadFileSize": 5120,
     "workspace.checkThirdParty": false

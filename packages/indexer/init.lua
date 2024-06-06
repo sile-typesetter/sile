@@ -79,8 +79,8 @@ function package:registerCommands ()
 
    self:registerCommand("index:item", function (options, content)
       SILE.settings:temporarily(function ()
-         SILE.settings:set("typesetter.parfillskip", SILE.nodefactory.glue())
-         SILE.settings:set("current.parindent", SILE.nodefactory.glue())
+         SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+         SILE.settings:set("current.parindent", SILE.types.node.glue())
          SILE.call("code", {}, content)
          -- Ideally, leaders
          SILE.call("hss")

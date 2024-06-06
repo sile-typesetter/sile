@@ -4,8 +4,8 @@ package = "@TRANSFORMED_PACKAGE_NAME@"
 version = "dev-@ROCKREV@"
 
 source = {
-      url = "git+https://github.com/sile-typesetter/sile.git",
-      branch = "master",
+   url = "git+https://github.com/sile-typesetter/sile.git",
+   branch = "master",
 }
 
 description = {
@@ -29,7 +29,6 @@ dependencies = {
    "cassowary == 2.3.2-1",
    "cldr == 0.3.0-0",
    "compat53 == 0.13-1", -- only required on Lua < 5.3
-   "cosmo == 16.06.04-1",
    "fluent == 0.2.0-0",
    "linenoise == 0.9-1",
    "loadkit == 1.1.0-1",

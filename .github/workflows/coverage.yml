@@ -60,10 +60,8 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
-            --enable-developer LUACHECK=false NIX=false STYLUA=false \
+            --enable-developer-mode LDOC=false LUACHECK=false NIX=false DELTA=cat STYLUA=false \
             --disable-font-variations \
-            --without-system-luarocks \
-            --with-luajit \
             --without-manual
       - name: Make
         run: |

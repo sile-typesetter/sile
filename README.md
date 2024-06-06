@@ -138,12 +138,12 @@ Additionally the latest release will be tagged `latest`, and a `master` tag is a
 In order to be useful you need to tell the Docker run command a way to reach your source documents.
 This is done by mounting your project directory inside the container.
 This also gives SILE a place to write the output.
-For ownership and permissions of output generated inside the container to match the host, the expected user ids need to be passed as well.
+The user and group IDs of the Docker user will be automatically adjusted to match those of the directory you mounted.
 
 You may find it easiest to do all this with an alias like this:
 
 ```console
-$ alias sile='docker run -it --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest'
+$ alias sile='docker run -it --volume "$(pwd):/data" siletypesetter/sile:latest'
 $ sile input.sil
 ```
 
@@ -154,7 +154,7 @@ You can see where fonts are found on your system using `fc-list`.
 The path of your choosing from the host system should be mounted as a volume on `/fonts` inside the container like this:
 
 ```console
-$ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" --user "$(id -u):$(id -g)" siletypesetter/sile:latest
+$ docker run -it --volume "/usr/share/fonts:/fonts" --volume "$(pwd):/data" siletypesetter/sile:latest
 ```
 
 #### Nix
@@ -194,13 +194,21 @@ $ nix run github:sile-typesetter/sile/develop -- <sile arguments>
 
 SILE source code can be downloaded from [its website][sile] or directly from [the GitHub releases page][releases].
 
-SILE is written in the Lua programming language, so you will need a working Lua installation on your system.
-Lua 5.1, 5.2, 5.3, 5.4, and LuaJIT (2.0, 2.1, or OpenResty) are all fully supported.
+SILE is completely programmable using the Lua programming language.
+As of v0.15.0, the CLI you actually execute is a Rust binary with a Lua VM built in.
+(For compatiblity and demonstration purposes a pure Lua version of the CLI is still available as \code{sile-lua}.)
+The Rust binary can be built based on your system's Lua sources or use its own vendored Lua sources.
+All SILE's Lua code takes a lowest-common-denominator approach to Lua compatibility.
+Any of Lua 5.1, 5.2, 5.3, 5.4, or LuaJIT (2.0, 2.1, or OpenResty) are fully supported.
+Compiling it to match your system's Lua version has the advantage of making it easy to access system installed Lua Rocks, but this is not a requirement.
+
+Compiling from sources will require both a Rust toolchain and Lua sources.
+At runtime no Rust tooling is required, and the system Lua interpreter is not actually used.
 
 It also relies on external libraries to access fonts and write PDF files.
-Its preferred combination of libraries is [Harfbuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX.
-Harfbuzz (minimum version 1.1.3) should be available from your operating system’s package manager.
-For Harfbuzz to work you will also need fontconfig installed.
+Its preferred combination of libraries is [HarfBuzz][harfbuzz] and [libtexpdf][], a PDF creation library extracted from TeX.
+HarfBuzz (minimum version 2.7.4) should be available from your operating system’s package manager.
+For HarfBuzz to work you will also need fontconfig installed.
 SILE also requires the [ICU][icu] libraries for Unicode handling.
 
 On macOS, ICU can be installed via Homebrew:
@@ -234,7 +242,7 @@ $ ./bootstrap.sh
 
 If you just plan on installing and using SILE, the default configure options (plus any Lua related options discussed above) should be fine.
 If you plan on developing SILE itself (whether to just tinker with it for your own use or contribute upstream) there is one particularly useful configuration option.
-You can add `--enable-developer` will set the 'installed data' directory to the source location which will enable the compiled binary to run directly from the source directory without being installed at all.
+You can add `--enable-developer-mode` will set the 'installed data' directory to the source location which will enable the compiled binary to run directly from the source directory without being installed at all.
 Additionally it will enable checks for tooling we expect SILE contributors to have such as tools used for testing.
 Using this options also enables a number of targets that wouldn’t normally be needed by end users such as `make regressions`.
 
@@ -245,7 +253,7 @@ $ ./configure
 $ make
 ```
 
-If you just want to mess with SILE locally you can stop here (especially if you used `--enable-developer`).
+If you just want to mess with SILE locally you can stop here (especially if you used `--enable-developer-mode`).
 However to actually install, you will need to run the installation command with system permissions.
 
 ```console

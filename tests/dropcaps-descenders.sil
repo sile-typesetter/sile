@@ -1,7 +1,8 @@
 \begin[papersize=a6]{document}
+\use[module=packages.retrograde,target=v0.15.0]
 \nofolios
 \neverindent
-\script[src=packages/dropcaps]
+\use[module=packages.dropcaps]
 \set[parameter=document.baselineskip, value=1.2em]
 \font[family=Cormorant Infant, size=11pt]
 % Normal I

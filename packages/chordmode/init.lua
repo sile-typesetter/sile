@@ -13,7 +13,7 @@ function package.declareSettings (_)
    SILE.settings:declare({
       parameter = "chordmode.offset",
       type = "length",
-      default = SILE.length("2ex"),
+      default = SILE.types.length("2ex"),
       help = "Vertical offset between the chord name and the text.",
    })
 end
@@ -24,7 +24,7 @@ function package:registerCommands ()
          SILE.call("chordmode:chordfont", {}, { options.name })
       end)
       local origWidth = chordBox.width
-      chordBox.width = SILE.length()
+      chordBox.width = SILE.types.length()
 
       SILE.call("raise", { height = SILE.settings:get("chordmode.offset") }, function ()
          SILE.typesetter:pushHbox(chordBox)
@@ -32,7 +32,7 @@ function package:registerCommands ()
 
       local lyricBox = SILE.call("hbox", {}, content)
       if lyricBox.width < origWidth then
-         lyricBox.width = origWidth + SILE.length("0.5em"):absolute()
+         lyricBox.width = origWidth + SILE.types.length("0.5em"):absolute()
       end
       local chordLineHeight = chordBox.height + SILE.settings:get("chordmode.offset"):absolute()
       if chordLineHeight > lyricBox.height then

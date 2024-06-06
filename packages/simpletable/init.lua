@@ -51,7 +51,7 @@ function package:_init (options)
          local tbl = {}
          table.insert(SILE.scratch.simpletable.tables, tbl)
          SILE.settings:temporarily(function ()
-            SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+            SILE.settings:set("document.parindent", SILE.types.node.glue())
             SILE.process(content)
          end)
          SILE.typesetter:leaveHmode()
@@ -74,7 +74,7 @@ function package:_init (options)
          until not stuffInThisColumn
          -- Now set each row at the given column width
          SILE.settings:temporarily(function ()
-            SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+            SILE.settings:set("document.parindent", SILE.types.node.glue())
             for row = 1, #tbl do
                for colno = 1, #tbl[row] do
                   local hbox = tbl[row][colno].hbox

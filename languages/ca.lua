@@ -33,7 +33,7 @@ SILE.hyphenator.languages["ca"].hyphenateSegments = function (node, segments, j)
    else
       hyphen = SILE.shaper:createNnodes(hyphenChar, node.options)
    end
-   local discretionary = SILE.nodefactory.discretionary({ replacement = replacement, prebreak = hyphen })
+   local discretionary = SILE.types.node.discretionary({ replacement = replacement, prebreak = hyphen })
    return discretionary, segments
 end
 

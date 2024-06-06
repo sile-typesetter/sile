@@ -1,11 +1,11 @@
 exclude = {
-	".lua",
-	".luarocks",
-	"lua_modules",
-	"lua%-libraries",
-	"home/runner",
-	"usr/share",
-	".+_spec",
-	"tests",
+   ".lua",
+   ".luarocks",
+   "lua_modules",
+   "lua%-libraries",
+   "home/runner",
+   "usr/share",
+   ".+_spec",
+   "tests",
 }
 includeuntestedfiles = true

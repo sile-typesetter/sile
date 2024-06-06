@@ -1,3 +1,6 @@
+--- jbook document class.
+-- @use classes.jbook
+
 local tbook = require("classes.tbook")
 
 local class = pl.class(tbook)

@@ -27,9 +27,9 @@ end
 
 -- \hfill (from the "plain" class) and \leaders (from the "leaders" package) use glues,
 -- so we behave the same for hrulefill.
-local hrulefillglue = pl.class(SILE.nodefactory.hfillglue)
-hrulefillglue.raise = SILE.measurement()
-hrulefillglue.thickness = SILE.measurement("0.2pt")
+local hrulefillglue = pl.class(SILE.types.node.hfillglue)
+hrulefillglue.raise = SILE.types.measurement()
+hrulefillglue.thickness = SILE.types.measurement("0.2pt")
 
 function hrulefillglue:outputYourself (typesetter, line)
    local outputWidth = SU.rationWidth(self.width, self.width, line.ratio):tonumber()
@@ -98,7 +98,7 @@ function package:registerCommands ()
 
       SILE.typesetter:pushExplicitGlue(hrulefillglue({
          raise = raise,
-         thickness = thickness or SILE.measurement("0.2pt"),
+         thickness = thickness or SILE.types.measurement("0.2pt"),
       }))
    end, "Add a huge horizontal hrule glue")
 
@@ -106,38 +106,15 @@ function package:registerCommands ()
       local thickness = SU.cast("measurement", options.thickness or "0.2pt")
       local raise = SU.cast("measurement", options.raise or "0.5em")
 
-      -- BEGIN DEPRECATION COMPATIBILITY
       if options.height then
          SU.deprecated("\\fullrule[…, height=…]", "\\fullrule[…, thickness=…]", "0.13.1", "0.15.0")
-         thickness = SU.cast("measurement", options.height)
       end
       if not SILE.typesetter:vmode() then
          SU.deprecated("\\fullrule in horizontal mode", "\\hrule or \\hrulefill", "0.13.1", "0.15.0")
-         if options.width then
-            SU.deprecated("\\fullrule with width", "\\hrule and \\raise", "0.13.1", "0.15.0")
-            SILE.call("raise", { height = raise }, function ()
-               SILE.call("hrule", {
-                  height = thickness,
-                  width = options.width,
-               })
-            end)
-         else
-            -- This was very broken anyway, as it was overflowing the line.
-            -- At least we try better...
-            SILE.call("hrulefill", { raise = raise, thickness = thickness })
-         end
-         return
       end
       if options.width then
          SU.deprecated("\\fullrule with width", "\\hrule and \\raise", "0.13.1 ", "0.15.0")
-         SILE.call("raise", { height = raise }, function ()
-            SILE.call("hrule", {
-               height = thickness,
-               width = options.width,
-            })
-         end)
       end
-      -- END DEPRECATION COMPATIBILITY
 
       SILE.typesetter:leaveHmode()
       SILE.call("noindent")
@@ -148,60 +125,40 @@ function package:registerCommands ()
    self:registerCommand("underline", function (_, content)
       local underlinePosition, underlineThickness = getUnderlineParameters()
 
-      local hbox, hlist = SILE.typesetter:makeHbox(content)
-      -- Re-wrap the hbox in another hbox responsible for boxing it at output
-      -- time, when we will know the line contribution and can compute the scaled width
-      -- of the box, taking into account possible stretching and shrinking.
-      SILE.typesetter:pushHbox({
-         inner = hbox,
-         width = hbox.width,
-         height = hbox.height,
-         depth = hbox.depth,
-         outputYourself = function (node, typesetter, line)
-            local oldX = typesetter.frame.state.cursorX
-            local Y = typesetter.frame.state.cursorY
+      SILE.typesetter:liner("underline", content, function (box, typesetter, line)
+         local oldX = typesetter.frame.state.cursorX
+         local Y = typesetter.frame.state.cursorY
 
-            -- Build the original hbox.
-            -- Cursor will be moved by the actual definitive size.
-            node.inner:outputYourself(SILE.typesetter, line)
-            local newX = typesetter.frame.state.cursorX
+         -- Build the content.
+         -- Cursor will be moved by the actual definitive size.
+         box:outputContent(typesetter, line)
+         local newX = typesetter.frame.state.cursorX
 
-            -- Output a line.
-            -- NOTE: According to the OpenType specs, underlinePosition is "the suggested distance of
-            -- the top of the underline from the baseline" so it seems implied that the thickness
-            -- should expand downwards
-            SILE.outputter:drawRule(oldX, Y - underlinePosition, newX - oldX, underlineThickness)
-         end,
-      })
-      SILE.typesetter:pushHlist(hlist)
+         -- Output a line.
+         -- NOTE: According to the OpenType specs, underlinePosition is "the suggested distance of
+         -- the top of the underline from the baseline" so it seems implied that the thickness
+         -- should expand downwards
+         SILE.outputter:drawRule(oldX, Y - underlinePosition, newX - oldX, underlineThickness)
+      end)
    end, "Underlines some content")
 
    self:registerCommand("strikethrough", function (_, content)
       local yStrikeoutPosition, yStrikeoutSize = getStrikethroughParameters()
 
-      local hbox, hlist = SILE.typesetter:makeHbox(content)
-      -- Re-wrap the hbox in another hbox responsible for boxing it at output
-      -- time, when we will know the line contribution and can compute the scaled width
-      -- of the box, taking into account possible stretching and shrinking.
-      SILE.typesetter:pushHbox({
-         inner = hbox,
-         width = hbox.width,
-         height = hbox.height,
-         depth = hbox.depth,
-         outputYourself = function (node, typesetter, line)
-            local oldX = typesetter.frame.state.cursorX
-            local Y = typesetter.frame.state.cursorY
-            -- Build the original hbox.
-            -- Cursor will be moved by the actual definitive size.
-            node.inner:outputYourself(SILE.typesetter, line)
-            local newX = typesetter.frame.state.cursorX
-            -- Output a line.
-            -- NOTE: The OpenType spec is not explicit regarding how the size
-            -- (thickness) affects the position. We opt to distribute evenly
-            SILE.outputter:drawRule(oldX, Y - yStrikeoutPosition - yStrikeoutSize / 2, newX - oldX, yStrikeoutSize)
-         end,
-      })
-      SILE.typesetter:pushHlist(hlist)
+      SILE.typesetter:liner("strikethrough", content, function (box, typesetter, line)
+         local oldX = typesetter.frame.state.cursorX
+         local Y = typesetter.frame.state.cursorY
+
+         -- Build the content.
+         -- Cursor will be moved by the actual definitive size.
+         box:outputContent(typesetter, line)
+         local newX = typesetter.frame.state.cursorX
+
+         -- Output a line.
+         -- NOTE: The OpenType spec is not explicit regarding how the size
+         -- (thickness) affects the position. We opt to distribute evenly
+         SILE.outputter:drawRule(oldX, Y - yStrikeoutPosition - yStrikeoutSize / 2, newX - oldX, yStrikeoutSize)
+      end)
    end, "Strikes out some content")
 
    self:registerCommand("boxaround", function (_, content)
@@ -257,6 +214,8 @@ So, they can appear in the middle of a paragraph, like this:
 The \autodoc:command{\underline} command \underline{underlines} its content.
 
 The \autodoc:command{\strikethrough} command \strikethrough{strikes} its content.
+
+Both commands support paragraph content spanning multiple lines.
 
 \autodoc:note{The position and thickness of the underlines and strikethroughs are based on the metrics of the current font, honoring the values defined by the type designer.}
 

@@ -1,3 +1,6 @@
+--- jplain document class.
+-- @use classes.jplain
+
 -- Basic! Transitional! In development! Not very good! Don't use it!
 local tplain = require("classes.tplain")
 

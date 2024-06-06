@@ -1,3 +1,6 @@
+--- docbook document class.
+-- @use classes.docbook
+
 local plain = require("classes.plain")
 
 local class = pl.class(plain)
@@ -22,7 +25,7 @@ function class:_init (options)
    -- SILE sensibly does not define a pixels unit because it has no meaning in its frame of reference. However the
    -- Docbook standard requires them and even defaults to them for bare numbers, even while warning against their use.
    -- Here we define a px arbitrarily to be the equivalent point unit if output was 300 DPI.
-   SILE.units.px = {
+   SILE.types.unit.px = {
       definition = "0.24pt",
    }
 end

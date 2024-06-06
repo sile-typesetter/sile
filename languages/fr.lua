@@ -1,4 +1,5 @@
--- French language rules
+--- French language rules
+-- @submodule languages
 
 local computeSpaces = function ()
    -- Computes:
@@ -12,9 +13,9 @@ local computeSpaces = function ()
    local stretch = SILE.settings:get("shaper.spacestretchfactor")
    local shrink = SILE.settings:get("shaper.spaceshrinkfactor")
    return {
-      colonspace = SILE.length(enlargement .. "spc plus " .. stretch .. "spc minus " .. shrink .. "spc"),
-      thinspace = SILE.length((0.5 * enlargement) .. "spc"),
-      guillspace = SILE.length(
+      colonspace = SILE.types.length(enlargement .. "spc plus " .. stretch .. "spc minus " .. shrink .. "spc"),
+      thinspace = SILE.types.length((0.5 * enlargement) .. "spc"),
+      guillspace = SILE.types.length(
          (0.8 * enlargement) .. "spc plus " .. (0.3 * stretch) .. "spc minus " .. (0.8 * shrink) .. "spc"
       ),
    }
@@ -27,21 +28,21 @@ local spaces = computeSpaces()
 SILE.settings:declare({
    parameter = "languages.fr.colonspace",
    type = "kern",
-   default = SILE.nodefactory.kern(spaces.colonspace),
+   default = SILE.types.node.kern(spaces.colonspace),
    help = "The amount of space before a colon, theoretically a non-breakable, shrinkable, stretchable inter-word space",
 })
 
 SILE.settings:declare({
    parameter = "languages.fr.thinspace",
    type = "kern",
-   default = SILE.nodefactory.kern(spaces.thinspace),
+   default = SILE.types.node.kern(spaces.thinspace),
    help = "The amount of space before high punctuations, theoretically a fixed, non-breakable space, around half the inter-word space",
 })
 
 SILE.settings:declare({
    parameter = "languages.fr.guillspace",
    type = "kern",
-   default = SILE.nodefactory.kern(spaces.guillspace),
+   default = SILE.types.node.kern(spaces.guillspace),
    help = "The amount of space applying to guillemets, theoretically smaller than a non-breakable inter-word space, with reduced stretchability",
 })
 
@@ -55,7 +56,7 @@ SILE.settings:declare({
 local getSpaceGlue = function (options, parameter)
    local sg
    if SILE.settings:get("languages.fr.debugspace") then
-      sg = SILE.nodefactory.kern("5spc")
+      sg = SILE.types.node.kern("5spc")
    else
       sg = SILE.settings:get(parameter)
    end
@@ -69,6 +70,9 @@ local getSpaceGlue = function (options, parameter)
       SILE.settings:set("font.filename", options.filename)
       sg = sg:absolute()
    end)
+   -- Track a subtype on that kern:
+   -- See automated italic correction at the typesetter level.
+   sg.subtype = "punctspace"
    return sg
 end
 

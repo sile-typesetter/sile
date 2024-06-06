@@ -15,8 +15,8 @@ function package:registerCommands ()
       for i = 1, maxg - 1 do
          local wd = metrics.glyphwidth(i, face)
          SILE.typesetter:pushHbox({
-            height = SILE.length(1.2 * fontoptions.size),
-            width = SILE.length(wd * fontoptions.size),
+            height = SILE.types.length(1.2 * fontoptions.size),
+            width = SILE.types.length(wd * fontoptions.size),
             depth = 0,
             value = { options = fontoptions, glyphString = { i } },
          })

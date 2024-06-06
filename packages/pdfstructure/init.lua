@@ -81,7 +81,7 @@ function package:_init ()
    local stRoot = stNode("Document")
    stPointer = stRoot
    self:loadPackage("pdf")
-   function SILE.outputters.libtexpdf._endHook (_)
+   SILE.outputter:registerHook("prefinish", function ()
       local catalog = pdf.get_dictionary("Catalog")
       local structureTree = pdf.parse("<< /Type /StructTreeRoot >>")
       pdf.add_dict(catalog, pdf.parse("/StructTreeRoot"), pdf.reference(structureTree))
@@ -94,7 +94,7 @@ function package:_init ()
       if structureTree then
          pdf.release(structureTree)
       end
-   end
+   end)
 end
 
 function package:registerCommands ()
@@ -123,6 +123,24 @@ function package:registerCommands ()
       actualtext[#actualtext] = nil
       stPointer = oldstPointer
    end)
+
+   self:registerCommand("pdf:literal", function (_, content)
+      -- NOTE: This method is used by the pdfstructure package and should
+      -- probably be moved elsewhere, so there's no attempt here to delegate
+      -- the low-level libtexpdf call to te outputter.
+      if SILE.outputter._name ~= "libtexpdf" then
+         SU.error("pdf package requires libtexpdf backend")
+      end
+      SILE.typesetter:pushHbox({
+         value = nil,
+         height = SILE.types.measurement(0),
+         width = SILE.types.measurement(0),
+         depth = SILE.types.measurement(0),
+         outputYourself = function (_, _, _)
+            SILE.outputter:drawRaw(content[1])
+         end,
+      })
+   end)
 end
 
 package.documentation = [[
@@ -131,7 +149,8 @@ package.documentation = [[
 \pdf:structure[type=P]{%
 For PDF documents to be considered accessible, they must contain a description of the PDF’s document structure.
 This package allows structure trees to be created and saved to the PDF file.
-Currently this provides a low-level interface to creating nodes in the tree; classes which require PDF accessibility should use the \autodoc:command{\pdf:structure} command in their sectioning implementation to declare the document structure.
+Currently this provides a low-level interface to creating nodes in the tree;
+   classes which require PDF accessibility should use the \autodoc:command{\pdf:structure} command in their sectioning implementation to declare the document structure.
 }
 
 \pdf:structure[type=P]{%

@@ -59,12 +59,12 @@ local debugging = false
 function lineBreak:init ()
    self:trimGlue() -- 842
    -- 849
-   self.activeWidth = SILE.length()
-   self.curActiveWidth = SILE.length()
-   self.breakWidth = SILE.length()
+   self.activeWidth = SILE.types.length()
+   self.curActiveWidth = SILE.types.length()
+   self.breakWidth = SILE.types.length()
    -- 853
-   local rskip = (SILE.settings:get("document.rskip") or SILE.nodefactory.glue()).width:absolute()
-   local lskip = (SILE.settings:get("document.lskip") or SILE.nodefactory.glue()).width:absolute()
+   local rskip = (SILE.settings:get("document.rskip") or SILE.types.node.glue()).width:absolute()
+   local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()).width:absolute()
    self.background = rskip + lskip
    -- 860
    self.bestInClass = {}
@@ -82,7 +82,7 @@ function lineBreak:trimGlue () -- 842
    if nodes[#nodes].is_glue then
       nodes[#nodes] = nil
    end
-   nodes[#nodes + 1] = SILE.nodefactory.penalty(inf_bad)
+   nodes[#nodes + 1] = SILE.types.node.penalty(inf_bad)
 end
 
 -- NOTE FOR DEVELOPERS: this method is called when the linebreak.parShape
@@ -110,12 +110,12 @@ end
 local parShapeCache = {}
 
 local grantLeftoverWidth = function (hsize, l, w, r)
-   local width = SILE.measurement(w or hsize)
+   local width = SILE.types.measurement(w or hsize)
    if not w and l then
-      width = width - SILE.measurement(l)
+      width = width - SILE.types.measurement(l)
    end
    if not w and r then
-      width = width - SILE.measurement(r)
+      width = width - SILE.types.measurement(r)
    end
    local remaining = hsize:tonumber() - width:tonumber()
    local left = SU.cast("number", l or (r and (remaining - SU.cast("number", r))) or 0)
@@ -182,14 +182,14 @@ function lineBreak:tryBreak () -- 855
       pi = node.penalty or 0
    end
    if debugging then
-      SU.debug("break", "Trying a ", breakType, "break p =", pi)
+      SU.debug("break", "Trying a", breakType, "break p =", pi)
    end
    self.no_break_yet = true -- We have to store all this state crap in the object, or it's global variables all the way
    self.prev_prev_r = nil
    self.prev_r = self.activeListHead
    self.old_l = 0
    self.r = nil
-   self.curActiveWidth = SILE.length(self.activeWidth)
+   self.curActiveWidth = SILE.types.length(self.activeWidth)
    while true do
       while true do -- allows "break" to function as "continue"
          self.r = self.prev_r.next
@@ -212,7 +212,7 @@ function lineBreak:tryBreak () -- 855
          -- 861
          if self.r.lineNumber > self.old_l then
             if debugging then
-               SU.debug("break", "Minimum demerits = " .. self.minimumDemerits)
+               SU.debug("break", "Minimum demerits =", self.minimumDemerits)
             end
             if self.minimumDemerits < awful_bad and (self.old_l ~= self.easy_line or self.r == self.activeListHead) then
                self:createNewActiveNodes(breakType)
@@ -239,17 +239,17 @@ function lineBreak:tryBreak () -- 855
                end
             end
             if debugging then
-               SU.debug("break", "line width = " .. tostring(self.lineWidth))
+               SU.debug("break", "line width =", self.lineWidth)
             end
          end
          if debugging then
-            SU.debug("break", " ---> (2) cuaw is " .. tostring(self.curActiveWidth))
-            SU.debug("break", " ---> aw is " .. tostring(self.activeWidth))
+            SU.debug("break", " ---> (2) cuaw is", self.curActiveWidth)
+            SU.debug("break", " ---> aw is", self.activeWidth)
          end
          self:considerDemerits(pi, breakType)
          if debugging then
-            SU.debug("break", " <--- cuaw is " .. tostring(self.curActiveWidth))
-            SU.debug("break", " <--- aw is " .. tostring(self.activeWidth))
+            SU.debug("break", " <--- cuaw is", self.curActiveWidth)
+            SU.debug("break", " <--- aw is ", self.activeWidth)
          end
       end
    end
@@ -324,7 +324,7 @@ function lineBreak:tryAlternatives (from, to)
       local badness =
          SU.rateBadness(inf_bad, ss.length.amount, self.curActiveWidth[ss > 0 and "stretch" or "shrink"].length.amount)
       if debugging then
-         SU.debug("break", "  badness of " .. ss .. " (" .. self.curActiveWidth .. ") is " .. badness)
+         SU.debug("break", "  badness of", ss, "(", self.curActiveWidth, ") is", badness)
       end
       if badness < localMinimum then
          self.r.alternates = alternates
@@ -347,18 +347,16 @@ function lineBreak:considerDemerits (pi, breakType) -- 877
    self.artificialDemerits = false
    local nodeStaysActive = false
    -- self:dumpActiveRing()
-   local shortfall = self.lineWidth - self.curActiveWidth
    if self.seenAlternatives then
       self:tryAlternatives(
          self.r.prevBreak and self.r.prevBreak.curBreak or 1,
-         self.r.curBreak and self.r.curBreak or 1,
-         shortfall
+         self.r.curBreak and self.r.curBreak or 1
       )
    end
-   shortfall = self.lineWidth - self.curActiveWidth
+   local shortfall = self.lineWidth - self.curActiveWidth
    self.badness, self.fitClass = fitclass(self, shortfall)
    if debugging then
-      SU.debug("break", self.badness .. " " .. self.fitClass)
+      SU.debug("break", self.badness, self.fitClass)
    end
    if self.badness > inf_bad or pi == ejectPenalty then
       if
@@ -405,7 +403,7 @@ function lineBreak:deactivateR () -- 886
       self.r = self.activeListHead.next
       if self.r.type == "delta" then
          self.activeWidth:___add(self.r.width)
-         self.curActiveWidth = SILE.length(self.activeWidth)
+         self.curActiveWidth = SILE.types.length(self.activeWidth)
          self.activeListHead.next = self.r.next
       end
       if debugging then
@@ -467,19 +465,19 @@ function lineBreak:recordFeasible (pi, breakType) -- 881
       if self.nodes[self.place] then
          SU.debug(
             "break",
-            "@"
-               .. self.nodes[self.place]
-               .. " via @@"
-               .. (self.r.serial or "0")
-               .. " badness="
-               .. self.badness
-               .. " demerit="
-               .. demerit
+            "@",
+            self.nodes[self.place],
+            "via @@",
+            (self.r.serial or "0"),
+            "badness =",
+            self.badness,
+            "demerit =",
+            demerit
          ) -- 882
       else
          SU.debug("break", "@ \\par via @@")
       end
-      SU.debug("break", " fit class = " .. self.fitClass)
+      SU.debug("break", " fit class =", self.fitClass)
    end
    demerit = demerit + self.r.totalDemerits
    if demerit <= self.bestInClass[self.fitClass].minimalDemerits then
@@ -499,7 +497,7 @@ function lineBreak:createNewActiveNodes (breakType) -- 862
    if self.no_break_yet then
       -- 863
       self.no_break_yet = false
-      self.breakWidth = SILE.length(self.background)
+      self.breakWidth = SILE.types.length(self.background)
       local place = self.place
       local node = self.nodes[place]
       if node and node.is_discretionary then -- 866
@@ -517,7 +515,7 @@ function lineBreak:createNewActiveNodes (breakType) -- 862
          place = place + 1
       end
       if debugging then
-         SU.debug("break", "Value of breakWidth = " .. tostring(self.breakWidth))
+         SU.debug("break", "Value of breakWidth =", self.breakWidth)
       end
    end
    -- 869 (Add a new delta node)
@@ -525,11 +523,11 @@ function lineBreak:createNewActiveNodes (breakType) -- 862
       self.prev_r.width:___sub(self.curActiveWidth)
       self.prev_r.width:___add(self.breakWidth)
    elseif self.prev_r == self.activeListHead then
-      self.activeWidth = SILE.length(self.breakWidth)
+      self.activeWidth = SILE.types.length(self.breakWidth)
    else
       local newDelta = { next = self.r, type = "delta", width = self.breakWidth - self.curActiveWidth }
       if debugging then
-         SU.debug("break", "Added new delta node = " .. tostring(newDelta.width))
+         SU.debug("break", "Added new delta node =", newDelta.width)
       end
       self.prev_r.next = newDelta
       self.prev_prev_r = self.prev_r
@@ -546,7 +544,7 @@ function lineBreak:createNewActiveNodes (breakType) -- 862
       local best = self.bestInClass[class]
       local value = best.minimalDemerits
       if debugging then
-         SU.debug("break", "Class is " .. class .. " Best value here is " .. value)
+         SU.debug("break", "Class is", class, "Best value here is", value)
       end
 
       if value <= self.minimumDemerits then
@@ -590,7 +588,7 @@ function lineBreak.dumpBreakNode (_, node)
 end
 
 function lineBreak:describeBreakNode (node)
-   --print("@@" .. b.serial .. ": line " .. (b.lineNumber -1) .. "." .. b.fitness .. " " .. b.type .. " t=".. b.totalDemerits .. " -> @@ " .. (b.prevBreak and b.prevBreak.serial or "0") )
+   --SU.debug("break", "@@", b.serial, ": line", b.lineNumber - 1, ".", b.fitness, b.type, "t=", b.totalDemerits, "-> @@", b.prevBreak and b.prevBreak.serial or "0")
    if node.sentinel then
       return node.sentinel
    end
@@ -705,7 +703,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
    -- 889
    while 1 do
       if debugging then
-         SU.debug("break", "@" .. self.pass .. "pass")
+         SU.debug("break", "@", self.pass, "pass")
       end
       if self.threshold > inf_bad then
          self.threshold = inf_bad
@@ -731,7 +729,7 @@ function lineBreak:doBreak (nodes, hsize, sideways)
       }
 
       -- Not doing 1630
-      self.activeWidth = SILE.length(self.background)
+      self.activeWidth = SILE.types.length(self.background)
 
       self.place = 1
       while self.nodes[self.place] and self.activeListHead.next ~= self.activeListHead do

@@ -9,7 +9,7 @@ package._name = "infonode"
 -- Check out SILE.scratch.info.thispage in your end-of-page routine and see what nodes
 -- are there.
 
-local _info = pl.class(SILE.nodefactory.zerohbox)
+local _info = pl.class(SILE.types.node.zerohbox)
 _info.type = "info"
 
 function _info:__tostring ()
@@ -43,9 +43,8 @@ function package:_init ()
       SILE.scratch.info = { thispage = {} }
    end
    self.class:registerHook("newpage", newPageInfo)
-   self:deprecatedExport("newPageInfo", function (class)
+   self:deprecatedExport("newPageInfo", function ()
       SU.deprecated("class:newPageInfo", nil, "0.13.0", "0.15.0", _deprecate)
-      return class:newPageInfo()
    end)
 end
 

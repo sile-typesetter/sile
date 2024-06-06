@@ -6,7 +6,18 @@ insert_final_newline = true
 charset = utf-8
 trim_trailing_whitespace = true
 
-[{*.lua,*.lua.in,sile.in,*rockspec,.busted,.luacheckrc}]
+[{Makefile*,*.mk,*.mk.in}]
+indent_style = tab
+indent_size = 4
+
+[*.m4]
+indent_style = space
+indent_size = 8
+
+[*.md]
+trim_trailing_whitespace = false
+
+[{*.lua,*.lua.in,sile.in,*.rockspec,*.rockspec.in,.busted,.luacov,.luacheckrc,config.ld}]
 indent_style = space
 indent_size = 3
 max_line_length = 120
@@ -23,10 +34,12 @@ trailing_table_separator = always,
 align_call_args = true,
 end_statement_with_semicolon = same_line
 
+[{*.rockspec,*.rockspec.in}]
+max_line_length = 190
+
 [*.pl]
 indent_style = space
-indent_size = 4
+indent_size = 2
 
-[makefile*]
-indent_style = tab
+[*.rs]
 indent_size = 4

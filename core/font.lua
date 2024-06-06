@@ -1,9 +1,11 @@
+--- font
+-- @module SILE.font
 local icu = require("justenoughicu")
 
 local lastshaper
 
 SILE.registerCommand("font", function (options, content)
-   if SU.hasContent(content) then
+   if SU.ast.hasContent(content) then
       SILE.settings:pushState()
    end
    if options.filename then
@@ -68,7 +70,7 @@ SILE.registerCommand("font", function (options, content)
    -- that the post-load hook might want to do.
    SILE.font.cache(SILE.font.loadDefaults({}), SILE.shaper.getFace)
 
-   if SU.hasContent(content) then
+   if SU.ast.hasContent(content) then
       SILE.process(content)
       SILE.settings:popState()
       if SILE.shaper._name == "harfbuzzWithColor" and lastshaper then
@@ -96,7 +98,7 @@ SILE.fontCache = {}
 local _key = function (options)
    return table.concat({
       options.family,
-      ("%g"):format(SILE.measurement(options.size):tonumber()),
+      ("%g"):format(SILE.types.measurement(options.size):tonumber()),
       ("%d"):format(options.weight or 0),
       options.style,
       options.variant,

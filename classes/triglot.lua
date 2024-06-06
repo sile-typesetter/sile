@@ -1,3 +1,6 @@
+--- triglot document class.
+-- @use classes.triglot
+
 local book = require("classes.book")
 
 local class = pl.class(book)
@@ -44,7 +47,7 @@ function class:_init (options)
    })
 
    SILE.settings:set("linebreak.tolerance", 5000)
-   SILE.settings:set("document.parindent", SILE.nodefactory.glue())
+   SILE.settings:set("document.parindent", SILE.types.node.glue())
 end
 
 return class

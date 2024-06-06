@@ -117,7 +117,7 @@ This section covers a range of different topics from initial capitals to text tr
 \package-documentation{unichar}
 
 \subsection{url}
-\status:medium
+\status:high
 \package-documentation{url}
 
 \subsection{gutenberg}
@@ -146,7 +146,7 @@ Line-filling patterns or rules, rectangular blobs of inks... What else to say?
 \package-documentation{leaders}
 
 \subsection{rules}
-\status:medium
+\status:high
 \package-documentation{rules}
 
 \section{Boxes & Effects}
@@ -273,6 +273,10 @@ This section introduces packages that could not fit in another category.
 \subsection{ifattop}
 \status:low
 \package-documentation{ifattop}
+
+\subsection{retrograde}
+\status:high
+\package-documentation{retrograde}
 
 \section{Frames and page layouts}
 

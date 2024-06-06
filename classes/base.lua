@@ -1,3 +1,6 @@
+--- SILE document class interface.
+-- @interfaces classes
+
 local class = pl.class()
 class.type = "class"
 class._name = "base"
@@ -17,7 +20,7 @@ class.options = setmetatable({}, {
       elseif type(value) == "function" then
          opts[key] = value
       elseif type(key) == "number" then
-         return nil
+         return
       else
          SU.error("Attempted to set an undeclared class option '" .. key .. "'")
       end
@@ -60,6 +63,12 @@ function class:_init (options)
    self:setOptions(options)
    self:declareFrames(self.defaultFrameset)
    self:registerPostinit(function (self_)
+      -- In the event no packages have called \language explicitly or otherwise triggerend the language loader, at this
+      -- point we'll have a language *setting* but not actually have loaded the language. We put it off as long as we
+      -- could in case the user changed the default document language and we didn't need to load the system default one,
+      -- but that time has come at gone at this point. Make sure we've loaded somethnig...
+      local lang = SILE.settings:get("document.language")
+      SILE.languageSupport.loadLanguage(lang)
       if type(self.firstContentFrame) == "string" then
          self_.pageTemplate.firstContentFrame = self_.pageTemplate.frames[self_.firstContentFrame]
       end
@@ -88,11 +97,15 @@ end
 function class:setOptions (options)
    options = options or {}
    -- Classes that add options with dependencies should explicitly handle them, then exempt them from furthur processing.
-   -- The landscape option is handled explicitly before papersize, then the "rest" of options that are not interdependent.
+   -- The landscape and crop related options are handled explicitly before papersize, then the "rest" of options that are not interdependent.
    self.options.landscape = SU.boolean(options.landscape, false)
    options.landscape = nil
    self.options.papersize = options.papersize or "a4"
    options.papersize = nil
+   self.options.bleed = options.bleed or "0"
+   options.bleed = nil
+   self.options.sheetsize = options.sheetsize or nil
+   options.sheetsize = nil
    for option, value in pairs(options) do
       self.options[option] = value
    end
@@ -135,6 +148,35 @@ function class:declareOptions ()
       end
       return self.papersize
    end)
+   self:declareOption("sheetsize", function (_, size)
+      if size then
+         self.sheetsize = size
+         SILE.documentState.sheetSize = SILE.papersize(size, self.options.landscape)
+         if
+            SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1]
+            or SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2]
+         then
+            SU.error("Sheet size shall not be smaller than the paper size")
+         end
+         if SILE.documentState.sheetSize[1] < SILE.documentState.paperSize[1] + SILE.documentState.bleed then
+            SU.debug("frames", "Sheet size width augmented to take page bleed into account")
+            SILE.documentState.sheetSize[1] = SILE.documentState.paperSize[1] + SILE.documentState.bleed
+         end
+         if SILE.documentState.sheetSize[2] < SILE.documentState.paperSize[2] + SILE.documentState.bleed then
+            SU.debug("frames", "Sheet size height augmented to take page bleed into account")
+            SILE.documentState.sheetSize[2] = SILE.documentState.paperSize[2] + SILE.documentState.bleed
+         end
+      else
+         return self.sheetsize
+      end
+   end)
+   self:declareOption("bleed", function (_, dimen)
+      if dimen then
+         self.bleed = dimen
+         SILE.documentState.bleed = SU.cast("measurement", dimen):tonumber()
+      end
+      return self.bleed
+   end)
 end
 
 function class.declareSettings (_)
@@ -158,13 +200,44 @@ function class.declareSettings (_)
    })
 end
 
-function class:loadPackage (packname, options)
-   local pack = require(("packages.%s"):format(packname))
-   if type(pack) == "table" and pack.type == "package" then -- new package
-      self.packages[pack._name] = pack(options)
+function class:loadPackage (packname, options, reload)
+   local pack
+   -- Allow loading by injecting whole packages as-is, otherwise try to load it with the usual packages path.
+   if type(packname) == "table" then
+      pack, packname = packname, packname._name
+   elseif type(packname) == "nil" or packname == "nil" or pl.stringx.strip(packname) == "" then
+      SU.error(("Attempted to load package with an invalid packname '%s'"):format(packname))
+   else
+      pack = require(("packages.%s"):format(packname))
+      if pack._name ~= packname then
+         SU.error(("Loaded module name '%s' does not match requested name '%s'"):format(pack._name, packname))
+      end
+   end
+   SILE.packages[packname] = pack
+   if type(pack) == "table" and pack.type == "package" then -- current package api
+      if self.packages[packname] then
+         -- If the same package name has been loaded before, we might be loading a modified version of the same package or
+         -- we might be re-loading the same package, or we might just be doubling up work because somebody called us twice.
+         -- The package itself should take care of the difference between load and reload based on the reload flag here,
+         -- but in addition to that we also want to avoid creating a new instance. We want to run the intitializer from the
+         -- (possibly different) new module, but not create a new instance ID and loose any connections it made.
+         -- To do this we add a create function that returns the current instance. This brings along the _initialized flag
+         -- and of course anything else already setup and running.
+         local current_instance = self.packages[packname]
+         pack._create = function ()
+            return current_instance
+         end
+         pack(options, true)
+      else
+         self.packages[packname] = pack(options, reload)
+      end
    else -- legacy package
       self:initPackage(pack, options)
    end
+end
+
+function class:reloadPackage (packname, options)
+   return self:loadPackage(packname, options, true)
 end
 
 function class:initPackage (pack, options)
@@ -234,11 +307,23 @@ end
 
 function class:runHooks (category, options)
    for _, func in ipairs(self.hooks[category]) do
-      SU.debug("classhooks", "Running hook from", category, options and "with options " .. #options)
+      SU.debug("classhooks", "Running hook from", category, options and "with options #" .. #options)
       func(self, options)
    end
 end
 
+--- Register a function as a SILE command.
+-- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
+-- nodes identified with the command name.
+--
+-- Note that this should only be used to register commands supplied directly by a document class. A similar method is
+-- available for packages, `packages:registerCommand`.
+-- @tparam string name Name of cammand to register.
+-- @tparam function func Callback function to use as command handler.
+-- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
+-- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
+-- messages. Usually auto-detected.
+-- @see SILE.packages:registerCommand
 function class.registerCommand (_, name, func, help, pack)
    SILE.Commands[name] = func
    if not pack then
@@ -351,10 +436,41 @@ function class:registerCommands ()
 
    self:registerCommand("script", function (options, content)
       local packopts = packOptions(options)
-      if SU.hasContent(content) then
+      local function _deprecated (original, suggested)
+         SU.deprecated(
+            "\\script",
+            "\\lua or \\use",
+            "0.15.0",
+            "0.16.0",
+            ([[
+      The \script function has been deprecated. It was overloaded to mean
+      too many different things and more targeted tools were introduced in
+      SILE v0.14.0. To load 3rd party modules designed for use with SILE,
+      replace \script[src=...] with \use[module=...]. To run arbitrary Lua
+      code inline use \lua{}, optionally with a require= parameter to load
+      a (non-SILE) Lua module using the Lua module path or src= to load a
+      file by file path.
+
+      For this use case consider replacing:
+
+          %s
+
+      with:
+
+          %s
+      ]]):format(original, suggested)
+         )
+      end
+      if SU.ast.hasContent(content) then
+         _deprecated("\\script{...}", "\\lua{...}")
          return SILE.processString(content[1], options.format or "lua", nil, packopts)
       elseif options.src then
-         return SILE.require(options.src)
+         local module = options.src:gsub("%/", ".")
+         local original = (("\\script[src=%s]"):format(options.src))
+         local result = SILE.require(options.src)
+         local suggested = (result._name and "\\use[module=%s]" or "\\lua[require=%s]"):format(module)
+         _deprecated(original, suggested)
+         return result
       else
          SU.error("\\script function requires inline content or a src file path")
          return SILE.processString(content[1], options.format or "lua", nil, packopts)
@@ -363,8 +479,8 @@ function class:registerCommands ()
 
    self:registerCommand("include", function (options, content)
       local packopts = packOptions(options)
-      if SU.hasContent(content) then
-         local doc = SU.contentToString(content)
+      if SU.ast.hasContent(content) then
+         local doc = SU.ast.contentToString(content)
          return SILE.processString(doc, options.format, nil, packopts)
       elseif options.src then
          return SILE.processFile(options.src, options.format, packopts)
@@ -377,8 +493,8 @@ function class:registerCommands ()
       "lua",
       function (options, content)
          local packopts = packOptions(options)
-         if SU.hasContent(content) then
-            local doc = SU.contentToString(content)
+         if SU.ast.hasContent(content) then
+            local doc = SU.ast.contentToString(content)
             return SILE.processString(doc, "lua", nil, packopts)
          elseif options.src then
             return SILE.processFile(options.src, "lua", packopts)
@@ -394,8 +510,8 @@ function class:registerCommands ()
 
    self:registerCommand("sil", function (options, content)
       local packopts = packOptions(options)
-      if SU.hasContent(content) then
-         local doc = SU.contentToString(content)
+      if SU.ast.hasContent(content) then
+         local doc = SU.ast.contentToString(content)
          return SILE.processString(doc, "sil")
       elseif options.src then
          return SILE.processFile(options.src, "sil", packopts)
@@ -406,8 +522,8 @@ function class:registerCommands ()
 
    self:registerCommand("xml", function (options, content)
       local packopts = packOptions(options)
-      if SU.hasContent(content) then
-         local doc = SU.contentToString(content)
+      if SU.ast.hasContent(content) then
+         local doc = SU.ast.contentToString(content)
          return SILE.processString(doc, "xml", nil, packopts)
       elseif options.src then
          return SILE.processFile(options.src, "xml", packopts)
@@ -421,7 +537,7 @@ function class:registerCommands ()
       function (options, content)
          local packopts = packOptions(options)
          if content[1] and string.len(content[1]) > 0 then
-            local doc = SU.contentToString(content)
+            local doc = SU.ast.contentToString(content)
             SILE.processString(doc, "lua", nil, packopts)
          else
             if options.src then
@@ -472,7 +588,7 @@ function class:registerCommands ()
    end, "Inserts a penalty node. Option is penalty= for the size of the penalty.")
 
    self:registerCommand("discretionary", function (options, _)
-      local discretionary = SILE.nodefactory.discretionary({})
+      local discretionary = SILE.types.node.discretionary({})
       if options.prebreak then
          local hbox = SILE.typesetter:makeHbox({ options.prebreak })
          discretionary.prebreak = { hbox }
@@ -495,12 +611,12 @@ function class:registerCommands ()
 
    self:registerCommand("kern", function (options, _)
       local width = SU.cast("length", options.width):absolute()
-      SILE.typesetter:pushHorizontal(SILE.nodefactory.kern(width))
+      SILE.typesetter:pushHorizontal(SILE.types.node.kern(width))
    end, "Inserts a glue node. The width option denotes the glue dimension.")
 
    self:registerCommand("skip", function (options, _)
       options.discardable = SU.boolean(options.discardable, false)
-      options.height = SILE.length(options.height):absolute()
+      options.height = SILE.types.length(options.height):absolute()
       SILE.typesetter:leaveHmode()
       if options.discardable then
          SILE.typesetter:pushVglue(options)
@@ -568,7 +684,6 @@ function class.newPar (typesetter)
    -- new frame context. However, defining a parindent in such a unit is quite
    -- unlikely. And anyway pushback() has plenty of other issues.
    typesetter:pushGlue(parindent:absolute())
-   SILE.settings:set("current.parindent", nil)
    local hangIndent = SILE.settings:get("current.hangIndent")
    if hangIndent then
       SILE.settings:set("linebreak.hangIndent", hangIndent)
@@ -581,6 +696,7 @@ end
 
 -- WARNING: not called as class method
 function class.endPar (typesetter)
+   SILE.settings:set("current.parindent", nil)
    typesetter:pushVglue(SILE.settings:get("document.parskip"))
    if SILE.settings:get("current.hangIndent") then
       SILE.settings:set("current.hangIndent", nil)

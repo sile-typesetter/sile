@@ -3,27 +3,36 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "rotate"
 
-local pdf = require("justenoughlibtexpdf")
-
 local enter = function (self, _)
+   -- Probably broken, see:
+   -- https://github.com/sile-typesetter/sile/issues/427
    if not self.rotate then
       return
    end
-   local x = -math.rad(self.rotate)
+   if not SILE.outputter.enterFrameRotate then
+      return SU.warn(
+         "Frame '"
+            .. self.id("' will not be rotated: backend '")
+            .. SILE.outputter._name
+            .. "' does not support rotation"
+      )
+   end
+   local theta = -math.rad(self.rotate)
    -- Keep center point the same
-   pdf:gsave()
-   local cx = self:left():tonumber()
-   local cy = -self:bottom():tonumber()
-   pdf.setmatrix(1, 0, 0, 1, cx + math.sin(x) * self:height():tonumber(), cy)
-   pdf.setmatrix(math.cos(x), math.sin(x), -math.sin(x), math.cos(x), 0, 0)
-   pdf.setmatrix(1, 0, 0, 1, -cx, -cy)
+   local x0 = self:left():tonumber()
+   local x1 = x0 + math.sin(theta) * self:height():tonumber()
+   local y0 = self:bottom():tonumber()
+   SILE.outputter:enterFrameRotate(x0, x1, y0, theta) -- Unstable API
 end
 
 local leave = function (self, _)
    if not self.rotate then
       return
    end
-   pdf:grestore()
+   if not SILE.outputter.enterFrameRotate then
+      return
+   end -- no enter no leave.
+   SILE.outputter:leaveFrameRotate()
 end
 
 -- What is the width, depth and height of a rectangle width w and height h rotated by angle theta?
@@ -39,20 +48,20 @@ end
 
 local outputRotatedHbox = function (self, typesetter, line)
    local origbox = self.value.orig
-   local x = self.value.theta
-   -- Find origin of untransformed hbox
-   local save = typesetter.frame.state.cursorX
-   typesetter.frame.state.cursorX = typesetter.frame.state.cursorX - (origbox.width.length - self.width) / 2
+   local theta = self.value.theta
 
-   local horigin = (typesetter.frame.state.cursorX + origbox.width.length / 2):tonumber()
-   local vorigin = -(typesetter.frame.state.cursorY - (origbox.height - origbox.depth) / 2):tonumber()
-   pdf:gsave()
-   pdf.setmatrix(1, 0, 0, 1, horigin, vorigin)
-   pdf.setmatrix(math.cos(x), math.sin(x), -math.sin(x), math.cos(x), 0, 0)
-   pdf.setmatrix(1, 0, 0, 1, -horigin, -vorigin)
-   origbox:outputYourself(typesetter, line)
-   pdf:grestore()
-   typesetter.frame.state.cursorX = save
+   -- Find origin of untransformed hbox
+   local X = typesetter.frame.state.cursorX
+   local Y = typesetter.frame.state.cursorY
+   typesetter.frame.state.cursorX = X - (origbox.width.length - self.width) / 2
+   local horigin = X + origbox.width.length / 2
+   local vorigin = Y - (origbox.height - origbox.depth) / 2
+
+   SILE.outputter:rotateFn(horigin, vorigin, theta, function ()
+      origbox:outputYourself(typesetter, line)
+   end)
+   typesetter.frame.state.cursorX = X
+   typesetter.frame.state.cursorY = Y
    typesetter.frame:advanceWritingDirection(self.width)
 end
 
@@ -68,6 +77,10 @@ end
 
 function package:registerCommands ()
    self:registerCommand("rotate", function (options, content)
+      if not SILE.outputter.rotateFn then
+         SU.warn("Output will not be rotated: backend '" .. SILE.outputter._name .. "' does not support rotation")
+         return SILE.process(content)
+      end
       local angle = SU.required(options, "angle", "rotate command")
       local theta = -math.rad(angle)
       local origbox, hlist = SILE.typesetter:makeHbox(content)
@@ -94,10 +107,9 @@ function package:registerCommands ()
          depth = 0.5 * (h - h * ct - w * st)
       end
       depth = -depth
-      if depth < SILE.length(0) then
-         depth = SILE.length(0)
+      if depth < SILE.types.length(0) then
+         depth = SILE.types.length(0)
       end
-      SILE.outputter:_ensureInit()
       SILE.typesetter:pushHbox({
          value = { orig = origbox, theta = theta },
          height = height,

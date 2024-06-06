@@ -9,6 +9,7 @@ Makefile.in
 /autom4te.cache
 /config.status
 /configure
+/aminclude.am
 build-aux/compile
 build-aux/config.guess
 build-aux/config.sub
@@ -21,6 +22,7 @@ build-aux/ltversion.m4
 build-aux/lt~obsolete.m4
 build-aux/missing
 build-aux/list-dist-files.sh
+build-aux/rust_boilerplate.mk
 tests/regressions.pl
 
 # Other autojunk
@@ -65,7 +67,6 @@ node_modules
 lua_modules
 lua_modules_dist
 package-lock.json
-yarn.lock
 
 # Editor entrails
 .vscode/
@@ -79,16 +80,26 @@ gource.webm
 *.rockspec
 .fonts/*
 .sources/*
-/sile
+sile
 sile.1
-/.version
-/.version-prev
-/.tarball-version
-/.built-subdirs
+sile-lua
+sile-lua.1
+.version
+.version-prev
+.tarball-version
+.built-subdirs
 *.so
+*.o
 core/version.lua
 core/features.lua
+target/
+completions/
 core/pathsetup.lua
+src/embed.rs
+src/embed-includes.rs
 
 # Nix symlink to builds
-/result
+result
+result-man
+result-doc
+result-dev

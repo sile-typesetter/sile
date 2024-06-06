@@ -61,16 +61,17 @@ local function loadPatterns (hyphenator, language)
 end
 
 SILE._hyphenate = function (self, text)
-   if string.len(text) < self.minWord then
+   if luautf8.len(text) < self.minWord then
       return { text }
    end
-   local points = self.exceptions[text:lower()]
+   local lowertext = luautf8.lower(text)
+   local points = self.exceptions[lowertext]
    local word = SU.splitUtf8(text)
    if not points then
       points = SU.map(function ()
          return 0
       end, word)
-      local work = SU.map(string.lower, word)
+      local work = SU.map(luautf8.lower, word)
       table.insert(work, ".")
       table.insert(work, 1, ".")
       table.insert(points, 1, 0)
@@ -115,7 +116,7 @@ SILE._hyphenators = {}
 
 local function defaultHyphenateSegments (node, segments, _)
    local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options)
-   return SILE.nodefactory.discretionary({ prebreak = hyphen }), segments
+   return SILE.types.node.discretionary({ prebreak = hyphen }), segments
 end
 
 local initHyphenator = function (lang)

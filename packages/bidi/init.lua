@@ -93,8 +93,8 @@ end
 local splitNodeAtPos = function (n, splitstart, p)
    if n.is_unshaped then
       local utf8chars = SU.splitUtf8(n.text)
-      local n2 = SILE.nodefactory.unshaped({ text = "", options = pl.tablex.copy(n.options) })
-      local n1 = SILE.nodefactory.unshaped({ text = "", options = pl.tablex.copy(n.options) })
+      local n2 = SILE.types.node.unshaped({ text = "", options = pl.tablex.copy(n.options) })
+      local n1 = SILE.types.node.unshaped({ text = "", options = pl.tablex.copy(n.options) })
       for i = splitstart, #utf8chars do
          if i <= p then
             n1.text = n1.text .. utf8chars[i]

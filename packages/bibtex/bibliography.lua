@@ -11,8 +11,8 @@ local function find_outside_braces (str, pat, i)
       return j, k
    end
    local jb, kb = string.find(str, "%b{}", i)
-   while jb and jb < j do --- scan past braces
-      --- braces come first, so we search again after close brace
+   while jb and jb < j do -- scan past braces
+      -- braces come first, so we search again after close brace
       local i2 = kb + 1
       j, k = string.find(str, pat, i2)
       if not j then
@@ -21,10 +21,10 @@ local function find_outside_braces (str, pat, i)
       jb, kb = string.find(str, "%b{}", i2)
    end
    -- either pat precedes braces or there are no braces
-   return string.find(str, pat, j) --- 2nd call needed to get captures
+   return string.find(str, pat, j) -- 2nd call needed to get captures
 end
 
-local function split (str, pat, find) --- return list of substrings separated by pat
+local function split (str, pat, find) -- return list of substrings separated by pat
    find = find or string.find -- could be find_outside_braces
    -- @Omikhelia: I added this check here to avoid breaking on error,
    -- but probably in could have been done earlier...
@@ -49,7 +49,7 @@ local function split (str, pat, find) --- return list of substrings separated by
    return t
 end
 
-local function splitters (str, pat, find) --- return list of separators
+local function splitters (str, pat, find) -- return list of separators
    find = find or string.find -- could be find_outside_braces
    local t = {}
    local insert = table.insert
@@ -136,7 +136,7 @@ do
             trailers[i] = string.sub(trailer, 1, 1)
          end
       end
-      local commas = {} --- maps each comma to index of token the follows it
+      local commas = {} -- maps each comma to index of token the follows it
       for i, t in ipairs(trailers) do
          string.gsub(t, ",", function ()
             table.insert(commas, i + 1)
@@ -269,7 +269,7 @@ do
    end
 end
 
---- Thanks, Norman, for the above functions!
+-- Thanks, Norman, for the above functions!
 
 local Bibliography
 Bibliography = {

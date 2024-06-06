@@ -3,14 +3,12 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "counters"
 
-SILE.formatCounter = function (counter)
+SILE.formatCounter = function ()
    SU.deprecated("SILE.formatCounter", "class:formatCounter", "0.13.0", "0.15.0")
-   return package.formatCounter(nil, counter)
 end
 
-SILE.formatMultilevelCounter = function (counter, options)
+SILE.formatMultilevelCounter = function ()
    SU.deprecated("SILE.formatMultilevelCounter", "class:formatMultilevelCounter", "0.13.0", "0.15.0")
-   return package.formatMultilevelCounter(nil, counter, options)
 end
 
 local function getCounter (_, id)
@@ -51,7 +49,7 @@ function package:formatMultilevelCounter (counter, options)
    options = options or {}
    local maxlevel = options.level and SU.min(SU.cast("integer", options.level), #counter.value) or #counter.value
    -- Option minlevel is undocumented and should perhaps be deprecated: is there a real use case for it?
-   local minlevel = options.minlevel and SU.min(SU.cast("integer", options.minlevel, #counter.value)) or 1
+   local minlevel = options.minlevel and SU.min(SU.cast("integer", options.minlevel), #counter.value) or 1
    local out = {}
    if SU.boolean(options.noleadingzeros, false) then
       while counter.value[minlevel] == 0 do
@@ -239,7 +237,8 @@ The available built-in display types are:
 \item{\code{alpha}, for lower-case alphabetic counting}
 \item{\code{Alpha}, for upper-case alphabetic counting}
 \item{\code{roman}, for lower-case Roman numerals}
-\item{\code{ROMAN} for upper-case Roman numerals}
+\item{\code{ROMAN}, for upper-case Roman numerals}
+\item{\code{greek}, for Greek letters in alphabetical order (not Greek numerals)}
 \end{itemize}
 
 The ICU library also provides ways of formatting numbers in global (non-Latin) scripts.
