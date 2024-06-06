@@ -50,6 +50,10 @@
         "updater": "build-aux/cargo-updater.js"
       }
     ],
+    "scripts": {
+      "postbump": "cargo generate-lockfile --offline",
+      "postcommit": "git add -u Cargo.lock && git commit --amend --no-edit"
+    },
     "infile": "CHANGELOG.md",
     "types": [
       {
