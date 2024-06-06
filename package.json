@@ -5,8 +5,9 @@
   "main": "sile",
   "scripts": {
     "test": "make test",
+    "lint": "make lint",
     "release": "standard-version",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
