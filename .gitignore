@@ -76,6 +76,7 @@ tags
 # Generated resources
 Makefile-distfiles
 documentation/*.pdf
+documentation/fig-input-to-output.pdf.gs
 gource.webm
 *.rockspec
 .fonts/*
@@ -97,6 +98,7 @@ completions/
 core/pathsetup.lua
 src/embed.rs
 src/embed-includes.rs
+src/sile-entry.sh
 
 # Nix symlink to builds
 result
