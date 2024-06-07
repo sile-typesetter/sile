@@ -15,9 +15,9 @@ All the paragraphs in this test should be left justified and all the signatures 
 
 A line of stuff in a paragraph that wraps on the page following the one it started on.
 
-\rightalign{The undersigned,}
+\raggedleft{The undersigned,}
 
-\rightalign{John Hancock}
+\raggedleft{John Hancock}
 
 \skip[height=16em]
 

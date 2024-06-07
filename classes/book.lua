@@ -202,7 +202,7 @@ function class:registerCommands ()
       if not SILE.scratch.counters.folio.off then
          SILE.call("right-running-head", {}, function ()
             SILE.call("book:right-running-head-font", {}, function ()
-               SILE.call("rightalign", {}, function ()
+               SILE.call("raggedleft", {}, function ()
                   SILE.settings:temporarily(function ()
                      if SU.boolean(options.numbering, true) then
                         SILE.call("show-multilevel-counter", { id = "sectioning", level = 2 })
