@@ -983,9 +983,9 @@ end
 -- These two special nodes are used to track the current liner entry and exit.
 -- As Sith Lords, they are always two: they are local here, so no one can
 -- use one alone and break the balance of the Force.
-local linerEnterNode = pl.class(SILE.nodefactory.hbox)
+local linerEnterNode = pl.class(SILE.types.node.hbox)
 function linerEnterNode:_init (name, outputMethod)
-   SILE.nodefactory.hbox._init(self)
+   SILE.types.node.hbox._init(self)
    self.outputMethod = outputMethod
    self.name = name
    self.is_enter = true
@@ -999,9 +999,9 @@ end
 function linerEnterNode:__tostring ()
    return "+L[" .. self.name .. "]"
 end
-local linerLeaveNode = pl.class(SILE.nodefactory.hbox)
+local linerLeaveNode = pl.class(SILE.types.node.hbox)
 function linerLeaveNode:_init (name)
-   SILE.nodefactory.hbox._init(self)
+   SILE.types.node.hbox._init(self)
    self.name = name
    self.is_leave = true
 end
@@ -1015,9 +1015,9 @@ function linerLeaveNode:__tostring ()
    return "-L[" .. self.name .. "]"
 end
 
-local linerBox = pl.class(SILE.nodefactory.hbox)
+local linerBox = pl.class(SILE.types.node.hbox)
 function linerBox:_init (name, outputMethod)
-   SILE.nodefactory.hbox._init(self)
+   SILE.types.node.hbox._init(self)
    self.width = SILE.length()
    self.height = SILE.length()
    self.depth = SILE.length()

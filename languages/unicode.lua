@@ -209,7 +209,7 @@ function SILE.nodeMakers.unicode:_handleWordBreakRepeatHyphen (item)
       self:addToken(item.text, item)
       self:makeToken()
       if self.lastnode ~= "discretionary" then
-         coroutine.yield(SILE.nodefactory.discretionary({
+         coroutine.yield(SILE.types.node.discretionary({
             postbreak = SILE.shaper:createNnodes("-", self.options),
          }))
          self.lastnode = "discretionary"
