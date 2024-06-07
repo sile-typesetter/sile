@@ -1,5 +1,5 @@
 \begin[class=jplain,layout=tate,papersize=a4]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \neverindent
 \nofolios
 

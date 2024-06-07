@@ -62,7 +62,7 @@ package.shim_commands = {
    },
 }
 
-package.shim_shims = {
+package.shim_classes = {
    ["0.15.0"] = {
       ["classes.base.newPar"] = function ()
          local newPar = SILE.documentState.documentClass.newPar
@@ -95,29 +95,28 @@ end
 
 function package:recede (target)
    self:recede_defaults(target)
-   self:recede_shims(target)
+   self:recede_classes(target)
    self:recede_commands(target)
 end
 
 function package._prep (_, target, type)
    target = semver(target and target or SILE.version)
-   SU.debug("retrograde", ("Targeting %s changes back as far as the release of SILE v%s."):format(type, target))
+   SU.debug("retrograde", ("Targeting changes to %s since the release of SILE v%s."):format(type, target))
    local terminal = function (version)
       SU.debug(
          "retrograde",
-         ("The next set of %s changes is from the release of SILE v%s, stopping."):format(type, version)
+         ("The next set of changes to %s is from the release of SILE v%s, stopping."):format(type, version)
       )
    end
    return target, terminal
 end
 
 function package:recede_defaults (target)
-   local semvertarget, terminal = self:_prep(target, "default")
-   local target_hit = false
+   local semvertarget, terminal = self:_prep(target, "defaults")
    for version, settings in pl.tablex.sort(self.default_settings, semver_descending) do
       version = semver(version)
-      if target_hit then
-         terminal()
+      if version <= semvertarget then
+         terminal(version)
          break
       end
       for parameter, value in pairs(settings) do
@@ -127,29 +126,22 @@ function package:recede_defaults (target)
          )
          SILE.settings:set(parameter, value, true)
       end
-      if version <= semvertarget then
-         target_hit = true
-      end
    end
 end
 
-function package:recede_shims (target)
-   local semvertarget, terminal = self:_prep(target, "default")
+function package:recede_classes (target)
+   local semvertarget, terminal = self:_prep(target, "classes")
    local reverters = {}
-   local target_hit = false
-   for version, callbacks in pl.tablex.sort(self.shim_shims, semver_descending) do
+   for version, callbacks in pl.tablex.sort(self.shim_classes, semver_descending) do
       version = semver(version)
-      if target_hit then
-         terminal()
+      if version <= semvertarget then
+         terminal(version)
          break
       end
       for widget, callback in pairs(callbacks) do
          SU.debug("retrograde", ("Shimming '%s' to behavior similar to prior to v%s."):format(widget, version))
          local reverter = callback()
          reverters[widget] = reverter
-      end
-      if version <= semvertarget then
-         target_hit = true
       end
    end
    return function ()
@@ -160,13 +152,12 @@ function package:recede_shims (target)
 end
 
 function package:recede_commands (target)
-   local semvertarget, terminal = self:_prep(target, "command")
+   local semvertarget, terminal = self:_prep(target, "commands")
    local currents = {}
-   local target_hit = false
    for version, commands in pl.tablex.sort(self.shim_commands, semver_descending) do
       version = semver(version)
-      if target_hit then
-         terminal()
+      if version <= semvertarget then
+         terminal(version)
          break
       end
       for command, get_function in pairs(commands) do
@@ -174,9 +165,6 @@ function package:recede_commands (target)
          local current = SILE.Commands[command]
          currents[command] = current
          SILE.Commands[command] = get_function(current)
-      end
-      if version <= semvertarget then
-         target_hit = true
       end
    end
    local function reverter ()
@@ -203,15 +191,15 @@ function package:registerCommands ()
       end
    end)
 
-   self:registerCommand("recede-shims", function (options, content)
+   self:registerCommand("recede-classes", function (options, content)
       if content then
          SILE.settings:temporarily(function ()
-            local reverter = self:recede_shims(options.target)
+            local reverter = self:recede_classes(options.target)
             SILE.process(content)
             reverter()
          end)
       else
-         self:recede_shims(options.target)
+         self:recede_classes(options.target)
       end
    end)
 

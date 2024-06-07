@@ -1,5 +1,5 @@
 \begin[papersize=a6]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \use[module=packages.frametricks]
 \begin{lua}
   SILE.registerCommand("donothing", function (options, content)

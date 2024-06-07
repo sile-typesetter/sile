@@ -1,5 +1,5 @@
 \begin[papersize=a5]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \font[family=Noto Sans Ethiopic,language=am]
 የሰው፡ልጅ፡ሁሉ፡ሲወለድ፡ነጻና፡በክብርና፡በመብትም፡እኩልነት፡ያለው፡ነው።፡የተፈጥሮ፡ማስተዋልና፡ሕሊና፡ስላለው፡አንዱ፡ሌላውን፡በወንድማማችነት፡መንፈስ፡መመልከት፡ይገባዋል።
 

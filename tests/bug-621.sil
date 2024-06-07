@@ -1,5 +1,5 @@
 \begin{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \font[language=fr, size=15pt]
 La peine de mort est nécessaire, disent les partisans de l’antique et barbare routine ; sans elle il n’est point de frein assez puissant pour le crime. Qui vous l’a dit ? Avez-vous calculé tous les ressorts par lesquels les lois pénales peuvent agir sur la sensibilité humaine ? Hélas ! avant la mort, combien de douleurs physiques et morales l’homme ne peut-il pas endurer !
 
