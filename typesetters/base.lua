@@ -1018,9 +1018,9 @@ end
 local linerBox = pl.class(SILE.types.node.hbox)
 function linerBox:_init (name, outputMethod)
    SILE.types.node.hbox._init(self)
-   self.width = SILE.length()
-   self.height = SILE.length()
-   self.depth = SILE.length()
+   self.width = SILE.types.length()
+   self.height = SILE.types.length()
+   self.depth = SILE.types.length()
    self.name = name
    self.inner = {}
    self.outputYourself = outputMethod
