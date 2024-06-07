@@ -8,6 +8,7 @@
 This paragraph is at the page top.
 
 This paragraph has a big parskip before it.
+
 \vfill
 This paragraph must be at the page bottom.
 \par
