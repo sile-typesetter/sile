@@ -126,7 +126,6 @@ Space at the beginning of a line will be ignored.
 
 Similarly, you can place a line break anywhere you like in the input file, and it won’t affect the output because SILE considers each paragraph at a time and computes the appropriate line breaks for the paragraph based on the width of the line available.
 In other words, if your input file says
-
 \begin[type=autodoc:codeblock]{raw}
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
 incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
@@ -135,8 +134,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
 fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
 culpa qui officia deserunt mollit anim id est laborum.
 \end{raw}
-
-\noindent{}…you might not necessarily get a line break after ‘tempor’;
+…you might not necessarily get a line break after ‘tempor’;
     rather, you’ll get a line break wherever is most appropriate.
 In the context of this document, you’ll get:
 
@@ -147,7 +145,7 @@ incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
 nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
 fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.\par
+culpa qui officia deserunt mollit anim id est laborum.
 \end{autodoc:example}
 \end{font}
 
