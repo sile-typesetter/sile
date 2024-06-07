@@ -5,7 +5,7 @@
 \begin{lua}
 -- MVE: Use the box width to advance position, rather than rely on internal content to move it.
 SILE.documentState.documentClass:registerCommand("advance-box-width", function (options, content)
-  local bs = SILE.measurement("0.9bs"):tonumber()
+  local bs = SILE.types.measurement("0.9bs"):tonumber()
   local bsratio = 0.3
   SILE.typesetter:liner("advance-box-width", content,
     function (box, typesetter, line)

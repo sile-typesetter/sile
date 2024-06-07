@@ -43,7 +43,7 @@ describe("The frame parser", function ()
    end)
 
    describe("dimensioned string", function ()
-      it("should convert via SILE.measurements", function ()
+      it("should convert SILE measurements", function ()
          assert.is.equal(14.4, m:match("0.2 in"))
       end)
    end)
