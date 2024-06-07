@@ -1,11 +1,11 @@
 \begin[papersize=a5]{document}
 \use[module=packages.retrograde,target=v0.15.0]
 %nice script from SILE book
-\begin{script}
+\begin{lua}
 for i=1,10 do
 SILE.typesetter:typeset(i .. " x " .. i .. " = " .. i*i .. ". ")
 SILE.typesetter:leaveHmode()
 SILE.call("smallskip")
 end
-\end{script}
+\end{lua}
 \end{document}

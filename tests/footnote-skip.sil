@@ -2,10 +2,10 @@
 \use[module=packages.retrograde,target=v0.15.0]
 \use[module=packages.lorem]
 \use[module=packages.rules]
-\begin{script}
+\begin{lua}
 SILE.scratch.insertions.classes.footnote.topSkip = SILE.types.length("5pt")
 SILE.scratch.insertions.classes.footnote.interInsertionSkip = SILE.types.length("24pt")
-\end{script}
+\end{lua}
 \lorem[words=50]\footnote{\hrule[width=2pt, height=19.82421875pt]}
 
 \lorem[words=50]\footnote{\hrule[width=2pt, height=39.82421875pt]}

@@ -3,7 +3,7 @@
 \font[family=Amiri,size=30pt]
 \nofolios
 \neverindent
-\begin{script}
+\begin{lua}
 
 SILE.documentState.documentClass:declareFrame("other", {
     left = "left(content)",
@@ -24,5 +24,5 @@ SILE.call("bigskip")
 SILE.call("bidi-off")
 SILE.typesetter:typeset("عَرَبي fail")
 
-\end{script}
+\end{lua}
 \end{document}

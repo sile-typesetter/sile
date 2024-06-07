@@ -1,6 +1,6 @@
 \begin[papersize=a5]{document}
 \nofolios
-\begin{script}
+\begin{lua}
 SILE.registerCommand("poetry", function(options, content)
   SILE.settings:temporarily(function()
     SILE.typesetter:leaveHmode()
@@ -12,7 +12,7 @@ SILE.registerCommand("poetry", function(options, content)
     SILE.call("par")
   end)
 end)
-\end{script}
+\end{lua}
 \begin{poetry}
 Line 1\break
 \qquad

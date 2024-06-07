@@ -1,7 +1,7 @@
 \begin[papersize=a6]{document}
 \use[module=packages.retrograde,target=v0.15.0]
 \use[module=packages.frametricks]
-\script{
+\begin{lua}
   SILE.registerCommand("donothing", function (options, content)
     SILE.settings:pushState()
     SILE.settings:temporarily(function ()
@@ -11,7 +11,7 @@
     end)
     SILE.settings:popState()
   end)
-}
+\end{lua}
 
 \set[parameter=document.spaceskip,value=2.5pt plus 2.5pt minus 1pt]
 

@@ -2,7 +2,7 @@
 \use[module=packages.retrograde,target=v0.15.0]
 \nofolios
 \use[module=packages.lorem]
-\begin{script}
+\begin{lua}
 
 local testshape = {
   { 50, 30, nil },
@@ -30,5 +30,5 @@ SILE.call("lorem", { words = 20 })
 SILE.call("par")
 SILE.call("lorem", { words = 30 })
 
-\end{script}
+\end{lua}
 \end{document}

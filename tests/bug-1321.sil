@@ -4,7 +4,7 @@
 \use[module=packages.footnotes]
 \font[family=Amiri]
 عَرَبي\footnote{عَرَبي}
-\begin{script}
+\begin{lua}
 
 SILE.documentState.documentClass:declareFrame("inherit", {
     left = "left(content)",
@@ -33,5 +33,5 @@ SILE.typesetNaturally(SILE.getFrame("inherit"), function()
   SILE.typesetter:typeset("عَرَبي")
 end)
 
-\end{script}
+\end{lua}
 \end{document}

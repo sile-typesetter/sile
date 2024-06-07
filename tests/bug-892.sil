@@ -2,7 +2,7 @@
 \use[module=packages.retrograde,target=v0.15.0]
 \define[command=micro]{}
 \define[command=macro]{\process}
-\begin{script}
+\begin{lua}
 local plain = function () end
 local fancy = function (options, content) SILE.process(content) end
 SILE.registerCommand("plain", plain)
@@ -40,6 +40,6 @@ SILE.registerCommand("bug892", function (options, content)
 	SILE.call("macro", {}, SILE.Commands["hbox"])
 	SILE.process(content)
 end)
-\end{script}
+\end{lua}
 foo\bug892{}baz
 \end{document}

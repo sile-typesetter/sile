@@ -291,7 +291,7 @@ The command \autodoc:command{\breakframevertical} breaks the current frame in tw
 If the frame initially had the ID \code{main}, then \code{main} becomes the upper frame (before the command) and the lower frame (after the command) is called \code{main_}.
 We just issued a \autodoc:command{\breakframevertical} command at the start of this paragraph, and now we will issue the command \autodoc:command{\showframe}.
 \showframe
-As you can see, the current frame is called \code{\script{SILE.typesetter:typeset(SILE.typesetter.frame.id)}} and now begins at the start of the paragraph.
+As you can see, the current frame is called \code{\lua{SILE.typesetter:typeset(SILE.typesetter.frame.id)}} and now begins at the start of the paragraph.
 
 Similarly, the \autodoc:command{\breakframehorizontal} command breaks the frame in two into a left and a right frame.
 The command takes an optional parameter \autodoc:parameter{offset=<dimension>}, specifying where on the line the frame should be split.
