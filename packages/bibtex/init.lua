@@ -58,6 +58,34 @@ local parseBibtex = function (fn)
    return entries
 end
 
+--- Resolve the 'crossref' field on a bibliography entry.
+-- (Supplementing the entry with the attributes of the parent entry.)
+-- Once resolved recursively, the crossref field is removed from the entry.
+-- So this is intended to be called at first use of the entry, and have no
+-- effect on subsequent uses: BibTeX does seem to mandate crossref to be
+-- defined before the entry that uses it, or even in the same bibliography
+-- file.
+-- @tparam table bib Bibliography
+-- @tparam string key Valid entry key
+local function crossrefResolve (bib, key)
+   local entry = bib[key]
+   local crossref = entry.attributes.crossref
+   if crossref then
+      local parent = bib[crossref]
+      entry.attributes.crossref = nil
+      if parent then
+         crossrefResolve(bib, crossref)
+         for k, v in pairs(parent.attributes) do
+            if not entry.attributes[k] then
+               entry.attributes[k] = v
+            end
+         end
+      else
+         SU.warn("Unknown crossref " .. crossref .. " in bibliography entry " .. key)
+      end
+   end
+end
+
 function package:_init ()
    base._init(self)
    SILE.scratch.bibtex = { bib = {} }
@@ -87,13 +115,14 @@ function package:registerCommands ()
       if not options.key then
          options.key = SU.ast.contentToString(content)
       end
-      local style = SILE.settings:get("bibtex.style")
-      local bibstyle = require("packages.bibtex.styles." .. style)
-      local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
-      if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
+      if not SILE.scratch.bibtex.bib[options.key] then
          SU.warn("Unknown reference in citation " .. options.key)
          return
       end
+      crossrefResolve(SILE.scratch.bibtex.bib, options.key)
+      local style = SILE.settings:get("bibtex.style")
+      local bibstyle = require("packages.bibtex.styles." .. style)
+      local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
       SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
    end)
 
@@ -101,13 +130,14 @@ function package:registerCommands ()
       if not options.key then
          options.key = SU.ast.contentToString(content)
       end
+      if not SILE.scratch.bibtex.bib[options.key] then
+         SU.warn("Unknown reference in citation " .. options.key)
+         return
+      end
+      crossrefResolve(SILE.scratch.bibtex.bib, options.key)
       local style = SILE.settings:get("bibtex.style")
       local bibstyle = require("packages.bibtex.styles." .. style)
       local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
-      if cite == Bibliography.Errors.UNKNOWN_REFERENCE then
-         SU.warn("Unknown reference in citation " .. tostring(options.key))
-         return
-      end
       if cite == Bibliography.Errors.UNKNOWN_TYPE then
          SU.warn("Unknown type @" .. err .. " in citation for reference " .. options.key)
          return

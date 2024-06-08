@@ -286,6 +286,7 @@ Bibliography = {
    produceCitation = function (cite, bib, style)
       local item = bib[cite.key]
       if not item then
+         -- Should have been already checked by the caller
          return Bibliography.Errors.UNKNOWN_REFERENCE
       end
       local t = Bibliography.buildEnv(cite, item.attributes, style)
@@ -296,6 +297,7 @@ Bibliography = {
    produceReference = function (cite, bib, style)
       local item = bib[cite.key]
       if not item then
+         -- Should have been already checked by the caller
          return Bibliography.Errors.UNKNOWN_REFERENCE
       end
       item.type = item.type:gsub("^%l", string.upper)
