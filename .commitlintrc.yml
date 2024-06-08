@@ -62,7 +62,7 @@ help: |
   `chore`:        Improves existing functions or features
                       (Not for new features, fixes to bugs in releases, or refactoring)
   `ci`:           Changes CI configuration files and scripts
-                      (relevanat scopes: build, deps, tooling, cirrus, azure, actions)
+                      (relevant scopes: build, deps, tooling, cirrus, azure, actions)
   `docs`:         Adds or alters documentation.
   `feat`:         Adds a new user facing feature.
   `fix`:          Solves a user facing bug in previously released code
