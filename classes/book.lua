@@ -148,7 +148,7 @@ function class:registerCommands ()
    end)
 
    self:registerCommand("chapter", function (options, content)
-      SILE.typesetter:leaveHmode()
+      SILE.call("par")
       SILE.call("open-spread", { double = false })
       SILE.call("noindent")
       SILE.scratch.headers.right = nil
@@ -185,10 +185,10 @@ function class:registerCommands ()
    end, "Begin a new chapter")
 
    self:registerCommand("section", function (options, content)
-      SILE.typesetter:leaveHmode()
-      SILE.call("goodbreak")
-      SILE.call("bigskip")
+      SILE.call("par")
       SILE.call("noindent")
+      SILE.call("bigskip")
+      SILE.call("goodbreak")
       SILE.call("book:sectionfont", {}, function ()
          SILE.call("book:sectioning", {
             numbering = options.numbering,
@@ -220,7 +220,7 @@ function class:registerCommands ()
       end
       SILE.call("par")
       SILE.call("novbreak")
-      SILE.call("bigskip")
+      SILE.call("smallskip")
       SILE.call("novbreak")
       -- English typography (notably) expects the first paragraph under a section
       -- not to be indented. Frenchies, don't use this class :)
@@ -228,10 +228,10 @@ function class:registerCommands ()
    end, "Begin a new section")
 
    self:registerCommand("subsection", function (options, content)
-      SILE.typesetter:leaveHmode()
-      SILE.call("goodbreak")
+      SILE.call("par")
       SILE.call("noindent")
       SILE.call("medskip")
+      SILE.call("goodbreak")
       SILE.call("book:subsectionfont", {}, function ()
          SILE.call("book:sectioning", {
             numbering = options.numbering,
@@ -248,7 +248,7 @@ function class:registerCommands ()
       end)
       SILE.call("par")
       SILE.call("novbreak")
-      SILE.call("medskip")
+      SILE.call("smallskip")
       SILE.call("novbreak")
       -- English typography (notably) expects the first paragraph under a section
       -- not to be indented. Frenchies, don't use this class :)
