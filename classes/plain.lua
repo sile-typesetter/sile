@@ -78,8 +78,16 @@ function class:registerCommands ()
 
    self:registerCommand("noindent", function (_, content)
       if #SILE.typesetter.state.nodes ~= 0 then
-         SU.warn(
-            "\\noindent called after nodes already received in a paragraph, the setting will have no effect because the parindent (if any) has already been output"
+         SU.warn([[\noindent was called after paragraph content has already been procesed.
+
+  This will not result in avoiding the current paragraph being indented.
+  This function must be called before any content belonging to the
+  paragraph is processed. If the intent was to suppress indentation of a
+  following paragraph, first explicitly close the current paragraph. From
+  an input document this is typically done with an empty line between
+  paragraphs, but calling the \par command explicitly or from Lua code
+  running SILE.call("par") will end the current paragraph.
+]]
          )
       end
       SILE.settings:set("current.parindent", SILE.types.node.glue())

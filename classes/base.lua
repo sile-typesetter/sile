@@ -696,16 +696,18 @@ end
 
 -- WARNING: not called as class method
 function class.endPar (typesetter)
+   -- If we're already explicitly out of hmode don't do anything special in the way of skips or indents. Assume the user
+   -- has handled that how they want, e.g. with a skip.
+   local queue = typesetter.state.outputQueue
+   local last_vbox = queue and queue[#queue]
+   local last_is_vglue = last_vbox and last_vbox.is_vglue
+   local last_is_vpenalty = last_vbox and last_vbox.is_penalty
+   if typesetter:vmode() and (last_is_vglue or last_is_vpenalty) then
+      return
+   end
    SILE.settings:set("current.parindent", nil)
+   typesetter:leaveHmode()
    typesetter:pushVglue(SILE.settings:get("document.parskip"))
-   if SILE.settings:get("current.hangIndent") then
-      SILE.settings:set("current.hangIndent", nil)
-      SILE.settings:set("linebreak.hangIndent", nil)
-   end
-   if SILE.settings:get("current.hangAfter") then
-      SILE.settings:set("current.hangAfter", nil)
-      SILE.settings:set("linebreak.hangAfter", nil)
-   end
 end
 
 function class:newPage ()
@@ -725,6 +727,7 @@ end
 
 function class:finish ()
    SILE.inputter:postamble()
+   SILE.typesetter:endline()
    SILE.call("vfill")
    while not SILE.typesetter:isQueueEmpty() do
       SILE.call("supereject")

@@ -349,8 +349,16 @@ function typesetter:initline ()
 end
 
 function typesetter:endline ()
-   self:leaveHmode()
    SILE.documentState.documentClass.endPar(self)
+   self:leaveHmode()
+   if SILE.settings:get("current.hangIndent") then
+      SILE.settings:set("current.hangIndent", nil)
+      SILE.settings:set("linebreak.hangIndent", nil)
+   end
+   if SILE.settings:get("current.hangAfter") then
+      SILE.settings:set("current.hangAfter", nil)
+      SILE.settings:set("linebreak.hangAfter", nil)
+   end
 end
 
 -- Just compute once, to avoid unicode characters in source code.

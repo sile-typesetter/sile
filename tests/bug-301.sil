@@ -19,7 +19,7 @@ A line of stuff in a paragraph that wraps on the page following the one it start
 
 \raggedleft{John Hancock}
 
-\skip[height=16em]
+\vfill
 
 The problem with hfills on the next page doesn't repro if you try to do it on this page.
 
