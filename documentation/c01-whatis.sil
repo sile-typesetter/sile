@@ -81,13 +81,6 @@ But in terms of \em{core capabilities}, SILE aims at being at least equivalent t
 
 The other tool that people reach for when designing printed material on a computer is Adobe InDesign (or similar desktop publishing software, such as Scribus).
 
-% Reduce bug reports about this buggy float with a hack-around
-% https://github.com/sile-typesetter/sile/issues/860
-\skip{height=1bs}
-\skip{height=1ps}
-\par
-
-\noindent
 \float[rightboundary=7pt,bottomboundary=10pt]{\img[src=documentation/fig1.png,width=140]}
 DTP software is similar to word processing software in that they are both graphical and largely WYSIWYG, but the paradigm is different.
 The focus is usually less on preparing the content than on laying it out on the page—you click and drag to move areas of text and images around the screen.
