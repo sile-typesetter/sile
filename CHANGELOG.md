@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.15.1](https://github.com/sile-typesetter/sile/compare/v0.15.0...v0.15.1) (2024-06-08)
+
+
+### Bug Fixes
+
+* **build:** Distribute vendored compat-5.3.c source file ([3c469d6](https://github.com/sile-typesetter/sile/commit/3c469d680b1f0ac78c340c65bf2693431569ee39))
+* **build:** Remove Git from configure dependencies ([352a125](https://github.com/sile-typesetter/sile/commit/352a125e7dd2d63abc854c456bee1ed1e97a5e38))
+* **classes:** Correct order of operations when paragraphs are ended manually ([08f1a7b](https://github.com/sile-typesetter/sile/commit/08f1a7ba8284ec571ea47c537257f0a1a93c6704))
+* **packages:** Change retrograde package so 'target' version works as expected ([6ad9b76](https://github.com/sile-typesetter/sile/commit/6ad9b762c6cdd2f164c7e343c8a5b3ebbf13d717))
+
 ## [0.15.0](https://github.com/sile-typesetter/sile/compare/v0.14.17...v0.15.0) (2024-06-06)
 
 
