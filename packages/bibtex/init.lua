@@ -21,16 +21,18 @@ local bibtexparser = epnf.define(function (_ENV)
    local value = balanced + doubleq + myID
    local pair = Cg(myTag * _ * "=" * _ * C(value)) * _ * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
    local list = Cf(Ct("") * pair^0, rawset)
-   local commentKey = Cmt(R("az", "AZ")^1, function(_, _, a)
-      return a:lower() == "comment"
+   local skippedType = Cmt(R("az", "AZ")^1, function(_, _, tag)
+      -- ignore both @comment and @preamble
+      local t = tag:lower()
+      return t == "comment" or t == "preamble"
    end)
 
    START "document"
-   document = (V"comment" + V"entry")^1 -- order important: @comment must have precedence over @other
+   document = (V"skipped" + V"entry")^1 -- order important: skipped (@comment, @preamble) must be first
       * (-1 + E("Unexpected character at end of input"))
-   comment  = WS +
-      ( V"blockcomment" + (P"%" * (1-S"\r\n")^0 * S"\r\n") / function () return "" end) -- Don't bother telling me about comments
-   blockcomment = (P("@") * commentKey) + balanced / function () return "" end -- Don't bother telling me about comments
+   skipped  = WS +
+      ( V"blockskipped" + (P"%" * (1-S"\r\n")^0 * S"\r\n") / "")
+   blockskipped = (P("@") * skippedType) + balanced / ""
    entry = Ct( P("@") * Cg(myTag, "type") * _ * P("{") * _ * Cg(myID, "label") * _ * sep * list * P("}") * _ )
 end)
 -- luacheck: pop
