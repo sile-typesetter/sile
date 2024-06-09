@@ -58,30 +58,49 @@ local parseBibtex = function (fn)
    return entries
 end
 
---- Resolve the 'crossref' field on a bibliography entry.
+--- Resolve the 'crossref' and 'xdata' fields on a bibliography entry.
 -- (Supplementing the entry with the attributes of the parent entry.)
--- Once resolved recursively, the crossref field is removed from the entry.
+-- Once resolved recursively, the crossref and xdata fields are removed
+-- from the entry.
 -- So this is intended to be called at first use of the entry, and have no
--- effect on subsequent uses: BibTeX does seem to mandate crossref to be
--- defined before the entry that uses it, or even in the same bibliography
+-- effect on subsequent uses: BibTeX does seem to mandate cross refererences
+-- to be defined before the entry that uses it, or even in the same bibliography
 -- file.
+-- Implementation note:
+-- We are not here to check the consistency of the BibTeX file, so there is
+-- no check that xdata refers only to @xdata entries
+-- Removing the crossref field implies we won't track its use and implicitely
+-- cite referenced entries in the bibliography over a certain threshold.
 -- @tparam table bib Bibliography
--- @tparam string key Valid entry key
-local function crossrefResolve (bib, key)
-   local entry = bib[key]
+-- @tparam table entry Bibliography entry
+local function crossrefAndXDataResolve (bib, entry)
+   local refs
+   local xdata = entry.attributes.xdata
+   if xdata then
+      refs = xdata and pl.stringx.split(xdata, ",")
+      entry.attributes.xdata = nil
+   end
    local crossref = entry.attributes.crossref
    if crossref then
-      local parent = bib[crossref]
+      refs = refs or {}
+      table.insert(refs, crossref)
       entry.attributes.crossref = nil
+   end
+
+   if not refs then
+      return
+   end
+   for _, ref in ipairs(refs) do
+      local parent = bib[ref]
       if parent then
-         crossrefResolve(bib, crossref)
+         crossrefAndXDataResolve(bib, parent)
          for k, v in pairs(parent.attributes) do
             if not entry.attributes[k] then
                entry.attributes[k] = v
             end
          end
       else
-         SU.warn("Unknown crossref " .. crossref .. " in bibliography entry " .. key)
+         SU.warn("Unknown crossref " .. ref .. " in bibliography entry " .. entry.label)
       end
    end
 end
@@ -115,11 +134,16 @@ function package:registerCommands ()
       if not options.key then
          options.key = SU.ast.contentToString(content)
       end
-      if not SILE.scratch.bibtex.bib[options.key] then
+      local entry = SILE.scratch.bibtex.bib[options.key]
+      if not entry then
          SU.warn("Unknown reference in citation " .. options.key)
          return
       end
-      crossrefResolve(SILE.scratch.bibtex.bib, options.key)
+      if entry.type == "xdata" then
+         SU.warn("Skipped citation of @xdata entry " .. options.key)
+         return
+      end
+      crossrefAndXDataResolve(SILE.scratch.bibtex.bib, entry)
       local style = SILE.settings:get("bibtex.style")
       local bibstyle = require("packages.bibtex.styles." .. style)
       local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
@@ -130,11 +154,16 @@ function package:registerCommands ()
       if not options.key then
          options.key = SU.ast.contentToString(content)
       end
-      if not SILE.scratch.bibtex.bib[options.key] then
+      local entry = SILE.scratch.bibtex.bib[options.key]
+      if not entry then
          SU.warn("Unknown reference in citation " .. options.key)
          return
       end
-      crossrefResolve(SILE.scratch.bibtex.bib, options.key)
+      if entry.type == "xdata" then
+         SU.warn("Skipped citation of @xdata entry " .. options.key)
+         return
+      end
+      crossrefAndXDataResolve(SILE.scratch.bibtex.bib, entry)
       local style = SILE.settings:get("bibtex.style")
       local bibstyle = require("packages.bibtex.styles." .. style)
       local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
