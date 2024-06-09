@@ -11,14 +11,17 @@ local Bibliography
 -- stylua: ignore start
 ---@diagnostic disable: undefined-global, unused-local, lowercase-global
 local bibtexparser = epnf.define(function (_ENV)
+   local strings = {} -- Local store for @string entries
+
    local identifier = (SILE.parserBits.identifier + S":-")^1
    local balanced = C{ "{" * P" "^0 * C(((1 - S"{}") + V(1))^0) * "}" } / function (...) local t={...}; return t[2] end
-   local doubleq = C( P'"' * C(((1 - S'"\r\n\f\\') + (P'\\' * 1)) ^ 0) * '"' )
+   local quoted = C( P'"' * C(((1 - S'"\r\n\f\\') + (P'\\' * 1)) ^ 0) * '"' ) / function (...) local t={...}; return t[2] end
    local _ = WS^0
    local sep = S",;" * _
-   local myID = C(identifier + P(1)) / function (t) return t end
+   local myID = C(identifier + P(1)) / function (t) return strings[t] or t end
    local myTag = C(identifier + P(1)) / function (t) return t:lower() end
-   local value = balanced + doubleq + myID
+   local pieces = balanced + quoted + myID
+   local value = Ct(pieces * (WS * P("#") * WS * pieces)^0) / function (t) return table.concat(t) end
    local pair = Cg(myTag * _ * "=" * _ * C(value)) * _ * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
    local list = Cf(Ct("") * pair^0, rawset)
    local skippedType = Cmt(R("az", "AZ")^1, function(_, _, tag)
@@ -28,11 +31,16 @@ local bibtexparser = epnf.define(function (_ENV)
    end)
 
    START "document"
-   document = (V"skipped" + V"entry")^1 -- order important: skipped (@comment, @preamble) must be first
+   document = (V"skipped" -- order important: skipped (@comment, @preamble) must be first
+      + V"stringblock" -- order important: @string must be before @entry
+      + V"entry")^1
       * (-1 + E("Unexpected character at end of input"))
-   skipped  = WS +
-      ( V"blockskipped" + (P"%" * (1-S"\r\n")^0 * S"\r\n") / "")
+   skipped  = WS + (V"blockskipped" + (1 - P"@")^1 ) / ""
    blockskipped = (P("@") * skippedType) + balanced / ""
+   stringblock = Ct( P("@string") * _ * P("{") * pair * _ * P("}") * _ )
+       / function (t)
+          strings[t[1]] = t[2]
+          return t end
    entry = Ct( P("@") * Cg(myTag, "type") * _ * P("{") * _ * Cg(myID, "label") * _ * sep * list * P("}") * _ )
 end)
 -- luacheck: pop
