@@ -109,18 +109,17 @@ end
 
 -- Add the current working directory, presumably a local project, as one of the highest priority paths.
 local executable_dir = executable:gsub("(.*)(/.*)", "%1")
-if executable_dir:match("^@") then
-   -- Running from a nix flake reports this, but we don't want anything special to get added.
-   extendPaths(".")
-else
+
+-- Running from a nix flake reports this, but we don't want anything special to get added.
+if not executable_dir:match("^@") then
    -- If executable_dir is just an alternate name of PWD, we don't need to duplicate it.
    -- Also ignore Rust binary thinking its executable_dir is in its source directory.
    if executable_dir ~= "./" and executable_dir ~= "src" then
       extendPaths(executable_dir)
    end
-   extendPathsRocks("./lua_modules")
-   extendPaths(".")
 end
+
+extendPaths(".")
 
 -- Stuff internal utility features into the global namespace so they could be manipulated externally (undocumented).
 _G.extendSilePath = extendPaths
