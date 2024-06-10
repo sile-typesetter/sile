@@ -1,7 +1,7 @@
--- Allow autoconf to setup system lua paths at compile time, not run time (only used in developer mode)
-if "@LUA_PATH@" ~= "" then
-   package.path = "@LUA_PATH@"
-   package.cpath = "@LUA_CPATH@"
+-- Allow autoconf to setup system lua paths at compile time, not run time (only used in developer mode).
+if "@SYSTEM_LUA_PATH@" ~= "" then
+   package.path = "@SYSTEM_LUA_PATH@"
+   package.cpath = "@SYSTEM_LUA_CPATH@"
 end
 
 -- In the event the user has exported Lua environment variables, use them like a system Lua VM would. This essentially

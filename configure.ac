@@ -263,13 +263,13 @@ AC_SUBST([SILE_PATH])
 
 # In order for our Rust CLI binary to use the same default package.path as the system Lua,
 # we test the system Lua (required only at build not run time) for its current package.path.
-adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.path)')"], [LUA_PATH])
-AC_DEFINE_UNQUOTED([LUA_PATH], ["${LUA_PATH}"],[System Lua package path])
-AC_SUBST([LUA_PATH])
+adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.path)')"], [SYSTEM_LUA_PATH])
+AC_DEFINE_UNQUOTED([SYSTEM_LUA_PATH], ["${SYSTEM_LUA_PATH}"],[System Lua package path])
+AC_SUBST([SYSTEM_LUA_PATH])
 
-adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.cpath)')"], [LUA_CPATH])
-AC_DEFINE_UNQUOTED([LUA_CPATH], ["${LUA_CPATH}"], [System Lua package cpath])
-AC_SUBST([LUA_CPATH])
+adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.cpath)')"], [SYSTEM_LUA_CPATH])
+AC_DEFINE_UNQUOTED([SYSTEM_LUA_CPATH], ["${SYSTEM_LUA_CPATH}"], [System Lua package cpath])
+AC_SUBST([SYSTEM_LUA_CPATH])
 
 adl_RECURSIVE_EVAL(["${libdir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"], [Path for SILE libraries])
