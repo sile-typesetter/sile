@@ -109,7 +109,7 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v11
       - name: Cache Nix dependencies
-        uses: DeterminateSystems/magic-nix-cache-action@v6
+        uses: DeterminateSystems/magic-nix-cache-action@v7
       - name: Setup developer environment
         run: |
           nix develop --command ./bootstrap.sh
