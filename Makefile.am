@@ -89,6 +89,15 @@ CLEANFILES = $(MANUAL)
 
 DISTCLEANFILES = @AMINCLUDE@
 
+# The boilerplate Docker is setup as if GHCR was our primary, and the CI jobs also
+# manually override these values. But as long as we're manually running a sync of
+# the auto deployed GHCR emiages to Dokcer Hub, the manual invocations need extra help.
+export GHCR_REGISTRY ?= ghcr.io
+export GHCR_REPO ?= sile-typesetter/$(TRANSFORMED_PACKAGE_NAME)
+export DOCKER_REGISTRY ?= docker.io
+export DOCKER_REPO ?= siletypesetter/$(TRANSFORMED_PACKAGE_NAME)
+export DOCKER_TAG ?= HEAD
+
 # A classical use of the autoconf-archive include macro would expand
 # INC_AMINCLUDE here, but the perl script that inlines include statements
 # runs before the automake that organizes logic and performs substitution.
@@ -391,13 +400,6 @@ $(DEPDIRS): | Makefile-distfiles
 $(DEPFILES): | $(DEPDIRS)
 
 include $(wildcard $(DEPFILES))
-
-export GHCR_REGISTRY ?= ghcr.io
-export GHCR_REPO ?= sile-typesetter/$(TRANSFORMED_PACKAGE_NAME)
-
-export DOCKER_REGISTRY ?= docker.io
-export DOCKER_REPO ?= siletypesetter/$(TRANSFORMED_PACKAGE_NAME)
-export DOCKER_TAG ?= HEAD
 
 docker-dep-check: .docker_deps .aur_deps
 	$(DIFF) -u $^
