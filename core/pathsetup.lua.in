@@ -4,6 +4,18 @@ if "@LUA_PATH@" ~= "" then
    package.cpath = "@LUA_CPATH@"
 end
 
+-- In the event the user has exported Lua environment variables, use them like a system Lua VM would. This essentially
+-- nukes the existing runtime path and uses only the new value. This is useful for using `eval $(luarocks --local path)`
+-- or similar incantations that setup a path that will reach 3rd party modules.
+local env_lua_path = os.getenv("LUA_PATH")
+if env_lua_path then
+   package.path = env_lua_path
+end
+local env_lua_cpath = os.getenv("LUA_CPATH")
+if env_lua_cpath then
+   package.cpath = env_lua_cpath
+end
+
 local executable = debug.getinfo(3, "S").source
 local luaversion = _VERSION:match("%d+%.%d+")
 
