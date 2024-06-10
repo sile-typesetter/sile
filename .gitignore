@@ -22,7 +22,6 @@ build-aux/ltversion.m4
 build-aux/lt~obsolete.m4
 build-aux/missing
 build-aux/list-dist-files.sh
-build-aux/rust_boilerplate.mk
 tests/regressions.pl
 
 # Other autojunk
@@ -81,6 +80,7 @@ gource.webm
 *.rockspec
 .fonts/*
 .sources/*
+sile-x86_64
 sile
 sile.1
 sile-lua
@@ -99,6 +99,7 @@ core/pathsetup.lua
 src/embed.rs
 src/embed-includes.rs
 src/sile-entry.sh
+*.asc
 
 # Nix symlink to builds
 result
