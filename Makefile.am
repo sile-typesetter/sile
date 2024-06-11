@@ -196,13 +196,19 @@ selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS)
 	$(PDFINFO) $$output | $(GREP) "SILE v$(VERSION)"
 
 .PHONY: docs
-docs: $(_MANUAL) lua-api-docs
+docs: $(_MANUAL) lua-api-docs rust-api-docs
 
 .PHONY: lua-api-docs
 lua-api-docs: lua-api-docs/index.html
 
 lua-api-docs/index.html: build-aux/config.ld
 	$(LDOC) -c build-aux/config.ld .
+
+.PHONY: rust-api-docs
+rust-api-docs: rust-api-docs/doc/sile/index.html
+
+rust-api-docs/doc/sile/index.html:
+	cargo doc $(CARGO_FEATURE_ARGS) --no-deps --target-dir rust-api-docs
 
 .PHONY: docs-figures
 docs-figures: $(FIGURES)
