@@ -1530,6 +1530,7 @@ dependencies = [
  "harfbuzz-sys",
  "mlua",
  "rust-embed",
+ "semver",
  "vergen",
 ]
 
