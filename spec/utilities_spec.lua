@@ -26,6 +26,16 @@ describe("SILE.utilities", function ()
       end)
    end)
 
+   describe("setenv", function ()
+      it("should effectively set variables before executing system commands", function ()
+         local before = os.getenv("FOO")
+         assert.is.equal(type(before), "nil")
+         SU.setenv("FOO", "bar")
+         local after = os.getenv("FOO")
+         assert.is.equal(after, "bar")
+      end)
+   end)
+
    describe("formatNumber", function ()
       local icu = require("justenoughicu")
       local icu73plus = tostring(icu.version()) >= "73.0"
