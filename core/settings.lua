@@ -19,6 +19,9 @@ function settings:_init ()
       parameter = "document.language",
       type = "string",
       default = "en",
+      hook = function (language)
+         fluent:set_locale(language)
+      end,
       help = "Locale for localized language support",
    })
 

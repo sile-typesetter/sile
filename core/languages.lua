@@ -33,6 +33,10 @@ SILE.languageSupport = {
       end
       local ftlresource = string.format("i18n.%s", language)
       SU.debug("fluent", "Loading FTL resource", ftlresource, "into locale", language)
+      -- This needs to be set so that we load localizations into the right bundle,
+      -- but this breaks the sync enabled by the hook in the document.language
+      -- setting, so we want to set it back when we're done.
+      local original_language = fluent:get_locale()
       fluent:set_locale(language)
       local gotftl, ftl = pcall(require, ftlresource)
       if not gotftl then
@@ -46,6 +50,7 @@ SILE.languageSupport = {
       if type(lang) == "table" and lang.init then
          lang.init()
       end
+      fluent:set_locale(original_language)
    end,
 }
 
@@ -65,10 +70,11 @@ end, nil, nil, true)
 SILE.registerCommand("fluent", function (options, content)
    local key = content[1]
    local locale = options.locale or SILE.settings:get("document.language")
+   local original_locale = fluent:get_locale()
+   fluent:set_locale(locale)
    SU.debug("fluent", "Looking for", key, "in", locale)
    local entry
    if key then
-      fluent:set_locale(locale)
       entry = fluent:get_message(key)
    else
       SU.warn("Fluent localization function called without passing a valid message id")
@@ -83,12 +89,13 @@ SILE.registerCommand("fluent", function (options, content)
       if entry then
          message = entry:format(options)
       end
-      fluent:set_locale(locale)
    end
+   fluent:set_locale(original_locale)
    SILE.processString(("<sile>%s</sile>"):format(message), "xml")
 end, nil, nil, true)
 
 SILE.registerCommand("ftl", function (options, content)
+   local original_locale = fluent:get_locale()
    local locale = options.locale or SILE.settings:get("document.language")
    SU.debug("fluent", "Loading message(s) into locale", locale)
    fluent:set_locale(locale)
@@ -98,6 +105,7 @@ SILE.registerCommand("ftl", function (options, content)
       local input = content[1]
       fluent:add_messages(input, locale)
    end
+   fluent:set_locale(original_locale)
 end, nil, nil, true)
 
 require("languages.unicode")
