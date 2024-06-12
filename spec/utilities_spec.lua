@@ -18,7 +18,7 @@ describe("SILE.utilities", function ()
       end)
    end)
 
-   describe("utf8_to_utf16be_hexencoded ", function ()
+   describe("utf8_to_utf16be_hexencoded", function ()
       it("should hex encode input", function ()
          local str = "foo"
          local out = "feff0066006f006f"

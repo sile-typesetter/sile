@@ -19,6 +19,7 @@ pub fn start_luavm() -> crate::Result<Lua> {
     #[cfg(feature = "static")]
     crate::embed::inject_embedded_loader(&lua);
     inject_paths(&lua);
+    inject_rusty_funcs(&lua);
     load_sile(&lua);
     inject_version(&lua);
     Ok(lua)
@@ -48,6 +49,18 @@ pub fn inject_paths(lua: &Lua) {
         .exec()
         .unwrap();
     }
+}
+
+pub fn inject_rusty_funcs(lua: &Lua) {
+    let rusty_funcs: LuaTable = lua.create_table().unwrap();
+    let setenv: LuaFunction = lua
+        .create_function(|_, (key, value): (String, String)| {
+            env::set_var(key, value);
+            Ok(())
+        })
+        .unwrap();
+    rusty_funcs.set("setenv", setenv).unwrap();
+    lua.globals().set("_rusty_funcs", rusty_funcs).unwrap();
 }
 
 pub fn inject_version(lua: &Lua) {

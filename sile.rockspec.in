@@ -46,6 +46,12 @@ dependencies = {
    "vstruct == 2.1.1-1",
 }
 
+-- Optional deps to enable the legacy Lua CLI to have features from the Rust one
+--[[
+table.insert(dependencies, "luaposix == 36.2.1-1") -- for Unix
+table.insert(dependencies, "winapi == 1.4.2-1") -- for Windows
+]]
+
 build = {
    type = "builtin",
    modules = {},
