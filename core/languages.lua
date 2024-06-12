@@ -10,17 +10,17 @@ loadkit.register("ftl", function (file)
    return assert(fluent:add_messages(contents))
 end)
 
-local loadonce = {}
+SILE.scratch.loaded_languages = {}
 
 SILE.languageSupport = {
    languages = {},
    loadLanguage = function (language)
       language = language or SILE.settings:get("document.language")
       language = cldr.locales[language] and language or "und"
-      if loadonce[language] then
+      if SILE.scratch.loaded_languages[language] then
          return
       end
-      loadonce[language] = true
+      SILE.scratch.loaded_languages[language] = true
       local langresource = string.format("languages.%s", language)
       local gotlang, lang = pcall(require, langresource)
       if not gotlang then
