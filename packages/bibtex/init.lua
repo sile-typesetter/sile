@@ -252,6 +252,92 @@ To produce a full reference, use \autodoc:command{\reference{<key>}}.
 
 Currently, the only supported bibliography style is Chicago referencing, but other styles should be easy to implement.
 Adapt \code{packages/bibtex/styles/chicago.lua} as necessary.
+
+\smallskip
+\noindent
+\em{Notes on the supported BibTeX syntax}
+\novbreak
+
+\indent
+The BibTeX file format is a plain text format for bibliographies.
+
+The \code{@type\{…\}} syntax is used to specify an entry, where \code{type} is the type of the entry, and is case-insensitive.
+Any content outside entries is ignored.
+
+The \code{@preamble} and \code{@comment} special entries are ignored.
+The former is specific to TeX-based systems, and the latter is a comment (everything between the balanced braces is ignored).
+
+The \code{@string\{key=value\}} special entry is used to define a string or “abbreviation,” for use in other subsequent entries.
+
+The \code{@xdata} entry is used to define an entry that can be used as a reference in other entries.
+Such entries are not printed in the bibliography.
+Normally, they cannot be cited directly.
+In this implementation, a warning is raised if they are; but as they have no known type, their formatting is not well-defined, and might not be meaningful.
+
+Regular bibliography entries have the following syntax:
+
+\begin[type=autodoc:codeblock]{raw}
+@type{key,
+  field1 = value1,
+  field2 = value2,
+  …
+}
+\end{raw}
+
+The entry key is a unique identifier for the entry, and is case-sensitive.
+Entries consist of fields, which are key-value pairs.
+The field names are case-insensitive.
+Spaces and line breaks are not important, except for readability.
+On the contrary, commas are compulsory between any two fields of an entry.
+
+String values shall be enclosed in either double quotes or curly braces.
+The latter allows using quotes inside the string, while the former does not without escaping them with a backslash.
+
+When string values are not enclosed in quotes or braces, they must not contain any whitespace characters.
+The value is then considered to be a refererence to an abbreviation previously defined in a \code{@string} entry.
+If no such abbreviation is found, the value is considered to be a string literal.
+(This allows a decent fallback for fields where curly braces or double quotes could historically be omitted, such as numerical values, and one-word strings.)
+
+String values are assumed to be in the UTF-8 encoding, and shall not contain (La)TeX commands.
+Special character sequences from TeX (such as \code{`} assumed to be an opening quote) are not supported.
+
+Values can also be composed by concatenating strings, using the \code{#} character.
+
+Besides using string references, entries have two other \em{parent-child} inheritance mechanisms allowing to reuse fields from other entries, without repeating them: the \code{crossref} and \code{xdata} fields.
+
+The \code{crossref} field is used to reference another entry by its key.
+The \code{xdata} field accepts a comma-separated list of keys of entries that are to be inherited.
+
+Some BibTeX implementations automatically include entries referenced with the \code{crossref} field in the bibliography, when a certain threshold is met.
+This implementation does not do that.
+
+Depending on the types of the parent and child entries, the child entry may inherit some or all fields from the parent entry, and some inherited fields may be reassigned in the child entry.
+For instance, the \code{title} in a \code{@collection} entry is inherited as the \code{booktitle} field in a \code{@incollection} child entry.
+Some BibTeX implementations allow configuring the data inheritance behavior, but this implementation does not.
+It is also currently quite limited on the fields that are reassigned, and only provides a subset of the mappings defined in the BibLaTeX manual, appendix B.
+
+Here is an example of a BibTeX file showing some of the abovementioned features:
+
+\begin[type=autodoc:codeblock]{raw}
+@string{JIT = "Journal of Interesting Things"}
+...
+This text is ignored
+...
+@xdata{jit-vol1-iss2,
+  journal = JIT # { (JIT)},
+  year    = {2020},
+  month   = {jan},
+  volume  = {1},
+  number  = {2},
+}
+@article{my-article,
+  author  = {Doe, John and Smith, Jane}
+  title   = {Theories & Practices},
+  xdata   = {jit-1-2},
+  pages   = {100--200},
+}
+\end{raw}
+
 \end{document}
 ]]
 
