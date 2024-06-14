@@ -47,7 +47,30 @@ end)
 -- stylua: ignore end
 ---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
-local parseBibtex = function (fn)
+local bibcompat = require("packages.bibtex.bibmaps")
+local crossrefmap, fieldmap = bibcompat.crossrefmap, bibcompat.fieldmap
+
+local function consolidateEntry (entry, label)
+   local consolidated = {}
+   for field, value in pairs(entry.attributes) do
+      consolidated[field] = value
+      local alias = fieldmap[field]
+      if alias then
+         if entry.attributes[alias] then
+            SU.warn("Duplicate field '" .. field .. "' and alias '" .. alias .. "' in entry '" .. label .. "'")
+         else
+            consolidated[alias] = value
+         end
+      end
+   end
+   entry.attributes = consolidated
+   return entry
+end
+
+--- Parse a BibTeX file and populate a bibliography table.
+-- @tparam string fn Filename
+-- @tparam table biblio Table of entries
+local function parseBibtex (fn, biblio)
    fn = SILE.resolveFile(fn) or SU.error("Unable to resolve Bibtex file " .. fn)
    local fh, e = io.open(fn)
    if e then
@@ -58,14 +81,45 @@ local parseBibtex = function (fn)
    if not t or not t[1] or t.id ~= "document" then
       SU.error("Error parsing bibtex")
    end
-   local entries = {}
    for i = 1, #t do
       if t[i].id == "entry" then
          local ent = t[i][1]
-         entries[ent.label] = { type = ent.type, attributes = ent[1] }
+         local entry = { type = ent.type, attributes = ent[1] }
+         if biblio[ent.label] then
+            SU.warn("Duplicate entry key '" .. ent.label .. "', picking the last one")
+         end
+         biblio[ent.label] = consolidateEntry(entry, ent.label)
       end
    end
-   return entries
+end
+
+--- Copy fields from the parent entry to the child entry.
+-- BibLaTeX/Biber have a complex inheritance system for fields.
+-- This implementation is more naive, but should be sufficient for reasonable
+-- use cases.
+-- @tparam table parent Parent entry
+-- @tparam table entry Child entry
+local function fieldsInherit (parent, entry)
+   local map = crossrefmap[parent.type] and crossrefmap[parent.type][entry.type]
+   if not map then
+      -- @xdata and any other unknown types: inherit all missing fields
+      for field, value in pairs(parent.attributes) do
+         if not entry.attributes[field] then
+            entry.attributes[field] = value
+         end
+      end
+      return -- done
+   end
+   for field, value in pairs(parent.attributes) do
+      if map[field] == nil and not entry.attributes[field] then
+         entry.attributes[field] = value
+      end
+      for childfield, parentfield in pairs(map) do
+         if parentfield and not entry.attributes[parentfield] then
+            entry.attributes[parentfield] = parent.attributes[childfield]
+         end
+      end
+   end
 end
 
 --- Resolve the 'crossref' and 'xdata' fields on a bibliography entry.
@@ -104,11 +158,7 @@ local function crossrefAndXDataResolve (bib, entry)
       local parent = bib[ref]
       if parent then
          crossrefAndXDataResolve(bib, parent)
-         for k, v in pairs(parent.attributes) do
-            if not entry.attributes[k] then
-               entry.attributes[k] = v
-            end
-         end
+         fieldsInherit(parent, entry)
       else
          SU.warn("Unknown crossref " .. ref .. " in bibliography entry " .. entry.label)
       end
@@ -133,7 +183,7 @@ end
 function package:registerCommands ()
    self:registerCommand("loadbibliography", function (options, _)
       local file = SU.required(options, "file", "loadbibliography")
-      SILE.scratch.bibtex.bib = parseBibtex(file) -- Later we'll do multiple bibliogs, but not now
+      parseBibtex(file, SILE.scratch.bibtex.bib)
    end)
 
    self:registerCommand("bibstyle", function (_, _)
