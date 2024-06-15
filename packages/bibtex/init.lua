@@ -101,8 +101,12 @@ local function consolidateEntry (entry, label)
       end
    end
    -- Names field split and parsed
-   for _, field in ipairs({ "author" }) do
+   for _, field in ipairs({ "author", "editor", "translator", "shortauthor", "shorteditor", "holder" }) do
       if consolidated[field] then
+         -- FIXME Check our corporate names behave, we are probably bad currently
+         -- with nested braces !!!
+         -- See biblatex manual v3.20 §2.3.3 Name Lists
+         -- e.g. editor = {{National Aeronautics and Space Administration} and Doe, John}
          local names = namesplit(consolidated[field])
          for i = 1, #names do
             names[i] = parse_name(names[i])
