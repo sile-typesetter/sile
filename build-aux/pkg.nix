@@ -115,6 +115,9 @@ in stdenv.mkDerivation (finalAttrs: {
     # `pdfinfo`, by using `false` we make sure that if it is expected during
     # build time we would fail to build since we only provide it at test time.
     "PDFINFO=false"
+    # We're using Cargo to build a shared library skipping some libtool bits
+    # and Nix mistakenly assumes are relevant and thinks it needs to cleanup.
+    "RANLIB=:"
     #"--with-manual" In Nixpkgs we add this flag, here its not important enough
   ] ++ lib.optionals (!lua.pkgs.isLuaJIT) [
     "--without-luajit"

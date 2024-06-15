@@ -36,6 +36,8 @@ fn main() {
     generate_shell_completions();
     #[cfg(feature = "static")]
     {
+        println!("cargo:rustc-link-arg=-lrusile");
+
         let dir = env::var("CARGO_MANIFEST_DIR").unwrap();
         println!(
             "cargo:rustc-link-search=native={}",
