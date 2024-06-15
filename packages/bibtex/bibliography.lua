@@ -200,7 +200,7 @@ do
          von_start, last_lim, jr_lim, first_start, first_lim = 1, commas[1], commas[2], commas[2], n + 1
          divide_von_from_last()
       else
-         SU.error("Too many commas in name '%s'")
+         SU.error(("Too many commas in name '%s'"):format(str))
       end
       -- <set fields of name based on [[first_start]] and friends>=
       -- We set long and short forms together; [[ss]] is the
