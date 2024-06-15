@@ -4,6 +4,8 @@ local package = pl.class(base)
 package._name = "bibtex"
 
 local epnf = require("epnf")
+local nbibtex = require("packages.bibtex.support.nbibtex")
+local namesplit, parse_name = nbibtex.namesplit, nbibtex.parse_name
 
 local Bibliography
 
@@ -81,11 +83,12 @@ end)
 -- stylua: ignore end
 ---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
-local bibcompat = require("packages.bibtex.bibmaps")
+local bibcompat = require("packages.bibtex.support.bibmaps")
 local crossrefmap, fieldmap = bibcompat.crossrefmap, bibcompat.fieldmap
 
 local function consolidateEntry (entry, label)
    local consolidated = {}
+   -- BibLaTeX aliases for legacy BibTeX fields
    for field, value in pairs(entry.attributes) do
       consolidated[field] = value
       local alias = fieldmap[field]
@@ -95,6 +98,16 @@ local function consolidateEntry (entry, label)
          else
             consolidated[alias] = value
          end
+      end
+   end
+   -- Names field split and parsed
+   for _, field in ipairs({ "author" }) do
+      if consolidated[field] then
+         local names = namesplit(consolidated[field])
+         for i = 1, #names do
+            names[i] = parse_name(names[i])
+         end
+         consolidated[field] = names
       end
    end
    entry.attributes = consolidated
