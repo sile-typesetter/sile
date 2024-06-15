@@ -1,5 +1,37 @@
 local Bibliography = require("packages.bibtex.bibliography")
 
+-- WORKAROUND FIXME
+-- We may want fluent strings for all languages, but for now we just use English.
+-- It's also very incomplete (for date ranges, approximate dates, etc.)
+local MONTHNAMES = { "January", "February", "March", "April", "May", "June",
+   "July", "August", "September", "October", "November", "December" }
+local SEASONNAMES = { "Spring", "Summer", "Fall", "Winter" }
+local function fullDate (item)
+   local d = item.date
+   if d then
+      if d.year and d.month and d.day then
+         return MONTHNAMES[d.month] .. " " .. d.day .. ", " .. d.year
+      end
+      if d.year and d.month then
+         return MONTHNAMES[d.month] .. " " .. d.year
+      end
+      if d.year and d.season then
+         return SEASONNAMES[d.season] .. " " .. d.year
+      end
+      if d.year then
+         return d.year
+      end
+      return ""
+   end
+   if item.year and item.month then
+      return MONTHNAMES[item.month] .. " " .. item.year
+   end
+   if item.year then
+      return item.year
+   end
+   return ""
+end
+
 local ChicagoStyles = pl.tablex.merge(Bibliography.Style, {
    CitationStyle = Bibliography.CitationStyles.AuthorYear,
 
@@ -23,7 +55,7 @@ local ChicagoStyles = pl.tablex.merge(Bibliography.Style, {
             italic(journaltitle),
             optional(" ", volume),
             optional(" no. ", number),
-            optional(" ", parens(optional(month, " "), year)),
+            optional(" ", parens(fullDate)),
             optional(": ", pageRange),
             ".",
             optional(" ", doi, "."),
@@ -35,8 +67,7 @@ local ChicagoStyles = pl.tablex.merge(Bibliography.Style, {
          quotes(title, "."),
          " ",
          italic(journaltitle),
-         optional(", ", month),
-         optional(", ", year),
+         optional(", ", fullDate),
          optional(": ", pageRange),
          ".",
          optional(" ", doi, "."),
