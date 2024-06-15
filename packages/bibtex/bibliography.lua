@@ -119,10 +119,14 @@ Bibliography = {
       transEditor = function (item)
          local r = {}
          if item.editor then
-            r[#r + 1] = fluent:get_message("bibliography-edited-by")({ name = item.editor })
+            r[#r + 1] = fluent:get_message("bibliography-edited-by")({
+               name = Bibliography.Style.firstLastNames(item.editor),
+            })
          end
          if item.translator then
-            r[#r + 1] = fluent:get_message("bibliography-translated-by")({ name = item.translator })
+            r[#r + 1] = fluent:get_message("bibliography-translated-by")({
+               name = Bibliography.Style.firstLastNames(item.translator),
+            })
          end
          if #r then
             return table.concat(r, ", ")
@@ -160,6 +164,19 @@ Bibliography = {
             end
             return table.concat(t, "")
          end
+      end,
+
+      firstLastNames = function (field)
+         local namelist = field or {}
+         if #namelist == 0 then
+            return ""
+         end
+         local names = {}
+         for i = 1, #namelist do
+            local author = namelist[i]
+            names[i] = author.ff .. " " .. author.ll
+         end
+         return Bibliography.Style.commafy(names)
       end,
 
       commafy = function (t, andword) -- also stolen from nbibtex
