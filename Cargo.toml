@@ -2,10 +2,13 @@
 resolver = "2"
 members = [
   ".",
+  "rusile",
 ]
 
 [workspace.package]
+version = "0.15.3"
 edition = "2021"
+rust-version = "1.71.0"
 authors = [
   "Simon Cozens",
   "Caleb Maclennan <caleb@alerque.com>",
@@ -18,16 +21,16 @@ license = "MIT"
 
 [package]
 name = "sile"
-version = "0.15.3"
-edition.workspace = true
-rust-version = "1.71.0"
 description = "Simon’s Improved Layout Engine"
+readme = "README.md"
+build = "build-aux/build.rs"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 authors.workspace = true
 homepage.workspace = true
-readme = "README.md"
 repository.workspace = true
 license.workspace = true
-build = "build-aux/build.rs"
 
 [[bin]]
 name = "sile"
