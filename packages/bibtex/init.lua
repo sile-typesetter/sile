@@ -7,6 +7,37 @@ local epnf = require("epnf")
 
 local Bibliography
 
+local nbsp = luautf8.char(0x00A0)
+local function sanitize (str)
+   local s = str
+      -- TeX special characters:
+      -- Backslash-escaped tilde is a tilde,
+      -- but standalone tilde is a non-breaking space
+      :gsub(
+         "(.?)~",
+         function (prev)
+            if prev == "\\" then
+               return "~"
+            end
+            return prev .. nbsp
+         end
+      )
+      -- Other backslash-escaped characters are skipped
+      -- TODO FIXME:
+      -- This ok for \", \& etc. which we want to unescape,
+      -- BUT what should we do with other TeX-like commands?
+      :gsub(
+         "\\",
+         ""
+      )
+      -- We will wrap the content in <sile> tags so we need to XML-escape
+      -- the input.
+      :gsub("&", "&amp;")
+      :gsub("<", "&lt;")
+      :gsub(">", "&gt;")
+   return s
+end
+
 -- luacheck: push ignore
 -- stylua: ignore start
 ---@diagnostic disable: undefined-global, unused-local, lowercase-global
@@ -18,11 +49,14 @@ local bibtexparser = epnf.define(function (_ENV)
    local quoted = C( P'"' * C(((1 - S'"\r\n\f\\') + (P'\\' * 1)) ^ 0) * '"' ) / function (...) local t={...}; return t[2] end
    local _ = WS^0
    local sep = S",;" * _
-   local myID = C(identifier + P(1)) / function (t) return strings[t] or t end
-   local myTag = C(identifier + P(1)) / function (t) return t:lower() end
-   local pieces = balanced + quoted + myID
-   local value = Ct(pieces * (WS * P("#") * WS * pieces)^0) / function (t) return table.concat(t) end
-   local pair = Cg(myTag * _ * "=" * _ * C(value)) * _ * sep^-1   / function (...) local t= {...}; return t[1], t[#t] end
+   local myID = C(identifier)
+   local myStrID = myID / function (t) return strings[t] or t end
+   local myTag = C(identifier) / function (t) return t:lower() end
+   local pieces = balanced + quoted + myStrID
+   local value = Ct(pieces * (WS * P("#") * WS * pieces)^0)
+      / function (t) return table.concat(t) end / sanitize
+   local pair = myTag * _ * "=" * _ * value * _ * sep^-1
+      / function (...) local t= {...}; return t[1], t[#t] end
    local list = Cf(Ct("") * pair^0, rawset)
    local skippedType = Cmt(R("az", "AZ")^1, function(_, _, tag)
       -- ignore both @comment and @preamble
@@ -300,6 +334,7 @@ If no such abbreviation is found, the value is considered to be a string literal
 
 String values are assumed to be in the UTF-8 encoding, and shall not contain (La)TeX commands.
 Special character sequences from TeX (such as \code{`} assumed to be an opening quote) are not supported.
+There are exceptions to this rule. Notably, the \code{~} character can be used to represent a non-breaking space (when not backslash-escaped), and the \code{\\&} sequence is accepted (though this implementation does not mandate escaping ampersands).
 
 Values can also be composed by concatenating strings, using the \code{#} character.
 
