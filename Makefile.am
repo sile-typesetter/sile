@@ -204,6 +204,11 @@ selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS)
 .PHONY: docs
 docs: $(_MANUAL) lua-api-docs
 
+.PHONY: fake-manual
+fake-manual:
+	touch $(FIGURES)
+	touch $(MANUAL)
+
 .PHONY: lua-api-docs
 lua-api-docs: lua-api-docs/index.html
 
@@ -287,7 +292,7 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS
 force: ;
 
 PHONY_DEVELOPER_TARGETS = busted compare coverage \
-	docker-dep-check docker-ghcr-to-hub gource.webm lint luacheck luarocks-lint \
+	docker-dep-check docker-ghcr-to-hub docker-test-dist gource.webm lint luacheck luarocks-lint \
 	prerelease regression_previews regressions release release-preview stylua tagrelease \
 	test update_expecteds update_libtexpdf
 .PHONY: $(PHONY_DEVELOPER_TARGETS)
@@ -429,6 +434,11 @@ docker-ghcr-to-hub:
 	$(DOCKER) pull $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG)
 	$(DOCKER) tag  $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
 	$(docker_push)
+
+docker-test-dist: export DOCKERFILE = tests/Dockerfile-dist
+docker-test-dist: export DOCKER_TAG = dist-test
+docker-test-dist:
+	./hooks/build $(VERSION)
 
 gource.webm:
 	$(MKDIR_P) /tmp/gravatars
