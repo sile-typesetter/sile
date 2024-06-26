@@ -59,6 +59,7 @@ BUILT_LUA_SOURCES = core/features.lua core/pathsetup.lua core/version.lua
 
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
+nodist_man_MANS =
 dist_man_MANS = sile-lua.1
 sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
 EXTRA_sile_SOURCES =

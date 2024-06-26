@@ -2,7 +2,7 @@ export VERSION_FROM_AUTOTOOLS = v$(VERSION)
 
 @PACKAGE_VAR@_SOURCES += Cargo.toml build-aux/build.rs
 EXTRA_@PACKAGE_VAR@_SOURCES += Cargo.lock .version
-dist_man_MANS += @PACKAGE_NAME@.1
+nodist_man_MANS += @PACKAGE_NAME@.1
 
 CLEANFILES += $(bin_PROGRAMS) $(BUILT_SOURCES) $(dist_man_MANS)
 
