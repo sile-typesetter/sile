@@ -44,13 +44,11 @@ TESTPREVIEWS ?= $(addsuffix .pdf,$(basename $(filter-out $(_DISABLEDSRCS),$(_TES
 include $(wildcard Makefile-distfiles)
 
 FIGURES = documentation/fig-input-to-output.pdf
-
 MANUAL := documentation/sile.pdf
 SILELUA := $(PACKAGE_NAME)-lua
 
 if MANUAL
 _MANUAL = $(MANUAL)
-
 endif
 
 $(MANUAL): $(FIGURES)
@@ -76,7 +74,7 @@ EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/c
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
 EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
-EXTRA_DIST += $(MANUAL) $(FIGURES)
+EXTRA_DIST += $(FIGURES)
 EXTRA_DIST += src/embed.rs.in
 EXTRA_DIST += sil.abnf
 
@@ -166,7 +164,7 @@ LOCALPATHS := SILE_PATH="$(PWD);libtexpdf/.libs;justenough/.libs"
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
 DRAFT ?= false
 
-dist-hook: $(MANUAL) dist-hook-distfiles
+dist-hook: dist-hook-distfiles
 
 .PHONY: dist-hook-distfiles
 dist-hook-distfiles:
