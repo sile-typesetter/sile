@@ -290,3 +290,11 @@ AC_OUTPUT
 
 AC_MSG_NOTICE([monkey-patching configure to ignore core directory])
 m4_esyscmd_s([build-aux/decore-automake.sh])
+
+# Avoid the perceived need to run automake again when building from source
+# tarballs. The assorted AM include macros assume two passes are needed to
+# generate a makefile since one pass has to generate the includes and the
+# second one inlines them, but we're distributing a ready-to-use version and
+# hence one pass is enough. We can skip ahead and assume the Makefile template
+# is ready to go an this point, avoiding the need for autotools at all.
+AM_COND_IF([SOURCE_IS_DIST], [touch -r aminclude.am Makefile.in])
