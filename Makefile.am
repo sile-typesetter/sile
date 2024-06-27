@@ -164,13 +164,20 @@ LOCALPATHS := SILE_PATH="$(PWD);libtexpdf/.libs;justenough/.libs"
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
 DRAFT ?= false
 
-dist-hook: dist-hook-distfiles
+dist-hook: dist-hook-decore-automake dist-hook-devendor-luarocks
 
-.PHONY: dist-hook-distfiles
-dist-hook-distfiles:
+.PHONY: dist-hook-decore-automake
+dist-hook-decore-automake:
+	cd $(distdir)
+	$(top_srcdir)/build-aux/decore-automake.sh
+
+# Don't take it for granted that the user will use --without-system-luarocks
+# when building from source tarballs even though the dist tarball may be
+# generated with that configuration.
+.PHONY: dist-hook-devendor-luarocks
+dist-hook-devendor-luarocks: dist-hook-decore-automake
 	cd $(distdir)
 	$(SED) -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
-	$(top_srcdir)/build-aux/decore-automake.sh
 	$(SED) -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
 
 # Whether to force tests to run from scratch
