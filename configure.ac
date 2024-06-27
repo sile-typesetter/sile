@@ -217,6 +217,7 @@ AM_COND_IF([SYSTEM_LUAROCKS], [
     AX_LUA_MODULE([vstruct], [vstruct])
 ], [
     QUE_PROGVAR([luarocks])
+    QUE_PROGVAR([git]) # required for luarocks to install zlib rock
 ])
 
 QUE_FONT(Gentium Plus)
