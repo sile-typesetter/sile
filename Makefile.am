@@ -40,7 +40,7 @@ TESTPREVIEWS ?= $(addsuffix .pdf,$(basename $(filter-out $(_DISABLEDSRCS),$(_TES
 # using $(wildcard ...) to include it (the very function we couldn't use because
 # of the race condition it creates) we actually keep it from being flattened and
 # hence evaluated when we want it to be. Since the file always exists (see
-# BUILT_SOURCES and EXTRA_DIST) this doesn't induce a race.
+# BUILT_SOURCES) this doesn't induce a race.
 include $(wildcard Makefile-distfiles)
 
 FIGURES = documentation/fig-input-to-output.pdf
@@ -69,7 +69,6 @@ dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE.md
 EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
-EXTRA_DIST += Makefile-distfiles
 EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/config.ld build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
 EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
@@ -177,7 +176,6 @@ dist-hook-decore-automake:
 .PHONY: dist-hook-devendor-luarocks
 dist-hook-devendor-luarocks: dist-hook-decore-automake
 	cd $(distdir)
-	$(SED) -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
 	$(SED) -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
 
 # Whether to force tests to run from scratch
