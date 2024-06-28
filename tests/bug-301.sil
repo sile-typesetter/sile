@@ -1,5 +1,5 @@
 \begin[papersize=a7,class=book]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \use[module=packages.linespacing]
 \nofolios
 \font[family=Gentium Plus,size=9.5pt]
@@ -15,11 +15,11 @@ All the paragraphs in this test should be left justified and all the signatures 
 
 A line of stuff in a paragraph that wraps on the page following the one it started on.
 
-\rightalign{The undersigned,}
+\raggedleft{The undersigned,}
 
-\rightalign{John Hancock}
+\raggedleft{John Hancock}
 
-\skip[height=16em]
+\vfill
 
 The problem with hfills on the next page doesn't repro if you try to do it on this page.
 

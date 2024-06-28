@@ -1,5 +1,5 @@
 \begin[papersize=a5,class=book]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \nofolios
 \define[command=mwe]{One, two. Buckle my shoe.\smallskip}
 

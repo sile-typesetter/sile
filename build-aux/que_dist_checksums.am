@@ -1,4 +1,4 @@
-# Output both a file that can be attatched to releases and also write STDOUT
+# Output both a file that can be attached to releases and also write STDOUT
 # for the sake of CI build logs so they can be audited as matching what is
 # eventually posted. The list of files checksummed is a glob (even though we
 # know an exact pattern) to avoid errors for formats not generated.

@@ -1,5 +1,5 @@
 \begin[papersize=a6]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \nofolios
 \neverindent
 foo
@@ -9,8 +9,8 @@ foo
 \set[parameter=font.family,reset=true]qiz
 
 foo
-\script{SILE.settings:set("font.family", "Cormorant Infant")}bar
-\script{SILE.settings:set("font.family", nil, nil, true)}baz
-\script{SILE.settings:set("font.family", "Cormorant Infant", true)}bar
-\script{SILE.settings:set("font.family", nil, nil, true)}qiz
+\lua{SILE.settings:set("font.family", "Cormorant Infant")}bar
+\lua{SILE.settings:set("font.family", nil, nil, true)}baz
+\lua{SILE.settings:set("font.family", "Cormorant Infant", true)}bar
+\lua{SILE.settings:set("font.family", nil, nil, true)}qiz
 \end{document}

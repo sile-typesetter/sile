@@ -1,5 +1,5 @@
 \begin[papersize=a6,class=book]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \nofolios
 \use[module=packages.lorem]
 \font[family=Gentium Plus,size=10pt]

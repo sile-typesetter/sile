@@ -1,8 +1,8 @@
 \begin[papersize=a7,class=bible]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \nofolios
 \font[family=Gentium Plus]
-\begin{script}
+\begin{lua}
 SILE.registerCommand("format-reference", function (options, content)
   SILE.call("font", { family = "Gentium Plus" })
   local ref
@@ -14,7 +14,7 @@ SILE.registerCommand("format-reference", function (options, content)
   SILE.typesetter:typeset(ref)
 end)
 SILE.registerCommand("bible:verse-number", function(options, content) end)
-\end{script}
+\end{lua}
 \save-book-title{Gn}
 \save-chapter-number{1}
 \verse-number{1}

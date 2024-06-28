@@ -1,12 +1,12 @@
 \begin[papersize=a6]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \nofolios
-\begin{script}
+\begin{lua}
 local class = SILE.documentState.documentClass
 class:declareFrame("left", { top = "top(content)", left = "left(content)", right = "52%pw" })
 class:declareFrame("right", { top = "top(content)", left = "50%pw", right = "right(content)" })
 class:loadPackage("parallel", { frames = { left = "left", right = "right" }})
-\end{script}
+\end{lua}
 \left
 Left
 \right

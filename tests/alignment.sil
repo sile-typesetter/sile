@@ -12,6 +12,6 @@
 
 \justified{\em{Justified} \lorem[words=40]}
 
-\rightalign{\em{Right aligned} \lorem[words=4]}
+\raggedleft{\em{Right aligned} \lorem[words=4]}
 
 \end{document}

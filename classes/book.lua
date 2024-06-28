@@ -148,7 +148,7 @@ function class:registerCommands ()
    end)
 
    self:registerCommand("chapter", function (options, content)
-      SILE.typesetter:leaveHmode()
+      SILE.call("par")
       SILE.call("open-spread", { double = false })
       SILE.call("noindent")
       SILE.scratch.headers.right = nil
@@ -166,6 +166,7 @@ function class:registerCommands ()
       if SILE.Commands[postcmd .. ":" .. lang] then
          postcmd = postcmd .. ":" .. lang
       end
+      SILE.call("nofoliothispage")
       SILE.call(postcmd)
       SILE.call("book:chapterfont", {}, content)
       SILE.call("left-running-head", {}, function ()
@@ -173,18 +174,21 @@ function class:registerCommands ()
             SILE.call("book:left-running-head-font", {}, content)
          end)
       end)
+      SILE.call("novbreak")
+      SILE.call("par")
+      SILE.call("novbreak")
       SILE.call("bigskip")
-      SILE.call("nofoliothispage")
+      SILE.call("novbreak")
       -- English typography (notably) expects the first paragraph under a section
       -- not to be indented. Frenchies, don't use this class :)
       SILE.call("noindent")
    end, "Begin a new chapter")
 
    self:registerCommand("section", function (options, content)
-      SILE.typesetter:leaveHmode()
-      SILE.call("goodbreak")
-      SILE.call("bigskip")
+      SILE.call("par")
       SILE.call("noindent")
+      SILE.call("bigskip")
+      SILE.call("goodbreak")
       SILE.call("book:sectionfont", {}, function ()
          SILE.call("book:sectioning", {
             numbering = options.numbering,
@@ -202,7 +206,7 @@ function class:registerCommands ()
       if not SILE.scratch.counters.folio.off then
          SILE.call("right-running-head", {}, function ()
             SILE.call("book:right-running-head-font", {}, function ()
-               SILE.call("rightalign", {}, function ()
+               SILE.call("raggedleft", {}, function ()
                   SILE.settings:temporarily(function ()
                      if SU.boolean(options.numbering, true) then
                         SILE.call("show-multilevel-counter", { id = "sectioning", level = 2 })
@@ -214,20 +218,20 @@ function class:registerCommands ()
             end)
          end)
       end
+      SILE.call("par")
       SILE.call("novbreak")
-      SILE.call("bigskip")
+      SILE.call("smallskip")
       SILE.call("novbreak")
       -- English typography (notably) expects the first paragraph under a section
       -- not to be indented. Frenchies, don't use this class :)
       SILE.call("noindent")
-      SILE.typesetter:inhibitLeading()
    end, "Begin a new section")
 
    self:registerCommand("subsection", function (options, content)
-      SILE.typesetter:leaveHmode()
-      SILE.call("goodbreak")
+      SILE.call("par")
       SILE.call("noindent")
       SILE.call("medskip")
+      SILE.call("goodbreak")
       SILE.call("book:subsectionfont", {}, function ()
          SILE.call("book:sectioning", {
             numbering = options.numbering,
@@ -242,14 +246,13 @@ function class:registerCommands ()
          SILE.call(postcmd)
          SILE.process(content)
       end)
-      SILE.typesetter:leaveHmode()
+      SILE.call("par")
       SILE.call("novbreak")
-      SILE.call("medskip")
+      SILE.call("smallskip")
       SILE.call("novbreak")
       -- English typography (notably) expects the first paragraph under a section
       -- not to be indented. Frenchies, don't use this class :)
       SILE.call("noindent")
-      SILE.typesetter:inhibitLeading()
    end, "Begin a new subsection")
 
    self:registerCommand("book:chapterfont", function (_, content)

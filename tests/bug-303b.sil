@@ -1,7 +1,7 @@
 \begin[papersize=a5,class=book]{document}
 \nofolios
 \use[module=packages.lorem]
-\begin{script}
+\begin{lua}
 SILE.registerCommand("section", function (options, content)
   SILE.typesetter:leaveHmode()
   SILE.call("goodbreak")
@@ -10,7 +10,7 @@ SILE.registerCommand("section", function (options, content)
   SILE.process(content)
   SILE.call("novbreak")
 end)
-\end{script}
+\end{lua}
 \hbox
 \skip[height=34em]
 \lorem[words=40]

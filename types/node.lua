@@ -533,7 +533,7 @@ nodetypes.vglue._default_length = "height"
 nodetypes.vglue.adjustment = nil
 
 function nodetypes.vglue:_init (spec)
-   self.adjustment = SILE.measurement()
+   self.adjustment = SILE.types.measurement()
    self:super(spec)
 end
 

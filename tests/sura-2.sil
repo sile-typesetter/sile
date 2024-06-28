@@ -1,5 +1,5 @@
 \begin[papersize=a6,direction=RTL]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \begin{lua}
   -- ICU 74 introduced a change that affects where SILE sees font
   -- property changes in this text. Both outputs are fine, but we

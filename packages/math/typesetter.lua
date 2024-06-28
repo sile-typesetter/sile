@@ -171,7 +171,7 @@ local function handleMath (_, mbox, options)
          SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
          SILE.settings:set("document.spaceskip", SILE.types.length("1spc", 0, 0))
          SILE.typesetter:pushHorizontal(mbox)
-         SILE.typesetter:pushExplicitGlue(SILE.nodefactory.hfillglue())
+         SILE.typesetter:pushExplicitGlue(SILE.types.node.hfillglue())
          if counter then
             options.counter = counter
             SILE.call("increment-counter", { id = counter })

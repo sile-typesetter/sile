@@ -5,13 +5,13 @@
 \begin{raggedright}
 foo
 \end{raggedright}
-\begin{script}
+\begin{lua}
 -- \\begin{foo}
 b = "\\begin{bar}"
 -- \\end{foo}
 local e = "\\end{bar}"
 SILE.typesetter:typeset(b..e)
-\end{script}
+\end{lua}
 \par
 bar
 \end{center}

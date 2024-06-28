@@ -1,16 +1,16 @@
 \begin[papersize=a6,direction=RTL-TTB]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \nofolios
 \neverindent
 \font[family=Awami Nastaliq,size=22]
 \set[parameter=document.baselineskip,value=3em]
 \set[parameter=shaper.spacestretchfactor,value=10]
-\begin{script}
+\begin{lua}
 local str = "کی خواہش "
 local concatenated = ""
 for i = 1, 8 do
 	concatenated = concatenated..str
 end
 SILE.typesetter:typeset(concatenated)
-\end{script}
+\end{lua}
 \end{document}

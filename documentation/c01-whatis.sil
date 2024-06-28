@@ -9,7 +9,7 @@ SILE is a typesetting system.
 Its job is to produce beautiful printed documents from raw content.
 The best way to understand what SILE is and what it does is to compare it to other systems which you may have heard of.
 
-\section{SILE versus Word}
+\section{SILE versus MS Word and friends}
 
 When most people produce printed documents using a computer, they usually use desktop oriented word processing software such as Microsoft Word, Apple Pages, or LibreOffice Writer.
 SILE is not a word processor;
@@ -44,9 +44,10 @@ When preparing content for SILE, you keep typing, because the page breaks are de
 
 In other words, SILE is a \em{language} for describing what you want to happen, and an interpreter that will make certain formatting decisions about the best way for those instructions to be turned into print.
 
-\section{SILE versus TeX}
+\section{SILE versus TeX and company}
 
-“Ah,” some people will say, “that sounds very much like TeX!”\footnote{Except that, being TeX users, they will say “Ah, that sounds very much like T\glue[width=-.1667em]\lower[height=0.5ex]{E}\glue[width=-.125em]X!”}
+“Ah,” some people will say, “that sounds very much like TeX!”%
+\footnote{Except that, being TeX users, they will say “Ah, that sounds very much like T\glue[width=-.1667em]\lower[height=0.5ex]{E}\glue[width=-.125em]X!”}
 
 And it’s true.
 SILE owes an awful lot of its heritage to TeX.
@@ -70,24 +71,25 @@ This a must-have feature for anyone typesetting bibles and other documents to be
 Typesetting on a grid means that each line of text will line up between the front and back of each piece of paper producing much less visual bleed-through when printed on thin paper.
 This a fairly difficult task to accomplish in TeX.
 There are various solutions trying to address it, but they are complex and have limitations.
-In SILE, you can alter the behaviour of the typesetter and include a reasonably short add-on package to enable grid typesetting.
+In SILE, the core behaviours of the typesetter itself can easily be altered, even on the fly in a document.
+There is a reasonably short add-on package shipped with SILE by default to enable grid typesetting.
 
-In fact, almost nobody uses plain TeX—they all use LaTeX equivalents plus a huge repository of packages available from the The Comprehensive TeX Archive Network (CTAN) archive.
-SILE does not benefit from the large ecosystem and community that has grown up around TeX.\footnote{Nevertheless, SILE does have a small ecosystem of third-party packages—More on the topic later.}
+In fact, almost nobody uses plain TeX—they all use LaTeX equivalents.%
+\footnote{Such as \code{pdflatex}, \code{xelatex}, \code{lualatex}, and \code{context}.}
+Additionally they leverage a huge repository of packages available from the The Comprehensive TeX Archive Network (CTAN) archive.
+SILE does not benefit from the large ecosystem and community that has grown up around TeX.%
+\footnote{Nevertheless, SILE does have a small ecosystem of third-party packages—More on the topic later.}
 In that sense, TeX will remain ahead of SILE for some time to come.
 But in terms of \em{core capabilities}, SILE aims at being at least equivalent to TeX.
 
-\section{SILE versus InDesign}
+\section{SILE versus InDesign and competitors}
 
-The other tool that people reach for when designing printed material on a computer is Adobe InDesign (or similar desktop publishing software, such as Scribus).
+The other category of tool that people reach for when designing printed material on a computer desktop publishing software (DTP).
+Adobe's InDesign is a prominant package in this space, but many others exist.
+Affinity Publisher is a newcommer but popular alternative.
+Old timers and newspaper publishers will remember QuarkXPress.
+Scribus is a capable Open Source entry in this space.
 
-% Reduce bug reports about this buggy float with a hack-around
-% https://github.com/sile-typesetter/sile/issues/860
-\skip{height=1bs}
-\skip{height=1ps}
-\par
-
-\noindent
 \float[rightboundary=7pt,bottomboundary=10pt]{\img[src=documentation/fig1.png,width=140]}
 DTP software is similar to word processing software in that they are both graphical and largely WYSIWYG, but the paradigm is different.
 The focus is usually less on preparing the content than on laying it out on the page—you click and drag to move areas of text and images around the screen.

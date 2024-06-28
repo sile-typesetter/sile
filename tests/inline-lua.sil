@@ -1,21 +1,21 @@
 \begin[papersize=a5,class=book]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 % A real comment
-\begin{script}
+\begin{lua}
 answer = { output = tostring(3 * 3 % 5) }
 escapes = "\\backslash & \ttab"
-\end{script}
+\end{lua}
 Normal {braced \% mark} and pure command \em{100\% italic}.
 
-Modulus from environment: 3 * 3 \% 5 = \script{SILE.typesetter:typeset(answer.output)}
+Modulus from environment: 3 * 3 \% 5 = \lua{SILE.typesetter:typeset(answer.output)}
 
-Modulus in inline command: 3 * 3 \% 5 = \script{SILE.typesetter:typeset(tostring(3 * 3 % 5))}
+Modulus in inline command: 3 * 3 \% 5 = \lua{SILE.typesetter:typeset(tostring(3 * 3 % 5))}
 
-Braces in inline command: \script{val = { str = "Matching brace {} inception is" }; SILE.typesetter:typeset(val.str)} valid.
+Braces in inline command: \lua{val = { str = "Matching brace {} inception is" }; SILE.typesetter:typeset(val.str)} valid.
 
-Lua character escapes from environment: \script{SILE.typesetter:typeset(escapes)}
+Lua character escapes from environment: \lua{SILE.typesetter:typeset(escapes)}
 
-Lua character escapes from command: \script{SILE.typesetter:typeset("\\backslash & \ttab")}
+Lua character escapes from command: \lua{SILE.typesetter:typeset("\\backslash & \ttab")}
 
 Grouped {words here} and \{escaped braces\} here.
 \end{document}

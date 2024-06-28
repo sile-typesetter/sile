@@ -1,5 +1,5 @@
 \begin[papersize=a6]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \begin{lua}
   -- Recent versions of ICU report different information about chunking around
   -- soft hyphens. Our test expectations are wired for 74, but our IC has 70.

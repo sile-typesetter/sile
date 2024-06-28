@@ -1,9 +1,9 @@
 \begin[direction=RTL,papersize=a7]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \font[family=Amiri,size=30pt]
 \nofolios
 \neverindent
-\begin{script}
+\begin{lua}
 
 SILE.documentState.documentClass:declareFrame("other", {
     left = "left(content)",
@@ -24,5 +24,5 @@ SILE.call("bigskip")
 SILE.call("bidi-off")
 SILE.typesetter:typeset("عَرَبي fail")
 
-\end{script}
+\end{lua}
 \end{document}

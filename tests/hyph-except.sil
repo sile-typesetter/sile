@@ -1,15 +1,15 @@
 \begin[papersize=a6]{document}
-\use[module=packages.retrograde,target=v0.15.0]
+\use[module=packages.retrograde,target=v0.14.17]
 \nofolios
 \language[main=tr]
-\script{SILE.typesetter:typeset(SILE.showHyphenationPoints("rab'bin", "tr"))}
+\lua{SILE.typesetter:typeset(SILE.showHyphenationPoints("rab'bin", "tr"))}
 
 \hyphenator:add-exceptions{rab’-bin rab'-bin}
 
-\script{SILE.typesetter:typeset(SILE.showHyphenationPoints("rab'bin", "tr"))}
+\lua{SILE.typesetter:typeset(SILE.showHyphenationPoints("rab'bin", "tr"))}
 
-\script{SILE.typesetter:typeset(SILE.showHyphenationPoints("rab’bin", "tr"))}
+\lua{SILE.typesetter:typeset(SILE.showHyphenationPoints("rab’bin", "tr"))}
 
-\script{SILE.typesetter:typeset(SILE.showHyphenationPoints("volksemosie", "af"))}
+\lua{SILE.typesetter:typeset(SILE.showHyphenationPoints("volksemosie", "af"))}
 
 \end{document}
