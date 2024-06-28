@@ -88,17 +88,18 @@ sile-lua.1
 .version
 .version-prev
 .tarball-version
+.flake-version
 .built-subdirs
 *.so
 *.o
-core/version.lua
-core/features.lua
-target/
 completions/
+core/features.lua
 core/pathsetup.lua
-src/embed.rs
+core/version.lua
 src/embed-includes.rs
+src/embed.rs
 src/sile-entry.sh
+target/
 *.asc
 
 # Nix symlink to builds
