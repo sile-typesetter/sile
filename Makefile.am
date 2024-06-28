@@ -40,17 +40,15 @@ TESTPREVIEWS ?= $(addsuffix .pdf,$(basename $(filter-out $(_DISABLEDSRCS),$(_TES
 # using $(wildcard ...) to include it (the very function we couldn't use because
 # of the race condition it creates) we actually keep it from being flattened and
 # hence evaluated when we want it to be. Since the file always exists (see
-# BUILT_SOURCES and EXTRA_DIST) this doesn't induce a race.
+# BUILT_SOURCES) this doesn't induce a race.
 include $(wildcard Makefile-distfiles)
 
 FIGURES = documentation/fig-input-to-output.pdf
-
 MANUAL := documentation/sile.pdf
 SILELUA := $(PACKAGE_NAME)-lua
 
 if MANUAL
 _MANUAL = $(MANUAL)
-
 endif
 
 $(MANUAL): $(FIGURES)
@@ -59,6 +57,7 @@ BUILT_LUA_SOURCES = core/features.lua core/pathsetup.lua core/version.lua
 
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
+nodist_man_MANS =
 dist_man_MANS = sile-lua.1
 sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
 EXTRA_sile_SOURCES =
@@ -70,12 +69,11 @@ dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE.md
 EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
-EXTRA_DIST += Makefile-distfiles
 EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/config.ld build-aux/decore-automake.sh build-aux/git-version-gen build-aux/list-dist-files.sh
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
 EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
-EXTRA_DIST += $(MANUAL) $(FIGURES)
+EXTRA_DIST += $(FIGURES)
 EXTRA_DIST += src/embed.rs.in
 EXTRA_DIST += sil.abnf
 
@@ -165,13 +163,19 @@ LOCALPATHS := SILE_PATH="$(PWD);libtexpdf/.libs;justenough/.libs"
 SILEFLAGS ?= -m $(DEPDIR)/$(basename $@).d -d versions -f fontconfig
 DRAFT ?= false
 
-dist-hook: $(MANUAL) dist-hook-distfiles
+dist-hook: dist-hook-decore-automake dist-hook-devendor-luarocks
 
-.PHONY: dist-hook-distfiles
-dist-hook-distfiles:
+.PHONY: dist-hook-decore-automake
+dist-hook-decore-automake:
 	cd $(distdir)
-	$(SED) -i -e '/^LUAMODULES =/s/=.*/=/' Makefile-distfiles
 	$(top_srcdir)/build-aux/decore-automake.sh
+
+# Don't take it for granted that the user will use --without-system-luarocks
+# when building from source tarballs even though the dist tarball may be
+# generated with that configuration.
+.PHONY: dist-hook-devendor-luarocks
+dist-hook-devendor-luarocks: dist-hook-decore-automake
+	cd $(distdir)
 	$(SED) -i -e '/^LUAMODULES/d;/^\tlua_modules/d' Makefile.in
 
 # Whether to force tests to run from scratch
@@ -196,13 +200,24 @@ selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS)
 	$(PDFINFO) $$output | $(GREP) "SILE v$(VERSION)"
 
 .PHONY: docs
-docs: $(_MANUAL) lua-api-docs
+docs: $(_MANUAL) lua-api-docs rust-api-docs
+
+.PHONY: fake-manual
+fake-manual:
+	touch $(FIGURES)
+	touch $(MANUAL)
 
 .PHONY: lua-api-docs
 lua-api-docs: lua-api-docs/index.html
 
 lua-api-docs/index.html: build-aux/config.ld
 	$(LDOC) -c build-aux/config.ld .
+
+.PHONY: rust-api-docs
+rust-api-docs: rust-api-docs/doc/sile/index.html
+
+rust-api-docs/doc/sile/index.html:
+	cargo doc $(CARGO_FEATURE_ARGS) --no-deps --target-dir rust-api-docs
 
 .PHONY: docs-figures
 docs-figures: $(FIGURES)
@@ -281,7 +296,7 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS
 force: ;
 
 PHONY_DEVELOPER_TARGETS = busted compare coverage \
-	docker-dep-check docker-ghcr-to-hub gource.webm lint luacheck luarocks-lint \
+	docker-dep-check docker-ghcr-to-hub docker-test-dist gource.webm lint luacheck luarocks-lint \
 	prerelease regression_previews regressions release release-preview stylua tagrelease \
 	test update_expecteds update_libtexpdf
 .PHONY: $(PHONY_DEVELOPER_TARGETS)
@@ -423,6 +438,11 @@ docker-ghcr-to-hub:
 	$(DOCKER) pull $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG)
 	$(DOCKER) tag  $(GHCR_REGISTRY)/$(GHCR_REPO):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_REPO):$(DOCKER_TAG)
 	$(docker_push)
+
+docker-test-dist: export DOCKERFILE = tests/Dockerfile-dist
+docker-test-dist: export DOCKER_TAG = dist-test
+docker-test-dist:
+	./hooks/build $(VERSION)
 
 gource.webm:
 	$(MKDIR_P) /tmp/gravatars

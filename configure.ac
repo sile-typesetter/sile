@@ -5,22 +5,26 @@ AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-zstd dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
+# Load up re-usable m4 bits shared across Caleb's projects
 QUE_GIT_VERSION
 QUE_TRANSFORM_PACKAGE_NAME
 QUE_DEVELOPER_MODE
 QUE_DIST_CHECKSUMS
+
+# Extend the QUE checksums feature with support for the PDF manual
 SILE_DIST_CHECKSUMS
 
-# Checks for programs.
-AC_PROG_CC
-AC_PROG_OBJC
-
+# Check for and set variables for tooling used during our build process
 AC_PROG_AWK
+AC_PROG_CC
 AC_PROG_GREP
+AC_PROG_OBJC
 AC_PROG_SED
-
 QUE_PROGVAR([cmp])
 QUE_PROGVAR([find])
+QUE_PROGVAR([jq])
+QUE_PROGVAR([pdfinfo])
+QUE_PROGVAR([xargs])
 
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
@@ -89,13 +93,6 @@ AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
 AM_CONDITIONAL([FONT_DOWNLOAD_TOOLS], [test -z ${DEVELOPER_MODE_TRUE} || (test -z ${SOURCE_IS_DIST_TRUE} && test -z ${MANUAL_TRUE})])
 AC_SUBST([FONT_DOWNLOAD_TOOLS])
 
-AC_MSG_NOTICE([checking for SILE specific build dependencies])
-
-QUE_FONT(Gentium Plus)
-
-QUE_PROGVAR([pdfinfo])
-QUE_PROGVAR([jq])
-QUE_PROGVAR([xargs])
 AM_COND_IF([MANUAL], [
             QUE_PROGVAR([dot])
             QUE_PROGVAR([gs])
@@ -125,6 +122,7 @@ case $host_os in
         AC_MSG_RESULT([no])
         ;;
 esac
+AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 
 AM_COND_IF([FONTCONFIG],
             [PKG_CHECK_MODULES(FONTCONFIG, [fontconfig],
@@ -161,6 +159,31 @@ PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
         AC_MSG_FAILURE([Required ICU library not found])
     fi
 ])
+AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
+
+# Required for downloading fonts for the manual and for tests
+# Since the source tarball includes a prebuilt manual we only need this for Git source builds
+AM_COND_IF([FONT_DOWNLOAD_TOOLS], [
+    QUE_PROGVAR([curl])
+    QUE_PROGVAR([bsdtar])
+])
+
+AM_COND_IF([DEVELOPER_MODE], [
+    QUE_PROGVAR([busted])
+    QUE_PROGVAR([curl])
+    QUE_PROGVAR([delta])
+    QUE_PROGVAR([diff])
+    QUE_PROGVAR([head])
+    QUE_PROGVAR([ldoc])
+    QUE_PROGVAR([luacheck])
+    QUE_PROGVAR([luarocks])
+    QUE_PROGVAR([nix])
+    QUE_PROGVAR([npm])
+    QUE_PROGVAR([perl])
+    QUE_PROGVAR([sort])
+    QUE_PROGVAR([stylua])
+    QUE_PROGVAR([tr])
+])
 
 AX_PROG_LUA([5.1])
 AX_LUA_HEADERS
@@ -194,34 +217,11 @@ AM_COND_IF([SYSTEM_LUAROCKS], [
     AX_LUA_MODULE([vstruct], [vstruct])
 ], [
     QUE_PROGVAR([luarocks])
+    QUE_PROGVAR([git]) # required for luarocks to install zlib rock
 ])
 
-# Required for downloading fonts for the manual and for tests
-# Since the source tarball includes a prebuilt manual we only need this for Git source builds
-AM_COND_IF([FONT_DOWNLOAD_TOOLS], [
-    QUE_PROGVAR([curl])
-    QUE_PROGVAR([bsdtar])
-])
+QUE_FONT(Gentium Plus)
 
-AM_COND_IF([DEVELOPER_MODE], [
-    QUE_PROGVAR([busted])
-    QUE_PROGVAR([curl])
-    QUE_PROGVAR([delta])
-    QUE_PROGVAR([diff])
-    QUE_PROGVAR([head])
-    QUE_PROGVAR([ldoc])
-    QUE_PROGVAR([luacheck])
-    QUE_PROGVAR([luarocks])
-    QUE_PROGVAR([nix])
-    QUE_PROGVAR([npm])
-    QUE_PROGVAR([perl])
-    QUE_PROGVAR([sort])
-    QUE_PROGVAR([stylua])
-    QUE_PROGVAR([tr])
-])
-
-AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
-AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
 
 AC_SUBST([APPKIT_TRUE])
 AC_SUBST([FONTCONFIG_TRUE])
@@ -291,3 +291,11 @@ AC_OUTPUT
 
 AC_MSG_NOTICE([monkey-patching configure to ignore core directory])
 m4_esyscmd_s([build-aux/decore-automake.sh])
+
+# Avoid the perceived need to run automake again when building from source
+# tarballs. The assorted AM include macros assume two passes are needed to
+# generate a makefile since one pass has to generate the includes and the
+# second one inlines them, but we're distributing a ready-to-use version and
+# hence one pass is enough. We can skip ahead and assume the Makefile template
+# is ready to go an this point, avoiding the need for autotools at all.
+AM_COND_IF([SOURCE_IS_DIST], [touch -r aminclude.am Makefile.in])
