@@ -87,8 +87,7 @@ function class:registerCommands ()
   an input document this is typically done with an empty line between
   paragraphs, but calling the \par command explicitly or from Lua code
   running SILE.call("par") will end the current paragraph.
-]]
-         )
+]])
       end
       SILE.settings:set("current.parindent", SILE.types.node.glue())
       SILE.process(content)

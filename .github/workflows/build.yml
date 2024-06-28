@@ -91,6 +91,43 @@ jobs:
             sile-${{ env.CARCH }}
             sile-${{ env.VERSION }}.sha256.txt
 
+  build-from-dist:
+    runs-on: ubuntu-22.04
+    name: Build from source tarball without automake
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Cache lua_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            lua_modules
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install jq libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libluajit-5.1-dev libpng-dev luajit lua-sec lua-socket lua-zlib-dev luarocks
+      - name: Configure
+        run: |
+          ./bootstrap.sh
+          ./configure \
+            --enable-developer-mode \
+            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false FCMATCH=true PDFINFO=false CARGO=true \
+            --disable-font-variations \
+            --with-system-lua-sources \
+            --without-manual
+          echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
+          echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
+      - name: Package
+        run: |
+          make fake-manual
+          make distdir
+      - name: Build from package
+        run: |
+          make docker-test-dist
+
   build-nix:
     runs-on: ubuntu-22.04
     name: Build Nix

@@ -59,8 +59,8 @@ pub fn inject_version(lua: &Lua) {
 
 pub fn load_sile(lua: &Lua) {
     let entry: LuaString = lua.create_string("core.sile").unwrap();
-    let r#require: LuaFunction = lua.globals().get("require").unwrap();
-    r#require.call::<LuaString, ()>(entry).unwrap();
+    let require: LuaFunction = lua.globals().get("require").unwrap();
+    require.call::<LuaString, ()>(entry).unwrap();
 }
 
 pub fn version() -> crate::Result<String> {
@@ -186,8 +186,8 @@ pub fn run(
         finish.call::<_, _>(())?;
     } else {
         let repl_module: LuaString = lua.create_string("core.repl")?;
-        let r#require: LuaFunction = lua.globals().get("require")?;
-        let repl: LuaTable = r#require.call::<LuaString, LuaTable>(repl_module)?;
+        let require: LuaFunction = lua.globals().get("require")?;
+        let repl: LuaTable = require.call::<LuaString, LuaTable>(repl_module)?;
         repl.call_method::<_, _>("enter", ())?;
     }
     Ok(())

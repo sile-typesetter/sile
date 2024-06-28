@@ -66,8 +66,10 @@ in stdenv.mkDerivation (finalAttrs: {
     # before, in Nixpkgs, we won't need to run these commands.
     rm -rf ./libtexpdf
     cp --no-preserve=mode -r ${libtexpdf-src} ./libtexpdf/
-    # pretend to be a tarball release so sile --version will not say `vUNKNOWN`.
-    echo ${finalAttrs.version} > .tarball-version
+    # pretend to be a tarball release so sile --version will not say `vUNKNOWN`,
+    # but don't pretend so hard we make the build system treat us like the tarball.
+    echo ${finalAttrs.version} > .flake-version
+    sed -i -e 's/tarball-version/flake-version/' configure.ac
   '';
 
   nativeBuildInputs = [

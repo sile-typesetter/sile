@@ -1,0 +1,15 @@
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\language[main=en]
+\use[module=packages.bibtex]
+\loadbibliography[file=tests/bug-2054.bib]
+
+\reference{bar}
+
+\reference{foo}
+
+% Should not use Latin localization, should match first use of reference
+\reference{bar}
+
+\end{document}
