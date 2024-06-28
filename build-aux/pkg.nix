@@ -4,25 +4,25 @@
 # `fetchFromGitHub` with fetchSubmodules = true;`.
 { lib
 , stdenv
+, darwin
 , version, src, libtexpdf-src
-, autoreconfHook
-, gitMinimal
-, pkg-config
-, jq
-, cargo
-, rustc
-, rustPlatform
 , makeWrapper
-, poppler_utils
+, autoreconfHook
+, rustPlatform
+, gitMinimal
+, runCommand
+, pkg-config
+, cargo
+, fontconfig
+, gentium
 , harfbuzz
 , icu
-, fontconfig
-, lua
+, jq
 , libiconv
-, darwin
+, lua
 , makeFontsConf
-, gentium
-, runCommand
+, poppler_utils
+, rustc
 , stylua
 }:
 
@@ -50,13 +50,13 @@ let
     luacheck
     # packages needed for building api docs
     ldoc
-  # NOTE: Add lua packages here, to change the luaEnv also read by `flake.nix`
   ] ++ lib.optionals (lib.versionOlder lua.luaversion "5.2") [
     bit32
   ] ++ lib.optionals (lib.versionOlder lua.luaversion "5.3") [
     compat53
   ]);
-in stdenv.mkDerivation (finalAttrs: {
+
+  in stdenv.mkDerivation (finalAttrs: {
   pname = "sile";
   inherit version src;
 
@@ -73,16 +73,16 @@ in stdenv.mkDerivation (finalAttrs: {
   '';
 
   nativeBuildInputs = [
+    makeWrapper
     autoreconfHook
-    gitMinimal
     pkg-config
+    rustPlatform.cargoSetupHook
+    gitMinimal
     jq
     cargo
     rustc
-    rustPlatform.cargoSetupHook
-    poppler_utils
-    makeWrapper
   ];
+
   # In Nixpkgs, we don't copy the Cargo.lock file from the repo to Nixpkgs'
   # repo, but we inherit src, and specify a hash (it is a fixed output
   # derivation). `nix-update` and `nixpkgs-update` should be able to catch that
@@ -103,21 +103,21 @@ in stdenv.mkDerivation (finalAttrs: {
   ];
 
   configureFlags = [
+    # Build SILE's internal VM against headers from the Nix supplied Lua
+    "--with-system-lua-sources"
     # Nix will supply all the Lua dependencies, so stop the build system from
     # bundling vendored copies of them.
-    "--with-system-lua-sources"
     "--with-system-luarocks"
     # The automake check target uses pdfinfo to confirm the output of a test
-    # run, and uses autotools to discover it. This flake build eschews that
-    # test because it is run from the source directory but the binary is
-    # already built with system paths, so it can't be checked under Nix until
-    # after install. After install the Makefile isn't available of course, so
-    # we have our own copy of it with a hard coded path to `pdfinfo`. By
-    # specifying some binary here we skip the configure time test for
-    # `pdfinfo`, by using `false` we make sure that if it is expected during
-    # build time we would fail to build since we only provide it at test time.
+    # run, and uses autotools to discover it. Nix builds have to that test
+    # because it is run from the source directory with a binary already built
+    # with system paths, so it can't be checked under Nix until after install.
+    # After install the Makefile isn't available of course, so we have our own
+    # copy of it with a hard coded path to `pdfinfo`. By specifying some binary
+    # here we skip the configure time test for `pdfinfo`, by using `false` we
+    # make sure that if it is expected during build time we would fail to build
+    # since we only provide it at test time.
     "PDFINFO=false"
-    #"--with-manual" In Nixpkgs we add this flag, here its not important enough
   ] ++ lib.optionals (!lua.pkgs.isLuaJIT) [
     "--without-luajit"
   ];
@@ -172,7 +172,6 @@ in stdenv.mkDerivation (finalAttrs: {
       such as InDesign.
     '';
     homepage = "https://sile-typesetter.org";
-    # In nixpkgs we use a version specific URL for CHANGELOG.md
     changelog = "https://github.com/sile-typesetter/sile/raw/master/CHANGELOG.md";
     platforms = lib.platforms.unix;
     maintainers = with lib.maintainers; [ doronbehar alerque ];
