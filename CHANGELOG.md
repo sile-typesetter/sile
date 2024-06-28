@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.15.3](https://github.com/sile-typesetter/sile/compare/v0.15.2...v0.15.3) (2024-06-10)
+
+
+### Bug Fixes
+
+* **core:** Allow LUA_PATH env var to take effect at runtime ([e573c2d](https://github.com/sile-typesetter/sile/commit/e573c2d2026f5d194bfb0f0ea67f21d3728fafcb))
+
 ## [0.15.2](https://github.com/sile-typesetter/sile/compare/v0.15.1...v0.15.2) (2024-06-10)
 
 
