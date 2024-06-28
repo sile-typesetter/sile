@@ -6,9 +6,9 @@ SILE.init()
 describe("Hyphenation module", function ()
    local hyphenate = SILE.showHyphenationPoints
 
+   SILE.call("language", { main = "fr" })
+
    describe("minWord with UTF8 in input text", function ()
-      SILE.languageSupport.loadLanguage("fr")
-      fluent:set_locale("fr")
       -- Trigger the initialization of the hyphenator
       -- so SILE._hyphenators["fr"] is created
       hyphenate("série", "fr")
@@ -33,10 +33,7 @@ describe("Hyphenation module", function ()
    end)
 
    describe("exceptions with UTF8 in input text", function ()
-      SILE.languageSupport.loadLanguage("fr")
-      fluent:set_locale("fr")
-
-      SILE.call("hyphenator:add-exceptions", { lang = "fr" }, { "légè-rement" })
+      SILE.call("hyphenator:add-exceptions", {}, { "légè-rement" })
 
       it("should hyphenate with exception rule", function ()
          assert.is.equal("légè-rement", hyphenate("légèrement", "fr"))

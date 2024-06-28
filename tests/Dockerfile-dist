@@ -1,0 +1,34 @@
+#syntax=docker/dockerfile:1.2
+
+ARG ARCHTAG
+
+FROM docker.io/library/archlinux:base-devel$ARCHTAG
+
+ARG RUNTIME_DEPS
+ARG BUILD_DEPS
+
+# Freshen all base system packages
+RUN pacman-key --init
+RUN pacman --needed --noconfirm -Syq archlinux-keyring
+RUN pacman --needed --noconfirm -Suq
+
+# Install build and run-time dependecies
+RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS $BUILD_DEPS
+
+# Remove autotools, building the source distributions should not require them
+RUN pacman --noconfirm -Rn autoconf automake libtool base-devel
+
+# Set at build time, forces Docker’s layer caching to reset at this point
+ARG VERSION
+
+COPY ./sile-$VERSION /src
+WORKDIR /src
+
+RUN ./configure --with-system-lua-sources --without-manual
+RUN make
+RUN make install
+
+# We can't properly test path handling from inside the source directory!
+WORKDIR /tmp
+
+RUN sile --version | grep $VERSION

@@ -48,9 +48,8 @@ SILE.registerCommand("font", function (options, content)
          -- end
          options.language = newlang
       end
-      SILE.settings:set("document.language", options.language)
-      fluent:set_locale(options.language)
       SILE.languageSupport.loadLanguage(options.language)
+      SILE.settings:set("document.language", options.language)
    end
    if options.script then
       SILE.settings:set("font.script", options.script)

@@ -115,11 +115,18 @@ local function retrieveMathTable (font)
       if not face then
          SU.error("Could not find requested font " .. font .. " or any suitable substitutes")
       end
-      local mathTable = ot.parseMath(hb.get_table(face, "MATH"))
-      local upem = ot.parseHead(hb.get_table(face, "head")).unitsPerEm
-      if mathTable == nil then
-         SU.error("You must use a math font for math rendering.")
+      local fontHasMathTable, rawMathTable, mathTableParsable, mathTable
+      fontHasMathTable, rawMathTable = pcall(hb.get_table, face, "MATH")
+      if fontHasMathTable then
+         mathTableParsable, mathTable = pcall(ot.parseMath, rawMathTable)
       end
+      if not fontHasMathTable or not mathTableParsable then
+         SU.error(([[You must use a math font for math rendering.
+
+  The math table in '%s' could not be %s.
+         ]]):format(face.filename, fontHasMathTable and "parsed" or "loaded"))
+      end
+      local upem = ot.parseHead(hb.get_table(face, "head")).unitsPerEm
       local constants = {}
       for k, v in pairs(mathTable.mathConstants) do
          if type(v) == "table" then

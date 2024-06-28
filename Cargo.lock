@@ -1317,7 +1317,7 @@ checksum = "b833d8d034ea094b1ea68aa6d5c740e0d04bad9d16568d08ba6f76823a114316"
 
 [[package]]
 name = "rusile"
-version = "0.15.3"
+version = "0.15.4"
 dependencies = [
  "mlua",
  "sile",
@@ -1482,7 +1482,7 @@ dependencies = [
 
 [[package]]
 name = "sile"
-version = "0.15.3"
+version = "0.15.4"
 dependencies = [
  "anyhow",
  "clap",
