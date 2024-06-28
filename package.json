@@ -1,6 +1,6 @@
 {
   "name": "sile",
-  "version": "0.15.1",
+  "version": "0.15.2",
   "description": "The SILE Typesetter",
   "main": "sile",
   "scripts": {
@@ -35,7 +35,7 @@
       "path": "@commitlint/prompt"
     }
   },
-  "standard-version": {
+  "commit-and-tag-version": {
     "bumpFiles": [
       {
         "filename": "action.yml",
@@ -90,7 +90,6 @@
         "type": "test",
         "hidden": true
       }
-    ],
-    "preset": "conventionalcommits"
+    ]
   }
 }

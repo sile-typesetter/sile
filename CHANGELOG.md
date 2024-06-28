@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.15.2](https://github.com/sile-typesetter/sile/compare/v0.15.1...v0.15.2) (2024-06-10)
+
+
+### Bug Fixes
+
+* **build:** Bundle all assets in source distribution ([5198641](https://github.com/sile-typesetter/sile/commit/5198641080d929a9240853e8322bf4ba36104cd9))
+
 ## [0.15.1](https://github.com/sile-typesetter/sile/compare/v0.15.0...v0.15.1) (2024-06-08)
 
 
