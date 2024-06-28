@@ -507,6 +507,34 @@ function utilities.rationWidth (target, width, ratio)
    return target
 end
 
+--- System
+-- @section system
+
+local function which_setenv ()
+   if type(_G._rusty_funcs) == "table" then
+      return _G._rusty_funcs.setenv
+   elseif pcall(require, "posix") then
+      return require("posix").stdlib.setenv
+   elseif pcall(require, "winapi") then
+      return require("winapi").setenv
+   else
+      return function (key, _)
+         utilities.warn(([[Failed to set environment variable '%s' using legacy Lua based CLI
+
+  Please use the Rust based CLI. Meanwhile expect anything depending on
+  this variable not to work. Alternatively installing the luaposix or
+  winapi LuaRocks modules will enable this from the Lua side.
+
+         ]]):format(key))
+      end
+   end
+end
+
+--- Set environment variable to take effect when executing subprocesses
+-- @tparam string key Name of environment variable, typically in all caps.
+-- @tparam string value Value to set.
+utilities.setenv = which_setenv()
+
 --- Text handling
 -- @section text
 
