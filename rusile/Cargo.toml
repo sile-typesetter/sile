@@ -1,0 +1,28 @@
+[package]
+name = "rusile"
+description = "Rusty components for the SILE typesetter"
+readme = "README.md"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[lib]
+crate_type = ["rlib", "cdylib", "staticlib"]
+
+[dependencies.sile]
+path = ".."
+
+[features]
+lua54 = [ "mlua/lua54" ]
+lua53 = [ "mlua/lua53" ]
+lua52 = [ "mlua/lua52" ]
+lua51 = [ "mlua/lua51" ]
+luajit = [ "mlua/luajit" ]
+
+[dependencies.mlua]
+version = "0.9"
+features = [ "module" ]
