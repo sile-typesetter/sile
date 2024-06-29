@@ -1,5 +1,39 @@
 local base = require("packages.base")
 
+local loadkit = require("loadkit")
+local cslStyleLoader = loadkit.make_loader("csl")
+local cslLocaleLoader = loadkit.make_loader("xml")
+
+local CslLocale = require("csl.core.locale").CslLocale
+local CslStyle = require("csl.core.style").CslStyle
+local CslEngine = require("csl.core.engine").CslEngine
+
+local function loadCslLocale (name)
+   local filename = SILE.resolveFile("csl/locales/locales-" .. name .. ".xml")
+      or cslLocaleLoader("csl.locales.locales-" .. name)
+   if not filename then
+      SU.error("Could not find CSL locale '" .. name .. "'")
+   end
+   local locale, err = CslLocale.read(filename)
+   if not locale then
+      SU.error("Could not open CSL locale '" .. name .. "'': " .. err)
+      return
+   end
+   return locale
+end
+local function loadCslStyle (name)
+   local filename = SILE.resolveFile("csl/styles/" .. name .. ".csl") or cslStyleLoader("csl.styles." .. name)
+   if not filename then
+      SU.error("Could not find CSL style '" .. name .. "'")
+   end
+   local style, err = CslStyle.read(filename)
+   if not style then
+      SU.error("Could not open CSL style '" .. name .. "'': " .. err)
+      return
+   end
+   return style
+end
+
 local package = pl.class(base)
 package._name = "bibtex"
 
@@ -7,6 +41,7 @@ local epnf = require("epnf")
 local nbibtex = require("packages.bibtex.support.nbibtex")
 local namesplit, parse_name = nbibtex.namesplit, nbibtex.parse_name
 local isodatetime = require("packages.bibtex.support.isodatetime")
+local bib2csl = require("packages.bibtex.support.bib2csl")
 
 local Bibliography
 
@@ -241,10 +276,36 @@ local function crossrefAndXDataResolve (bib, entry)
    end
 end
 
+function package:loadOptPackage (pack)
+   local ok, _ = pcall(function ()
+      self:loadPackage(pack)
+      return true
+   end)
+   SU.debug("bibtex", "Optional package " .. pack .. (ok and " loaded" or " not loaded"))
+   return ok
+end
+
 function package:_init ()
    base._init(self)
    SILE.scratch.bibtex = { bib = {} }
    Bibliography = require("packages.bibtex.bibliography")
+   -- For DOI, PMID, PMCID and URL support.
+   self:loadPackage("url")
+   -- For underline styling support
+   self:loadPackage("rules")
+   -- For TeX-like math support (extension)
+   self:loadPackage("math")
+   -- For superscripting support in number formatting
+   -- Play fair: try to load 3rd-party optional textsubsuper package.
+   -- If not available, fallback to raiselower to implement textsuperscript
+   if not self:loadOptPackage("textsubsuper") then
+      self:loadPackage("raiselower")
+      self:registerCommand("textsuperscript", function (_, content)
+         SILE.call("raise", { height = "0.7ex" }, function ()
+            SILE.call("font", { size = "1.5ex" }, content)
+         end)
+      end)
+   end
 end
 
 function package.declareSettings (_)
@@ -261,6 +322,8 @@ function package:registerCommands ()
       local file = SU.required(options, "file", "loadbibliography")
       parseBibtex(file, SILE.scratch.bibtex.bib)
    end)
+
+   -- LEGACY COMMANDS
 
    self:registerCommand("bibstyle", function (_, _)
       SU.deprecated("\\bibstyle", "\\set[parameter=bibtex.style]", "0.13.2", "0.14.0")
@@ -309,6 +372,161 @@ function package:registerCommands ()
       end
       SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
    end)
+
+   -- NEW CSL IMPLEMENTATION
+
+   -- Internal commands for CSL processing
+
+   self:registerCommand("bibSmallCaps", function (_, content)
+      -- To avoid attributes in the CSL-processed content
+      SILE.call("font", { features = "+smcp" }, content)
+   end)
+
+   -- CSL 1.0.2 appendix VI
+   -- "If the bibliography entry for an item renders any of the following
+   -- identifiers, the identifier should be anchored as a link, with the
+   -- target of the link as follows:
+   --   url: output as is
+   --   doi: prepend with “https://doi.org/”
+   --   pmid: prepend with “https://www.ncbi.nlm.nih.gov/pubmed/”
+   --   pmcid: prepend with “https://www.ncbi.nlm.nih.gov/pmc/articles/”
+   -- NOT IMPLEMENTED:
+   --   "Citation processors should include an option flag for calling
+   --   applications to disable bibliography linking behavior."
+   -- (But users can redefine these commands to their liking...)
+   self:registerCommand("bibLink", function (options, content)
+      SILE.call("href", { src = options.src }, {
+         SU.ast.createCommand("url", {}, { content[1] }),
+      })
+   end)
+   self:registerCommand("bibURL", function (_, content)
+      local link = content[1]
+      if not link:match("^https?://") then
+         -- Play safe
+         link = "https://" .. link
+      end
+      SILE.call("bibLink", { src = link }, content)
+   end)
+   self:registerCommand("bibDOI", function (_, content)
+      local link = content[1]
+      if not link:match("^https?://") then
+         link = "https://doi.org/" .. link
+      end
+      SILE.call("bibLink", { src = link }, content)
+   end)
+   self:registerCommand("bibPMID", function (_, content)
+      local link = content[1]
+      if not link:match("^https?://") then
+         link = "https://www.ncbi.nlm.nih.gov/pubmed/" .. link
+      end
+      SILE.call("bibLink", { src = link }, content)
+   end)
+   self:registerCommand("bibPMCID", function (_, content)
+      local link = content[1]
+      if not link:match("^https?://") then
+         link = "https://www.ncbi.nlm.nih.gov/pmc/articles/" .. link
+      end
+      SILE.call("bibLink", { src = link }, content)
+   end)
+
+   -- Style and locale loading
+
+   self:registerCommand("bibliographystyle", function (options, _)
+      local sty = SU.required(options, "style", "bibliographystyle")
+      local style = loadCslStyle(sty)
+      -- FIXME: lang is mandatory until we can map document.lang to a resolved
+      -- BCP47 with region always present, as this is what CSL locales require.
+      if not options.lang then
+         -- Pick the default locale from the style, if any
+         options.lang = style.globalOptions["default-locale"]
+      end
+      local lang = SU.required(options, "lang", "bibliographystyle")
+      local locale = loadCslLocale(lang)
+      SILE.scratch.bibtex.engine = CslEngine(style, locale, {
+         localizedPunctuation = SU.boolean(options.localizedPunctuation, false),
+         italicExtension = SU.boolean(options.italicExtension, true),
+         mathExtension = SU.boolean(options.mathExtension, true),
+      })
+   end)
+
+   self:registerCommand("csl:cite", function (options, content)
+      -- TODO:
+      -- - locator support
+      -- - multiple citation keys
+      if not SILE.scratch.bibtex.engine then
+         SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
+         -- SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-fullnote-bibliography" })
+         -- SILE.call("bibliographystyle", { lang = "en-US", style = "apa" })
+      end
+      local engine = SILE.scratch.bibtex.engine
+      if not options.key then
+         options.key = SU.ast.contentToString(content)
+      end
+      local entry = SILE.scratch.bibtex.bib[options.key]
+      if not entry then
+         SU.warn("Unknown reference in citation " .. options.key)
+         return
+      end
+      if entry.type == "xdata" then
+         SU.warn("Skipped citation of @xdata entry " .. options.key)
+         return
+      end
+      crossrefAndXDataResolve(SILE.scratch.bibtex.bib, entry)
+
+      local csljson = bib2csl(entry)
+      -- csljson.locator = { -- EXPERIMENTAL
+      --    label = "page",
+      --    value = "123-125"
+      -- }
+      local cite = engine:cite(csljson)
+
+      SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+   end)
+
+   self:registerCommand("csl:reference", function (options, content)
+      if not SILE.scratch.bibtex.engine then
+         SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
+         -- SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-fullnote-bibliography" })
+         -- SILE.call("bibliographystyle", { lang = "en-US", style = "apa" })
+      end
+      local engine = SILE.scratch.bibtex.engine
+      if not options.key then
+         options.key = SU.ast.contentToString(content)
+      end
+      local entry = SILE.scratch.bibtex.bib[options.key]
+      if not entry then
+         SU.warn("Unknown reference in citation " .. options.key)
+         return
+      end
+      if entry.type == "xdata" then
+         SU.warn("Skipped citation of @xdata entry " .. options.key)
+         return
+      end
+      crossrefAndXDataResolve(SILE.scratch.bibtex.bib, entry)
+
+      local cslentry = bib2csl(entry)
+      local cite = engine:reference(cslentry)
+
+      SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+   end)
+
+   self:registerCommand("printbibliography", function (_, _)
+      local bib = SILE.scratch.bibtex.bib
+      -- TEMP: until we implement proper sorting, let's sort by keys
+      -- for reproducibility.
+      local tkeys = {}
+      for k, _ in pairs(bib) do
+         table.insert(tkeys, k)
+      end
+      table.sort(tkeys)
+      local count = 0
+      for _, k in ipairs(tkeys) do
+         SILE.call("csl:reference", { key = k })
+         SILE.call("par")
+         count = count + 1
+      end
+      SILE.typesetter:typeset("¤ " .. count .. " references")
+   end)
 end
 
 package.documentation = [[
@@ -321,13 +539,48 @@ This experimental package allows SILE to read and process BibTeX \code{.bib} fil
 
 To load a BibTeX file, issue the command \autodoc:command{\loadbibliography[file=<whatever.bib>]}
 
+\smallskip
+\noindent
+\em{Producing citations and references (legacy commands)}
+\novbreak
+
+\indent
 To produce an inline citation, call \autodoc:command{\cite{<key>}}, which will typeset something like “Jones 1982”.
 If you want to cite a particular page number, use \autodoc:command{\cite[page=22]{<key>}}.
 
 To produce a full reference, use \autodoc:command{\reference{<key>}}.
 
-Currently, the only supported bibliography style is Chicago referencing, but other styles should be easy to implement.
-Adapt \code{packages/bibtex/styles/chicago.lua} as necessary.
+Currently, the only supported bibliography style is Chicago referencing.
+
+\smallskip
+\noindent
+\em{Producing citations and references (CSL implementation)}
+\novbreak
+
+\indent
+While an experimental work-in-progress, the CSL (Citation Style Language) implementation is more powerful and flexible than the legacy commands.
+
+You must first invoke \autodoc:command{\bibliographystyle[style=<style>, lang=<lang>]}, where \autodoc:parameter{style} is the name of the CSL style file (without the \code{.csl} extension), and \autodoc:parameter{lang} is the language code of the CSL locale to use (e.g., \code{en-US}).
+
+The command accepts a few additional options:
+
+\begin{itemize}
+\item{\autodoc:parameter{localizedPunctuation} (default \code{false}): whether to use localized punctuation – this is non-standard but may be useful when using a style that was not designed for the target language;}
+\item{\autodoc:parameter{italicExtension} (default \code{true}): whether to convert \code{_text_} to italic text (“à la Markdown”);}
+\item{\autodoc:parameter{mathExtension} (default \code{true}): whether to recognize \code{$formula$} as math formulae in (a subset of the) TeX-like syntax.}
+\end{itemize}
+
+The locale and styles files are searched in the \code{csl/locales} and \code{csl/styles} directories, respectively, in your project directory, or in the Lua package path.
+For convenience and testing, SILE bundles the \code{chicago-author-date} and \code{chicago-author-date-fr} styles, and the \code{en-US} and \code{fr-FR} locales.
+If you don’t specify a style or locale, the author-date style and the \code{en-US} locale will be used.
+
+To produce an inline citation, call \autodoc:command{\csl:cite{<key>}}, which will typeset something like “(Jones 1982)”.
+
+To produce a full reference, use \autodoc:command{\csl:reference{<key>}}.
+
+To produce a complete bibliography, use \autodoc:command{\printbibliography}.
+As of yet, this command is for testing purposes only.
+It does not handle sorting or filtering of the bibliography.
 
 \smallskip
 \noindent
@@ -376,7 +629,9 @@ If no such abbreviation is found, the value is considered to be a string literal
 
 String values are assumed to be in the UTF-8 encoding, and shall not contain (La)TeX commands.
 Special character sequences from TeX (such as \code{`} assumed to be an opening quote) are not supported.
-There are exceptions to this rule. Notably, the \code{~} character can be used to represent a non-breaking space (when not backslash-escaped), and the \code{\\&} sequence is accepted (though this implementation does not mandate escaping ampersands).
+There are exceptions to this rule.
+Notably, the \code{~} character can be used to represent a non-breaking space (when not backslash-escaped), and the \code{\\&} sequence is accepted (though this implementation does not mandate escaping ampersands).
+With the CSL renderer, see also the non-standard extensions above.
 
 Values can also be composed by concatenating strings, using the \code{#} character.
 
