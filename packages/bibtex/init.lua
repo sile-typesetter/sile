@@ -308,6 +308,82 @@ function package:registerCommands ()
       end
       SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
    end)
+
+   -- EXPERIMENTAL
+   local scriptOffset = "0.7ex"
+   local scriptSize = "1.5ex"
+   self:loadPackage("raiselower")
+   self:registerCommand("textsuperscript", function (_, content)
+      SILE.call("raise", { height = scriptOffset }, function ()
+         SILE.call("font", { size = scriptSize }, content)
+      end)
+   end)
+
+   local filename
+   local bib2csl = require("packages.bibtex.support.bib2csl")
+   local CslLocale = require("csl.core.locale").CslLocale
+   local CslStyle = require("csl.core.style").CslStyle
+   local CslEngine = require("csl.core.engine").CslEngine
+   filename = SILE.resolveFile("csl/locales/locales-en-US.xml")
+   --filename = SILE.resolveFile("csl/locales/locales-fr-FR.xml")
+   local locale, errl = CslLocale.read(filename)
+   if not locale then
+      SU.error("Could not open " .. filename .. ": " .. errl)
+      return
+   end
+   filename = SILE.resolveFile("csl/styles/chicago-author-date.csl")
+   --filename = SILE.resolveFile("csl/styles/chicago-author-date-fr.csl")
+   local style, errs = CslStyle.read(filename)
+   if not style then
+      SU.error("Could not open " .. filename .. ": " .. errs)
+      return
+   end
+   local engine = CslEngine(style, locale)
+
+   self:registerCommand("csl:cite", function (options, content)
+      if not options.key then
+         options.key = SU.ast.contentToString(content)
+      end
+      local entry = SILE.scratch.bibtex.bib[options.key]
+      if not entry then
+         SU.warn("Unknown reference in citation " .. options.key)
+         return
+      end
+      if entry.type == "xdata" then
+         SU.warn("Skipped citation of @xdata entry " .. options.key)
+         return
+      end
+      crossrefAndXDataResolve(SILE.scratch.bibtex.bib, entry)
+
+      entry.attributes.type = entry.type:lower() -- HACK
+      local csljson = bib2csl(entry.attributes)
+      --pl.pretty.dump(csljson)
+      --pl.pretty.dump(entry)
+      local cite = engine:cite(csljson)
+
+      SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+   end)
+
+   self:registerCommand("csl:reference", function (options, content)
+      if not options.key then
+         options.key = SU.ast.contentToString(content)
+      end
+      local entry = SILE.scratch.bibtex.bib[options.key]
+      if not entry then
+         SU.warn("Unknown reference in citation " .. options.key)
+         return
+      end
+      if entry.type == "xdata" then
+         SU.warn("Skipped citation of @xdata entry " .. options.key)
+         return
+      end
+      crossrefAndXDataResolve(SILE.scratch.bibtex.bib, entry)
+
+      local csljson = bib2csl(entry.attributes)
+      local cite = engine:reference(csljson)
+
+      SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+   end)
 end
 
 package.documentation = [[
