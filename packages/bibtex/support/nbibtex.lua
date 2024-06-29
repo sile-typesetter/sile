@@ -266,8 +266,10 @@ do
          end
       end
       set_name(first_start, first_lim, "ff", "f")
+      set_name(first_start, first_lim, "given", "f") -- HACK OMIKHLEIA FIXME
       set_name(von_start, von_lim, "vv", "v")
       set_name(von_lim, last_lim, "ll", "l")
+      set_name(von_lim, last_lim, "family", "l") -- HACK OMIKHLEIA FIXME
       set_name(last_lim, jr_lim, "jj", "j")
       return name
    end
