@@ -3,6 +3,7 @@
 #![crate_type = "staticlib"]
 
 use mlua::prelude::*;
+use sile::rusile_demo;
 
 #[mlua::lua_module]
 fn rusile(lua: &Lua) -> LuaResult<LuaTable> {
