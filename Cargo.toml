@@ -1,20 +1,36 @@
-[package]
-name = "sile"
+[workspace]
+resolver = "2"
+members = [
+  ".",
+  "rusile",
+]
+
+[workspace.package]
 version = "0.15.4"
 edition = "2021"
 rust-version = "1.71.0"
-description = "Simon’s Improved Layout Engine"
 authors = [
   "Simon Cozens",
   "Caleb Maclennan <caleb@alerque.com>",
   "Olivier Nicole",
   "Didier Willis"
 ]
-readme = "README.md"
 homepage = "https://sile-typesetter.org"
 repository = "https://github.com/sile-typesetter/sile"
 license = "MIT"
+
+[package]
+name = "sile"
+description = "Simon’s Improved Layout Engine"
+readme = "README.md"
 build = "build-aux/build.rs"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [[bin]]
 name = "sile"
