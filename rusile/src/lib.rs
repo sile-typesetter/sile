@@ -8,12 +8,12 @@ use sile::rusile_demo;
 #[mlua::lua_module]
 fn rusile(lua: &Lua) -> LuaResult<LuaTable> {
     let exports = lua.create_table().unwrap();
-    let foo: LuaFunction = lua.create_function(foo).unwrap();
-    exports.set("foo", foo)?;
+    let demo: LuaFunction = lua.create_function(demo).unwrap();
+    exports.set("demo", demo)?;
     Ok(exports)
 }
 
-fn foo(lua: &Lua, (): ()) -> LuaResult<LuaString> {
-    let s = rusile_demo();
-    lua.create_string(s)
+fn demo(lua: &Lua, (): ()) -> LuaResult<LuaString> {
+    let res = rusile_demo().unwrap();
+    lua.create_string(res)
 }

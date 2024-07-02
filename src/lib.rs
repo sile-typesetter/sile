@@ -201,6 +201,6 @@ fn paths_to_strings(paths: Vec<PathBuf>) -> Vec<String> {
     paths.iter().map(path_to_string).collect()
 }
 
-pub fn rusile_demo() -> String {
-    "Hello from rusile".to_string()
+pub fn rusile_demo() -> Result<String> {
+    Ok("Hello from rusile".to_string())
 }

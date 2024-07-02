@@ -6,10 +6,10 @@ describe("rusile", function ()
       assert.is.truthy(SILE._rusile)
    end)
 
-   describe("foo ", function ()
+   describe("demo ", function ()
       it("should return a test string", function ()
          local str = "Hello from rusile"
-         assert.is.equal(str, SILE._rusile.foo())
+         assert.is.equal(str, SILE._rusile.demo())
       end)
    end)
 
