@@ -3,6 +3,7 @@
 #![crate_type = "staticlib"]
 
 use mlua::prelude::*;
+use sile::rusile_demo;
 
 #[mlua::lua_module]
 fn rusile(lua: &Lua) -> LuaResult<LuaTable> {
@@ -13,5 +14,6 @@ fn rusile(lua: &Lua) -> LuaResult<LuaTable> {
 }
 
 fn foo(lua: &Lua, (): ()) -> LuaResult<LuaString> {
-    lua.create_string("Hello from rusile")
+    let s = rusile_demo();
+    lua.create_string(s)
 }
