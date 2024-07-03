@@ -2,6 +2,7 @@ use mlua::chunk;
 use mlua::prelude::*;
 use rust_embed::{EmbeddedFile, RustEmbed};
 use std::str;
+//use rusile::rusile;
 
 /// Embed everything that would otherwise be installed to datadir
 #[derive(RustEmbed)]
@@ -31,7 +32,7 @@ pub struct SileModules;
 // Link Lua loader functions from C modules that Lua would otherwise be loading externally that
 // we've linked into the CLI binary. Linking happens in build-aux/build.rs.
 extern "C-unwind" {
-    fn luaopen_rusile(lua: *mut mlua::lua_State) -> i32;
+    //fn luaopen_rusile(lua: *mut mlua::lua_State) -> i32;
     fn luaopen_fontmetrics(lua: *mut mlua::lua_State) -> i32;
     fn luaopen_justenoughfontconfig(lua: *mut mlua::lua_State) -> i32;
     fn luaopen_justenoughharfbuzz(lua: *mut mlua::lua_State) -> i32;
@@ -53,9 +54,9 @@ pub fn inject_embedded_loader(lua: &Lua) {
     loaders
         .push(LuaFunction::wrap(|lua, module: String| unsafe {
             match module.as_str() {
-                "rusile" => lua
-                    .create_c_function(luaopen_rusile)
-                    .map(LuaValue::Function),
+                //"rusile" => lua
+                //    .create_c_function(luaopen_rusile)
+                //    .map(LuaValue::Function),
                 "fontmetrics" => lua
                     .create_c_function(luaopen_fontmetrics)
                     .map(LuaValue::Function),

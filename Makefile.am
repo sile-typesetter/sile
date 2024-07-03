@@ -53,7 +53,7 @@ endif
 
 $(MANUAL): $(FIGURES)
 
-BUILT_LUA_SOURCES = core/features.lua core/pathsetup.lua core/version.lua
+BUILT_SOURCES_LUA = core/features.lua core/pathsetup.lua core/version.lua
 RUSILE_SOURCES = rusile/Cargo.toml rusile/src/lib.rs
 
 bin_PROGRAMS = sile
@@ -67,7 +67,7 @@ noinst_LIBRARIES = librusile.a
 librusile_a_SOURCES = $(RUSILE_SOURCES)
 else !EMBEDDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
-nobase_nodist_pkgdata_DATA = $(BUILT_LUA_SOURCES) $(LUAMODULES)
+nobase_nodist_pkgdata_DATA = $(BUILT_SOURCES_LUA) $(LUAMODULES)
 pkglib_LIBRARIES = rusile.so
 rusile_so_SOURCES = $(RUSILE_SOURCES)
 endif !EMBEDDED_RESOURCES
@@ -87,7 +87,7 @@ if EMBEDDED_RESOURCES
 EXTRA_DIST += $(SILEDATA) $(LUALIBRARIES)
 endif
 
-BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
+BUILT_SOURCES = $(BUILT_SOURCES_LUA) Makefile-distfiles
 
 CLEANFILES = $(MANUAL)
 
@@ -126,7 +126,11 @@ $(CARGO_BIN): justenough/.libs/justenoughicu.a
 $(CARGO_BIN): justenough/.libs/justenoughlibtexpdf.a
 $(CARGO_BIN): justenough/.libs/svg.a
 $(CARGO_BIN): libtexpdf/.libs/libtexpdf.a
-$(CARGO_BIN): librusile.a rusile.so
+if EMBEDDED_RESOURCES
+$(CARGO_BIN): librusile.a
+else !EMBEDDED_RESOURCES
+$(CARGO_BIN): rusile.so
+endif !EMBEDDED_RESOURCES
 
 src/embed-includes.rs: Makefile-distfiles
 	{

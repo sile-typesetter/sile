@@ -36,7 +36,13 @@ fn main() {
     generate_shell_completions();
     #[cfg(feature = "static")]
     {
-        println!("cargo:rustc-link-arg=-lrusile");
+        ////let dir = env::var("CARGO_TARGET_DIR").unwrap();
+        //let dir = env::var("CARGO_MANIFEST_DIR").unwrap();
+        //println!(
+        //    "cargo:rustc-link-search=native={}",
+        //    Path::new(&dir).join("target").join("release").display()
+        //);
+        //println!("cargo:rustc-link-arg=-l:librusile.a");
 
         let dir = env::var("CARGO_MANIFEST_DIR").unwrap();
         println!(
