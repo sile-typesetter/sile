@@ -2,6 +2,12 @@
 -- with permission.
 -- Thanks, Norman, for these functions!
 
+-- The initial implementation was using "~", but we now sanitized the
+-- input earlier at parsing to replace those from the input with
+-- non-breaking spaces. So we can just use the non-breaking space
+-- character now on.
+local nbsp = luautf8.char(0x00A0)
+
 local function find_outside_braces (str, pat, i)
    -- local len = string.len(str)
    local j, k = string.find(str, pat, i)
@@ -243,10 +249,10 @@ do
                   -- <possibly adjust [[sep]] and [[ssep]] according to token position and size>=
                   if not string.find(sep, sep_char) then
                      if i == lim - 1 then
-                        sep, ssep = "~", "~"
+                        sep, ssep = nbsp, nbsp
                      elseif i == start + 1 then
-                        sep = string.len(shortname) < 3 and "~" or " "
-                        ssep = string.len(longname) < 3 and "~" or " "
+                        sep = string.len(shortname) < 3 and nbsp or " "
+                        ssep = string.len(longname) < 3 and nbsp or " "
                      else
                         sep, ssep = " ", " "
                      end
