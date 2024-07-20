@@ -132,7 +132,7 @@ local function bib2csl (entry)
 
    -- BibTeX number and issue
    -- Tricky, see https://github.com/JabRef/jabref/issues/8372#issuecomment-1023768144
-   -- Still not sure this is completely corect below.
+   -- Still not sure this is completely correct below.
    if bibtex.series then
       -- Series use number
       -- BibLaTeX says number is for the series number on books, etc.
