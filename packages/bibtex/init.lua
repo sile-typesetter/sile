@@ -276,6 +276,20 @@ local function crossrefAndXDataResolve (bib, entry)
    end
 end
 
+local function resolveEntry (bib, key)
+   local entry = bib[key]
+   if not entry then
+      SU.warn("Unknown citation key " .. key)
+      return
+   end
+   if entry.type == "xdata" then
+      SU.warn("Skipped citation of @xdata entry " .. key)
+      return
+   end
+   crossrefAndXDataResolve(bib, entry)
+   return entry
+end
+
 function package:loadOptPackage (pack)
    local ok, _ = pcall(function ()
       self:loadPackage(pack)
@@ -333,16 +347,10 @@ function package:registerCommands ()
       if not options.key then
          options.key = SU.ast.contentToString(content)
       end
-      local entry = SILE.scratch.bibtex.bib[options.key]
+      local entry = resolveEntry(SILE.scratch.bibtex.bib, options.key)
       if not entry then
-         SU.warn("Unknown reference in citation " .. options.key)
          return
       end
-      if entry.type == "xdata" then
-         SU.warn("Skipped citation of @xdata entry " .. options.key)
-         return
-      end
-      crossrefAndXDataResolve(SILE.scratch.bibtex.bib, entry)
       local style = SILE.settings:get("bibtex.style")
       local bibstyle = require("packages.bibtex.styles." .. style)
       local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
@@ -353,16 +361,10 @@ function package:registerCommands ()
       if not options.key then
          options.key = SU.ast.contentToString(content)
       end
-      local entry = SILE.scratch.bibtex.bib[options.key]
+      local entry = resolveEntry(SILE.scratch.bibtex.bib, options.key)
       if not entry then
-         SU.warn("Unknown reference in citation " .. options.key)
          return
       end
-      if entry.type == "xdata" then
-         SU.warn("Skipped citation of @xdata entry " .. options.key)
-         return
-      end
-      crossrefAndXDataResolve(SILE.scratch.bibtex.bib, entry)
       local style = SILE.settings:get("bibtex.style")
       local bibstyle = require("packages.bibtex.styles." .. style)
       local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
@@ -462,16 +464,10 @@ function package:registerCommands ()
       if not options.key then
          options.key = SU.ast.contentToString(content)
       end
-      local entry = SILE.scratch.bibtex.bib[options.key]
+      local entry = resolveEntry(SILE.scratch.bibtex.bib, options.key)
       if not entry then
-         SU.warn("Unknown reference in citation " .. options.key)
          return
       end
-      if entry.type == "xdata" then
-         SU.warn("Skipped citation of @xdata entry " .. options.key)
-         return
-      end
-      crossrefAndXDataResolve(SILE.scratch.bibtex.bib, entry)
 
       local csljson = bib2csl(entry)
       -- csljson.locator = { -- EXPERIMENTAL
@@ -493,16 +489,10 @@ function package:registerCommands ()
       if not options.key then
          options.key = SU.ast.contentToString(content)
       end
-      local entry = SILE.scratch.bibtex.bib[options.key]
+      local entry = resolveEntry(SILE.scratch.bibtex.bib, options.key)
       if not entry then
-         SU.warn("Unknown reference in citation " .. options.key)
          return
       end
-      if entry.type == "xdata" then
-         SU.warn("Skipped citation of @xdata entry " .. options.key)
-         return
-      end
-      crossrefAndXDataResolve(SILE.scratch.bibtex.bib, entry)
 
       local cslentry = bib2csl(entry)
       local cite = engine:reference(cslentry)
@@ -511,21 +501,27 @@ function package:registerCommands ()
    end)
 
    self:registerCommand("printbibliography", function (_, _)
+      if not SILE.scratch.bibtex.engine then
+         SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
+         -- SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-fullnote-bibliography" })
+         -- SILE.call("bibliographystyle", { lang = "en-US", style = "apa" })
+      end
+      local engine = SILE.scratch.bibtex.engine
+
       local bib = SILE.scratch.bibtex.bib
-      -- TEMP: until we implement proper sorting, let's sort by keys
-      -- for reproducibility.
-      local tkeys = {}
-      for k, _ in pairs(bib) do
-         table.insert(tkeys, k)
+      local entries = {}
+      for _, entry in pairs(bib) do
+         if entry.type ~= "xdata" then
+            crossrefAndXDataResolve(bib, entry)
+            if entry then
+               local cslentry = bib2csl(entry)
+               table.insert(entries, cslentry)
+            end
+         end
       end
-      table.sort(tkeys)
-      local count = 0
-      for _, k in ipairs(tkeys) do
-         SILE.call("csl:reference", { key = k })
-         SILE.call("par")
-         count = count + 1
-      end
-      SILE.typesetter:typeset("¤ " .. count .. " references")
+      print("<bibliography: " .. #entries .. " entries>")
+      local cite = engine:reference(entries)
+      SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
    end)
 end
 
@@ -580,7 +576,7 @@ To produce a full reference, use \autodoc:command{\csl:reference{<key>}}.
 
 To produce a complete bibliography, use \autodoc:command{\printbibliography}.
 As of yet, this command is for testing purposes only.
-It does not handle sorting or filtering of the bibliography.
+It does not handle filtering of the bibliography.
 
 \smallskip
 \noindent
