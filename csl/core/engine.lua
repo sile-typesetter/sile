@@ -4,8 +4,8 @@
 --
 -- Public API:
 --  - (constructor) CslEngine(style, locale) -> CslEngine
---  - CslEngine:cite(entry) -> string
---  - CslEngine:reference(entry) -> string
+--  - CslEngine:cite(entries) -> string
+--  - CslEngine:reference(entries) -> string
 --
 -- Important: while some consistency checks are performed, this engine is not
 -- intended to handle errors in the locale, style or input data. It is assumed
@@ -13,7 +13,6 @@
 --
 -- THINGS NOT DONE
 --  - disambiguation logic (not done at all)
---  - sorting logic (not done at all)
 --  - other FIXME/TODOs in the code on specific features
 --
 -- luacheck: no unused args
@@ -78,14 +77,10 @@ function CslEngine:_init (style, locale, extras)
    }
 end
 
-function CslEngine:_prerender (mode)
+function CslEngine:_prerender ()
    -- Stack for processing of cs:group as conditional
    self.groupQueue = {}
    self.groupState = { variables = {}, count = 0 }
-
-   -- Track mode for processing: "citation" or "bibliography"
-   -- Needed to use appropriate inheritable options.
-   self.mode = mode
 
    -- Track first name for name-as-sort-order
    self.firstName = true
@@ -221,7 +216,9 @@ function CslEngine:_render_text_specials (value)
             -- Typography:
             -- Use pseudo-markdown italic extension (_text_) to wrap
             -- the text in emphasis.
-            s = luautf8.gsub(s, "_([^_]+)_", "<em>%1</em>")
+            -- Skip if sorting, as it's not supposed to affect sorting.
+            local repl = self.sorting and "%1" or "<em>%1</em>"
+            s = luautf8.gsub(s, "_([^_]+)_", repl)
          end
          table.insert(pieces, s)
       else
@@ -285,6 +282,10 @@ function CslEngine:_render_formatting (t, options)
    if not t then
       return
    end
+   if self.sorting then
+      -- Skip all formatting in sorting mode
+      return t
+   end
    if options["font-style"] == "italic" then -- FIXME: also normal, oblique, and how nesting is supposed to work?
       t = "<em>" .. t .. "</em>"
    end
@@ -331,6 +332,13 @@ function CslEngine:_render_display (t, options)
 end
 
 function CslEngine:_render_quotes (t, options)
+   if not t then
+      return
+   end
+   if self.sorting then
+      -- Skip all quotes in sorting mode
+      return luautf8.gsub(t, '[“”"]', "")
+   end
    if t and options.quotes then
       -- Smart transform curly quotes in the input to localized inner quotes.
       t = luautf8.gsub(t, "“", self.punctuation.open_inner_quote)
@@ -347,7 +355,7 @@ function CslEngine:_render_quotes (t, options)
 end
 
 function CslEngine:_render_link (t, link)
-   if t and link then
+   if t and link and not self.sorting then
       -- We'll let the processor implement CSL 1.0.2 link handling.
       -- (appendix VI)
       t = "<bib" .. link .. ">" .. t .. "</bib" .. link .. ">"
@@ -362,19 +370,31 @@ end
 
 -- RENDERING ELEMENTS: layout, text, date, number, names, label, group, choose
 
-function CslEngine:_layout (options, content, entry)
+function CslEngine:_layout (options, content, entries)
    local output = {}
-   local entries = type(entry) == "table" and not entry.type and entry or { entry } -- Multiple entries vs. single entry
-   for _, ent in ipairs(entries) do
-      local elem = self:_render_children(content, ent)
+   for _, entry in ipairs(entries) do
+      self:_prerender()
+      local elem = self:_render_children(content, entry)
+      -- affixes and formatting likely apply on elementary entries
+      -- (The CSL 1.0.2 specification is not very clear on this point.)
+      elem = self:_render_formatting(elem, options)
+      elem = self:_render_affixes(elem, options)
+      elem = self:_postrender(elem)
       if elem then
          table.insert(output, elem)
       end
    end
-   local t = self:_render_delimiter(output, options.delimiter)
-   t = self:_render_formatting(t, options)
-   t = self:_render_affixes(t, options)
-   return t
+   if options.delimiter then
+      return self:_render_delimiter(output, options.delimiter)
+   end
+   -- (Normally citations have a delimiter options, so we should only reach
+   -- this point for the bibliography)
+   local delim = self.mode == "citation" and "; " or "<par/>"
+   -- references all belong to a different paragraph
+   -- FIXME: should account for attributes on the toplevel bibliography element:
+   --   line-spacing
+   --   hanging-indent
+   return table.concat(output, delim)
 end
 
 function CslEngine:_text (options, content, entry)
@@ -705,13 +725,22 @@ function CslEngine:_name_et_al (options)
 end
 
 function CslEngine:_a_name (options, content, entry)
+   local form = options.form
+   local nameAsSortOrder = options["name-as-sort-order"]
+   if self.sorting then
+      -- Ovveride form and name-as-sort-order in sorting mode
+      form = "long"
+      nameAsSortOrder = "all"
+   end
+
    -- TODO FIXME: content can consists in name-part elements for formatting, text-case, affixes
    -- Chigaco style does not seem to use them, so we keep it simple for now.
    -- TODO FIXME: demote-non-dropping-particle option not implemented, and name particle not implemented at all!
-   if options.form == "short" then
+
+   if form == "short" then
       return entry.family
    end
-   if options["name-as-sort-order"] ~= "all" and not self.firstName then
+   if nameAsSortOrder ~= "all" and not self.firstName then
       -- Order is: Given Family
       return entry.given and (entry.given .. " " .. entry.family) or entry.family
    end
@@ -758,7 +787,8 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
       local skip = editortranslator and var == "translator" -- done via the "editor" field
       if not skip and entry[var] then
          local label
-         if label_opts then
+         if label_opts and not self.sorting then
+            -- (labels in names are skipped in sorting mode)
             local v = var == "editor" and editortranslator and "editortranslator" or var
             local opts = pl.tablex.union(label_opts, { variable = v })
             label = self:_label(opts, nil, entry)
@@ -1001,22 +1031,101 @@ function CslEngine:_if (options, content, entry)
 end
 
 function CslEngine:_choose (options, content, entry)
-   for _, c in ipairs(content) do
-      if c.command == "cs:if" or c.command == "cs:else-if" then
-         local t, match = self:_if(c.options, c, entry)
+   for _, child in ipairs(content) do
+      if child.command == "cs:if" or child.command == "cs:else-if" then
+         local t, match = self:_if(child.options, child, entry)
          if match then
             return t
          end
-      elseif c.command == "cs:else" then
-         return self:_render_children(c, entry)
+      elseif child.command == "cs:else" then
+         return self:_render_children(child, entry)
       end
    end
 end
 
-function CslEngine:_sort (options, content, entry)
-   -- FIXME TODO
-   -- Silent for now.
-   -- SU.warn("CSL sort not implemented yet")
+local function dateToYYMMDD (date)
+   --- Year from BibLaTeX year field may be a literal
+   local y = date.year and date.year:match("%d%d%d%d") or "0000"
+   local m = date.month or "00"
+   local d = date.day or "00"
+   return ("%04d%02d%02d"):format(y, m, d)
+end
+
+function CslEngine:_key (options, content, entry)
+   if options.macro then
+      return self:_render_children(self.macros[options.macro], entry)
+   end
+   if options.variable then
+      local value = entry[options.variable]
+      if type(value) == "table" then
+         if value.range then
+            if value.startdate and value.enddate then
+               return dateToYYMMDD(value.startdate) .. "-" .. dateToYYMMDD(value.enddate)
+            end
+            if value.startdate then
+               return dateToYYMMDD(value.startdate) .. "-"
+            end
+            if value.enddate then
+               return dateToYYMMDD(value.enddate)
+            end
+            return dateToYYMMDD(value.from) .. "-" .. dateToYYMMDD(value.to)
+         end
+         if value.year or value.month or value.day then
+            return dateToYYMMDD(value)
+         end
+         -- FIXME names need a special rule here
+         -- Chicago style use macro here, so not considered for now.
+         SU.error("CSL variable not yet usable for sorting: " .. options.variable)
+      end
+      return value
+   end
+   SU.error("CSL key without variable or macro")
+end
+
+-- FIXME: A bit ugly: When implementing SU.collatedSort, I didn't consider
+-- sorting structured tables, so I need to go low level here.
+-- Moreover, I made icu.compare return a boolean, so we have to pay twice
+-- the comparison cost to check equality...
+local icu = require("justenoughicu")
+
+function CslEngine:_sort (options, content, entries)
+   if not self.sorting then
+      -- Skipped at rendering
+      return
+   end
+   -- FIXME: not implemented: sort direction ascending/descending
+
+   -- Compute the sorting keys for each entry
+   for _, entry in ipairs(entries) do
+      local keys = {}
+      for _, child in ipairs(content) do
+         if child.command == "cs:key" then
+            self:_prerender()
+            -- Deep copy the entry as cs:substitute may remove fields
+            -- And we may need them back in actual rendering
+            local ent = pl.tablex.deepcopy(entry)
+            local key = self:_key(child.options, child, ent)
+            -- No _postrender here, as we don't want to apply punctuation (?)
+            table.insert(keys, key or "")
+         end
+      end
+      entry._keys = keys
+   end
+   -- Perform the sort
+   -- Using the locale language (BCP47).
+   local lang = self.locale.lang
+   local collator = icu.collation_create(lang, {})
+   table.sort(entries, function (a, b)
+      local ak = a._keys
+      local bk = b._keys
+      for i = 1, math.min(#ak, #bk) do
+         if ak[i] ~= bk[i] then -- See comment, ugly inequality check)
+            return icu.compare(collator, ak[i], bk[i])
+         end
+      end
+      return false
+   end)
+   icu.collation_destroy(collator)
 end
 
 -- PROCESSING
@@ -1086,33 +1195,44 @@ function CslEngine:_postrender (text)
    return text
 end
 
-function CslEngine:_process (entry, mode)
+function CslEngine:_process (entries, mode)
    if mode ~= "citation" and mode ~= "bibliography" then
       SU.error("CSL processing mode must be 'citation' or 'bibliography'")
    end
-   self:_prerender(mode)
-   -- Deep copy the entry as cs:substitute may remove fields
-   entry = pl.tablex.deepcopy(entry)
+   self.mode = mode
+   -- Deep copy the entries as cs:substitute may remove fields
+   entries = pl.tablex.deepcopy(entries)
+
    local ast = self[mode]
    if not ast then
       SU.error("CSL style has no " .. mode .. " definition")
    end
-   local res = self:_render_children(ast, entry)
-   return self:_postrender(res)
+   local sort = SU.ast.findInTree(ast, "cs:sort")
+   if sort then
+      self.sorting = true
+      self:_sort(sort.options, sort, entries)
+      self.sorting = false
+   end
+
+   local res = self:_render_children(ast, entries)
+
+   return res
 end
 
 --- Generate a citation string.
--- @tparam table entry TList of CSL-JSON entries
--- @treturn string The citation string
-function CslEngine:cite (entry)
-   return self:_process(entry, "citation")
+-- @tparam table entry List of CSL entries
+-- @treturn string The XML citation string
+function CslEngine:cite (entries)
+   entries = type(entries) == "table" and not entries.type and entries or { entries }
+   return self:_process(entries, "citation")
 end
 
 --- Generate a reference string.
--- @tparam table entry TList of CSL-JSON entries
--- @treturn string The reference string
-function CslEngine:reference (entry)
-   return self:_process(entry, "bibliography")
+-- @tparam table entry List of CSL entries
+-- @treturn string The XML reference string
+function CslEngine:reference (entries)
+   entries = type(entries) == "table" and not entries.type and entries or { entries }
+   return self:_process(entries, "bibliography")
 end
 
 return {
