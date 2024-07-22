@@ -6,10 +6,6 @@ local plain = require("classes.plain")
 local class = pl.class(plain)
 class._name = "bible"
 
-if not SILE.scratch.headers then
-   SILE.scratch.headers = {}
-end
-
 class.defaultFrameset = {
    content = {
       left = "8.3%pw",
