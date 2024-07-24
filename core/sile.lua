@@ -47,6 +47,10 @@ SILE.lua_isjit = type(jit) == "table"
 -- @string full_version
 SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
 
+--- Default to verbose mode, can be changed from the CLI or by libraries
+--- @boolean quiet
+SILE.quiet = false
+
 -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 if not SILE.lua_isjit and SILE.lua_version < "5.3" then
    require("compat53")
