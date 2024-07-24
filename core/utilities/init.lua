@@ -326,6 +326,7 @@ local _skip_traceback_levels = 2
 -- @tparam string message The error message to give.
 -- @tparam boolean isbug Whether or not hitting this error is expected to be a code bug (as opposed to misakes in user input).
 function utilities.error (message, isbug)
+   SILE.quiet = false
    _skip_traceback_levels = 3
    utilities.warn(message, isbug)
    _skip_traceback_levels = 2
@@ -350,6 +351,9 @@ end
 -- @tparam string message The error message to give.
 -- @tparam boolean isbug Whether or not hitting this warning is expected to be a code bug (as opposed to misakes in user input).
 function utilities.warn (message, isbug)
+   if SILE.quiet then
+      return
+   end
    utilities.msg(message)
    if SILE.traceback or isbug then
       io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
