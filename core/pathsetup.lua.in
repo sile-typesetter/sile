@@ -1,8 +1,10 @@
 -- Allow autoconf to setup system lua paths at compile time, not run time (only used in developer mode).
+-- stylua: ignore start
 if "@SYSTEM_LUA_PATH@" ~= "" then
    package.path = "@SYSTEM_LUA_PATH@"
    package.cpath = "@SYSTEM_LUA_CPATH@"
 end
+-- stylua: ignore end
 
 -- In the event the user has exported Lua environment variables, use them like a system Lua VM would. This essentially
 -- nukes the existing runtime path and uses only the new value. This is useful for using `eval $(luarocks --local path)`
