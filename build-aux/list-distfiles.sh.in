@@ -8,7 +8,7 @@ alias sort="${SORT:-@SORT@}"
 alias xargs="${XARGS:-@XARGS@}"
 
 finder () {
-    test -d "$1" || return 1
+    test -d "$1" || return 0
     find "$@" -type f | am_list
 }
 
