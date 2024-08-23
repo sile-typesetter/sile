@@ -448,9 +448,11 @@ If you call SILE with no input file names, it enters the REPL:
 
 \begin{autodoc:codeblock}
 \sileversion
-> \em{l = SILE.types.length.parse("22mm")}
+> \em{l = SILE.types.length("22mm")}
 > \em{l.length}
-62.3622054
+22mm
+> \em{l.absolute()}
+62.3622054pt
 \end{autodoc:codeblock}
 
 At any point during the evaluation of Lua commands, you can call \code{SILE.repl:enter()} to enter the REPL and poke around;
