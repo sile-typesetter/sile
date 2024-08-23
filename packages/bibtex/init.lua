@@ -4,6 +4,9 @@ local package = pl.class(base)
 package._name = "bibtex"
 
 local epnf = require("epnf")
+local nbibtex = require("packages.bibtex.support.nbibtex")
+local namesplit, parse_name = nbibtex.namesplit, nbibtex.parse_name
+local isodatetime = require("packages.bibtex.support.isodatetime")
 
 local Bibliography
 
@@ -81,11 +84,14 @@ end)
 -- stylua: ignore end
 ---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
-local bibcompat = require("packages.bibtex.bibmaps")
+local bibcompat = require("packages.bibtex.support.bibmaps")
 local crossrefmap, fieldmap = bibcompat.crossrefmap, bibcompat.fieldmap
+local months =
+   { jan = 1, feb = 2, mar = 3, apr = 4, may = 5, jun = 6, jul = 7, aug = 8, sep = 9, oct = 10, nov = 11, dec = 12 }
 
 local function consolidateEntry (entry, label)
    local consolidated = {}
+   -- BibLaTeX aliases for legacy BibTeX fields
    for field, value in pairs(entry.attributes) do
       consolidated[field] = value
       local alias = fieldmap[field]
@@ -94,6 +100,42 @@ local function consolidateEntry (entry, label)
             SU.warn("Duplicate field '" .. field .. "' and alias '" .. alias .. "' in entry '" .. label .. "'")
          else
             consolidated[alias] = value
+         end
+      end
+   end
+   -- Names field split and parsed
+   for _, field in ipairs({ "author", "editor", "translator", "shortauthor", "shorteditor", "holder" }) do
+      if consolidated[field] then
+         -- FIXME Check our corporate names behave, we are probably bad currently
+         -- with nested braces !!!
+         -- See biblatex manual v3.20 §2.3.3 Name Lists
+         -- e.g. editor = {{National Aeronautics and Space Administration} and Doe, John}
+         local names = namesplit(consolidated[field])
+         for i = 1, #names do
+            names[i] = parse_name(names[i])
+         end
+         consolidated[field] = names
+      end
+   end
+   -- Month field in either number or string (3-letter code)
+   if consolidated.month then
+      local month = tonumber(consolidated.month) or months[consolidated.month:lower()]
+      if month and (month >= 1 and month <= 12) then
+         consolidated.month = month
+      else
+         SU.warn("Unrecognized month skipped in entry '" .. label .. "'")
+         consolidated.month = nil
+      end
+   end
+   -- Extended date fields
+   for _, field in ipairs({ "date", "origdate", "eventdate", "urldate" }) do
+      if consolidated[field] then
+         local dt = isodatetime(consolidated[field])
+         if dt then
+            consolidated[field] = dt
+         else
+            SU.warn("Invalid '" .. field .. "' skipped in entry '" .. label .. "'")
+            consolidated[field] = nil
          end
       end
    end
@@ -373,6 +415,10 @@ This text is ignored
 }
 \end{raw}
 
+Some fields have a special syntax.
+The \code{author}, \code{editor} and \code{translator} fields accept a list of names, separated by the keyword \code{and}.
+The legacy \code{month} field accepts a three-letter abbreviation for the month in English, or a number from 1 to 12.
+The more powerful \code{date} field accepts a date-time following the ISO 8601-2 Extended Date/Time Format specification level 1 (such as \code{YYYY-MM-DD}, or a date range \code{YYYY-MM-DD/YYYY-MM-DD}, and more).
 \end{document}
 ]]
 
