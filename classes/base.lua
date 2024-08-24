@@ -86,6 +86,7 @@ function class:_init (options)
 end
 
 function class:_post_init ()
+   SILE.documentState.documentClass = self
    self._initialized = true
    for i, func in ipairs(self.deferredInit) do
       func(self)
