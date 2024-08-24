@@ -91,6 +91,11 @@ features = [ "build", "cargo", "git", "gitoxide" ]
 
 [package.metadata.typos.default]
 locale = "en-us"
+extend-ignore-identifiers-re = [
+  # Git short hashes, especially found in the changelog
+  # Basically blocks fixing any seven letter words, but  better than false positives
+  '[a-f0-9]{7}',
+]
 
 [package.metadata.typos.default.extend-words]
 

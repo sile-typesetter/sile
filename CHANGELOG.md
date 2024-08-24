@@ -111,7 +111,7 @@ indent. The new behaviour honors the fixed part of the parent context's
 margins, meaning that if you have an environment playing with margins
 such as an epigraph or an indented quote, those margins are not lost.
 The raggedleft and raggedright environment also now no longer cancel the
-pararagraph indent.
+paragraph indent.
 * **classes:** The \script function was heavily overloaded to have
 many different functions at once and more targeted tools were introduced
 in SILE v0.14.0 To load 3rd party modules designed for use with SILE,
@@ -161,10 +161,10 @@ support nesting and was just setting the font style to italic. The
 command now alternates italic and regular when nested.
 * **packages:** The current (pseudo) idempotent behaviour when loading
 a package potentially clobbers anything that has been modified
-since the last load. Loading a package, then modifiying a function it
+since the last load. Loading a package, then modifying a function it
 provides, then loading the same package again will clobber the
 modifiecation. This is good for idempotency but not very good for user
-experience when you may not be modifiying all aspects of a document
+experience when you may not be modifying all aspects of a document
 render pipeline at once, as in when using templates.
 
 This change makes the default behaviour to run setting, raw handler, and
@@ -179,7 +179,7 @@ using LuaRocks and are much more robust.
 
 ### Features
 
-* **build:** Make vendoring Lua sources controlable at build time ([773245b](https://github.com/sile-typesetter/sile/commit/773245b8dcb8df1bc983c7320cb1ad2cdd46784d))
+* **build:** Make vendoring Lua sources controllable at build time ([773245b](https://github.com/sile-typesetter/sile/commit/773245b8dcb8df1bc983c7320cb1ad2cdd46784d))
 * **build:** Set default Lua version to prefer LuaJIT ([#1873](https://github.com/sile-typesetter/sile/issues/1873)) ([8a8b506](https://github.com/sile-typesetter/sile/commit/8a8b506fde16c677e5229f0ad5f60be28aeb7373))
 * **classes,outputters,packages:** New approach to full bleed printing, cropmarks, background ([aa538e2](https://github.com/sile-typesetter/sile/commit/aa538e215ddb4716e8360899e98fb6ef1512e477))
 * **classes:** Make text alignment commands honor nesting and margins ([7cde8a3](https://github.com/sile-typesetter/sile/commit/7cde8a31ff65913e8aed8784183cc939116c18d2))
@@ -189,7 +189,7 @@ using LuaRocks and are much more robust.
 * **cli:** Allow more than one input document (Rust edition) ([bdfeecd](https://github.com/sile-typesetter/sile/commit/bdfeecd9c87b74e355ba297b698f817b95d32fef))
 * **core:** Allow multiple runtime SILE_PATH segments ([b329923](https://github.com/sile-typesetter/sile/commit/b3299239f608fea68d7b9c491e6f25e7abc889c0))
 * **core:** Allow multiple runtime SILE_PATH segments in Lua binary as well as Rust ([5e05fa9](https://github.com/sile-typesetter/sile/commit/5e05fa918cbb3a1c3be496dcb1bc06d86bcfec6c))
-* **core:** Automaticalyl include project-local lua_modules in module loader path ([fd940a9](https://github.com/sile-typesetter/sile/commit/fd940a9e0a8d2f813c04c80d408755a28957dcea))
+* **core:** Automatically include project-local lua_modules in module loader path ([fd940a9](https://github.com/sile-typesetter/sile/commit/fd940a9e0a8d2f813c04c80d408755a28957dcea))
 * **core:** Make it easier to add project-specific LuaRocks trees as dependencies ([796b344](https://github.com/sile-typesetter/sile/commit/796b344e557895c5448e552898a808750d382835))
 * **docker:** Add all default fonts and package management tooling to container ([6bd5dc0](https://github.com/sile-typesetter/sile/commit/6bd5dc03ff930e881e7d4fe1d9287a8a22f93ef9))
 * **docker:** Automatically adjust Docker user to owner of mounted data ([4ee535f](https://github.com/sile-typesetter/sile/commit/4ee535f79db2a3ab9ef2c325ccfd6466de526ea9))
@@ -234,7 +234,7 @@ using LuaRocks and are much more robust.
 * **build:** Correct configure flag so debug builds are not release mode ([d931849](https://github.com/sile-typesetter/sile/commit/d931849f93c50a2722e07411579f891708b53fc6))
 * **build:** Fix build configuration for --with-system-libtexpdf ([d22ea34](https://github.com/sile-typesetter/sile/commit/d22ea347055ae2e183efc617d45a9e09b03b89c0))
 * **build:** Move build-time dependency checks out of runtime dep check configure flag ([5e587bd](https://github.com/sile-typesetter/sile/commit/5e587bdb2574f1e385fe24a1826bdbdb2e4c5253))
-* **build:** Stop copying libraries places autotools doesn't normaly handle them ([68d9008](https://github.com/sile-typesetter/sile/commit/68d900804ada4b9dceefe36604b2b22ccfaaffd4))
+* **build:** Stop copying libraries places autotools doesn't normally handle them ([68d9008](https://github.com/sile-typesetter/sile/commit/68d900804ada4b9dceefe36604b2b22ccfaaffd4))
 * **build:** Switch from xz to zst compression for official artifacts ([685780d](https://github.com/sile-typesetter/sile/commit/685780de79c299152221baec0da9cb5498878ec8))
 * **classes:** Reset current parindent at end of paragraphs, not beginning ([84c70fd](https://github.com/sile-typesetter/sile/commit/84c70fdf6fba4d9a644b35bf0ee9cbfcd029798f))
 * **core:** Output makedepends file after class finish and snippets ([f59670c](https://github.com/sile-typesetter/sile/commit/f59670c95f31cb404ce6bfcd99e4ab750f5387ea))
@@ -244,11 +244,11 @@ using LuaRocks and are much more robust.
 * **inputters:** Correct typo in SIL parser, disallow conflicting commands ([923b11e](https://github.com/sile-typesetter/sile/commit/923b11eb46c4e3930c540a249e6320704a54294d))
 * **inputters:** Make whitespace after envirnomnts behave the same as commands ([6d51ee3](https://github.com/sile-typesetter/sile/commit/6d51ee3d819902a052b76fbb0acd13cf3d45a038))
 * **languages:** Handle UTF8 properly in Liang hyphenation ([b33c11c](https://github.com/sile-typesetter/sile/commit/b33c11ce46766e9280d255e62075ea96c499eeac))
-* **languages:** Load default en language support if none explitly requested ([#2036](https://github.com/sile-typesetter/sile/issues/2036)) ([d02b063](https://github.com/sile-typesetter/sile/commit/d02b063a918b9c035138838e456945ff6d294b61))
+* **languages:** Load default en language support if none explicitly requested ([#2036](https://github.com/sile-typesetter/sile/issues/2036)) ([d02b063](https://github.com/sile-typesetter/sile/commit/d02b063a918b9c035138838e456945ff6d294b61))
 * **packages:** Color changes shall not affect other content at page breaks ([9d6d409](https://github.com/sile-typesetter/sile/commit/9d6d409a5cb2f593f5c2dee349aad67c8bdacf83))
 * **packages:** Correct bogus mixup of variable names in package inits ([8dfe3c3](https://github.com/sile-typesetter/sile/commit/8dfe3c3f070324ba0aced587fccbd063944fe4c0))
 * **packages:** Fix broken font fallback clear function ([2b15de5](https://github.com/sile-typesetter/sile/commit/2b15de500371fa6cbdfdf6f302c1360b4a023883))
-* **packages:** Use current pagebuilder API not deprecatod one internaly ([730150f](https://github.com/sile-typesetter/sile/commit/730150f9b7a759b2564461b95778bdd27df20b2e))
+* **packages:** Use current pagebuilder API not deprecatod one internally ([730150f](https://github.com/sile-typesetter/sile/commit/730150f9b7a759b2564461b95778bdd27df20b2e))
 * **tooling:** Add npx to nix' devShell ([624137f](https://github.com/sile-typesetter/sile/commit/624137fc0aaad08794a41c12dfbea2db64cff066))
 * **tooling:** Fix Nix build for rustier sile ([f53904c](https://github.com/sile-typesetter/sile/commit/f53904c629d99d8eeeee7704fdfa6c396b899633))
 * **tooling:** Really ignore all nix symlinks ([34b0493](https://github.com/sile-typesetter/sile/commit/34b0493aa3fbc9447f1a723f4101ad2419b69d7f))
@@ -301,7 +301,7 @@ using LuaRocks and are much more robust.
 
 ### Features
 
-* **languages:** Accomodate alternate Turkish hyphenation guidelines at apostrophes ([92904fc](https://github.com/sile-typesetter/sile/commit/92904fcaf119cb95633c2865c2cdef89106803a1))
+* **languages:** Accommodate alternate Turkish hyphenation guidelines at apostrophes ([92904fc](https://github.com/sile-typesetter/sile/commit/92904fcaf119cb95633c2865c2cdef89106803a1))
 * **typesetters:** Support for speaker change introduced by em-dash ([2afa4cb](https://github.com/sile-typesetter/sile/commit/2afa4cbf7eafcc9efef4ea5219c9508fff7989a8))
 
 
@@ -434,7 +434,7 @@ using LuaRocks and are much more robust.
 
 * **build:** Pass build time configuration into Lua environment ([c5d8789](https://github.com/sile-typesetter/sile/commit/c5d8789cb1096a3d597da49475c7e4ceaa94f603))
 * **core:** Add variations support to font command ([a37e7bc](https://github.com/sile-typesetter/sile/commit/a37e7bc61c44e85a678e3b5d40b29eedbc151368))
-* **shapers:** Instanciate variable fonts ([d50881f](https://github.com/sile-typesetter/sile/commit/d50881fd1709ba0d5db52107d5e15d1db8da032b))
+* **shapers:** Instantiate variable fonts ([d50881f](https://github.com/sile-typesetter/sile/commit/d50881fd1709ba0d5db52107d5e15d1db8da032b))
 * **shapers:** Support named instances with FontConfig ([29119b9](https://github.com/sile-typesetter/sile/commit/29119b9da844825e78dabd0edebb9d9ef7b642a6))
 * **shapers:** Support named instances with macfonts ([39a3242](https://github.com/sile-typesetter/sile/commit/39a324250e0b058585411ab8c91aec6e34e2545b))
 
@@ -458,7 +458,7 @@ using LuaRocks and are much more robust.
 
 ### Bug Fixes
 
-* **build:** Only check tooling to bulid manual if really needed ([e166e00](https://github.com/sile-typesetter/sile/commit/e166e0063b0b6c49040cc5c3759cd0a68162ef15))
+* **build:** Only check tooling to build manual if really needed ([e166e00](https://github.com/sile-typesetter/sile/commit/e166e0063b0b6c49040cc5c3759cd0a68162ef15))
 * **inputters:** Rework SIL input to handle both junk outside of document tag and fragments ([4c51c55](https://github.com/sile-typesetter/sile/commit/4c51c557034dd618ad1e68799f9de1db76c4f262))
 * **outputters:** Patch up error message when failing to load font ([#1671](https://github.com/sile-typesetter/sile/issues/1671)) ([771d87f](https://github.com/sile-typesetter/sile/commit/771d87f24fa0f4599655fba23bcade15a7a5e7cb))
 * **shaper:** Correct font-variants using opsz axis ([#1666](https://github.com/sile-typesetter/sile/issues/1666)) ([a929583](https://github.com/sile-typesetter/sile/commit/a9295838e2639dee9fde71d29717957deaf650d5))
@@ -685,7 +685,7 @@ using LuaRocks and are much more robust.
 * **core:** Add ability to pass args to modules via \use and other commands that load modules ([e64ce0f](https://github.com/sile-typesetter/sile/commit/e64ce0f5c7b4d04a3ef9429f92ce57566c0c66c4))
 * **core:** Add inline-escaping in SIL-language ([f09b135](https://github.com/sile-typesetter/sile/commit/f09b13578db44e87f0bef526b2027e35aac32c12))
 * **core:** Support loading classes/packages installed with `luarocks` ([232e72b](https://github.com/sile-typesetter/sile/commit/232e72b39d1d9e72897ec2d50033d5fe5e5402e4))
-* **i18n:** Add more Russion localizations ([350cf14](https://github.com/sile-typesetter/sile/commit/350cf1459e4143898de32d6e78da7871cf8946da))
+* **i18n:** Add more Russian localizations ([350cf14](https://github.com/sile-typesetter/sile/commit/350cf1459e4143898de32d6e78da7871cf8946da))
 * **i18n:** Add support for as many languages as possible ([da57577](https://github.com/sile-typesetter/sile/commit/da5757771a911555dc6b4adeaaec38041094ded0))
 * **i18n:** Fallback to messages from 'und' language if no localized ([9f47715](https://github.com/sile-typesetter/sile/commit/9f477155dc6f3372477e3dd7859fe71bf41cec18))
 * **i18n:** Parse XML style SILE commands in Fluent messages ([989290b](https://github.com/sile-typesetter/sile/commit/989290b255573c3a656eae3340c3944dd08e0c01))
@@ -773,7 +773,7 @@ using LuaRocks and are much more robust.
 * **languages:** Add full Esperanto language support ([b740709](https://github.com/sile-typesetter/sile/commit/b7407090ab4feac9107454db0f328c3d886a0631))
 * **packages:** Add 'lists' package (bullets and enumerations) ([6af3c62](https://github.com/sile-typesetter/sile/commit/6af3c62822ac334c64e2c46d8def11c51a017093))
 * **packages:** Add more options for custom 'lists"' styling ([3167410](https://github.com/sile-typesetter/sile/commit/316741033da7edff44cb933a311f3b5080b763c7))
-* **packages:** Handle font fallback when glyph named null returned on shape falure ([09c0a86](https://github.com/sile-typesetter/sile/commit/09c0a8647105bbddac155f3414cda2bc481a86ca))
+* **packages:** Handle font fallback when glyph named null returned on shape failure ([09c0a86](https://github.com/sile-typesetter/sile/commit/09c0a8647105bbddac155f3414cda2bc481a86ca))
 * **packages:** Pass through font-specific options to fallback fonts ([fb29442](https://github.com/sile-typesetter/sile/commit/fb2944233ea13e10729ada47aa8b72db44ea8a30))
 
 
@@ -1253,7 +1253,7 @@ using LuaRocks and are much more robust.
 
 ### Bug Fixes
 
-* **build:** Avoid possible race condition on first bulid ([b937c95](https://github.com/sile-typesetter/sile/commit/b937c9509e86aeec25ee1db9c0726151e3214d82))
+* **build:** Avoid possible race condition on first build ([b937c95](https://github.com/sile-typesetter/sile/commit/b937c9509e86aeec25ee1db9c0726151e3214d82))
 * **build:** Use BSD compatible find syntax ([c96683e](https://github.com/sile-typesetter/sile/commit/c96683ef5d015ccc540214acb8b20a86f8e0ae78))
 * **build:** Use BSD compatible touch syntax ([25eb6fd](https://github.com/sile-typesetter/sile/commit/25eb6fda81eb6ad9c0afc4e656eca0a31620ed00))
 * **docker:** Make sure Lua modules installation works on the first pass ([f0c3e26](https://github.com/sile-typesetter/sile/commit/f0c3e2683d78de82d2395dcd0a6c5ca5d1d4081b))
@@ -1261,7 +1261,7 @@ using LuaRocks and are much more robust.
 
 ### Performance Improvements
 
-* **build:** Save a ./configure cycle by bootstraping the version ([2997d05](https://github.com/sile-typesetter/sile/commit/2997d05d433492633dc6db68032ded1ef91edd1c))
+* **build:** Save a ./configure cycle by bootstrapping the version ([2997d05](https://github.com/sile-typesetter/sile/commit/2997d05d433492633dc6db68032ded1ef91edd1c))
 
 
 ### Reverts
@@ -1325,7 +1325,7 @@ using LuaRocks and are much more robust.
 ### Bug Fixes
 
 * **build:** Check for luarocks if not configured --with-system-luarocks ([e8770ce](https://github.com/sile-typesetter/sile/commit/e8770ce2d1085752e2383adcb11acf8222225cd7))
-* **core:** Account for possibilty that there are no working fallbacks ([391f44e](https://github.com/sile-typesetter/sile/commit/391f44eb7cd93351404bbbe89167d5acca466bff))
+* **core:** Account for possibility that there are no working fallbacks ([391f44e](https://github.com/sile-typesetter/sile/commit/391f44eb7cd93351404bbbe89167d5acca466bff))
 * **core:** Gracefully do nothing when SILE.process() passed nothing ([1085049](https://github.com/sile-typesetter/sile/commit/1085049310cce11728f74dd7d46571bc579d7afb))
 * **core:** Revamp macro system to fix [#535](https://github.com/sile-typesetter/sile/issues/535) ([47a0af8](https://github.com/sile-typesetter/sile/commit/47a0af8e922f5122f6af41d3809b2f1248c2ac2d))
 * **frames:** Avoid possible infinite loop when looking for a frame ([157dfc8](https://github.com/sile-typesetter/sile/commit/157dfc815e0888c604581ac38766d5858450bcf8))
@@ -1379,7 +1379,7 @@ using LuaRocks and are much more robust.
 
 ### New Features
 
-* **backends:** Aproximate space and break in text output to PDF ([9577ae4](https://github.com/sile-typesetter/sile/commit/9577ae4610a2a70f50078b7f0789bf842ab8ef1d))
+* **backends:** Approximate space and break in text output to PDF ([9577ae4](https://github.com/sile-typesetter/sile/commit/9577ae4610a2a70f50078b7f0789bf842ab8ef1d))
 * **docker:** Add dockerfile and setup to build an image ([4424d44](https://github.com/sile-typesetter/sile/commit/4424d4469905edf43815464d74229184b4710aad))
 * **docker:** Add method to inject fonts into Docker container ([104124a](https://github.com/sile-typesetter/sile/commit/104124a1d9019399561c7c64e9590a3175de6ce3))
 
@@ -1409,7 +1409,7 @@ using LuaRocks and are much more robust.
 * **build:** Correct Makefile syntax oopses ([a831a4f](https://github.com/sile-typesetter/sile/commit/a831a4fc99ff10a56110240c5621474065089f45))
 * **build:** Deautoconfiscate, undoing race condition setup by ee1834a ([f09bb08](https://github.com/sile-typesetter/sile/commit/f09bb08c651cf9c3eef6dce9fc7f3a538a9b405c))
 * **build:** Don't let autoconf warn when hack run too early ([56a0714](https://github.com/sile-typesetter/sile/commit/56a07142e2ae091498e67fe4d0d2e15b1f82d061))
-* **build:** Use POSIX compatable shell arguments ([#712](https://github.com/sile-typesetter/sile/issues/712)) ([c0542ca](https://github.com/sile-typesetter/sile/commit/c0542ca6715946192fdfe4abb239a3ea6705d784))
+* **build:** Use POSIX compatible shell arguments ([#712](https://github.com/sile-typesetter/sile/issues/712)) ([c0542ca](https://github.com/sile-typesetter/sile/commit/c0542ca6715946192fdfe4abb239a3ea6705d784))
 * **build:** Use version detection that works w/out git ([f94e9d8](https://github.com/sile-typesetter/sile/commit/f94e9d8caaae03a7d1b02c42dddf19efb56b13c9))
 * **classes:** Don't try to load layout modules until init() ([b58c861](https://github.com/sile-typesetter/sile/commit/b58c8610d3e725dbf3d538f2e3ce8958207c410d))
 * **core:** Add Lua 5.1 compatibility hack to makedeps code ([067d410](https://github.com/sile-typesetter/sile/commit/067d41072c3464ec086350ba36192a0d486f9536))
