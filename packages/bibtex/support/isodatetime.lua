@@ -98,7 +98,7 @@ local enddateonly = slash
    * date
    / function (t)
       return {
-         aproximate = t.approximate,
+         approximate = t.approximate,
          range = true,
          enddate = t,
       }

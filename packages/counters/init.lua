@@ -243,7 +243,7 @@ The available built-in display types are:
 
 The ICU library also provides ways of formatting numbers in global (non-Latin) scripts.
 You can use any of the display types in this list: \url{http://www.unicode.org/repos/cldr/tags/latest/common/bcp47/number.xml}.
-For example, \autodoc:parameter{display=beng} will format your numbers in Bengali digits.
+For example, \autodoc:parameter{display=being} will format your numbers in Bengali digits.
 
 So, for example, the following SILE code:
 

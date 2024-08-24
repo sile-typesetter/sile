@@ -203,13 +203,13 @@ end
 -- Once resolved recursively, the crossref and xdata fields are removed
 -- from the entry.
 -- So this is intended to be called at first use of the entry, and have no
--- effect on subsequent uses: BibTeX does seem to mandate cross refererences
+-- effect on subsequent uses: BibTeX does seem to mandate cross references
 -- to be defined before the entry that uses it, or even in the same bibliography
 -- file.
 -- Implementation note:
 -- We are not here to check the consistency of the BibTeX file, so there is
 -- no check that xdata refers only to @xdata entries
--- Removing the crossref field implies we won't track its use and implicitely
+-- Removing the crossref field implies we won't track its use and implicitly
 -- cite referenced entries in the bibliography over a certain threshold.
 -- @tparam table bib Bibliography
 -- @tparam table entry Bibliography entry
@@ -370,7 +370,7 @@ String values shall be enclosed in either double quotes or curly braces.
 The latter allows using quotes inside the string, while the former does not without escaping them with a backslash.
 
 When string values are not enclosed in quotes or braces, they must not contain any whitespace characters.
-The value is then considered to be a refererence to an abbreviation previously defined in a \code{@string} entry.
+The value is then considered to be a reference to an abbreviation previously defined in a \code{@string} entry.
 If no such abbreviation is found, the value is considered to be a string literal.
 (This allows a decent fallback for fields where curly braces or double quotes could historically be omitted, such as numerical values, and one-word strings.)
 
