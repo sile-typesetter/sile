@@ -88,3 +88,17 @@ features = [ "derive" ]
 version = "8.2"
 default-features = false
 features = [ "build", "cargo", "git", "gitoxide" ]
+
+[package.metadata.typos.default]
+locale = "en-us"
+
+[package.metadata.typos.default.extend-words]
+
+[package.metadata.typos.files]
+ignore-hidden = false
+extend-exclude = [
+  "/.git",
+  "CHANGELOG.md",
+  "build-aux/ax*",
+  "lua-libraries/*",
+]

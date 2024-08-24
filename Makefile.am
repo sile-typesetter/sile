@@ -301,7 +301,7 @@ force: ;
 
 PHONY_DEVELOPER_TARGETS = busted compare coverage \
 	docker-dep-check docker-ghcr-to-hub docker-test-dist gource.webm lint luacheck luarocks-lint \
-	prerelease regression_previews regressions release release-preview stylua tagrelease \
+	prerelease regression_previews regressions release release-preview stylua typos tagrelease \
 	test update_expecteds update_libtexpdf
 .PHONY: $(PHONY_DEVELOPER_TARGETS)
 
@@ -352,6 +352,9 @@ luacheck:
 
 stylua:
 	$(STYLUA) --check --respect-ignores -g '*.lua' -g '*.lua.in' -g '*.rockspec.in' .busted .luacov .luacheckrc build-aux/config.ld .
+
+typos:
+	$(TYPOS) .
 
 busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'

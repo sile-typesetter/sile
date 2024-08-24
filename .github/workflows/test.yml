@@ -71,7 +71,7 @@ jobs:
           ./bootstrap.sh
           ./configure \
             ${{ matrix.luaVersion[1] }} \
-            --enable-developer-mode LDOC=false LUACHECK=false NIX=false DELTA=cat STYLUA=false \
+            --enable-developer-mode LDOC=false LUACHECK=false NIX=false DELTA=cat STYLUA=false TYPOS=false \
             --disable-font-variations \
             --with${{ !startsWith(matrix.luaVersion[0], 'luajit') && 'out' || '' }}-luajit \
             --without-system-luarocks \

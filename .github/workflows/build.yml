@@ -49,7 +49,7 @@ jobs:
           ./bootstrap.sh
           ./configure \
             --enable-developer-mode \
-            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false \
+            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false TYPOS=false \
             --disable-font-variations \
             --with-manual \
             ${{ matrix.configuration[1] }}
@@ -114,7 +114,7 @@ jobs:
           ./bootstrap.sh
           ./configure \
             --enable-developer-mode \
-            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false FCMATCH=true PDFINFO=false CARGO=true \
+            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false TYPOS=false FCMATCH=true PDFINFO=false CARGO=true \
             --disable-font-variations \
             --with-system-lua-sources \
             --without-manual

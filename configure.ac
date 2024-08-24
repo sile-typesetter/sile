@@ -183,6 +183,7 @@ AM_COND_IF([DEVELOPER_MODE], [
     QUE_PROGVAR([perl])
     QUE_PROGVAR([stylua])
     QUE_PROGVAR([tr])
+    QUE_PROGVAR([typos])
 ])
 
 AX_PROG_LUA([5.1])
