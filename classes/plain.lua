@@ -78,7 +78,7 @@ function class:registerCommands ()
 
    self:registerCommand("noindent", function (_, content)
       if #SILE.typesetter.state.nodes ~= 0 then
-         SU.warn([[\noindent was called after paragraph content has already been procesed.
+         SU.warn([[\noindent was called after paragraph content has already been processed.
 
   This will not result in avoiding the current paragraph being indented.
   This function must be called before any content belonging to the
@@ -181,14 +181,14 @@ function class:registerCommands ()
 
    self:registerCommand("framebreak", function (_, _)
       if not SILE.typesetter:vmode() then
-         SU.warn("framebreak was not intended to work in horizontal mode. Behaviour may change in future versions")
+         SU.warn("framebreak was not intended to work in horizontal mode. Behavior may change in future versions")
       end
       SILE.call("penalty", { penalty = -10000, vertical = true })
    end, "Requests a frame break (switching to vertical mode if needed)")
 
    self:registerCommand("pagebreak", function (_, _)
       if not SILE.typesetter:vmode() then
-         SU.warn("pagebreak was not intended to work in horizontal mode. Behaviour may change in future versions")
+         SU.warn("pagebreak was not intended to work in horizontal mode. Behavior may change in future versions")
       end
       SILE.call("penalty", { penalty = -20000, vertical = true })
    end, "Requests a non-negotiable page break (switching to vertical mode if needed)")
