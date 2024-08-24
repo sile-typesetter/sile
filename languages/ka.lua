@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["ka"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["ka"].patterns = {
    ".ავ4რწყა",
    ".აი2ა",
@@ -2111,3 +2113,4 @@ SILE.hyphenator.languages["ka"].patterns = {
    "ჰ1ყ2",
    "ჰ1ხ2",
 }
+-- typos: ignore end

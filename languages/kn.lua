@@ -1,5 +1,7 @@
 SILE.languageSupport.languages.kn = { defaultScript = "Knda" }
 SILE.hyphenator.languages["kn"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["kn"].patterns = {
    -- GENERAL RULE
    -- Do not break either side of ZERO-WIDTH JOINER  (U+200D)
@@ -84,3 +86,4 @@ SILE.hyphenator.languages["kn"].patterns = {
    -- Do not break either side of virama (may be within conjunct).
    "2್2",
 }
+-- typos: ignore end

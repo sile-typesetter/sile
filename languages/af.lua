@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["af"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["af"].patterns = {
    ".aan5s4",
    ".aä7lawa",
@@ -10343,6 +10345,9 @@ SILE.hyphenator.languages["af"].patterns = {
    "-t4we",
    "-5twee",
 }
+-- typos: ignore end
+
+-- typos: ignore start
 SILE.hyphenator.languages["af"].exceptions = {
    "sandaal",
    "aand-e-tes",
@@ -10530,3 +10535,4 @@ SILE.hyphenator.languages["af"].exceptions = {
    "wes-oe-wer",
    "xho-sa-tjie",
 }
+-- typos: ignore end

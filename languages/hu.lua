@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["hu"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["hu"].patterns = {
    ".a2",
    ".adatát1a2",
@@ -62852,3 +62854,4 @@ SILE.hyphenator.languages["hu"].patterns = {
    "z3zsí",
    "z3zso",
 }
+-- typos: ignore end

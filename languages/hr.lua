@@ -5,6 +5,8 @@ SILE.nodeMakers.hr.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRep
 SILE.nodeMakers.hr.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
 
 SILE.hyphenator.languages["hr"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["hr"].patterns = {
    "a1a2",
    "a1e2",
@@ -1482,3 +1484,4 @@ SILE.hyphenator.languages["hr"].patterns = {
    "n2s1t",
    "l2f1t",
 }
+-- typos: ignore end

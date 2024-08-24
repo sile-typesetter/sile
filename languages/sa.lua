@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["sa"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["sa"].patterns = {
    "a1",
    "ā1",
@@ -842,3 +844,4 @@ SILE.hyphenator.languages["sa"].patterns = {
    -- Do not break either side of virama (may be within conjunct).
    "2్2",
 }
+-- typos: ignore end

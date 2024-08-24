@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["id"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["id"].patterns = {
    "a1",
    "e1",
@@ -149,7 +151,9 @@ SILE.hyphenator.languages["id"].patterns = {
    ".ri3ng4an.",
    ".de3ng4an.", -- Don't overload the exception list...
 }
+-- typos: ignore end
 
+-- typos: ignore start
 SILE.hyphenator.languages["id"].exceptions = {
    "be-ra-be",
    "be-ra-hi",
@@ -207,3 +211,4 @@ SILE.hyphenator.languages["id"].exceptions = {
    "te-rus",
    "te-ru-si",
 }
+-- typos: ignore end

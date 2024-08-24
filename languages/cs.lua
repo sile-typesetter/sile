@@ -5,6 +5,8 @@ SILE.nodeMakers.cs.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRep
 SILE.nodeMakers.cs.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
 
 SILE.hyphenator.languages["cs"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["cs"].patterns = {
    ".a2",
    ".a4da",
@@ -3643,6 +3645,9 @@ SILE.hyphenator.languages["cs"].patterns = {
    "žš4ti",
    "žš4tě",
 }
+-- typos: ignore end
+
+-- typos: ignore start
 SILE.hyphenator.languages["cs"].exceptions = {
    "koe-fi-ci-ent",
    "koe-fi-ci-en-ty",
@@ -3650,3 +3655,4 @@ SILE.hyphenator.languages["cs"].exceptions = {
    "úhlo-příč-ka",
    "úhlo-příč-ky",
 }
+-- typos: ignore end

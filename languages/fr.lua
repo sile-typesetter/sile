@@ -259,6 +259,8 @@ function SILE.nodeMakers.fr:iterator (items)
 end
 
 SILE.hyphenator.languages["fr"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["fr"].patterns = {
    ------------------------------------------------
    -- phonetic patterns -- etymological patterns --
@@ -1558,3 +1560,4 @@ SILE.hyphenator.languages["fr"].patterns = {
    "1zu",
    "1zy",
 }
+-- typos: ignore end

@@ -1,5 +1,7 @@
 -- German Hyphenation Patterns (Reformed Orthography, 2006) `dehyphn-x' 2014-05-21 (WL)
 SILE.hyphenator.languages["de"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["de"].patterns = {
    ".ab1a",
    ".abi4",
@@ -15209,3 +15211,4 @@ SILE.hyphenator.languages["de"].patterns = {
    "z3z2o",
    "zz2ö",
 }
+-- typos: ignore end

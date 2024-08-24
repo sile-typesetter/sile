@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["hy"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["hy"].patterns = {
    "և1ա",
    "և1ե",
@@ -1429,3 +1431,4 @@ SILE.hyphenator.languages["hy"].patterns = {
    "օ1քո",
    "օ1քօ",
 }
+-- typos: ignore end

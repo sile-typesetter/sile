@@ -5,6 +5,8 @@ SILE.nodeMakers.pl.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRep
 SILE.nodeMakers.pl.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
 
 SILE.hyphenator.languages["pl"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["pl"].patterns = {
    ".ćć8",
    ".ćł8",
@@ -4060,6 +4062,9 @@ SILE.hyphenator.languages["pl"].patterns = {
    "yu2",
    "ze4p3p",
 }
+-- typos: ignore end
+
+-- typos: ignore start
 SILE.hyphenator.languages["pl"].exceptions = {
    "be-zach",
    "be-zami",
@@ -4082,3 +4087,4 @@ SILE.hyphenator.languages["pl"].exceptions = {
    "tró-jami",
    "tró-jek",
 }
+-- typos: ignore end

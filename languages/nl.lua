@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["nl"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["nl"].patterns = {
    ".a4",
    ".aan5",
@@ -12725,6 +12727,9 @@ SILE.hyphenator.languages["nl"].patterns = {
    "zz3or",
    "z4z5w",
 }
+-- typos: ignore end
+
+-- typos: ignore start
 SILE.hyphenator.languages["nl"].exceptions = {
    "aan-dachts-trek-ker",
    "aan-dachts-trek-kers",
@@ -12767,3 +12772,4 @@ SILE.hyphenator.languages["nl"].exceptions = {
    "wa-ter-staats-in-ge-ni-eur",
    "wa-ter-staats-in-ge-ni-eurs",
 }
+-- typos: ignore end

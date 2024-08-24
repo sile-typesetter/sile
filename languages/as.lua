@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["as"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["as"].patterns = {
    -- GENERAL RULE
    -- Do not break either side of ZERO-WIDTH JOINER  (U+200D)
@@ -83,3 +85,4 @@ SILE.hyphenator.languages["as"].patterns = {
    -- Do not break either side of virama (may be within conjunct).
    "2্2",
 }
+-- typos: ignore end

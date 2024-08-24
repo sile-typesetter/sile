@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["en"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["en"].patterns = {
    ".ach4",
    ".ad4der",
@@ -4448,7 +4450,9 @@ SILE.hyphenator.languages["en"].patterns = {
    "4z1z2",
    "z4zy",
 }
+-- typos: ignore end
 
+-- typos: ignore start
 SILE.hyphenator.languages["en"].exceptions = {
    "as-so-ciate",
    "as-so-ciates",
@@ -4465,6 +4469,7 @@ SILE.hyphenator.languages["en"].exceptions = {
    "ret-ri-bu-tion",
    "ta-ble",
 }
+-- typos: ignore end
 
 -- Internationalisation stuff
 local en_string = function (num)

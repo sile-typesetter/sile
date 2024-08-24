@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["et"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["et"].patterns = {
    ".aa4",
    ".aasta5",
@@ -3692,3 +3694,4 @@ SILE.hyphenator.languages["et"].patterns = {
    "4št",
    "3šu4",
 }
+-- typos: ignore end

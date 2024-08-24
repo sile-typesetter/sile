@@ -33,6 +33,7 @@ SILE.hyphenator.languages["tr"].hyphenateSegments = function (node, segments, j)
    return SILE.types.node.discretionary({ replacement = replacement, prebreak = hyphen }), segments
 end
 
+-- typos: ignore start
 SILE.hyphenator.languages["tr"].patterns = {
    "2a1",
    "2â1",
@@ -711,6 +712,7 @@ SILE.hyphenator.languages["tr"].patterns = {
    "4z1'",
    "4z1’",
 }
+-- typos: ignore end
 
 -- Internationalisation stuff
 

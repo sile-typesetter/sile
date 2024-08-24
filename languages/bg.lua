@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["bg"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["bg"].patterns = {
    "1а1",
    "1б1",
@@ -1507,3 +1509,4 @@ SILE.hyphenator.languages["bg"].patterns = {
    "н4кс.",
    "к4ст.",
 }
+-- typos: ignore end

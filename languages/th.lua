@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["th"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["th"].patterns = {
    ".ชี5วั",
    ".ทัศนู5",
@@ -4297,3 +4299,4 @@ SILE.hyphenator.languages["th"].patterns = {
    "7อุ.",
    "ิศ7รา",
 }
+-- typos: ignore end

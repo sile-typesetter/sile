@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["mr"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["mr"].patterns = {
    -- GENERAL RULE
    -- Do not break either side of ZERO-WIDTH JOINER  (U+200D)
@@ -80,3 +82,4 @@ SILE.hyphenator.languages["mr"].patterns = {
    -- Do not break either side of virama (may be within conjunct).
    "2्2",
 }
+-- typos: ignore end

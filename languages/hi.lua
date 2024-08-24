@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["hi"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["hi"].patterns = {
    "2‍2",
    -- Break on both sides of ZERO-WIDTH NON JOINER  (U+200C)
@@ -78,3 +80,4 @@ SILE.hyphenator.languages["hi"].patterns = {
    -- Do not break either side of virama (may be within conjunct).
    "2्2",
 }
+-- typos: ignore end

@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["it"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["it"].patterns = {
    ".a3p2n", -- After the Garzanti dictionary: a-pnea, a-pnoi-co
    ".anti1",
@@ -356,3 +358,4 @@ SILE.hyphenator.languages["it"].patterns = {
    "2z''",
    ".z2",
 }
+-- typos: ignore end

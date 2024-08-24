@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["ru"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["ru"].patterns = {
    ".аб1р",
    ".аг1ро",
@@ -7209,3 +7211,4 @@ SILE.hyphenator.languages["ru"].exceptions = {
    "ядо-зу-бе",
    "ярем-но-го",
 }
+-- typos: ignore end
