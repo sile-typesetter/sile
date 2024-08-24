@@ -6,7 +6,6 @@ class.type = "class"
 class._name = "base"
 
 class._initialized = false
-class.deferredLegacyInit = {}
 class.deferredInit = {}
 class.pageTemplate = { frames = {}, firstContentFrame = nil }
 class.defaultFrameset = {}
@@ -270,15 +269,6 @@ function class:initPackage (pack, options)
          self:registerPostinit(pack.init, options)
       end
    end
-end
-
-function class:registerLegacyPostinit (func, options)
-   if self._initialized then
-      return func(self, options)
-   end
-   table.insert(self.deferredLegacyInit, function (_)
-      func(self, options)
-   end)
 end
 
 --- Register a callback function to be executed after the class initialization has completed.
