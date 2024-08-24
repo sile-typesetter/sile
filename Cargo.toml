@@ -100,12 +100,18 @@ extend-ignore-identifiers-re = [
   '[a-f0-9]{7}',
   '^.{2,3}$',
   '^twords?',
+  '[Pp]arms',
   'wdth',
   '0fpt',
+  '^ot',
+  '^hb_ot',
+  '^HB_',
   '^Tyre$',
 ]
 
 [package.metadata.typos.default.extend-words]
+craters = "creators"
+neet = "need"
 
 [package.metadata.typos.files]
 ignore-hidden = false
@@ -114,4 +120,9 @@ extend-exclude = [
   "CHANGELOG.md",
   "build-aux/ax*",
   "lua-libraries/*",
+  "lua_modules/*",
+  "node_modules/*",
+  "tests/*.expected",
+  "cmake/*.diff",
+  "libtexpdf",
 ]
