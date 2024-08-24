@@ -1,7 +1,7 @@
 SILE.nodeMakers.ca = pl.class({
    _base = SILE.nodeMakers.unicode,
 
-   -- overriden properties from parent class
+   -- overridden properties from parent class
    quoteTypes = { qu = true }, -- split tokens at apostrophes &c.
 })
 

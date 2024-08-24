@@ -1,5 +1,5 @@
 -- Different years of TDK and various publisher style guides differ on this point.
--- Current official guidance suggests dropping the hypenation mark if the break
+-- Current official guidance suggests dropping the hyphenation mark if the break
 -- occurs at an apostrophe (kesme işareti). Some older guidance and some publishers
 -- suggest dropping the apostrophe instead.
 SILE.settings:declare({
@@ -714,7 +714,7 @@ SILE.hyphenator.languages["tr"].patterns = {
 }
 -- typos: ignore end
 
--- Internationalisation stuff
+-- Internationalization stuff
 
 -- local sum_tens = function (val, loc, digits)
 --   local ten = string.sub(digits, loc+1, loc+1)

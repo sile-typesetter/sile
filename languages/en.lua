@@ -4471,7 +4471,7 @@ SILE.hyphenator.languages["en"].exceptions = {
 }
 -- typos: ignore end
 
--- Internationalisation stuff
+-- Internationalization stuff
 local en_string = function (num)
    local words = { "one ", "two ", "three ", "four ", "five ", "six ", "seven ", "eight ", "nine " }
    local levels = {
