@@ -92,7 +92,7 @@ features = [ "build", "cargo", "git", "gitoxide" ]
 [package.metadata.typos.default]
 locale = "en-us"
 extend-ignore-re = [
-  "(?s)(#|//|--)\\s*typos: ignore start.*?\\n\\s*(#|//|--)\\s*typos: ignore end",
+  "(?s)(#|//|--|%)\\s*typos: ignore start.*?\\n\\s*(#|//|--|%)\\s*typos: ignore end",
 ]
 extend-ignore-identifiers-re = [
   # Git short hashes, especially found in the changelog

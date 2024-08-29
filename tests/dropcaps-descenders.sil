@@ -5,6 +5,7 @@
 \use[module=packages.dropcaps]
 \set[parameter=document.baselineskip, value=1.2em]
 \font[family=Cormorant Infant, size=11pt]
+% typos: ignore start
 % Normal I
 \dropcap[lines=3]{I}bis lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam.
 
@@ -28,5 +29,6 @@
 \set[parameter=dropcaps.bsratio, value=0.5]{%
 \dropcap[lines=2, strict=false]{Q}uo lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam.
 \par}
+% typos: ignore end
 
 \end{document}

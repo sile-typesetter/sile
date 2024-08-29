@@ -21,7 +21,9 @@ describe("Hyphenation module", function ()
       it("should hyphenate words longer than minWord", function ()
          SILE._hyphenators["fr"].minWord = 5 -- (Default)
          assert.is.equal("sé-rie", hyphenate("série", "fr"))
+         -- typos: ignore start
          assert.is.equal("Lé-gè-re-ment", hyphenate("Légèrement", "fr"))
+         -- typos: ignore end
       end)
 
       it("should not hyphenate words shorter than minWord", function ()
