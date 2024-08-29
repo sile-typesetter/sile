@@ -33,12 +33,12 @@ jobs:
             lua_modules
           key: luarocks-luajit-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
       - name: Setup ‘lua’
-        uses: leafo/gh-actions-lua@v10
+        uses: hishamhm/gh-actions-lua@master
         with:
           luaVersion: luajit
           luaCompileFlags: XCFLAGS=-fPIC
       - name: Setup ‘luarocks’
-        uses: leafo/gh-actions-luarocks@v4
+        uses: hishamhm/gh-actions-luarocks@master
       - name: Prep system Lua for use
         run: |
           luarocks install busted
