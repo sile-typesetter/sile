@@ -193,7 +193,7 @@ sile-$(VERSION).pdf: $(MANUAL)
 sile-%.md: CHANGELOG.md
 	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' CHANGELOG.md | \
 		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' |
-		$(TYPOS) --write-changes - > $@
+	$(or $(filter cat,$(TYPOS)),$(TYPOS) --write-changes -) > $@
 
 check: selfcheck
 
