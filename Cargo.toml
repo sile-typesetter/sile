@@ -107,6 +107,11 @@ extend-ignore-identifiers-re = [
   '^hb_ot',
   '^HB_',
   '^Tyre$',
+  'PoDoFo',
+  '_Flate',
+  'DEPENDEES',
+  'EPdf',
+  'FileAttachement',
 ]
 
 [package.metadata.typos.default.extend-words]
