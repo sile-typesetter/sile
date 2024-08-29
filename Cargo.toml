@@ -124,5 +124,4 @@ extend-exclude = [
   "node_modules/*",
   "tests/*.expected",
   "cmake/*.diff",
-  "libtexpdf",
 ]
