@@ -14,7 +14,7 @@ if not status then
 end
 
 -- On FreeBSD, Lua's debug module doesn't give us info above the top of the stack.
--- Since our detection is currently burried in a module it doesn't tell us the executable.
+-- Since our detection is currently buried in a module it doesn't tell us the executable.
 if _G.executablePath == "=[C]" then
    _G.executablePath = debug.getinfo(1, "S").source
 end

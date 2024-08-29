@@ -36,7 +36,7 @@ function typesetter:init (frame)
   refactored using a different object model. Your instance was created
   and initialized using the object copy syntax from the stdlib model.
   It has been shimmed for you using the new Penlight model, but this may
-  lead to unexpected behaviour. Please update your code to use the new
+  lead to unexpected behavior. Please update your code to use the new
   Penlight based inheritance model.]])
    warned = true
    self:_init(frame)
@@ -986,7 +986,7 @@ function typesetter.leadingFor (_, vbox, previous)
    end
 end
 
--- Beggining of liner logic (contructs spanning over several lines)
+-- Beginning of liner logic (constructs spanning over several lines)
 
 -- These two special nodes are used to track the current liner entry and exit.
 -- As Sith Lords, they are always two: they are local here, so no one can
@@ -1471,7 +1471,7 @@ end
 -- effects.
 -- If we are already in horizontal-restricted mode, the liner is processed
 -- immediately, since line breaking won't occur then.
--- @tparam string name Name of the liner (usefull for debugging)
+-- @tparam string name Name of the liner (useful for debugging)
 -- @tparam table content SILE AST to process
 -- @tparam function outputYourself Output method for wrapped boxes
 function typesetter:liner (name, content, outputYourself)

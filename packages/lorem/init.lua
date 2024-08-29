@@ -3,6 +3,7 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "lorem"
 
+-- typos: ignore start
 local lorem = [[
 lorem ipsum dolor sit amet consetetur sadipscing elitr sed diam nonumy
 eirmod tempor invidunt ut labore et dolore magna aliquyam erat sed diam
@@ -68,6 +69,7 @@ et ea rebum stet clita kasd gubergren no sea takimata sanctus est lorem
 ipsum dolor sit amet
 
 ]]
+-- typos: ignore end
 
 local _, nwords = lorem:gsub("%S+", "")
 

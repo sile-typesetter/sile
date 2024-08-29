@@ -285,7 +285,7 @@ end
 
 \subsection{Changing the default page layout}
 
-We earlier learnt how to define a frame layout for a single page, let’s try to define one for an entire document.
+We earlier learned how to define a frame layout for a single page, let’s try to define one for an entire document.
 We’re going to create a simple class file which merely changes the size of the
 margins and the typeblock. We’ll call it \code{bringhurst.lua}, because it
 replicates the layout of the Hartley & Marks edition of Robert Bringhurst’s

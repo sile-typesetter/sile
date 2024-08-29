@@ -118,7 +118,7 @@ Next we end each paragraph—after adding the glue so that paragraph skips do no
 Now everything is ready apart from the output routine.
 In the output routine we need to ensure, at the start of each document and the start of each page, that each typesetter is linked to the appropriate frame.
 The default \code{newPage} routine will do this for one typesetter every time we open a new page, but it doesn’t know that we have another typesetter object to set up as well.
-So we also need to make sure that, no matter which typesetter causes an new-page event, the other typesetter also gets correctly initialised:
+So we also need to make sure that, no matter which typesetter causes an new-page event, the other typesetter also gets correctly initialized:
 
 \begin[type=autodoc:codeblock]{raw}
 function diglot:newPage (self)

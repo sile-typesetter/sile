@@ -1,7 +1,7 @@
 SILE.nodeMakers.ca = pl.class({
    _base = SILE.nodeMakers.unicode,
 
-   -- overriden properties from parent class
+   -- overridden properties from parent class
    quoteTypes = { qu = true }, -- split tokens at apostrophes &c.
 })
 
@@ -37,6 +37,7 @@ SILE.hyphenator.languages["ca"].hyphenateSegments = function (node, segments, j)
    return discretionary, segments
 end
 
+-- typos: ignore start
 SILE.hyphenator.languages["ca"].patterns = {
    --
    -- Attach vowel groups to left consonant
@@ -924,7 +925,9 @@ SILE.hyphenator.languages["ca"].patterns = {
    "ui3et",
    "o3gnò",
 }
+-- typos: ignore end
 
+-- typos: ignore start
 SILE.hyphenator.languages["ca"].exceptions = {
    "cu-rie",
    "cu-ries",
@@ -953,3 +956,4 @@ SILE.hyphenator.languages["ca"].exceptions = {
    "whis-ky",
    "whis-kies",
 }
+-- typos: ignore end

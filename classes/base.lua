@@ -96,7 +96,7 @@ end
 
 function class:setOptions (options)
    options = options or {}
-   -- Classes that add options with dependencies should explicitly handle them, then exempt them from furthur processing.
+   -- Classes that add options with dependencies should explicitly handle them, then exempt them from further processing.
    -- The landscape and crop related options are handled explicitly before papersize, then the "rest" of options that are not interdependent.
    self.options.landscape = SU.boolean(options.landscape, false)
    options.landscape = nil

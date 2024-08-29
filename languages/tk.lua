@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["tk"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["tk"].patterns = {
    -- Some suffixes are added through a hyphen. When hyphenating these words, a hyphen is added before the hyphen so that the line ends with a hyphen and the new line starts with a hyphen.
    "1-4",
@@ -2379,3 +2381,4 @@ SILE.hyphenator.languages["tk"].patterns = {
    "n1g2r",
    "s2k1w",
 }
+-- typos: ignore end

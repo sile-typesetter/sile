@@ -5,6 +5,8 @@ SILE.nodeMakers.es.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRep
 SILE.nodeMakers.es.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
 
 SILE.hyphenator.languages["es"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["es"].patterns = {
    "1b",
    "4b.",
@@ -3378,3 +3380,4 @@ SILE.hyphenator.languages["es"].patterns = {
    ".tran2s1ur",
    ".tri1ó2x",
 }
+-- typos: ignore end

@@ -23,7 +23,7 @@ RUN pacman --needed --noconfirm -Suq
 # locale support out of it later.
 RUN pacman --noconfirm -Sq glibc && yes | pacman -Sccq
 
-# Install run-time dependecies
+# Install run-time dependencies
 RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS $BUILD_DEPS
 
 # Set at build time, forces Docker’s layer caching to reset at this point
@@ -66,7 +66,7 @@ RUN pacman-key --init
 RUN pacman --needed --noconfirm -Syq archlinux-keyring && yes | pacman -Sccq
 RUN pacman --needed --noconfirm -Suq && yes | pacman -Sccq
 
-# Install run-time dependecies
+# Install run-time dependencies
 RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS && yes | pacman -Sccq
 
 LABEL org.opencontainers.image.title="SILE"

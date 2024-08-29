@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["cy"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["cy"].patterns = {
    ".ac4t",
    ".ad3ae",
@@ -6729,3 +6731,4 @@ SILE.hyphenator.languages["cy"].patterns = {
    "ywy5ne",
    "y1y",
 }
+-- typos: ignore end

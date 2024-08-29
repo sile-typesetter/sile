@@ -93,13 +93,13 @@ SILE.nodeMakers.fr.highPunctuations = { ";", "!", "?", "!!", "?!", "!?" }
 -- By the books, they have it "after a letter or digit", at least. After a closing
 -- punctuation, too, seems usual.
 -- Otherwise, one shall have no space inside e.g. (?), ?!, [!], …?, !!! etc.
--- As a simplication, we reverse the rule and define after which characters the space
+-- As a simplification, we reverse the rule and define after which characters the space
 -- shall not be added. This is by no mean perfect, I couldn't find an explicit list
 -- of exceptions. French typography is a delicate beast.
 SILE.nodeMakers.fr.spaceExceptions =
    { "!", "?", ":", ".", "…", "(", "[", "{", "<", "«", "‹", "“", "‘", "?!", "!!", "!?" }
 
--- overriden properties from parent class
+-- overridden properties from parent class
 SILE.nodeMakers.fr.quoteTypes = { qu = true } -- split tokens at apostrophes &c.
 
 -- methods defined in this class
@@ -202,7 +202,7 @@ function SILE.nodeMakers.fr:mustRemove (i, items)
    return false
 end
 
--- overriden methods from parent class
+-- overridden methods from parent class
 
 function SILE.nodeMakers.fr:dealWith (item)
    if self:handleSpaceBefore(item) then
@@ -259,6 +259,8 @@ function SILE.nodeMakers.fr:iterator (items)
 end
 
 SILE.hyphenator.languages["fr"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["fr"].patterns = {
    ------------------------------------------------
    -- phonetic patterns -- etymological patterns --
@@ -1558,3 +1560,4 @@ SILE.hyphenator.languages["fr"].patterns = {
    "1zu",
    "1zy",
 }
+-- typos: ignore end

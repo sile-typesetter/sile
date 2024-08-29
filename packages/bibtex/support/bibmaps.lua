@@ -45,7 +45,9 @@ local crossrefmap = {
 -- From biblatex package manual v3.20, section 2.2.5
 local fieldmap = {
    address = "location",
+   -- typos: ignore start
    annote = "annotation",
+   -- typos: ignore end
    archiveprefix = "eprinttype",
    key = "sortkey",
    pdf = "file",

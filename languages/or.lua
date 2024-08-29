@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["or"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["or"].patterns = {
    -- GENERAL RULE
    -- Do not break either side of ZERO-WIDTH JOINER  (U+200D)
@@ -74,3 +76,4 @@ SILE.hyphenator.languages["or"].patterns = {
    -- Do not break either side of virama (may be within conjunct).
    "2୍2",
 }
+-- typos: ignore end

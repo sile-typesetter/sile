@@ -282,7 +282,7 @@ end
 function settings:runHooks (parameter, value)
    if self.hooks[parameter] then
       for _, func in ipairs(self.hooks[parameter]) do
-         SU.debug("classhooks", "Running seting hook for", parameter)
+         SU.debug("classhooks", "Running setting hook for", parameter)
          func(value)
       end
    end
@@ -301,7 +301,7 @@ function settings:temporarily (func)
 end
 
 --- Create a settings wrapper function that applies current settings to later content processing.
---- @treturn function a closure fuction accepting one argument (content) to process using
+--- @treturn function a closure function accepting one argument (content) to process using
 --- typesetter settings as they are at the time of closure creation.
 function settings:wrap ()
    if not self then

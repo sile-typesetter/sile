@@ -140,7 +140,7 @@ Downloads of SILE can be obtained from the home page at \silehp.
 
 SILE is completely programmable using the Lua programming language.
 As of v0.15.0, the CLI you actually execute is a Rust binary with a Lua VM built in.
-(For compatiblity and demonstration purposes a pure Lua version of the CLI is still available as \code{sile-lua}.)
+(For compatibility and demonstration purposes a pure Lua version of the CLI is still available as \code{sile-lua}.)
 The Rust binary can be built based on your system’s Lua sources or use its own vendored Lua sources.
 All SILE’s Lua code takes a lowest-common-denominator approach to Lua compatibility.
 Any of Lua 5.1, 5.2, 5.3, 5.4, or LuaJIT (2.0, 2.1, or OpenResty) are fully supported.
@@ -193,7 +193,7 @@ Otherwise to go with default of bundling them, just run:
 
 Also note that by default, the build process will use a vendored copy of fresh Lua sources.
 This will probably result in a different version of Lua than the default on your system.
-In the event you want it to exactly match, you'll need to have the development headers instaled matching your system Lua.
+In the event you want it to exactly match, you'll need to have the development headers installed matching your system Lua.
 Once available, add this flag to your configuration:
 
 \terminal{$ ./configure --with-system-lua-sources}

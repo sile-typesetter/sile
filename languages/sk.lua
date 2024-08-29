@@ -5,6 +5,8 @@ SILE.nodeMakers.sk.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRep
 SILE.nodeMakers.sk.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
 
 SILE.hyphenator.languages["sk"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["sk"].patterns = {
    -- samohlásky
    "a1",
@@ -2492,7 +2494,9 @@ SILE.hyphenator.languages["sk"].patterns = {
    "t2ri3u2mf",
    "kli3e2nt",
 }
+-- typos: ignore end
 
+-- typos: ignore start
 SILE.hyphenator.languages["sk"].exceptions = {
    "dosť",
    "me-tó-da",
@@ -2500,3 +2504,4 @@ SILE.hyphenator.languages["sk"].exceptions = {
    "ne-do-stat-ka-mi",
    "sep-tem-bra",
 }
+-- typos: ignore end

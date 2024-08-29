@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["sv"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["sv"].patterns = {
    ".a4b",
    ".ab5i",
@@ -4694,3 +4696,4 @@ SILE.hyphenator.languages["sv"].patterns = {
    "öv4sk",
    "é3e",
 }
+-- typos: ignore end

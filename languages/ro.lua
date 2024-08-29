@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["ro"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["ro"].patterns = {
    ".a3ic",
    ".a4n3is",
@@ -648,3 +650,4 @@ SILE.hyphenator.languages["ro"].patterns = {
    "2z2v",
    "z3vă",
 }
+-- typos: ignore end

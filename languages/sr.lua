@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["sr"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["sr"].patterns = {
    ".ђ2",
    ".ћ2",
@@ -2558,3 +2560,4 @@ SILE.hyphenator.languages["sr"].exceptions = {
    "сни-ма-ња",
    "сни-ма-ње",
 }
+-- typos: ignore end

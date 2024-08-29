@@ -16,7 +16,7 @@ function package:registerCommands ()
          and hlist[#hlist].is_unshaped
          and pl.tablex.deepcompare(hlist[#hlist].options, SILE.font.loadDefaults({}))
       then
-         -- Stack character with a preceeding unshaped node if its font is the
+         -- Stack character with a preceding unshaped node if its font is the
          -- same as the current one, so that combining characters (e.g. diacritics)
          -- and kerning works with \unichar'ed code points too.
          hlist[#hlist].text = hlist[#hlist].text .. char

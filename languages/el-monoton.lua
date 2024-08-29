@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["el-monoton"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["el-monoton"].patterns = {
    -------- vowels
    ---- Vowel patterns (pre-combined)
@@ -596,3 +598,4 @@ SILE.hyphenator.languages["el-monoton"].patterns = {
    "4τσ1ντ",
    "4τϲ1ντ",
 }
+-- typos: ignore end

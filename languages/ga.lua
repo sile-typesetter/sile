@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["ga"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["ga"].patterns = {
    ".ab4ai",
    ".ab6ar",
@@ -6034,7 +6036,9 @@ SILE.hyphenator.languages["ga"].patterns = {
    "x5ai",
    "x5aí",
 }
+-- typos: ignore end
 
+-- typos: ignore start
 SILE.hyphenator.languages["ga"].exceptions = {
    "bhrachtaí",
    "mbrachtaí",
@@ -6083,3 +6087,4 @@ SILE.hyphenator.languages["ga"].exceptions = {
    "dtiom-áintí",
    "thiom-áintí",
 }
+-- typos: ignore end

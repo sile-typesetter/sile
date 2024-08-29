@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["lv"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["lv"].patterns = {
    "d4z",
    "d4ž",
@@ -11584,3 +11586,4 @@ SILE.hyphenator.languages["lv"].patterns = {
    "bal2t3ma",
    ".vie2n1",
 }
+-- typos: ignore end

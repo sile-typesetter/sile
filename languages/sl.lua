@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["sl"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["sl"].patterns = {
    ".av5r",
    ".di6spo",
@@ -1069,3 +1071,4 @@ SILE.hyphenator.languages["sl"].patterns = {
    "8š.",
    "8č.",
 }
+-- typos: ignore end

@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["la"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["la"].patterns = {
    ".a2b3l",
    ".anti1",
@@ -336,3 +338,4 @@ SILE.hyphenator.languages["la"].patterns = {
    "u2r1uo",
    "u2r1uu",
 }
+-- typos: ignore end

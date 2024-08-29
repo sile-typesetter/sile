@@ -292,7 +292,7 @@ describe("SILE.utilities", function ()
             -- I've not idea however, so let's BREAK the default French rules for testing!
             SU.collatedSort.fr = { caseFirst = "upper", numericOrdering = false }
             local sortme = pl.tablex.copy(original)
-            SU.collatedSort(sortme) -- with default options as overriden.
+            SU.collatedSort(sortme) -- with default options as overridden.
             assert.is.same({
                -- Alain and the Jean guys are the guinea pigs!
                "Alain",

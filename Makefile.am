@@ -91,7 +91,7 @@ DISTCLEANFILES = @AMINCLUDE@
 
 # The boilerplate Docker is setup as if GHCR was our primary, and the CI jobs also
 # manually override these values. But as long as we're manually running a sync of
-# the auto deployed GHCR emiages to Dokcer Hub, the manual invocations need extra help.
+# the auto deployed GHCR emiages to Docker Hub, the manual invocations need extra help.
 export GHCR_REGISTRY ?= ghcr.io
 export GHCR_REPO ?= sile-typesetter/$(TRANSFORMED_PACKAGE_NAME)
 export DOCKER_REGISTRY ?= docker.io
@@ -135,8 +135,8 @@ src/embed-includes.rs: Makefile-distfiles
 
 src/embed.rs: src/embed.rs.in src/embed-includes.rs
 	$(SED) \
-		-e '/@EMBEDED_INCLUDE_LIST@/r $(word 2,$^)' \
-		-e '/@EMBEDED_INCLUDE_LIST@/d' \
+		-e '/@EMBEDDED_INCLUDE_LIST@/r $(word 2,$^)' \
+		-e '/@EMBEDDED_INCLUDE_LIST@/d' \
 		$< > $@
 endif EMBEDDED_RESOURCES
 
@@ -192,7 +192,8 @@ sile-$(VERSION).pdf: $(MANUAL)
 
 sile-%.md: CHANGELOG.md
 	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' CHANGELOG.md | \
-		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' > $@
+		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' |
+	$(or $(filter cat,$(TYPOS)),$(TYPOS) --write-changes -) > $@
 
 check: selfcheck
 
@@ -227,7 +228,7 @@ rust-api-docs/doc/sile/index.html:
 docs-figures: $(FIGURES)
 
 # This is a monkey patch to figure out how many passes we have to to to
-# garantee the TOC is up to date, simplify when #230 is fixed.
+# guarantee the TOC is up to date, simplify when #230 is fixed.
 hastoc = [ -f $(subst .pdf,.toc,$@) ] && echo true || echo false
 pages = $(PDFINFO) $@ | $(AWK) '$$1 == "Pages:" {print $$2}' || echo 0
 localsile = $(LOCALFONTS) $(LOCALPATHS) ./$(bin_PROGRAMS) $(SILEFLAGS)
@@ -301,7 +302,7 @@ force: ;
 
 PHONY_DEVELOPER_TARGETS = busted compare coverage \
 	docker-dep-check docker-ghcr-to-hub docker-test-dist gource.webm lint luacheck luarocks-lint \
-	prerelease regression_previews regressions release release-preview stylua tagrelease \
+	prerelease regression_previews regressions release release-preview stylua typos tagrelease \
 	test update_expecteds update_libtexpdf
 .PHONY: $(PHONY_DEVELOPER_TARGETS)
 
@@ -352,6 +353,9 @@ luacheck:
 
 stylua:
 	$(STYLUA) --check --respect-ignores -g '*.lua' -g '*.lua.in' -g '*.rockspec.in' sile.in .busted .luacov .luacheckrc build-aux/config.ld .
+
+typos:
+	$(TYPOS) .
 
 busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'
