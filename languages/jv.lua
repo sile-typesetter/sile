@@ -1,5 +1,6 @@
 local lpeg = require("lpeg")
 
+-- typos: ignore start
 local types = {
    "Bi",
    "Bi",
@@ -102,6 +103,7 @@ local jv = {}
 local P8 = function (c)
    return lpeg.P(luautf8.char(c))
 end
+-- typos: ignore end
 
 for i = 1, #types do
    local cp = i - 1 + 0xA980

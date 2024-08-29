@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["fi"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["fi"].patterns = {
    "1ba",
    "1be",
@@ -309,3 +311,4 @@ SILE.hyphenator.languages["fi"].patterns = {
    "ts2h",
    "ch2r",
 }
+-- typos: ignore end

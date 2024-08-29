@@ -1,0 +1,54 @@
+#!@SHELL@
+set -e
+
+alias find="${FIND:-@FIND@}"
+alias grep="${GREP:-@GREP@}"
+alias sed="${SED:-@SED@}"
+alias sort="${SORT:-@SORT@}"
+alias xargs="${XARGS:-@XARGS@}"
+
+finder () {
+    test -d "$1" || return 0
+    find "$@" -type f | am_list
+}
+
+am_list () {
+    sed -e 's#^\./##' | sort -bdi | xargs printf ' \\\n\t%s'
+}
+
+printf '%s =' SILEDATA
+finder core -name '*.lua' -not -name '*_spec.lua' -not -name 'version.lua' -not -name 'features.lua' -not -name 'pathsetup.lua'
+finder classes inputters languages outputters packages shapers types typesetters pagebuilders -name '*.lua' -not -name '*_spec.lua'
+finder classes i18n packages -name '*.ftl'
+finder packages -name '*.svg'
+
+printf '\n\n%s =' LUALIBRARIES
+finder lua-libraries -name '*.lua'
+
+printf '\n\n%s =' LUAMODULES
+finder lua_modules -not -name "'*~'"
+
+printf '\n\n%s :=' _TESTSRCS
+{
+find tests -maxdepth 1 -name '*.sil' -type f
+find tests -maxdepth 1 -name '*.xml' -type f
+find tests -maxdepth 1 -name '*.lua' -type f
+find tests -maxdepth 1 -name '*.nil' -type f
+} |
+    am_list
+
+printf '\n\n%s ?=' _TESTPREVIEWS
+{
+find tests -maxdepth 1 -name '*.sil' -type f
+find tests -maxdepth 1 -name '*.xml' -type f
+find tests -maxdepth 1 -name '*.lua' -type f
+find tests -maxdepth 1 -name '*.nil' -type f
+} |
+    xargs grep -L KNOWNBAD |
+    am_list
+
+printf '\n\n%s ?=' BUSTEDSPECS
+finder . -name '*_spec.lua'
+
+printf '\n\n%s ?=' TESTEXPECTS
+finder tests -maxdepth 1 -name '*.expected'

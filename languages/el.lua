@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["el"] = { exceptions = {} }
+
+-- typos: ignore start
 SILE.hyphenator.languages["el"].patterns = {
    "α1",
    "ε1",
@@ -4342,3 +4344,4 @@ SILE.hyphenator.languages["el"].patterns = {
    "ι2σ1μυριάκισ.",
    "ι2σ1μυριάκισ.",
 }
+-- typos: ignore end

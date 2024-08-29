@@ -16,7 +16,7 @@ SILE.settings:declare({
 })
 
 local transliteration = {
-   -- I'm going to pretend that normalisation isn't a problem
+   -- I'm going to pretend that normalization isn't a problem
    { al = "ئا", la = "a", lapa = "^a" },
    { al = "ا", la = "a" },
    { al = "ب", la = "b" },

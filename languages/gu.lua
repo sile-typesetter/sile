@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["gu"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["gu"].patterns = {
    -- GENERAL RULE
    -- Do not break either side of ZERO-WIDTH JOINER  (U+200D)
@@ -76,3 +78,4 @@ SILE.hyphenator.languages["gu"].patterns = {
    "2્2",
    "2ં2",
 }
+-- typos: ignore end

@@ -287,7 +287,7 @@ static int has_table(hb_face_t* face, hb_tag_t tag) {
   return ret;
 }
 
-int je_hb_instanciate(lua_State *L) {
+int je_hb_instantiate(lua_State *L) {
   unsigned int data_l = 0;
   const char * data_s = NULL;
 #ifdef HAVE_HARFBUZZ_SUBSET
@@ -296,7 +296,7 @@ int je_hb_instanciate(lua_State *L) {
   hb_face_t* face = hb_font_get_face(font);
 
   if (hb_ot_var_has_data(face) &&
-      /* hb-subset does not support instanciating CFF2 table yet */
+      /* hb-subset does not support instantiating CFF2 table yet */
       !has_table(face, HB_TAG('C','F','F','2'))) {
     hb_subset_input_t * input;
 
@@ -464,7 +464,7 @@ static const struct luaL_Reg lib_table [] = {
   {"version", je_hb_get_harfbuzz_version},
   {"shapers", je_hb_list_shapers},
   {"get_table", je_hb_get_table},
-  {"instanciate", je_hb_instanciate},
+  {"instantiate", je_hb_instantiate},
   {"version_lessthan", je_hb_version_lessthan},
   {NULL, NULL}
 };

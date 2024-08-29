@@ -64,14 +64,14 @@ At this point, the parts of TeX that people actually \em{use} are (1) the box-an
 
 SILE follows exactly in TeX’s footsteps for each of these three areas that have stood the test of time;
 	it contains a slavish port of the TeX line-breaking algorithm which has been tested to produce exactly the same output as TeX given equivalent input.
-But as SILE is itself written in an interpreted language,\footnote{And if the phrase \code{TeX capacity exceeded} is familiar to you, you should already be getting excited.} it is very easy to extend or alter the behaviour of the SILE typesetter.
+But as SILE is itself written in an interpreted language,\footnote{And if the phrase \code{TeX capacity exceeded} is familiar to you, you should already be getting excited.} it is very easy to extend or alter the behavior of the SILE typesetter.
 
 For instance, one of the things that TeX can’t do particularly well is typesetting on a grid.
 This a must-have feature for anyone typesetting bibles and other documents to be printed on thin paper.
 Typesetting on a grid means that each line of text will line up between the front and back of each piece of paper producing much less visual bleed-through when printed on thin paper.
 This a fairly difficult task to accomplish in TeX.
 There are various solutions trying to address it, but they are complex and have limitations.
-In SILE, the core behaviours of the typesetter itself can easily be altered, even on the fly in a document.
+In SILE, the core behaviors of the typesetter itself can easily be altered, even on the fly in a document.
 There is a reasonably short add-on package shipped with SILE by default to enable grid typesetting.
 
 In fact, almost nobody uses plain TeX—they all use LaTeX equivalents.%
@@ -85,7 +85,7 @@ But in terms of \em{core capabilities}, SILE aims at being at least equivalent t
 \section{SILE versus InDesign and competitors}
 
 The other category of tool that people reach for when designing printed material on a computer desktop publishing software (DTP).
-Adobe's InDesign is a prominant package in this space, but many others exist.
+Adobe's InDesign is a prominent package in this space, but many others exist.
 Affinity Publisher is a newcommer but popular alternative.
 Old timers and newspaper publishers will remember QuarkXPress.
 Scribus is a capable Open Source entry in this space.

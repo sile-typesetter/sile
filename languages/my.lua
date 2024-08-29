@@ -1,3 +1,4 @@
+-- typos: ignore start
 local function charclass (u)
    if (u >= 0x1000 and u <= 0x102A) or u == 0x104E or u == 0x25CC or u == 0x2d then
       return "CI"
@@ -64,12 +65,14 @@ local function charclass (u)
    end
    return "OT"
 end
+-- typos: ignore end
 
 -- "Syllable Based Dual Weight Algorithm for Line Breaking in Myanmar Unicode"
 -- Keith Stribley, http://thanlwinsoft.github.io/www.thanlwinsoft.org/ThanLwinSoft/MyanmarUnicode/Parsing/my2weightLineBreakAlg1_1.pdf
 local p2 = SILE.types.node.penalty({ penalty = -25 })
 local p1 = SILE.types.node.penalty({ penalty = -50 })
 
+-- typos: ignore start
 local penaltyFor = function (ca, cb)
    if ca == "WJ" or ca == "LQ" then
       return
@@ -86,7 +89,6 @@ local penaltyFor = function (ca, cb)
    if cb == "LQ" then
       return p2
    end
-
    if cb == "CI" then
       if ca == "AN" or ca == "KI" or ca == "LD" or ca == "VG" or ca == "PL" or ca == "PV" or ca == "RQ" then
          return p2
@@ -109,6 +111,7 @@ local penaltyFor = function (ca, cb)
       return p2
    end
 end
+-- typos: ignore end
 
 SILE.tokenizers.my = function (string)
    return coroutine.wrap(function ()

@@ -31,7 +31,8 @@ function inputter:classInit (options)
    if constructor.id then
       SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", string.format(_deprecated, constructor.id))
    end
-   SILE.documentState.documentClass = constructor(options)
+   -- Note SILE.documentState.documentClass is set by the instance's own :_post_init()
+   constructor(options)
 end
 
 function inputter:requireClass (tree)

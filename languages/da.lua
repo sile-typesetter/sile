@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["da"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["da"].patterns = {
    ".ae3",
    ".an3k",
@@ -1145,3 +1147,4 @@ SILE.hyphenator.languages["da"].patterns = {
    "å5sk",
    "å3t",
 }
+-- typos: ignore end

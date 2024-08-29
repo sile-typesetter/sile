@@ -1,7 +1,7 @@
 \begin{document}
 \chapter{Some Useful SILE Commands}
 
-We’re going to organise our tour of SILE by usage:
+We’re going to organize our tour of SILE by usage:
     we’ll start by giving you the most useful commands that you’ll need to get started typesetting documents using SILE, and then we’ll gradually move into more and more obscure corners as the documentation progresses.
 
 \section{Fonts}
@@ -153,7 +153,7 @@ When playing with vertical spaces, there is however a few additional considerati
 Without entering into the details, they are usually ignored at the beginning of a frame.
 Would you want to enforce them there, you therefore need to have some initial content.
 An empty \autodoc:command{\hbox} can do the trick.
-Additionally, there are cases where SILE automaticall inserts a \autodoc:command{\vfill} command at the end of a frame, so you may need to ensure you terminated a paragraph and introduced your own frame break in order to avoid it.
+Additionally, there are cases where SILE automatically inserts a \autodoc:command{\vfill} command at the end of a frame, so you may need to ensure you terminated a paragraph and introduced your own frame break in order to avoid it.
 The following example illustrates both techniques.
 
 \begin[type=autodoc:codeblock]{raw}
@@ -253,7 +253,7 @@ So for instance, you may wish to write a thesis like this:
 
 \autodoc:command{\include}s may be nested: file A can include file B which includes file C.
 
-The contents of an included file should be put in a \autodoc:environment{sile} environment (or a \code{<sile>} tag if the file is in XML flavour), like so:
+The contents of an included file should be put in a \autodoc:environment{sile} environment (or a \code{<sile>} tag if the file is in XML flavor), like so:
 
 \begin[type=autodoc:codeblock]{raw}
 \begin{sile}

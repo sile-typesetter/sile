@@ -309,7 +309,7 @@ int je_icu_collation_create(lua_State *L) {
   // Also a useful reading https://www.mongodb.com/docs/manual/reference/collation/
   // I took some of the names from this documentation, they are more 'friendly'
   // (IMHO) than some of the ICU names.
-  // The default ICU values do not aways make sense in usual dictionary sorting
+  // The default ICU values do not always make sense in usual dictionary sorting
   // so we may set them a bit more logically.
   int strength = UCOL_TERTIARY; // N.B.default is UCOL_TERTIARY
   int alternate = UCOL_SHIFTED; // N.B. default is UCOL_NON_IGNORABLE

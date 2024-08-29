@@ -3,7 +3,7 @@
 \use[module=packages.leaders]
 \nofolios
 \neverindent
-% Test case: vertical alignement for \leaders with custom pattern
+% Test case: vertical alignment for \leaders with custom pattern
 \font[size=50pt]
 |\leaders{/}|\par
 \hbox{}\leaders{/}\hbox{}\par

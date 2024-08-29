@@ -1,6 +1,6 @@
 --- SILE length type.
 -- Lengths are composed of 3 `measurement`s: a length, a stretch, and a shrink. Each part internally is just
--- a measurement, but combined describe a flexible length that is allowed to grow up to the amout defined by stretch or
+-- a measurement, but combined describe a flexible length that is allowed to grow up to the amount defined by stretch or
 -- compress up to the amount defined by shrink.
 -- @types length
 

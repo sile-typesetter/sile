@@ -1,8 +1,10 @@
 -- Allow autoconf to setup system lua paths at compile time, not run time (only used in developer mode).
+-- stylua: ignore start
 if "@SYSTEM_LUA_PATH@" ~= "" then
    package.path = "@SYSTEM_LUA_PATH@"
    package.cpath = "@SYSTEM_LUA_CPATH@"
 end
+-- stylua: ignore end
 
 -- In the event the user has exported Lua environment variables, use them like a system Lua VM would. This essentially
 -- nukes the existing runtime path and uses only the new value. This is useful for using `eval $(luarocks --local path)`
@@ -24,7 +26,7 @@ local luaversion = _VERSION:match("%d+%.%d+")
 package.path = package.path:gsub("/%./", "/")
 package.cpath = package.cpath:gsub("/%./", "/")
 
--- Utility function so that last-added paths take precidence and are not duplicated.
+-- Utility function so that last-added paths take precedence and are not duplicated.
 local function prepend_and_dedup (segment, path)
    local escaped = segment:gsub("[%-%.%+%[%]%(%)%$%^%%%?%*]", "%%%1") -- copied from pl.utils.escape() which we can't load yet
    local striped = path:gsub(("^%s"):format(escaped), ""):gsub((";%s"):format(escaped), "")
@@ -37,7 +39,7 @@ local function prependPath (path)
    package.path = prepend_and_dedup(path .. "/?.lua", package.path)
 end
 
--- Prepand paths specifically for C modules.
+-- Prepend paths specifically for C modules.
 local function prependCPath (path)
    package.cpath = prepend_and_dedup(path .. "/?.@SHARED_LIB_EXT@", package.cpath)
 end
@@ -51,7 +53,7 @@ local function extendPathsRocks (path)
    prependPath(path .. "/share/lua/" .. luaversion .. "/sile")
 end
 
--- Take a given path and iterate over the permutations of subdirectories we expect to finde SILE/Lua/C modules under.
+-- Take a given path and iterate over the permutations of subdirectories we expect to find SILE/Lua/C modules under.
 -- The second argument enables extra paths that we *only* expect to find in SILE source checkouts, and should not be
 -- found in system, user, toolkit, or project level paths.
 local function extendPaths (path, silesourcedir)
@@ -82,12 +84,12 @@ end
 package.path = table.concat(luapath, ";")
 
 -- This path is set by autoconf at configure time, and could be the full path to the source directory if in developer
--- mode or the expeted system istalation location otherwise.
+-- mode or the expected system istalation location otherwise.
 extendPaths("@SILE_PATH@", true)
 extendPaths("@SILE_LIB_PATH@", true)
 
 -- If the configure time option to use system luarocks is disabled, use ones local to the source (again could be the
--- development mode source directory or expected system instalation location).
+-- development mode source directory or expected system installation location).
 if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
    extendPathsRocks("@SILE_PATH@/lua_modules")
 end
