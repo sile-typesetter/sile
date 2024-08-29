@@ -91,7 +91,7 @@ DISTCLEANFILES = @AMINCLUDE@
 
 # The boilerplate Docker is setup as if GHCR was our primary, and the CI jobs also
 # manually override these values. But as long as we're manually running a sync of
-# the auto deployed GHCR emiages to Dokcer Hub, the manual invocations need extra help.
+# the auto deployed GHCR emiages to Docker Hub, the manual invocations need extra help.
 export GHCR_REGISTRY ?= ghcr.io
 export GHCR_REPO ?= sile-typesetter/$(TRANSFORMED_PACKAGE_NAME)
 export DOCKER_REGISTRY ?= docker.io
@@ -228,7 +228,7 @@ rust-api-docs/doc/sile/index.html:
 docs-figures: $(FIGURES)
 
 # This is a monkey patch to figure out how many passes we have to to to
-# garantee the TOC is up to date, simplify when #230 is fixed.
+# guarantee the TOC is up to date, simplify when #230 is fixed.
 hastoc = [ -f $(subst .pdf,.toc,$@) ] && echo true || echo false
 pages = $(PDFINFO) $@ | $(AWK) '$$1 == "Pages:" {print $$2}' || echo 0
 localsile = $(LOCALFONTS) $(LOCALPATHS) ./$(bin_PROGRAMS) $(SILEFLAGS)
