@@ -351,7 +351,7 @@ luacheck:
 	$(LUACHECK) -j$(shell nproc) -q .
 
 stylua:
-	$(STYLUA) --check --respect-ignores -g '*.lua' -g '*.lua.in' -g '*.rockspec.in' .busted .luacov .luacheckrc build-aux/config.ld .
+	$(STYLUA) --check --respect-ignores -g '*.lua' -g '*.lua.in' -g '*.rockspec.in' sile.in .busted .luacov .luacheckrc build-aux/config.ld .
 
 busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'
