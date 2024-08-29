@@ -270,6 +270,19 @@ end
 function SILE.use (module, options, reload)
    local status, pack
    if type(module) == "string" then
+      if module:match("/") then
+         SU.warn(([[Module names should not include platform-specific path separators
+
+  Using slashes like '/' or '\' in a module name looks like a path segment. This
+  may appear to work in some cases, but breaks cross platform compatibility.
+  Even on the platform with the matching separator, this can lead to packages
+  getting loaded more than once because Lua will cache one each of the different
+  formats. Please use '.' separators which are automatically translated to the
+  correct platform one. For example a correct use statement would be:
+
+      \use[module=%s] instead of \use[module=%s].
+]]):format(module:gsub("/", "."), module))
+      end
       status, pack = pcall(require, module)
       if not status then
          SU.error(
