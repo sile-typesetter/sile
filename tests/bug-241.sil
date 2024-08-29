@@ -2,7 +2,7 @@
 \use[module=packages.retrograde,target=v0.14.17]
 \nofolios
 \font[family=Gentium Plus,size=9pt]
-\center{TITILE\break{}Then vfill to logo\vfill{}<logo>\par\break}
+\center{TITLE\break{}Then vfill to logo\vfill{}<logo>\par\break}
 \define[command=pubpage]{
 Content so vfill isn't eaten at top of page.
 \vfill
