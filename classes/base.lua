@@ -276,7 +276,7 @@ end
 -- for setting document settings after packages and all their dependencies have been loaded. For example a package might
 -- want to trigger something to happen after all frames have been defined, but the package itself doesn't know if it is
 -- being loaded before or after the document options are processed, frame masters have been setup, etc. Rather than
--- relying on the user to load the package after these events, the package can use this callback to deffer the action
+-- relying on the user to load the package after these events, the package can use this callback to defer the action
 -- until those things can be reasonable expected to have completed.
 --
 -- Functions in the deferred initialization queue are run on a first-set first-run basis.

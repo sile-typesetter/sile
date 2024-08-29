@@ -74,7 +74,7 @@ the next start of a line. This means that calling any variant of `\skip`
 inline in a paragraph will result in content beginning on a new line
 without using the parindent setting.
 
-Fixing this change in behaviour requires either explicitly resetting the
+Fixing this change in behavior requires either explicitly resetting the
 current.parindent setting *after* it is initially used or explicitly
 ending a paragraph before or after placing a vertical skip.
 * **inputters:** Input documents using the SIL language will now retain
@@ -107,7 +107,7 @@ reorg
 * **classes:** The "center", "raggedleft" and "raggedright"
 environments formerly reset the margins (left or right skips), meaning
 they'd take the full frame width. They all cancelled the paragraph
-indent. The new behaviour honors the fixed part of the parent context's
+indent. The new behavior honors the fixed part of the parent context's
 margins, meaning that if you have an environment playing with margins
 such as an epigraph or an indented quote, those margins are not lost.
 The raggedleft and raggedright environment also now no longer cancel the
@@ -159,7 +159,7 @@ that do not support it will neet to set the `ruby.opentype` feature to
 * **classes:** The former implementation of the "em" command did not
 support nesting and was just setting the font style to italic. The
 command now alternates italic and regular when nested.
-* **packages:** The current (pseudo) idempotent behaviour when loading
+* **packages:** The current (pseudo) idempotent behavior when loading
 a package potentially clobbers anything that has been modified
 since the last load. Loading a package, then modifying a function it
 provides, then loading the same package again will clobber the
@@ -167,7 +167,7 @@ modifiecation. This is good for idempotency but not very good for user
 experience when you may not be modifying all aspects of a document
 render pipeline at once, as in when using templates.
 
-This change makes the default behaviour to run setting, raw handler, and
+This change makes the default behavior to run setting, raw handler, and
 command registrations only once. An altertanive to :loadpackage() called
 :reloadpackage() can be used to force all these registrations to be
 rerun when the goal is to make sure of a specific state.

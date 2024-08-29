@@ -63,7 +63,7 @@ template <typename T> T SwigValueInit() {
 # endif
 #endif
 
-/* attribute recognised by some compilers to avoid 'unused' warnings */
+/* attribute recognized by some compilers to avoid 'unused' warnings */
 #ifndef SWIGUNUSED
 # if defined(__GNUC__)
 #   if !(defined(__cplusplus)) || (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
@@ -1109,7 +1109,7 @@ SWIGRUNTIME void SWIG_Lua_NewPointerObj(lua_State *L,void *ptr,swig_type_info *t
 SWIGRUNTIME void SWIG_Lua_NewPackedObj(lua_State *L,void *ptr,size_t size,swig_type_info *type);
 static int swig_lua_elua_emulate_unique_key;
 
-/* This function emulates eLua rotables behaviour. It loads a rotable definition into the usual lua table. */
+/* This function emulates eLua rotables behavior. It loads a rotable definition into the usual lua table. */
 SWIGINTERN void SWIG_Lua_elua_emulate_register(lua_State *L, const swig_elua_entry *table)
 {
   int i, table_parsed, parsed_tables_array, target_table;
@@ -1214,7 +1214,7 @@ SWIGINTERN int SWIG_Lua_emulate_elua_getmetatable(lua_State *L)
   lua_call(L,1,1);
   if(!lua_isnil(L,-1)) /*There is an ordinary metatable */
     return 1;
-  /*if it is a table, then emulate elua behaviour - check for __metatable attribute of a table*/
+  /*if it is a table, then emulate elua behavior - check for __metatable attribute of a table*/
   assert(lua_gettop(L) == 2);
   if(lua_istable(L,-2)) {
     lua_pop(L,1); /*remove the nil*/
@@ -1443,7 +1443,7 @@ SWIGINTERN int SWIG_Lua_iterate_bases(lua_State *L, swig_type_info * SWIGUNUSED 
     (void)swig_type;
     lua_getmetatable(L,first_arg);
 
-    /* initialise base search */
+    /* initialize base search */
 #if (SWIG_LUA_TARGET == SWIG_LUA_FLAVOR_LUA)
     SWIG_Lua_get_table(L,".bases");
     assert(lua_istable(L,-1));
@@ -58467,7 +58467,7 @@ SWIGEXPORT int SWIG_init(lua_State* L) /* default Lua action */
   int globalRegister = 0;
   /* start with global table */
   lua_pushglobaltable (L);
-  /* SWIG's internal initialisation */
+  /* SWIG's internal initialization */
   SWIG_InitializeModule((void*)L);
   SWIG_PropagateClientData();
 #endif

@@ -365,7 +365,7 @@ For questions and discussion, please join the [mailing list][list-en].
 
 ## License Terms
 
-SILE is distributed under the [MIT licence][license].
+SILE is distributed under the [MIT license][license].
 
   [alerque-arch]: https://wiki.archlinux.org/index.php/Unofficial_user_repositories#alerque
   [arch-sile]: https://archlinux.org/packages/extra/x86_64/sile/
