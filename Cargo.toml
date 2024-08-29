@@ -16,6 +16,47 @@ repository = "https://github.com/sile-typesetter/sile"
 license = "MIT"
 build = "build-aux/build.rs"
 
+[package.metadata.typos.default]
+locale = "en-us"
+extend-ignore-re = [
+  "(?s)(#|//|--|%)\\s*typos: ignore start.*?\\n\\s*(#|//|--|%)\\s*typos: ignore end"
+]
+extend-ignore-identifiers-re = [
+  "[a-f0-9]{7}",
+  "^.{2,3}$",
+  "^twords?",
+  "[Pp]arms",
+  "wdth",
+  "0fpt",
+  "^ot",
+  "^hb_ot",
+  "^HB_",
+  "^Tyre$",
+  "PoDoFo",
+  "_Flate",
+  "DEPENDEES",
+  "EPdf",
+  "FileAttachement"
+]
+
+  [package.metadata.typos.default.extend-words]
+  craters = "creators"
+  neet = "need"
+
+[package.metadata.typos.files]
+ignore-hidden = false
+extend-exclude = [
+  "/.git",
+  "CHANGELOG.md",
+  "build-aux/ax*",
+  "lua-libraries/*",
+  "lua_modules/*",
+  "node_modules/*",
+  "tests/*.expected",
+  "cmake/*.diff",
+  "libtexpdf"
+]
+
 [[bin]]
 name = "sile"
 required-features = [ "cli" ]
@@ -88,46 +129,3 @@ features = [ "derive" ]
 version = "8.2"
 default-features = false
 features = [ "build", "cargo", "git", "gitoxide" ]
-
-[package.metadata.typos.default]
-locale = "en-us"
-extend-ignore-re = [
-  "(?s)(#|//|--|%)\\s*typos: ignore start.*?\\n\\s*(#|//|--|%)\\s*typos: ignore end",
-]
-extend-ignore-identifiers-re = [
-  # Git short hashes, especially found in the changelog
-  # Basically blocks fixing any seven letter words, but  better than false positives
-  '[a-f0-9]{7}',
-  '^.{2,3}$',
-  '^twords?',
-  '[Pp]arms',
-  'wdth',
-  '0fpt',
-  '^ot',
-  '^hb_ot',
-  '^HB_',
-  '^Tyre$',
-  'PoDoFo',
-  '_Flate',
-  'DEPENDEES',
-  'EPdf',
-  'FileAttachement',
-]
-
-[package.metadata.typos.default.extend-words]
-craters = "creators"
-neet = "need"
-
-[package.metadata.typos.files]
-ignore-hidden = false
-extend-exclude = [
-  "/.git",
-  "CHANGELOG.md",
-  "build-aux/ax*",
-  "lua-libraries/*",
-  "lua_modules/*",
-  "node_modules/*",
-  "tests/*.expected",
-  "cmake/*.diff",
-  "libtexpdf",
-]
