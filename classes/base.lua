@@ -6,7 +6,6 @@ class.type = "class"
 class._name = "base"
 
 class._initialized = false
-class.deferredLegacyInit = {}
 class.deferredInit = {}
 class.pageTemplate = { frames = {}, firstContentFrame = nil }
 class.defaultFrameset = {}
@@ -86,6 +85,7 @@ function class:_init (options)
 end
 
 function class:_post_init ()
+   SILE.documentState.documentClass = self
    self._initialized = true
    for i, func in ipairs(self.deferredInit) do
       func(self)
@@ -271,15 +271,22 @@ function class:initPackage (pack, options)
    end
 end
 
-function class:registerLegacyPostinit (func, options)
-   if self._initialized then
-      return func(self, options)
-   end
-   table.insert(self.deferredLegacyInit, function (_)
-      func(self, options)
-   end)
-end
-
+--- Register a callback function to be executed after the class initialization has completed.
+-- Sometimes a class or package may want to run things after the class has been fully initialized. This can be useful
+-- for setting document settings after packages and all their dependencies have been loaded. For example a package might
+-- want to trigger something to happen after all frames have been defined, but the package itself doesn't know if it is
+-- being loaded before or after the document options are processed, frame masters have been setup, etc. Rather than
+-- relying on the user to load the package after these events, the package can use this callback to deffer the action
+-- until those things can be reasonable expected to have completed.
+--
+-- Functions in the deferred initialization queue are run on a first-set first-run basis.
+--
+-- Note the typesetter will *not* have been instantiated yet, so is not appropriate to try to output content at this
+-- point. Injecting content to be processed at the start of a document should be done with preambles. The inputter
+-- *will* be instantiated at this point, so adding a new preamble is viable.
+-- If the class has already been initialized the callback function will be run immediately.
+-- @tparam function func Callback function accepting up to two arguments.
+-- @tparam[opt] table options Additional table passed as a second argument to the callback.
 function class:registerPostinit (func, options)
    if self._initialized then
       return func(self, options)
