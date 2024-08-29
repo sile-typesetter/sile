@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.15.5](https://github.com/sile-typesetter/sile/compare/v0.15.4...v0.15.5) (2024-08-29)
+
+
+### New Features
+
+* **packages:** Support biblatex date field and improve date formatting ([5169d67](https://github.com/sile-typesetter/sile/commit/5169d678588bd47bc86b9b65686b9408f14f0208))
+
+
+### Bug Fixes
+
+* **build:** Fix distribution of unit tests clean up dist file list ([00abf9b](https://github.com/sile-typesetter/sile/commit/00abf9b9497e9bfa8565b7768479ef0e241522bb))
+* **classes:** Make document state available during class's post init ([71336b9](https://github.com/sile-typesetter/sile/commit/71336b9434a3dc90601ac73a94e80e6f0da9db58))
+* **cli:** Suppress trace info in quiet for warnings but do show errors ([e12dcc9](https://github.com/sile-typesetter/sile/commit/e12dcc9d07ead3e70c2f1bee9874a4be0ce574e4))
+* **packages:** Parse and split all bibtex name fields ([e3a7dc1](https://github.com/sile-typesetter/sile/commit/e3a7dc197e86f651edac1915c288b1085ecbb041)), closes [#2052](https://github.com/sile-typesetter/sile/issues/2052)
+* **packages:** Use non-breakable space in bibTeX name splitting, not tilde ([f4ea4ed](https://github.com/sile-typesetter/sile/commit/f4ea4ed0a24ea9d821dfed0d8e20cadd78f6d95d))
+
 ## [0.15.4](https://github.com/sile-typesetter/sile/compare/v0.15.3...v0.15.4) (2024-06-28)
 
 
