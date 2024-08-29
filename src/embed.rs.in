@@ -47,7 +47,7 @@ pub fn inject_embedded_loader(lua: &Lua) {
     let loaders: LuaTable = match package.get("loaders").unwrap() {
         LuaValue::Table(loaders) => loaders,
         LuaValue::Nil => package.get("searchers").unwrap(),
-        _ => panic!("Unable to find approprate interface to inject embedded loader"),
+        _ => panic!("Unable to find appropriate interface to inject embedded loader"),
     };
     loaders
         .push(LuaFunction::wrap(|lua, module: String| unsafe {
