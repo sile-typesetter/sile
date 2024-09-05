@@ -145,7 +145,7 @@ pub fn run(
                 local spec = SILE.parserBits.cliuse:match($module);
                 table.insert(SILE.input.uses, spec)
             })
-            .eval()?;
+            .eval::<()>()?;
             // let spec = cliuse.call_function::<_, _, _>("match", module);
         }
     }
@@ -153,7 +153,7 @@ pub fn run(
         eprintln!("{full_version}");
     }
     let init: LuaFunction = sile.get("init")?;
-    init.call::<_, _>(())?;
+    init.call::<_, ()>(())?;
     if let Some(inputs) = inputs {
         let input_filenames: LuaTable = lua.create_table()?;
         for input in inputs.iter() {
@@ -175,7 +175,7 @@ pub fn run(
             let spec = spec?;
             let module: LuaString = spec.get("module")?;
             let options: LuaTable = spec.get("options")?;
-            r#use.call::<(LuaString, LuaTable), _>((module, options))?;
+            r#use.call::<(LuaString, LuaTable), ()>((module, options))?;
         }
         let input_filenames: LuaTable = sile_input.get("filenames")?;
         let process_file: LuaFunction = sile.get("processFile")?;
@@ -183,12 +183,12 @@ pub fn run(
             process_file.call::<LuaString, ()>(file?)?;
         }
         let finish: LuaFunction = sile.get("finish")?;
-        finish.call::<_, _>(())?;
+        finish.call::<_, ()>(())?;
     } else {
         let repl_module: LuaString = lua.create_string("core.repl")?;
         let require: LuaFunction = lua.globals().get("require")?;
         let repl: LuaTable = require.call::<LuaString, LuaTable>(repl_module)?;
-        repl.call_method::<_, _>("enter", ())?;
+        repl.call_method::<_, ()>("enter", ())?;
     }
     Ok(())
 }
