@@ -63,18 +63,18 @@ jobs:
         run: |
           make dist
       - name: Upload source dist artifact
-        if: ${{ matrix.configuration[0] == 'dynamic' && !contains(github.ref, 'refs/tags/v') }}
+        if: matrix.configuration[0] == 'dynamic' && !startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
           name: sile-${{ env.VERSION }}
           path: sile-${{ env.VERSION }}.zip
       - name: Append architecture to static binary
-        if: ${{ matrix.configuration[0] == 'static' }}
+        if: matrix.configuration[0] == 'static'
         run: |
           cp sile sile-${{ env.CARCH }}
           sha256sum sile-${{ env.CARCH }} | tee -a sile-${{ env.VERSION }}.sha256.txt
       - name: Upload static binary artifact
-        if: ${{ matrix.configuration[0] == 'static' && !contains(github.ref, 'refs/tags/v') }}
+        if: matrix.configuration[0] == 'static' && !startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
           name: sile-${{ env.CARCH }}
