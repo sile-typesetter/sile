@@ -258,5 +258,5 @@ function SILE.nodeMakers.fr:iterator (items)
    return self._base.iterator(self, cleanItems)
 end
 
-local hyphens = require("hyphens.misc.fr")
+local hyphens = require("hyphens.tex.fr")
 SILE.hyphenator.languages["fr"] = hyphens

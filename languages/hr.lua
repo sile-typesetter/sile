@@ -4,6 +4,6 @@ SILE.nodeMakers.hr = pl.class(SILE.nodeMakers.unicode)
 SILE.nodeMakers.hr.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRepeatHyphen
 SILE.nodeMakers.hr.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
 
-local hyphens = require("hyphens.misc.hr")
+local hyphens = require("hyphens.tex.hr")
 SILE.hyphenator.languages["hr"] = hyphens
 

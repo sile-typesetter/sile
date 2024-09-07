@@ -22,3 +22,4 @@ return {
 
 Patterns are organized in subfolders.
  - **misc** contains patterns specific to SILE or from uncertain origin.
+ - **tex** contains patterns derived from [TeX patterns](https://github.com/hyphenation/tex-hyphen), see also the dedicated [README](tex/README.md) for details.

@@ -1,2 +1,2 @@
-local hyphens = require("hyphens.misc.ta")
+local hyphens = require("hyphens.tex.ta")
 SILE.hyphenator.languages["ta"] = hyphens

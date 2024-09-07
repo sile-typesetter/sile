@@ -1,3 +1,3 @@
-local hyphens = require("hyphens.misc.el-monoton")
+local hyphens = require("hyphens.tex.el-monoton")
 SILE.hyphenator.languages["el-monoton"] = hyphens
 

@@ -4,5 +4,5 @@ SILE.nodeMakers.sk = pl.class(SILE.nodeMakers.unicode)
 SILE.nodeMakers.sk.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRepeatHyphen
 SILE.nodeMakers.sk.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
 
-local hyphens = require("hyphens.misc.sk")
+local hyphens = require("hyphens.tex.sk")
 SILE.hyphenator.languages["sk"] = hyphens
