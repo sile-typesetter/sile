@@ -1,19 +1,21 @@
 This folder contains hyphenation patterns for Knuth-Liang hyphenation algorithm.
 
-The patters follow the following format (with all fields being optional):
+The patterns respect the following format (with all fields being optional):
 
 ```lua
 return {
    -- If derived from some other patterns
-   input = { "..." },
+   input = { "..." }, -- Not yet supported
    -- Typesetting parameters
    hyphenmins = {
       typesetting = {left = ..., right = ...},
       generation = {left = ..., right = ...},
    },
+   -- Hyphenation patterns
    patterns = {
       "...",
    },
+   -- Exceptions (words with hyphens)
    exceptions = {
       "...",
    },

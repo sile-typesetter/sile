@@ -1,5 +1,5 @@
 
-The patterns in this folder are derived from the [TeX hyphenation patterns][TeX hyphenation repository](https://github.com/hyphenation/tex-hyphen).
+The patterns in this folder are derived from the [TeX hyphenation repository](https://github.com/hyphenation/tex-hyphen).
 
 The **sources** subfolder contains the original patterns in TeX format (for reference and easier comparison with the original patterns if the latter are updated).
 
@@ -14,6 +14,6 @@ source convert.sh
 ## License
 
 The patterns are licensed under MIT, LPPL, or sometimes a dual MIT/LPPL license.
-See the individual pattern files for details.
+See the individual pattern files for details and authorship information.
 
 The converted patterns are licensed under the same license as the original patterns.
