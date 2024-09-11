@@ -78,8 +78,9 @@ end
 
 --- Convert a BibTeX entry to a CSL item.
 -- @tparam table entry The BibTeX entry
+-- @tparam number citnum The citation number (computed, not from BibTeX but from actual citation order)
 -- @treturn table The CSL item
-local function bib2csl (entry)
+local function bib2csl (entry, citnum)
    local csl = {}
    local bibtex = entry.attributes
    local bibtype = entry.type:lower()
@@ -87,6 +88,17 @@ local function bib2csl (entry)
    -- BibTeX type
    local t = BIBTEX2CSL_TYPES[bibtype] or "document"
    csl.type = t
+
+   -- Citation key may be wanted by some styles
+   csl["citation-key"] = entry.label
+   -- Citation number is used by some styles such as ACS
+   csl["citation-number"] = citnum
+
+   -- BibLaTeX label / shorthand
+   -- The label "provides a substitute for any missing data"
+   -- it relates to shorthand, which overrides the label.
+   -- Some CSL styles such as USITC use citation-label in priority over author, etc.
+   csl["citation-label"] = bibtex.shorthand or bibtex.label
 
    -- BibTeX address / BibLaTeX location
    if bibtex.location then
@@ -105,7 +117,12 @@ local function bib2csl (entry)
 
    -- BibTex editor
    csl.editor = bibtex.editor
-   csl["collection-editor"] = bibtex.editor
+   -- N.B. BibLaTeX does not have a "collection-editor".
+   -- Using some editora and editoratype hint is sometimes mentioned on forums
+   -- but it's ad hoc and not part of any 'standard' recommendation.
+   -- Biber would allow to define extra fields (e.g. serieseditor) but the issue
+   -- is the same: lack of standardization.
+   -- csl["collection-editor"] = bibtex.editoratype == "serieseditor" and bibtex.editora
 
    -- BibLaTeX date / BibTeX year and month
    local date = bibtex.date and bibtex.date or toDate(bibtex.year, bibtex.month)

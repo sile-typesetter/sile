@@ -13,6 +13,7 @@
 --
 -- THINGS NOT DONE
 --  - disambiguation logic (not done at all)
+--  - collapse logic in citations (not done at all)
 --  - other FIXME/TODOs in the code on specific features
 --
 -- luacheck: no unused args
@@ -875,7 +876,7 @@ function CslEngine:_names (options, content, entry)
    local name_delimiter = name_node.options.delimiter or inherited_opts["names-delimiter"]
    -- local delimiter_precedes_et_al = name_node.options["delimiter-precedes-et-al"] -- TODO NOT IMPLEMENTED
 
-   if not self.cache[name_delimiter] then
+   if name_delimiter and not self.cache[name_delimiter] then
       name_delimiter = self:_xmlEscape(name_delimiter)
       self.cache[name_delimiter] = name_delimiter
    end
@@ -885,7 +886,7 @@ function CslEngine:_names (options, content, entry)
       et_al_min = et_al_min,
       et_al_use_first = et_al_use_first,
       and_word = and_word,
-      name_delimiter = self.cache[name_delimiter],
+      name_delimiter = name_delimiter and self.cache[name_delimiter],
       is_label_first = is_label_first,
       label_opts = label_opts,
       et_al_opts = et_al_opts,
@@ -1083,9 +1084,10 @@ function CslEngine:_key (options, content, entry)
 end
 
 -- FIXME: A bit ugly: When implementing SU.collatedSort, I didn't consider
--- sorting structured tables, so I need to go low level here.
+-- sorting structured tables, so we need to go low level here.
 -- Moreover, I made icu.compare return a boolean, so we have to pay twice
 -- the comparison cost to check equality...
+-- See PR #2105
 local icu = require("justenoughicu")
 
 function CslEngine:_sort (options, content, entries)
@@ -1116,14 +1118,32 @@ function CslEngine:_sort (options, content, entries)
    local lang = self.locale.lang
    local collator = icu.collation_create(lang, {})
    table.sort(entries, function (a, b)
+      if a["citation-key"] == b["citation-key"] then
+         -- Lua can invoke the comparison function with the same entry.
+         -- Really! Due to the way it handles it pivot on partitioning.
+         -- Shortcut the inner keys comparison in that case.
+         return false
+      end
+      -- NOT IMPLEMENTED (not bothering for now):
+      -- "Items with an empty sort key value are placed at the end of the sort,
+      -- both for ascending and descending sorts."
       local ak = a._keys
       local bk = b._keys
       for i = 1, math.min(#ak, #bk) do
-         if ak[i] ~= bk[i] then -- See comment, ugly inequality check)
-            return icu.compare(collator, ak[i], bk[i])
+         if ak[i] ~= bk[i] then -- HACK: See comment above, ugly inequality check
+            local cmp = icu.compare(collator, ak[i], bk[i])
+            if type(cmp) == "number" then
+               return cmp < 0 -- To keep on working whenever PR #2105 lands
+            end
+            return cmp
          end
       end
-      return false
+      -- If we reach this point, the keys are equal.
+      -- Probably unlikely in real life, and not mentioned in the CSL spec
+      -- unless I missed it. Let's fallback to the citation order, so at
+      -- least cited entries are ordered predictably.
+      SU.warn("CSL sort keys are equal for " .. a["citation-key"] .. " and " .. b["citation-key"])
+      return a["citation-number"] < b["citation-number"]
    end)
    icu.collation_destroy(collator)
 end
@@ -1212,6 +1232,28 @@ function CslEngine:_process (entries, mode)
       self.sorting = true
       self:_sort(sort.options, sort, entries)
       self.sorting = false
+   else
+      -- The CSL specification says:
+      -- "In the absence of cs:sort, cites and bibliographic entries appear in
+      -- the order in which they are cited."
+      -- The wording is ambiguous!
+      -- We tracked the first citation number in 'citation-number', so for
+      -- the bibliography, using it makes sense.
+      -- For citations, we use the exact order of the input. Consider a cite
+      -- (work1, work2) and a subsequent cite (work2, work1). The order of
+      -- the bibliography should be (work1, work2), but the order of the cites
+      -- should be (work1, work2) and (work2, work1) respectively.
+      -- It seeems to be the case: Some styles (ex. American Chemical Society)
+      -- have an explicit sort by 'citation-number' in the citations section,
+      -- which would be useless if that order was impplied.
+      if mode == "bibliography" then
+         table.sort(entries, function (e1, e2)
+            if not e1["citation-number"] or not e2["citation-number"] then
+               return false -- Safeguard?
+            end
+            return e1["citation-number"] < e2["citation-number"]
+         end)
+      end
    end
 
    local res = self:_render_children(ast, entries)

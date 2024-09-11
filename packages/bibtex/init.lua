@@ -195,7 +195,7 @@ local function parseBibtex (fn, biblio)
    for i = 1, #t do
       if t[i].id == "entry" then
          local ent = t[i][1]
-         local entry = { type = ent.type, attributes = ent[1] }
+         local entry = { type = ent.type, label = ent.label, attributes = ent[1] }
          if biblio[ent.label] then
             SU.warn("Duplicate entry key '" .. ent.label .. "', picking the last one")
          end
@@ -301,7 +301,7 @@ end
 
 function package:_init ()
    base._init(self)
-   SILE.scratch.bibtex = { bib = {} }
+   SILE.scratch.bibtex = { bib = {}, cited = { keys = {}, citnums = {} } }
    Bibliography = require("packages.bibtex.bibliography")
    -- For DOI, PMID, PMCID and URL support.
    self:loadPackage("url")
@@ -457,8 +457,6 @@ function package:registerCommands ()
       -- - multiple citation keys
       if not SILE.scratch.bibtex.engine then
          SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
-         -- SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-fullnote-bibliography" })
-         -- SILE.call("bibliographystyle", { lang = "en-US", style = "apa" })
       end
       local engine = SILE.scratch.bibtex.engine
       if not options.key then
@@ -469,7 +467,12 @@ function package:registerCommands ()
          return
       end
 
-      local csljson = bib2csl(entry)
+      -- Keep track of cited entries
+      table.insert(SILE.scratch.bibtex.cited.keys, options.key)
+      local citnum = #SILE.scratch.bibtex.cited.keys
+      SILE.scratch.bibtex.cited.citnums[options.key] = citnum
+
+      local csljson = bib2csl(entry, citnum)
       -- csljson.locator = { -- EXPERIMENTAL
       --    label = "page",
       --    value = "123-125"
@@ -482,8 +485,6 @@ function package:registerCommands ()
    self:registerCommand("csl:reference", function (options, content)
       if not SILE.scratch.bibtex.engine then
          SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
-         -- SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-fullnote-bibliography" })
-         -- SILE.call("bibliographystyle", { lang = "en-US", style = "apa" })
       end
       local engine = SILE.scratch.bibtex.engine
       if not options.key then
@@ -494,27 +495,56 @@ function package:registerCommands ()
          return
       end
 
-      local cslentry = bib2csl(entry)
+      local citnum = SILE.scratch.bibtex.cited.citnums[options.key]
+      if not citnum then
+         SU.warn("Reference to a non-cited entry " .. options.key)
+         -- Make it cited
+         table.insert(SILE.scratch.bibtex.cited.keys, options.key)
+         citnum = #SILE.scratch.bibtex.cited.keys
+         SILE.scratch.bibtex.cited.citnums[options.key] = citnum
+      end
+      local cslentry = bib2csl(entry, citnum)
       local cite = engine:reference(cslentry)
 
       SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
    end)
 
-   self:registerCommand("printbibliography", function (_, _)
+   self:registerCommand("printbibliography", function (options, _)
       if not SILE.scratch.bibtex.engine then
          SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
-         -- SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-fullnote-bibliography" })
-         -- SILE.call("bibliographystyle", { lang = "en-US", style = "apa" })
       end
       local engine = SILE.scratch.bibtex.engine
 
-      local bib = SILE.scratch.bibtex.bib
+      local bib
+      if SU.boolean(options.cited, true) then
+         bib = {}
+         for _, key in ipairs(SILE.scratch.bibtex.cited.keys) do
+            bib[key] = SILE.scratch.bibtex.bib[key]
+         end
+      else
+         bib = SILE.scratch.bibtex.bib
+      end
+
       local entries = {}
-      for _, entry in pairs(bib) do
+      local ncites = #SILE.scratch.bibtex.cited.keys
+      for key, entry in pairs(bib) do
          if entry.type ~= "xdata" then
             crossrefAndXDataResolve(bib, entry)
             if entry then
-               local cslentry = bib2csl(entry)
+               local citnum = SILE.scratch.bibtex.cited.citnums[key]
+               if not citnum then
+                  -- This is just to make happy CSL styles that require a citation number
+                  -- However, table order is not guaranteed in Lua so the output may be
+                  -- inconsistent across runs with styles that use this number for sorting.
+                  -- This may only happen for non-cited entries in the bibliography, and it
+                  -- would be a bad practive to use such a style to print the full bibliography,
+                  -- so I don't see a strong need to fix this at the expense of performance.
+                  -- (and we can't really, some styles might have several sorting criteria
+                  -- leading to impredictable order anyway).
+                  ncites = ncites + 1
+                  citnum = ncites
+               end
+               local cslentry = bib2csl(entry, citnum)
                table.insert(entries, cslentry)
             end
          end
@@ -522,6 +552,8 @@ function package:registerCommands ()
       print("<bibliography: " .. #entries .. " entries>")
       local cite = engine:reference(entries)
       SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+
+      SILE.scratch.bibtex.cited = { keys = {}, citnums = {} }
    end)
 end
 
@@ -531,7 +563,6 @@ BibTeX is a citation management system.
 It was originally designed for TeX but has since been integrated into a variety of situations.
 
 This experimental package allows SILE to read and process BibTeX \code{.bib} files and output citations and full text references.
-(It doesn’t currently produce full bibliography listings.)
 
 To load a BibTeX file, issue the command \autodoc:command{\loadbibliography[file=<whatever.bib>]}
 
@@ -544,9 +575,9 @@ To load a BibTeX file, issue the command \autodoc:command{\loadbibliography[file
 To produce an inline citation, call \autodoc:command{\cite{<key>}}, which will typeset something like “Jones 1982”.
 If you want to cite a particular page number, use \autodoc:command{\cite[page=22]{<key>}}.
 
-To produce a full reference, use \autodoc:command{\reference{<key>}}.
+To produce a bibliographic reference, use \autodoc:command{\reference{<key>}}.
 
-Currently, the only supported bibliography style is Chicago referencing.
+This implementation doesn’t currently produce full bibliography listings, and the only supported bibliography style is Chicago referencing.
 
 \smallskip
 \noindent
@@ -556,7 +587,7 @@ Currently, the only supported bibliography style is Chicago referencing.
 \indent
 While an experimental work-in-progress, the CSL (Citation Style Language) implementation is more powerful and flexible than the legacy commands.
 
-You must first invoke \autodoc:command{\bibliographystyle[style=<style>, lang=<lang>]}, where \autodoc:parameter{style} is the name of the CSL style file (without the \code{.csl} extension), and \autodoc:parameter{lang} is the language code of the CSL locale to use (e.g., \code{en-US}).
+You should first invoke \autodoc:command{\bibliographystyle[style=<style>, lang=<lang>]}, where \autodoc:parameter{style} is the name of the CSL style file (without the \code{.csl} extension), and \autodoc:parameter{lang} is the language code of the CSL locale to use (e.g., \code{en-US}).
 
 The command accepts a few additional options:
 
@@ -572,11 +603,13 @@ If you don’t specify a style or locale, the author-date style and the \code{en
 
 To produce an inline citation, call \autodoc:command{\csl:cite{<key>}}, which will typeset something like “(Jones 1982)”.
 
-To produce a full reference, use \autodoc:command{\csl:reference{<key>}}.
+To produce a bibliography of cited references, use \autodoc:command{\printbibliography}.
+After printing the bibliography, the list of cited entries will be cleared. This allows you to start fresh for subsequent uses (e.g., in a different chapter).
+If you want to include all entries in the bibliography, not just those that have been cited, set the option \autodoc:parameter{cited} to false.
 
-To produce a complete bibliography, use \autodoc:command{\printbibliography}.
-As of yet, this command is for testing purposes only.
-It does not handle filtering of the bibliography.
+To produce a bibliographic reference, use \autodoc:command{\csl:reference{<key>}}.
+Note that this command is not intended for actual use, but for testing purposes.
+It may be removed in the future.
 
 \smallskip
 \noindent
