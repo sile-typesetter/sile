@@ -42,6 +42,7 @@ local nbibtex = require("packages.bibtex.support.nbibtex")
 local namesplit, parse_name = nbibtex.namesplit, nbibtex.parse_name
 local isodatetime = require("packages.bibtex.support.isodatetime")
 local bib2csl = require("packages.bibtex.support.bib2csl")
+local locators = require("packages.bibtex.support.locators")
 
 local Bibliography
 
@@ -453,8 +454,22 @@ function package:registerCommands ()
 
    self:registerCommand("csl:cite", function (options, content)
       -- TODO:
-      -- - locator support
-      -- - multiple citation keys
+      -- - multiple citation keys (but how to handle locators then?)
+      local locator
+      for k, v in pairs(options) do
+         if k ~= "key" then
+            if not locators[k] then
+               SU.warn("Unknown option '" .. k .. "' in \\csl:cite")
+            else
+               if not locator then
+                  local label = locators[k]
+                  locator = { label = label, value = v }
+               else
+                  SU.warn("Multiple locators in \\csl:cite, using the first one")
+               end
+            end
+         end
+      end
       if not SILE.scratch.bibtex.engine then
          SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
       end
@@ -473,10 +488,7 @@ function package:registerCommands ()
       SILE.scratch.bibtex.cited.citnums[options.key] = citnum
 
       local csljson = bib2csl(entry, citnum)
-      -- csljson.locator = { -- EXPERIMENTAL
-      --    label = "page",
-      --    value = "123-125"
-      -- }
+      csljson.locator = locator
       local cite = engine:cite(csljson)
 
       SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
@@ -602,6 +614,8 @@ For convenience and testing, SILE bundles the \code{chicago-author-date} and \co
 If you don’t specify a style or locale, the author-date style and the \code{en-US} locale will be used.
 
 To produce an inline citation, call \autodoc:command{\csl:cite{<key>}}, which will typeset something like “(Jones 1982)”.
+If you want to cite a particular page number, use \autodoc:command{\csl:cite[page=22]{<key>}}. Other “locator”  options are available (article, chapter, column, line, note, paragraph, section, volume, etc.) – see the CSL documentation for details.
+Some frequent abbreviations are also supported (art, chap, col, fig…)
 
 To produce a bibliography of cited references, use \autodoc:command{\printbibliography}.
 After printing the bibliography, the list of cited entries will be cleared. This allows you to start fresh for subsequent uses (e.g., in a different chapter).

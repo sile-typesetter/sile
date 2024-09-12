@@ -990,13 +990,16 @@ function CslEngine:_if (options, content, entry)
       end
    end
    if options.locator then
-      local cond = entry.locator and entry.locator.label == options.locator
-      table.insert(conds, cond)
+      for _, loc in ipairs(pl.stringx.split(options.locator, " ")) do
+         local cond = entry.locator and entry.locator.label == loc or false
+         table.insert(conds, cond)
+      end
    end
    -- FIXME TODO other conditions: position, disambiguate
    for _, v in ipairs({ "position", "disambiguate" }) do
       if options[v] then
          SU.warn("CSL if condition " .. v .. " not implemented yet")
+         table.insert(conds, false)
       end
    end
    -- Apply match
