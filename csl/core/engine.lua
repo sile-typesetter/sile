@@ -1049,13 +1049,17 @@ end
 
 local function dateToYYMMDD (date)
    --- Year from BibLaTeX year field may be a literal
-   local y = date.year and date.year:match("%d%d%d%d") or "0000"
-   local m = date.month or "00"
-   local d = date.day or "00"
+   local y = type(date.year) == "number" and date.year or tonumber(date.year) or 0
+   local m = date.month or 0
+   local d = date.day or 0
    return ("%04d%02d%02d"):format(y, m, d)
 end
 
 function CslEngine:_key (options, content, entry)
+   -- Attribute 'sort' is managed at a higher level
+   -- NOT IMPLEMENTED:
+   -- Attributes 'names-min', 'names-use-first', and 'names-use-last'
+   -- (overrides for the 'et-al-xxx' attributes)
    if options.macro then
       return self:_render_children(self.macros[options.macro], entry)
    end
@@ -1098,8 +1102,13 @@ function CslEngine:_sort (options, content, entries)
       -- Skipped at rendering
       return
    end
-   -- FIXME: not implemented: sort direction ascending/descending
-
+   -- Store the sort order for each key
+   local ordering = {}
+   for _, child in ipairs(content) do
+      if child.command == "cs:key" then
+         table.insert(ordering, child.options.sort ~= "descending") -- true for ascending (default)
+      end
+   end
    -- Compute the sorting keys for each entry
    for _, entry in ipairs(entries) do
       local keys = {}
@@ -1127,21 +1136,36 @@ function CslEngine:_sort (options, content, entries)
          -- Shortcut the inner keys comparison in that case.
          return false
       end
-      -- NOT IMPLEMENTED (not bothering for now):
-      -- "Items with an empty sort key value are placed at the end of the sort,
-      -- both for ascending and descending sorts."
       local ak = a._keys
       local bk = b._keys
-      for i = 1, math.min(#ak, #bk) do
+      for i = 1, #ordering do
+         -- "Items with an empty sort key value are placed at the end of the sort,
+         -- both for ascending and descending sorts."
+         if ak[i] == "" then
+            return bk[i] == ""
+         end
+         if bk[i] == "" then
+            return true
+         end
+
          if ak[i] ~= bk[i] then -- HACK: See comment above, ugly inequality check
             local cmp = icu.compare(collator, ak[i], bk[i])
+            -- Hack to keep on working whenever PR #2105 lands and changes icu.compare
+            local islower
             if type(cmp) == "number" then
-               return cmp < 0 -- To keep on working whenever PR #2105 lands
+               islower = cmp < 0
+            else
+               islower = cmp
             end
-            return cmp
+            -- Now order accordingly
+            if ordering[i] then
+               return islower
+            else
+               return not islower
+            end
          end
       end
-      -- If we reach this point, the keys are equal.
+      -- If we reach this point, the keys are equal (or we had no keys)
       -- Probably unlikely in real life, and not mentioned in the CSL spec
       -- unless I missed it. Let's fallback to the citation order, so at
       -- least cited entries are ordered predictably.
@@ -1178,8 +1202,7 @@ function CslEngine:_render_children (ast, entry, context)
          SU.error("CSL unexpected content") -- Should not happen
       end
    end
-
-   return #ret > 0 and self:_render_delimiter(ret, context.delimiter)
+   return #ret > 0 and self:_render_delimiter(ret, context.delimiter) or nil
 end
 
 function CslEngine:_postrender (text)
@@ -1239,7 +1262,6 @@ function CslEngine:_process (entries, mode)
       -- The CSL specification says:
       -- "In the absence of cs:sort, cites and bibliographic entries appear in
       -- the order in which they are cited."
-      -- The wording is ambiguous!
       -- We tracked the first citation number in 'citation-number', so for
       -- the bibliography, using it makes sense.
       -- For citations, we use the exact order of the input. Consider a cite
@@ -1259,9 +1281,7 @@ function CslEngine:_process (entries, mode)
       end
    end
 
-   local res = self:_render_children(ast, entries)
-
-   return res
+   return self:_render_children(ast, entries)
 end
 
 --- Generate a citation string.
