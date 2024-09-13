@@ -7,63 +7,65 @@
 
 -- Mappings from BibTeX types to CSL types
 -- Notes:
---  (1) Checked against citeproc-java
+--  (1) Checked against citeproc-java (source code)
+--  (2) Checked against citeproc-lua (scripts/bib-csl-mapping.md)
 
 local BIBTEX2CSL_TYPES = {
    -- BibLaTeX manual v3.20, §2.1.1
    -- Mappings to CSL are somewhat ad-hoc interpretations
-   article = "article-journal", -- (1)
-   book = "book", -- (1)
-   mvbook = "book",
-   inbook = "chapter", -- (1)
-   -- bookinbook ?
-   -- suppbook ?
-   booklet = "pamphlet", -- (1)
-   -- collection ?
-   -- mvcollection ?
+   article = "article-journal", -- (1) (2), but "article-magazine" or "article-newspaper" are also possible
+   book = "book", -- (1) (2)
+   mvbook = "book", -- (2)
+   inbook = "chapter", -- (1) (2)
+   bookinbook = "chapter", -- (2)
+   suppbook = "chapter", -- (2) but noted as "lossy mapping"
+   booklet = "pamphlet", -- (1) (2)
+   collection = "book", -- (2)
+   mvcollection = "book", -- (2)
    incollection = "chapter", -- (1)
-   -- suppcollection ?
-   dataset = "dataset",
-   manual = "book", -- (1)
-   misc = "document",
-   online = "webpage", -- (1)
-   patent = "patent", -- (1)
-   periodical = "article-journal", -- Not sure, (1) has book
-   -- suppperiodical ?
-   proceedings = "book", -- (1)
+   suppcollection = "chapter", -- (2) but noted as "lossy mapping"
+   dataset = "dataset", -- (2)
+   manual = "book", -- (1) has "book" but (2) has "report"
+   misc = "document", -- (2)
+   online = "webpage", -- (1) (2)
+   patent = "patent", -- (1) (2)
+   periodical = "periodical", -- (1) has "book", (2) has "periodical" ("new in CSL 1.0.2")
+   -- suppperiodical ? (2) maps to article (not CSL?) but "see article"
+   proceedings = "book", -- (1) (2)
    inproceedings = "paper-conference", -- (1)
-   reference = "entry-dictionary",
-   mvreference = "entry-dictionary",
-   report = "report", -- (1) via aliases
+   reference = "book", -- (2)
+   inreference = "entry", -- Unclear, but (2) noting "entry, entry-dictionary or entry-encyclopedia"...
+   mvreference = "book", -- (2)
+   report = "report", -- (1) (2)
    -- set [special case]
-   software = "software",
-   thesis = "thesis", -- (1) via aliases
-   unpublished = "manuscript", -- (1)
+   software = "software", -- (2)
+   thesis = "thesis", -- (1) (2)
+   unpublished = "manuscript", -- (1) (2)
 
    -- BibLaTeX manual v3.20, §2.1.2 (aliases)
-   conference = "event", -- not sure, should be equivalent to @inproceedings
-   electronic = "webpage", -- as @online
-   mastersthesis = "thesis", -- as @thesis
-   phdthesis = "thesis", -- as @thesis
-   techreport = "report", -- as @report
-   www = "webpage", -- as @online
+   conference = "event", -- not sure, should be equivalent to @inproceedings? And (2) has "paper-conference" indeed...
+   electronic = "webpage", -- as @online, (2) agrees
+   mastersthesis = "thesis", -- as @thesis, (2) agrees
+   phdthesis = "thesis", -- as @thesis, (2) agrees
+   techreport = "report", -- as @report, (2) agrees
+   www = "webpage", -- as @online, (2) agrees
 
    -- BibLaTeX manual v3.20, §2.1.3 (non-standard)
-   -- artwork ?
-   -- audio ?
+   artwork = "graphic", -- (2)
+   audio = "song", -- (2)
    -- bibnote [special case]
-   -- commentary ?
-   -- image ?
-   -- jurisdiction ?
-   legislation = "legislation",
-   -- legal ?
-   -- letter ?
-   -- movie ?
-   -- music ?
-   -- performance ?
-   -- review ?
-   standard = "legislation", -- (1)
-   -- video ?
+   -- commentary ? -- "book" in (2) but marked as not supported?
+   image = "graphic", -- (2)
+   jurisdiction = "legal_case", -- (2)
+   legislation = "legislation", -- (2)
+   legal = "treaty", -- (2)
+   letter = "personal_communication", -- (2)
+   movie = "motion_picture", -- (2)
+   music = "song", -- (2)
+   performance = "performance", -- (2)
+   review = "review", -- (2) "A more specific variant of the @@article type"
+   standard = "legislation", -- (1) But (2) has "standard" ("new in CSL 1.0.2")
+   video = "motion_picture", -- (2)
 }
 
 local function toDate (year, month)
@@ -86,7 +88,11 @@ local function bib2csl (entry, citnum)
    local bibtype = entry.type:lower()
 
    -- BibTeX type
-   local t = BIBTEX2CSL_TYPES[bibtype] or "document"
+   local t = BIBTEX2CSL_TYPES[bibtype]
+   if not t then
+      SU.warn(("No CSL type mapping for BibTeX type '%s', using 'document'"):format(bibtype))
+      t = "document"
+   end
    csl.type = t
 
    -- Citation key may be wanted by some styles
@@ -166,6 +172,8 @@ local function bib2csl (entry, citnum)
    elseif bibtex.issue then
       csl.issue = bibtex.issue
    end
+   -- BibLaTex issuetitle (title of a specific issue of a journal or other periodical)
+   csl["volume-title"] = bibtex.issuetitle
    -- BibLaTeX pagetotal
    csl["number-of-pages"] = bibtex.pagetotal
 
