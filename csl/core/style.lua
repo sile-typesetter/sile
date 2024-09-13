@@ -19,24 +19,22 @@ local rules = {
 
 local CslStyle = pl.class()
 
-function CslStyle:_init (csl)
-   self.csl = csl
+function CslStyle:_init (tree)
    self.macros = {}
    self.locales = {}
    self.bibliography = nil
    self.citation = nil
    self.globalOptions = {}
-   self:_preprocess()
-   self.csl = nil -- We don't need the AST anymore
+   self:_preprocess(tree)
 end
 
--- Store items in more convenient structures and maps
-function CslStyle:_preprocess ()
+-- Store items from the syntax tree in more convenient structures and maps
+function CslStyle:_preprocess (tree)
    -- Global options and inheritable name options
-   self.globalOptions = self.csl.options
+   self.globalOptions = tree.options
 
    -- Extract macros, locale overrides, citation and bibliography
-   for _, content in ipairs(self.csl) do
+   for _, content in ipairs(tree) do
       if content.command == "cs:macro" then
          local name = content.options and content.options.name
          if not name then
@@ -77,11 +75,11 @@ end
 -- @tparam string doc The CSL style document
 -- @treturn Csl The parsed CSL style object (or nil, error message on failure)
 function CslStyle.parse (doc)
-   local csl, err = parse(doc, rules)
-   if not csl then
+   local tree, err = parse(doc, rules)
+   if not tree then
       return nil, err
    end
-   return CslStyle(csl)
+   return CslStyle(tree)
 end
 
 --- Read a CSL style file (static method).

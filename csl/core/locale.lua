@@ -25,21 +25,18 @@ local rules = {
 
 local CslLocale = pl.class()
 
-function CslLocale:_init (locale)
-   self.locale = locale
+function CslLocale:_init (tree)
    self.terms = {}
    self.dates = {}
    self.styleOptions = {}
-   self.lang = "und"
-   self:_preprocess()
-   self.locale = nil -- We don't need the AST anymore
+   self:_preprocess(tree)
 end
 
--- Store items in more convenient structures and maps
-function CslLocale:_preprocess ()
-   self.lang = self.locale.options["xml:lang"]
+-- Store items from the syntax tree in more convenient structures and maps
+function CslLocale:_preprocess (tree)
+   self.lang = tree.options["xml:lang"]
 
-   for _, content in ipairs(self.locale) do
+   for _, content in ipairs(tree) do
       if content.command == "cs:terms" then
          for _, term in ipairs(content) do
             if term.command == "cs:term" then
@@ -224,11 +221,11 @@ end
 -- @tparam string doc The CSL locale file content
 -- @treturn CslLocale The locale object (or nil, error message on failure)
 function CslLocale.parse (doc)
-   local loc, err = parse(doc, rules)
-   if not loc then
+   local tree, err = parse(doc, rules)
+   if not tree then
       return nil, err
    end
-   return CslLocale(loc)
+   return CslLocale(tree)
 end
 
 --- Read a CSL locale file (static method).

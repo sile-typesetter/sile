@@ -113,18 +113,7 @@ local function parse (doc, rules)
          return nil, err
       end
    else
-      -- FIXME DUBIOUS CODE SMELL
-      -- SILE's XML parser hsome code here, which seems wrong:
-      -- keys on pair()?
-      -- EDIT: Known issue:
-      -- https://github.com/sile-typesetter/sile/issues/980
-      SU.error("XML parser: only string input should be supported")
-      -- for element in pairs(doc) do
-      --    status, err = parser:parse(element)
-      --    if not status then
-      --       return nil, err
-      --    end
-      -- end
+      return nil, "Only string input should be supported"
    end
    status, err = parser:parse()
    if not status then
