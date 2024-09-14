@@ -748,28 +748,135 @@ function CslEngine:_name_et_al (options)
 end
 
 function CslEngine:_a_name (options, content, entry)
-   local form = options.form
-   local nameAsSortOrder = options["name-as-sort-order"]
-   if self.sorting then
-      -- Ovveride form and name-as-sort-order in sorting mode
-      form = "long"
-      nameAsSortOrder = "all"
+   if not entry.family then
+      -- There's one element in a name we can't do without.
+      SU.error("Name without family: what do you expect me to do with it?")
    end
+   local demoteNonDroppingParticle = options["demote-non-dropping-particle"] or "never"
+
+   if self.sorting then
+      -- Implicitely we are in long form, name-as-sort-order all, and no formatting.
+      if demoteNonDroppingParticle == "never" then
+         -- Order is: [NDP] Family [Given] [Suffix] e.g. van Gogh Vincent III
+         local name = {}
+         if entry["non-dropping-particle"] then
+            table.insert(name, entry["non-dropping-particle"])
+         end
+         table.insert(name, entry.family)
+         if entry.given then
+            table.insert(name, entry.given)
+         end
+         if entry.suffix then
+            table.insert(name, entry.suffix)
+         end
+         return table.concat(name, " ")
+      end
+      -- Order is: Family [Given] [DP] [Suffix] e.g. Gogh Vincent van III
+      local name = { entry.family }
+      if entry.given then
+         table.insert(name, entry.given)
+      end
+      if entry["dropping-particle"] then
+         table.insert(name, entry["dropping-particle"])
+      end
+      if entry["non-dropping-particle"] then
+         table.insert(name, entry["non-dropping-particle"])
+      end
+      if entry.suffix then
+         table.insert(name, entry.suffix)
+      end
+      return table.concat(name, " ")
+   end
+
+   local form = options.form
+   local nameAsSortOrder = options["name-as-sort-order"] or "first"
 
    -- TODO FIXME: content can consists in name-part elements for formatting, text-case, affixes
-   -- Chigaco style does not seem to use them, so we keep it simple for now.
-   -- TODO FIXME: demote-non-dropping-particle option not implemented, and name particle not implemented at all!
+   -- Chigaco style does not seem to use them, so we keep it "simple" for now.
 
    if form == "short" then
+      -- Order is: [NDP] Family, e.g. van Gogh
+      if entry["non-dropping-particle"] then
+         return table.concat({
+            entry["non-dropping-particle"],
+            entry.family,
+         }, " ")
+      end
       return entry.family
    end
+
    if nameAsSortOrder ~= "all" and not self.firstName then
-      -- Order is: Given Family
-      return entry.given and (entry.given .. " " .. entry.family) or entry.family
+      -- Order is: [Given] [DP] [NDP] Family [Suffix] e.g. Vincent van Gogh III
+      local t = {}
+      if entry.given then
+         table.insert(t, entry.given)
+      end
+      if entry["dropping-particle"] then
+         table.insert(t, entry["dropping-particle"])
+      end
+      if entry["non-dropping-particle"] then
+         table.insert(t, entry["non-dropping-particle"])
+      end
+      table.insert(t, entry.family)
+      if entry.suffix then
+         table.insert(t, entry.suffix)
+      end
+      return table.concat(t, " ")
    end
-   -- Order is: Family, Given
+
    local sep = options["sort-separator"] or (self.punctuation[","] .. " ")
-   return entry.given and (entry.family .. sep .. entry.given) or entry.family
+   if demoteNonDroppingParticle == "display-and-sort" then
+      -- Order is: Family, [Given] [DP] [NDP], [Suffix] e.g. Gogh, Vincent van, III
+      local mid = {}
+      if entry.given then
+         table.insert(mid, entry.given)
+      end
+      if entry["dropping-particle"] then
+         table.insert(mid, entry["dropping-particle"])
+      end
+      if entry["non-dropping-particle"] then
+         table.insert(mid, entry["non-dropping-particle"])
+      end
+      local midname = table.concat(mid, " ")
+      if #midname > 0 then
+         return table.concat({
+            entry.family,
+            midname,
+            entry.suffix, -- may be nil
+         }, sep)
+      end
+      return table.concat({
+         entry.family,
+         entry.suffix, -- may be nil
+      }, sep)
+   end
+
+   -- Order is: [NDP] Family, [Given] [DP], [Suffix] e.g. van Gogh, Vincent, III
+   local beg = {}
+   if entry["non-dropping-particle"] then
+      table.insert(beg, entry["non-dropping-particle"])
+   end
+   table.insert(beg, entry.family)
+   local begname = table.concat(beg, " ")
+   local mid = {}
+   if entry.given then
+      table.insert(mid, entry.given)
+   end
+   if entry["dropping-particle"] then
+      table.insert(mid, entry["dropping-particle"])
+   end
+   local midname = table.concat(mid, " ")
+   if #midname > 0 then
+      return table.concat({
+         begname,
+         midname,
+         entry.suffix, -- may be nil
+      }, sep)
+   end
+   return table.concat({
+      begname,
+      entry.suffix, -- may be nil
+   }, sep)
 end
 
 local function hasField (list, field)
@@ -791,6 +898,7 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
    local et_al_opts = options.et_al_opts
    local name_node = options.name_node
    local names_delimiter = options.names_delimiter
+   local delimiter_precedes_last = options.delimiter_precedes_last
 
    -- Special case if both editor and translator are wanted and are the same person(s)
    local editortranslator = false
@@ -835,13 +943,22 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
             --    delimiter-precedes-et-al ("contextual" by default = hard-coded)
             --    et-al-use-last (default false, if true, the last is rendered as ", ... Name) instead of using et-al.
             local rendered_et_all = self:_name_et_al(et_al_opts)
-            local sep_et_al = #l > 1 and name_delimiter or " "
+            local sep_et_al = #l > 1 and name_delimiter
             joined = table.concat(l, name_delimiter) .. sep_et_al .. rendered_et_all
          elseif #l == 1 then
             joined = l[1]
          else
+            -- TODO THINGS TO SUPPORT THAT MIGHT REQUIRE A REFACTOR
+            --   delimiter-precedes-last ("contextual" by default)
+            -- Minimal support for "contextual" and "always" for Chicago style.
+            local sep_delim
+            if delimiter_precedes_last == "always" then
+               sep_delim = name_delimiter
+            else
+               sep_delim = #l > 2 and name_delimiter or " "
+            end
             local last = table.remove(l)
-            joined = table.concat(l, name_delimiter) .. " " .. and_word .. " " .. last
+            joined = table.concat(l, name_delimiter) .. sep_delim .. and_word .. " " .. last
          end
          if label then
             joined = is_label_first and (label .. joined) or (joined .. label)
@@ -895,8 +1012,9 @@ function CslEngine:_names (options, content, entry)
    local et_al_use_first = tonumber(name_node.options["et-al-use-first"]) or 1
    local and_opt = name_node.options["and"] or "text"
    local and_word = and_opt == "symbol" and "&amp;" or self:_render_term("and") -- text by default
-   local name_delimiter = name_node.options.delimiter or inherited_opts["names-delimiter"]
+   local name_delimiter = name_node.options.delimiter or inherited_opts["names-delimiter"] or ", "
    -- local delimiter_precedes_et_al = name_node.options["delimiter-precedes-et-al"] -- TODO NOT IMPLEMENTED
+   local delimiter_precedes_last = name_node.options["delimiter-precedes-last"] or inherited_opts["delimiter-precedes-last"] or "contextual"
 
    if name_delimiter and not self.cache[name_delimiter] then
       name_delimiter = self:_xmlEscape(name_delimiter)
@@ -914,6 +1032,7 @@ function CslEngine:_names (options, content, entry)
       et_al_opts = et_al_opts,
       name_node = name_node,
       names_delimiter = options.delimiter or inherited_opts["names-delimiter"],
+      delimiter_precedes_last = delimiter_precedes_last,
    }
    resolved = pl.tablex.union(options, resolved)
 

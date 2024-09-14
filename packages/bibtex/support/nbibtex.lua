@@ -1,6 +1,9 @@
 -- The following functions borrowed from Norman Ramsey's nbibtex,
 -- with permission.
 -- Thanks, Norman, for these functions!
+-- NOTE: Modified in 2024 for CSL compatibility:
+--  - nbsp instead of "~" for non-breaking space
+--  - added CSL compatibility fields (given, non-dropping-particle, family, suffix)
 
 -- The initial implementation was using "~", but we now sanitized the
 -- input earlier at parsing to replace those from the input with
@@ -266,11 +269,21 @@ do
          end
       end
       set_name(first_start, first_lim, "ff", "f")
-      set_name(first_start, first_lim, "given", "f") -- HACK OMIKHLEIA FIXME
+      set_name(first_start, first_lim, "given", "given-short") -- CSL compatibility
+
       set_name(von_start, von_lim, "vv", "v")
+      -- BibLaTex doesn't distinguish between dropping-particle and non-dropping-particle...
+      -- So we assume it is non-dropping-particle.
+      -- Note: citeproc-lua assumes a non-dropping-particle too, without comment (checking its code)
+      -- I'd like to be more convinced, or the BibLaTeX folks to evolve towards something more
+      -- explicit. We are in 2024, folks, there has been time to think about it...
+      set_name(von_start, von_lim, "non-dropping-particle", "non-dropping-particle-short") -- CSL compatibility
+
       set_name(von_lim, last_lim, "ll", "l")
-      set_name(von_lim, last_lim, "family", "l") -- HACK OMIKHLEIA FIXME
+      set_name(von_lim, last_lim, "family", "family-short") -- CSL compatibility
+
       set_name(last_lim, jr_lim, "jj", "j")
+      set_name(last_lim, jr_lim, "suffix", "suffix-short") -- CSL compatibility
       return name
    end
 end
