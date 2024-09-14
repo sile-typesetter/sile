@@ -22,6 +22,7 @@ local CslLocale = require("csl.core.locale").CslLocale
 
 local superfolding = require("csl.core.utils.superfolding")
 local endash = luautf8.char(0x2013)
+local emdash = luautf8.char(0x2014)
 
 local CslEngine = pl.class()
 
@@ -61,11 +62,26 @@ function CslEngine:_init (style, locale, extras)
       close_quote = self:_render_term("close-quote") or luautf8.char(0x201D), -- 0x201D curly right quote
       open_inner_quote = self:_render_term("open-inner-quote") or luautf8.char(0x2018), -- 0x2018 curly left single quote
       close_inner_quote = self:_render_term("close-inner-quote") or luautf8.char(0x2019), -- 0x2019 curly right single quote
-      page_range_delimiter = self:_render_term("page-range-delimiter") or endash, -- FIXME: UNUSED AS OF NOW
+      page_range_delimiter = self:_render_term("page-range-delimiter") or endash,
       [","] = self:_render_term("comma") or ",",
       [";"] = self:_render_term("semicolon") or ";",
       [":"] = self:_render_term("colon") or ":",
    }
+
+   -- Small utility for page ranges, see text processing for <text variable="page">
+   local sep = self.punctuation.page_range_delimiter
+   if sep ~= endash and sep ~= emdash and sep ~= "-" then
+      -- Unlikely there's a percent here, but let's be safe
+      sep = luautf8.gsub(sep, "%%", "%%%%")
+   end
+   local dashes = "%-" .. endash .. emdash
+   local textinrange = "[^" .. dashes .. "]+"
+   local dashinrange = "[" .. dashes .. "]+"
+   local page_range_capture = "(" .. textinrange .. ")%s*" .. dashinrange .. "%s*(" .. textinrange .. ")"
+   local page_range_replacement = "%1" .. sep .. "%2"
+   self.page_range_replace = function (t)
+      return luautf8.gsub(t, page_range_capture, page_range_replacement)
+   end
 
    -- Inheritable variables
    -- There's a long list of such variables, but let's be dumb and just merge everything.
@@ -410,12 +426,18 @@ function CslEngine:_text (options, content, entry)
    elseif options.term then
       t = self:_render_term(options.term, options.form, options.plural)
    elseif options.variable then
-      local variable = SU.required(options, "variable", "CSL text")
+      local variable = options.variable
       t = entry[variable]
       self:_addGroupVariable(variable, t)
       if variable == "locator" then
          t = t and t.value
+         variable = entry.locator.label
       end
+      if variable == "page" and t then
+         -- Replace any dash in page ranges
+         t = self.page_range_replace(t)
+      end
+
       -- FIXME NOT IMPLEMENTED SPEC:
       -- "May be accompanied by the form attribute to select the “long”
       -- (default) or “short” form of a variable (e.g. the full or short
