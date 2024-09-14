@@ -33,8 +33,6 @@ end
 
 function package:_init ()
    base._init(self)
-   self:deprecatedExport("createCommand", self.createCommand)
-   self:deprecatedExport("transformContent", self.transformContent)
 end
 
 package.documentation = [[

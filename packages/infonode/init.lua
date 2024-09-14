@@ -29,23 +29,12 @@ local function newPageInfo (_)
    SILE.scratch.info = { thispage = {} }
 end
 
-local _deprecate = [[
-  Directly calling info node handling functions is no longer necessary. All the
-  SILE core classes and anything inheriting from them will take care of this
-  automatically using hooks. Custom classes that override the class:endPage()
-  function may need to handle this in other ways. By calling this hook directly
-  you are likely causing it to run twice and duplicate entries.
-]]
-
 function package:_init ()
    base._init(self)
    if not SILE.scratch.info then
       SILE.scratch.info = { thispage = {} }
    end
    self.class:registerHook("newpage", newPageInfo)
-   self:deprecatedExport("newPageInfo", function ()
-      SU.deprecated("class:newPageInfo", nil, "0.13.0", "0.15.0", _deprecate)
-   end)
 end
 
 function package:registerCommands ()

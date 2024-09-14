@@ -18,7 +18,6 @@ end
 
 function package:_init ()
    base._init(self)
-   self:deprecatedExport("date", self.date)
 end
 
 function package:registerCommands ()

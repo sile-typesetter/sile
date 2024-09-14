@@ -274,9 +274,6 @@ end
 
 function package:_init ()
    base._init(self)
-   self:deprecatedExport("reorder", self.reorder)
-   self:deprecatedExport("bidiEnableTypesetter", self.bidiEnableTypesetter)
-   self:deprecatedExport("bidiDisableTypesetter", self.bidiDisableTypesetter)
    if SILE.typesetter then
       self:bidiEnableTypesetter(SILE.typesetter)
    end

@@ -36,7 +36,6 @@ function package:_init ()
    if not SILE.scratch.index then
       SILE.scratch.index = {}
    end
-   self:deprecatedExport("buildIndex", self.buildIndex)
 end
 
 function package:registerCommands ()

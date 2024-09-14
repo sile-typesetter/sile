@@ -69,8 +69,6 @@ function package:_init ()
    end
    self:export("getCounter", getCounter)
    self:export("getMultilevelCounter", getMultilevelCounter)
-   self:deprecatedExport("formatCounter", self.formatCounter)
-   self:deprecatedExport("formatMultilevelCounter", self.formatMultilevelCounter)
 end
 
 function package:registerCommands ()

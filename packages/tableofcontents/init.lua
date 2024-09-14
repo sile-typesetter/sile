@@ -110,8 +110,6 @@ function package:_init ()
    self:loadPackage("leaders")
    self.class:registerHook("endpage", self.moveTocNodes)
    self.class:registerHook("finish", self.writeToc)
-   self:deprecatedExport("writeToc", self.writeToc)
-   self:deprecatedExport("moveTocNodes", self.moveTocNodes)
 end
 
 function package:registerCommands ()

@@ -96,8 +96,6 @@ function package:_init ()
          SU.error("Conversion failure for image '" .. source .. '"')
       end
    end)
-   self:deprecatedExport("register", self.register)
-   self:deprecatedExport("checkConverters", self.checkConverters)
 end
 
 function package:registerCommands ()
