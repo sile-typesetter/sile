@@ -7,6 +7,15 @@
 --  - CslEngine:cite(entries) -> string
 --  - CslEngine:reference(entries) -> string
 --
+-- The expected internal representation of a CSL entry is similar to CSL-JSON
+-- but with some differences:
+--    Date fields are structured tables (not an array of numbers as in CSL-JSON).
+--    citation-number (mandatory) is supposed to have been added by the citation processor.
+--    locator (optional, also possibly added by the citation processor) is a table with label and value fields.
+--    names are parsed,
+--        as personal names (ex. `{ given = "George", family = "Smith" ... }`),
+--        or are literal strings (ex. `{ literal = "T.C.B.S" }`).
+--
 -- Important: while some consistency checks are performed, this engine is not
 -- intended to handle errors in the locale, style or input data. It is assumed
 -- that they are all valid.
@@ -14,7 +23,7 @@
 -- THINGS NOT DONE
 --  - disambiguation logic (not done at all)
 --  - collapse logic in citations (not done at all)
---  - other FIXME/TODOs in the code on specific features
+--  - other FIXME in the code on quite specific features
 --
 -- luacheck: no unused args
 
@@ -92,6 +101,17 @@ function CslEngine:_init (style, locale, extras)
          self.style.bibliography and self.style.bibliography.options or {}
       ),
    }
+
+   self.subsequentAuthorSubstitute = self.inheritable["bibliography"]["subsequent-author-substitute"]
+   local _, count = luautf8.gsub(self.subsequentAuthorSubstitute, "[%-_–—]", "") -- naive count
+   if count > 0 then
+      -- With many fonts, a sequence of dashes is not looking that great.
+      -- So replace them with a command, and let the typesetter decide for a better rendering.
+      -- NOTE: Avoid (quoted) attributes and dashes in tags, as some global
+      -- substitutions might affect quotes...So we use a simple "wrapper" command.
+      local trail = luautf8.gsub(self.subsequentAuthorSubstitute, "^[%-–—_]+", "")
+      self.subsequentAuthorSubstitute = "<bibRule>" .. count .. "</bibRule>" .. trail
+   end
 end
 
 function CslEngine:_prerender ()
@@ -101,6 +121,13 @@ function CslEngine:_prerender ()
 
    -- Track first name for name-as-sort-order
    self.firstName = true
+
+   -- Track first rendered cs:names for subsequent-author-substitute
+   self.doAuthorSubstitute = self.mode == "bibliography" and self.subsequentAuthorSubstitute
+   self.hasRenderedNames = false
+   -- Track authors for subsequent-author-substitute
+   self.precAuthors = self.currentAuthors
+   self.currentAuthors = {}
 end
 
 function CslEngine:_merge_locales (locale1, locale2)
@@ -307,8 +334,8 @@ function CslEngine:_render_formatting (t, options)
       t = "<em>" .. t .. "</em>"
    end
    if options["font-variant"] == "small-caps" then
-      -- To avoid (quoted) attributes in the output, as some global
-      -- substitutions might affect quotes, we use a simple "wrapper" command.
+      -- NOTE: Avoid (quoted) attributes and dashes in tags, as some global
+      -- substitutions might affect quotes...So we use a simple "wrapper" command.
       t = "<bibSmallCaps>" .. t .. "</bibSmallCaps>"
    end
    if options["font-weight"] == "bold" then -- FIXME: also light, normal, and how nesting is supposed to work?
@@ -340,11 +367,12 @@ function CslEngine:_render_display (t, options)
    if not t then
       return
    end
-   -- if options.display then
-   -- FIXME Add rationale for not supporting it...
-   -- Keep silent: it's not a critical feature yet
-   -- SU.warn("CSL display not implemented")
-   -- end
+   -- FIXME NOT IMPLEMENTED:
+   -- If set, options.display can be "block", "left-margin", "right-inline", "indent"
+   -- Usual styles such as Chicago, MLA, ACS etc. do not use it.
+   if options.display then
+      SU.warn("CSL display attribute not implemented: output will likely be incorrect")
+   end
    return t
 end
 
@@ -375,6 +403,8 @@ function CslEngine:_render_link (t, link)
    if t and link and not self.sorting then
       -- We'll let the processor implement CSL 1.0.2 link handling.
       -- (appendix VI)
+      -- NOTE: Avoid (quoted) attributes and dashes in tags, as some global
+      -- substitutions might affect quotes...So we use a simple "wrapper" command.
       t = "<bib" .. link .. ">" .. t .. "</bib" .. link .. ">"
    end
    return t
@@ -438,7 +468,7 @@ function CslEngine:_text (options, content, entry)
          t = self.page_range_replace(t)
       end
 
-      -- FIXME NOT IMPLEMENTED SPEC:
+      -- FIXME NOT IMPLEMENTED:
       -- "May be accompanied by the form attribute to select the “long”
       -- (default) or “short” form of a variable (e.g. the full or short
       -- title). If the “short” form is selected but unavailable, the
@@ -595,8 +625,8 @@ end
 
 function CslEngine:_date_part (options, content, date)
    local name = SU.required(options, "name", "cs:date-part")
-   -- FIXME TODO full date range are not implemented properly
-   -- But we need to decide how to encode them in the pseudo CSL-JSON...
+   -- FIXME TODO
+   -- Full date range are not implemented properly
    local t
    local callback = "_a_date_" .. name
    if self[callback] then
@@ -748,6 +778,9 @@ function CslEngine:_name_et_al (options)
 end
 
 function CslEngine:_a_name (options, content, entry)
+   if entry.literal then -- pass through literal names
+      return entry.literal
+   end
    if not entry.family then
       -- There's one element in a name we can't do without.
       SU.error("Name without family: what do you expect me to do with it?")
@@ -927,30 +960,53 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
          local needEtAl = false
          local names = type(entry[var]) == "table" and entry[var] or { entry[var] }
          local l = {}
-         for i, name in ipairs(names) do
-            if #names >= et_al_min and i > et_al_use_first then
-               needEtAl = true
-               break
-            end
-            local t = self:_a_name(name_node.options, name_node, name)
-            self.firstName = false
-            table.insert(l, t)
+
+         -- FIXME EXPLAIN
+         if not self.hasRenderedNames then
+            pl.tablex.insertvalues(self.currentAuthors, names)
          end
+         if
+            self.doAuthorSubstitute
+            and not self.sorting
+            and not self.hasRenderedNames
+            and self.precAuthors
+            and pl.tablex.deepcompare(names, self.precAuthors)
+         then
+            -- FIXME NOT IMPLEMENTED
+            --   subsequent-author-substitute-rule (default "complete-all" is assumed here)
+            -- NOTE: Avoid (quoted) attributes and dashes in tags, as some global
+            -- substitutions might affect quotes...
+            -- So we use a simple "wrapper" command.
+            table.insert(l, self.subsequentAuthorSubstitute)
+            self.firstName = false
+         else
+            for i, name in ipairs(names) do
+               if #names >= et_al_min and i > et_al_use_first then
+                  needEtAl = true
+                  break
+               end
+               local t = self:_a_name(name_node.options, name_node, name)
+               self.firstName = false
+               table.insert(l, t)
+            end
+         end
+
          local joined
          if needEtAl then
-            -- TODO THINGS TO SUPPORT THAT MIGHT REQUIRE A REFACTOR
-            -- They are not needed in Chicago style, so let's keep it simple for now.
+            -- FIXME NOT IMPLEMENTED
+            -- They are not needed in Chicago style, so let's keep it simple for now:
             --    delimiter-precedes-et-al ("contextual" by default = hard-coded)
             --    et-al-use-last (default false, if true, the last is rendered as ", ... Name) instead of using et-al.
             local rendered_et_all = self:_name_et_al(et_al_opts)
-            local sep_et_al = #l > 1 and name_delimiter
+            local sep_et_al = #l > 1 and name_delimiter or " "
             joined = table.concat(l, name_delimiter) .. sep_et_al .. rendered_et_all
          elseif #l == 1 then
             joined = l[1]
          else
-            -- TODO THINGS TO SUPPORT THAT MIGHT REQUIRE A REFACTOR
-            --   delimiter-precedes-last ("contextual" by default)
+            -- FIXME NOT IMPLEMENTED FULLY
+            -- Likewise, not need in many styles, so we headed towards a shortcut:
             -- Minimal support for "contextual" and "always" for Chicago style.
+            --   delimiter-precedes-last ("contextual" by default)
             local sep_delim
             if delimiter_precedes_last == "always" then
                sep_delim = name_delimiter
@@ -1013,8 +1069,10 @@ function CslEngine:_names (options, content, entry)
    local and_opt = name_node.options["and"] or "text"
    local and_word = and_opt == "symbol" and "&amp;" or self:_render_term("and") -- text by default
    local name_delimiter = name_node.options.delimiter or inherited_opts["names-delimiter"] or ", "
-   -- local delimiter_precedes_et_al = name_node.options["delimiter-precedes-et-al"] -- TODO NOT IMPLEMENTED
-   local delimiter_precedes_last = name_node.options["delimiter-precedes-last"] or inherited_opts["delimiter-precedes-last"] or "contextual"
+   -- local delimiter_precedes_et_al = name_node.options["delimiter-precedes-et-al"] -- FIXME NOT IMPLEMENTED
+   local delimiter_precedes_last = name_node.options["delimiter-precedes-last"]
+      or inherited_opts["delimiter-precedes-last"]
+      or "contextual"
 
    if name_delimiter and not self.cache[name_delimiter] then
       name_delimiter = self:_xmlEscape(name_delimiter)
@@ -1036,7 +1094,11 @@ function CslEngine:_names (options, content, entry)
    }
    resolved = pl.tablex.union(options, resolved)
 
-   return self:_names_with_resolved_opts(resolved, substitute, entry)
+   local rendered = self:_names_with_resolved_opts(resolved, substitute, entry)
+   if rendered and not self.hasRenderedNames then
+      self.hasRenderedNames = true
+   end
+   return rendered
 end
 
 function CslEngine:_label (options, content, entry)
@@ -1113,7 +1175,7 @@ function CslEngine:_if (options, content, entry)
    end
    if options["is-numeric"] then
       for _, var in ipairs(pl.stringx.split(options["is-numeric"], " ")) do
-         -- TODO FIXME NOT IMPLEMENTED FULLY
+         -- FIXME NOT IMPLEMENTED FULLY
          -- Content is considered numeric if it solely consists of numbers.
          -- Numbers may have prefixes and suffixes (“D2”, “2b”, “L2d”), and may
          -- be separated by a comma, hyphen, or ampersand, with or without
@@ -1136,10 +1198,10 @@ function CslEngine:_if (options, content, entry)
          table.insert(conds, cond)
       end
    end
-   -- FIXME TODO other conditions: position, disambiguate
+   -- FIXME NOT IMPLEMENTED other conditions: "position", "disambiguate"
    for _, v in ipairs({ "position", "disambiguate" }) do
       if options[v] then
-         SU.warn("CSL if condition " .. v .. " not implemented yet")
+         SU.warn("CSL if condition '" .. v .. "' not implemented yet")
          table.insert(conds, false)
       end
    end
@@ -1198,7 +1260,7 @@ end
 
 function CslEngine:_key (options, content, entry)
    -- Attribute 'sort' is managed at a higher level
-   -- NOT IMPLEMENTED:
+   -- FIXME NOT IMPLEMENTED:
    -- Attributes 'names-min', 'names-use-first', and 'names-use-last'
    -- (overrides for the 'et-al-xxx' attributes)
    if options.macro then
@@ -1222,8 +1284,10 @@ function CslEngine:_key (options, content, entry)
          if value.year or value.month or value.day then
             return dateToYYMMDD(value)
          end
-         -- FIXME names need a special rule here
-         -- Chicago style use macro here, so not considered for now.
+         -- FIXME NOT IMPLEMENTED
+         -- Names need a special rule here.
+         -- Many styles (e.g. Chicago) use a macro here (for substitutes, etc.)
+         -- so this case is not yet implemented.
          SU.error("CSL variable not yet usable for sorting: " .. options.variable)
       end
       return value
