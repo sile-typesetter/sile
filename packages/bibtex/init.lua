@@ -408,7 +408,7 @@ function package:registerCommands ()
 
    -- NEW CSL IMPLEMENTATION
 
-   -- Internal commands for CSL processing
+   -- Hooks for CSL processing
 
    self:registerCommand("bibSmallCaps", function (_, content)
       -- To avoid attributes in the CSL-processed content
@@ -460,6 +460,14 @@ function package:registerCommands ()
          link = "https://www.ncbi.nlm.nih.gov/pmc/articles/" .. link
       end
       SILE.call("bibLink", { src = link }, content)
+   end)
+
+   self:registerCommand("bibRule", function (_, content)
+      local n = content[1] and tonumber(content[1]) or 3
+      local width = n .. "em"
+      SILE.call("raise", { height = "0.4ex" }, function ()
+         SILE.call("hrule", { height = "0.4pt", width = width })
+      end)
    end)
 
    -- Style and locale loading
