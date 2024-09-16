@@ -345,6 +345,15 @@ function package:registerCommands ()
    end)
 
    self:registerCommand("cite", function (options, content)
+      local style = SILE.settings:get("bibtex.style")
+      if style == "csl" then
+         SILE.call("csl:cite", options, content)
+         return -- done via CSL
+      end
+      if not self._deprecated_legacy_warning then
+         self._deprecated_legacy_warning = true
+         SU.warn("Legacy bibtex.style is deprecated, consider enabling the CSL implementation.")
+      end
       if not options.key then
          options.key = SU.ast.contentToString(content)
       end
@@ -352,13 +361,26 @@ function package:registerCommands ()
       if not entry then
          return
       end
-      local style = SILE.settings:get("bibtex.style")
+      -- Keep track of cited entries
+      table.insert(SILE.scratch.bibtex.cited.keys, options.key)
+      local citnum = #SILE.scratch.bibtex.cited.keys
+      SILE.scratch.bibtex.cited.citnums[options.key] = citnum
+
       local bibstyle = require("packages.bibtex.styles." .. style)
       local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
       SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
    end)
 
    self:registerCommand("reference", function (options, content)
+      local style = SILE.settings:get("bibtex.style")
+      if style == "csl" then
+         SILE.call("csl:reference", options, content)
+         return -- done via CSL
+      end
+      if not self._deprecated_legacy_warning then
+         self._deprecated_legacy_warning = true
+         SU.warn("Legacy bibtex.style is deprecated, consider enabling the CSL implementation.")
+      end
       if not options.key then
          options.key = SU.ast.contentToString(content)
       end
@@ -366,7 +388,15 @@ function package:registerCommands ()
       if not entry then
          return
       end
-      local style = SILE.settings:get("bibtex.style")
+
+      local citnum = SILE.scratch.bibtex.cited.citnums[options.key]
+      if not citnum then
+         SU.warn("Reference to a non-cited entry " .. options.key)
+         -- Make it cited
+         table.insert(SILE.scratch.bibtex.cited.keys, options.key)
+         citnum = #SILE.scratch.bibtex.cited.keys
+         SILE.scratch.bibtex.cited.citnums[options.key] = citnum
+      end
       local bibstyle = require("packages.bibtex.styles." .. style)
       local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
       if cite == Bibliography.Errors.UNKNOWN_TYPE then
@@ -573,10 +603,16 @@ package.documentation = [[
 \begin{document}
 BibTeX is a citation management system.
 It was originally designed for TeX but has since been integrated into a variety of situations.
+This experimental package allows SILE to read and process Bib(La)TeX \code{.bib} files and output citations and full text references.
 
-This experimental package allows SILE to read and process BibTeX \code{.bib} files and output citations and full text references.
+\smallskip
+\noindent
+\em{Loading a bibliography}
+\novbreak
 
-To load a BibTeX file, issue the command \autodoc:command{\loadbibliography[file=<whatever.bib>]}
+\indent
+To load a BibTeX file, issue the command \autodoc:command{\loadbibliography[file=<whatever.bib>]}.
+You can load multiple files, and the entries will be merged into a single bibliography database.
 
 \smallskip
 \noindent
@@ -584,12 +620,20 @@ To load a BibTeX file, issue the command \autodoc:command{\loadbibliography[file
 \novbreak
 
 \indent
+The “legacy” implementation is based on a custom rendering system.
+The plan is to eventually deprecate it in favor of the CSL implementation.
+
 To produce an inline citation, call \autodoc:command{\cite{<key>}}, which will typeset something like “Jones 1982”.
 If you want to cite a particular page number, use \autodoc:command{\cite[page=22]{<key>}}.
 
 To produce a bibliographic reference, use \autodoc:command{\reference{<key>}}.
 
-This implementation doesn’t currently produce full bibliography listings, and the only supported bibliography style is Chicago referencing.
+The \autodoc:setting[check=false]{bibtex.style} setting controls the style of the bibliography.
+It currently defaults to \code{chicago}, the only style supported out of the box.
+It can however be set to \code{csl} to enforce the use of the CSL implementation on the above commands.
+
+This implementation doesn’t currently produce full bibliography listings.
+(Actually, you can use the \autodoc:command{\printbibliography} introduced below, but then it always uses the CSL implementation for rendering the bibliography, differing from the output of the \autodoc:command{\reference} command.)
 
 \smallskip
 \noindent
