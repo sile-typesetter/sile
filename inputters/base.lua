@@ -49,6 +49,10 @@ end
 function inputter:process (doc)
    -- Input parsers can already return multiple ASTs, but so far we only process one
    local tree = self:parse(doc)[1]
+   if SU.debugging("inputter") and SU.debugging("ast") then
+      SU.debug("inputter", "Dumping AST tree before processing...\n")
+      SU.dump(tree)
+   end
    self:requireClass(tree)
    return SILE.process(tree)
 end
