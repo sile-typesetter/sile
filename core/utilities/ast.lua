@@ -36,7 +36,7 @@ function ast.debug (tree, level)
                if #content >= 1 then
                   ast.debug(content, level + 1)
                end
-            elseif content.id == "content" or (not content.command and not content.id) then
+            elseif not content.command and not content.id then
                ast.debug(content, level + 1)
             else
                SU.debug("ast", function ()

@@ -411,7 +411,7 @@ function SILE.process (ast)
          content()
       elseif SILE.Commands[content.command] then
          SILE.call(content.command, content.options, content)
-      elseif content.id == "content" or (not content.command and not content.id) then
+      elseif not content.command and not content.id then
          local pId = SILE.traceStack:pushContent(content, "content")
          SILE.process(content)
          SILE.traceStack:pop(pId)
