@@ -71,6 +71,16 @@ describe("#SIL #inputter", function ()
          assert.is.equal("bar", t[1][2].command)
          assert.is.equal("baz", t[1][2][1])
       end)
+
+      it("commands and environments to equivalent syntax trees", function ()
+         local t1 = inputter:parse([[\document{\em{emphasis}}]])[1]
+         local t2 = inputter:parse([[\begin{document}\begin{em}emphasis\end{em}\end{document}]])[1]
+         -- The "col" positions will differ, and we don't care about them
+         -- The "id" will differ, make it identical for comparison
+         local s1 = pl.pretty.write(t1, ""):gsub("col=%d+", "col=N")
+         local s2 = pl.pretty.write(t2, ""):gsub('id="environment"', 'id="command"'):gsub("col=%d+", "col=N")
+         assert.is.equal(s1, s2)
+      end)
    end)
 
    describe("should reject", function ()
