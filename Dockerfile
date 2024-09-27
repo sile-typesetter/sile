@@ -2,52 +2,19 @@
 
 ARG ARCHTAG
 
-FROM docker.io/library/archlinux:base-devel$ARCHTAG AS builder
+FROM docker.io/library/archlinux:$ARCHTAG AS base
+
+# Initialize keys so we can do package management
+RUN pacman-key --init && pacman-key --populate
+
+# This hack can convince Docker its cache is obsolete; e.g. when the contents
+# of downloaded resources have changed since being fetched. It's helpful to have
+# this as a separate layer because it saves time for local builds. Incrementing
+# this when pushing dependency updates to Caleb's Arch user repository or just
+# when the remote Docker Hub builds die should be enough.
+ARG DOCKER_HUB_CACHE=1
 
 ARG RUNTIME_DEPS
-ARG BUILD_DEPS
-
-# Freshen all base system packages
-RUN pacman-key --init
-RUN pacman --needed --noconfirm -Syq archlinux-keyring
-RUN pacman --needed --noconfirm -Suq
-
-# Install run-time dependencies
-RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS $BUILD_DEPS
-
-# Setup LuaRocks for use with LuaJIT roughly matching SILE's internal VM
-RUN luarocks config lua_version 5.1 && \
-    luarocks config lua_interpreter luajit && \
-    luarocks config variables.LUA "$(command -v luajit)" && \
-    luarocks config variables.LUA_INCDIR /usr/include/luajit-2.1/
-
-# Set at build time, forces Docker’s layer caching to reset at this point
-ARG REVISION
-
-COPY ./ /src
-WORKDIR /src
-
-# GitHub Actions builder stopped providing git history :(
-# See feature request at https://github.com/actions/runner/issues/767
-RUN build-aux/docker-bootstrap.sh
-
-RUN ./bootstrap.sh
-RUN ./configure --with-system-lua-sources --without-manual
-RUN make
-RUN make install DESTDIR=/pkgdir
-
-# Work around BuiltKit / buildx bug, they can’t copy to symlinks only dirs
-RUN mv /pkgdir/usr/local/{share/,}/man
-
-FROM docker.io/library/archlinux:base$ARCHTAG AS final
-
-# Same args as above, repeated because they went out of scope with FROM
-ARG RUNTIME_DEPS
-ARG VERSION
-ARG REVISION
-
-# Allow `su` with no root password so non-priv users can install dependencies
-RUN sed -i -e '/.so$/s/$/ nullok/' /etc/pam.d/su
 
 # Enable system locales for everything we have localizations for so tools like
 # `date` will output matching localized strings. By default Arch Docker images
@@ -55,13 +22,8 @@ RUN sed -i -e '/.so$/s/$/ nullok/' /etc/pam.d/su
 # rebuild custom Docker images with extra languages supported.
 RUN sed -i -e '/^NoExtract.*locale/d' /etc/pacman.conf
 
-# Set system locale to something other than 'C' that resolves to a real language
-ENV LANG=en_US.UTF-8
-
-# Freshen all base system packages (and cleanup cache)
-RUN pacman-key --init
-RUN pacman --needed --noconfirm -Syq archlinux-keyring && yes | pacman -Sccq
-RUN pacman --needed --noconfirm -Suq && yes | pacman -Sccq
+# Freshen all base system packages
+RUN pacman --needed --noconfirm -Syuq && yes | pacman -Sccq
 
 # Make sure *at least* glibc actually got reinstalled after enabling
 # extraction of locale files even if the version was fresh so we can use the
@@ -70,6 +32,54 @@ RUN pacman --noconfirm -Sq glibc && yes | pacman -Sccq
 
 # Install run-time dependencies
 RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS && yes | pacman -Sccq
+
+# Setup LuaRocks for use with LuaJIT roughly matching SILE's internal VM
+RUN luarocks config lua_version 5.1 && \
+    luarocks config lua_interpreter luajit && \
+    luarocks config variables.LUA "$(command -v luajit)" && \
+    luarocks config variables.LUA_INCDIR /usr/include/luajit-2.1/
+
+# Setup separate image for build so we don’t bloat the final image
+FROM base AS builder
+
+ARG BUILD_DEPS
+
+# Install build time dependencies
+RUN pacman --needed --noconfirm -Sq $BUILD_DEPS && yes | pacman -Sccq
+
+# Set at build time, forces Docker’s layer caching to reset at this point
+ARG REVISION
+
+COPY ./ /src
+WORKDIR /src
+
+# Take note of SILE's supported locales so the final system can build localized messages
+RUN ls i18n/ | sed 's/[.-].*$/_/;s/^/^/' | sort -u | grep -Ef - /usr/share/i18n/SUPPORTED > /etc/locale.gen
+
+# GitHub Actions builder stopped providing git history :(
+# See feature request at https://github.com/actions/runner/issues/767
+RUN build-aux/docker-bootstrap.sh
+
+RUN ./bootstrap.sh
+RUN ./configure --mandir='$prefix}/man' --with-system-lua-sources --without-system-luarocks --without-manual
+RUN make
+RUN make install DESTDIR=/pkgdir
+
+FROM base AS final
+
+# Same args as above, repeated because they went out of scope with FROM
+ARG REVISION
+ARG VERSION
+
+# Allow `su` with no root password so non-priv users can install dependencies
+RUN sed -i -e '/.so$/s/$/ nullok/' /etc/pam.d/su
+
+# Set system locale to something other than 'C' that resolves to a real language
+ENV LANG=en_US.UTF-8
+
+# Rebuild locale database so system apps have localized messages for SILE's supported locales
+COPY --from=builder /etc/locale.gen /etc
+RUN locale-gen
 
 LABEL org.opencontainers.image.title="SILE"
 LABEL org.opencontainers.image.description="A containerized version of the SILE typesetter"
@@ -84,10 +94,6 @@ COPY build-aux/docker-fontconfig.conf /etc/fonts/conf.d/99-docker.conf
 
 COPY --from=builder /pkgdir /
 COPY --from=builder /src/src/sile-entry.sh /usr/local/bin
-
-# Rebuild locale database after having added our supported locales.
-RUN ls /usr/local/share/sile/i18n/ | sed 's/[.-].*$/_/;s/^/^/' | sort -u | grep -Ef - /usr/share/i18n/SUPPORTED > /etc/locale.gen
-RUN locale-gen
 
 RUN sile --version
 
