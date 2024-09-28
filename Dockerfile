@@ -64,7 +64,11 @@ RUN build-aux/docker-bootstrap.sh
 ENV RUSTFLAGS="-C linker=clang -C link-arg=-fuse-ld=mold"
 
 RUN ./bootstrap.sh
-RUN ./configure --mandir='$prefix}/man' --with-system-lua-sources --without-system-luarocks --without-manual
+RUN ./configure \
+        --disable-embeded-resources \
+        --with-system-lua-sources \
+        --without-system-luarocks \
+        --without-manual
 RUN make
 RUN make install DESTDIR=/pkgdir
 
