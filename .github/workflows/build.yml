@@ -124,7 +124,7 @@ jobs:
         run: |
           make fake-manual
           make distdir
-      - name: Build from package
+      - name: Build from dist tree
         run: |
           make docker-test-dist
 
