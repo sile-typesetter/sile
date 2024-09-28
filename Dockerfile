@@ -95,6 +95,16 @@ LABEL org.opencontainers.image.revision="$REVISION"
 
 COPY build-aux/docker-fontconfig.conf /etc/fonts/conf.d/99-docker.conf
 
+# Inform the system Lua manifest where SILE's vendored modules are so they are
+# available to 3rd party packages even outside of SILE's runtime. Most notably
+# useful so that luarocks can find them as existing dependencies when
+# installing 3rd party modules. We replace the user tree instead of inserting
+# a new one because it doesn't make sense in Docker anyway and the default
+# priority works out better having it first.
+RUN luarocks config rocks_trees[1].root /usr/local/share/sile/lua_modules && \
+    luarocks config rocks_trees[1].name sile && \
+    luarocks config deps_mode all
+
 COPY --from=builder /pkgdir /
 COPY --from=builder /src/src/sile-entry.sh /usr/local/bin
 
