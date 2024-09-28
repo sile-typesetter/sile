@@ -60,6 +60,9 @@ RUN ls i18n/ | sed 's/[.-].*$/_/;s/^/^/' | sort -u | grep -Ef - /usr/share/i18n/
 # See feature request at https://github.com/actions/runner/issues/767
 RUN build-aux/docker-bootstrap.sh
 
+# Use clang and mold instead of gcc and ld for speed
+ENV RUSTFLAGS="-C linker=clang -C link-arg=-fuse-ld=mold"
+
 RUN ./bootstrap.sh
 RUN ./configure --mandir='$prefix}/man' --with-system-lua-sources --without-system-luarocks --without-manual
 RUN make
