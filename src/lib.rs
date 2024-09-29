@@ -1,10 +1,13 @@
 // rust-embed include attributes have issues with lots of matches...
 #![recursion_limit = "2048"]
 
+use mlua::prelude::*;
+
 #[cfg(not(feature = "static"))]
 use mlua::chunk;
-use mlua::prelude::*;
-use std::{env, path::PathBuf};
+use std::env;
+use std::path::PathBuf;
+
 #[cfg(feature = "cli")]
 pub mod cli;
 
@@ -16,21 +19,22 @@ pub mod types;
 pub type Result<T> = anyhow::Result<T>;
 
 pub fn start_luavm() -> crate::Result<Lua> {
-    let lua = unsafe { Lua::unsafe_new() };
+    let mut lua = unsafe { Lua::unsafe_new() };
     #[cfg(feature = "static")]
-    crate::embed::inject_embedded_loaders(&lua);
-    inject_paths(&lua);
-    load_sile(&lua);
-    inject_version(&lua);
+    {
+        lua = embed::inject_embedded_loaders(lua)?;
+    }
+    lua = inject_paths(lua)?;
+    lua = load_sile(lua)?;
+    lua = inject_version(lua)?;
     Ok(lua)
 }
 
-pub fn inject_paths(lua: &Lua) {
+pub fn inject_paths(lua: Lua) -> crate::Result<Lua> {
     #[cfg(feature = "static")]
     lua.load(r#"require("core.pathsetup")"#)
         .set_name("relative pathsetup loader")
-        .exec()
-        .unwrap();
+        .exec()?;
     #[cfg(not(feature = "static"))]
     {
         let datadir = env!("CONFIGURE_DATADIR").to_string();
@@ -38,7 +42,7 @@ pub fn inject_paths(lua: &Lua) {
             Ok(val) => format!("{datadir};{val}"),
             Err(_) => datadir,
         };
-        let sile_path: LuaString = lua.create_string(&sile_path).unwrap();
+        let sile_path: LuaString = lua.create_string(&sile_path)?;
         lua.load(chunk! {
             local status
             for path in string.gmatch($sile_path, "[^;]+") do
@@ -50,9 +54,9 @@ pub fn inject_paths(lua: &Lua) {
             end
         })
         .set_name("hard coded pathsetup loader")
-        .exec()
-        .unwrap();
+        .exec()?;
     }
+    Ok(lua)
 }
 
 pub fn get_rusile_exports(lua: &Lua) -> LuaResult<LuaTable> {
@@ -62,28 +66,29 @@ pub fn get_rusile_exports(lua: &Lua) -> LuaResult<LuaTable> {
     Ok(exports)
 }
 
-fn setenv(key: String, value: String) -> LuaResult<()> {
+fn setenv(key: String, value: String) {
     env::set_var(key, value);
-    Ok(())
 }
 
-pub fn inject_version(lua: &Lua) {
-    let sile: LuaTable = lua.globals().get("SILE").unwrap();
-    let mut full_version: String = sile.get("full_version").unwrap();
+pub fn inject_version(lua: Lua) -> crate::Result<Lua> {
+    let sile: LuaTable = lua.globals().get("SILE")?;
+    let mut full_version: String = sile.get("full_version")?;
     full_version.push_str(" [Rust]");
-    sile.set("full_version", full_version).unwrap();
+    sile.set("full_version", full_version)?;
+    Ok(lua)
 }
 
-pub fn load_sile(lua: &Lua) {
-    let entry: LuaString = lua.create_string("core.sile").unwrap();
-    let require: LuaFunction = lua.globals().get("require").unwrap();
-    require.call::<LuaTable>(entry).unwrap();
+pub fn load_sile(lua: Lua) -> crate::Result<Lua> {
+    let entry: LuaString = lua.create_string("core.sile")?;
+    let require: LuaFunction = lua.globals().get("require")?;
+    require.call::<LuaTable>(entry)?;
+    Ok(lua)
 }
 
 pub fn version() -> crate::Result<String> {
     let lua = start_luavm()?;
-    let sile: LuaTable = lua.globals().get("SILE").unwrap();
-    let full_version: String = sile.get("full_version").unwrap();
+    let sile: LuaTable = lua.globals().get("SILE")?;
+    let full_version: String = sile.get("full_version")?;
     Ok(full_version)
 }
 
