@@ -131,6 +131,68 @@ jobs:
         run: |
           make docker-test-dist
 
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    env:
+      CFLAGS: "-I/opt/homebrew/include/luajit-2.1 -I/opt/homebrew/include"
+      OBJCFLAGS: "-I/opt/homebrew/include/luajit-2.1 -I/opt/homebrew/include"
+      LDFLAGS: "-L/opt/homebrew/lib"
+      DOCKER: false
+      LDOC: false
+      NIX: false
+      SHA256SUM: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Cache test fonts
+        uses: actions/cache@v4
+        with:
+          path: |
+            .fonts
+            .sources
+          key: fonts-${{ hashFiles('Makefile-fonts') }}
+      - name: Cache lua_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            lua_modules
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+      - name: Install system dependencies
+        run: |
+          brew install \
+            autoconf \
+            automake \
+            expat \
+            ghostscript \
+            graphviz \
+            libtool \
+            luajit \
+            luarocks \
+            poppler \
+            rust \
+            unzip \
+            zlib
+          brew link icu4c@76 --force
+          brew link zlib --force
+          brew link expat --force
+          brew install --cask font-gentium-plus
+      - name: Configure
+        run: |
+          ./bootstrap.sh
+          ./configure \
+            --enable-developer-mode \
+            --without-developer-tools \
+            --with-system-lua-sources \
+            --with-manual
+          echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
+          echo "MAKEFLAGS=-j$(sysctl -n hw.ncpu) -Otarget" >> $GITHUB_ENV
+      - name: Make
+        run: |
+          make
+
   build-nix:
     runs-on: ubuntu-22.04
     name: Build Nix
