@@ -6,9 +6,14 @@
 .B [\fIoptions\fR]
 .B [\fIINPUT\fR]
 .SH DESCRIPTION
-The SILE typesetter reads an input file(s), by default in either SIL or XML format, and processes them to generate an output file, by default in PDF format.
-The output will be written to a file with the same name as the first input file with the extension changed to .pdf unless the \fB\-\-output\fR argument is used.
-Additional input or output formats can be handled by loading a module with the \fB\-\-use\fR argument to add support for them first.
+The SILE Typesetter reads input file(s) and typesets the content into a rendered documument format, typically PDF.
+.LP
+By default, input files may be in declarative SIL markup, structured XML, or programatic Lua.
+The input format is automatically detected by the active modules.
+By default, the output will be a file with the same name as the first input file with the extension changed to .pdf.
+The output filename can be overridden with the \fB\-\-output\fR argument.
+Using \fB\-\-backend\fR one can change to a different output format (or a different driver for the same format).
+Additional input or output formats can be handled by loading a 3rd party module that supports them by adding \fB\-\-use\fR argument on the command line (which will load prior to attempting to read input documents).
 .SH OPTIONS
 .TP
 .BR \-b ", " \-\-backend= \fIvalue\fR
