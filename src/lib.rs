@@ -60,7 +60,7 @@ pub fn inject_version(lua: &Lua) {
 pub fn load_sile(lua: &Lua) {
     let entry: LuaString = lua.create_string("core.sile").unwrap();
     let require: LuaFunction = lua.globals().get("require").unwrap();
-    require.call::<LuaString, ()>(entry).unwrap();
+    require.call::<LuaTable>(entry).unwrap();
 }
 
 pub fn version() -> crate::Result<String> {
@@ -153,7 +153,7 @@ pub fn run(
         eprintln!("{full_version}");
     }
     let init: LuaFunction = sile.get("init")?;
-    init.call::<_, ()>(())?;
+    init.call::<LuaValue>(())?;
     if let Some(inputs) = inputs {
         let input_filenames: LuaTable = lua.create_table()?;
         for input in inputs.iter() {
@@ -175,20 +175,20 @@ pub fn run(
             let spec = spec?;
             let module: LuaString = spec.get("module")?;
             let options: LuaTable = spec.get("options")?;
-            r#use.call::<(LuaString, LuaTable), ()>((module, options))?;
+            r#use.call::<(LuaString, LuaTable)>((module, options))?;
         }
         let input_filenames: LuaTable = sile_input.get("filenames")?;
         let process_file: LuaFunction = sile.get("processFile")?;
         for file in input_filenames.sequence_values::<LuaString>() {
-            process_file.call::<LuaString, ()>(file?)?;
+            process_file.call::<LuaString>(file?)?;
         }
         let finish: LuaFunction = sile.get("finish")?;
-        finish.call::<_, ()>(())?;
+        finish.call::<LuaValue>(())?;
     } else {
         let repl_module: LuaString = lua.create_string("core.repl")?;
         let require: LuaFunction = lua.globals().get("require")?;
-        let repl: LuaTable = require.call::<LuaString, LuaTable>(repl_module)?;
-        repl.call_method::<_, ()>("enter", ())?;
+        let repl: LuaTable = require.call::<LuaTable>(repl_module)?;
+        repl.call_method::<LuaValue>("enter", ())?;
     }
     Ok(())
 }
