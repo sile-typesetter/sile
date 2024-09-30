@@ -100,7 +100,7 @@ optional = true
 features = [ "derive", "string", "wrap_help" ]
 
 [dependencies.mlua]
-version = "0.9"
+version = "0.10.0-beta.2"
 features = [ "macros" ]
 
 [dependencies.rust-embed]
