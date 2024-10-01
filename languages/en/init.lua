@@ -1,4 +1,4 @@
-local hyphens = require("hyphens.misc.en")
+local hyphens = require("languages.en.hyphens")
 SILE.hyphenator.languages["en"] = hyphens
 
 -- Internationalization stuff

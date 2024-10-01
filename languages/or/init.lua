@@ -1,2 +1,2 @@
-local hyphens = require("hyphens.tex.or")
+local hyphens = require("languages.or.hyphens-tex")
 SILE.hyphenator.languages["or"] = hyphens

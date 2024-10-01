@@ -1,7 +1,7 @@
 -- Verkita originale por Fredrick BRENNAN (copypaste@kittens.ph) 2022-jare
 -- Original file by Fredrick R. Brennan (copypaste@kittens.ph) in 2022
 
-local hyphenator = require("hyphens.misc.eo")
+local hyphenator = require("languages.eo.hyphens")
 
 local function eo_ordinal (n, _)
    if n == nil then

@@ -5,7 +5,7 @@ SILE.nodeMakers.ca = pl.class({
    quoteTypes = { qu = true }, -- split tokens at apostrophes &c.
 })
 
-local hyphens = require("hyphens.tex.ca")
+local hyphens = require("languages.ca.hyphens-tex")
 SILE.hyphenator.languages["ca"] = hyphens
 
 SILE.hyphenator.languages["ca"].hyphenateSegments = function (node, segments, j)

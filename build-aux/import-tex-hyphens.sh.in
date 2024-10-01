@@ -11,7 +11,7 @@ git ls-tree -r --name-only $source_branch |
    grep 'sources/hyph-.*tex$' |
    while read tex_src; do
       lang=$(<<< "$tex_src" sed -E 's/[^-]+-//;s/.tex$//')
-      lua_dst=hyphens/tex/$lang.lua
+      lua_dst=languages/$lang/hyphens-tex.lua
       git show $source_branch:$tex_src |
          build-aux/transpile-tex-hyphen-patterns.lua \
          > $lua_dst

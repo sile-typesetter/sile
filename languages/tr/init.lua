@@ -13,7 +13,7 @@ SILE.settings:declare({
 SILE.nodeMakers.tr = pl.class(SILE.nodeMakers.unicode)
 SILE.nodeMakers.tr.wordTypes = { cm = true, qu = true }
 
-local hyphens = require("hyphens.misc.tr")
+local hyphens = require("languages.tr.hyphens")
 SILE.hyphenator.languages["tr"] = hyphens
 
 SILE.hyphenator.languages["tr"].hyphenateSegments = function (node, segments, j)

@@ -1,2 +1,2 @@
-local hyphens = require("hyphens.tex.gl")
+local hyphens = require("languages.gl.hyphens-tex")
 SILE.hyphenator.languages["gl"] = hyphens

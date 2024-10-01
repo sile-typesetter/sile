@@ -4,5 +4,5 @@ SILE.nodeMakers.cs = pl.class(SILE.nodeMakers.unicode)
 SILE.nodeMakers.cs.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRepeatHyphen
 SILE.nodeMakers.cs.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
 
-local hyphens = require("hyphens.tex.cs")
+local hyphens = require("languages.cs.hyphens-tex")
 SILE.hyphenator.languages["cs"] = hyphens

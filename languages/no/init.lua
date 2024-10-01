@@ -1,4 +1,4 @@
-local hyphens = require("hyphens.tex.no")
+local hyphens = require("languages.no.hyphens-tex")
 local patterns, exceptions = hyphens.patterns, hyphens.exceptions
 return {
    init = function ()

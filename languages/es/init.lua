@@ -6,5 +6,5 @@ SILE.nodeMakers.es.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRep
 
 SILE.hyphenator.languages["es"] = {}
 
-local hyphens = require("hyphens.misc.es")
+local hyphens = require("languages.es.hyphens")
 SILE.hyphenator.languages["es"] = hyphens
