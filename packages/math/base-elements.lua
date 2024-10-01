@@ -1395,13 +1395,23 @@ function elements.sqrt:output (x, y, line)
    local sw = self.symbolWidth
    local dh = h - self.symbolHeight
    local symbol = {
-      _r(self.radicalRuleThickness), "w", -- line width
-      2, "j", -- round line joins
-      _r(sw), _r(self.extraAscender), "m",
-      _r(sw * 0.4), _r(h + d), "l",
-      _r(sw * 0.15), _r(dh), "l",
-      0, _r(dh + 0.5), "l",
-      "S"
+      _r(self.radicalRuleThickness),
+      "w", -- line width
+      2,
+      "j", -- round line joins
+      _r(sw),
+      _r(self.extraAscender),
+      "m",
+      _r(sw * 0.4),
+      _r(h + d),
+      "l",
+      _r(sw * 0.15),
+      _r(dh),
+      "l",
+      0,
+      _r(dh + 0.5),
+      "l",
+      "S",
    }
    local svg = table.concat(symbol, " ")
    SILE.outputter:drawSVG(svg, x, y, sw, h, 1)

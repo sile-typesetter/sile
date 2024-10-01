@@ -316,8 +316,12 @@ describe("SILE.utilities", function ()
             }
             SU.collatedSort(sortme, nil, function (a, b, stringCompare)
                -- Sort by ascending age then ascending name
-               if a.age < b.age then return true end
-               if a.age > b.age then return false end
+               if a.age < b.age then
+                  return true
+               end
+               if a.age > b.age then
+                  return false
+               end
                return stringCompare(a.name, b.name) < 0
             end)
             assert.is.same({
@@ -330,12 +334,16 @@ describe("SILE.utilities", function ()
                { name = "Alice", year = 2005 },
                { name = "Charlie", year = 1995 },
                { name = "Bob", year = 1990 },
-               { name = "Alice", year = 1995 }
+               { name = "Alice", year = 1995 },
             }
             SU.collatedSort(namesAndYears, nil, function (a, b, stringCompare)
                local nameCompare = stringCompare(a.name, b.name)
-               if nameCompare < 0 then return true end
-               if nameCompare > 0 then return false end
+               if nameCompare < 0 then
+                  return true
+               end
+               if nameCompare > 0 then
+                  return false
+               end
                return a.year < b.year
             end)
             assert.is.same({

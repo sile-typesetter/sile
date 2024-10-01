@@ -11,7 +11,8 @@ local nostd = function ()
 
          in your project directly if needed. Note you may need to install the Lua rock
          as well since it no longer ships as a dependency.
-      ]])
+      ]]
+   )
 end
 -- luacheck: push ignore std
 ---@diagnostic disable: lowercase-global
