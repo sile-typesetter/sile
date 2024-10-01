@@ -282,6 +282,8 @@ AC_SUBST([ROCKREV], [1])
 QUE_SUBST_MAN_DATE
 
 AC_CONFIG_FILES([build-aux/list-distfiles.sh], [chmod +x build-aux/list-distfiles.sh])
+AC_CONFIG_FILES([build-aux/import-tex-hyphens.sh], [chmod +x build-aux/import-tex-hyphens.sh])
+AC_CONFIG_FILES([build-aux/transpile-tex-hyphen-patterns.lua], [chmod +x build-aux/transpile-tex-hyphen-patterns.lua])
 AC_CONFIG_FILES([Makefile justenough/Makefile sile-lua.1 core/features.lua core/pathsetup.lua core/version.lua])
 AC_CONFIG_FILES([sile-lua:sile.in], [chmod +x sile-lua])
 AC_CONFIG_FILES([tests/regressions.pl], [chmod +x tests/regressions.pl])

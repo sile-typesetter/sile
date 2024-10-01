@@ -1,4 +1,4 @@
-#!#usr/bin/env lua
+#!@LUA@
 
 local function parsePattern (doc)
    local pattern = {}
