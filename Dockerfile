@@ -72,6 +72,9 @@ RUN ./configure \
 RUN make
 RUN make install DESTDIR=/pkgdir
 
+# Work around BuiltKit / buildx bug, they can’t copy to symlinks only dirs
+RUN mv /pkgdir/usr/local/{share/,}/man
+
 FROM base AS final
 
 # Same args as above, repeated because they went out of scope with FROM
