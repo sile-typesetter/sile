@@ -125,6 +125,10 @@ function ConvertMathML (_, content)
          SU.error("Wrong number of children in mfrac: " .. #children)
       end
       return b.fraction(children[1], children[2])
+   elseif content.command == "msqrt" then
+      local children = convertChildren(content)
+      -- "The <msqrt> element generates an anonymous <mrow> box called the msqrt base
+      return b.sqrt(b.stackbox("H", children))
    elseif content.command == "mtable" or content.command == "table" then
       local children = convertChildren(content)
       return b.table(children, content.options)
