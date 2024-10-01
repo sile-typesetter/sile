@@ -32,12 +32,12 @@ local warned = false
 
 function typesetter:init (frame)
    SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", warned and "" or [[
-  The typesetter instance inheritance system for instances has been
-  refactored using a different object model. Your instance was created
-  and initialized using the object copy syntax from the stdlib model.
-  It has been shimmed for you using the new Penlight model, but this may
-  lead to unexpected behavior. Please update your code to use the new
-  Penlight based inheritance model.]])
+      The typesetter instance inheritance system for instances has been refactored
+      using a different object model. Your instance was created and initialized
+      using the object copy syntax from the stdlib model. It has been shimmed for
+      you using the new Penlight model, but this may lead to unexpected behavior.
+      Please update your code to use the new Penlight based inheritance model.
+   ]])
    warned = true
    self:_init(frame)
 end
@@ -383,7 +383,7 @@ function speakerChangeNode:shape ()
    else
       -- Should not occur:
       -- How could it possibly be shaped differently?
-      SU.warn("Speaker change logic met an unexpected case, this might be a bug.")
+      SU.warn("Speaker change logic met an unexpected case, this might be a bug")
    end
    return node
 end
@@ -940,7 +940,7 @@ end
 
 function typesetter:leaveHmode (independent)
    if self.state.hmodeOnly then
-      SU.error([[Paragraphs are forbidden in restricted horizontal mode.]])
+      SU.error("Paragraphs are forbidden in restricted horizontal mode")
    end
    SU.debug("typesetter", "Leaving hmode")
    local margins = self:getMargins()

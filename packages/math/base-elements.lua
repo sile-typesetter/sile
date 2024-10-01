@@ -121,9 +121,10 @@ local function retrieveMathTable (font)
          mathTableParsable, mathTable = pcall(ot.parseMath, rawMathTable)
       end
       if not fontHasMathTable or not mathTableParsable then
-         SU.error(([[You must use a math font for math rendering.
+         SU.error(([[
+            You must use a math font for math rendering
 
-  The math table in '%s' could not be %s.
+            The math table in '%s' could not be %s.
          ]]):format(face.filename, fontHasMathTable and "parsed" or "loaded"))
       end
       local upem = ot.parseHead(hb.get_table(face, "head")).unitsPerEm
@@ -908,7 +909,7 @@ end
 function elements.text:_init (kind, attributes, script, text)
    elements.terminal._init(self)
    if not (kind == "number" or kind == "identifier" or kind == "operator") then
-      SU.error("Unknown text node kind '" .. kind .. "'; should be one of: number, identifier, operator.")
+      SU.error("Unknown text node kind '" .. kind .. "'; should be one of: number, identifier, operator")
    end
    self.kind = kind
    self.script = script
