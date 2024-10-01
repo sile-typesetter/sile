@@ -315,5 +315,5 @@ return {
    exceptions = {
       "hard-ware",
       "soft-ware",
-   }
+   },
 }

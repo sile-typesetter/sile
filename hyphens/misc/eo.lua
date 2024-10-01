@@ -2008,5 +2008,5 @@ wq " overwrite input
       "1s2c2h",
       ".kalo3c2say",
       ".warin5g2hi2en",
-   }
+   },
 }

@@ -4463,5 +4463,5 @@ return {
       "ref-or-ma-tion",
       "ret-ri-bu-tion",
       "ta-ble",
-   }
+   },
 }

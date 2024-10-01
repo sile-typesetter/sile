@@ -6,4 +6,3 @@ SILE.nodeMakers.hr.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRep
 
 local hyphens = require("hyphens.tex.hr")
 SILE.hyphenator.languages["hr"] = hyphens
-

@@ -3371,5 +3371,5 @@ return {
       ".tran2s1oce",
       ".tran2s1ur",
       ".tri1ó2x",
-   }
+   },
 }

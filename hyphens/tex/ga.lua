@@ -1,7 +1,7 @@
 -- AUTOMATICALLY GENERATED FILE --
 return {
    hyphenmins = {
-      typesetting = {left = 2, right = 3},
+      typesetting = { left = 2, right = 3 },
    },
    patterns = {
       ".ab4ai",

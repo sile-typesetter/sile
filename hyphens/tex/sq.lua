@@ -1,8 +1,8 @@
 -- AUTOMATICALLY GENERATED FILE --
 return {
    hyphenmins = {
-      typesetting = {left = 2, right = 2},
-      generation = {left = 1, right = 1},
+      typesetting = { left = 2, right = 2 },
+      generation = { left = 1, right = 1 },
    },
    patterns = {
       "2'2",

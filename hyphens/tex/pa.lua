@@ -1,7 +1,7 @@
 -- AUTOMATICALLY GENERATED FILE --
 return {
    hyphenmins = {
-      generation = {left = 1, right = 1},
+      generation = { left = 1, right = 1 },
    },
    patterns = {
       "2‍2",

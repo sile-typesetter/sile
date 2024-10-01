@@ -1,7 +1,7 @@
 -- AUTOMATICALLY GENERATED FILE --
 return {
    hyphenmins = {
-      typesetting = {left = 1, right = 2},
+      typesetting = { left = 1, right = 2 },
    },
    patterns = {
       ".n2h2ā3",
