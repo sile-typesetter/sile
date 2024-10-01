@@ -1,3 +1,5 @@
+#!#usr/bin/env lua
+
 local function parsePattern (doc)
   local pattern = {}
   for line in doc:gmatch("[^\r\n]+") do
@@ -24,7 +26,7 @@ local function parseTagLeftRight(doc, pos)
   end
 end
 
-local function parseFile (doc)
+local function transpilePatterns (doc)
  -- Look for this block:
  -- % hyphenmins:
  -- %     generation:
@@ -70,62 +72,47 @@ local function parseFile (doc)
   return {hyphenmins = hyphenmins, patterns = t, exceptions = e, input = input}
 end
 
-local function convertPatternFile (filename)
-  local file, err = io.open(filename)
-  if not file then
-    return nil, err
-  end
-  local doc = file:read("*a")
-  file:close()
-  return parseFile(doc)
+local function readPatterns ()
+  local doc = io.stdin:read("*a")
+  io.stdin:close()
+  return doc
 end
 
-local function writePatternFile (filename, data)
-  local file, err = io.open(filename, "w")
-  if not file then
-    return nil, err
-  end
+local function writePatterns (data)
   local headline = ("-- AUTOMATICALLY GENERATED FILE --\n")
-  file:write(headline)
-  file:write("return {\n")
-  file:write("   hyphenmins = {\n")
+  io.write(headline)
+  io.write("return {\n")
+  io.write("   hyphenmins = {\n")
   for k, v in pairs(data.hyphenmins) do
-    file:write("      ", k, " = {left = ", v.left, ", right = ", v.right, "},\n")
+    io.write("      ", k, " = {left = ", v.left, ", right = ", v.right, "},\n")
   end
-  file:write("   },\n")
-  file:write("   patterns = {\n")
+  io.write("   },\n")
+  io.write("   patterns = {\n")
   for _, v in ipairs(data.patterns) do
-    file:write("      \"", v, "\",\n")
+    io.write("      \"", v, "\",\n")
   end
-  file:write("   },\n")
+  io.write("   },\n")
   if #data.exceptions > 0 then
-    file:write("   exceptions = {\n")
+    io.write("   exceptions = {\n")
     for _, v in ipairs(data.exceptions) do
-      file:write("      \"", v, "\",\n")
+      io.write("      \"", v, "\",\n")
     end
-    file:write("   },\n")
+    io.write("   },\n")
   end
   if data.input then
-    file:write("   input = { \"", data.input, "\" },\n")
+    io.write("   input = { \"", data.input, "\" },\n")
   end
-  file:write("}\n")
-  file:close()
+  io.write("}\n")
 end
 
-local input = arg[1]
-if not input then
-  print("Usage: texhyph2lua.lua <name>")
-  os.exit(1)
-end
-local res, err = convertPatternFile("sources/"..input..".tex")
-if not res then
-  print(input, "- Error:", err)
-  os.exit(1)
-end
+local doc = readPatterns()
+
+local res, _ = transpilePatterns(doc)
+
 if #res.patterns == 0 and #res.exceptions == 0 and not res.input then
-  print(input, "- Nothing found, skipping")
-  os.exit(1)
+  error("- Nothing found, skipping")
 end
-local output =  input:gsub("^hyph%-", "") .. ".lua"
-print(input, "- Patterns: " .. #res.patterns .. ", exceptions: " .. #res.exceptions .. (res.input and ", input: " .. res.input or ""))
-writePatternFile(output, res)
+
+io.stderr:write("- Patterns: " .. #res.patterns .. ", exceptions: " .. #res.exceptions .. "\n")
+
+writePatterns(res)
