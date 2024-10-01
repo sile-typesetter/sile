@@ -476,6 +476,7 @@ compileToMathML(
    convertTexlike(nil, {
       [==[
   \def{frac}{\mfrac{#1}{#2}}
+  \def{sqrt}{\msqrt{#1}}
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
 
