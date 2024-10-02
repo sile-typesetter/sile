@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["ta"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["ta"].patterns = {
    -- GENERAL RULE
    -- Do not break either side of ZERO-WIDTH JOINER  (U+200D)
@@ -81,3 +83,4 @@ SILE.hyphenator.languages["ta"].patterns = {
    -- Do not break before virama but break after virama.
    "2்1",
 }
+-- typos: ignore end

@@ -1,3 +1,4 @@
+-- typos: ignore start
 local patterns = {
    ".a4",
    ".aa4",
@@ -27448,7 +27449,9 @@ local patterns = {
    "å1ø8",
    "åøy4",
 }
+-- typos: ignore end
 
+-- typos: ignore start
 local exceptions = {
    "Ant-wer-pen",
    "Arm-strong",
@@ -27559,6 +27562,7 @@ local exceptions = {
    "velan",
    "velet",
 }
+-- typos: ignore end
 
 return {
    init = function ()

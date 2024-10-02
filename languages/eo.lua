@@ -2,6 +2,7 @@
 -- Original file by Fredrick R. Brennan (copypaste@kittens.ph) in 2022
 
 local hyphenator = { exceptions = {} }
+-- typos: ignore start
 hyphenator.patterns = {
    -- La fonto de la ŝablonoj ĉisubaj estas Sergio Pokrovskij (@pok49)'s GitHub-projekto «vortdivido».
    -- (The source of the patterns below is Sergio Pokrovskij (@pok49)'s «vortdivido» project on GitHub.)
@@ -2010,6 +2011,7 @@ wq " overwrite input
    ".kalo3c2say",
    ".warin5g2hi2en",
 }
+-- typos: ignore end
 
 local function eo_ordinal (n, _)
    if n == nil then
@@ -2036,8 +2038,10 @@ end
 -- Rezultas la vorton de la postulata nombra parametro
 -- Returns the Esperanto name of the required number argument
 local eo_string = function (num, _)
+   -- typos: ignore start
    local words = { "unu", "du", "tri", "kvar", "kvin", "ses", "sep", "ok", "naŭ", [0] = "" }
    local levels = { "mil", "miliono", "miliardo", [0] = "" }
+   -- typos: ignore end
    local ten = "dek"
    local hundred = "cent"
    for i = 2, 8, 1 do

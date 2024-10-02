@@ -6,6 +6,8 @@ SILE.nodeMakers.pt.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRep
 
 -- further patterns "1nô", "1tô" and "1cô" were added for Brazilian Portuguese
 SILE.hyphenator.languages["pt"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["pt"].patterns = {
    "1b2l",
    "1b2r",
@@ -318,8 +320,11 @@ SILE.hyphenator.languages["pt"].patterns = {
    "u3u",
    "1-",
 }
+-- typos: ignore end
 
+-- typos: ignore start
 SILE.hyphenator.languages["pt"].exceptions = {
    "hard-ware",
    "soft-ware",
 }
+-- typos: ignore end

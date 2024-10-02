@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["rm"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["rm"].patterns = {
    "2'2",
    "2'.",
@@ -376,3 +378,4 @@ SILE.hyphenator.languages["rm"].patterns = {
    "2z.",
    ".z2",
 }
+-- typos: ignore end

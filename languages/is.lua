@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["is"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["is"].patterns = {
    ".að3",
    ".aða4",
@@ -4189,3 +4191,4 @@ SILE.hyphenator.languages["is"].patterns = {
    "ö5u",
    "þ6ó",
 }
+-- typos: ignore end

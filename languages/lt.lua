@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["lt"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["lt"].patterns = {
    ".ap1",
    ".api1",
@@ -1547,3 +1549,4 @@ SILE.hyphenator.languages["lt"].patterns = {
    "2ž1š",
    "2ž1ž",
 }
+-- typos: ignore end

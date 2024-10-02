@@ -50,7 +50,7 @@ local otFeatureMap = {
       Alternate = "calt",
       WordInitial = "init",
       WordFinal = "fina",
-      LineFinal = "falt",
+      LineFinal = "fault",
       Inner = "medi",
    },
    VerticalPosition = {

@@ -140,7 +140,7 @@ Kerns:
 
 \section{The typesetter}
 
-SILE’s typesetting is organised by the \code{SILE.typesetter} object.
+SILE’s typesetting is organized by the \code{SILE.typesetter} object.
 It maintains two queues of material that it is still working on: the node queue and the output queue.
 Material in these queues is content that has been parsed but not yet rendered to the canvas and can still be manipulated.
 The node queue (\code{SILE.typesetter.state.nodes}) contains new horizontal boxes and glue

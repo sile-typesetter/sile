@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["uk"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["uk"].patterns = {
    -- break words into syllables (rules60 \S 30);
    -- breakpoints between consecutive consonants
@@ -4359,3 +4361,4 @@ SILE.hyphenator.languages["uk"].patterns = {
    "-'8'8",
    "8'8'-",
 }
+-- typos: ignore end

@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["ml"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["ml"].patterns = {
    -- GENERAL RULE
    -- Do not break either side of ZERO-WIDTH JOINER  (U+200D)
@@ -98,3 +100,4 @@ SILE.hyphenator.languages["ml"].patterns = {
    "2ൾ",
    "2ൿ",
 }
+-- typos: ignore end

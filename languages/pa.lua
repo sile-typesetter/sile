@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["pa"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["pa"].patterns = {
    -- GENERAL RULE
    -- Do not break either side of ZERO-WIDTH JOINER  (U+200D)
@@ -70,3 +72,4 @@ SILE.hyphenator.languages["pa"].patterns = {
    "2ੰ2",
    "2ੱ2",
 }
+-- typos: ignore end

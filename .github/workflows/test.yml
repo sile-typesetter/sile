@@ -46,14 +46,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
       - name: Setup ‘lua’
-        uses: leafo/gh-actions-lua@v10
+        uses: hishamhm/gh-actions-lua@master
         with:
           luaVersion: ${{ matrix.luaVersion[0] }}
           luaCompileFlags: ${{ matrix.luaVersion[1] }}
       - name: Setup ‘cargo’
         uses: actions-rs/toolchain@v1
       - name: Setup ‘luarocks’
-        uses: leafo/gh-actions-luarocks@v4
+        uses: hishamhm/gh-actions-luarocks@master
       - name: Prep system Lua for use
         run: |
           luarocks install busted
@@ -71,7 +71,7 @@ jobs:
           ./bootstrap.sh
           ./configure \
             ${{ matrix.luaVersion[1] }} \
-            --enable-developer-mode LDOC=false LUACHECK=false NIX=false DELTA=cat STYLUA=false \
+            --enable-developer-mode LDOC=false LUACHECK=false NIX=false DELTA=cat STYLUA=false TYPOS=false \
             --disable-font-variations \
             --with${{ !startsWith(matrix.luaVersion[0], 'luajit') && 'out' || '' }}-luajit \
             --without-system-luarocks \

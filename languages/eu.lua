@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["eu"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["eu"].patterns = {
    -- Rule SR1
    -- Vowels are kept together by the defaults
@@ -201,3 +203,4 @@ SILE.hyphenator.languages["eu"].patterns = {
    "su2b2r",
    "su2b2l",
 }
+-- typos: ignore end

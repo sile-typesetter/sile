@@ -172,7 +172,7 @@ function outputter:setLinkAnchor (name, x, y)
 end
 
 function outputter:beginLink (dest, opts)
-   self:_writeline("Begining a link", dest, opts)
+   self:_writeline("Beginning a link", dest, opts)
 end
 
 function outputter:endLink (dest, opts, x0, y0, x1, y1)

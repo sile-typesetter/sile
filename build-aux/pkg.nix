@@ -24,6 +24,7 @@
 , gentium
 , runCommand
 , stylua
+, typos
 }:
 
 let
@@ -98,6 +99,7 @@ in stdenv.mkDerivation (finalAttrs: {
     fontconfig
     libiconv
     stylua
+    typos
   ] ++ lib.optionals stdenv.isDarwin [
     darwin.apple_sdk.frameworks.AppKit
   ];

@@ -1,10 +1,12 @@
 SILE.nodeMakers.hr = pl.class(SILE.nodeMakers.unicode)
 
--- According to Croation rules, when a break occurs at an explicit hyphen, the hyphen gets repeated on the next line...
+-- According to Croatian rules, when a break occurs at an explicit hyphen, the hyphen gets repeated on the next line...
 SILE.nodeMakers.hr.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRepeatHyphen
 SILE.nodeMakers.hr.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
 
 SILE.hyphenator.languages["hr"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["hr"].patterns = {
    "a1a2",
    "a1e2",
@@ -1482,3 +1484,4 @@ SILE.hyphenator.languages["hr"].patterns = {
    "n2s1t",
    "l2f1t",
 }
+-- typos: ignore end

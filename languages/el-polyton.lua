@@ -1,4 +1,6 @@
 SILE.hyphenator.languages["el-polyton"] = {}
+
+-- typos: ignore start
 SILE.hyphenator.languages["el-polyton"].patterns = {
    -------- vowels
    ---- Vowel patterns (pre-combined)
@@ -1190,3 +1192,4 @@ SILE.hyphenator.languages["el-polyton"].patterns = {
    "6τσ5ν2τ",
    "6τϲ5ν2τ",
 }
+-- typos: ignore end

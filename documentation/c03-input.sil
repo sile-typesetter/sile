@@ -226,7 +226,7 @@ Here are a few more examples of SILE commands:
 \end{raw}%
 \subsection{Environments}
 
-Commands like \autodoc:command{\chapter} (to start a chapter) and \autodoc:command{\em} (to emphasise text) are normally used to enclose a relatively small piece of text—a few lines at most.
+Commands like \autodoc:command{\chapter} (to start a chapter) and \autodoc:command{\em} (to emphasize text) are normally used to enclose a relatively small piece of text—a few lines at most.
 Where you want to enclose a larger piece of the document, you can use an \em{environment}.
 An environment begins with \code{\\begin\{\em{name}\}} and encloses all the text up until the corresponding \code{\\end\{\em{name}\}}.
 We’ve already seen an example: the \autodoc:environment[check=false]{document} environment, which must enclose the \em{entire} document.

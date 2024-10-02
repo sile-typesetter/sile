@@ -450,7 +450,7 @@ local parseCoverage = function (offset, fd)
          for glyphID = ranges[i].startGlyphID, ranges[i].endGlyphID do
             local index = ranges[i].startCoverageIndex + glyphID - ranges[i].startGlyphID + 1 -- array in lua is one-based
             if coverage[index] then
-               SU.error(glyphID .. " already exist in converage when processing " .. ranges[i])
+               SU.error(glyphID .. " already exist in coverage when processing " .. ranges[i])
             end
             coverage[index] = glyphID
          end

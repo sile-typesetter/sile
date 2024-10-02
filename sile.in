@@ -4,17 +4,19 @@
 -- so require() isn't something we can rely on.
 local status
 for path in string.gmatch("@SILE_PATH@", "[^;]+") do
-  status = pcall(dofile, path .. "/core/pathsetup.lua")
-  if status then break end
+   status = pcall(dofile, path .. "/core/pathsetup.lua")
+   if status then
+      break
+   end
 end
 if not status then
-  dofile("./core/pathsetup.lua")
+   dofile("./core/pathsetup.lua")
 end
 
 -- On FreeBSD, Lua's debug module doesn't give us info above the top of the stack.
--- Since our detection is currently burried in a module it doesn't tell us the executable.
+-- Since our detection is currently buried in a module it doesn't tell us the executable.
 if _G.executablePath == "=[C]" then
-  _G.executablePath = debug.getinfo(1, "S").source
+   _G.executablePath = debug.getinfo(1, "S").source
 end
 
 -- This global is set here and *also* in the core library, since this
@@ -25,36 +27,34 @@ SILE.full_version = SILE.full_version .. " [Lua]"
 local cli = require("core.cli")
 cli:parseArguments()
 
-if not os.getenv 'LUA_REPL_RLWRAP' and not SILE.quiet then
-  io.stderr:write(SILE.full_version .. '\n')
+if not os.getenv("LUA_REPL_RLWRAP") and not SILE.quiet then
+   io.stderr:write(SILE.full_version .. "\n")
 end
 
 SILE.init()
 
 if SILE.input.filenames and #SILE.input.filenames >= 1 then
+   for _, spec in ipairs(SILE.input.uses) do
+      SILE.use(spec.module, spec.options)
+   end
 
-  for _, spec in ipairs(SILE.input.uses) do
-    SILE.use(spec.module, spec.options)
-  end
+   local process_status, error_msg = xpcall(function ()
+      pl.tablex.imap(SILE.processFile, SILE.input.filenames)
+   end, SILE.errorHandler)
 
-  local process_status, error_msg = xpcall(function()
-    pl.tablex.imap(SILE.processFile, SILE.input.filenames)
-  end, SILE.errorHandler)
+   if not process_status then
+      if type(error_msg) == "string" and error_msg:match(": interrupted!") then
+         SILE.outputter:finish()
+      else
+         io.stderr:write("\nerror summary:\n\t" .. tostring(error_msg) .. "\n")
+      end
+      os.exit(1)
+   end
 
-  if not process_status then
-    if type(error_msg) == "string" and error_msg:match(": interrupted!") then
-      SILE.outputter:finish()
-    else
-      io.stderr:write("\nerror summary:\n\t" .. tostring(error_msg) .. "\n")
-    end
-    os.exit(1)
-  end
-
-  SILE.finish()
-
+   SILE.finish()
 else
-  local repl = require("core.repl")
-  repl:enter()
+   local repl = require("core.repl")
+   repl:enter()
 end
 
 -- vim: ft=lua

@@ -23,7 +23,7 @@ Sed non risus. Suspendisse lectus tortor.
 Lorem ipsum dolor sit amet, sit amet adipiscing.
 Suspendisse lectus tortor.
 
-% Punctiation spaces are U+00A0 in the following case.
+% Punctuation spaces are U+00A0 in the following case.
 % Expectation:
 % French punctuation spaces are managed automatically,
 % also replacing U+00A0.

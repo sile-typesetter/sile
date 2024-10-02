@@ -19,7 +19,7 @@ _G.luautf8 = require("lua-utf8")
 -- For handling messages in various languages SILE provides an implementation of
 -- [Project Fluent](https://projectfluent.org/)'s localization system (originally developed by Mozilla for use in
 -- Firefox). This global is an instantiated interface to [fluent-lua](https://github.com/alerque/fluent-lua) pre-loaded
--- with resources for all the langugaes and regions SILE has support for.
+-- with resources for all the languages and regions SILE has support for.
 _G.fluent = require("fluent")()
 
 -- For developer testing only, usually in CI
