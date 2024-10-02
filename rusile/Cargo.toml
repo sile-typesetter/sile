@@ -26,5 +26,5 @@ luajit = [ "mlua/luajit" ]
 vendored = [ "mlua/vendored" ]
 
 [dependencies.mlua]
-version = "0.9"
+workspace = true
 features = [ "macros", "module" ]

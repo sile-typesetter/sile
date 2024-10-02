@@ -57,13 +57,13 @@ function outputter:setCursor (x, y, relative)
          if newy - cursorY > bs then
             outfile:write("\n")
          else
-            outfile:write("‫")
+            outfile:write("\u{202b}")
          end
       elseif newx > cursorX then
          if newx:tonumber() - cursorX:tonumber() > spc then
             outfile:write(" ")
          else
-            outfile:write("‫")
+            outfile:write("\u{202b}")
          end
       end
    end

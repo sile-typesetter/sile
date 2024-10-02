@@ -67,7 +67,7 @@ local function extendPaths (path, silesourcedir)
       prependPath(path .. "/sile")
    end
    -- These paths are *only* used in developer mode for build testing
-   if "@DEVELOPER_FALSE@" ~= "" then -- see ./configure --(en|dis)able-developer
+   if "@DEVELOPER_MODE_TRUE@" == "" then -- see ./configure --(en|dis)able-developer-mode
       prependCPath(path .. "/libtexpdf/.libs")
       prependCPath(path .. "/justenough/.libs")
    end

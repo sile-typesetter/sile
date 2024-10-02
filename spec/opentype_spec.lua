@@ -20,6 +20,6 @@ describe("The OpenType loader/parser", function ()
 
    it("should convert Microsoft-platform name strings to UTF8", function ()
       local version = font.names[5]["en-US"][1]
-      assert.is.equal("Version 7.020;RELEASE", version)
+      assert.is.equal("Version 7.050;RELEASE", version)
    end)
 end)

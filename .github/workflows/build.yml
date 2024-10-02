@@ -63,18 +63,18 @@ jobs:
         run: |
           make dist
       - name: Upload source dist artifact
-        if: ${{ matrix.configuration[0] == 'dynamic' && !contains(github.ref, 'refs/tags/v') }}
+        if: matrix.configuration[0] == 'dynamic' && !startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
           name: sile-${{ env.VERSION }}
           path: sile-${{ env.VERSION }}.zip
       - name: Append architecture to static binary
-        if: ${{ matrix.configuration[0] == 'static' }}
+        if: matrix.configuration[0] == 'static'
         run: |
           cp sile sile-${{ env.CARCH }}
           sha256sum sile-${{ env.CARCH }} | tee -a sile-${{ env.VERSION }}.sha256.txt
       - name: Upload static binary artifact
-        if: ${{ matrix.configuration[0] == 'static' && !contains(github.ref, 'refs/tags/v') }}
+        if: matrix.configuration[0] == 'static' && !startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
           name: sile-${{ env.CARCH }}
@@ -124,7 +124,7 @@ jobs:
         run: |
           make fake-manual
           make distdir
-      - name: Build from package
+      - name: Build from dist tree
         run: |
           make docker-test-dist
 
@@ -144,9 +144,9 @@ jobs:
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v13
+        uses: DeterminateSystems/nix-installer-action@v14
       - name: Cache Nix dependencies
-        uses: DeterminateSystems/magic-nix-cache-action@v7
+        uses: DeterminateSystems/magic-nix-cache-action@v8
       - name: Setup developer environment
         run: |
           nix develop --command ./bootstrap.sh
