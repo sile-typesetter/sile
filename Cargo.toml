@@ -1,20 +1,36 @@
-[package]
-name = "sile"
+[workspace]
+resolver = "2"
+members = [
+  ".",
+  "rusile",
+]
+
+[workspace.package]
 version = "0.15.5"
 edition = "2021"
 rust-version = "1.71.0"
-description = "Simon’s Improved Layout Engine"
 authors = [
   "Simon Cozens",
   "Caleb Maclennan <caleb@alerque.com>",
   "Olivier Nicole",
   "Didier Willis"
 ]
-readme = "README.md"
 homepage = "https://sile-typesetter.org"
 repository = "https://github.com/sile-typesetter/sile"
 license = "MIT"
+
+[package]
+name = "sile"
+description = "Simon’s Improved Layout Engine"
+readme = "README.md"
 build = "build-aux/build.rs"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [package.metadata.typos.default]
 locale = "en-us"
@@ -91,6 +107,9 @@ zsh = [ "completions" ]
 [profile.release]
 lto = true
 
+[workspace.dependencies.mlua]
+version = "0.10.0-beta.2"
+
 [dependencies.anyhow]
 version = "1.0"
 
@@ -100,8 +119,11 @@ optional = true
 features = [ "derive", "string", "wrap_help" ]
 
 [dependencies.mlua]
-version = "0.9"
+workspace = true
 features = [ "macros" ]
+
+# [dependencies.rusile]
+# path = "rusile"
 
 [dependencies.rust-embed]
 version = "8.0"
