@@ -15,7 +15,7 @@ function ast.debug (tree, level)
    local out = string.rep("  ", 1 + level)
    if level == 0 then
       SU.debug("ast", function ()
-         return "[" .. SILE.currentlyProcessingFile
+         return "[" .. (SILE.currentlyProcessingFile or "<nowhere>")
       end)
    end
    if type(tree) == "function" then
@@ -36,7 +36,7 @@ function ast.debug (tree, level)
                if #content >= 1 then
                   ast.debug(content, level + 1)
                end
-            elseif content.id == "content" or (not content.command and not content.id) then
+            elseif not content.command and not content.id then
                ast.debug(content, level + 1)
             else
                SU.debug("ast", function ()
