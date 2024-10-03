@@ -45,6 +45,7 @@ let
     luasocket
     luautf8
     penlight
+    serpent
     vstruct
     # lua packages needed for testing
     busted
