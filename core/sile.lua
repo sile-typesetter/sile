@@ -431,7 +431,7 @@ function SILE.process (ast)
    end
 end
 
-local preloadedinputters = { "xml", "lua", "sil" }
+local preloadedinputters = { "xml", "lua", "ast", "sil" }
 
 local function detectFormat (doc, filename)
    -- Preload default reader types so content detection has something to work with

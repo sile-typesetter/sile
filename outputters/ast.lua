@@ -29,6 +29,8 @@ function outputter:preProcess (ast)
       }
    )
    outfile:write(serialized)
+   -- Only dump the *first* AST we're given dodging SILE generated ones (like folios) later
+   self.preProcess = function () end
 end
 
 function outputter:finish ()
