@@ -6,6 +6,10 @@ Supporting a language in SILE involves some combination of:
 * A hyphenation patterns module
 * Localization strings
 
+## Localization strings
+
+Each locale may have a `messages.ftl` file that provides translations of strings that may be output into documents.
+
 ## Hyphenation patterns
 
 Hyphenation rules are typically handled via patterns for the Knuth-Liang hyphenation algorithm.
