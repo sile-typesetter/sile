@@ -3,17 +3,10 @@
 #![crate_type = "staticlib"]
 
 use mlua::prelude::*;
-use sile::rusile_demo;
 
 #[mlua::lua_module]
 fn rusile(lua: &Lua) -> LuaResult<LuaTable> {
     let exports = lua.create_table().unwrap();
-    let demo: LuaFunction = lua.create_function(demo).unwrap();
-    exports.set("demo", demo)?;
+    exports.set("demo", LuaFunction::wrap_raw(sile::rusile_demo))?;
     Ok(exports)
-}
-
-fn demo(lua: &Lua, (): ()) -> LuaResult<LuaString> {
-    let res = rusile_demo().unwrap();
-    lua.create_string(res)
 }

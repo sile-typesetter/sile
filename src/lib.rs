@@ -202,5 +202,5 @@ fn paths_to_strings(paths: Vec<PathBuf>) -> Vec<String> {
 }
 
 pub fn rusile_demo() -> Result<String> {
-    Ok("Hello from rusile".to_string())
+    Ok("Hello from rusile in the ten era".to_string())
 }

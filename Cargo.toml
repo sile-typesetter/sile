@@ -109,6 +109,7 @@ lto = true
 
 [workspace.dependencies.mlua]
 version = "0.10.0-rc.1"
+features = [ "anyhow" ]
 
 [dependencies.anyhow]
 version = "1.0"
