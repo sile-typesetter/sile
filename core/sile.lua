@@ -218,10 +218,10 @@ function SILE.init ()
       SILE.shaper = SILE.shapers.harfbuzz()
       SILE.outputter = SILE.outputters.debug()
    elseif SILE.backend == "text" then
-      SILE.shaper = SILE.shapers.harfbuzz()
+      SILE.shaper = SILE.shapers.dummy()
       SILE.outputter = SILE.outputters.text()
    elseif SILE.backend == "dummy" then
-      SILE.shaper = SILE.shapers.harfbuzz()
+      SILE.shaper = SILE.shapers.dummy()
       SILE.outputter = SILE.outputters.dummy()
    end
    SILE.pagebuilder = SILE.pagebuilders.base()
