@@ -1,4 +1,5 @@
 local base = require("outputters.base")
+local serpent = require("serpent")
 
 local outputter = pl.class(base)
 outputter._name = "ast"
@@ -15,8 +16,19 @@ end
 
 function outputter:preProcess (ast)
    self:_ensureInit()
-   local prettyprinted = pl.pretty.write(ast, "   ")
-   outfile:write(prettyprinted)
+   local serialized = serpent.serialize(
+      ast,
+      {
+         comment = false,
+         compact = true,
+         fatal = true,
+         indent = "   ",
+         metatostring = false,
+         sortkeys = true,
+         sparse = true,
+      }
+   )
+   outfile:write(serialized)
 end
 
 function outputter:finish ()
