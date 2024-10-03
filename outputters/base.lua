@@ -27,6 +27,10 @@ function outputter:runHooks (category, data)
    return data
 end
 
+function outputter.preProcess (_, ast)
+   return ast
+end
+
 function outputter.newPage () end
 
 function outputter:finish ()

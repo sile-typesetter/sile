@@ -218,11 +218,14 @@ function SILE.init ()
       SILE.shaper = SILE.shapers.harfbuzz()
       SILE.outputter = SILE.outputters.debug()
    elseif SILE.backend == "text" then
-      SILE.shaper = SILE.shapers.harfbuzz()
+      SILE.shaper = SILE.shapers.dummy()
       SILE.outputter = SILE.outputters.text()
    elseif SILE.backend == "dummy" then
-      SILE.shaper = SILE.shapers.harfbuzz()
+      SILE.shaper = SILE.shapers.dummy()
       SILE.outputter = SILE.outputters.dummy()
+   elseif SILE.backend == "ast" then
+      SILE.shaper = SILE.shapers.dummy()
+      SILE.outputter = SILE.outputters.ast()
    end
    SILE.pagebuilder = SILE.pagebuilders.base()
    io.stdout:setvbuf("no")
@@ -399,6 +402,7 @@ end
 -- iterate through the tree handling each item in the order encountered.
 -- @tparam table ast SILE content in abstract syntax tree format (a table of strings, functions, or more AST trees).
 function SILE.process (ast)
+   ast = SILE.outputter:preProcess(ast)
    if not ast then
       return
    end
@@ -427,7 +431,7 @@ function SILE.process (ast)
    end
 end
 
-local preloadedinputters = { "xml", "lua", "sil" }
+local preloadedinputters = { "xml", "lua", "ast", "sil" }
 
 local function detectFormat (doc, filename)
    -- Preload default reader types so content detection has something to work with
