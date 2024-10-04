@@ -3,10 +3,8 @@
 
 local loadkit = require("loadkit")
 
--- BEGIN OMIKHLEIA HACKLANG
 -- Disabled for now, see further below.
---   local cldr = require("cldr")
--- END OMIKHLEIA HACKLANG
+-- local cldr = require("cldr")
 
 loadkit.register("ftl", function (file)
    local contents = assert(file:read("*a"))
@@ -16,7 +14,6 @@ end)
 
 SILE.scratch.loaded_languages = {}
 
--- BEGIN OMIKHLEIA HACKLANG
 local icu = require("justenoughicu")
 
 -- This small utility could be moved to utilities as SU.forLanguage()...
@@ -40,37 +37,20 @@ local function forLanguage(langbcp47, callback)
    end
    return nil
 end
--- END OMIKHLEIA HACKLANG
 
 SILE.languageSupport = {
    languages = {},
-   -- BEGIN OMIKHLEIA HACKLANG
-   -- BAD CODE SMELL WARNING!!!!
-   -- In earlier versions this was used where we now have a "loadonce" table of boolean.
-   -- The change occurred here https://github.com/sile-typesetter/sile/commit/0c5e7f97f3c73ab1b6cd7aee0afca4a59c447cd9
-   -- So this table is not handled as it was, and shouldn't be used! But:
-   --   - font.lua uses it at one point...
-   --   - so does languages/kn.lua
-   --   - and also packages/complex-spaces
-   -- END OMIKHLEIA HACKLANG
    loadLanguage = function (language)
       language = language or SILE.settings:get("document.language")
-      -- BEGIN OMIKHLEIA HACKLANG
-      -- Either done too soon or plain wrong (a BCP47 language can e.g. contain a script for instance, sr-Latn
-      -- and I don't see that in https://github.com/alerque/cldr-lua/blob/master/cldr/data/locales.lua
-      -- I don't really know why we would want that CLDR filtering here BTW...
-      -- language = cldr.locales[language] and language or "und"
-      -- The user may have set document.language to anything, let's ensure a canonical
-      -- BCP47 language...
+      -- The user may have set document.language to anything, let's ensure a canonical BCP47 language...
       if language ~= "und" then
          language = icu.canonicalize_language(language)
+         -- language = cldr.locales[language] and language or "und"
       end
-      -- END OMIKHLEIA HACKLANG
       if SILE.scratch.loaded_languages[language] then
          return
       end
       SILE.scratch.loaded_languages[language] = true
-      -- BEGIN OMIKHLEIA HACKLANG
       -- We need to find language resources for this BCP47 identifier, from the less specific
       -- to the more general.
       local langresource, matchedlang = forLanguage(language, function (lang)
@@ -118,23 +98,17 @@ SILE.languageSupport = {
             -- a ftl file. APIs that aren't stateless are messy :(
             -- in the case of our example, they had to be read into "en"...
             -- HACK HACK, all we can do is reloaad it fully, but under the target "en-GB" name...
-            local loaded = string.format("i18n.%s", matchedi18n)
+            local loaded = string.format("language.%s.messages", matchedi18n)
             package.loaded[loaded] = nil -- HACK force reload!!!
             fluent:set_locale(language)
             require(string.format("i18n.%s", matchedi18n))
          end
       end
-      -- Most language resource files act by side effects, directly tweaking
-      -- SILE.nodeMarkers.xx, SILE.hyphenator.languages.xx, SU.formatNumber.xx (etc.? Doh)
-      -- BUT some don't do that exactly AND return a table with an init method...
-      -- Unclear API discrepancy, heh.
       if type(lang) == "table" and lang.init then
          lang.init()
       end
-      -- END OMIKHLEIA HACKLANG
       fluent:set_locale(original_language)
    end,
-
 }
 
 SILE.registerCommand("language", function (options, content)

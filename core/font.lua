@@ -1,11 +1,6 @@
 --- font
 -- @module SILE.font
 
--- BEGIN OMIKHLEIA HACKLANG
--- No longer required here, see further below
---   local icu = require("justenoughicu")
--- END OMIKHLEIA HACKLANG
-
 local lastshaper
 
 SILE.registerCommand("font", function (options, content)
@@ -45,37 +40,12 @@ SILE.registerCommand("font", function (options, content)
       SILE.settings:set("font.direction", options.direction)
    end
    if options.language then
-      -- BEGIN OMIKHLEIA HACKLANG
-      -- Commented out. Too soon and or at discrepancy with the "language" command anyway.
-      -- So let document.language is what the user wants, and loadLanguage take care of it
-      --
-      -- if options.language ~= "und" and icu and icu.canonicalize_language then
-      --   local newlang = icu.canonicalize_language(options.language)
-      --   -- if newlang ~= options.language then
-      --     -- SU.warn("Language '"..options.language.."' not canonical, '"..newlang.."' will be used instead.")
-      --   -- end
-      --   options.language = newlang
-      -- end
-      -- END OMIKHLEIA HACKLANG
       SILE.languageSupport.loadLanguage(options.language)
       SILE.settings:set("document.language", options.language)
-      -- BEGIN OMIKHLEIA HACKLANG
-      -- Commented out. This is BAD design:
-      -- Fluent maintains a global state (locale) but we could be in a temporary environment
-      -- if the font command has contents, and we'd need this to remain scoped.
-      -- So we should act here!
-      --     fluent:set_locale(options.language)
-      -- END OMIKHLEIA HACKLANG
    end
    if options.script then
       SILE.settings:set("font.script", options.script)
    elseif SILE.settings:get("document.language") then
-      -- BEGIN OMIKHLEIA HACKLANG
-      -- BAD STUFF WARNING: This SILE.languageSupport.languages[] is broken, (nearly always returning nil),
-      -- see comment in languages.lua
-      -- ON THE OTHER HAND, setting font.script doesn't seem to be used in any sensible way...
-      --  Possible code smell here.
-      -- END OMIKHLEIA HACKLANG
       local lang = SILE.languageSupport.languages[SILE.settings:get("document.language")]
       if lang and lang.defaultScript then
          SILE.settings:set("font.script", lang.defaultScript)
