@@ -115,6 +115,7 @@ function package:_init (options)
    self:loadPackage("inputfilter")
    self:loadPackage("rules")
    self:loadPackage("raiselower")
+   self:loadPackage("verbatim")
    if options then
       pl.tablex.update(theme, options)
    end
