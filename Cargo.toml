@@ -123,9 +123,6 @@ features = [ "derive", "string", "wrap_help" ]
 workspace = true
 features = [ "macros" ]
 
-# [dependencies.rusile]
-# path = "rusile"
-
 [dependencies.rust-embed]
 version = "8.0"
 optional = true

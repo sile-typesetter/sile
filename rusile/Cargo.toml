@@ -11,7 +11,7 @@ repository.workspace = true
 license.workspace = true
 
 [lib]
-crate_type = ["rlib", "cdylib", "staticlib"]
+crate-type = ["rlib", "cdylib", "staticlib"]
 
 [dependencies.sile]
 path = ".."
