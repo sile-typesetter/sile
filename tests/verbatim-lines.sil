@@ -22,4 +22,11 @@ Bar
     Baz
 \end{raw}
 
+\begin{verbatim}
+Two
+
+
+Lines
+\end{verbatim}
+
 \end{document}
