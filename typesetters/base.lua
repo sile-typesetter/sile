@@ -295,10 +295,25 @@ function typesetter:typeset (text)
       return
    end
    local pId = SILE.traceStack:pushText(text)
-   for token in SU.gtoke(text, SILE.settings:get("typesetter.parseppattern")) do
+   local parsepattern = SILE.settings:get("typesetter.parseppattern")
+   -- NOTE: Big assumption on how to guess were are in "obeylines" mode.
+   -- See https://github.com/sile-typesetter/sile/issues/2128
+   local obeylines = parsepattern == "\n"
+
+   local seenParaContent = true
+   for token in SU.gtoke(text, parsepattern) do
       if token.separator then
+         if obeylines and not seenParaContent then
+            -- In obeylines mode, each standalone line must be kept.
+            -- The zerohbox is not discardable, so it will be kept in the output,
+            -- and the baseline skip will do the rest.
+            self:pushHorizontal(SILE.types.node.zerohbox())
+         else
+            seenParaContent = false
+         end
          self:endline()
       else
+         seenParaContent = true
          if SILE.settings:get("typesetter.softHyphen") then
             local warnedshy = false
             for token2 in SU.gtoke(token.string, luautf8.char(0x00AD)) do
