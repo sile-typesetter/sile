@@ -32,6 +32,9 @@ homepage.workspace = true
 repository.workspace = true
 license.workspace = true
 
+[package.metadata.bacon.jobs]
+cmd = [ "cargo", "build", "--color", "always" ]
+
 [package.metadata.typos.default]
 locale = "en-us"
 extend-ignore-re = [
