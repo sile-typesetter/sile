@@ -12,6 +12,8 @@ pub mod cli;
 #[cfg(feature = "static")]
 pub mod embed;
 
+pub mod types;
+
 pub type Result<T> = anyhow::Result<T>;
 
 pub fn start_luavm() -> crate::Result<Lua> {

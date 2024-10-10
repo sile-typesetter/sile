@@ -62,7 +62,7 @@ bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
 nodist_man_MANS =
 dist_man_MANS = sile-lua.1
-sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
+sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs src/types.rs src/types/semver.rs
 EXTRA_sile_SOURCES =
 if EMBEDDED_RESOURCES
 noinst_LIBRARIES = librusile.a
@@ -171,7 +171,7 @@ if FONT_VARIATIONS
 CARGO_FEATURE_ARGS += --features variations
 endif
 
-rusile.so: $(rusile_so_SOURCES)
+rusile.so: $(rusile_so_SOURCES) $(bin_PROGRAMS)
 	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(RUSILE_FEATURE_ARG) $(CARGO_RELEASE_ARGS) -p rusile
 	$(INSTALL) @builddir@/target/@RUST_TARGET_SUBDIR@/lib$@ $@
 
