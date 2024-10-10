@@ -62,7 +62,7 @@ bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
 nodist_man_MANS =
 dist_man_MANS = sile-lua.1
-sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
+sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs src/types.rs src/types/semver.rs
 EXTRA_sile_SOURCES =
 if EMBEDDED_RESOURCES
 noinst_LIBRARIES = librusile.a
