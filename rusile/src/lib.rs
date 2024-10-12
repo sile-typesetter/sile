@@ -7,7 +7,6 @@ use mlua::prelude::*;
 #[mlua::lua_module]
 fn rusile(lua: &Lua) -> LuaResult<LuaTable> {
     let exports = lua.create_table()?;
-    exports.set("demo", LuaFunction::wrap_raw(sile::rusile_demo))?;
     exports.set("semver", LuaFunction::wrap_raw(sile::types::semver::semver))?;
     Ok(exports)
 }
