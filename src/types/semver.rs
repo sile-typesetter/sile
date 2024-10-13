@@ -54,14 +54,17 @@ fn use_registered_metatable(lua: &Lua) -> LuaResult<LuaTable> {
             )?;
             metatable.set(
                 "__lt",
-                lua.create_function(|_, args: (LuaTable, LuaTable)| {
-                    let major_is_less: bool =
-                        args.0.get::<u16>("major")? < args.1.get::<u16>("major")?;
+                lua.create_function(|_, (a, b): (Semver, Semver)| {
+                    //let major_is_less: bool =
+                    //    args.0.get::<u16>("major")? < args.1.get::<u16>("major")?;
+                    //let m: Semver = args.0;
+                    dbg!(a);
                     //let _minor_is_less: bool =
                     //    args.0.get::<u16>("minor")? < args.1.get::<u16>("minor")?;
                     //let _patch_is_less: bool =
                     //    args.0.get::<u16>("patch")? < args.1.get::<u16>("patch")?;
-                    Ok(major_is_less)
+                    //Ok(major_is_less)
+                    Ok(false)
                 })?,
             )?;
             lua.set_named_registry_value(key, &metatable)?;
@@ -89,5 +92,23 @@ impl IntoLua for Semver {
         let metatable: mlua::Table = use_registered_metatable(&lua)?;
         semver.set_metatable(Some(metatable));
         Ok(LuaValue::Table(semver))
+    }
+}
+
+impl FromLua for Semver {
+    #[inline]
+    fn from_lua(value: LuaValue, _: &Lua) -> LuaResult<Self> {
+        dbg!(value);
+        match value {
+            //LuaValue::UserData(ud) => {
+            //    dbg!(&ud);
+            //}
+            LuaValue::Table(t) => {
+                dbg!(t);
+            }
+            _ => unreachable!(),
+        };
+        //let major = value.get("major")?;
+        Ok(Semver::new("4.6.8")?)
     }
 }
