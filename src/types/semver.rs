@@ -33,14 +33,14 @@ fn use_registered_metatable(lua: &Lua) -> LuaResult<LuaTable> {
                 Ok(format!("{}.{}.{}", major, minor, patch))
             })?;
             metatable.set("__tostring", to_string)?;
-            let equal = lua.create_function(|_, args: (LuaTable, LuaTable)| {
+            let equal_to = lua.create_function(|_, args: (LuaTable, LuaTable)| {
                 dbg!(args);
                 //let major: u8 = args.0.get("major")?;
                 //let minor: u8 = args.0.get("minor")?;
                 //let patch: u8 = args.0.get("patch")?;
                 Ok(false)
             })?;
-            metatable.set("__eq", equal)?;
+            metatable.set("__eq", equal_to)?;
             let less_equal = lua.create_function(|_, args: (LuaTable, LuaTable)| {
                 dbg!(args);
                 Ok(false)
