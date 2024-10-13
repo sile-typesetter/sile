@@ -28,7 +28,10 @@ pub fn start_luavm() -> crate::Result<Lua> {
 
 pub fn inject_paths(lua: &Lua) {
     #[cfg(feature = "static")]
-    lua.load(r#"require("core.pathsetup")"#).exec().unwrap();
+    lua.load(r#"require("core.pathsetup")"#)
+        .set_name("relative pathsetup loader")
+        .exec()
+        .unwrap();
     #[cfg(not(feature = "static"))]
     {
         let datadir = env!("CONFIGURE_DATADIR").to_string();
@@ -47,6 +50,7 @@ pub fn inject_paths(lua: &Lua) {
                 dofile("./core/pathsetup.lua")
             end
         })
+        .set_name("hard coded pathsetup loader")
         .exec()
         .unwrap();
     }
@@ -147,6 +151,7 @@ pub fn run(
                 local spec = SILE.parserBits.cliuse:match($module);
                 table.insert(SILE.input.uses, spec)
             })
+            .set_name("cli --uses flag parser")
             .eval::<()>()?;
             // let spec = cliuse.call_function::<_, _, _>("match", module);
         }
