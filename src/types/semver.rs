@@ -26,34 +26,44 @@ fn use_registered_metatable(lua: &Lua) -> LuaResult<LuaTable> {
         LuaValue::Table(metatable) => metatable,
         LuaValue::Nil => {
             let metatable = lua.create_table()?;
-            let to_string = lua.create_function(|_, luaself: LuaTable| {
-                let major: u8 = luaself.get("major")?;
-                let minor: u8 = luaself.get("minor")?;
-                let patch: u8 = luaself.get("patch")?;
-                Ok(format!("{}.{}.{}", major, minor, patch))
-            })?;
-            metatable.set("__tostring", to_string)?;
-            let equal_to = lua.create_function(|_, args: (LuaTable, LuaTable)| {
-                dbg!(args);
-                //let major: u8 = args.0.get("major")?;
-                //let minor: u8 = args.0.get("minor")?;
-                //let patch: u8 = args.0.get("patch")?;
-                Ok(false)
-            })?;
-            metatable.set("__eq", equal_to)?;
-            let less_equal = lua.create_function(|_, args: (LuaTable, LuaTable)| {
-                dbg!(args);
-                Ok(false)
-            })?;
-            metatable.set("__le", less_equal)?;
-            let less_than = lua.create_function(|_, args: (LuaTable, LuaTable)| {
-                dbg!(args);
-                Ok(false)
-                //let major1: u8 = args.0.get("major")?;
-                //let major2: u8 = args.1.get("major")?;
-                //Ok(major1 < major2)
-            })?;
-            metatable.set("__lt", less_than)?;
+            metatable.set(
+                "__tostring",
+                lua.create_function(|_, arg: LuaTable| {
+                    let major: u16 = arg.get("major")?;
+                    let minor: u16 = arg.get("minor")?;
+                    let patch: u16 = arg.get("patch")?;
+                    Ok(format!("{}.{}.{}", major, minor, patch))
+                })?,
+            )?;
+            metatable.set(
+                "__eq",
+                lua.create_function(|_, args: (LuaTable, LuaTable)| {
+                    dbg!(args);
+                    //let major: u16 = args.0.get("major")?;
+                    //let minor: u16 = args.0.get("minor")?;
+                    //let patch: u16 = args.0.get("patch")?;
+                    Ok(false)
+                })?,
+            )?;
+            metatable.set(
+                "__le",
+                lua.create_function(|_, args: (LuaTable, LuaTable)| {
+                    dbg!(args);
+                    Ok(false)
+                })?,
+            )?;
+            metatable.set(
+                "__lt",
+                lua.create_function(|_, args: (LuaTable, LuaTable)| {
+                    let major_is_less: bool =
+                        args.0.get::<u16>("major")? < args.1.get::<u16>("major")?;
+                    let minor_is_less: bool =
+                        args.0.get::<u16>("minor")? < args.1.get::<u16>("minor")?;
+                    let patch_is_less: bool =
+                        args.0.get::<u16>("patch")? < args.1.get::<u16>("patch")?;
+                    Ok(major_is_less)
+                })?,
+            )?;
             lua.set_named_registry_value(key, &metatable)?;
             metatable
         }
