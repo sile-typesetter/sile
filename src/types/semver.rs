@@ -37,8 +37,8 @@ fn use_registered_metatable(lua: &Lua) -> LuaResult<LuaTable> {
             )?;
             metatable.set(
                 "__eq",
-                lua.create_function(|_, args: (LuaTable, LuaTable)| {
-                    dbg!(args);
+                lua.create_function(|_, _args: (LuaTable, LuaTable)| {
+                    //dbg!(args);
                     //let major: u16 = args.0.get("major")?;
                     //let minor: u16 = args.0.get("minor")?;
                     //let patch: u16 = args.0.get("patch")?;
@@ -47,8 +47,8 @@ fn use_registered_metatable(lua: &Lua) -> LuaResult<LuaTable> {
             )?;
             metatable.set(
                 "__le",
-                lua.create_function(|_, args: (LuaTable, LuaTable)| {
-                    dbg!(args);
+                lua.create_function(|_, _args: (LuaTable, LuaTable)| {
+                    //dbg!(args);
                     Ok(false)
                 })?,
             )?;
@@ -57,17 +57,17 @@ fn use_registered_metatable(lua: &Lua) -> LuaResult<LuaTable> {
                 lua.create_function(|_, args: (LuaTable, LuaTable)| {
                     let major_is_less: bool =
                         args.0.get::<u16>("major")? < args.1.get::<u16>("major")?;
-                    let minor_is_less: bool =
-                        args.0.get::<u16>("minor")? < args.1.get::<u16>("minor")?;
-                    let patch_is_less: bool =
-                        args.0.get::<u16>("patch")? < args.1.get::<u16>("patch")?;
+                    //let _minor_is_less: bool =
+                    //    args.0.get::<u16>("minor")? < args.1.get::<u16>("minor")?;
+                    //let _patch_is_less: bool =
+                    //    args.0.get::<u16>("patch")? < args.1.get::<u16>("patch")?;
                     Ok(major_is_less)
                 })?,
             )?;
             lua.set_named_registry_value(key, &metatable)?;
             metatable
         }
-        _ => panic!("Unexpected type return from registry lookup"),
+        _ => unreachable!(),
     };
     Ok(metatable)
 }
