@@ -2,9 +2,9 @@ use mlua::prelude::*;
 use semver::Version;
 use std::ops::Deref;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Semver {
-    pub version: Version,
+    version: Version,
 }
 
 impl Semver {
@@ -90,16 +90,17 @@ impl LuaUserData for Semver {
     }
 
     fn add_methods<M: LuaUserDataMethods<Self>>(methods: &mut M) {
-        methods.add_meta_method("__tostring", |_, this, ()| Ok(this.to_string()));
+        methods.add_meta_method(LuaMetaMethod::ToString, |_, this, ()| {
+            Ok(this.version.to_string())
+        });
 
-        //methods.add_meta_method(MetaMethod::Add, |_, this, value: i32| {
-        //    Ok(this.0 + value)
-        //});
+        methods.add_meta_method(LuaMetaMethod::Lt, |_, this, other: Self| {
+            Ok(this.version < other.version)
+        });
     }
 }
 
 //impl IntoLua for Semver {
-//    #[inline]
 //    fn into_lua(self, lua: &Lua) -> LuaResult<LuaValue> {
 //        let semver = lua.create_table()?;
 //        semver.set("major", self.version.major)?;
@@ -111,20 +112,12 @@ impl LuaUserData for Semver {
 //    }
 //}
 
-//impl FromLua for Semver {
-//    #[inline]
-//    fn from_lua(value: LuaValue, _: &Lua) -> LuaResult<Self> {
-//        dbg!(value);
-//        match value {
-//            //LuaValue::UserData(ud) => {
-//            //    dbg!(&ud);
-//            //}
-//            LuaValue::Table(t) => {
-//                dbg!(t);
-//            }
-//            _ => unreachable!(),
-//        };
-//        //let major = value.get("major")?;
-//        Ok(Semver::new("4.6.8")?)
-//    }
-//}
+impl FromLua for Semver {
+    fn from_lua(value: LuaValue, _: &Lua) -> LuaResult<Self> {
+        match value {
+            LuaValue::UserData(ud) => Ok(ud.borrow::<Semver>()?.deref().clone()),
+            LuaValue::Table(_t) => todo!("implement for legacy Lua table based implementation"),
+            _ => unreachable!(),
+        }
+    }
+}
