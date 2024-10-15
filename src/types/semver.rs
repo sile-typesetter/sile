@@ -56,7 +56,7 @@ impl LuaUserData for Semver {
 impl FromLua for Semver {
     fn from_lua(value: LuaValue, _: &Lua) -> LuaResult<Self> {
         match value {
-            LuaValue::UserData(ud) => Ok(ud.borrow::<Semver>()?.deref().clone()),
+            LuaValue::UserData(ud) => Ok(ud.borrow::<Self>()?.clone()),
             LuaValue::Table(_t) => todo!("implement for legacy Lua table based implementation"),
             _ => unreachable!(),
         }
