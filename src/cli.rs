@@ -91,9 +91,9 @@ pub struct Cli {
     /// Set or override document class options.
     ///
     /// Can be used to change default options or override the ones specified in a document.
-    /// For example setting `--options papersize=letter` would override both the default `papersize` of A4 and any specific one set in the document’s options.
+    /// For example setting `--option papersize=letter` would override both the default `papersize` of A4 and any specific one set in the document’s options.
     /// May be specified more than once.
-    #[clap(short = 'O', long)]
+    #[clap(short = 'O', long, alias = "options")]
     pub option: Option<Vec<String>>,
 
     /// Include the contents of a SIL, XML, or other resource file before the input document content.
