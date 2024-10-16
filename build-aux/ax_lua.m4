@@ -719,14 +719,3 @@ AC_DEFUN([AX_LUA_READLINE],
     ],
     [$2])
 ])
-
-AC_DEFUN([AX_LUA_MODULE],
-[
-  AC_MSG_CHECKING([for required Lua library $1])
-  AS_IF([$LUA -e 'require("$1")' 2>/dev/null], [
-  AC_MSG_RESULT([found])
-  $3],
-  [
-  AC_MSG_RESULT([not found])
-  m4_default([$4], [AC_MSG_ERROR([cannot find Lua library $1 - install from luarocks package $2])])])
-])
