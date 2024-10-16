@@ -36,6 +36,7 @@ task:
     - luarocks51 install luarepl
     - luarocks51 install luautf8
     - luarocks51 install penlight
+    - luarocks51 install serpent
     - luarocks51 install vstruct
   bootstrap_script:
     - git fetch --prune --tags ||:
