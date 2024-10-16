@@ -52,9 +52,6 @@ function class:_init (options)
       insertInto = "footnotes",
       stealFrom = { "content" },
    })
-   if not SILE.scratch.headers then
-      SILE.scratch.headers = {}
-   end
 end
 
 function class:endPage ()
