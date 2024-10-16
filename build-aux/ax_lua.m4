@@ -90,7 +90,7 @@
 #   appropriate Automake primary, e.g. lua_SCRIPS or luaexec_LIBRARIES.
 #
 #   If an acceptable Lua interpreter is found, then ACTION-IF-FOUND is
-#   performed, otherwise ACTION-IF-NOT-FOUND is preformed. If ACTION-IF-NOT-
+#   performed, otherwise ACTION-IF-NOT-FOUND is performed. If ACTION-IF-NOT-
 #   FOUND is blank, then it will default to printing an error. To prevent
 #   the default behavior, give ':' as an action.
 #
@@ -218,12 +218,12 @@ AC_DEFUN([AX_PROG_LUA],
 
     AS_IF([test "x$LUA" != 'x:'],
       [ dnl At least check if this is a Lua interpreter.
-    AC_MSG_CHECKING([if $LUA is a Lua interpreter])
-    _AX_LUA_CHK_IS_INTRP([$LUA],
-      [AC_MSG_RESULT([yes])],
-      [ AC_MSG_RESULT([no])
-        AC_MSG_ERROR([not a Lua interpreter])
-      ])
+        AC_MSG_CHECKING([if $LUA is a Lua interpreter])
+        _AX_LUA_CHK_IS_INTRP([$LUA],
+          [AC_MSG_RESULT([yes])],
+          [ AC_MSG_RESULT([no])
+            AC_MSG_ERROR([not a Lua interpreter])
+          ])
       ])
   ],
   [ dnl A version check is needed.
@@ -430,17 +430,6 @@ AC_DEFUN([_AX_LUA_CHK_VER],
       [$4], [$5])
 ])
 
-AC_DEFUN([_AX_LUAJIT_CHK_VER],
-[
-  AS_IF([$1 2>/dev/null -e '
-    function norm (v)
-    i,j=v:match "(%d+)%.(%d+)" if i then return 100 * i + j end
-    end
-    v, toobig=norm (jit.version), norm "$3" or math.huge
-    os.exit ((v >= norm ("$2") and v < toobig) and 0 or 1)'],
-    [$4], [$5])
-])
-
 
 dnl =========================================================================
 dnl _AX_LUA_FND_PRFX_PTH(PROG, PREFIX, SCRIPT-OR-MODULE-DIR)
@@ -539,9 +528,9 @@ AC_DEFUN([AX_LUA_HEADERS],
          test "x$ac_cv_header_lua_h" != 'xyes' ||
          test "x$with_luajit" != 'xno' &&
          test "x$ac_cv_header_luajit_h" != 'xyes'],
-      [ dnl Try some common include paths.
+    [ dnl Try some common include paths.
       for _ax_include_path in $_ax_lua_include_list; do
-      test ! -d "$_ax_include_path" && continue
+        test ! -d "$_ax_include_path" && continue
 
         AC_MSG_CHECKING([for Lua headers in])
         AC_MSG_RESULT([$_ax_include_path])
@@ -674,25 +663,25 @@ AC_DEFUN([AX_LUA_LIBS],
     _ax_lua_saved_libs=$LIBS
     LIBS="$LIBS $LUA_LIB"
     AM_COND_IF([LUAJIT],
-        [AC_SEARCH_LIBS([lua_load],
-          [ luajit$LUA_VERSION \
-            luajit$LUA_SHORT_VERSION \
-            luajit-$LUA_VERSION \
-            luajit-$LUA_SHORT_VERSION \
-            luajit],
-          [_ax_found_lua_libs='yes'],
-          [_ax_found_lua_libs='no'],
-          [$_ax_lua_extra_libs])],
-        [AC_SEARCH_LIBS([lua_load],
-          [ lua$LUA_VERSION \
-            lua$LUA_SHORT_VERSION \
-            lua-$LUA_VERSION \
-            lua-$LUA_SHORT_VERSION \
-            lua \
-          ],
-          [_ax_found_lua_libs='yes'],
-          [_ax_found_lua_libs='no'],
-          [$_ax_lua_extra_libs])])
+      [AC_SEARCH_LIBS([lua_load],
+        [ luajit$LUA_VERSION \
+          luajit$LUA_SHORT_VERSION \
+          luajit-$LUA_VERSION \
+          luajit-$LUA_SHORT_VERSION \
+          luajit],
+        [_ax_found_lua_libs='yes'],
+        [_ax_found_lua_libs='no'],
+        [$_ax_lua_extra_libs])],
+      [AC_SEARCH_LIBS([lua_load],
+        [ lua$LUA_VERSION \
+          lua$LUA_SHORT_VERSION \
+          lua-$LUA_VERSION \
+          lua-$LUA_SHORT_VERSION \
+          lua \
+        ],
+        [_ax_found_lua_libs='yes'],
+        [_ax_found_lua_libs='no'],
+        [$_ax_lua_extra_libs])])
     LIBS=$_ax_lua_saved_libs
 
     AS_IF([test "x$ac_cv_search_lua_load" != 'xno' &&
