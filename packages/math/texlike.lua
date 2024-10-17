@@ -252,6 +252,23 @@ local compileToStr = function (argEnv, mathlist)
    end
 end
 
+local function isBigOperator (tree)
+   if tree.command ~= "mo" then
+      return false
+   end
+   -- Case \mo[atom=big]{ops}
+   -- E.g. \mo[atom=big]{lim}
+   if tree.options and tree.options.atom == "big" then
+      return true
+   end
+   -- Case \mo{ops} where ops is registered as big operator (unicode-symbols)
+   -- E.g. \mo{∑) or \sum
+   if tree[1] and symbolDefaults[tree[1]] and symbolDefaults[tree[1]].atom == atomType.bigOperator then
+      return true
+   end
+   return false
+end
+
 local function compileToMathML_aux (_, arg_env, tree)
    if type(tree) == "string" then
       return tree
@@ -328,21 +345,13 @@ local function compileToMathML_aux (_, arg_env, tree)
       tree.options = {}
    -- Translate TeX-like sub/superscripts to `munderover` or `msubsup`,
    -- depending on whether the base is a big operator
-   elseif tree.id == "sup" and tree[1].command == "mo" and tree[1].atom == atomType.bigOperator then
+   elseif tree.id == "sup" and isBigOperator(tree[1]) then
       tree.command = "mover"
-   elseif tree.id == "sub" and tree[1].command == "mo" and symbolDefaults[tree[1][1]].atom == atomType.bigOperator then
+   elseif tree.id == "sub" and isBigOperator(tree[1]) then
       tree.command = "munder"
-   elseif
-      tree.id == "subsup"
-      and tree[1].command == "mo"
-      and symbolDefaults[tree[1][1]].atom == atomType.bigOperator
-   then
+   elseif tree.id == "subsup" and isBigOperator(tree[1]) then
       tree.command = "munderover"
-   elseif
-      tree.id == "supsub"
-      and tree[1].command == "mo"
-      and symbolDefaults[tree[1][1]].atom == atomType.bigOperator
-   then
+   elseif tree.id == "supsub" and isBigOperator(tree[1]) then
       tree.command = "munderover"
       local tmp = tree[2]
       tree[2] = tree[3]
@@ -479,6 +488,16 @@ compileToMathML(
   \def{sqrt}{\msqrt{#1}}
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
+
+  \def{lim}{\mo[atom=big]{lim}}
+
+  % From amsmath:
+  \def{to}{\mo[atom=bin]{→}}
+  % Those use U+202F NARROW NO-BREAK SPACE in their names
+  \def{limsup}{\mo[atom=big]{lim sup}}
+  \def{liminf}{\mo[atom=big]{lim inf}}
+  \def{projlim}{\mo[atom=big]{proj lim}}
+  \def{injlim}{\mo[atom=big]{inj lim}}
 
   % Standard spaces gleaned from plain TeX
   \def{thinspace}{\mspace[width=thin]}
