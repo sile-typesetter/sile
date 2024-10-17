@@ -225,7 +225,7 @@ Integrals, display (large font), MathML:
 Integrals, text, TeX:
 <math>
   \oiint_S \mi[mathvariant=bold]{E} \cdot
-  \mi[mathvariant=bold]{dS} = \frac{1}{\epsilon_0}
+  \mi[mathvariant=bold]{dS} = \frac{1}{\varepsilon_0}
   \iiint_V \rho \mi[mathvariant=normal]{dV}
   = \int_0^x {f(t)\mo{d}t}
 </math>
@@ -233,7 +233,7 @@ Integrals, text, TeX:
 Integrals, display, TeX:
 <math mode="display">
   \oiint_S \mi[mathvariant=bold]{E} \cdot
-  \mi[mathvariant=bold]{dS} = \frac{1}{\epsilon_0}
+  \mi[mathvariant=bold]{dS} = \frac{1}{\varepsilon_0}
   \iiint_V \rho \mi[mathvariant=normal]{dV}
   = \int_0^x {f(t)\mo{d}t}
 </math>
