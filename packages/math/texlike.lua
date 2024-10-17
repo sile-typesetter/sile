@@ -493,6 +493,11 @@ compileToMathML(
 
   % From amsmath:
   \def{to}{\mo[atom=bin]{→}}
+  \def{gcd}{\mo[atom=big]{gcd}}
+  \def{sup}{\mo[atom=big]{sup}}
+  \def{inf}{\mo[atom=big]{inf}}
+  \def{max}{\mo[atom=big]{max}}
+  \def{min}{\mo[atom=big]{min}}
   % Those use U+202F NARROW NO-BREAK SPACE in their names
   \def{limsup}{\mo[atom=big]{lim sup}}
   \def{liminf}{\mo[atom=big]{lim inf}}
