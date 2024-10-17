@@ -42,8 +42,11 @@ local mathGrammar = function (_ENV)
          return ret
       end
    local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
+   -- Simple amsmath-like \text command (no embedded math)
+   local textgroup = P"{" * C((1-P"}")^1) * (P"}" + E("`}` expected"))
    local element_no_infix =
       V"def" +
+      V"text" + -- Important: before command
       V"command" +
       group +
       V"argument" +
@@ -115,6 +118,11 @@ local mathGrammar = function (_ENV)
    sub = element_no_infix * _ * P"_" * _ * element_no_infix
    atom = natural + C(utf8code - S"\\{}%^_&") +
       (P"\\{" + P"\\}") / function (s) return string.sub(s, -1) end
+   text = (
+         P"\\text" *
+         Cg(parameters, "options") *
+         textgroup
+      )
    command = (
          P"\\" *
          Cg(ctrl_sequence_name, "command") *
@@ -365,6 +373,8 @@ local function compileToMathML_aux (_, arg_env, tree)
          return compileToMathML_aux(nil, compiledArgs, tree[1])
       end)
       return nil
+   elseif tree.id == "text" then
+      tree.command = "mtext"
    elseif tree.id == "command" and commands[tree.command] then
       local argTypes = commands[tree.command][1]
       local cmdFun = commands[tree.command][2]
