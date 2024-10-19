@@ -1372,23 +1372,48 @@ end
 
 function elements.table.output (_) end
 
+local function getRadicandMode (mode)
+   -- Not too sure if we should do something special/
+   return mode
+end
+
+local function getDegreeMode (mode)
+   -- 2 levels smaller, up to scriptScript evntually.
+   -- Not too sure if we should do something else.
+   if mode == mathMode.display then
+      return mathMode.scriptScript
+   elseif mode == mathMode.displayCramped then
+      return mathMode.scriptScriptCramped
+   elseif mode == mathMode.text or mode == mathMode.script or mode == mathMode.scriptScript then
+      return mathMode.scriptScript
+   end
+   return mathMode.scriptScriptCramped
+end
+
 elements.sqrt = pl.class(elements.mbox)
 elements.sqrt._type = "Sqrt"
 
 function elements.sqrt:__tostring ()
-   return self._type .. "(" .. tostring(self.radicand) .. ")"
+   return self._type .. "(" .. tostring(self.radicand) .. (self.degree and ", " .. tostring(self.degree) or "") .. ")"
 end
 
-function elements.sqrt:_init (radicand)
+function elements.sqrt:_init (radicand, degree)
    elements.mbox._init(self)
    self.radicand = radicand
+   if degree then
+      self.degree = degree
+      table.insert(self.children, degree)
+   end
    table.insert(self.children, radicand)
-   self.relX = SILE.types.length(0) -- x position relative to its parent box
-   self.relY = SILE.types.length(0) -- y position relative to its parent box
+   self.relX = SILE.types.length()
+   self.relY = SILE.types.length()
 end
 
 function elements.sqrt:styleChildren ()
-   self.radicand.mode = self.mode
+   self.radicand.mode = getRadicandMode(self.mode)
+   if self.degree then
+      self.degree.mode = getDegreeMode(self.mode)
+   end
 end
 
 function elements.sqrt:shape ()
@@ -1404,15 +1429,42 @@ function elements.sqrt:shape ()
    end
    self.extraAscender = constants.radicalExtraAscender * scaleDown
 
-   -- HACK: More or less ad hoc values, see output method for more details
-   self.symbolWidth = SILE.shaper:measureChar("√").width
-   self.symbolHeight = SILE.types.length("1.1ex"):tonumber() * scaleDown
+   -- HACK: We draw own own radical sign in the output() method.
+   -- Derive dimensions for the radical sign (more or less ad hoc).
+   -- Note: In TeX, the radical sign extends a lot below the baseline,
+   -- and MathML Core also has a lot of layout text about it.
+   -- Not only it doesn't look good, but it's not very clear vs. OpenType.
+   local radicalGlyph = SILE.shaper:measureChar("√")
+   local ratio = (self.radicand.height:tonumber() + self.radicand.depth:tonumber())
+      / (radicalGlyph.height + radicalGlyph.depth)
+   local vertAdHocOffset = (ratio > 1 and math.log(ratio) or 0) * self.radicalVerticalGap
+   self.symbolHeight = SILE.types.length(radicalGlyph.height) * scaleDown
+   self.symbolDepth = (SILE.types.length(radicalGlyph.depth) + vertAdHocOffset) * scaleDown
+   self.symbolWidth = (SILE.types.length(radicalGlyph.width) + vertAdHocOffset) * scaleDown
 
-   self.width = self.radicand.width + SILE.types.length(self.symbolWidth)
-   self.height = self.radicand.height + self.radicalVerticalGap + self.extraAscender
+   -- Adjust the height of the radical sign if the radicand is higher
+   self.symbolHeight = self.radicand.height > self.symbolHeight and self.radicand.height or self.symbolHeight
+   -- Compute the (max-)height of the short leg of the radical sign
+   self.symbolShortHeight = self.symbolHeight * constants.radicalDegreeBottomRaisePercent
+
+   self.offsetX = SILE.types.length()
+   if self.degree then
+      -- Position the degree
+      self.degree.relY = -constants.radicalDegreeBottomRaisePercent * self.symbolHeight
+      -- Adjust the height of the short leg of the radical sign to ensure the degree is not too close
+      -- (empirically use radicalExtraAscender)
+      self.symbolShortHeight = self.symbolShortHeight - constants.radicalExtraAscender * scaleDown
+      -- Compute the width adjustment for the degree
+      self.offsetX = self.degree.width
+         + constants.radicalKernBeforeDegree * scaleDown
+         + constants.radicalKernAfterDegree * scaleDown
+   end
+   -- Position the radicand
+   self.radicand.relX = self.symbolWidth + self.offsetX
+   -- Compute the dimentions of the whole radical
+   self.width = self.radicand.width + self.symbolWidth + self.offsetX
+   self.height = self.symbolHeight + self.radicalVerticalGap + self.extraAscender
    self.depth = self.radicand.depth
-   self.radicand:shape()
-   self.radicand.relX = self.symbolWidth
 end
 
 local function _r (number)
@@ -1422,40 +1474,46 @@ local function _r (number)
 end
 
 function elements.sqrt:output (x, y, line)
-   -- HACK FIXME:
+   -- HACK:
    -- OpenType might say we need to assemble the radical sign from parts.
    -- Frankly, it's much easier to just draw it as a graphic :-)
    -- Hence, here we use a PDF graphic operators to draw a nice radical sign.
    -- Some values here are ad hoc, but they look good.
    local h = self.height:tonumber()
    local d = self.depth:tonumber()
-   local sw = self.symbolWidth
-   local dh = h - self.symbolHeight
+   local s0 = scaleWidth(self.offsetX, line):tonumber()
+   local sw = scaleWidth(self.symbolWidth, line):tonumber()
+   local dsh = h - self.symbolShortHeight:tonumber()
+   local dsd = self.symbolDepth:tonumber()
    local symbol = {
       _r(self.radicalRuleThickness),
       "w", -- line width
       2,
       "j", -- round line joins
-      _r(sw),
+      _r(sw + s0),
       _r(self.extraAscender),
       "m",
-      _r(sw * 0.4),
-      _r(h + d),
+      _r(s0 + sw * 0.90),
+      _r(self.extraAscender),
       "l",
-      _r(sw * 0.15),
-      _r(dh),
+      _r(s0 + sw * 0.4),
+      _r(h + d + dsd),
       "l",
-      0,
-      _r(dh + 0.5),
+      _r(s0 + sw * 0.2),
+      _r(dsh),
+      "l",
+      s0 + sw * 0.1,
+      _r(dsh + 0.5),
       "l",
       "S",
    }
    local svg = table.concat(symbol, " ")
-   SILE.outputter:drawSVG(svg, x, y, sw, h, 1)
+   local xscaled = scaleWidth(x, line)
+   SILE.outputter:drawSVG(svg, xscaled, y, sw, h, 1)
    -- And now we just need to draw the bar over the radicand
    SILE.outputter:drawRule(
-      self.symbolWidth + scaleWidth(x, line),
-      y.length - scaleWidth(self.radicand.height, line) - self.radicalVerticalGap - self.radicalRuleThickness / 2,
+      s0 + self.symbolWidth + xscaled,
+      y.length - self.height + self.extraAscender - self.radicalRuleThickness / 2,
       scaleWidth(self.radicand.width, line),
       self.radicalRuleThickness
    )

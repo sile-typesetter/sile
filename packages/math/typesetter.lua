@@ -134,6 +134,9 @@ function ConvertMathML (_, content)
       local children = convertChildren(content)
       -- "The <msqrt> element generates an anonymous <mrow> box called the msqrt base
       return b.sqrt(b.stackbox("H", children))
+   elseif content.command == "mroot" then
+      local children = convertChildren(content)
+      return b.sqrt(children[1], children[2])
    elseif content.command == "mtable" or content.command == "table" then
       local children = convertChildren(content)
       return b.table(children, content.options)
