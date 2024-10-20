@@ -2,7 +2,7 @@
 
 AC_DEFUN([AX_LUA_MODULE],
 [
-  AX_PROG_LUA([5.1])
+  AX_PROG_LUA([5.1], [], [], [], [prefer])
   AC_MSG_CHECKING([whether Lua can load module $1])
   AS_IF([$LUA -e 'require("$1")' 2>/dev/null], [
     AC_MSG_RESULT([loaded])
