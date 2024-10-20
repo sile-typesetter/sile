@@ -41,6 +41,11 @@ function ConvertMathML (_, content)
       return b.stackbox("V", convertChildren(content))
    elseif content.command == "mrow" then
       return b.stackbox("H", convertChildren(content))
+   elseif content.command == "mphantom" then
+      -- MathML's standard mphantom corresponds to TeX's \phantom only.
+      -- Let's support a special attribute "h" or "v" for TeX-like \hphantom or \vphantom.
+      local special = content.options.special
+      return b.phantom(convertChildren(content), special)
    elseif content.command == "mi" then
       local script = content.options.mathvariant and b.mathVariantToScriptType(content.options.mathvariant)
       local text = content[1]
