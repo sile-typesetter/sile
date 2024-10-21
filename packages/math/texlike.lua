@@ -444,7 +444,7 @@ local function printMathML (tree)
    if tree.options then
       local options = {}
       for k, v in pairs(tree.options) do
-         table.insert(options, k .. "=" .. v)
+         table.insert(options, k .. "=" .. tostring(v))
       end
       if #options > 0 then
          result = result .. "[" .. table.concat(options, ", ") .. "]"
@@ -529,6 +529,21 @@ compileToMathML(
   \def{enskip}{\enspace}
   \def{quad}{\mspace[width=1em]}
   \def{qquad}{\mspace[width=2em]}
+
+  % MathML says a single-character identifier must be in italic by default.
+  % TeX however has the following Greek capital macros rendered in upright shape.
+  % It so common that you've probably never seen Γ(x) written with an italic gamma.
+  \def{Gamma}{\mi[mathvariant=normal]{Γ}}
+  \def{Delta}{\mi[mathvariant=normal]{Δ}}
+  \def{Theta}{\mi[mathvariant=normal]{Θ}}
+  \def{Lambda}{\mi[mathvariant=normal]{Λ}}
+  \def{Xi}{\mi[mathvariant=normal]{Ξ}}
+  \def{Pi}{\mi[mathvariant=normal]{Π}}
+  \def{Sigma}{\mi[mathvariant=normal]{Σ}}
+  \def{Upsilon}{\mi[mathvariant=normal]{Υ}}
+  \def{Phi}{\mi[mathvariant=normal]{Φ}}
+  \def{Psi}{\mi[mathvariant=normal]{Ψ}}
+  \def{Omega}{\mi[mathvariant=normal]{Ω}}
 
   % Modulus operator forms
   \def{bmod}{\mo{mod}}
