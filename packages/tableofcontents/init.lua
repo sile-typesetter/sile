@@ -38,12 +38,13 @@ function package.readToc (_)
       -- already loaded
       return SILE.scratch._tableofcontents
    end
-   local tocfile, _ = io.open(pl.path.splitext(SILE.input.filenames[1]) .. ".toc")
+   local tocfile_name = (pl.path.splitext(SILE.input.filenames[1]) .. ".toc")
+   local tocfile, _ = io.open(tocfile_name)
    if not tocfile then
       return false -- No TOC yet
    end
    local doc = tocfile:read("*all")
-   local toc = assert(load(doc))()
+   local toc = assert(load(doc), tocfile_name)()
    SILE.scratch._tableofcontents = toc
    return SILE.scratch._tableofcontents
 end
