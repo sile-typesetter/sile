@@ -44,7 +44,7 @@ function package.readToc (_)
       return false -- No TOC yet
    end
    local doc = tocfile:read("*all")
-   local toc = assert(load(doc), tocfile_name)()
+   local toc = assert(load(doc), tocfile_name, "r")()
    SILE.scratch._tableofcontents = toc
    return SILE.scratch._tableofcontents
 end
