@@ -42,9 +42,13 @@ function package.declareSettings (_)
    })
    SILE.settings:declare({
       parameter = "math.font.size",
-      type = "integer",
-      default = 10,
+      type = "number or integer",
+      default = SILE.settings:get("font.size"),
    })
+   SILE.settings:registerHook ("font.size", function (size)
+      -- Follow document font size changes
+      SILE.settings:set("math.font.size", size)
+   end)
    -- Whether to show debug boxes around mboxes
    SILE.settings:declare({
       parameter = "math.debug.boxes",
