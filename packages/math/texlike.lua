@@ -544,6 +544,21 @@ compileToMathML(
   \def{Phi}{\mi[mathvariant=normal]{Φ}}
   \def{Psi}{\mi[mathvariant=normal]{Ψ}}
   \def{Omega}{\mi[mathvariant=normal]{Ω}}
+  % Some calligraphic (script), fraktur, double-struck styles:
+  % Convenience for compatibility with LaTeX.
+  \def{mathcal}{\mi[mathvariant=script]{#1}}
+  \def{mathfrak}{\mi[mathvariant=fraktur]{#1}}
+  \def{mathbb}{\mi[mathvariant=double-struck]{#1}}
+  % Some style-switching commands for compatibility with LaTeX math.
+  % Caveat emptor: LaTeX would allow these to apply to a whole formula.
+  % We can't do that in MathML, as mathvariant applies to token elements only.
+  % Also note that LaTeX and related packages may have many more such commands.
+  % We only provide a few common ('historical') ones here.
+  \def{mathrm}{\mi[mathvariant=normal]{#1}}
+  \def{mathbf}{\mi[mathvariant=bold]{#1}}
+  \def{mathit}{\mi[mathvariant=italic]{#1}}
+  \def{mathsf}{\mi[mathvariant=sans-serif]{#1}}
+  \def{mathtt}{\mi[mathvariant=monospace]{#1}}
 
   % Modulus operator forms
   \def{bmod}{\mo{mod}}
