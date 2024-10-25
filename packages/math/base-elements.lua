@@ -1180,9 +1180,9 @@ function elements.table:_init (children, options)
       return #row.children
    end, self.children)))
    SU.debug("math", "self.ncols =", self.ncols)
-   self.rowspacing = self.options.rowspacing and SILE.types.length(self.options.rowspacing) or SILE.types.length("7pt")
-   self.columnspacing = self.options.columnspacing and SILE.types.length(self.options.columnspacing)
-      or SILE.types.length("6pt")
+   local spacing = SILE.settings:get("math.font.size") * 0.6 -- arbitrary ratio of the current math font size
+   self.rowspacing = self.options.rowspacing and SILE.types.length(self.options.rowspacing) or spacing
+   self.columnspacing = self.options.columnspacing and SILE.types.length(self.options.columnspacing) or spacing
    -- Pad rows that do not have enough cells by adding cells to the
    -- right.
    for i, row in ipairs(self.children) do
