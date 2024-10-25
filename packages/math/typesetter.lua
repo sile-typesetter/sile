@@ -34,6 +34,17 @@ local function convertChildren (tree)
    return mboxes
 end
 
+local function convertFirstChild (tree)
+   -- We need to loop until the first non-nil box is found, because
+   -- we may have blank lines in the tree.
+   for _, n in ipairs(tree) do
+      local box = ConvertMathML(nil, n)
+      if box then
+         return box
+      end
+   end
+end
+
 -- convert MathML into mbox
 function ConvertMathML (_, content)
    if content == nil or content.command == nil then
@@ -159,6 +170,13 @@ function ConvertMathML (_, content)
       -- There's also some explanations about CSS, italic correction etc. which we ignore too.
       text = text:gsub("[\n\r]", " ")
       return b.text("string", {}, scriptType.upright, text:gsub("%s+", " "))
+   elseif content.command == "maction" then
+      -- MathML Core 3.6: display as mrow, ignoring all but the first child
+      return b.stackbox("H", { convertFirstChild(content) })
+   elseif content.command == "mstyle" then
+      -- It's an mrow, but with some style attributes that we ignore.
+      SU.warn("MathML mstyle is not fully supported yet")
+      return b.stackbox("H", convertChildren(content))
    else
       SU.error("Unknown math command " .. content.command)
    end
