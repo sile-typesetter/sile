@@ -260,21 +260,34 @@ local compileToStr = function (argEnv, mathlist)
    end
 end
 
-local function isBigOperator (tree)
+local function isOperatorKind (tree, typeOfAtom, typeOfSymbol)
+   if not tree then
+      return false -- safeguard
+   end
    if tree.command ~= "mo" then
       return false
    end
    -- Case \mo[atom=big]{ops}
    -- E.g. \mo[atom=big]{lim}
-   if tree.options and tree.options.atom == "big" then
+   if tree.options and tree.options.atom == typeOfAtom then
       return true
    end
-   -- Case \mo{ops} where ops is registered as big operator (unicode-symbols)
+   -- Case \mo{ops} where ops is registered with the resquested type
    -- E.g. \mo{∑) or \sum
-   if tree[1] and symbolDefaults[tree[1]] and symbolDefaults[tree[1]].atom == atomType.bigOperator then
+   if tree[1] and symbolDefaults[tree[1]] and symbolDefaults[tree[1]].atom == typeOfSymbol then
       return true
    end
    return false
+end
+
+local function isBigOperator (tree)
+   return isOperatorKind(tree, "big", atomType.bigOperator)
+end
+local function isCloseOperator (tree)
+   return isOperatorKind(tree, "close", atomType.closeSymbol)
+end
+local function isOpeningOperator (tree)
+   return isOperatorKind(tree, "open", atomType.openingSymbol)
 end
 
 local function compileToMathML_aux (_, arg_env, tree)
@@ -323,12 +336,56 @@ local function compileToMathML_aux (_, arg_env, tree)
       -- Turn mathlist into `mrow` except if it has exactly one `mtr` or `mtd`
       -- child.
       -- Note that `def`s have already been compiled away at this point.
-      if #tree == 1 and (tree[1].command == "mtr" or tree[1].command == "mtd") then
-         return tree[1]
+      if #tree == 1 then
+         if tree[1].command == "mtr" or tree[1].command == "mtd" then
+            return tree[1]
+         else
+            tree.command = "mrow"
+         end
       else
+         -- Re-wrap content from opening to closing operator in an implicit mrow,
+         -- so stretchy operators apply to the correct span of content.
+         local children = {}
+         local stack = {}
+         for _, child in ipairs(tree) do
+            if isOpeningOperator(child) then
+               table.insert(stack, children)
+               local mrow = {
+                  command = "mrow",
+                  options = {},
+                  child,
+               }
+               table.insert(children, mrow)
+               children = mrow
+            elseif isCloseOperator(child) then
+               table.insert(children, child)
+               if #stack > 0 then
+                  children = table.remove(stack)
+               end
+            elseif
+               (child.command == "msubsup" or child.command == "msub" or child.command == "msup")
+               and isCloseOperator(child[1]) -- child[1] is the base
+            then
+               if #stack > 0 then
+                  -- Special case for closing operator with sub/superscript:
+                  -- (....)^i must be interpreted as {(....)}^i, not as (...{)}^i
+                  -- Push the closing operator into the mrow
+                  table.insert(children, child[1])
+                  -- Move the mrow into the msubsup, replacing the closing operator
+                  child[1] = children
+                  -- And insert the msubsup into the parent
+                  children = table.remove(stack)
+                  children[#children] = child
+               else
+                  table.insert(children, child)
+               end
+            else
+               table.insert(children, child)
+            end
+         end
+         tree = #stack > 0 and stack[1] or children
          tree.command = "mrow"
       end
-      tree.command = "mrow"
    elseif tree.id == "atom" then
       local codepoints = {}
       for _, cp in luautf8.codes(tree[1]) do
