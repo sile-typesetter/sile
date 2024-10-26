@@ -1054,10 +1054,11 @@ function elements.fraction:__tostring ()
    return self._type .. "(" .. tostring(self.numerator) .. ", " .. tostring(self.denominator) .. ")"
 end
 
-function elements.fraction:_init (numerator, denominator)
+function elements.fraction:_init (attributes, numerator, denominator)
    elements.mbox._init(self)
    self.numerator = numerator
    self.denominator = denominator
+   self.attributes = attributes
    table.insert(self.children, numerator)
    table.insert(self.children, denominator)
 end
@@ -1069,12 +1070,12 @@ end
 
 function elements.fraction:shape ()
    -- MathML Core 3.3.2: "To avoid visual confusion between the fraction bar
-   -- and another adjacent items (e.g. minus sign or another fraction's bar),"
-   -- By convention, here we use 1px = 1/96in = 0.75pt.
+   -- and another adjacent items (e.g. minus sign or another fraction's bar),
+   -- a default 1-pixel space is added around the element."
    -- Note that PlainTeX would likely use \nulldelimiterspace (default 1.2pt)
    -- but it would depend on the surrounding context, and might be far too
    -- much in some cases, so we stick to MathML's suggested padding.
-   self.padding = SILE.types.length(0.75)
+   self.padding = SILE.types.length("1px"):absolute()
 
    -- Determine relative abscissas and width
    local widest, other
@@ -1090,7 +1091,16 @@ function elements.fraction:shape ()
    local constants = self:getMathMetrics().constants
    local scaleDown = self:getScaleDown()
    self.axisHeight = constants.axisHeight * scaleDown
-   self.ruleThickness = constants.fractionRuleThickness * scaleDown
+   self.ruleThickness = self.attributes.linethickness
+         and SU.cast("measurement", self.attributes.linethickness):tonumber()
+      or constants.fractionRuleThickness * scaleDown
+
+   -- MathML Core 3.3.2.2 ("Fraction with zero line thickness") uses
+   -- stack(DisplayStyle)GapMin, stackTop(DisplayStyle)ShiftUp and stackBottom(DisplayStyle)ShiftDown.
+   -- TODO not implemented
+   -- The most common use cases for zero line thickness are:
+   --  - Binomial coefficients
+   --  - Stacked subscript/superscript on big operators such as sums.
 
    local numeratorGapMin, denominatorGapMin, numeratorShiftUp, denominatorShiftDown
    if isDisplayMode(self.mode) then
@@ -1126,12 +1136,14 @@ function elements.fraction:shape ()
 end
 
 function elements.fraction:output (x, y, line)
-   SILE.outputter:drawRule(
-      scaleWidth(x + self.padding, line),
-      y.length - self.axisHeight - self.ruleThickness / 2,
-      scaleWidth(self.width - 2 * self.padding, line),
-      self.ruleThickness
-   )
+   if self.ruleThickness > 0 then
+      SILE.outputter:drawRule(
+         scaleWidth(x + self.padding, line),
+         y.length - self.axisHeight - self.ruleThickness / 2,
+         scaleWidth(self.width - 2 * self.padding, line),
+         self.ruleThickness
+      )
+   end
 end
 
 local function newSubscript (spec)
