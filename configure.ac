@@ -146,7 +146,7 @@ AM_COND_IF([SYSTEM_LIBTEXPDF],
                             [AC_MSG_FAILURE([--with-system-libtexpdf was given, but test for libtexpdf failed])])],
             [AC_CONFIG_SUBDIRS([libtexpdf])])
 
-PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
+PKG_CHECK_MODULES(ICU, icu-uc icu-i18n icu-io, [
     with_icu=yes
 ],[
     AC_CHECK_TOOL(ICU_CONFIG, icu-config, no)
