@@ -142,18 +142,15 @@ pub fn run(
         sile_input.set("options", options)?;
     }
     if let Some(modules) = uses {
-        // let parser_bits: LuaTable = sile.get("parserBits")?;
-        // let cliuse: LuaAnyUserData = parser_bits.get("cliuse")?;
-        // sile_input.get("uses")?;
+        let parser_bits: LuaTable = sile.get("parserBits")?;
+        let cliuse: LuaAnyUserData = parser_bits.get("cliuse")?;
+        let input_uses: LuaTable = sile_input.get("uses")?;
         for module in modules.iter() {
             let module = lua.create_string(module)?;
-            lua.load(chunk! {
-                local spec = SILE.parserBits.cliuse:match($module);
-                table.insert(SILE.input.uses, spec)
-            })
-            .set_name("cli --uses flag parser")
-            .eval::<()>()?;
-            // let spec = cliuse.call_function::<_, _, _>("match", module);
+            let spec: LuaTable = cliuse
+                .call_method::<_>("match", module)
+                .context("failed to call `cliuse:match()`")?;
+            let _ = input_uses.push(spec);
         }
     }
     if !quiet {
