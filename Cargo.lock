@@ -1143,12 +1143,13 @@ dependencies = [
 
 [[package]]
 name = "mlua"
-version = "0.10.0-rc.1"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7928e85ce39d4ea4d11dc850fde2acb503fc114a76f53e8606dd9ed237a491e9"
+checksum = "0f6ddbd668297c46be4bdea6c599dcc1f001a129586272d53170b7ac0a62961e"
 dependencies = [
  "anyhow",
  "bstr",
+ "either",
  "mlua-sys",
  "mlua_derive",
  "num-traits",
@@ -1158,9 +1159,9 @@ dependencies = [
 
 [[package]]
 name = "mlua-sys"
-version = "0.6.3"
+version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ebe026d6bd1583a9cf9080e189030ddaea7e6f5f0deb366a8e26f8a26c4135b8"
+checksum = "e9eebac25c35a13285456c88ee2fde93d9aee8bcfdaf03f9d6d12be3391351ec"
 dependencies = [
  "cc",
  "cfg-if",
@@ -1171,9 +1172,9 @@ dependencies = [
 
 [[package]]
 name = "mlua_derive"
-version = "0.10.0-rc.1"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e110f0addea6b8d2f2378717e94f63b36a74274760b4895943b3a5650fa7513e"
+checksum = "2cfc5faa2e0d044b3f5f0879be2920e0a711c97744c42cf1c295cb183668933e"
 dependencies = [
  "itertools",
  "once_cell",
