@@ -290,6 +290,10 @@ local function isOpeningOperator (tree)
    return isOperatorKind(tree, "open", atomType.openingSymbol)
 end
 
+local function isAccentSymbol (symbol)
+   return symbolDefaults[symbol] and symbolDefaults[symbol].atom == atomType.accentSymbol
+end
+
 local function compileToMathML_aux (_, arg_env, tree)
    if type(tree) == "string" then
       return tree
@@ -481,7 +485,36 @@ local function compileToMathML_aux (_, arg_env, tree)
       return res
    elseif tree.id == "command" and symbols[tree.command] then
       local atom = { id = "atom", [1] = symbols[tree.command] }
-      tree = compileToMathML_aux(nil, arg_env, atom)
+      if isAccentSymbol(symbols[tree.command]) and #tree > 0 then
+         -- LaTeX-style accents \vec{v} = <mover accent="true"><mi>v</mi><mo>→</mo></mover>
+         local accent = {
+            id = "command",
+            command = "mover",
+            options = {
+               accent = "true",
+            },
+         }
+         accent[1] = compileToMathML_aux(nil, arg_env, tree[1])
+         accent[2] = compileToMathML_aux(nil, arg_env, atom)
+         tree = accent
+      elseif #tree > 0 then
+         -- Play cool with LaTeX-style commands that don't take arguments:
+         -- Edge case for non-accent symbols so we don't loose bracketed groups
+         -- that might have been seen as command arguments.
+         -- Ex. \langle{x}\rangle (without space after \langle)
+         local sym = compileToMathML_aux(nil, arg_env, atom)
+         -- Compile all children in-place
+         for i, child in ipairs(tree) do
+            tree[i] = compileToMathML_aux(nil, arg_env, child)
+         end
+         -- Insert symbol at the beginning,
+         -- And add a wrapper mrow to be unwrapped in the parent.
+         table.insert(tree, 1, sym)
+         tree.command = "mrow"
+         tree.id = "wrapper"
+      else
+         tree = compileToMathML_aux(nil, arg_env, atom)
+      end
    elseif tree.id == "argument" then
       if arg_env[tree.index] then
          return arg_env[tree.index]
