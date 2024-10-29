@@ -1108,6 +1108,14 @@ function elements.fraction:styleChildren ()
 end
 
 function elements.fraction:shape ()
+   -- MathML Core 3.3.2: "To avoid visual confusion between the fraction bar
+   -- and another adjacent items (e.g. minus sign or another fraction's bar),"
+   -- By convention, here we use 1px = 1/96in = 0.75pt.
+   -- Note that PlainTeX would likely use \nulldelimiterspace (default 1.2pt)
+   -- but it would depend on the surrounding context, and might be far too
+   -- much in some cases, so we stick to MathML's suggested padding.
+   self.padding = SILE.types.length(0.75)
+
    -- Determine relative abscissas and width
    local widest, other
    if self.denominator.width > self.numerator.width then
@@ -1115,61 +1123,53 @@ function elements.fraction:shape ()
    else
       widest, other = self.numerator, self.denominator
    end
-   widest.relX = SILE.types.length(0)
-   other.relX = (widest.width - other.width) / 2
-   self.width = widest.width
+   widest.relX = self.padding
+   other.relX = self.padding + (widest.width - other.width) / 2
+   self.width = widest.width + 2 * self.padding
    -- Determine relative ordinates and height
    local constants = self:getMathMetrics().constants
    local scaleDown = self:getScaleDown()
    self.axisHeight = constants.axisHeight * scaleDown
    self.ruleThickness = constants.fractionRuleThickness * scaleDown
+
+   local numeratorGapMin, denominatorGapMin, numeratorShiftUp, denominatorShiftDown
    if isDisplayMode(self.mode) then
-      self.numerator.relY = -self.axisHeight
-         - self.ruleThickness / 2
-         - SILE.types.length(
-            math.max(
-               (constants.fractionNumDisplayStyleGapMin * scaleDown + self.numerator.depth):tonumber(),
-               constants.fractionNumeratorDisplayStyleShiftUp * scaleDown - self.axisHeight - self.ruleThickness / 2
-            )
-         )
+      numeratorGapMin = constants.fractionNumDisplayStyleGapMin * scaleDown
+      denominatorGapMin = constants.fractionDenomDisplayStyleGapMin * scaleDown
+      numeratorShiftUp = constants.fractionNumeratorDisplayStyleShiftUp * scaleDown
+      denominatorShiftDown = constants.fractionDenominatorDisplayStyleShiftDown * scaleDown
    else
-      self.numerator.relY = -self.axisHeight
-         - self.ruleThickness / 2
-         - SILE.types.length(
-            math.max(
-               (constants.fractionNumeratorGapMin * scaleDown + self.numerator.depth):tonumber(),
-               constants.fractionNumeratorShiftUp * scaleDown - self.axisHeight - self.ruleThickness / 2
-            )
-         )
+      numeratorGapMin = constants.fractionNumeratorGapMin * scaleDown
+      denominatorGapMin = constants.fractionDenominatorGapMin * scaleDown
+      numeratorShiftUp = constants.fractionNumeratorShiftUp * scaleDown
+      denominatorShiftDown = constants.fractionDenominatorShiftDown * scaleDown
    end
-   if isDisplayMode(self.mode) then
-      self.denominator.relY = -self.axisHeight
-         + self.ruleThickness / 2
-         + SILE.types.length(
-            math.max(
-               (constants.fractionDenomDisplayStyleGapMin * scaleDown + self.denominator.height):tonumber(),
-               constants.fractionDenominatorDisplayStyleShiftDown * scaleDown + self.axisHeight - self.ruleThickness / 2
-            )
+
+   self.numerator.relY = -self.axisHeight
+      - self.ruleThickness / 2
+      - SILE.types.length(
+         math.max(
+            (numeratorGapMin + self.numerator.depth):tonumber(),
+            numeratorShiftUp - self.axisHeight - self.ruleThickness / 2
          )
-   else
-      self.denominator.relY = -self.axisHeight
-         + self.ruleThickness / 2
-         + SILE.types.length(
-            math.max(
-               (constants.fractionDenominatorGapMin * scaleDown + self.denominator.height):tonumber(),
-               constants.fractionDenominatorShiftDown * scaleDown + self.axisHeight - self.ruleThickness / 2
-            )
+      )
+   self.denominator.relY = -self.axisHeight
+      + self.ruleThickness / 2
+      + SILE.types.length(
+         math.max(
+            (denominatorGapMin + self.denominator.height):tonumber(),
+            denominatorShiftDown + self.axisHeight - self.ruleThickness / 2
          )
-   end
+      )
    self.height = self.numerator.height - self.numerator.relY
    self.depth = self.denominator.relY + self.denominator.depth
 end
 
 function elements.fraction:output (x, y, line)
    SILE.outputter:drawRule(
-      scaleWidth(x, line),
+      scaleWidth(x + self.padding, line),
       y.length - self.axisHeight - self.ruleThickness / 2,
-      scaleWidth(self.width, line),
+      scaleWidth(self.width - 2 * self.padding, line),
       self.ruleThickness
    )
 end
