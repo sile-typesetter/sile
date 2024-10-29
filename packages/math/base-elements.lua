@@ -533,6 +533,43 @@ end
 
 function elements.stackbox.output (_, _, _, _) end
 
+elements.phantom = pl.class(elements.stackbox) -- inherit from stackbox
+elements.phantom._type = "Phantom"
+
+function elements.phantom:_init (children, special)
+   -- MathML core 3.3.7:
+   -- "Its layout algorithm is the same as the mrow element".
+   -- Also not the MathML states that <mphantom> is sort of legacy, "implemented
+   -- for compatibility with full MathML. Authors whose only target is MathML
+   -- Core are encouraged to use CSS for styling."
+   -- The thing is that we don't have CSS in SILE, so supporting <mphantom> is
+   -- a must.
+   elements.stackbox._init(self, "H", children)
+   self.special = special
+end
+
+function elements.phantom:shape ()
+   elements.stackbox.shape(self)
+   -- From https://latexref.xyz:
+   -- "The \vphantom variant produces an invisible box with the same vertical size
+   -- as subformula, the same height and depth, but having zero width.
+   -- And \hphantom makes a box with the same width as subformula but
+   -- with zero height and depth."
+   if self.special == "v" then
+      self.width = SILE.types.length()
+   elseif self.special == "h" then
+      self.height = SILE.types.length()
+      self.depth = SILE.types.length()
+   end
+end
+
+function elements.phantom:output (_, _, _)
+   -- Note the trick here: when the tree is rendered, the node's output
+   -- function is invoked, then all its children's output functions.
+   -- So we just cancel the list of children here, before it's rendered.
+   self.children = {}
+end
+
 elements.subscript = pl.class(elements.mbox)
 elements.subscript._type = "Subscript"
 

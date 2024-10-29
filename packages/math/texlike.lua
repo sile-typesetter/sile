@@ -533,6 +533,11 @@ compileToMathML(
   % Modulus operator forms
   \def{bmod}{\mo{mod}}
   \def{pmod}{\quad(\mo{mod} #1)}
+
+  % Phantom commands from TeX/LaTeX
+  \def{phantom}{\mphantom{#1}}
+  \def{hphantom}{\mphantom[special=h]{#1}}
+  \def{vphantom}{\mphantom[special=v]{#1}}
 ]==],
    })
 )
