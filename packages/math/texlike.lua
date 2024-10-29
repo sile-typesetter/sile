@@ -656,8 +656,9 @@ compileToMathML(
 
   % Phantom commands from TeX/LaTeX
   \def{phantom}{\mphantom{#1}}
-  \def{hphantom}{\mphantom[special=h]{#1}}
-  \def{vphantom}{\mphantom[special=v]{#1}}
+  \def{hphantom}{\mpadded[height=0, depth=0]{\mphantom{#1}}}
+  \def{vphantom}{\mpadded[width=0]{\mphantom{#1}}}
+  %\mphantom[special=v]{#1}}}
 ]==],
    })
 )

@@ -177,6 +177,10 @@ function ConvertMathML (_, content)
       -- It's an mrow, but with some style attributes that we ignore.
       SU.warn("MathML mstyle is not fully supported yet")
       return b.stackbox("H", convertChildren(content))
+   elseif content.command == "mpadded" then
+      -- MathML Core 3.3.6.1: The <mpadded> element generates an anonymous <mrow> box
+      -- called the "impadded inner box"
+      return b.padded(content.options, b.stackbox("H", convertChildren(content)))
    else
       SU.error("Unknown math command " .. content.command)
    end

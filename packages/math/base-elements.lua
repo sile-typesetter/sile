@@ -468,7 +468,7 @@ function elements.stackbox.output (_, _, _, _) end
 elements.phantom = pl.class(elements.stackbox) -- inherit from stackbox
 elements.phantom._type = "Phantom"
 
-function elements.phantom:_init (children, special)
+function elements.phantom:_init (children)
    -- MathML core 3.3.7:
    -- "Its layout algorithm is the same as the mrow element".
    -- Also not the MathML states that <mphantom> is sort of legacy, "implemented
@@ -477,22 +477,6 @@ function elements.phantom:_init (children, special)
    -- The thing is that we don't have CSS in SILE, so supporting <mphantom> is
    -- a must.
    elements.stackbox._init(self, "H", children)
-   self.special = special
-end
-
-function elements.phantom:shape ()
-   elements.stackbox.shape(self)
-   -- From https://latexref.xyz:
-   -- "The \vphantom variant produces an invisible box with the same vertical size
-   -- as subformula, the same height and depth, but having zero width.
-   -- And \hphantom makes a box with the same width as subformula but
-   -- with zero height and depth."
-   if self.special == "v" then
-      self.width = SILE.types.length()
-   elseif self.special == "h" then
-      self.height = SILE.types.length()
-      self.depth = SILE.types.length()
-   end
 end
 
 function elements.phantom:output (_, _, _)
@@ -1453,6 +1437,50 @@ function elements.sqrt:output (x, y, line)
       self.radicalRuleThickness
    )
 end
+
+elements.padded = pl.class(elements.mbox)
+elements.padded._type = "Padded"
+
+function elements.padded:__tostring ()
+   return self._type .. "(" .. tostring(self.impadded) .. ")"
+end
+
+function elements.padded:_init (attributes, impadded)
+   elements.mbox._init(self)
+   self.impadded = impadded
+   self.attributes = attributes or {}
+   table.insert(self.children, impadded)
+end
+
+function elements.padded:styleChildren ()
+   self.impadded.mode = self.mode
+end
+
+function elements.padded:shape ()
+   -- TODO MathML allows percentages font-relative units (em, ex) for padding
+   -- But our units work with font.size, not math.font.size (possibly adjusted by scaleDown)
+   -- so the expectations might not be met.
+   local width = self.attributes.width and SU.cast("measurement", self.attributes.width)
+   local height = self.attributes.height and SU.cast("measurement", self.attributes.height)
+   local depth = self.attributes.depth and SU.cast("measurement", self.attributes.depth)
+   local lspace = self.attributes.lspace and SU.cast("measurement", self.attributes.lspace)
+   local voffset = self.attributes.voffset and SU.cast("measurement", self.attributes.voffset)
+   -- Clamping for width, height, depth, lspace
+   width = width and (width:tonumber() > 0 and width or SILE.types.measurement())
+   height = height and (height:tonumber() > 0 and height or SILE.types.measurement())
+   depth = depth and (depth:tonumber() > 0 and depth or SILE.types.measurement())
+   lspace = lspace and (lspace:tonumber() > 0 and lspace or SILE.types.measurement())
+   -- No clamping for voffset
+   voffset = voffset or SILE.types.measurement(0)
+   -- Compute the dimensions
+   self.width = width and SILE.types.length(width) or self.impadded.width
+   self.height = height and SILE.types.length(height) or self.impadded.height
+   self.depth = depth and SILE.types.length(depth) or self.impadded.depth
+   self.impadded.relX = lspace and SILE.types.length(lspace) or SILE.types.length()
+   self.impadded.relY = voffset and SILE.types.length(voffset):negate() or SILE.types.length()
+end
+
+function elements.padded.output (_, _, _, _) end
 
 elements.mathMode = mathMode
 elements.atomType = atomType
