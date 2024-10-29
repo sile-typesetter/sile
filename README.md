@@ -70,13 +70,16 @@ If you install LuaRocks for use with SILE via `pacman`, use the `lua51-*` varian
 
 #### Fedora
 
-A [COPR][copr] repository is available for Fedora users with packages of SILE and all the necessary dependencies.
-Fedora 38 and later are supported.
-There is work in progress to get the packages added to the official Fedora repository.
+Fedora Linux has SILE in their official repositories. To install run:
 
 ```console
-$ dnf copr enable jonny/SILE
 $ dnf install sile
+```
+
+Not all the fonts are not installed by default, to install them:
+
+```console
+$ dnf install sil-gentium-plus-fonts alerque-libertinus-fonts hack-fonts
 ```
 
 #### OpenSUSE

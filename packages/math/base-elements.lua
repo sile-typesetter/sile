@@ -908,8 +908,8 @@ end
 
 function elements.text:_init (kind, attributes, script, text)
    elements.terminal._init(self)
-   if not (kind == "number" or kind == "identifier" or kind == "operator") then
-      SU.error("Unknown text node kind '" .. kind .. "'; should be one of: number, identifier, operator")
+   if not (kind == "number" or kind == "identifier" or kind == "operator" or kind == "string") then
+      SU.error("Unknown text node kind '" .. kind .. "'; should be one of: number, identifier, operator, string")
    end
    self.kind = kind
    self.script = script

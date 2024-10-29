@@ -133,7 +133,15 @@ pub fn run(
         has_input_filename = true;
     }
     if let Some(options) = options {
-        sile_input.set("options", options)?;
+        // TODO: when mlua v0.10 merges, adapt this like the uses parsing to avoid chunking
+        for option in options.iter() {
+            let option = lua.create_string(option)?;
+            lua.load(chunk! {
+                local parameter = SILE.parserBits.parameters:match($option);
+                SILE.input.options = pl.tablex.merge(SILE.input.options, parameter, true)
+            })
+            .eval::<()>()?;
+        }
     }
     if let Some(modules) = uses {
         // let parser_bits: LuaTable = sile.get("parserBits")?;

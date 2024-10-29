@@ -42,8 +42,11 @@ local mathGrammar = function (_ENV)
          return ret
       end
    local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
+   -- Simple amsmath-like \text command (no embedded math)
+   local textgroup = P"{" * C((1-P"}")^1) * (P"}" + E("`}` expected"))
    local element_no_infix =
       V"def" +
+      V"text" + -- Important: before command
       V"command" +
       group +
       V"argument" +
@@ -115,6 +118,11 @@ local mathGrammar = function (_ENV)
    sub = element_no_infix * _ * P"_" * _ * element_no_infix
    atom = natural + C(utf8code - S"\\{}%^_&") +
       (P"\\{" + P"\\}") / function (s) return string.sub(s, -1) end
+   text = (
+         P"\\text" *
+         Cg(parameters, "options") *
+         textgroup
+      )
    command = (
          P"\\" *
          Cg(ctrl_sequence_name, "command") *
@@ -252,6 +260,23 @@ local compileToStr = function (argEnv, mathlist)
    end
 end
 
+local function isBigOperator (tree)
+   if tree.command ~= "mo" then
+      return false
+   end
+   -- Case \mo[atom=big]{ops}
+   -- E.g. \mo[atom=big]{lim}
+   if tree.options and tree.options.atom == "big" then
+      return true
+   end
+   -- Case \mo{ops} where ops is registered as big operator (unicode-symbols)
+   -- E.g. \mo{∑) or \sum
+   if tree[1] and symbolDefaults[tree[1]] and symbolDefaults[tree[1]].atom == atomType.bigOperator then
+      return true
+   end
+   return false
+end
+
 local function compileToMathML_aux (_, arg_env, tree)
    if type(tree) == "string" then
       return tree
@@ -328,21 +353,13 @@ local function compileToMathML_aux (_, arg_env, tree)
       tree.options = {}
    -- Translate TeX-like sub/superscripts to `munderover` or `msubsup`,
    -- depending on whether the base is a big operator
-   elseif tree.id == "sup" and tree[1].command == "mo" and tree[1].atom == atomType.bigOperator then
+   elseif tree.id == "sup" and isBigOperator(tree[1]) then
       tree.command = "mover"
-   elseif tree.id == "sub" and tree[1].command == "mo" and symbolDefaults[tree[1][1]].atom == atomType.bigOperator then
+   elseif tree.id == "sub" and isBigOperator(tree[1]) then
       tree.command = "munder"
-   elseif
-      tree.id == "subsup"
-      and tree[1].command == "mo"
-      and symbolDefaults[tree[1][1]].atom == atomType.bigOperator
-   then
+   elseif tree.id == "subsup" and isBigOperator(tree[1]) then
       tree.command = "munderover"
-   elseif
-      tree.id == "supsub"
-      and tree[1].command == "mo"
-      and symbolDefaults[tree[1][1]].atom == atomType.bigOperator
-   then
+   elseif tree.id == "supsub" and isBigOperator(tree[1]) then
       tree.command = "munderover"
       local tmp = tree[2]
       tree[2] = tree[3]
@@ -365,6 +382,8 @@ local function compileToMathML_aux (_, arg_env, tree)
          return compileToMathML_aux(nil, compiledArgs, tree[1])
       end)
       return nil
+   elseif tree.id == "text" then
+      tree.command = "mtext"
    elseif tree.id == "command" and commands[tree.command] then
       local argTypes = commands[tree.command][1]
       local cmdFun = commands[tree.command][2]
@@ -479,6 +498,21 @@ compileToMathML(
   \def{sqrt}{\msqrt{#1}}
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
+
+  \def{lim}{\mo[atom=big]{lim}}
+
+  % From amsmath:
+  \def{to}{\mo[atom=bin]{→}}
+  \def{gcd}{\mo[atom=big]{gcd}}
+  \def{sup}{\mo[atom=big]{sup}}
+  \def{inf}{\mo[atom=big]{inf}}
+  \def{max}{\mo[atom=big]{max}}
+  \def{min}{\mo[atom=big]{min}}
+  % Those use U+202F NARROW NO-BREAK SPACE in their names
+  \def{limsup}{\mo[atom=big]{lim sup}}
+  \def{liminf}{\mo[atom=big]{lim inf}}
+  \def{projlim}{\mo[atom=big]{proj lim}}
+  \def{injlim}{\mo[atom=big]{inj lim}}
 
   % Standard spaces gleaned from plain TeX
   \def{thinspace}{\mspace[width=thin]}
