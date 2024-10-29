@@ -663,7 +663,16 @@ function elements.underOver:styleChildren ()
 end
 
 function elements.underOver:shape ()
-   if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) then
+   if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) and self.base.largeop then
+      -- FIXME
+      -- Added the self.base.largeop condition, but it's kind of a workaround:
+      -- It should rather be the "moveablelimits" propery in MathML, but we do not have that yet.
+      -- When the base is a moveable limit, the under/over scripts are not placed under/over the base,
+      -- but ather to the right of it, when display mode is not used.
+      -- Notable effects:
+      --   Mozilla MathML test 19 (on "k times" > overbrace > base)
+      --   Maxwell's Equations in MathML3 Test Suite "complex1" (on the vectors in fractions)
+      -- For now, go with the "largeop" property, but this is not correct.
       self.isUnderOver = true
       elements.subscript.shape(self)
       return
