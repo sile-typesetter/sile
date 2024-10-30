@@ -424,7 +424,7 @@ function elements.stackbox:shape ()
       -- Handle stretchy operators
       for _, elt in ipairs(self.children) do
          if elt.is_a(elements.text) and elt.kind == "operator" and elt.stretchy then
-            elt:stretchyReshape(self.depth, self.height)
+            elt:_vertStretchyReshape(self.depth, self.height)
          end
       end
       -- Set self.width
@@ -966,38 +966,56 @@ function elements.text:shape ()
    end
 end
 
-function elements.text:stretchyReshape (depth, height)
-   -- Required depth+height of stretched glyph, in font units
+function elements.text.findClosestVariant (_, variants, requiredAdvance, currentAdvance)
+   local closest
+   local closestI
+   local m = requiredAdvance - currentAdvance
+   for i, variant in ipairs(variants) do
+      local diff = math.abs(variant.advanceMeasurement - requiredAdvance)
+      SU.debug("math", "stretch: diff =", diff)
+      if diff < m then
+         closest = variant
+         closestI = i
+         m = diff
+      end
+   end
+   return closest, closestI
+end
+
+function elements.text:_reshapeGlyph (glyph, closestVariant, sz)
+   local face = SILE.font.cache(self.font, SILE.shaper.getFace)
+   local dimen = hb.get_glyph_dimensions(face, sz, closestVariant.variantGlyph)
+   glyph.gid = closestVariant.variantGlyph
+   glyph.width, glyph.height, glyph.depth, glyph.glyphAdvance =
+      dimen.width, dimen.height, dimen.depth, dimen.glyphAdvance
+   return dimen
+end
+
+function elements.text:_stretchyReshape (target, direction)
+   -- direction is the required direction of stretching: true for vertical, false for horizontal
+   -- target is the required dimension of the stretched glyph, in font units
    local mathMetrics = self:getMathMetrics()
    local upem = mathMetrics.unitsPerEm
    local sz = self.font.size
-   local requiredAdvance = (depth + height):tonumber() * upem / sz
+   local requiredAdvance = target:tonumber() * upem / sz
    SU.debug("math", "stretch: rA =", requiredAdvance)
    -- Choose variant of the closest size. The criterion we use is to have
    -- an advance measurement as close as possible as the required one.
-   -- The advance measurement is simply the depth+height of the glyph.
+   -- The advance measurement is simply the dimension of the glyph.
    -- Therefore, the selected glyph may be smaller or bigger than
-   -- required.  TODO: implement assembly of stretchable glyphs form
-   -- their parts for cases when the biggest variant is not big enough.
+   -- required.
+   -- TODO: implement assembly of stretchable glyphs from their parts for cases
+   -- when the biggest variant is not big enough.
    -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
    local glyphs = pl.tablex.deepcopy(self.value.items)
-   local constructions = self:getMathMetrics().mathVariants.vertGlyphConstructions[glyphs[1].gid]
+   local glyphConstructions = direction and mathMetrics.mathVariants.vertGlyphConstructions
+      or mathMetrics.mathVariants.horizGlyphConstructions
+   local constructions = glyphConstructions[glyphs[1].gid]
    if constructions then
       local variants = constructions.mathGlyphVariantRecord
       SU.debug("math", "stretch: variants =", variants)
-      local closest
-      local closestI
-      local m = requiredAdvance - (self.depth + self.height):tonumber() * upem / sz
-      SU.debug("math", "stretch: m =", m)
-      for i, v in ipairs(variants) do
-         local diff = math.abs(v.advanceMeasurement - requiredAdvance)
-         SU.debug("math", "stretch: diff =", diff)
-         if diff < m then
-            closest = v
-            closestI = i
-            m = diff
-         end
-      end
+      local currentAdvance = (direction and (self.depth + self.height):tonumber() or self.width:tonumber()) * upem / sz
+      local closest, closestI = self:findClosestVariant(variants, requiredAdvance, currentAdvance)
       SU.debug("math", "stretch: closestI =", closestI)
       if closest then
          -- Now we have to re-shape the glyph chain. We will assume there
@@ -1005,21 +1023,24 @@ function elements.text:stretchyReshape (depth, height)
          -- TODO: this code is probably wrong when the vertical
          -- variants have a different width than the original, because
          -- the shaping phase is already done. Need to do better.
-         glyphs[1].gid = closest.variantGlyph
-         local face = SILE.font.cache(self.font, SILE.shaper.getFace)
-         local dimen = hb.get_glyph_dimensions(face, self.font.size, closest.variantGlyph)
-         glyphs[1].width = dimen.width
-         glyphs[1].height = dimen.height
-         glyphs[1].depth = dimen.depth
-         glyphs[1].glyphAdvance = dimen.glyphAdvance
-         self.width = SILE.types.length(dimen.glyphAdvance)
-         self.depth = SILE.types.length(dimen.depth)
-         self.height = SILE.types.length(dimen.height)
+         local dimen = self:_reshapeGlyph(glyphs[1], closest, sz)
+         self.width, self.depth, self.height =
+            SILE.types.length(dimen.glyphAdvance), SILE.types.length(dimen.depth), SILE.types.length(dimen.height)
          SILE.shaper:preAddNodes(glyphs, self.value)
          self.value.items = glyphs
          self.value.glyphString = { glyphs[1].gid }
+         return true
       end
    end
+   return false
+end
+
+function elements.text:_vertStretchyReshape(depth, height)
+   return self:_stretchyReshape(depth + height, true)
+end
+
+function elements.text:_horizStretchyReshape(width)
+   return self:_stretchyReshape(width, false)
 end
 
 function elements.text:output (x, y, line)
