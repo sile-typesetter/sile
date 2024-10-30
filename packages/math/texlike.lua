@@ -444,7 +444,7 @@ local function printMathML (tree)
    if tree.options then
       local options = {}
       for k, v in pairs(tree.options) do
-         table.insert(options, k .. "=" .. v)
+         table.insert(options, k .. "=" .. tostring(v))
       end
       if #options > 0 then
          result = result .. "[" .. table.concat(options, ", ") .. "]"
@@ -529,6 +529,36 @@ compileToMathML(
   \def{enskip}{\enspace}
   \def{quad}{\mspace[width=1em]}
   \def{qquad}{\mspace[width=2em]}
+
+  % MathML says a single-character identifier must be in italic by default.
+  % TeX however has the following Greek capital macros rendered in upright shape.
+  % It so common that you've probably never seen Γ(x) written with an italic gamma.
+  \def{Gamma}{\mi[mathvariant=normal]{Γ}}
+  \def{Delta}{\mi[mathvariant=normal]{Δ}}
+  \def{Theta}{\mi[mathvariant=normal]{Θ}}
+  \def{Lambda}{\mi[mathvariant=normal]{Λ}}
+  \def{Xi}{\mi[mathvariant=normal]{Ξ}}
+  \def{Pi}{\mi[mathvariant=normal]{Π}}
+  \def{Sigma}{\mi[mathvariant=normal]{Σ}}
+  \def{Upsilon}{\mi[mathvariant=normal]{Υ}}
+  \def{Phi}{\mi[mathvariant=normal]{Φ}}
+  \def{Psi}{\mi[mathvariant=normal]{Ψ}}
+  \def{Omega}{\mi[mathvariant=normal]{Ω}}
+  % Some calligraphic (script), fraktur, double-struck styles:
+  % Convenience for compatibility with LaTeX.
+  \def{mathcal}{\mi[mathvariant=script]{#1}}
+  \def{mathfrak}{\mi[mathvariant=fraktur]{#1}}
+  \def{mathbb}{\mi[mathvariant=double-struck]{#1}}
+  % Some style-switching commands for compatibility with LaTeX math.
+  % Caveat emptor: LaTeX would allow these to apply to a whole formula.
+  % We can't do that in MathML, as mathvariant applies to token elements only.
+  % Also note that LaTeX and related packages may have many more such commands.
+  % We only provide a few common ('historical') ones here.
+  \def{mathrm}{\mi[mathvariant=normal]{#1}}
+  \def{mathbf}{\mi[mathvariant=bold]{#1}}
+  \def{mathit}{\mi[mathvariant=italic]{#1}}
+  \def{mathsf}{\mi[mathvariant=sans-serif]{#1}}
+  \def{mathtt}{\mi[mathvariant=monospace]{#1}}
 
   % Modulus operator forms
   \def{bmod}{\mo{mod}}

@@ -1,6 +1,8 @@
 -- Interpret a MathML or TeX-like AST, typeset it and add it to the output.
 local b = require("packages.math.base-elements")
 local syms = require("packages.math.unicode-symbols")
+local mathvariants = require("packages.math.unicode-mathvariants")
+local mathVariantToScriptType, scriptType = mathvariants.mathVariantToScriptType, mathvariants.scriptType
 
 -- Shorthands for atom types, used in the `atom` command option
 local atomTypeShort = {
@@ -47,16 +49,16 @@ function ConvertMathML (_, content)
       local special = content.options.special
       return b.phantom(convertChildren(content), special)
    elseif content.command == "mi" then
-      local script = content.options.mathvariant and b.mathVariantToScriptType(content.options.mathvariant)
+      local script = content.options.mathvariant and mathVariantToScriptType(content.options.mathvariant)
       local text = content[1]
       if type(text) ~= "string" then
          SU.error("mi command contains content which is not text")
       end
-      script = script or (luautf8.len(text) == 1 and b.scriptType.italic or b.scriptType.upright)
+      script = script or (luautf8.len(text) == 1 and scriptType.italic or scriptType.upright)
       return b.text("identifier", {}, script, text)
    elseif content.command == "mo" then
-      local script = content.options.mathvariant and b.mathVariantToScriptType(content.options.mathvariant)
-         or b.scriptType.upright
+      local script = content.options.mathvariant and mathVariantToScriptType(content.options.mathvariant)
+         or scriptType.upright
       local text = content[1]
       local attributes = {}
       if syms.symbolDefaults[text] then
@@ -76,8 +78,8 @@ function ConvertMathML (_, content)
       end
       return b.text("operator", attributes, script, text)
    elseif content.command == "mn" then
-      local script = content.options.mathvariant and b.mathVariantToScriptType(content.options.mathvariant)
-         or b.scriptType.upright
+      local script = content.options.mathvariant and mathVariantToScriptType(content.options.mathvariant)
+         or scriptType.upright
       local text = content[1]
       if type(text) ~= "string" then
          SU.error("mn command contains content which is not text")
@@ -156,7 +158,7 @@ function ConvertMathML (_, content)
       -- and soft wrap opportunities: ignored here.
       -- There's also some explanations about CSS, italic correction etc. which we ignore too.
       text = text:gsub("[\n\r]", " ")
-      return b.text("string", {}, b.scriptType.upright, text:gsub("%s+", " "))
+      return b.text("string", {}, scriptType.upright, text:gsub("%s+", " "))
    else
       SU.error("Unknown math command " .. content.command)
    end

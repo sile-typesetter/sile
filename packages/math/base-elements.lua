@@ -2,6 +2,8 @@ local nodefactory = require("types.node")
 local hb = require("justenoughharfbuzz")
 local ot = require("core.opentype-parser")
 local syms = require("packages.math.unicode-symbols")
+local mathvariants = require("packages.math.unicode-mathvariants")
+local convertMathVariantScript = mathvariants.convertMathVariantScript
 
 local atomType = syms.atomType
 local symbolDefaults = syms.symbolDefaults
@@ -19,32 +21,6 @@ local mathMode = {
    scriptScriptCramped = 7,
 }
 
-local scriptType = {
-   upright = 1,
-   bold = 2, -- also have Greek and digits
-   italic = 3, -- also have Greek
-   boldItalic = 4, -- also have Greek
-   script = 5,
-   boldScript = 6,
-   fraktur = 7,
-   boldFraktur = 8,
-   doubleStruck = 9, -- also have digits
-   sansSerif = 10, -- also have digits
-   sansSerifBold = 11, -- also have Greek and digits
-   sansSerifItalic = 12,
-   sansSerifBoldItalic = 13, -- also have Greek
-   monospace = 14, -- also have digits
-}
-
-local mathVariantToScriptType = function (attr)
-   return attr == "normal" and scriptType.upright
-      or attr == "bold" and scriptType.bold
-      or attr == "italic" and scriptType.italic
-      or attr == "bold-italic" and scriptType.boldItalic
-      or attr == "double-struck" and scriptType.doubleStruck
-      or SU.error('Invalid value "' .. attr .. '" for option mathvariant')
-end
-
 local function isDisplayMode (mode)
    return mode <= 1
 end
@@ -60,50 +36,6 @@ end
 local function isScriptScriptMode (mode)
    return mode == mathMode.scriptScript or mode == mathMode.scriptScriptCramped
 end
-
-local mathScriptConversionTable = {
-   capital = {
-      [scriptType.upright] = function (codepoint)
-         return codepoint
-      end,
-      [scriptType.bold] = function (codepoint)
-         return codepoint + 0x1D400 - 0x41
-      end,
-      [scriptType.italic] = function (codepoint)
-         return codepoint + 0x1D434 - 0x41
-      end,
-      [scriptType.boldItalic] = function (codepoint)
-         return codepoint + 0x1D468 - 0x41
-      end,
-      [scriptType.doubleStruck] = function (codepoint)
-         return codepoint == 0x43 and 0x2102
-            or codepoint == 0x48 and 0x210D
-            or codepoint == 0x4E and 0x2115
-            or codepoint == 0x50 and 0x2119
-            or codepoint == 0x51 and 0x211A
-            or codepoint == 0x52 and 0x211D
-            or codepoint == 0x5A and 0x2124
-            or codepoint + 0x1D538 - 0x41
-      end,
-   },
-   small = {
-      [scriptType.upright] = function (codepoint)
-         return codepoint
-      end,
-      [scriptType.bold] = function (codepoint)
-         return codepoint + 0x1D41A - 0x61
-      end,
-      [scriptType.italic] = function (codepoint)
-         return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61
-      end,
-      [scriptType.boldItalic] = function (codepoint)
-         return codepoint + 0x1D482 - 0x61
-      end,
-      [scriptType.doubleStruck] = function (codepoint)
-         return codepoint + 0x1D552 - 0x61
-      end,
-   },
-}
 
 local mathCache = {}
 
@@ -952,16 +884,7 @@ function elements.text:_init (kind, attributes, script, text)
    self.script = script
    self.text = text
    if self.script ~= "upright" then
-      local converted = ""
-      for _, uchr in luautf8.codes(self.text) do
-         local dst_char = luautf8.char(uchr)
-         if uchr >= 0x41 and uchr <= 0x5A then -- Latin capital letter
-            dst_char = luautf8.char(mathScriptConversionTable.capital[self.script](uchr))
-         elseif uchr >= 0x61 and uchr <= 0x7A then -- Latin non-capital letter
-            dst_char = luautf8.char(mathScriptConversionTable.small[self.script](uchr))
-         end
-         converted = converted .. dst_char
-      end
+      local converted = convertMathVariantScript(self.text, self.script)
       self.originalText = self.text
       self.text = converted
    end
@@ -1521,8 +1444,6 @@ end
 
 elements.mathMode = mathMode
 elements.atomType = atomType
-elements.scriptType = scriptType
-elements.mathVariantToScriptType = mathVariantToScriptType
 elements.symbolDefaults = symbolDefaults
 elements.newSubscript = newSubscript
 elements.newUnderOver = newUnderOver
