@@ -423,7 +423,7 @@ function elements.stackbox:shape ()
       end
       -- Handle stretchy operators
       for _, elt in ipairs(self.children) do
-         if elt.is_a(elements.text) and elt.kind == "operator" and elt.stretchy then
+         if elt.is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
             elt:_vertStretchyReshape(self.depth, self.height)
          end
       end
@@ -554,7 +554,7 @@ function elements.subscript:shape ()
    local subShift
    local supShift
    if self.sub then
-      if self.isUnderOver or self.base.largeop then
+      if self.isUnderOver or SU.boolean(self.base.largeop, false) then
          -- Ad hoc correction on integral limits, following LuaTeX's
          -- `\mathnolimitsmode=0` (see LuaTeX Reference Manual).
          subShift = -itCorr
@@ -567,12 +567,12 @@ function elements.subscript:shape ()
          --self.base.depth + constants.subscriptBaselineDropMin * scaleDown,
          (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
       ))
-      if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or self.base.largeop then
+      if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or SU.boolean(self.base.largeop, false) then
          self.sub.relY = maxLength(self.sub.relY, self.base.depth + constants.subscriptBaselineDropMin * scaleDown)
       end
    end
    if self.sup then
-      if self.isUnderOver or self.base.largeop then
+      if self.isUnderOver or SU.boolean(self.base.largeop, false) then
          -- Ad hoc correction on integral limits, following LuaTeX's
          -- `\mathnolimitsmode=0` (see LuaTeX Reference Manual).
          supShift = 0
@@ -586,7 +586,7 @@ function elements.subscript:shape ()
          --self.base.height - constants.superscriptBaselineDropMax * scaleDown,
          (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
       )) * -1
-      if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or self.base.largeop then
+      if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or SU.boolean(self.base.largeop, false) then
          self.sup.relY = maxLength(
             (0 - self.sup.relY),
             self.base.height - constants.superscriptBaselineDropMax * scaleDown
@@ -663,9 +663,9 @@ function elements.underOver:styleChildren ()
 end
 
 function elements.underOver:shape ()
-   if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) and self.base.largeop then
+   if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) and SU.boolean(self.base.largeop, false) then
       -- FIXME
-      -- Added the self.base.largeop condition, but it's kind of a workaround:
+      -- Added the "largeop" condition, but it's kind of a workaround:
       -- It should rather be the "moveablelimits" propery in MathML, but we do not have that yet.
       -- When the base is a moveable limit, the under/over scripts are not placed under/over the base,
       -- but ather to the right of it, when display mode is not used.
@@ -861,8 +861,8 @@ function elements.text:__tostring ()
       .. tostring(self.kind)
       .. ", script="
       .. tostring(self.script)
-      .. (self.stretchy and ", stretchy" or "")
-      .. (self.largeop and ", largeop" or "")
+      .. (SU.boolean(self.stretchy, false) and ", stretchy" or "")
+      .. (SU.boolean(self.largeop, false) and ", largeop" or "")
       .. ', text="'
       .. (self.originalText or self.text)
       .. '")'
@@ -897,7 +897,7 @@ function elements.text:shape ()
    local mathMetrics = self:getMathMetrics()
    local glyphs = SILE.shaper:shapeToken(self.text, self.font)
    -- Use bigger variants for big operators in display style
-   if isDisplayMode(self.mode) and self.largeop then
+   if isDisplayMode(self.mode) and SU.boolean(self.largeop, false) then
       -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
       glyphs = pl.tablex.deepcopy(glyphs)
       local constructions = mathMetrics.mathVariants.vertGlyphConstructions[glyphs[1].gid]

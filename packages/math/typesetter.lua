@@ -72,10 +72,15 @@ function ConvertMathML (_, content)
          or scriptType.upright
       local text = content[1]
       local attributes = {}
+      -- Attributes from the (default) oerator table
       if syms.symbolDefaults[text] then
          for attribute, value in pairs(syms.symbolDefaults[text]) do
             attributes[attribute] = value
          end
+      end
+      -- Overwrite with attributes from the element
+      for attribute, value in pairs(content.options) do
+         attributes[attribute] = value
       end
       if content.options.atom then
          if not atomTypeShort[content.options.atom] then
