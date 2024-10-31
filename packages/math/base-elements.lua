@@ -1035,12 +1035,26 @@ function elements.text:_stretchyReshape (target, direction)
    return false
 end
 
-function elements.text:_vertStretchyReshape(depth, height)
-   return self:_stretchyReshape(depth + height, true)
+function elements.text:_vertStretchyReshape (depth, height)
+   local hasStretched = self:_stretchyReshape(depth + height, true)
+   if hasStretched then
+      -- HACK: see output routine
+      self.vertExpectedSz = height + depth
+      self.vertScalingRatio = (depth + height):tonumber() / (self.height:tonumber() + self.depth:tonumber())
+      self.height = height
+      self.depth = depth
+   end
+   return hasStretched
 end
 
-function elements.text:_horizStretchyReshape(width)
-   return self:_stretchyReshape(width, false)
+function elements.text:_horizStretchyReshape (width)
+   local hasStretched = self:_stretchyReshape(width, false)
+   if hasStretched then
+      -- HACK: see output routine
+      self.horizScalingRatio = width:tonumber() / self.width:tonumber()
+      self.width = width
+   end
+   return hasStretched
 end
 
 function elements.text:output (x, y, line)
@@ -1058,7 +1072,21 @@ function elements.text:output (x, y, line)
    -- There should be no stretch or shrink on the width of a text
    -- element.
    local width = self.width.length
-   SILE.outputter:drawHbox(self.value, width)
+   -- HACK: For stretchy operators, MathML Core and OpenType define how to build large glyphs
+   -- from an assembly of smaller ones. It's fairly complex and idealistic...
+   -- Anyhow, we do not have that yet, so we just stretch the glyph artificially.
+   -- There are cases where this will not look very good.
+   -- Call that a compromise, so that long vectors or large matrices look "decent" without assembly.
+   if SILE.outputter.scaleFn and (self.horizScalingRatio or self.vertScalingRatio) then
+      local xratio = self.horizScalingRatio or 1
+      local yratio = self.vertScalingRatio or 1
+      SU.debug("math", "fake glyph stretch: xratio =", xratio, "yratio =", yratio)
+      SILE.outputter:scaleFn(x, y, xratio, yratio, function ()
+         SILE.outputter:drawHbox(self.value, width)
+      end)
+   else
+      SILE.outputter:drawHbox(self.value, width)
+   end
 end
 
 elements.fraction = pl.class(elements.mbox)
