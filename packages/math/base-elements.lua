@@ -1062,7 +1062,7 @@ function elements.text:output (x, y, line)
       return
    end
    local compensatedY
-   if isDisplayMode(self.mode) and self.atom == atomType.bigOperator and self.value.items[1].fontDepth then
+   if isDisplayMode(self.mode) and SU.boolean(self.largeop, false) and self.value.items[1].fontDepth then
       compensatedY = SILE.types.length(y.length + self.value.items[1].depth - self.value.items[1].fontDepth)
    else
       compensatedY = y
