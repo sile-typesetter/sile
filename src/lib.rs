@@ -184,7 +184,7 @@ pub fn run(
         let input_filenames: LuaTable = sile_input.get("filenames")?;
         let process_file: LuaFunction = sile.get("processFile")?;
         for file in input_filenames.sequence_values::<LuaString>() {
-            process_file.call::<LuaString>(file?)?;
+            process_file.call::<LuaValue>(file?)?;
         }
         let finish: LuaFunction = sile.get("finish")?;
         finish.call::<LuaValue>(())?;
