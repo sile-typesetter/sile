@@ -2,7 +2,6 @@ use mlua::chunk;
 use mlua::prelude::*;
 use rust_embed::{EmbeddedFile, RustEmbed};
 use std::str;
-//use rusile::rusile;
 
 /// Embed everything that would otherwise be installed to datadir
 #[derive(RustEmbed)]
@@ -46,7 +45,6 @@ pub struct SileModules;
 // Link Lua loader functions from C modules that Lua would otherwise be loading externally that
 // we've linked into the CLI binary. Linking happens in build-aux/build.rs.
 extern "C-unwind" {
-    //fn luaopen_rusile(lua: *mut mlua::lua_State) -> i32;
     fn luaopen_fontmetrics(lua: *mut mlua::lua_State) -> i32;
     fn luaopen_justenoughfontconfig(lua: *mut mlua::lua_State) -> i32;
     fn luaopen_justenoughharfbuzz(lua: *mut mlua::lua_State) -> i32;
@@ -58,18 +56,27 @@ extern "C-unwind" {
 /// Register a Lua function in the loaders/searchers table to return C modules linked into the CLI
 /// binary and another to return embedded Lua resources as Lua modules. See discussion in mlua:
 /// https://github.com/khvzak/mlua/discussions/322
-pub fn inject_embedded_loader(lua: &Lua) {
+pub fn inject_embedded_loaders(lua: &Lua) {
     let package: LuaTable = lua.globals().get("package").unwrap();
     let loaders: LuaTable = match package.get("loaders").unwrap() {
         LuaValue::Table(loaders) => loaders,
         LuaValue::Nil => package.get("searchers").unwrap(),
         _ => panic!("Unable to find appropriate interface to inject embedded loader"),
     };
-    let embedded_ffi_loader = lua.create_function(|lua, module: String| unsafe {
+
+    let embedded_rusile_loader = lua
+        .create_function(|lua, module: String| match module.as_str() {
+            "rusile" => lua
+                .create_function(move |lua, _: ()| crate::get_rusile_exports(lua))
+                .map(LuaValue::Function),
+            _ => format!("Module '{module}' is embeded in Rust binary").into_lua(lua),
+        })
+        .unwrap();
+    loaders.push(embedded_rusile_loader).unwrap();
+
+    let embedded_ffi_loader = lua
+        .create_function(|lua, module: String| unsafe {
             match module.as_str() {
-                //"rusile" => lua
-                //    .create_c_function(luaopen_rusile)
-                //    .map(LuaValue::Function),
                 "fontmetrics" => lua
                     .create_c_function(luaopen_fontmetrics)
                     .map(LuaValue::Function),
@@ -88,12 +95,12 @@ pub fn inject_embedded_loader(lua: &Lua) {
                 "svg" => lua.create_c_function(luaopen_svg).map(LuaValue::Function),
                 _ => format!("C Module '{module}' is not linked in Rust binary").into_lua(lua),
             }
-        }).unwrap();
-    loaders
-        .push(embedded_ffi_loader)
+        })
         .unwrap();
+    loaders.push(embedded_ffi_loader).unwrap();
 
-    let embedded_lua_loader = lua.create_function(|lua, module: String| {
+    let embedded_lua_loader = lua
+        .create_function(|lua, module: String| {
             let module_path = module.replace('.', "/");
             let luaversion: LuaString = lua
                 .load(chunk! {
@@ -121,40 +128,40 @@ pub fn inject_embedded_loader(lua: &Lua) {
                 }
             }
             match resource_option {
-                Some(module) => {
-                    lua.create_function(move |lua, _: ()| {
+                Some(module) => lua
+                    .create_function(move |lua, _: ()| {
                         let data = str::from_utf8(module.data.as_ref())
                             .expect("Embedded content is not valid UTF-8");
                         lua.load(data).call::<LuaValue>(())
-                    }).map(LuaValue::Function)
-                },
+                    })
+                    .map(LuaValue::Function),
 
                 None => format!("Module '{module}' is not embedded in Rust binary").into_lua(lua),
             }
-        }).unwrap();
-    loaders
-        .push(embedded_lua_loader)
+        })
         .unwrap();
+    loaders.push(embedded_lua_loader).unwrap();
 
-    let embedded_ftl_loader = lua.create_function(|lua, module: String| {
+    let embedded_ftl_loader = lua
+        .create_function(|lua, module: String| {
             let module_path = module.replace('.', "/");
             let pattern = "?.ftl";
             let path = pattern.replace('?', &module_path);
             match SileModules::get(&path) {
-                Some(module) => lua.create_function(move |lua, _: ()| {
-                    let data = str::from_utf8(module.data.as_ref())
-                        .expect("Embedded content is not valid UTF-8");
-                    lua.load(chunk! {
-                        return assert(fluent:add_messages($data))
+                Some(module) => lua
+                    .create_function(move |lua, _: ()| {
+                        let data = str::from_utf8(module.data.as_ref())
+                            .expect("Embedded content is not valid UTF-8");
+                        lua.load(chunk! {
+                            return assert(fluent:add_messages($data))
+                        })
+                        .call::<LuaValue>(())
                     })
-                    .call::<LuaValue>(())
-                }).map(LuaValue::Function),
+                    .map(LuaValue::Function),
                 _ => format!("FTL resource '{module_path}' is not embedded in Rust binary")
                     .into_lua(lua),
             }
-        }).unwrap();
-    loaders
-        .push(embedded_ftl_loader)
+        })
         .unwrap();
-
+    loaders.push(embedded_ftl_loader).unwrap();
 }

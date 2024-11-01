@@ -1,6 +1,7 @@
 // rust-embed include attributes have issues with lots of matches...
 #![recursion_limit = "2048"]
 
+#[cfg(not(feature = "static"))]
 use mlua::chunk;
 use mlua::prelude::*;
 #[cfg(not(feature = "static"))]
@@ -19,7 +20,7 @@ pub type Result<T> = anyhow::Result<T>;
 pub fn start_luavm() -> crate::Result<Lua> {
     let lua = unsafe { Lua::unsafe_new() };
     #[cfg(feature = "static")]
-    crate::embed::inject_embedded_loader(&lua);
+    crate::embed::inject_embedded_loaders(&lua);
     inject_paths(&lua);
     load_sile(&lua);
     inject_version(&lua);
@@ -54,6 +55,12 @@ pub fn inject_paths(lua: &Lua) {
         .exec()
         .unwrap();
     }
+}
+
+pub fn get_rusile_exports(lua: &Lua) -> LuaResult<LuaTable> {
+    let exports = lua.create_table()?;
+    exports.set("semver", LuaFunction::wrap_raw(types::semver::semver))?;
+    Ok(exports)
 }
 
 pub fn inject_version(lua: &Lua) {

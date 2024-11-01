@@ -64,10 +64,7 @@ nodist_man_MANS =
 dist_man_MANS = sile-lua.1
 sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs src/types.rs src/types/semver.rs
 EXTRA_sile_SOURCES =
-if EMBEDDED_RESOURCES
-noinst_LIBRARIES = librusile.a
-librusile_a_SOURCES = $(RUSILE_SOURCES)
-else !EMBEDDED_RESOURCES
+if !EMBEDDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = $(BUILT_SOURCES_LUA) $(LUAMODULES)
 pkglib_LIBRARIES = rusile.so
@@ -128,9 +125,7 @@ $(CARGO_BIN): justenough/.libs/justenoughicu.a
 $(CARGO_BIN): justenough/.libs/justenoughlibtexpdf.a
 $(CARGO_BIN): justenough/.libs/svg.a
 $(CARGO_BIN): libtexpdf/.libs/libtexpdf.a
-if EMBEDDED_RESOURCES
-$(CARGO_BIN): librusile.a
-else !EMBEDDED_RESOURCES
+if !EMBEDDED_RESOURCES
 $(CARGO_BIN): rusile.so
 endif !EMBEDDED_RESOURCES
 
@@ -175,10 +170,6 @@ endif
 rusile.so: $(rusile_so_SOURCES) $(bin_PROGRAMS)
 	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(RUSILE_FEATURE_ARG) $(CARGO_RELEASE_ARGS) -p rusile
 	$(INSTALL) @builddir@/target/@RUST_TARGET_SUBDIR@/lib$@ $@
-
-librusile.a:
-	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(RUSILE_FEATURE_ARG) $(CARGO_RELEASE_ARGS) -p rusile
-	$(INSTALL) @builddir@/target/@RUST_TARGET_SUBDIR@/$@ $@
 
 DEPDIR := .deps
 LOCALFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
