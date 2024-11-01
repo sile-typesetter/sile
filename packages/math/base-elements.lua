@@ -633,12 +633,22 @@ function elements.underOver:__tostring ()
    return self._type .. "(" .. tostring(self.base) .. ", " .. tostring(self.sub) .. ", " .. tostring(self.sup) .. ")"
 end
 
+local function isNotEmpty (element)
+   -- The MathML test suite uses <munderover> with an empty <mrow> as sub/sup.
+   -- I don't know why they didn't use a <munder> or <mover> instead...
+   -- But the expectation is to behave as if the empty element was not there,
+   -- so that height and depth are not affected by the axis height.
+   -- See notably:
+   --   MathML3 "complex1" torture test: Maxwell's Equations (vectors in fractions)
+   return element and (element:is_a(elements.terminal) or #element.children > 0)
+end
+
 function elements.underOver:_init (base, sub, sup)
    elements.mbox._init(self)
    self.atom = base.atom
    self.base = base
-   self.sub = sub
-   self.sup = sup
+   self.sub = isNotEmpty(sub) and sub or nil
+   self.sup = isNotEmpty(sup) and sup or nil
    if self.sup then
       table.insert(self.children, self.sup)
    end
