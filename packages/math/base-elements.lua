@@ -551,10 +551,12 @@ function elements.subscript:shape ()
       self.width = SILE.types.length(0)
    end
    local itCorr = self:calculateItalicsCorrection() * scaleDown
+   local isBaseSymbol = not self.base or self.base:is_a(elements.terminal)
+   local isBaseLargeOp = SU.boolean(self.base and self.base.largeop, false)
    local subShift
    local supShift
    if self.sub then
-      if self.isUnderOver or SU.boolean(self.base.largeop, false) then
+      if self.isUnderOver or isBaseLargeOp then
          -- Ad hoc correction on integral limits, following LuaTeX's
          -- `\mathnolimitsmode=0` (see LuaTeX Reference Manual).
          subShift = -itCorr
@@ -562,17 +564,20 @@ function elements.subscript:shape ()
          subShift = 0
       end
       self.sub.relX = self.width + subShift
-      self.sub.relY = SILE.types.length(math.max(
-         constants.subscriptShiftDown * scaleDown,
-         --self.base.depth + constants.subscriptBaselineDropMin * scaleDown,
-         (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
-      ))
-      if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or SU.boolean(self.base.largeop, false) then
+      self.sub.relY = SILE.types.length(
+         math.max(
+            constants.subscriptShiftDown * scaleDown,
+            isBaseSymbol and 0 -- TeX (σ19) is more finicky than MathML Core
+               or (self.base.depth + constants.subscriptBaselineDropMin * scaleDown):tonumber(),
+            (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
+         )
+      )
+      if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or isBaseLargeOp then
          self.sub.relY = maxLength(self.sub.relY, self.base.depth + constants.subscriptBaselineDropMin * scaleDown)
       end
    end
    if self.sup then
-      if self.isUnderOver or SU.boolean(self.base.largeop, false) then
+      if self.isUnderOver or isBaseLargeOp then
          -- Ad hoc correction on integral limits, following LuaTeX's
          -- `\mathnolimitsmode=0` (see LuaTeX Reference Manual).
          supShift = 0
@@ -580,13 +585,16 @@ function elements.subscript:shape ()
          supShift = itCorr
       end
       self.sup.relX = self.width + supShift
-      self.sup.relY = SILE.types.length(math.max(
-         isCrampedMode(self.mode) and constants.superscriptShiftUpCramped * scaleDown
-            or constants.superscriptShiftUp * scaleDown, -- or cramped
-         --self.base.height - constants.superscriptBaselineDropMax * scaleDown,
-         (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
-      )) * -1
-      if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or SU.boolean(self.base.largeop, false) then
+      self.sup.relY = SILE.types.length(
+         math.max(
+            isCrampedMode(self.mode) and constants.superscriptShiftUpCramped * scaleDown
+               or constants.superscriptShiftUp * scaleDown,
+            isBaseSymbol and 0 -- TeX (σ18) is more finicky than MathML Core
+               or (self.base.height - constants.superscriptBaselineDropMax * scaleDown):tonumber(),
+            (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
+         )
+      ) * -1
+      if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or isBaseLargeOp then
          self.sup.relY = maxLength(
             (0 - self.sup.relY),
             self.base.height - constants.superscriptBaselineDropMax * scaleDown
@@ -710,7 +718,8 @@ function elements.underOver:_stretchyReshapeToBase (part)
 end
 
 function elements.underOver:shape ()
-   if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) and SU.boolean(self.base.largeop, false) then
+   local isBaseLargeOp = SU.boolean(self.base and self.base.largeop, false)
+   if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) and isBaseLargeOp then
       -- FIXME
       -- Added the "largeop" condition, but it's kind of a workaround:
       -- It should rather be the "moveablelimits" propery in MathML, but we do not have that yet.
