@@ -18,7 +18,7 @@ impl Semver {
 
 // TODO: cfg gate this so it only ends up in Lua module?
 pub fn semver(version: String) -> crate::Result<Semver> {
-    Ok(Semver::new(&version)?)
+    Semver::new(&version)
 }
 
 impl Deref for Semver {
@@ -59,6 +59,7 @@ impl FromLua for Semver {
         match value {
             LuaValue::UserData(ud) => Ok(ud.borrow::<Self>()?.clone()),
             LuaValue::Table(_t) => todo!("implement for legacy Lua table based implementation"),
+            LuaValue::Nil => Ok(Semver::new("0.0.0")?),
             _ => unreachable!(),
         }
     }
