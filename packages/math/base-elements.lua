@@ -662,6 +662,43 @@ function elements.underOver:styleChildren ()
    end
 end
 
+function elements.underOver:_stretchyReshapeToBase (part)
+   -- FIXME: Big leap of faith here.
+   -- MathML Core only mentions stretching along the inline axis in 3.4.2.2,
+   -- i.e. under the section on <mover>, <munder>, <munderover>.
+   -- So we are "somewhat" good here, but... the algorithm is totally unclear
+   -- to me and seems to imply a lot of recursion and reshaping.
+   -- The implementation below is NOT general and only works for the cases
+   -- I checked:
+   --   Mozilla MathML tests: braces in f19, f22
+   --   Personal tests: vectors in d19, d22, d23
+   --   Joe Javawaski's tests: braces in 8a, 8b
+   --   MathML3 "complex1" torture test: Maxwell's Equations (vectors in fractions)
+   if #part.children == 0 then
+      local elt = part
+      if elt.is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
+         elt:_horizStretchyReshape(self.base.width)
+      end
+   elseif part:is_a(elements.underOver) then
+      -- Big assumption here: only considering one level of stacked under/over.
+      local hasStreched = false
+      for _, elt in ipairs(part.children) do
+         if elt.is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
+            local stretched = elt:_horizStretchyReshape(self.base.width)
+            if stretched then
+               hasStreched = true
+            end
+         end
+      end
+      if hasStreched then
+         -- We need to re-calculate the shape so positions are re-calculated on each
+         -- of its own parts.
+         -- (Added after seeing that Mozilla test f19 was not rendering correctly.)
+         part:shape()
+      end
+   end
+end
+
 function elements.underOver:shape ()
    if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) and SU.boolean(self.base.largeop, false) then
       -- FIXME
@@ -684,6 +721,7 @@ function elements.underOver:shape ()
       self.base.relY = SILE.types.length(0)
    end
    if self.sub then
+      self:_stretchyReshapeToBase(self.sub)
       self.sub.relY = self.base.depth
          + SILE.types.length(
             math.max(
@@ -693,6 +731,7 @@ function elements.underOver:shape ()
          )
    end
    if self.sup then
+      self:_stretchyReshapeToBase(self.sup)
       self.sup.relY = 0
          - self.base.height
          - SILE.types.length(
