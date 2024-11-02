@@ -65,7 +65,6 @@ ENV RUSTFLAGS="-C linker=clang -C link-arg=-fuse-ld=mold"
 
 RUN ./bootstrap.sh
 RUN ./configure \
-        --disable-embeded-resources \
         --with-system-lua-sources \
         --without-system-luarocks \
         --without-manual

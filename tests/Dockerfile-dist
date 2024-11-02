@@ -27,7 +27,6 @@ COPY ./sile-$VERSION /src
 WORKDIR /src
 
 RUN ./configure \
-        --disable-embeded-resources \
         --with-system-lua-sources \
         --without-system-luarocks \
         --without-manual
