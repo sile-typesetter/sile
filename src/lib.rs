@@ -146,19 +146,20 @@ pub fn run(
         has_input_filename = true;
     }
     if let Some(options) = options {
-        // TODO: when mlua v0.10 merges, adapt this like the uses parsing to avoid chunking
+        let parameters: LuaAnyUserData = sile.get::<LuaTable>("parserBits")?.get("parameters")?;
+        let input_options: LuaTable = sile_input.get("options")?;
         for option in options.iter() {
-            let option = lua.create_string(option)?;
-            lua.load(chunk! {
-                local parameter = SILE.parserBits.parameters:match($option);
-                SILE.input.options = pl.tablex.merge(SILE.input.options, parameter, true)
-            })
-            .eval::<()>()?;
+            let parameters: LuaTable = parameters
+                .call_method("match", lua.create_string(option)?)
+                .context("failed to call `parameters:match()`")?;
+            for parameter in parameters.pairs::<LuaValue, LuaValue>() {
+                let (key, value) = parameter?;
+                let _ = input_options.set(key, value);
+            }
         }
     }
     if let Some(modules) = uses {
-        let parser_bits: LuaTable = sile.get("parserBits")?;
-        let cliuse: LuaAnyUserData = parser_bits.get("cliuse")?;
+        let cliuse: LuaAnyUserData = sile.get::<LuaTable>("parserBits")?.get("cliuse")?;
         let input_uses: LuaTable = sile_input.get("uses")?;
         for module in modules.iter() {
             let module = lua.create_string(module)?;
