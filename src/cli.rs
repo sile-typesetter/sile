@@ -1,10 +1,10 @@
 use clap::Parser;
 use std::path::PathBuf;
 
-/// The SILE Typesetter reads input file(s) and typesets the content into a rendered documument
+/// The SILE Typesetter reads input file(s) and typesets the content into a rendered document
 /// format, typically PDF.
 ///
-/// By default, input files may be in declarative SIL markup, structured XML, or programatic Lua.
+/// By default, input files may be in declarative SIL markup, structured XML, or programmatic Lua.
 /// The input format is automatically detected by the active modules. By default, the output will
 /// be a file with the same name as the first input file with the extension changed to .pdf. The
 /// output filename can be overridden with the `--output` argument. Using `--backend` one can

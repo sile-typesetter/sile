@@ -36,7 +36,7 @@ package._name = "lists"
 --         This is still in L1.1}
 --    \end{itemize}
 -- But personally, for simple lists, I prefer the first "more readable" one.
--- Lists from Mardown, obviously, due to their structure, would need the
+-- Lists from Markdown, obviously, due to their structure, would need the
 -- second technique.
 --
 

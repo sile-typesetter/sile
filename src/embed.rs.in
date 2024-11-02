@@ -69,7 +69,7 @@ pub fn inject_embedded_loaders(lua: &Lua) {
             "rusile" => lua
                 .create_function(move |lua, _: ()| crate::get_rusile_exports(lua))
                 .map(LuaValue::Function),
-            _ => format!("Module '{module}' is embeded in Rust binary").into_lua(lua),
+            _ => format!("Module '{module}' is embedded in Rust binary").into_lua(lua),
         })
         .unwrap();
     loaders.push(embedded_rusile_loader).unwrap();

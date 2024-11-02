@@ -699,16 +699,16 @@ function elements.underOver:_stretchyReshapeToBase (part)
       end
    elseif part:is_a(elements.underOver) then
       -- Big assumption here: only considering one level of stacked under/over.
-      local hasStreched = false
+      local hasStretched = false
       for _, elt in ipairs(part.children) do
          if elt.is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
             local stretched = elt:_horizStretchyReshape(self.base.width)
             if stretched then
-               hasStreched = true
+               hasStretched = true
             end
          end
       end
-      if hasStreched then
+      if hasStretched then
          -- We need to re-calculate the shape so positions are re-calculated on each
          -- of its own parts.
          -- (Added after seeing that Mozilla test f19 was not rendering correctly.)
@@ -722,9 +722,9 @@ function elements.underOver:shape ()
    if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) and isBaseLargeOp then
       -- FIXME
       -- Added the "largeop" condition, but it's kind of a workaround:
-      -- It should rather be the "moveablelimits" propery in MathML, but we do not have that yet.
+      -- It should rather be the "moveablelimits" property in MathML, but we do not have that yet.
       -- When the base is a moveable limit, the under/over scripts are not placed under/over the base,
-      -- but ather to the right of it, when display mode is not used.
+      -- but other to the right of it, when display mode is not used.
       -- Notable effects:
       --   Mozilla MathML test 19 (on "k times" > overbrace > base)
       --   Maxwell's Equations in MathML3 Test Suite "complex1" (on the vectors in fractions)
@@ -1496,7 +1496,7 @@ function elements.sqrt:shape ()
    end
    -- Position the radicand
    self.radicand.relX = self.symbolWidth + self.offsetX
-   -- Compute the dimentions of the whole radical
+   -- Compute the dimensions of the whole radical
    self.width = self.radicand.width + self.symbolWidth + self.offsetX
    self.height = self.symbolHeight + self.radicalVerticalGap + self.extraAscender
    self.depth = self.radicand.depth
