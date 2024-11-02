@@ -51,7 +51,7 @@ function ConvertMathML (_, content)
       return nil
    end
    if content.command == "math" or content.command == "mathml" then -- toplevel
-      return b.stackbox("V", convertChildren(content))
+      return b.stackbox("H", convertChildren(content))
    elseif content.command == "mrow" then
       return b.stackbox("H", convertChildren(content))
    elseif content.command == "mphantom" then
