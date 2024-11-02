@@ -27,6 +27,10 @@ QUE_PROGVAR([pdfinfo])
 QUE_PROGVAR([sort])
 QUE_PROGVAR([xargs])
 
+# Disable ranlib to avoid it being run on our rusile.so module, already LTO
+# optimized but libtool wants to relink it...
+RANLIB=:
+
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
