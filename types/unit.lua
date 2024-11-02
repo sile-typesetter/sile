@@ -76,6 +76,13 @@ unittypes["pc"] = {
    definition = "0.166666667in",
 }
 
+-- Pixel, by convention 1px = 1/96in = 0.75pt
+-- (CSS Values and Units Module Level 3, §5.2)
+-- Used in MathML, etc.
+unittypes["px"] = {
+   definition = "0.75pt",
+}
+
 local checkPaperDefined = function ()
    if not SILE.documentState or not SILE.documentState.orgPaperSize then
       SU.error("A measurement tried to measure the paper size before the paper was defined", true)
