@@ -88,6 +88,12 @@ endif
 
 BUILT_SOURCES = $(BUILT_SOURCES_LUA) Makefile-distfiles
 
+if SHARED
+EXTRA_RUNTIME_DEPS = $(pkglib_LIBRARIES)
+else !SHARED
+EXTRA_RUNTIME_DEPS =
+endif
+
 CLEANFILES = $(MANUAL)
 
 DISTCLEANFILES = @AMINCLUDE@
@@ -210,7 +216,7 @@ sile-%.md: CHANGELOG.md
 check: selfcheck
 
 .PHONY: selfcheck
-selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS)
+selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS) $(EXTRA_RUNTIME_DEPS)
 	output=$$(mktemp -t selfcheck-XXXXXX.pdf)
 	trap '$(RM) $$output' EXIT HUP TERM
 	echo "<sile>foo</sile>" | $(LOCALPATHS) ./$(bin_PROGRAMS) -o $$output -
@@ -261,9 +267,6 @@ _FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
 _TEST_DEPS = $(and $$(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
 _DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
 
-# TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
-# these subdirs don't do crazy things like copying files outside of their own trees!
-_BUILT_SUBDIRS = .built-subdirs
 _SUBDIR_TELLS =
 
 if SHARED
@@ -294,7 +297,7 @@ CLEANFILES += $(_BUILT_SUBDIRS)
 $(_SUBDIR_TELLS):
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
-patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(EXTRA_RUNTIME_DEPS) $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
 
 %.pdf: %.sil $$(patterndeps)
 	$(runsile)
