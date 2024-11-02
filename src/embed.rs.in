@@ -7,9 +7,24 @@ use std::str;
 #[derive(RustEmbed)]
 #[folder = "."]
 #[exclude = ".*"]
-#[exclude = "*~"]
+#[exclude = "*.a"]
+#[exclude = "*.abnf"]
+#[exclude = "*.ac"]
+#[exclude = "*.am"]
 #[exclude = "*.in"]
-#[exclude = "Make*"]
+#[exclude = "*.json"]
+#[exclude = "*.m4"]
+#[exclude = "*.md"]
+#[exclude = "*.nix"]
+#[exclude = "*.so"]
+#[exclude = "*.yml"]
+#[exclude = "*~"]
+#[exclude = "Makefile*"]
+#[exclude = "bootstrap.sh"]
+#[exclude = "config*"]
+#[exclude = "libtool"]
+#[exclude = "rust-toolchain"]
+#[exclude = "sile*"]
 #[exclude = "autom4te.cache/*"]
 #[exclude = "build-aux/*"]
 #[exclude = "cmake/*"]
@@ -17,11 +32,10 @@ use std::str;
 #[exclude = "documentation/*"]
 #[exclude = "justenough/*"]
 #[exclude = "libtexpdf/*"]
-#[exclude = "libtexpdf/*"]
-#[exclude = "libtool"]
 #[exclude = "node_modules/*"]
-#[exclude = "rust-toolchain"]
-#[exclude = "sile*"]
+#[exclude = "rusile/*"]
+#[exclude = "rust-api-docs/*"]
+#[exclude = "spec/*"]
 #[exclude = "src/*"]
 #[exclude = "target/*"]
 #[exclude = "tests/*"]
@@ -42,15 +56,26 @@ extern "C-unwind" {
 /// Register a Lua function in the loaders/searchers table to return C modules linked into the CLI
 /// binary and another to return embedded Lua resources as Lua modules. See discussion in mlua:
 /// https://github.com/khvzak/mlua/discussions/322
-pub fn inject_embedded_loader(lua: &Lua) {
+pub fn inject_embedded_loaders(lua: &Lua) {
     let package: LuaTable = lua.globals().get("package").unwrap();
     let loaders: LuaTable = match package.get("loaders").unwrap() {
         LuaValue::Table(loaders) => loaders,
         LuaValue::Nil => package.get("searchers").unwrap(),
         _ => panic!("Unable to find appropriate interface to inject embedded loader"),
     };
-    loaders
-        .push(LuaFunction::wrap(|lua, module: String| unsafe {
+
+    let embedded_rusile_loader = lua
+        .create_function(|lua, module: String| match module.as_str() {
+            "rusile" => lua
+                .create_function(move |lua, _: ()| crate::get_rusile_exports(lua))
+                .map(LuaValue::Function),
+            _ => format!("Module '{module}' is embeded in Rust binary").into_lua(lua),
+        })
+        .unwrap();
+    loaders.push(embedded_rusile_loader).unwrap();
+
+    let embedded_ffi_loader = lua
+        .create_function(|lua, module: String| unsafe {
             match module.as_str() {
                 "fontmetrics" => lua
                     .create_c_function(luaopen_fontmetrics)
@@ -70,10 +95,12 @@ pub fn inject_embedded_loader(lua: &Lua) {
                 "svg" => lua.create_c_function(luaopen_svg).map(LuaValue::Function),
                 _ => format!("C Module '{module}' is not linked in Rust binary").into_lua(lua),
             }
-        }))
+        })
         .unwrap();
-    loaders
-        .push(LuaFunction::wrap(|lua, module: String| {
+    loaders.push(embedded_ffi_loader).unwrap();
+
+    let embedded_lua_loader = lua
+        .create_function(|lua, module: String| {
             let module_path = module.replace('.', "/");
             let luaversion: LuaString = lua
                 .load(chunk! {
@@ -81,7 +108,7 @@ pub fn inject_embedded_loader(lua: &Lua) {
                 })
                 .eval()
                 .unwrap();
-            let luaversion: &str = luaversion.to_str().unwrap();
+            let luaversion: &str = &luaversion.to_str().unwrap();
             let mut package_epath: Vec<&str> = vec!["?/init.lua", "?.lua", "lua-libraries/?.lua"];
             let path = format!("lua_modules/lib/lua/{}/?/init.lua", luaversion);
             package_epath.push(&path);
@@ -101,36 +128,40 @@ pub fn inject_embedded_loader(lua: &Lua) {
                 }
             }
             match resource_option {
-                Some(module) => {
-                    return LuaFunction::wrap(move |lua, ()| {
+                Some(module) => lua
+                    .create_function(move |lua, _: ()| {
                         let data = str::from_utf8(module.data.as_ref())
                             .expect("Embedded content is not valid UTF-8");
-                        lua.load(data).call::<_, LuaValue>(())
+                        lua.load(data).call::<LuaValue>(())
                     })
-                    .into_lua(lua)
-                }
+                    .map(LuaValue::Function),
+
                 None => format!("Module '{module}' is not embedded in Rust binary").into_lua(lua),
             }
-        }))
+        })
         .unwrap();
-    loaders
-        .push(LuaFunction::wrap(|lua, module: String| {
+    loaders.push(embedded_lua_loader).unwrap();
+
+    let embedded_ftl_loader = lua
+        .create_function(|lua, module: String| {
             let module_path = module.replace('.', "/");
             let pattern = "?.ftl";
             let path = pattern.replace('?', &module_path);
             match SileModules::get(&path) {
-                Some(module) => LuaFunction::wrap(move |lua, ()| {
-                    let data = str::from_utf8(module.data.as_ref())
-                        .expect("Embedded content is not valid UTF-8");
-                    lua.load(chunk! {
-                        return assert(fluent:add_messages($data))
+                Some(module) => lua
+                    .create_function(move |lua, _: ()| {
+                        let data = str::from_utf8(module.data.as_ref())
+                            .expect("Embedded content is not valid UTF-8");
+                        lua.load(chunk! {
+                            return assert(fluent:add_messages($data))
+                        })
+                        .call::<LuaValue>(())
                     })
-                    .call::<_, LuaValue>(())
-                })
-                .into_lua(lua),
-                None => format!("FTL resource '{module_path}' is not embedded in Rust binary")
+                    .map(LuaValue::Function),
+                _ => format!("FTL resource '{module_path}' is not embedded in Rust binary")
                     .into_lua(lua),
             }
-        }))
+        })
         .unwrap();
+    loaders.push(embedded_ftl_loader).unwrap();
 }

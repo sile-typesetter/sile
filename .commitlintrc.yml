@@ -51,6 +51,7 @@ rules:
     - pdf
     - readme
     - release
+    - rusile
     - settings
     - shapers
     - tooling

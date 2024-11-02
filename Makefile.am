@@ -55,18 +55,21 @@ endif
 
 $(MANUAL): $(FIGURES)
 
-BUILT_LUA_SOURCES = core/features.lua core/pathsetup.lua core/version.lua
+BUILT_SOURCES_LUA = core/features.lua core/pathsetup.lua core/version.lua
+RUSILE_SOURCES = rusile/Cargo.toml rusile/src/lib.rs
 
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
 nodist_man_MANS =
 dist_man_MANS = sile-lua.1
-sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
+sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs src/types.rs src/types/semver.rs
 EXTRA_sile_SOURCES =
 if !EMBEDDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
-nobase_nodist_pkgdata_DATA = $(BUILT_LUA_SOURCES) $(LUAMODULES)
-endif
+nobase_nodist_pkgdata_DATA = $(BUILT_SOURCES_LUA) $(LUAMODULES)
+pkglib_LIBRARIES = rusile.so
+rusile_so_SOURCES = $(RUSILE_SOURCES)
+endif !EMBEDDED_RESOURCES
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE.md
@@ -83,7 +86,13 @@ if EMBEDDED_RESOURCES
 EXTRA_DIST += $(SILEDATA) $(LUALIBRARIES)
 endif
 
-BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
+BUILT_SOURCES = $(BUILT_SOURCES_LUA) Makefile-distfiles
+
+if SHARED
+EXTRA_RUNTIME_DEPS = $(pkglib_LIBRARIES)
+else !SHARED
+EXTRA_RUNTIME_DEPS =
+endif
 
 CLEANFILES = $(MANUAL)
 
@@ -122,11 +131,15 @@ $(CARGO_BIN): justenough/.libs/justenoughicu.a
 $(CARGO_BIN): justenough/.libs/justenoughlibtexpdf.a
 $(CARGO_BIN): justenough/.libs/svg.a
 $(CARGO_BIN): libtexpdf/.libs/libtexpdf.a
+if !EMBEDDED_RESOURCES
+$(CARGO_BIN): rusile.so
+endif !EMBEDDED_RESOURCES
 
 src/embed-includes.rs: Makefile-distfiles
 	{
-		echo $(BUILT_LUA_SOURCES)
-		$(GREP) -E '^(SILEDATA|LUALIBRARIES|LUAMODULES) = ' $<
+		echo $(BUILT_SOURCES_LUA)
+		$(SED) -ze 's/\\\n\t//g' $< |
+			$(GREP) -E '^(SILEDATA|LUALIBRARIES|LUAMODULES) = '
 	} |
 		$(SED) -E -e 's/^.* = //;s/ /\n/g' |
 		while read file; do
@@ -146,6 +159,7 @@ else
 MLUAVER = lua$(LUA_SHORT_VERSION)
 endif
 CARGO_FEATURE_ARGS = --features $(MLUAVER)
+RUSILE_FEATURE_ARG = --features $(MLUAVER)
 
 if !SYSTEM_LUA_SOURCES
 CARGO_FEATURE_ARGS += --features vendored
@@ -158,6 +172,10 @@ endif
 if FONT_VARIATIONS
 CARGO_FEATURE_ARGS += --features variations
 endif
+
+rusile.so: $(rusile_so_SOURCES) $(bin_PROGRAMS)
+	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(RUSILE_FEATURE_ARG) $(CARGO_RELEASE_ARGS) -p rusile
+	$(INSTALL) @builddir@/target/@RUST_TARGET_SUBDIR@/lib$@ $@
 
 DEPDIR := .deps
 LOCALFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
@@ -198,7 +216,7 @@ sile-%.md: CHANGELOG.md
 check: selfcheck
 
 .PHONY: selfcheck
-selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS)
+selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS) $(EXTRA_RUNTIME_DEPS)
 	output=$$(mktemp -t selfcheck-XXXXXX.pdf)
 	trap '$(RM) $$output' EXIT HUP TERM
 	echo "<sile>foo</sile>" | $(LOCALPATHS) ./$(bin_PROGRAMS) -o $$output -
@@ -249,9 +267,6 @@ _FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
 _TEST_DEPS = $(and $$(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
 _DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
 
-# TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
-# these subdirs don't do crazy things like copying files outside of their own trees!
-_BUILT_SUBDIRS = .built-subdirs
 _SUBDIR_TELLS =
 
 if SHARED
@@ -282,7 +297,7 @@ CLEANFILES += $(_BUILT_SUBDIRS)
 $(_SUBDIR_TELLS):
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
-patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(EXTRA_RUNTIME_DEPS) $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
 
 %.pdf: %.sil $$(patterndeps)
 	$(runsile)
@@ -365,8 +380,15 @@ if !SYSTEM_LUAROCKS
 	packagepath+=(./lua_modules/share/lua/$(LUA_VERSION)/?{,/init}.lua)
 	packagecpath+=(./lua_modules/lib/lua/$(LUA_VERSION)/?.$(SHARED_LIB_EXT))
 endif
-# Note: use of --lua causes this to be passed back through a shell loosing one layer of quoting. Drop single quotes if removing.
+# Note: Busted tests can't run with out static build since the Rusile module is
+# only available embedded into it. We can test on the dynamic builds where it
+# is available as a use space module. This could change if we enable a lua vm
+# pass through mode and use that as busted's interpreter.
+if SHARED
+# Note: use of --lua causes this to be passed back through a shell loosing one
+# layer of quoting. Drop single quotes if removing.
 	$(LOCALFONTS) $(BUSTED) --lua=$(LUA) --lpath="'$${packagepath[*]};;'" --cpath="'$${packagecpath[*]};;'" $(BUSTEDFLAGS) .
+endif
 
 coverage: export SILE_COVERAGE=1
 coverage: BUSTEDFLAGS += -c
