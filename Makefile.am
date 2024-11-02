@@ -377,8 +377,15 @@ if !SYSTEM_LUAROCKS
 	packagepath+=(./lua_modules/share/lua/$(LUA_VERSION)/?{,/init}.lua)
 	packagecpath+=(./lua_modules/lib/lua/$(LUA_VERSION)/?.$(SHARED_LIB_EXT))
 endif
-# Note: use of --lua causes this to be passed back through a shell loosing one layer of quoting. Drop single quotes if removing.
+# Note: Busted tests can't run with out static build since the Rusile module is
+# only available embedded into it. We can test on the dynamic builds where it
+# is available as a use space module. This could change if we enable a lua vm
+# pass through mode and use that as busted's interpreter.
+if SHARED
+# Note: use of --lua causes this to be passed back through a shell loosing one
+# layer of quoting. Drop single quotes if removing.
 	$(LOCALFONTS) $(BUSTED) --lua=$(LUA) --lpath="'$${packagepath[*]};;'" --cpath="'$${packagecpath[*]};;'" $(BUSTEDFLAGS) .
+endif
 
 coverage: export SILE_COVERAGE=1
 coverage: BUSTEDFLAGS += -c
