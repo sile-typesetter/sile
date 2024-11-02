@@ -10,6 +10,70 @@ local symbolDefaults = syms.symbolDefaults
 
 local elements = {}
 
+local isCombining =  function (codepoint)
+   --  Combining Diacritical Marks (0300–036F), since version 1.0, with modifications in subsequent versions down to 4.1
+   --  Combining Diacritical Marks Extended (1AB0–1AFF), version 7.0
+   --  Combining Diacritical Marks Supplement (1DC0–1DFF), versions 4.1 to 5.2
+   --  Combining Diacritical Marks for Symbols (20D0–20FF), since version 1.0, with modifications in subsequent versions down to 5.1
+   --  Cyrillic Extended-A (2DE0–2DFF), version 5.1
+   --  Combining Half Marks (FE20–FE2F), versions 1.0, with modifications in subsequent versions down to 8.0
+   local combining =
+      (codepoint >= 0x0300 and codepoint <= 0x036F)
+      or (codepoint >= 0x1AB0 and codepoint <= 0x1AFF)
+      or (codepoint >= 0x1DC0 and codepoint <= 0x1DFF)
+      or (codepoint >= 0x20D0 and codepoint <= 0x20FF)
+      or (codepoint >= 0x2DE0 and codepoint <= 0x2DFF)
+      or (codepoint >= 0xFE20 and codepoint <= 0xFE2F)
+
+   -- BAD BAD BAD FIXME
+   -- MathML Test Suite use 0209
+      -- 02D9 is a dot above, but it's not a combining character
+
+   -- MathML has this list:
+   -- U+002B	plus sign	below	U+031F	combining plus sign below
+   -- U+002D	hyphen-minus	above	U+0305	combining overline
+   -- U+002D	hyphen-minus	below	U+0320	combining minus sign below
+   -- U+002D	hyphen-minus	below	U+0332	combining low line
+   -- U+002E	full stop	above	U+0307	combining dot above
+   -- U+002E	full stop	below	U+0323	combining dot below
+   -- U+005E	circumflex accent	above	U+0302	combining circumflex accent
+   -- U+005E	circumflex accent	below	U+032D	combining circumflex accent below
+   -- U+005F	low line	below	U+0332	combining low line
+   -- U+0060	grave accent	above	U+0300	combining grave accent
+   -- U+0060	grave accent	below	U+0316	combining grave accent below
+   -- U+007E	tilde	above	U+0303	combining tilde
+   -- U+007E	tilde	below	U+0330	combining tilde below
+   -- U+00A8	diaeresis	above	U+0308	combining diaeresis
+   -- U+00A8	diaeresis	below	U+0324	combining diaeresis below
+   -- U+00AF	macron	above	U+0304	combining macron
+   -- U+00AF	macron	above	U+0305	combining overline
+   -- U+00B4	acute accent	above	U+0301	combining acute accent
+   -- U+00B4	acute accent	below	U+0317	combining acute accent below
+   -- U+00B8	cedilla	below	U+0327	combining cedilla
+   -- U+02C6	modifier letter circumflex accent	above	U+0302	combining circumflex accent
+   -- U+02C7	caron	above	U+030C	combining caron
+   -- U+02C7	caron	below	U+032C	combining caron below
+   -- U+02D8	breve	above	U+0306	combining breve
+   -- U+02D8	breve	below	U+032E	combining breve below
+   -- U+02D9	dot above	above	U+0307	combining dot above
+   -- U+02D9	dot above	below	U+0323	combining dot below
+   -- U+02DB	ogonek	below	U+0328	combining ogonek
+   -- U+02DC	small tilde	above	U+0303	combining tilde
+   -- U+02DC	small tilde	below	U+0330	combining tilde below
+   -- U+02DD	double acute accent	above	U+030B	combining double acute accent
+   -- U+203E	overline	above	U+0305	combining overline
+   -- U+2190	leftwards arrow	above	U+20D6	
+   -- U+2192	rightwards arrow	above	U+20D7	combining right arrow above
+   -- U+2192	rightwards arrow	above	U+20EF	combining right arrow below
+   -- U+2212	minus sign	above	U+0305	combining overline
+   -- U+2212	minus sign	below	U+0332	combining low line
+   -- U+27F6	long rightwards arrow	above	U+20D7	combining right arrow above
+   -- U+27F6	long rightwards arrow	above	U+20EF	combining right arrow below
+
+   -- DISABLE FOR NOW. SEE NOTE 20241027-accents
+   return false
+end
+
 local mathMode = {
    display = 0,
    displayCramped = 1,
@@ -114,6 +178,16 @@ local function getSubscriptMode (mode)
    else
       return mathMode.scriptScriptCramped
    end
+end
+local function getAccentMode (mode)
+   -- Always displaystyle to false, but no size change
+   if mode == mathMode.display then
+      return mathMode.text
+   end
+   if mode == mathMode.displayCramped then
+      return mathMode.textCramped
+   end
+   return mode
 end
 
 -- Style transition functions for fraction (numerator and denominator)
@@ -651,8 +725,9 @@ local function isNotEmpty (element)
    return element and (element:is_a(elements.terminal) or #element.children > 0)
 end
 
-function elements.underOver:_init (base, sub, sup)
+function elements.underOver:_init (attributes, base, sub, sup)
    elements.mbox._init(self)
+   self.attributes = attributes or {}
    self.atom = base.atom
    self.base = base
    self.sub = isNotEmpty(sub) and sub or nil
@@ -673,10 +748,14 @@ function elements.underOver:styleChildren ()
       self.base.mode = self.mode
    end
    if self.sub then
-      self.sub.mode = getSubscriptMode(self.mode)
+      self.sub.mode = SU.boolean(self.attributes.accentunder, false)
+         and getAccentMode(self.mode)
+         or getSubscriptMode(self.mode)
    end
    if self.sup then
-      self.sup.mode = getSuperscriptMode(self.mode)
+      self.sup.mode = SU.boolean(self.attributes.accent, false)
+         and getAccentMode(self.mode)
+         or getSuperscriptMode(self.mode)
    end
 end
 
@@ -719,6 +798,7 @@ end
 
 function elements.underOver:shape ()
    local isBaseLargeOp = SU.boolean(self.base and self.base.largeop, false)
+   local isAccent = SU.boolean(self.attributes.accent, false)
    if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) and isBaseLargeOp then
       -- FIXME
       -- Added the "largeop" condition, but it's kind of a workaround:
@@ -751,6 +831,34 @@ function elements.underOver:shape ()
    end
    if self.sup then
       self:_stretchyReshapeToBase(self.sup)
+      if isAccent then
+         self.sup.relY = SILE.types.length()
+         -- MathML Core wants to align the accentBaseHeight
+         local overShift = math.max(
+            0,
+            constants.accentBaseHeight * scaleDown - self.base.height:tonumber()
+         )
+         self.sup.relY = self.sup.relY - SILE.types.length(overShift)
+         print("OVERSHIFT", overShift)
+         if self.sup.height:tonumber() < constants.flattenedAccentBaseHeight * scaleDown then
+            -- Bad accent, we need to raise it
+            self.sup.relY = self.sup.relY
+               - SILE.types.length(
+                  self.base.height:tonumber() - (constants.flattenedAccentBaseHeight -
+                  constants.accentBaseHeight) * scaleDown
+
+               )
+            print("  BAD", self.sup, "BY", constants.accentBaseHeight * scaleDown - self.sup.height:tonumber())
+         end
+
+
+         if self.base.height:tonumber() > constants.accentBaseHeight * scaleDown then
+            self.sup.relY = self.sup.relY
+               - self.base.height:tonumber() + constants.accentBaseHeight * scaleDown
+               print("  OVERSHOT", self.sup, "BY", self.base.height:tonumber() - constants.accentBaseHeight * scaleDown)
+               print("     ", self.sup.relY)
+         end
+      else
       self.sup.relY = 0
          - self.base.height
          - SILE.types.length(
@@ -759,6 +867,7 @@ function elements.underOver:shape ()
                constants.upperLimitBaselineRiseMin * scaleDown
             )
          )
+      end
    end
    -- Determine relative Xs based on widest symbol
    local widest, a, b
@@ -813,7 +922,15 @@ function elements.underOver:shape ()
       self.sup and self.sup.width or SILE.types.length(0)
    )
    if self.sup then
-      self.height = 0 - self.sup.relY + self.sup.height
+      if isAccent then
+         -- MathML Core says: overBarExtraAscender is added to the height of the accent
+         self.height = 0 - self.sup.relY + self.sup.height
+           + SILE.types.length(
+              constants.overbarExtraAscender * scaleDown
+            )
+      else
+         self.height = 0 - self.sup.relY + self.sup.height
+      end
    else
       self.height = self.base and self.base.height or 0
    end
@@ -1022,6 +1139,22 @@ function elements.text:shape ()
       self.height = SILE.types.length(0)
       self.depth = SILE.types.length(0)
    end
+   -- SEE NOTE 20241028-accents2 = should we do this?
+   -- if luautf8.len(self.text) == 1 and isCombining(luautf8.codepoint(self.text)) then
+   --    -- We need to adjust the width of combining characters, because they
+   --    -- are not supposed to be as wide as the base character.
+   --    -- This is a hack, but it works.
+   --    local constants = mathMetrics.constants
+   --    print("COMBINING", luautf8.codepoint(self.text), "[ ".. self.text .. " ]")
+   --    local guess = constants.accentBaseHeight + (constants.flattenedAccentBaseHeight - constants.accentBaseHeight) / 2
+   --    self.offY = -guess * self:getScaleDown()
+   --    self.height = self.height + SILE.types.length(self.offY)
+   --    self.depth = SILE.types.length(0)
+
+   --    -- self.depth = SILE.types.length(0)
+   --    -- self.width = SILE.types.length(0)
+   --    --self.offY = 0.0001
+   -- end
 end
 
 function elements.text.findClosestVariant (_, variants, requiredAdvance, currentAdvance)
@@ -1111,6 +1244,11 @@ function elements.text:_horizStretchyReshape (width)
       -- HACK: see output routine
       self.horizScalingRatio = width:tonumber() / self.width:tonumber()
       self.width = width
+      -- SEE NOTE 20241028-accents2 = should we do this?
+      -- if self.offY then
+      --    self.height = self.height +SILE.types.length(self.offY)
+      --    self.depth = SILE.types.length(0)
+      -- end
    end
    return hasStretched
 end
@@ -1251,7 +1389,7 @@ local function newSubscript (spec)
 end
 
 local function newUnderOver (spec)
-   return elements.underOver(spec.base, spec.sub, spec.sup)
+   return elements.underOver(spec.attributes, spec.base, spec.sub, spec.sup)
 end
 
 -- TODO replace with penlight equivalent

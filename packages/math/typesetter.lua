@@ -129,19 +129,19 @@ function ConvertMathML (_, content)
       if #children ~= 2 then
          SU.error("Wrong number of children in munder")
       end
-      return b.newUnderOver({ base = children[1], sub = children[2] })
+      return b.newUnderOver({ attributes = content.options, base = children[1], sub = children[2] })
    elseif content.command == "mover" then
       local children = convertChildren(content)
       if #children ~= 2 then
          SU.error("Wrong number of children in mover")
       end
-      return b.newUnderOver({ base = children[1], sup = children[2] })
+      return b.newUnderOver({ attributes = content.options, base = children[1], sup = children[2] })
    elseif content.command == "munderover" then
       local children = convertChildren(content)
       if #children ~= 3 then
          SU.error("Wrong number of children in munderover")
       end
-      return b.newUnderOver({ base = children[1], sub = children[2], sup = children[3] })
+      return b.newUnderOver({ attributes = content.options, base = children[1], sub = children[2], sup = children[3] })
    elseif content.command == "mfrac" then
       local children = convertChildren(content)
       if #children ~= 2 then

@@ -25,6 +25,12 @@ local mkAtomType = {
    mathbin = atomType.binaryOperator,
    mathaccent = atomType.accentSymbol,
    mathaccentwide = atomType.accentSymbol,
+   -- BEGIN MISSING FIXME !!!
+   mathaccentoverlay = atomType.accentSymbol,-- FIXME: What is this?
+   mathbotaccent = atomType.accentSymbol, -- FIXME: bottom vs top.
+   mathbotaccentwide = atomType.accentSymbol, -- FIXME: bottom vs top.
+   mathpunct = atomType.punctuationSymbol,
+   -- END MISSING FIXME !!!
    mathrel = atomType.relationalOperator,
    mathunder = atomType.underSymbol,
    mathover = atomType.overSymbol,
@@ -2647,7 +2653,7 @@ symbolDefaults["⟹"] = { atom = atomType.relationalOperator }
 symbolDefaults["/"] = { atom = atomType.binaryOperator }
 symbolDefaults[":"] = { atom = atomType.relationalOperator }
 symbolDefaults["⟶"] = { atom = atomType.relationalOperator }
-symbolDefaults["|"] = { atom = atomType.relationalOperator }
+symbolDefaults["|"] = { atom = atomType.relationalOperator, stretchy = true }
 symbolDefaults["("] = { atom = atomType.openingSymbol, stretchy = true }
 symbolDefaults[")"] = { atom = atomType.closeSymbol, stretchy = true }
 symbolDefaults["["] = { atom = atomType.openingSymbol, stretchy = true }
@@ -2656,6 +2662,33 @@ symbolDefaults["{"] = { atom = atomType.openingSymbol, stretchy = true }
 symbolDefaults["}"] = { atom = atomType.closeSymbol, stretchy = true }
 symbolDefaults["mod"] = { atom = atomType.binaryOperator }
 symbolDefaults["%"] = { atom = atomType.binaryOperator }
+symbolDefaults["⟨"] = { atom = atomType.openingSymbol, stretchy = true } -- Unicode U+27E8 langle
+symbolDefaults["⟩"] = { atom = atomType.closeSymbol, stretchy = true } -- Unicode U+27E9 rangle
+-- FIXME This table is inherently incomplete when not wrong.
+-- See https://github.com/sile-typesetter/sile/issues/2148
+-- See https://www.w3.org/TR/MathML/appendixc.html
+--     https://w3c.github.io/mathml-core/#operator-dictionary
+-- QUICK'N DIRTY: ADDONS FOR MY OWN TEST SUITE
+local x = luautf8.char(0x23DE) -- Unicode U+23DE (top curly bracket)
+symbolDefaults[x] = { atom = atomType.openingSymbol, stretchy = true, zig=true } -- Unicode U+23DC;
+x = luautf8.char(0x23DF) -- Unicode U+23DF (bottom curly bracket)
+symbolDefaults[x] = { atom = atomType.closeSymbol, stretchy = true, zig=true } -- Unicode U+23DD;
+-- x = luautf8.char(0x20D6) -- Unicode U+20D6 (combining left arrow above) = vec
+-- symbolDefaults[x] = { atom = atomType.accentSymbol, stretchy = true } -- Unicode U+20D6;
+-- x = luautf8.char(0x20D7) -- Unicode U+20D7 (combining right arrow above) = vec
+-- symbolDefaults[x] = { atom = atomType.accentSymbol, stretchy = true } -- Unicode U+20D7;
+symbolDefaults["¯"] = { atom = atomType.accentSymbol, stretchy = true } -- Unicode U+00AF (macron)
+x = luautf8.char(0x203E) -- Unicode U+203E (overline)
+-- U+203E (overline rendered as:  ̅)
+symbolDefaults[x] = { atom = atomType.accentSymbol, stretchy = true } -- Unicode U+203E (overline)
+x = luautf8.char(0x0305) -- Unicode U+0305 (overline)
+symbolDefaults[x] = { atom = atomType.accentSymbol, stretchy = true } -- Unicode U+0305 (overline)
+--→ is a right arrow U+2192
+symbolDefaults["→"] = { atom = atomType.relationalOperator, stretchy = true } -- Unicode U+2192 (right arrow)
+-- ⃗ is a combining right arrow above U+20D7
+symbolDefaults["⃗"] = { atom = atomType.accentSymbol, stretchy = true } -- Unicode U+20D7 (combining right arrow above)
+-- ̂ is a combining circumflex accent U+0302
+symbolDefaults["̂"] = { atom = atomType.accentSymbol, stretchy = true } -- Unicode U+0302 (combining circumflex accent)
 
 return {
    symbols = symbols,
