@@ -2,6 +2,8 @@ local nodefactory = require("types.node")
 local hb = require("justenoughharfbuzz")
 local ot = require("core.opentype-parser")
 local syms = require("packages.math.unicode-symbols")
+local mathvariants = require("packages.math.unicode-mathvariants")
+local convertMathVariantScript = mathvariants.convertMathVariantScript
 
 local atomType = syms.atomType
 local symbolDefaults = syms.symbolDefaults
@@ -19,32 +21,6 @@ local mathMode = {
    scriptScriptCramped = 7,
 }
 
-local scriptType = {
-   upright = 1,
-   bold = 2, -- also have Greek and digits
-   italic = 3, -- also have Greek
-   boldItalic = 4, -- also have Greek
-   script = 5,
-   boldScript = 6,
-   fraktur = 7,
-   boldFraktur = 8,
-   doubleStruck = 9, -- also have digits
-   sansSerif = 10, -- also have digits
-   sansSerifBold = 11, -- also have Greek and digits
-   sansSerifItalic = 12,
-   sansSerifBoldItalic = 13, -- also have Greek
-   monospace = 14, -- also have digits
-}
-
-local mathVariantToScriptType = function (attr)
-   return attr == "normal" and scriptType.upright
-      or attr == "bold" and scriptType.bold
-      or attr == "italic" and scriptType.italic
-      or attr == "bold-italic" and scriptType.boldItalic
-      or attr == "double-struck" and scriptType.doubleStruck
-      or SU.error('Invalid value "' .. attr .. '" for option mathvariant')
-end
-
 local function isDisplayMode (mode)
    return mode <= 1
 end
@@ -60,50 +36,6 @@ end
 local function isScriptScriptMode (mode)
    return mode == mathMode.scriptScript or mode == mathMode.scriptScriptCramped
 end
-
-local mathScriptConversionTable = {
-   capital = {
-      [scriptType.upright] = function (codepoint)
-         return codepoint
-      end,
-      [scriptType.bold] = function (codepoint)
-         return codepoint + 0x1D400 - 0x41
-      end,
-      [scriptType.italic] = function (codepoint)
-         return codepoint + 0x1D434 - 0x41
-      end,
-      [scriptType.boldItalic] = function (codepoint)
-         return codepoint + 0x1D468 - 0x41
-      end,
-      [scriptType.doubleStruck] = function (codepoint)
-         return codepoint == 0x43 and 0x2102
-            or codepoint == 0x48 and 0x210D
-            or codepoint == 0x4E and 0x2115
-            or codepoint == 0x50 and 0x2119
-            or codepoint == 0x51 and 0x211A
-            or codepoint == 0x52 and 0x211D
-            or codepoint == 0x5A and 0x2124
-            or codepoint + 0x1D538 - 0x41
-      end,
-   },
-   small = {
-      [scriptType.upright] = function (codepoint)
-         return codepoint
-      end,
-      [scriptType.bold] = function (codepoint)
-         return codepoint + 0x1D41A - 0x61
-      end,
-      [scriptType.italic] = function (codepoint)
-         return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61
-      end,
-      [scriptType.boldItalic] = function (codepoint)
-         return codepoint + 0x1D482 - 0x61
-      end,
-      [scriptType.doubleStruck] = function (codepoint)
-         return codepoint + 0x1D552 - 0x61
-      end,
-   },
-}
 
 local mathCache = {}
 
@@ -121,9 +53,10 @@ local function retrieveMathTable (font)
          mathTableParsable, mathTable = pcall(ot.parseMath, rawMathTable)
       end
       if not fontHasMathTable or not mathTableParsable then
-         SU.error(([[You must use a math font for math rendering.
+         SU.error(([[
+            You must use a math font for math rendering
 
-  The math table in '%s' could not be %s.
+            The math table in '%s' could not be %s.
          ]]):format(face.filename, fontHasMathTable and "parsed" or "loaded"))
       end
       local upem = ot.parseHead(hb.get_table(face, "head")).unitsPerEm
@@ -532,6 +465,43 @@ end
 
 function elements.stackbox.output (_, _, _, _) end
 
+elements.phantom = pl.class(elements.stackbox) -- inherit from stackbox
+elements.phantom._type = "Phantom"
+
+function elements.phantom:_init (children, special)
+   -- MathML core 3.3.7:
+   -- "Its layout algorithm is the same as the mrow element".
+   -- Also not the MathML states that <mphantom> is sort of legacy, "implemented
+   -- for compatibility with full MathML. Authors whose only target is MathML
+   -- Core are encouraged to use CSS for styling."
+   -- The thing is that we don't have CSS in SILE, so supporting <mphantom> is
+   -- a must.
+   elements.stackbox._init(self, "H", children)
+   self.special = special
+end
+
+function elements.phantom:shape ()
+   elements.stackbox.shape(self)
+   -- From https://latexref.xyz:
+   -- "The \vphantom variant produces an invisible box with the same vertical size
+   -- as subformula, the same height and depth, but having zero width.
+   -- And \hphantom makes a box with the same width as subformula but
+   -- with zero height and depth."
+   if self.special == "v" then
+      self.width = SILE.types.length()
+   elseif self.special == "h" then
+      self.height = SILE.types.length()
+      self.depth = SILE.types.length()
+   end
+end
+
+function elements.phantom:output (_, _, _)
+   -- Note the trick here: when the tree is rendered, the node's output
+   -- function is invoked, then all its children's output functions.
+   -- So we just cancel the list of children here, before it's rendered.
+   self.children = {}
+end
+
 elements.subscript = pl.class(elements.mbox)
 elements.subscript._type = "Subscript"
 
@@ -907,23 +877,14 @@ end
 
 function elements.text:_init (kind, attributes, script, text)
    elements.terminal._init(self)
-   if not (kind == "number" or kind == "identifier" or kind == "operator") then
-      SU.error("Unknown text node kind '" .. kind .. "'; should be one of: number, identifier, operator.")
+   if not (kind == "number" or kind == "identifier" or kind == "operator" or kind == "string") then
+      SU.error("Unknown text node kind '" .. kind .. "'; should be one of: number, identifier, operator, string")
    end
    self.kind = kind
    self.script = script
    self.text = text
    if self.script ~= "upright" then
-      local converted = ""
-      for _, uchr in luautf8.codes(self.text) do
-         local dst_char = luautf8.char(uchr)
-         if uchr >= 0x41 and uchr <= 0x5A then -- Latin capital letter
-            dst_char = luautf8.char(mathScriptConversionTable.capital[self.script](uchr))
-         elseif uchr >= 0x61 and uchr <= 0x7A then -- Latin non-capital letter
-            dst_char = luautf8.char(mathScriptConversionTable.small[self.script](uchr))
-         end
-         converted = converted .. dst_char
-      end
+      local converted = convertMathVariantScript(self.text, self.script)
       self.originalText = self.text
       self.text = converted
    end
@@ -1107,6 +1068,14 @@ function elements.fraction:styleChildren ()
 end
 
 function elements.fraction:shape ()
+   -- MathML Core 3.3.2: "To avoid visual confusion between the fraction bar
+   -- and another adjacent items (e.g. minus sign or another fraction's bar),"
+   -- By convention, here we use 1px = 1/96in = 0.75pt.
+   -- Note that PlainTeX would likely use \nulldelimiterspace (default 1.2pt)
+   -- but it would depend on the surrounding context, and might be far too
+   -- much in some cases, so we stick to MathML's suggested padding.
+   self.padding = SILE.types.length(0.75)
+
    -- Determine relative abscissas and width
    local widest, other
    if self.denominator.width > self.numerator.width then
@@ -1114,61 +1083,53 @@ function elements.fraction:shape ()
    else
       widest, other = self.numerator, self.denominator
    end
-   widest.relX = SILE.types.length(0)
-   other.relX = (widest.width - other.width) / 2
-   self.width = widest.width
+   widest.relX = self.padding
+   other.relX = self.padding + (widest.width - other.width) / 2
+   self.width = widest.width + 2 * self.padding
    -- Determine relative ordinates and height
    local constants = self:getMathMetrics().constants
    local scaleDown = self:getScaleDown()
    self.axisHeight = constants.axisHeight * scaleDown
    self.ruleThickness = constants.fractionRuleThickness * scaleDown
+
+   local numeratorGapMin, denominatorGapMin, numeratorShiftUp, denominatorShiftDown
    if isDisplayMode(self.mode) then
-      self.numerator.relY = -self.axisHeight
-         - self.ruleThickness / 2
-         - SILE.types.length(
-            math.max(
-               (constants.fractionNumDisplayStyleGapMin * scaleDown + self.numerator.depth):tonumber(),
-               constants.fractionNumeratorDisplayStyleShiftUp * scaleDown - self.axisHeight - self.ruleThickness / 2
-            )
-         )
+      numeratorGapMin = constants.fractionNumDisplayStyleGapMin * scaleDown
+      denominatorGapMin = constants.fractionDenomDisplayStyleGapMin * scaleDown
+      numeratorShiftUp = constants.fractionNumeratorDisplayStyleShiftUp * scaleDown
+      denominatorShiftDown = constants.fractionDenominatorDisplayStyleShiftDown * scaleDown
    else
-      self.numerator.relY = -self.axisHeight
-         - self.ruleThickness / 2
-         - SILE.types.length(
-            math.max(
-               (constants.fractionNumeratorGapMin * scaleDown + self.numerator.depth):tonumber(),
-               constants.fractionNumeratorShiftUp * scaleDown - self.axisHeight - self.ruleThickness / 2
-            )
-         )
+      numeratorGapMin = constants.fractionNumeratorGapMin * scaleDown
+      denominatorGapMin = constants.fractionDenominatorGapMin * scaleDown
+      numeratorShiftUp = constants.fractionNumeratorShiftUp * scaleDown
+      denominatorShiftDown = constants.fractionDenominatorShiftDown * scaleDown
    end
-   if isDisplayMode(self.mode) then
-      self.denominator.relY = -self.axisHeight
-         + self.ruleThickness / 2
-         + SILE.types.length(
-            math.max(
-               (constants.fractionDenomDisplayStyleGapMin * scaleDown + self.denominator.height):tonumber(),
-               constants.fractionDenominatorDisplayStyleShiftDown * scaleDown + self.axisHeight - self.ruleThickness / 2
-            )
+
+   self.numerator.relY = -self.axisHeight
+      - self.ruleThickness / 2
+      - SILE.types.length(
+         math.max(
+            (numeratorGapMin + self.numerator.depth):tonumber(),
+            numeratorShiftUp - self.axisHeight - self.ruleThickness / 2
          )
-   else
-      self.denominator.relY = -self.axisHeight
-         + self.ruleThickness / 2
-         + SILE.types.length(
-            math.max(
-               (constants.fractionDenominatorGapMin * scaleDown + self.denominator.height):tonumber(),
-               constants.fractionDenominatorShiftDown * scaleDown + self.axisHeight - self.ruleThickness / 2
-            )
+      )
+   self.denominator.relY = -self.axisHeight
+      + self.ruleThickness / 2
+      + SILE.types.length(
+         math.max(
+            (denominatorGapMin + self.denominator.height):tonumber(),
+            denominatorShiftDown + self.axisHeight - self.ruleThickness / 2
          )
-   end
+      )
    self.height = self.numerator.height - self.numerator.relY
    self.depth = self.denominator.relY + self.denominator.depth
 end
 
 function elements.fraction:output (x, y, line)
    SILE.outputter:drawRule(
-      scaleWidth(x, line),
+      scaleWidth(x + self.padding, line),
       y.length - self.axisHeight - self.ruleThickness / 2,
-      scaleWidth(self.width, line),
+      scaleWidth(self.width - 2 * self.padding, line),
       self.ruleThickness
    )
 end
@@ -1334,10 +1295,155 @@ end
 
 function elements.table.output (_) end
 
+local function getRadicandMode (mode)
+   -- Not too sure if we should do something special/
+   return mode
+end
+
+local function getDegreeMode (mode)
+   -- 2 levels smaller, up to scriptScript evntually.
+   -- Not too sure if we should do something else.
+   if mode == mathMode.display then
+      return mathMode.scriptScript
+   elseif mode == mathMode.displayCramped then
+      return mathMode.scriptScriptCramped
+   elseif mode == mathMode.text or mode == mathMode.script or mode == mathMode.scriptScript then
+      return mathMode.scriptScript
+   end
+   return mathMode.scriptScriptCramped
+end
+
+elements.sqrt = pl.class(elements.mbox)
+elements.sqrt._type = "Sqrt"
+
+function elements.sqrt:__tostring ()
+   return self._type .. "(" .. tostring(self.radicand) .. (self.degree and ", " .. tostring(self.degree) or "") .. ")"
+end
+
+function elements.sqrt:_init (radicand, degree)
+   elements.mbox._init(self)
+   self.radicand = radicand
+   if degree then
+      self.degree = degree
+      table.insert(self.children, degree)
+   end
+   table.insert(self.children, radicand)
+   self.relX = SILE.types.length()
+   self.relY = SILE.types.length()
+end
+
+function elements.sqrt:styleChildren ()
+   self.radicand.mode = getRadicandMode(self.mode)
+   if self.degree then
+      self.degree.mode = getDegreeMode(self.mode)
+   end
+end
+
+function elements.sqrt:shape ()
+   local mathMetrics = self:getMathMetrics()
+   local scaleDown = self:getScaleDown()
+   local constants = mathMetrics.constants
+
+   self.radicalRuleThickness = constants.radicalRuleThickness * scaleDown
+   if self.mode == mathMode.display or self.mode == mathMode.displayCramped then
+      self.radicalVerticalGap = constants.radicalDisplayStyleVerticalGap * scaleDown
+   else
+      self.radicalVerticalGap = constants.radicalVerticalGap * scaleDown
+   end
+   self.extraAscender = constants.radicalExtraAscender * scaleDown
+
+   -- HACK: We draw own own radical sign in the output() method.
+   -- Derive dimensions for the radical sign (more or less ad hoc).
+   -- Note: In TeX, the radical sign extends a lot below the baseline,
+   -- and MathML Core also has a lot of layout text about it.
+   -- Not only it doesn't look good, but it's not very clear vs. OpenType.
+   local radicalGlyph = SILE.shaper:measureChar("√")
+   local ratio = (self.radicand.height:tonumber() + self.radicand.depth:tonumber())
+      / (radicalGlyph.height + radicalGlyph.depth)
+   local vertAdHocOffset = (ratio > 1 and math.log(ratio) or 0) * self.radicalVerticalGap
+   self.symbolHeight = SILE.types.length(radicalGlyph.height) * scaleDown
+   self.symbolDepth = (SILE.types.length(radicalGlyph.depth) + vertAdHocOffset) * scaleDown
+   self.symbolWidth = (SILE.types.length(radicalGlyph.width) + vertAdHocOffset) * scaleDown
+
+   -- Adjust the height of the radical sign if the radicand is higher
+   self.symbolHeight = self.radicand.height > self.symbolHeight and self.radicand.height or self.symbolHeight
+   -- Compute the (max-)height of the short leg of the radical sign
+   self.symbolShortHeight = self.symbolHeight * constants.radicalDegreeBottomRaisePercent
+
+   self.offsetX = SILE.types.length()
+   if self.degree then
+      -- Position the degree
+      self.degree.relY = -constants.radicalDegreeBottomRaisePercent * self.symbolHeight
+      -- Adjust the height of the short leg of the radical sign to ensure the degree is not too close
+      -- (empirically use radicalExtraAscender)
+      self.symbolShortHeight = self.symbolShortHeight - constants.radicalExtraAscender * scaleDown
+      -- Compute the width adjustment for the degree
+      self.offsetX = self.degree.width
+         + constants.radicalKernBeforeDegree * scaleDown
+         + constants.radicalKernAfterDegree * scaleDown
+   end
+   -- Position the radicand
+   self.radicand.relX = self.symbolWidth + self.offsetX
+   -- Compute the dimentions of the whole radical
+   self.width = self.radicand.width + self.symbolWidth + self.offsetX
+   self.height = self.symbolHeight + self.radicalVerticalGap + self.extraAscender
+   self.depth = self.radicand.depth
+end
+
+local function _r (number)
+   -- Lua 5.3+ formats floats as 1.0 and integers as 1
+   -- Also some PDF readers do not like double precision.
+   return math.floor(number) == number and math.floor(number) or tonumber(string.format("%.5f", number))
+end
+
+function elements.sqrt:output (x, y, line)
+   -- HACK:
+   -- OpenType might say we need to assemble the radical sign from parts.
+   -- Frankly, it's much easier to just draw it as a graphic :-)
+   -- Hence, here we use a PDF graphic operators to draw a nice radical sign.
+   -- Some values here are ad hoc, but they look good.
+   local h = self.height:tonumber()
+   local d = self.depth:tonumber()
+   local s0 = scaleWidth(self.offsetX, line):tonumber()
+   local sw = scaleWidth(self.symbolWidth, line):tonumber()
+   local dsh = h - self.symbolShortHeight:tonumber()
+   local dsd = self.symbolDepth:tonumber()
+   local symbol = {
+      _r(self.radicalRuleThickness),
+      "w", -- line width
+      2,
+      "j", -- round line joins
+      _r(sw + s0),
+      _r(self.extraAscender),
+      "m",
+      _r(s0 + sw * 0.90),
+      _r(self.extraAscender),
+      "l",
+      _r(s0 + sw * 0.4),
+      _r(h + d + dsd),
+      "l",
+      _r(s0 + sw * 0.2),
+      _r(dsh),
+      "l",
+      s0 + sw * 0.1,
+      _r(dsh + 0.5),
+      "l",
+      "S",
+   }
+   local svg = table.concat(symbol, " ")
+   local xscaled = scaleWidth(x, line)
+   SILE.outputter:drawSVG(svg, xscaled, y, sw, h, 1)
+   -- And now we just need to draw the bar over the radicand
+   SILE.outputter:drawRule(
+      s0 + self.symbolWidth + xscaled,
+      y.length - self.height + self.extraAscender - self.radicalRuleThickness / 2,
+      scaleWidth(self.radicand.width, line),
+      self.radicalRuleThickness
+   )
+end
+
 elements.mathMode = mathMode
 elements.atomType = atomType
-elements.scriptType = scriptType
-elements.mathVariantToScriptType = mathVariantToScriptType
 elements.symbolDefaults = symbolDefaults
 elements.newSubscript = newSubscript
 elements.newUnderOver = newUnderOver

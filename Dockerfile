@@ -54,7 +54,7 @@ COPY ./ /src
 WORKDIR /src
 
 # Take note of SILE's supported locales so the final system can build localized messages
-RUN ls i18n/ | sed 's/[.-].*$/_/;s/^/^/' | sort -u | grep -Ef - /usr/share/i18n/SUPPORTED > /etc/locale.gen
+RUN ls -d languages/*/ | sed -e 's!/$!_!;s!.*/!^!' | sort -u | grep -Ef - /usr/share/i18n/SUPPORTED > /etc/locale.gen
 
 # GitHub Actions builder stopped providing git history :(
 # See feature request at https://github.com/actions/runner/issues/767
@@ -71,6 +71,9 @@ RUN ./configure \
         --without-manual
 RUN make
 RUN make install DESTDIR=/pkgdir
+
+# Work around BuiltKit / buildx bug, they can’t copy to symlinks only dirs
+RUN mv /pkgdir/usr/local/{share/,}/man
 
 FROM base AS final
 

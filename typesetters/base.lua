@@ -32,12 +32,12 @@ local warned = false
 
 function typesetter:init (frame)
    SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", warned and "" or [[
-  The typesetter instance inheritance system for instances has been
-  refactored using a different object model. Your instance was created
-  and initialized using the object copy syntax from the stdlib model.
-  It has been shimmed for you using the new Penlight model, but this may
-  lead to unexpected behavior. Please update your code to use the new
-  Penlight based inheritance model.]])
+      The typesetter instance inheritance system for instances has been refactored
+      using a different object model. Your instance was created and initialized
+      using the object copy syntax from the stdlib model. It has been shimmed for
+      you using the new Penlight model, but this may lead to unexpected behavior.
+      Please update your code to use the new Penlight based inheritance model.
+   ]])
    warned = true
    self:_init(frame)
 end
@@ -234,26 +234,22 @@ function typesetter:pushVertical (vbox)
 end
 
 function typesetter:pushHbox (spec)
-   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
    local ntype = SU.type(spec)
    local node = (ntype == "hbox" or ntype == "zerohbox") and spec or SILE.types.node.hbox(spec)
    return self:pushHorizontal(node)
 end
 
 function typesetter:pushUnshaped (spec)
-   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
    local node = SU.type(spec) == "unshaped" and spec or SILE.types.node.unshaped(spec)
    return self:pushHorizontal(node)
 end
 
 function typesetter:pushGlue (spec)
-   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
    local node = SU.type(spec) == "glue" and spec or SILE.types.node.glue(spec)
    return self:pushHorizontal(node)
 end
 
 function typesetter:pushExplicitGlue (spec)
-   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
    local node = SU.type(spec) == "glue" and spec or SILE.types.node.glue(spec)
    node.explicit = true
    node.discardable = false
@@ -261,7 +257,6 @@ function typesetter:pushExplicitGlue (spec)
 end
 
 function typesetter:pushPenalty (spec)
-   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushHorizontal() to pass a premade node instead of a spec") end
    local node = SU.type(spec) == "penalty" and spec or SILE.types.node.penalty(spec)
    return self:pushHorizontal(node)
 end
@@ -272,19 +267,16 @@ function typesetter:pushMigratingMaterial (material)
 end
 
 function typesetter:pushVbox (spec)
-   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
    local node = SU.type(spec) == "vbox" and spec or SILE.types.node.vbox(spec)
    return self:pushVertical(node)
 end
 
 function typesetter:pushVglue (spec)
-   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
    local node = SU.type(spec) == "vglue" and spec or SILE.types.node.vglue(spec)
    return self:pushVertical(node)
 end
 
 function typesetter:pushExplicitVglue (spec)
-   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
    local node = SU.type(spec) == "vglue" and spec or SILE.types.node.vglue(spec)
    node.explicit = true
    node.discardable = false
@@ -292,7 +284,6 @@ function typesetter:pushExplicitVglue (spec)
 end
 
 function typesetter:pushVpenalty (spec)
-   -- if SU.type(spec) ~= "table" then SU.warn("Please use pushVertical() to pass a premade node instead of a spec") end
    local node = SU.type(spec) == "penalty" and spec or SILE.types.node.penalty(spec)
    return self:pushVertical(node)
 end
@@ -383,7 +374,7 @@ function speakerChangeNode:shape ()
    else
       -- Should not occur:
       -- How could it possibly be shaped differently?
-      SU.warn("Speaker change logic met an unexpected case, this might be a bug.")
+      SU.warn("Speaker change logic met an unexpected case, this might be a bug")
    end
    return node
 end
@@ -940,7 +931,7 @@ end
 
 function typesetter:leaveHmode (independent)
    if self.state.hmodeOnly then
-      SU.error([[Paragraphs are forbidden in restricted horizontal mode.]])
+      SU.error("Paragraphs are forbidden in restricted horizontal mode")
    end
    SU.debug("typesetter", "Leaving hmode")
    local margins = self:getMargins()

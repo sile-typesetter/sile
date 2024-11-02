@@ -483,7 +483,7 @@ int je_icu_compare(lua_State *L) {
     return luaL_error(L, "Internal failure to perform comparison");
   }
 
-  lua_pushboolean(L, result == UCOL_LESS);
+  lua_pushinteger(L, result); // UCOL_EQUAL(0), UCOL_GREATER(1), UCOL_LESS(-1)
   return 1;
   // IMPLEMENTATION NOTE FOR PORTABILITY
   // Good news, ucol_strcollUTF8 was introduced in ICU 50.

@@ -64,10 +64,11 @@ cli.parseArguments = function ()
          end
       end)
       if not has_input_filename and not opts.output then
-         SU.error(
-            "Unable to derive an output filename (perhaps because input is a STDIO stream).\n"
-               .. "  Please use --output to set one explicitly."
-         )
+         SU.error([[
+            Unable to derive an output filename (perhaps because input is a STDIO stream)
+
+            Please use --output to set one explicitly.
+         ]])
       end
       SILE.input.filenames = opts.INPUTS
    end

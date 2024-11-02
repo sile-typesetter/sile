@@ -110,11 +110,11 @@ function shaper:shapeToken (text, options)
             local newstart = run.start + item.index
             local pending = shapeQueue:addRun(run.offset, newstart)
             if not pending then
-               SU.warn(
-                  ("Glyph(s) '%s' not available in any fallback font,\n  run with '-d font-fallback' for more detail.\n"):format(
-                     item.text
-                  )
-               )
+               SU.warn(([[
+                  Glyph(s) '%s' not available in any fallback font
+
+                  Run with '-d font-fallback' for more detail.
+               ]]):format(item.text))
                run.offset = run.offset + 1
                table.insert(items, run.offset, item) -- output tofu if we're out of fallbacks
             end

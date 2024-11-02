@@ -101,12 +101,8 @@ local function typesetAST (options, content)
          else
             seenCommandWithoutArg = true
          end
-      elseif ast.id == "content" or (not ast.command and not ast.id) then
-         -- Due to the way it is implemented, the SILE-inputter may generate such
-         -- nodes in the AST. It's poorly documented, so it's not clear why they
-         -- are even kept there (esp. the "content" nodes), but anyhow, as
-         -- far as autodoc is concerned for presentation purposes, just
-         -- recurse into them.
+      elseif not ast.command and not ast.id then
+         -- Mere list of nodes
          typesetAST(options, ast)
       else
          SU.error("Unrecognized AST element, type " .. type(ast))
@@ -119,6 +115,7 @@ function package:_init (options)
    self:loadPackage("inputfilter")
    self:loadPackage("rules")
    self:loadPackage("raiselower")
+   self:loadPackage("verbatim")
    if options then
       pl.tablex.update(theme, options)
    end

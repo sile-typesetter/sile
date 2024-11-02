@@ -271,17 +271,18 @@ function SILE.use (module, options, reload)
    local status, pack
    if type(module) == "string" then
       if module:match("/") then
-         SU.warn(([[Module names should not include platform-specific path separators
+         SU.warn(([[
+            Module names should not include platform-specific path separators
 
-  Using slashes like '/' or '\' in a module name looks like a path segment. This
-  may appear to work in some cases, but breaks cross platform compatibility.
-  Even on the platform with the matching separator, this can lead to packages
-  getting loaded more than once because Lua will cache one each of the different
-  formats. Please use '.' separators which are automatically translated to the
-  correct platform one. For example a correct use statement would be:
+            Using slashes like '/' or '\' in a module name looks like a path segment. This
+            may appear to work in some cases, but breaks cross platform compatibility.
+            Even on the platform with the matching separator, this can lead to packages
+            getting loaded more than once because Lua will cache one each of the different
+            formats. Please use '.' separators which are automatically translated to the
+            correct platform one. For example a correct use statement would be:
 
-      \use[module=%s] instead of \use[module=%s].
-]]):format(module:gsub("/", "."), module))
+              \use[module=%s] instead of \use[module=%s].
+         ]]):format(module:gsub("/", "."), module))
       end
       status, pack = pcall(require, module)
       if not status then
@@ -372,10 +373,13 @@ function SILE.require (dependency, pathprefix, deprecation_ack)
    if not class and not deprecation_ack then
       SU.warn(string.format(
          [[
-  Use of SILE.require() is only supported in documents, packages, or class
-  init functions. It will not function fully before the class is instantiated.
-  Please just use the Lua require() function directly:
-      SILE.require("%s") → require("%s")]],
+            SILE.require() is only supported in documents, packages, or class init
+
+            It will not function fully before the class is instantiated. Please just use
+            the Lua require() function directly:
+
+              SILE.require("%s") → require("%s")
+         ]],
          dependency,
          dependency
       ))
@@ -411,7 +415,7 @@ function SILE.process (ast)
          content()
       elseif SILE.Commands[content.command] then
          SILE.call(content.command, content.options, content)
-      elseif content.id == "content" or (not content.command and not content.id) then
+      elseif not content.command and not content.id then
          local pId = SILE.traceStack:pushContent(content, "content")
          SILE.process(content)
          SILE.traceStack:pop(pId)
@@ -645,7 +649,10 @@ function SILE.registerCommand (name, func, help, pack, cheat)
          "class:registerCommand",
          "0.14.0",
          "0.16.0",
-         [[Commands are being scoped to the document classes they are loaded into rather than being globals.]]
+         [[
+            Commands are being scoped to the document classes they are loaded into rather
+            than being globals.
+         ]]
       )
    end
    -- Shimming until we have all scope cheating removed from core

@@ -21,7 +21,9 @@ build-aux/ltsugar.m4
 build-aux/ltversion.m4
 build-aux/lt~obsolete.m4
 build-aux/missing
+build-aux/import-tex-hyphens.sh
 build-aux/list-distfiles.sh
+build-aux/transpile-tex-hyphen-patterns.lua
 tests/regressions.pl
 
 # Other autojunk

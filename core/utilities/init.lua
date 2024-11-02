@@ -301,9 +301,10 @@ function utilities.deprecated (old, new, warnat, errorat, extra)
    local msg = (old .. brackets)
       .. " was deprecated in SILE v"
       .. tostring(warnat)
-      .. ". "
+      .. "\n\n  "
       .. _new
-      .. (extra and ("\n\n" .. extra .. "\n") or "")
+      .. "\n\n"
+      .. (extra and (pl.stringx.indent(pl.stringx.dedent(extra), 2)) or "")
    if errorat and current >= errorat then
       SU.error(msg)
    elseif warnat and current >= warnat then
@@ -343,7 +344,13 @@ function utilities.msg (message)
    if SILE.quiet then
       return
    end
-   io.stderr:write("\n! " .. message .. "\n")
+   message = pl.stringx.rstrip(message)
+   message = "                        " .. message
+   message = pl.stringx.dedent(message)
+   message = pl.stringx.lstrip(message)
+   message = pl.stringx.indent(message, 2)
+   message = message:gsub("^.", "!")
+   io.stderr:write("\n" .. message .. "\n")
 end
 
 --- Output a warning.
@@ -356,14 +363,14 @@ function utilities.warn (message, isbug)
    end
    utilities.msg(message)
    if SILE.traceback or isbug then
-      io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
+      io.stderr:write("at:\n" .. SILE.traceStack:locationTrace())
       if _skip_traceback_levels == 2 then
          io.stderr:write(
             debug.traceback("", _skip_traceback_levels) or "\t! debug.traceback() did not identify code location"
          )
       end
    else
-      io.stderr:write(" at " .. SILE.traceStack:locationHead())
+      io.stderr:write("  at " .. SILE.traceStack:locationHead())
    end
    io.stderr:write("\n")
 end
@@ -828,8 +835,7 @@ function utilities.subContent (content)
       "SU.ast.subContent",
       "0.15.0",
       "0.17.0",
-      [[
-    Note that the new implementation no longer introduces an id="stuff" key.]]
+      [[Note that the new implementation no longer introduces an id="stuff" key.]]
    )
    return utilities.ast.subContent(content)
 end

@@ -74,7 +74,7 @@ function package:registerCommands ()
       local scale = SU.cast("number", options.scale or 1.0)
       local strict = SU.boolean(options.strict, true)
       if strict and options.depthadjust then
-         SU.warn("The depthadjust option is ignored in strict mode.")
+         SU.warn("The depthadjust option is ignored in strict mode")
       end
       local color = options.color
       -- We need to measure the "would have been" size before using this.
