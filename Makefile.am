@@ -136,8 +136,9 @@ endif !EMBEDDED_RESOURCES
 
 src/embed-includes.rs: Makefile-distfiles
 	{
-		echo $(BUILT_LUA_SOURCES)
-		$(GREP) -E '^(SILEDATA|LUALIBRARIES|LUAMODULES) = ' $<
+		echo $(BUILT_SOURCES_LUA)
+		$(SED) -ze 's/\\\n\t//g' $< |
+			$(GREP) -E '^(SILEDATA|LUALIBRARIES|LUAMODULES) = '
 	} |
 		$(SED) -E -e 's/^.* = //;s/ /\n/g' |
 		while read file; do
