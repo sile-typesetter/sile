@@ -43,6 +43,7 @@ dependencies = {
    "luasocket == 3.1.0-1",
    "luautf8 == 0.1.5-2",
    "penlight == 1.14.0-2",
+   "serpent == 0.30-2",
    "vstruct == 2.1.1-1",
 }
 

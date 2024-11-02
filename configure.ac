@@ -219,6 +219,7 @@ AM_COND_IF([SYSTEM_LUAROCKS], [
     AX_LUA_MODULE([socket], [luasocket])
     AX_LUA_MODULE([lua-utf8], [luautf8])
     AX_LUA_MODULE([pl], [penlight])
+    AX_LUA_MODULE([serpent], [serpent])
     AX_LUA_MODULE([vstruct], [vstruct])
 ], [
     QUE_PROGVAR([luarocks])
