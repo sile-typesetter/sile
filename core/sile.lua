@@ -16,12 +16,6 @@ SILE = {}
 --- Fields
 -- @section fields
 
---- Load the C module that provides any and all SILE features implemented in Rust. The exports in this module are meant
---- to be moved to approprate places in the Lua API as we load other things and assemble the public facing interface.
---- This location is considered internal and accessing them directly from here is not supported.
--- @table SILE._rusile
-SILE._rusile = require("rusile")
-
 --- Machine friendly short-form version.
 -- Semver, prefixed with "v", possible postfixed with ".r" followed by VCS version information.
 -- @string version

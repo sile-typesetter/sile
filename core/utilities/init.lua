@@ -4,7 +4,7 @@
 
 local bitshim = require("bitshim")
 local luautf8 = require("lua-utf8")
-local semver = require("semver")
+local semver = require("rusile").semver
 
 local utilities = {}
 

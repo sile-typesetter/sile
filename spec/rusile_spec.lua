@@ -1,6 +1,6 @@
 SILE = require("core.sile")
 
-local rusile = SILE._rusile
+local rusile = require("rusile")
 
 local callable = require("luassert.util").callable
 
@@ -10,8 +10,7 @@ describe("rusile", function ()
    end)
 
    describe("semver", function ()
-      -- semver = SILE._rusile.semver
-      semver = require("semver")
+      local semver = rusile.semver
 
       it("constructor should exist", function ()
          assert.is.truthy(callable(semver))
