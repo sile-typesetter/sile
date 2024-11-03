@@ -3,31 +3,40 @@
 # `flake.nix`. In Nixpkgs, we don't need `libtexpdf-src` because we use
 # `fetchFromGitHub` with fetchSubmodules = true;`.
 {
+  # Nix specific packaging and flake tooling
+  autoreconfHook,
+  darwin,
+  gitMinimal,
   lib,
+  makeFontsConf,
+  makeWrapper,
+  runCommand,
+  rustPlatform,
+  src,
   stdenv,
   version,
-  src,
-  libtexpdf-src,
-  autoreconfHook,
-  gitMinimal,
-  pkg-config,
-  jq,
+
+  # Upstream build time dependencies
   cargo,
-  rustc,
-  rustPlatform,
-  makeWrapper,
+  jq,
+  pkg-config,
   poppler_utils,
+  rustc,
+
+  # Upstream run time dependencies
+  fontconfig,
+  gentium,
   harfbuzz,
   icu,
-  fontconfig,
-  lua,
   libiconv,
-  darwin,
-  makeFontsConf,
-  gentium,
-  runCommand,
+  lua,
+
+  # Developer environment dependencies
   stylua,
   typos,
+
+  # This package
+  libtexpdf-src,
 }:
 
 let
@@ -52,12 +61,13 @@ let
       luautf8
       penlight
       vstruct
+
       # lua packages needed for testing
       busted
       luacheck
+
       # packages needed for building api docs
       ldoc
-      # NOTE: Add lua packages here, to change the luaEnv also read by `flake.nix`
     ]
     ++ lib.optionals (lib.versionOlder lua.luaversion "5.2") [
       bit32
@@ -66,6 +76,7 @@ let
       compat53
     ]
   );
+
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "sile";
@@ -85,15 +96,15 @@ stdenv.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [
     autoreconfHook
-    gitMinimal
-    pkg-config
-    jq
     cargo
-    rustc
-    rustPlatform.cargoSetupHook
-    poppler_utils
+    gitMinimal
+    jq
     makeWrapper
+    pkg-config
+    rustPlatform.cargoSetupHook
+    rustc
   ];
+
   # In Nixpkgs, we don't copy the Cargo.lock file from the repo to Nixpkgs'
   # repo, but we inherit src, and specify a hash (it is a fixed output
   # derivation). `nix-update` and `nixpkgs-update` should be able to catch that
@@ -104,35 +115,36 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs =
     [
-      luaEnv
+      fontconfig
       harfbuzz
       icu
-      fontconfig
       libiconv
+      luaEnv
+
+      # Developer tooling
       stylua
       typos
-    ]
-    ++ lib.optionals stdenv.isDarwin [
-      darwin.apple_sdk.frameworks.AppKit
-    ];
+  ] ++ lib.optional stdenv.hostPlatform.isDarwin darwin.apple_sdk.frameworks.AppKit;
 
   configureFlags =
     [
+      # Build SILE's internal VM against headers from the Nix supplied Lua
+      "--with-system-lua-sources"
+
       # Nix will supply all the Lua dependencies, so stop the build system from
       # bundling vendored copies of them.
-      "--with-system-lua-sources"
       "--with-system-luarocks"
+
       # The automake check target uses pdfinfo to confirm the output of a test
-      # run, and uses autotools to discover it. This flake build eschews that
-      # test because it is run from the source directory but the binary is
-      # already built with system paths, so it can't be checked under Nix until
-      # after install. After install the Makefile isn't available of course, so
-      # we have our own copy of it with a hard coded path to `pdfinfo`. By
-      # specifying some binary here we skip the configure time test for
-      # `pdfinfo`, by using `false` we make sure that if it is expected during
-      # build time we would fail to build since we only provide it at test time.
+      # run, and uses autotools to discover it. Nix builds have to that test
+      # because it is run from the source directory with a binary already built
+      # with system paths, so it can't be checked under Nix until after install.
+      # After install the Makefile isn't available of course, so we have our own
+      # copy of it with a hard coded path to `pdfinfo`. By specifying some binary
+      # here we skip the configure time test for `pdfinfo`, by using `false` we
+      # make sure that if it is expected during build time we would fail to build
+      # since we only provide it at test time.
       "PDFINFO=false"
-      #"--with-manual" In Nixpkgs we add this flag, here its not important enough
     ]
     ++ lib.optionals (!lua.pkgs.isLuaJIT) [
       "--without-luajit"
@@ -142,7 +154,7 @@ stdenv.mkDerivation (finalAttrs: {
     patchShebangs build-aux/*.sh build-aux/git-version-gen
   '';
 
-  NIX_LDFLAGS = lib.optionalString stdenv.isDarwin "-framework AppKit";
+  NIX_LDFLAGS = lib.optionalString stdenv.hostPlatform.isDarwin "-framework AppKit";
 
   FONTCONFIG_FILE = makeFontsConf {
     fontDirectories = [
@@ -162,7 +174,7 @@ stdenv.mkDerivation (finalAttrs: {
     # So it will be easier to inspect this environment, in comparison to others
     inherit luaEnv;
     # Copied from Makefile.am
-    tests.test = lib.optionalAttrs (!(stdenv.isDarwin && stdenv.isAarch64)) (
+    tests.test = lib.optionalAttrs (!(stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64)) (
       runCommand "${finalAttrs.pname}-test"
         {
           nativeBuildInputs = [
@@ -187,7 +199,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   meta = {
-    description = "A typesetting system";
+    description = "Typesetting system";
     longDescription = ''
       SILE is a typesetting system; its job is to produce beautiful
       printed documents. Conceptually, SILE is similar to TeX—from
@@ -199,7 +211,6 @@ stdenv.mkDerivation (finalAttrs: {
       such as InDesign.
     '';
     homepage = "https://sile-typesetter.org";
-    # In nixpkgs we use a version specific URL for CHANGELOG.md
     changelog = "https://github.com/sile-typesetter/sile/raw/master/CHANGELOG.md";
     platforms = lib.platforms.unix;
     maintainers = with lib.maintainers; [
