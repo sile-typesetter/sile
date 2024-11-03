@@ -2,61 +2,71 @@
 # the `version`, `src` and `libtexpdf-src` attributes that are given by the
 # `flake.nix`. In Nixpkgs, we don't need `libtexpdf-src` because we use
 # `fetchFromGitHub` with fetchSubmodules = true;`.
-{ lib
-, stdenv
-, darwin
-, version, src, libtexpdf-src
-, makeWrapper
-, autoreconfHook
-, rustPlatform
-, gitMinimal
-, runCommand
-, pkg-config
-, cargo
-, fontconfig
-, gentium
-, harfbuzz
-, icu
-, jq
-, libiconv
-, lua
-, makeFontsConf
-, poppler_utils
-, rustc
-, stylua
+{
+  lib,
+  stdenv,
+  darwin,
+  version,
+  src,
+  libtexpdf-src,
+  makeWrapper,
+  autoreconfHook,
+  rustPlatform,
+  gitMinimal,
+  runCommand,
+  pkg-config,
+  cargo,
+  fontconfig,
+  gentium,
+  harfbuzz,
+  icu,
+  jq,
+  libiconv,
+  lua,
+  makeFontsConf,
+  poppler_utils,
+  rustc,
+  stylua,
 }:
 
 let
-  luaEnv = lua.withPackages(ps: with ps; [
-    cassowary
-    cldr
-    fluent
-    linenoise
-    loadkit
-    lpeg
-    lua-zlib
-    lua_cliargs
-    luaepnf
-    luaexpat
-    luafilesystem
-    luarepl
-    luasec
-    luasocket
-    luautf8
-    penlight
-    vstruct
-    # lua packages needed for testing
-    busted
-    luacheck
-    # packages needed for building api docs
-    ldoc
-  ] ++ lib.optionals (lib.versionOlder lua.luaversion "5.2") [
-    bit32
-  ] ++ lib.optionals (lib.versionOlder lua.luaversion "5.3") [
-    compat53
-  ]);
+  luaEnv = lua.withPackages (
+    ps:
+    with ps;
+    [
+      cassowary
+      cldr
+      fluent
+      linenoise
+      loadkit
+      lpeg
+      lua-zlib
+      lua_cliargs
+      luaepnf
+      luaexpat
+      luafilesystem
+      luarepl
+      luasec
+      luasocket
+      luautf8
+      penlight
+      vstruct
+      # lua packages needed for testing
+      busted
+      luacheck
+      # packages needed for building api docs
+      ldoc
+    ]
+    ++ lib.optionals (lib.versionOlder lua.luaversion "5.2") [
+      bit32
+    ]
+    ++ lib.optionals (lib.versionOlder lua.luaversion "5.3") [
+      compat53
+    ]
+  );
 
-  in stdenv.mkDerivation (finalAttrs: {
+in
+stdenv.mkDerivation (finalAttrs: {
   pname = "sile";
   inherit version src;
 
@@ -91,36 +101,40 @@ let
     lockFile = ../Cargo.lock;
   };
 
-  buildInputs = [
-    luaEnv
-    harfbuzz
-    icu
-    fontconfig
-    libiconv
-    stylua
-  ] ++ lib.optionals stdenv.isDarwin [
-    darwin.apple_sdk.frameworks.AppKit
-  ];
+  buildInputs =
+    [
+      luaEnv
+      harfbuzz
+      icu
+      fontconfig
+      libiconv
+      stylua
+    ]
+    ++ lib.optionals stdenv.isDarwin [
+      darwin.apple_sdk.frameworks.AppKit
+    ];
 
-  configureFlags = [
-    # Build SILE's internal VM against headers from the Nix supplied Lua
-    "--with-system-lua-sources"
-    # Nix will supply all the Lua dependencies, so stop the build system from
-    # bundling vendored copies of them.
-    "--with-system-luarocks"
-    # The automake check target uses pdfinfo to confirm the output of a test
-    # run, and uses autotools to discover it. Nix builds have to that test
-    # because it is run from the source directory with a binary already built
-    # with system paths, so it can't be checked under Nix until after install.
-    # After install the Makefile isn't available of course, so we have our own
-    # copy of it with a hard coded path to `pdfinfo`. By specifying some binary
-    # here we skip the configure time test for `pdfinfo`, by using `false` we
-    # make sure that if it is expected during build time we would fail to build
-    # since we only provide it at test time.
-    "PDFINFO=false"
-  ] ++ lib.optionals (!lua.pkgs.isLuaJIT) [
-    "--without-luajit"
-  ];
+  configureFlags =
+    [
+      # Build SILE's internal VM against headers from the Nix supplied Lua
+      "--with-system-lua-sources"
+      # Nix will supply all the Lua dependencies, so stop the build system from
+      # bundling vendored copies of them.
+      "--with-system-luarocks"
+      # The automake check target uses pdfinfo to confirm the output of a test
+      # run, and uses autotools to discover it. Nix builds have to that test
+      # because it is run from the source directory with a binary already built
+      # with system paths, so it can't be checked under Nix until after install.
+      # After install the Makefile isn't available of course, so we have our own
+      # copy of it with a hard coded path to `pdfinfo`. By specifying some binary
+      # here we skip the configure time test for `pdfinfo`, by using `false` we
+      # make sure that if it is expected during build time we would fail to build
+      # since we only provide it at test time.
+      "PDFINFO=false"
+    ]
+    ++ lib.optionals (!lua.pkgs.isLuaJIT) [
+      "--without-luajit"
+    ];
 
   postPatch = ''
     patchShebangs build-aux/*.sh build-aux/git-version-gen
@@ -147,17 +161,28 @@ let
     inherit luaEnv;
     # Copied from Makefile.am
     tests.test = lib.optionalAttrs (!(stdenv.isDarwin && stdenv.isAarch64)) (
-      runCommand "${finalAttrs.pname}-test" {
-          nativeBuildInputs = [ poppler_utils finalAttrs.finalPackage ];
+      runCommand "${finalAttrs.pname}-test"
+        {
+          nativeBuildInputs = [
+            poppler_utils
+            finalAttrs.finalPackage
+          ];
           inherit (finalAttrs) FONTCONFIG_FILE;
-      } ''
-        output=$(mktemp -t selfcheck-XXXXXX.pdf)
-        echo "<sile>foo</sile>" | sile -o $output -
-        pdfinfo $output | grep "SILE v${finalAttrs.version}" > $out
-      '');
+        }
+        ''
+          output=$(mktemp -t selfcheck-XXXXXX.pdf)
+          echo "<sile>foo</sile>" | sile -o $output -
+          pdfinfo $output | grep "SILE v${finalAttrs.version}" > $out
+        ''
+    );
   };
 
-  outputs = [ "out" "doc" "man" "dev" ];
+  outputs = [
+    "out"
+    "doc"
+    "man"
+    "dev"
+  ];
 
   meta = {
     description = "A typesetting system";
@@ -174,7 +199,10 @@ let
     homepage = "https://sile-typesetter.org";
     changelog = "https://github.com/sile-typesetter/sile/raw/master/CHANGELOG.md";
     platforms = lib.platforms.unix;
-    maintainers = with lib.maintainers; [ doronbehar alerque ];
+    maintainers = with lib.maintainers; [
+      doronbehar
+      alerque
+    ];
     license = lib.licenses.mit;
   };
 })
