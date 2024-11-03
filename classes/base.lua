@@ -6,7 +6,6 @@ class.type = "class"
 class._name = "base"
 
 class._initialized = false
-class.deferredLegacyInit = {}
 class.deferredInit = {}
 class.pageTemplate = { frames = {}, firstContentFrame = nil }
 class.defaultFrameset = {}
@@ -86,6 +85,7 @@ function class:_init (options)
 end
 
 function class:_post_init ()
+   SILE.documentState.documentClass = self
    self._initialized = true
    for i, func in ipairs(self.deferredInit) do
       func(self)
@@ -96,7 +96,7 @@ end
 
 function class:setOptions (options)
    options = options or {}
-   -- Classes that add options with dependencies should explicitly handle them, then exempt them from furthur processing.
+   -- Classes that add options with dependencies should explicitly handle them, then exempt them from further processing.
    -- The landscape and crop related options are handled explicitly before papersize, then the "rest" of options that are not interdependent.
    self.options.landscape = SU.boolean(options.landscape, false)
    options.landscape = nil
@@ -122,7 +122,7 @@ function class:declareOptions ()
          if self._legacy then
             self._name = name
          elseif name ~= self._name then
-            SU.error("Cannot change class name after instantiation, derive a new class instead.")
+            SU.error("Cannot change class name after instantiation, derive a new class instead")
          end
       end
       return self._name
@@ -247,10 +247,11 @@ function class:initPackage (pack, options)
       "0.14.0",
       "0.16.0",
       [[
-  This package appears to be a legacy format package. It returns a table
-  and expects SILE to guess about what to do. New packages inherit
-  from the base class and have a constructor function (_init) that
-  automatically handles setup.]]
+         This package appears to be a legacy format package. It returns a table and
+         expects SILE to guess about what to do. New packages inherit from the base
+         class and have a constructor function (_init) that automatically handles
+         setup.
+      ]]
    )
    if type(pack) == "table" then
       if pack.exports then
@@ -271,15 +272,22 @@ function class:initPackage (pack, options)
    end
 end
 
-function class:registerLegacyPostinit (func, options)
-   if self._initialized then
-      return func(self, options)
-   end
-   table.insert(self.deferredLegacyInit, function (_)
-      func(self, options)
-   end)
-end
-
+--- Register a callback function to be executed after the class initialization has completed.
+-- Sometimes a class or package may want to run things after the class has been fully initialized. This can be useful
+-- for setting document settings after packages and all their dependencies have been loaded. For example a package might
+-- want to trigger something to happen after all frames have been defined, but the package itself doesn't know if it is
+-- being loaded before or after the document options are processed, frame masters have been setup, etc. Rather than
+-- relying on the user to load the package after these events, the package can use this callback to defer the action
+-- until those things can be reasonable expected to have completed.
+--
+-- Functions in the deferred initialization queue are run on a first-set first-run basis.
+--
+-- Note the typesetter will *not* have been instantiated yet, so is not appropriate to try to output content at this
+-- point. Injecting content to be processed at the start of a document should be done with preambles. The inputter
+-- *will* be instantiated at this point, so adding a new preamble is viable.
+-- If the class has already been initialized the callback function will be run immediately.
+-- @tparam function func Callback function accepting up to two arguments.
+-- @tparam[opt] table options Additional table passed as a second argument to the callback.
 function class:registerPostinit (func, options)
    if self._initialized then
       return func(self, options)
@@ -384,7 +392,11 @@ function class:registerCommands ()
          self:registerCommand(options["command"], content)
          return
       elseif options.command == "process" then
-         SU.warn("Did you mean to re-definine the `\\process` macro? That probably won't go well.")
+         SU.warn([[
+            Did you mean to re-definine the `\\process` macro?
+
+            That probably won't go well.
+         ]])
       end
       self:registerCommand(options["command"], function (_, inner_content)
          SU.debug("macros", "Processing macro \\" .. options["command"])
@@ -431,7 +443,7 @@ function class:registerCommands ()
    self:registerCommand("comment", function (_, _) end, "Ignores any text within this command's body.")
 
    self:registerCommand("process", function ()
-      SU.error("Encountered unsubstituted \\process.")
+      SU.error("Encountered unsubstituted \\process")
    end, "Within a macro definition, processes the contents of the macro body.")
 
    self:registerCommand("script", function (options, content)
@@ -443,22 +455,21 @@ function class:registerCommands ()
             "0.15.0",
             "0.16.0",
             ([[
-      The \script function has been deprecated. It was overloaded to mean
-      too many different things and more targeted tools were introduced in
-      SILE v0.14.0. To load 3rd party modules designed for use with SILE,
-      replace \script[src=...] with \use[module=...]. To run arbitrary Lua
-      code inline use \lua{}, optionally with a require= parameter to load
-      a (non-SILE) Lua module using the Lua module path or src= to load a
-      file by file path.
+               The \script function has been deprecated. It was overloaded to mean too many
+               different things and more targeted tools were introduced in SILE v0.14.0. To
+               load 3rd party modules designed for use with SILE, replace \script[src=...]
+               with \use[module=...]. To run arbitrary Lua code inline use \lua{}, optionally
+               with a require= parameter to load a (non-SILE) Lua module using the Lua module
+               path or src= to load a file by file path.
 
-      For this use case consider replacing:
+               For this use case consider replacing:
 
-          %s
+               %s
 
-      with:
+               with:
 
-          %s
-      ]]):format(original, suggested)
+               %s
+            ]]):format(original, suggested)
          )
       end
       if SU.ast.hasContent(content) then
@@ -541,9 +552,12 @@ function class:registerCommands ()
             SILE.processString(doc, "lua", nil, packopts)
          else
             if options.src then
-               SU.warn(
-                  "Use of 'src' with \\use is discouraged because some of it's path handling\n  will eventually be deprecated. Use 'module' instead when possible."
-               )
+               SU.warn([[
+                  Use of 'src' with \\use is discouraged.
+
+                  Its path handling  will eventually be deprecated.
+                  Use 'module' instead when possible.
+               ]])
                SILE.processFile(options.src, "lua", packopts)
             else
                local module = SU.required(options, "module", "use")

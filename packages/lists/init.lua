@@ -36,7 +36,7 @@ package._name = "lists"
 --         This is still in L1.1}
 --    \end{itemize}
 -- But personally, for simple lists, I prefer the first "more readable" one.
--- Lists from Mardown, obviously, due to their structure, would need the
+-- Lists from Markdown, obviously, due to their structure, would need the
 -- second technique.
 --
 
@@ -81,7 +81,7 @@ local function pushListSpacing ()
    end
 end
 
--- Remove the last list separation space so it doen't interfere with parskip
+-- Remove the last list separation space so it doesn't interfere with parskip
 local function popListSpacing ()
    if lastListSpacing then
       local node = SILE.typesetter.state.outputQueue[lastListSpacing]

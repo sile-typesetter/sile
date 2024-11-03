@@ -870,7 +870,7 @@ addSymbol(0x027C7, "veedot", "mathbin", "or with dot inside")
 addSymbol(0x027C8, "bsolhsub", "mathrel", "reverse solidus preceding subset")
 addSymbol(0x027C9, "suphsol", "mathrel", "superset preceding solidus")
 addSymbol(0x027CC, "longdivision", "mathopen", "long division")
-addSymbol(0x027D0, "diamondcdot", "mathord", "white diamond with centred dot")
+addSymbol(0x027D0, "diamondcdot", "mathord", "white diamond with centered dot")
 addSymbol(0x027D1, "wedgedot", "mathbin", "and with dot")
 addSymbol(0x027D2, "upin", "mathrel", "element of opening upwards")
 addSymbol(0x027D3, "pullback", "mathrel", "lower right corner with dot")
@@ -2567,10 +2567,12 @@ symbols.alpha = "α"
 symbols.beta = "β"
 symbols.gamma = "γ"
 symbols.delta = "δ"
-symbols.epsilon = "ε"
+symbols.epsilon = "ϵ"
+symbols.varepsilon = "ε"
 symbols.zeta = "ζ"
 symbols.eta = "η"
 symbols.theta = "θ"
+symbols.vartheta = "ϑ"
 symbols.iota = "ι"
 symbols.kappa = "κ"
 symbols.lambda = "λ"
@@ -2579,11 +2581,15 @@ symbols.nu = "ν"
 symbols.xi = "ξ"
 symbols.omicron = "ο"
 symbols.pi = "π"
+symbols.varpi = "ϖ"
 symbols.rho = "ρ"
+symbols.varrho = "ϱ"
 symbols.sigma = "σ"
+symbols.varsigma = "ς"
 symbols.tau = "τ"
 symbols.upsilon = "υ"
-symbols.phi = "φ"
+symbols.phi = "ϕ"
+symbols.varphi = "φ"
 symbols.chi = "χ"
 symbols.psi = "ψ"
 symbols.omega = "ω"

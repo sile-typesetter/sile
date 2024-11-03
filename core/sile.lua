@@ -47,6 +47,10 @@ SILE.lua_isjit = type(jit) == "table"
 -- @string full_version
 SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
 
+--- Default to verbose mode, can be changed from the CLI or by libraries
+--- @boolean quiet
+SILE.quiet = false
+
 -- Backport of lots of Lua 5.3 features to Lua 5.[12]
 if not SILE.lua_isjit and SILE.lua_version < "5.3" then
    require("compat53")
@@ -134,9 +138,9 @@ SILE.rawHandlers = {}
 -- @tfield table filenames Path names of file(s) intended for processing. Files are processed in the order provided.
 -- File types may be mixed of any formaat for which SILE has an inputter module.
 -- @tfield table evaluates List of strings to be evaluated as Lua code snippets *before* processing inputs.
--- @tfield table evaluteAfters List of strings to be evaluated as Lua code snippets *after* processing inputs.
+-- @tfield table evaluateAfters List of strings to be evaluated as Lua code snippets *after* processing inputs.
 -- @tfield table uses List of strings specifying module names (and optionally optionns) for modules to load *before*
--- processing inputs. For example this accomodates loading inputter modules before any input of that type is encountered.
+-- processing inputs. For example this accommodates loading inputter modules before any input of that type is encountered.
 -- Additionally it can be used to process a document using a document class *other than* the one specified in the
 -- document itself. Document class modules loaded here are instantiated after load, meaning the document will not be
 -- queried for a class at all.
@@ -257,7 +261,7 @@ local function suggest_luarocks (module)
 end
 
 --- Multi-purpose loader to load and initialize modules.
--- This is used to load and intitialize core parts of SILE and also 3rd party modules.
+-- This is used to load and initialize core parts of SILE and also 3rd party modules.
 -- Module types supported bay be an *inputter*, *outputer*, *shaper*, *typesetter*, *pagebuilder*, or *package*.
 -- @tparam string|table module The module spec name to load (dot-separated, e.g. `"packages.lorem"`) or a table with
 --   a module that has already been loaded.
@@ -266,6 +270,20 @@ end
 function SILE.use (module, options, reload)
    local status, pack
    if type(module) == "string" then
+      if module:match("/") then
+         SU.warn(([[
+            Module names should not include platform-specific path separators
+
+            Using slashes like '/' or '\' in a module name looks like a path segment. This
+            may appear to work in some cases, but breaks cross platform compatibility.
+            Even on the platform with the matching separator, this can lead to packages
+            getting loaded more than once because Lua will cache one each of the different
+            formats. Please use '.' separators which are automatically translated to the
+            correct platform one. For example a correct use statement would be:
+
+              \use[module=%s] instead of \use[module=%s].
+         ]]):format(module:gsub("/", "."), module))
+      end
       status, pack = pcall(require, module)
       if not status then
          SU.error(
@@ -314,7 +332,7 @@ function SILE.use (module, options, reload)
    end
 end
 
--- --- Content loader like Lua's `require()` but whith special path handling for loading SILE resource files.
+-- --- Content loader like Lua's `require()` but with special path handling for loading SILE resource files.
 -- -- Used for example by commands that load data via a `src=file.name` option.
 -- -- @tparam string dependency Lua spec
 function SILE.require (dependency, pathprefix, deprecation_ack)
@@ -355,10 +373,13 @@ function SILE.require (dependency, pathprefix, deprecation_ack)
    if not class and not deprecation_ack then
       SU.warn(string.format(
          [[
-  Use of SILE.require() is only supported in documents, packages, or class
-  init functions. It will not function fully before the class is instantiated.
-  Please just use the Lua require() function directly:
-      SILE.require("%s") → require("%s")]],
+            SILE.require() is only supported in documents, packages, or class init
+
+            It will not function fully before the class is instantiated. Please just use
+            the Lua require() function directly:
+
+              SILE.require("%s") → require("%s")
+         ]],
          dependency,
          dependency
       ))
@@ -394,7 +415,7 @@ function SILE.process (ast)
          content()
       elseif SILE.Commands[content.command] then
          SILE.call(content.command, content.options, content)
-      elseif content.id == "content" or (not content.command and not content.id) then
+      elseif not content.command and not content.id then
          local pId = SILE.traceStack:pushContent(content, "content")
          SILE.process(content)
          SILE.traceStack:pop(pId)
@@ -438,7 +459,7 @@ end
 
 --- Process an input string.
 -- First converts the string to an AST, then runs `process` on it.
--- @tparam string doc Input string to be coverted to SILE content.
+-- @tparam string doc Input string to be converted to SILE content.
 -- @tparam[opt] nil|string format The name of the formatter. If nil, defaults to using each intputter's auto detection.
 -- @tparam[opt] nil|string filename Pseudo filename to identify the content with, useful for error messages stack traces.
 -- @tparam[opt] nil|table options Options to pass to the inputter instance when instantiated.
@@ -482,7 +503,7 @@ end
 --- Process an input file
 -- Opens a file, converts the contents to an AST, then runs `process` on it.
 -- Roughly equivalent to listing the file as an input, but easier to embed in code.
--- @tparam string filename Path of file to open string to be coverted to SILE content.
+-- @tparam string filename Path of file to open string to be converted to SILE content.
 -- @tparam[opt] nil|string format The name of the formatter. If nil, defaults to using each intputter's auto detection.
 -- @tparam[opt] nil|table options Options to pass to the inputter instance when instantiated.
 function SILE.processFile (filename, format, options)
@@ -548,7 +569,7 @@ end
 
 --- Resolve relative file paths to identify absolute resources locations.
 -- Makes it possible to load resources from relative paths, relative to a document or project or SILE itself.
--- @tparam string filename Name of file to find using the same order of precidence logic in `require()`.
+-- @tparam string filename Name of file to find using the same order of precedence logic in `require()`.
 -- @tparam[opt] nil|string pathprefix Optional prefix in which to look for if the file isn't found otherwise.
 function SILE.resolveFile (filename, pathprefix)
    local candidates = {}
@@ -612,7 +633,7 @@ end
 -- nodes identified with the command name.
 --
 -- Note that alternative versions of this action are available as methods on document classes and packages. Those
--- interfaces should be prefered to this global one.
+-- interfaces should be preferred to this global one.
 -- @tparam string name Name of cammand to register.
 -- @tparam function func Callback function to use as command handler.
 -- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
@@ -628,7 +649,10 @@ function SILE.registerCommand (name, func, help, pack, cheat)
          "class:registerCommand",
          "0.14.0",
          "0.16.0",
-         [[Commands are being scoped to the document classes they are loaded into rather than being globals.]]
+         [[
+            Commands are being scoped to the document classes they are loaded into rather
+            than being globals.
+         ]]
       )
    end
    -- Shimming until we have all scope cheating removed from core
@@ -640,8 +664,8 @@ end
 
 --- Wrap an existing command with new default options.
 -- Modifies an already registered SILE command with a new table of options to be used as default values any time it is
--- called. Calling options still take precidence.
--- @tparam string command Name of command to overwride.
+-- called. Calling options still take precedence.
+-- @tparam string command Name of command to overwrite.
 -- @tparam table options Options to set as updated defaults.
 function SILE.setCommandDefaults (command, options)
    local oldCommand = SILE.Commands[command]
@@ -674,7 +698,7 @@ end
 -- `:finish()` method of the outputter module in the appropriate sequence.
 -- 2. Closes out anything in active memory we don't need like font instances.
 -- 3. Evaluate any snippets in SILE.input.evalAfter table.
--- 4. Stops logging dependecies and writes them to a makedepends file if requested.
+-- 4. Stops logging dependencies and writes them to a makedepends file if requested.
 -- 5. Close out the Lua profiler if it was running.
 -- 6. Output version information if versions debug flag is set.
 function SILE.finish ()

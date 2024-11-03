@@ -2,6 +2,8 @@ local nodefactory = require("types.node")
 local hb = require("justenoughharfbuzz")
 local ot = require("core.opentype-parser")
 local syms = require("packages.math.unicode-symbols")
+local mathvariants = require("packages.math.unicode-mathvariants")
+local convertMathVariantScript = mathvariants.convertMathVariantScript
 
 local atomType = syms.atomType
 local symbolDefaults = syms.symbolDefaults
@@ -19,32 +21,6 @@ local mathMode = {
    scriptScriptCramped = 7,
 }
 
-local scriptType = {
-   upright = 1,
-   bold = 2, -- also have Greek and digits
-   italic = 3, -- also have Greek
-   boldItalic = 4, -- also have Greek
-   script = 5,
-   boldScript = 6,
-   fraktur = 7,
-   boldFraktur = 8,
-   doubleStruck = 9, -- also have digits
-   sansSerif = 10, -- also have digits
-   sansSerifBold = 11, -- also have Greek and digits
-   sansSerifItalic = 12,
-   sansSerifBoldItalic = 13, -- also have Greek
-   monospace = 14, -- also have digits
-}
-
-local mathVariantToScriptType = function (attr)
-   return attr == "normal" and scriptType.upright
-      or attr == "bold" and scriptType.bold
-      or attr == "italic" and scriptType.italic
-      or attr == "bold-italic" and scriptType.boldItalic
-      or attr == "double-struck" and scriptType.doubleStruck
-      or SU.error('Invalid value "' .. attr .. '" for option mathvariant')
-end
-
 local function isDisplayMode (mode)
    return mode <= 1
 end
@@ -60,50 +36,6 @@ end
 local function isScriptScriptMode (mode)
    return mode == mathMode.scriptScript or mode == mathMode.scriptScriptCramped
 end
-
-local mathScriptConversionTable = {
-   capital = {
-      [scriptType.upright] = function (codepoint)
-         return codepoint
-      end,
-      [scriptType.bold] = function (codepoint)
-         return codepoint + 0x1D400 - 0x41
-      end,
-      [scriptType.italic] = function (codepoint)
-         return codepoint + 0x1D434 - 0x41
-      end,
-      [scriptType.boldItalic] = function (codepoint)
-         return codepoint + 0x1D468 - 0x41
-      end,
-      [scriptType.doubleStruck] = function (codepoint)
-         return codepoint == 0x43 and 0x2102
-            or codepoint == 0x48 and 0x210D
-            or codepoint == 0x4E and 0x2115
-            or codepoint == 0x50 and 0x2119
-            or codepoint == 0x51 and 0x211A
-            or codepoint == 0x52 and 0x211D
-            or codepoint == 0x5A and 0x2124
-            or codepoint + 0x1D538 - 0x41
-      end,
-   },
-   small = {
-      [scriptType.upright] = function (codepoint)
-         return codepoint
-      end,
-      [scriptType.bold] = function (codepoint)
-         return codepoint + 0x1D41A - 0x61
-      end,
-      [scriptType.italic] = function (codepoint)
-         return codepoint == 0x68 and 0x210E or codepoint + 0x1D44E - 0x61
-      end,
-      [scriptType.boldItalic] = function (codepoint)
-         return codepoint + 0x1D482 - 0x61
-      end,
-      [scriptType.doubleStruck] = function (codepoint)
-         return codepoint + 0x1D552 - 0x61
-      end,
-   },
-}
 
 local mathCache = {}
 
@@ -121,9 +53,10 @@ local function retrieveMathTable (font)
          mathTableParsable, mathTable = pcall(ot.parseMath, rawMathTable)
       end
       if not fontHasMathTable or not mathTableParsable then
-         SU.error(([[You must use a math font for math rendering.
+         SU.error(([[
+            You must use a math font for math rendering
 
-  The math table in '%s' could not be %s.
+            The math table in '%s' could not be %s.
          ]]):format(face.filename, fontHasMathTable and "parsed" or "loaded"))
       end
       local upem = ot.parseHead(hb.get_table(face, "head")).unitsPerEm
@@ -490,8 +423,8 @@ function elements.stackbox:shape ()
       end
       -- Handle stretchy operators
       for _, elt in ipairs(self.children) do
-         if elt.is_a(elements.text) and elt.kind == "operator" and elt.stretchy then
-            elt:stretchyReshape(self.depth, self.height)
+         if elt.is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
+            elt:_vertStretchyReshape(self.depth, self.height)
          end
       end
       -- Set self.width
@@ -531,6 +464,27 @@ function elements.stackbox:outputYourself (typesetter, line)
 end
 
 function elements.stackbox.output (_, _, _, _) end
+
+elements.phantom = pl.class(elements.stackbox) -- inherit from stackbox
+elements.phantom._type = "Phantom"
+
+function elements.phantom:_init (children)
+   -- MathML core 3.3.7:
+   -- "Its layout algorithm is the same as the mrow element".
+   -- Also not the MathML states that <mphantom> is sort of legacy, "implemented
+   -- for compatibility with full MathML. Authors whose only target is MathML
+   -- Core are encouraged to use CSS for styling."
+   -- The thing is that we don't have CSS in SILE, so supporting <mphantom> is
+   -- a must.
+   elements.stackbox._init(self, "H", children)
+end
+
+function elements.phantom:output (_, _, _)
+   -- Note the trick here: when the tree is rendered, the node's output
+   -- function is invoked, then all its children's output functions.
+   -- So we just cancel the list of children here, before it's rendered.
+   self.children = {}
+end
 
 elements.subscript = pl.class(elements.mbox)
 elements.subscript._type = "Subscript"
@@ -597,10 +551,12 @@ function elements.subscript:shape ()
       self.width = SILE.types.length(0)
    end
    local itCorr = self:calculateItalicsCorrection() * scaleDown
+   local isBaseSymbol = not self.base or self.base:is_a(elements.terminal)
+   local isBaseLargeOp = SU.boolean(self.base and self.base.largeop, false)
    local subShift
    local supShift
    if self.sub then
-      if self.isUnderOver or self.base.largeop then
+      if self.isUnderOver or isBaseLargeOp then
          -- Ad hoc correction on integral limits, following LuaTeX's
          -- `\mathnolimitsmode=0` (see LuaTeX Reference Manual).
          subShift = -itCorr
@@ -608,17 +564,20 @@ function elements.subscript:shape ()
          subShift = 0
       end
       self.sub.relX = self.width + subShift
-      self.sub.relY = SILE.types.length(math.max(
-         constants.subscriptShiftDown * scaleDown,
-         --self.base.depth + constants.subscriptBaselineDropMin * scaleDown,
-         (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
-      ))
-      if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or self.base.largeop then
+      self.sub.relY = SILE.types.length(
+         math.max(
+            constants.subscriptShiftDown * scaleDown,
+            isBaseSymbol and 0 -- TeX (σ19) is more finicky than MathML Core
+               or (self.base.depth + constants.subscriptBaselineDropMin * scaleDown):tonumber(),
+            (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
+         )
+      )
+      if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or isBaseLargeOp then
          self.sub.relY = maxLength(self.sub.relY, self.base.depth + constants.subscriptBaselineDropMin * scaleDown)
       end
    end
    if self.sup then
-      if self.isUnderOver or self.base.largeop then
+      if self.isUnderOver or isBaseLargeOp then
          -- Ad hoc correction on integral limits, following LuaTeX's
          -- `\mathnolimitsmode=0` (see LuaTeX Reference Manual).
          supShift = 0
@@ -626,13 +585,16 @@ function elements.subscript:shape ()
          supShift = itCorr
       end
       self.sup.relX = self.width + supShift
-      self.sup.relY = SILE.types.length(math.max(
-         isCrampedMode(self.mode) and constants.superscriptShiftUpCramped * scaleDown
-            or constants.superscriptShiftUp * scaleDown, -- or cramped
-         --self.base.height - constants.superscriptBaselineDropMax * scaleDown,
-         (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
-      )) * -1
-      if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or self.base.largeop then
+      self.sup.relY = SILE.types.length(
+         math.max(
+            isCrampedMode(self.mode) and constants.superscriptShiftUpCramped * scaleDown
+               or constants.superscriptShiftUp * scaleDown,
+            isBaseSymbol and 0 -- TeX (σ18) is more finicky than MathML Core
+               or (self.base.height - constants.superscriptBaselineDropMax * scaleDown):tonumber(),
+            (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
+         )
+      ) * -1
+      if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or isBaseLargeOp then
          self.sup.relY = maxLength(
             (0 - self.sup.relY),
             self.base.height - constants.superscriptBaselineDropMax * scaleDown
@@ -679,12 +641,22 @@ function elements.underOver:__tostring ()
    return self._type .. "(" .. tostring(self.base) .. ", " .. tostring(self.sub) .. ", " .. tostring(self.sup) .. ")"
 end
 
+local function isNotEmpty (element)
+   -- The MathML test suite uses <munderover> with an empty <mrow> as sub/sup.
+   -- I don't know why they didn't use a <munder> or <mover> instead...
+   -- But the expectation is to behave as if the empty element was not there,
+   -- so that height and depth are not affected by the axis height.
+   -- See notably:
+   --   MathML3 "complex1" torture test: Maxwell's Equations (vectors in fractions)
+   return element and (element:is_a(elements.terminal) or #element.children > 0)
+end
+
 function elements.underOver:_init (base, sub, sup)
    elements.mbox._init(self)
    self.atom = base.atom
    self.base = base
-   self.sub = sub
-   self.sup = sup
+   self.sub = isNotEmpty(sub) and sub or nil
+   self.sup = isNotEmpty(sup) and sup or nil
    if self.sup then
       table.insert(self.children, self.sup)
    end
@@ -708,8 +680,55 @@ function elements.underOver:styleChildren ()
    end
 end
 
+function elements.underOver:_stretchyReshapeToBase (part)
+   -- FIXME: Big leap of faith here.
+   -- MathML Core only mentions stretching along the inline axis in 3.4.2.2,
+   -- i.e. under the section on <mover>, <munder>, <munderover>.
+   -- So we are "somewhat" good here, but... the algorithm is totally unclear
+   -- to me and seems to imply a lot of recursion and reshaping.
+   -- The implementation below is NOT general and only works for the cases
+   -- I checked:
+   --   Mozilla MathML tests: braces in f19, f22
+   --   Personal tests: vectors in d19, d22, d23
+   --   Joe Javawaski's tests: braces in 8a, 8b
+   --   MathML3 "complex1" torture test: Maxwell's Equations (vectors in fractions)
+   if #part.children == 0 then
+      local elt = part
+      if elt.is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
+         elt:_horizStretchyReshape(self.base.width)
+      end
+   elseif part:is_a(elements.underOver) then
+      -- Big assumption here: only considering one level of stacked under/over.
+      local hasStretched = false
+      for _, elt in ipairs(part.children) do
+         if elt.is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
+            local stretched = elt:_horizStretchyReshape(self.base.width)
+            if stretched then
+               hasStretched = true
+            end
+         end
+      end
+      if hasStretched then
+         -- We need to re-calculate the shape so positions are re-calculated on each
+         -- of its own parts.
+         -- (Added after seeing that Mozilla test f19 was not rendering correctly.)
+         part:shape()
+      end
+   end
+end
+
 function elements.underOver:shape ()
-   if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) then
+   local isBaseLargeOp = SU.boolean(self.base and self.base.largeop, false)
+   if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) and isBaseLargeOp then
+      -- FIXME
+      -- Added the "largeop" condition, but it's kind of a workaround:
+      -- It should rather be the "moveablelimits" property in MathML, but we do not have that yet.
+      -- When the base is a moveable limit, the under/over scripts are not placed under/over the base,
+      -- but other to the right of it, when display mode is not used.
+      -- Notable effects:
+      --   Mozilla MathML test 19 (on "k times" > overbrace > base)
+      --   Maxwell's Equations in MathML3 Test Suite "complex1" (on the vectors in fractions)
+      -- For now, go with the "largeop" property, but this is not correct.
       self.isUnderOver = true
       elements.subscript.shape(self)
       return
@@ -721,6 +740,7 @@ function elements.underOver:shape ()
       self.base.relY = SILE.types.length(0)
    end
    if self.sub then
+      self:_stretchyReshapeToBase(self.sub)
       self.sub.relY = self.base.depth
          + SILE.types.length(
             math.max(
@@ -730,6 +750,7 @@ function elements.underOver:shape ()
          )
    end
    if self.sup then
+      self:_stretchyReshapeToBase(self.sup)
       self.sup.relY = 0
          - self.base.height
          - SILE.types.length(
@@ -898,8 +919,8 @@ function elements.text:__tostring ()
       .. tostring(self.kind)
       .. ", script="
       .. tostring(self.script)
-      .. (self.stretchy and ", stretchy" or "")
-      .. (self.largeop and ", largeop" or "")
+      .. (SU.boolean(self.stretchy, false) and ", stretchy" or "")
+      .. (SU.boolean(self.largeop, false) and ", largeop" or "")
       .. ', text="'
       .. (self.originalText or self.text)
       .. '")'
@@ -907,23 +928,14 @@ end
 
 function elements.text:_init (kind, attributes, script, text)
    elements.terminal._init(self)
-   if not (kind == "number" or kind == "identifier" or kind == "operator") then
-      SU.error("Unknown text node kind '" .. kind .. "'; should be one of: number, identifier, operator.")
+   if not (kind == "number" or kind == "identifier" or kind == "operator" or kind == "string") then
+      SU.error("Unknown text node kind '" .. kind .. "'; should be one of: number, identifier, operator, string")
    end
    self.kind = kind
    self.script = script
    self.text = text
    if self.script ~= "upright" then
-      local converted = ""
-      for _, uchr in luautf8.codes(self.text) do
-         local dst_char = luautf8.char(uchr)
-         if uchr >= 0x41 and uchr <= 0x5A then -- Latin capital letter
-            dst_char = luautf8.char(mathScriptConversionTable.capital[self.script](uchr))
-         elseif uchr >= 0x61 and uchr <= 0x7A then -- Latin non-capital letter
-            dst_char = luautf8.char(mathScriptConversionTable.small[self.script](uchr))
-         end
-         converted = converted .. dst_char
-      end
+      local converted = convertMathVariantScript(self.text, self.script)
       self.originalText = self.text
       self.text = converted
    end
@@ -943,7 +955,7 @@ function elements.text:shape ()
    local mathMetrics = self:getMathMetrics()
    local glyphs = SILE.shaper:shapeToken(self.text, self.font)
    -- Use bigger variants for big operators in display style
-   if isDisplayMode(self.mode) and self.largeop then
+   if isDisplayMode(self.mode) and SU.boolean(self.largeop, false) then
       -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
       glyphs = pl.tablex.deepcopy(glyphs)
       local constructions = mathMetrics.mathVariants.vertGlyphConstructions[glyphs[1].gid]
@@ -1012,38 +1024,56 @@ function elements.text:shape ()
    end
 end
 
-function elements.text:stretchyReshape (depth, height)
-   -- Required depth+height of stretched glyph, in font units
+function elements.text.findClosestVariant (_, variants, requiredAdvance, currentAdvance)
+   local closest
+   local closestI
+   local m = requiredAdvance - currentAdvance
+   for i, variant in ipairs(variants) do
+      local diff = math.abs(variant.advanceMeasurement - requiredAdvance)
+      SU.debug("math", "stretch: diff =", diff)
+      if diff < m then
+         closest = variant
+         closestI = i
+         m = diff
+      end
+   end
+   return closest, closestI
+end
+
+function elements.text:_reshapeGlyph (glyph, closestVariant, sz)
+   local face = SILE.font.cache(self.font, SILE.shaper.getFace)
+   local dimen = hb.get_glyph_dimensions(face, sz, closestVariant.variantGlyph)
+   glyph.gid = closestVariant.variantGlyph
+   glyph.width, glyph.height, glyph.depth, glyph.glyphAdvance =
+      dimen.width, dimen.height, dimen.depth, dimen.glyphAdvance
+   return dimen
+end
+
+function elements.text:_stretchyReshape (target, direction)
+   -- direction is the required direction of stretching: true for vertical, false for horizontal
+   -- target is the required dimension of the stretched glyph, in font units
    local mathMetrics = self:getMathMetrics()
    local upem = mathMetrics.unitsPerEm
    local sz = self.font.size
-   local requiredAdvance = (depth + height):tonumber() * upem / sz
+   local requiredAdvance = target:tonumber() * upem / sz
    SU.debug("math", "stretch: rA =", requiredAdvance)
    -- Choose variant of the closest size. The criterion we use is to have
    -- an advance measurement as close as possible as the required one.
-   -- The advance measurement is simply the depth+height of the glyph.
+   -- The advance measurement is simply the dimension of the glyph.
    -- Therefore, the selected glyph may be smaller or bigger than
-   -- required.  TODO: implement assembly of stretchable glyphs form
-   -- their parts for cases when the biggest variant is not big enough.
+   -- required.
+   -- TODO: implement assembly of stretchable glyphs from their parts for cases
+   -- when the biggest variant is not big enough.
    -- We copy the glyph list to avoid modifying the shaper's cache. Yes.
    local glyphs = pl.tablex.deepcopy(self.value.items)
-   local constructions = self:getMathMetrics().mathVariants.vertGlyphConstructions[glyphs[1].gid]
+   local glyphConstructions = direction and mathMetrics.mathVariants.vertGlyphConstructions
+      or mathMetrics.mathVariants.horizGlyphConstructions
+   local constructions = glyphConstructions[glyphs[1].gid]
    if constructions then
       local variants = constructions.mathGlyphVariantRecord
       SU.debug("math", "stretch: variants =", variants)
-      local closest
-      local closestI
-      local m = requiredAdvance - (self.depth + self.height):tonumber() * upem / sz
-      SU.debug("math", "stretch: m =", m)
-      for i, v in ipairs(variants) do
-         local diff = math.abs(v.advanceMeasurement - requiredAdvance)
-         SU.debug("math", "stretch: diff =", diff)
-         if diff < m then
-            closest = v
-            closestI = i
-            m = diff
-         end
-      end
+      local currentAdvance = (direction and (self.depth + self.height):tonumber() or self.width:tonumber()) * upem / sz
+      local closest, closestI = self:findClosestVariant(variants, requiredAdvance, currentAdvance)
       SU.debug("math", "stretch: closestI =", closestI)
       if closest then
          -- Now we have to re-shape the glyph chain. We will assume there
@@ -1051,21 +1081,38 @@ function elements.text:stretchyReshape (depth, height)
          -- TODO: this code is probably wrong when the vertical
          -- variants have a different width than the original, because
          -- the shaping phase is already done. Need to do better.
-         glyphs[1].gid = closest.variantGlyph
-         local face = SILE.font.cache(self.font, SILE.shaper.getFace)
-         local dimen = hb.get_glyph_dimensions(face, self.font.size, closest.variantGlyph)
-         glyphs[1].width = dimen.width
-         glyphs[1].height = dimen.height
-         glyphs[1].depth = dimen.depth
-         glyphs[1].glyphAdvance = dimen.glyphAdvance
-         self.width = SILE.types.length(dimen.glyphAdvance)
-         self.depth = SILE.types.length(dimen.depth)
-         self.height = SILE.types.length(dimen.height)
+         local dimen = self:_reshapeGlyph(glyphs[1], closest, sz)
+         self.width, self.depth, self.height =
+            SILE.types.length(dimen.glyphAdvance), SILE.types.length(dimen.depth), SILE.types.length(dimen.height)
          SILE.shaper:preAddNodes(glyphs, self.value)
          self.value.items = glyphs
          self.value.glyphString = { glyphs[1].gid }
+         return true
       end
    end
+   return false
+end
+
+function elements.text:_vertStretchyReshape (depth, height)
+   local hasStretched = self:_stretchyReshape(depth + height, true)
+   if hasStretched then
+      -- HACK: see output routine
+      self.vertExpectedSz = height + depth
+      self.vertScalingRatio = (depth + height):tonumber() / (self.height:tonumber() + self.depth:tonumber())
+      self.height = height
+      self.depth = depth
+   end
+   return hasStretched
+end
+
+function elements.text:_horizStretchyReshape (width)
+   local hasStretched = self:_stretchyReshape(width, false)
+   if hasStretched then
+      -- HACK: see output routine
+      self.horizScalingRatio = width:tonumber() / self.width:tonumber()
+      self.width = width
+   end
+   return hasStretched
 end
 
 function elements.text:output (x, y, line)
@@ -1073,7 +1120,7 @@ function elements.text:output (x, y, line)
       return
    end
    local compensatedY
-   if isDisplayMode(self.mode) and self.atom == atomType.bigOperator and self.value.items[1].fontDepth then
+   if isDisplayMode(self.mode) and SU.boolean(self.largeop, false) and self.value.items[1].fontDepth then
       compensatedY = SILE.types.length(y.length + self.value.items[1].depth - self.value.items[1].fontDepth)
    else
       compensatedY = y
@@ -1083,7 +1130,21 @@ function elements.text:output (x, y, line)
    -- There should be no stretch or shrink on the width of a text
    -- element.
    local width = self.width.length
-   SILE.outputter:drawHbox(self.value, width)
+   -- HACK: For stretchy operators, MathML Core and OpenType define how to build large glyphs
+   -- from an assembly of smaller ones. It's fairly complex and idealistic...
+   -- Anyhow, we do not have that yet, so we just stretch the glyph artificially.
+   -- There are cases where this will not look very good.
+   -- Call that a compromise, so that long vectors or large matrices look "decent" without assembly.
+   if SILE.outputter.scaleFn and (self.horizScalingRatio or self.vertScalingRatio) then
+      local xratio = self.horizScalingRatio or 1
+      local yratio = self.vertScalingRatio or 1
+      SU.debug("math", "fake glyph stretch: xratio =", xratio, "yratio =", yratio)
+      SILE.outputter:scaleFn(x, y, xratio, yratio, function ()
+         SILE.outputter:drawHbox(self.value, width)
+      end)
+   else
+      SILE.outputter:drawHbox(self.value, width)
+   end
 end
 
 elements.fraction = pl.class(elements.mbox)
@@ -1093,10 +1154,11 @@ function elements.fraction:__tostring ()
    return self._type .. "(" .. tostring(self.numerator) .. ", " .. tostring(self.denominator) .. ")"
 end
 
-function elements.fraction:_init (numerator, denominator)
+function elements.fraction:_init (attributes, numerator, denominator)
    elements.mbox._init(self)
    self.numerator = numerator
    self.denominator = denominator
+   self.attributes = attributes
    table.insert(self.children, numerator)
    table.insert(self.children, denominator)
 end
@@ -1107,6 +1169,14 @@ function elements.fraction:styleChildren ()
 end
 
 function elements.fraction:shape ()
+   -- MathML Core 3.3.2: "To avoid visual confusion between the fraction bar
+   -- and another adjacent items (e.g. minus sign or another fraction's bar),
+   -- a default 1-pixel space is added around the element."
+   -- Note that PlainTeX would likely use \nulldelimiterspace (default 1.2pt)
+   -- but it would depend on the surrounding context, and might be far too
+   -- much in some cases, so we stick to MathML's suggested padding.
+   self.padding = SILE.types.length("1px"):absolute()
+
    -- Determine relative abscissas and width
    local widest, other
    if self.denominator.width > self.numerator.width then
@@ -1114,63 +1184,66 @@ function elements.fraction:shape ()
    else
       widest, other = self.numerator, self.denominator
    end
-   widest.relX = SILE.types.length(0)
-   other.relX = (widest.width - other.width) / 2
-   self.width = widest.width
+   widest.relX = self.padding
+   other.relX = self.padding + (widest.width - other.width) / 2
+   self.width = widest.width + 2 * self.padding
    -- Determine relative ordinates and height
    local constants = self:getMathMetrics().constants
    local scaleDown = self:getScaleDown()
    self.axisHeight = constants.axisHeight * scaleDown
-   self.ruleThickness = constants.fractionRuleThickness * scaleDown
+   self.ruleThickness = self.attributes.linethickness
+         and SU.cast("measurement", self.attributes.linethickness):tonumber()
+      or constants.fractionRuleThickness * scaleDown
+
+   -- MathML Core 3.3.2.2 ("Fraction with zero line thickness") uses
+   -- stack(DisplayStyle)GapMin, stackTop(DisplayStyle)ShiftUp and stackBottom(DisplayStyle)ShiftDown.
+   -- TODO not implemented
+   -- The most common use cases for zero line thickness are:
+   --  - Binomial coefficients
+   --  - Stacked subscript/superscript on big operators such as sums.
+
+   local numeratorGapMin, denominatorGapMin, numeratorShiftUp, denominatorShiftDown
    if isDisplayMode(self.mode) then
-      self.numerator.relY = -self.axisHeight
-         - self.ruleThickness / 2
-         - SILE.types.length(
-            math.max(
-               (constants.fractionNumDisplayStyleGapMin * scaleDown + self.numerator.depth):tonumber(),
-               constants.fractionNumeratorDisplayStyleShiftUp * scaleDown - self.axisHeight - self.ruleThickness / 2
-            )
-         )
+      numeratorGapMin = constants.fractionNumDisplayStyleGapMin * scaleDown
+      denominatorGapMin = constants.fractionDenomDisplayStyleGapMin * scaleDown
+      numeratorShiftUp = constants.fractionNumeratorDisplayStyleShiftUp * scaleDown
+      denominatorShiftDown = constants.fractionDenominatorDisplayStyleShiftDown * scaleDown
    else
-      self.numerator.relY = -self.axisHeight
-         - self.ruleThickness / 2
-         - SILE.types.length(
-            math.max(
-               (constants.fractionNumeratorGapMin * scaleDown + self.numerator.depth):tonumber(),
-               constants.fractionNumeratorShiftUp * scaleDown - self.axisHeight - self.ruleThickness / 2
-            )
-         )
+      numeratorGapMin = constants.fractionNumeratorGapMin * scaleDown
+      denominatorGapMin = constants.fractionDenominatorGapMin * scaleDown
+      numeratorShiftUp = constants.fractionNumeratorShiftUp * scaleDown
+      denominatorShiftDown = constants.fractionDenominatorShiftDown * scaleDown
    end
-   if isDisplayMode(self.mode) then
-      self.denominator.relY = -self.axisHeight
-         + self.ruleThickness / 2
-         + SILE.types.length(
-            math.max(
-               (constants.fractionDenomDisplayStyleGapMin * scaleDown + self.denominator.height):tonumber(),
-               constants.fractionDenominatorDisplayStyleShiftDown * scaleDown + self.axisHeight - self.ruleThickness / 2
-            )
+
+   self.numerator.relY = -self.axisHeight
+      - self.ruleThickness / 2
+      - SILE.types.length(
+         math.max(
+            (numeratorGapMin + self.numerator.depth):tonumber(),
+            numeratorShiftUp - self.axisHeight - self.ruleThickness / 2
          )
-   else
-      self.denominator.relY = -self.axisHeight
-         + self.ruleThickness / 2
-         + SILE.types.length(
-            math.max(
-               (constants.fractionDenominatorGapMin * scaleDown + self.denominator.height):tonumber(),
-               constants.fractionDenominatorShiftDown * scaleDown + self.axisHeight - self.ruleThickness / 2
-            )
+      )
+   self.denominator.relY = -self.axisHeight
+      + self.ruleThickness / 2
+      + SILE.types.length(
+         math.max(
+            (denominatorGapMin + self.denominator.height):tonumber(),
+            denominatorShiftDown + self.axisHeight - self.ruleThickness / 2
          )
-   end
+      )
    self.height = self.numerator.height - self.numerator.relY
    self.depth = self.denominator.relY + self.denominator.depth
 end
 
 function elements.fraction:output (x, y, line)
-   SILE.outputter:drawRule(
-      scaleWidth(x, line),
-      y.length - self.axisHeight - self.ruleThickness / 2,
-      scaleWidth(self.width, line),
-      self.ruleThickness
-   )
+   if self.ruleThickness > 0 then
+      SILE.outputter:drawRule(
+         scaleWidth(x + self.padding, line),
+         y.length - self.axisHeight - self.ruleThickness / 2,
+         scaleWidth(self.width - 2 * self.padding, line),
+         self.ruleThickness
+      )
+   end
 end
 
 local function newSubscript (spec)
@@ -1219,9 +1292,9 @@ function elements.table:_init (children, options)
       return #row.children
    end, self.children)))
    SU.debug("math", "self.ncols =", self.ncols)
-   self.rowspacing = self.options.rowspacing and SILE.types.length(self.options.rowspacing) or SILE.types.length("7pt")
-   self.columnspacing = self.options.columnspacing and SILE.types.length(self.options.columnspacing)
-      or SILE.types.length("6pt")
+   local spacing = SILE.settings:get("math.font.size") * 0.6 -- arbitrary ratio of the current math font size
+   self.rowspacing = self.options.rowspacing and SILE.types.length(self.options.rowspacing) or spacing
+   self.columnspacing = self.options.columnspacing and SILE.types.length(self.options.columnspacing) or spacing
    -- Pad rows that do not have enough cells by adding cells to the
    -- right.
    for i, row in ipairs(self.children) do
@@ -1334,10 +1407,199 @@ end
 
 function elements.table.output (_) end
 
+local function getRadicandMode (mode)
+   -- Not too sure if we should do something special/
+   return mode
+end
+
+local function getDegreeMode (mode)
+   -- 2 levels smaller, up to scriptScript evntually.
+   -- Not too sure if we should do something else.
+   if mode == mathMode.display then
+      return mathMode.scriptScript
+   elseif mode == mathMode.displayCramped then
+      return mathMode.scriptScriptCramped
+   elseif mode == mathMode.text or mode == mathMode.script or mode == mathMode.scriptScript then
+      return mathMode.scriptScript
+   end
+   return mathMode.scriptScriptCramped
+end
+
+elements.sqrt = pl.class(elements.mbox)
+elements.sqrt._type = "Sqrt"
+
+function elements.sqrt:__tostring ()
+   return self._type .. "(" .. tostring(self.radicand) .. (self.degree and ", " .. tostring(self.degree) or "") .. ")"
+end
+
+function elements.sqrt:_init (radicand, degree)
+   elements.mbox._init(self)
+   self.radicand = radicand
+   if degree then
+      self.degree = degree
+      table.insert(self.children, degree)
+   end
+   table.insert(self.children, radicand)
+   self.relX = SILE.types.length()
+   self.relY = SILE.types.length()
+end
+
+function elements.sqrt:styleChildren ()
+   self.radicand.mode = getRadicandMode(self.mode)
+   if self.degree then
+      self.degree.mode = getDegreeMode(self.mode)
+   end
+end
+
+function elements.sqrt:shape ()
+   local mathMetrics = self:getMathMetrics()
+   local scaleDown = self:getScaleDown()
+   local constants = mathMetrics.constants
+
+   self.radicalRuleThickness = constants.radicalRuleThickness * scaleDown
+   if self.mode == mathMode.display or self.mode == mathMode.displayCramped then
+      self.radicalVerticalGap = constants.radicalDisplayStyleVerticalGap * scaleDown
+   else
+      self.radicalVerticalGap = constants.radicalVerticalGap * scaleDown
+   end
+   self.extraAscender = constants.radicalExtraAscender * scaleDown
+
+   -- HACK: We draw own own radical sign in the output() method.
+   -- Derive dimensions for the radical sign (more or less ad hoc).
+   -- Note: In TeX, the radical sign extends a lot below the baseline,
+   -- and MathML Core also has a lot of layout text about it.
+   -- Not only it doesn't look good, but it's not very clear vs. OpenType.
+   local radicalGlyph = SILE.shaper:measureChar("√")
+   local ratio = (self.radicand.height:tonumber() + self.radicand.depth:tonumber())
+      / (radicalGlyph.height + radicalGlyph.depth)
+   local vertAdHocOffset = (ratio > 1 and math.log(ratio) or 0) * self.radicalVerticalGap
+   self.symbolHeight = SILE.types.length(radicalGlyph.height) * scaleDown
+   self.symbolDepth = (SILE.types.length(radicalGlyph.depth) + vertAdHocOffset) * scaleDown
+   self.symbolWidth = (SILE.types.length(radicalGlyph.width) + vertAdHocOffset) * scaleDown
+
+   -- Adjust the height of the radical sign if the radicand is higher
+   self.symbolHeight = self.radicand.height > self.symbolHeight and self.radicand.height or self.symbolHeight
+   -- Compute the (max-)height of the short leg of the radical sign
+   self.symbolShortHeight = self.symbolHeight * constants.radicalDegreeBottomRaisePercent
+
+   self.offsetX = SILE.types.length()
+   if self.degree then
+      -- Position the degree
+      self.degree.relY = -constants.radicalDegreeBottomRaisePercent * self.symbolHeight
+      -- Adjust the height of the short leg of the radical sign to ensure the degree is not too close
+      -- (empirically use radicalExtraAscender)
+      self.symbolShortHeight = self.symbolShortHeight - constants.radicalExtraAscender * scaleDown
+      -- Compute the width adjustment for the degree
+      self.offsetX = self.degree.width
+         + constants.radicalKernBeforeDegree * scaleDown
+         + constants.radicalKernAfterDegree * scaleDown
+   end
+   -- Position the radicand
+   self.radicand.relX = self.symbolWidth + self.offsetX
+   -- Compute the dimensions of the whole radical
+   self.width = self.radicand.width + self.symbolWidth + self.offsetX
+   self.height = self.symbolHeight + self.radicalVerticalGap + self.extraAscender
+   self.depth = self.radicand.depth
+end
+
+local function _r (number)
+   -- Lua 5.3+ formats floats as 1.0 and integers as 1
+   -- Also some PDF readers do not like double precision.
+   return math.floor(number) == number and math.floor(number) or tonumber(string.format("%.5f", number))
+end
+
+function elements.sqrt:output (x, y, line)
+   -- HACK:
+   -- OpenType might say we need to assemble the radical sign from parts.
+   -- Frankly, it's much easier to just draw it as a graphic :-)
+   -- Hence, here we use a PDF graphic operators to draw a nice radical sign.
+   -- Some values here are ad hoc, but they look good.
+   local h = self.height:tonumber()
+   local d = self.depth:tonumber()
+   local s0 = scaleWidth(self.offsetX, line):tonumber()
+   local sw = scaleWidth(self.symbolWidth, line):tonumber()
+   local dsh = h - self.symbolShortHeight:tonumber()
+   local dsd = self.symbolDepth:tonumber()
+   local symbol = {
+      _r(self.radicalRuleThickness),
+      "w", -- line width
+      2,
+      "j", -- round line joins
+      _r(sw + s0),
+      _r(self.extraAscender),
+      "m",
+      _r(s0 + sw * 0.90),
+      _r(self.extraAscender),
+      "l",
+      _r(s0 + sw * 0.4),
+      _r(h + d + dsd),
+      "l",
+      _r(s0 + sw * 0.2),
+      _r(dsh),
+      "l",
+      s0 + sw * 0.1,
+      _r(dsh + 0.5),
+      "l",
+      "S",
+   }
+   local svg = table.concat(symbol, " ")
+   local xscaled = scaleWidth(x, line)
+   SILE.outputter:drawSVG(svg, xscaled, y, sw, h, 1)
+   -- And now we just need to draw the bar over the radicand
+   SILE.outputter:drawRule(
+      s0 + self.symbolWidth + xscaled,
+      y.length - self.height + self.extraAscender - self.radicalRuleThickness / 2,
+      scaleWidth(self.radicand.width, line),
+      self.radicalRuleThickness
+   )
+end
+
+elements.padded = pl.class(elements.mbox)
+elements.padded._type = "Padded"
+
+function elements.padded:__tostring ()
+   return self._type .. "(" .. tostring(self.impadded) .. ")"
+end
+
+function elements.padded:_init (attributes, impadded)
+   elements.mbox._init(self)
+   self.impadded = impadded
+   self.attributes = attributes or {}
+   table.insert(self.children, impadded)
+end
+
+function elements.padded:styleChildren ()
+   self.impadded.mode = self.mode
+end
+
+function elements.padded:shape ()
+   -- TODO MathML allows percentages font-relative units (em, ex) for padding
+   -- But our units work with font.size, not math.font.size (possibly adjusted by scaleDown)
+   -- so the expectations might not be met.
+   local width = self.attributes.width and SU.cast("measurement", self.attributes.width)
+   local height = self.attributes.height and SU.cast("measurement", self.attributes.height)
+   local depth = self.attributes.depth and SU.cast("measurement", self.attributes.depth)
+   local lspace = self.attributes.lspace and SU.cast("measurement", self.attributes.lspace)
+   local voffset = self.attributes.voffset and SU.cast("measurement", self.attributes.voffset)
+   -- Clamping for width, height, depth, lspace
+   width = width and (width:tonumber() > 0 and width or SILE.types.measurement())
+   height = height and (height:tonumber() > 0 and height or SILE.types.measurement())
+   depth = depth and (depth:tonumber() > 0 and depth or SILE.types.measurement())
+   lspace = lspace and (lspace:tonumber() > 0 and lspace or SILE.types.measurement())
+   -- No clamping for voffset
+   voffset = voffset or SILE.types.measurement(0)
+   -- Compute the dimensions
+   self.width = width and SILE.types.length(width) or self.impadded.width
+   self.height = height and SILE.types.length(height) or self.impadded.height
+   self.depth = depth and SILE.types.length(depth) or self.impadded.depth
+   self.impadded.relX = lspace and SILE.types.length(lspace) or SILE.types.length()
+   self.impadded.relY = voffset and SILE.types.length(voffset):negate() or SILE.types.length()
+end
+
+function elements.padded.output (_, _, _, _) end
+
 elements.mathMode = mathMode
 elements.atomType = atomType
-elements.scriptType = scriptType
-elements.mathVariantToScriptType = mathVariantToScriptType
 elements.symbolDefaults = symbolDefaults
 elements.newSubscript = newSubscript
 elements.newUnderOver = newUnderOver

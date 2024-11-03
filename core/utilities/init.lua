@@ -4,7 +4,7 @@
 
 local bitshim = require("bitshim")
 local luautf8 = require("lua-utf8")
-local semver = require("semver")
+local semver = require("rusile").semver
 
 local utilities = {}
 
@@ -38,7 +38,7 @@ end
 -- @param options Input table of options.
 -- @param name Name of the required option.
 -- @param context User friendly name of the function or calling context.
--- @param required_type The name of a data type that the option must sucessfully cast to.
+-- @param required_type The name of a data type that the option must successfully cast to.
 function utilities.required (options, name, context, required_type)
    if not options[name] then
       utilities.error(context .. " needs a " .. name .. " parameter")
@@ -122,7 +122,7 @@ local function preferbool ()
    utilities.warn("Please use boolean values or strings such as 'true' and 'false' instead of 'yes' and 'no'.")
 end
 
---- Cast user intput into a boolean type.
+--- Cast user input into a boolean type.
 -- User input content such as options typed into documents will return string values such as "true" or "false rather
 -- than true or false types. This evaluates those strings or other inputs ane returns a consistent boolean type in
 -- return.
@@ -160,7 +160,7 @@ function utilities.boolean (value, default)
    return default == true
 end
 
---- Cast user intput to an expected type.
+--- Cast user input to an expected type.
 -- If possible, converts input from one type to another. Not all types can be cast. For example "four" can't be cast to
 -- a number, but "4" or 4 can. Likewise "6pt" or 6 can be cast to a SILE.types.measurement, SILE.types.length, or even
 -- a SILE.types.node.glue, but not a SILE.types.color.
@@ -240,8 +240,8 @@ end
 -- @section errors
 
 --- Output a debug message only if debugging for a specific category is enabled.
--- Importantly passing siries of strings, functions, or tables is more effecient than trying to formulate a full message
--- using concatentation and tostring() methods in the original code because it doesn't have to even run if the relevant
+-- Importantly passing siries of strings, functions, or tables is more efficient than trying to formulate a full message
+-- using concatenation and tostring() methods in the original code because it doesn't have to even run if the relevant
 -- debug flag is not enabled.
 -- @tparam text category Category flag for which this message should be output.
 -- @tparam string|function|table ... Each argument will be returned separated by spaces, strings directly, functions by
@@ -297,13 +297,14 @@ function utilities.deprecated (old, new, warnat, errorat, extra)
    -- deprecation when core code refactoring is an all-or-nothing proposition.
    -- Hence we fake it ‘till we make it, all deprecations internally are warnings.
    local brackets = old:sub(1, 1) == "\\" and "" or "()"
-   local _new = new and "Please use " .. (new .. brackets) .. " instead." or "Plase don't use it."
+   local _new = new and "Please use " .. (new .. brackets) .. " instead." or "Please don't use it."
    local msg = (old .. brackets)
       .. " was deprecated in SILE v"
       .. tostring(warnat)
-      .. ". "
+      .. "\n\n  "
       .. _new
-      .. (extra and ("\n\n" .. extra .. "\n") or "")
+      .. "\n\n"
+      .. (extra and (pl.stringx.indent(pl.stringx.dedent(extra), 2)) or "")
    if errorat and current >= errorat then
       SU.error(msg)
    elseif warnat and current >= warnat then
@@ -324,8 +325,9 @@ local _skip_traceback_levels = 2
 --- Raise an error and exit.
 -- Outputs a warning message via `warn`, then finishes up anything it can without processing more content, then exits.
 -- @tparam string message The error message to give.
--- @tparam boolean isbug Whether or not hitting this error is expected to be a code bug (as opposed to misakes in user input).
+-- @tparam boolean isbug Whether or not hitting this error is expected to be a code bug (as opposed to mistakes in user input).
 function utilities.error (message, isbug)
+   SILE.quiet = false
    _skip_traceback_levels = 3
    utilities.warn(message, isbug)
    _skip_traceback_levels = 2
@@ -342,24 +344,33 @@ function utilities.msg (message)
    if SILE.quiet then
       return
    end
-   io.stderr:write("\n! " .. message .. "\n")
+   message = pl.stringx.rstrip(message)
+   message = "                        " .. message
+   message = pl.stringx.dedent(message)
+   message = pl.stringx.lstrip(message)
+   message = pl.stringx.indent(message, 2)
+   message = message:gsub("^.", "!")
+   io.stderr:write("\n" .. message .. "\n")
 end
 
 --- Output a warning.
 -- Outputs a warning message including identifying where in the processing SILE is at when the warning is given.
 -- @tparam string message The error message to give.
--- @tparam boolean isbug Whether or not hitting this warning is expected to be a code bug (as opposed to misakes in user input).
+-- @tparam boolean isbug Whether or not hitting this warning is expected to be a code bug (as opposed to mistakes in user input).
 function utilities.warn (message, isbug)
+   if SILE.quiet then
+      return
+   end
    utilities.msg(message)
    if SILE.traceback or isbug then
-      io.stderr:write(" at:\n" .. SILE.traceStack:locationTrace())
+      io.stderr:write("at:\n" .. SILE.traceStack:locationTrace())
       if _skip_traceback_levels == 2 then
          io.stderr:write(
             debug.traceback("", _skip_traceback_levels) or "\t! debug.traceback() did not identify code location"
          )
       end
    else
-      io.stderr:write(" at " .. SILE.traceStack:locationHead())
+      io.stderr:write("  at " .. SILE.traceStack:locationHead())
    end
    io.stderr:write("\n")
 end
@@ -370,7 +381,7 @@ end
 --- Check equality of floating point values.
 -- Comparing floating point numbers using math functions in Lua may give different and unexpected answers depending on
 -- the Lua VM and other environmental factors. This normalizes them using our standard internal epsilon value and
--- compares the absolute intereger value to avoid floating point number wierdness.
+-- compares the absolute intereger value to avoid floating point number weirdness.
 -- @tparam float lhs
 -- @tparam float rhs
 -- @treturn boolean
@@ -587,7 +598,7 @@ end
 --- Convert a UTF-16 encoded string to a series of code points.
 -- Like `luautf8.codes`, but for UTF-16 strings.
 -- @tparam string ustr Input string.
--- @tparam string endian Either "le" or "be" depending on the enconding endedness.
+-- @tparam string endian Either "le" or "be" depending on the encoding endedness.
 -- @treturn string Serious of hex encoded code points.
 function utilities.utf16codes (ustr, endian)
    local pos = 1
@@ -624,7 +635,7 @@ end
 
 --- Split a UTF-8 string into characters.
 -- Lua's `string.split` will only explode a string by bytes. For text processing purposes it is usually more desirable
--- to split it into 1, 2, 3, or 4 byte grups matching the UTF-8 encoding.
+-- to split it into 1, 2, 3, or 4 byte groups matching the UTF-8 encoding.
 -- @tparam string str Input UTF-8 encoded string.
 -- @treturn table A list-like table of UTF8 strings each representing a Unicode char from the input string.
 function utilities.splitUtf8 (str)
@@ -657,7 +668,7 @@ end
 
 local byte, floor, reverse = string.byte, math.floor, string.reverse
 
---- The Unicode character in a UTF-8 encoded string at a specifi position
+--- The Unicode character in a UTF-8 encoded string at a specific position
 -- Uses `SU.splitUtf8` to break an string into segments represtenting encoded characters, returns the Nth one. May be
 -- more than one byte.
 -- @tparam string str Input string.
@@ -671,9 +682,9 @@ local utf16bom = function (endianness)
    return endianness == "be" and "\254\255" or endianness == "le" and "\255\254" or SU.error("Unrecognized endianness")
 end
 
---- Encode a string to a hexidecimal replesentation.
+--- Encode a string to a hexadecimal replesentation.
 -- @tparam string str Input UTF-8 string
--- @treturn string Hexidecimal replesentation of str.
+-- @treturn string Hexadecimal replesentation of str.
 function utilities.hexencoded (str)
    local ustr = ""
    for i = 1, #str do
@@ -682,8 +693,8 @@ function utilities.hexencoded (str)
    return ustr
 end
 
---- Decode a hexidecimal replesentation into a string.
--- @tparam string str Input hexidecimal encoded string.
+--- Decode a hexadecimal replesentation into a string.
+-- @tparam string str Input hexadecimal encoded string.
 -- @treturn string UTF-8 string.
 function utilities.hexdecoded (str)
    if #str % 2 == 1 then
@@ -733,14 +744,14 @@ end
 
 --- Convert a UTF-8 string to big-endian UTF-16, then encode in hex.
 -- @tparam string str UTF-8 encoded string.
--- @treturn string Hexidecimal representation of a big-endian UTF-16 encoded string.
+-- @treturn string Hexadecimal representation of a big-endian UTF-16 encoded string.
 function utilities.utf8_to_utf16be_hexencoded (str)
    return utilities.hexencoded(utilities.utf8_to_utf16be(str))
 end
 
 --- Convert a UTF-8 string to little-endian UTF-16, then encode in hex.
 -- @tparam string str UTF-8 encoded string.
--- @treturn string Hexidecimal representation of a little-endian UTF-16 encoded string.
+-- @treturn string Hexadecimal representation of a little-endian UTF-16 encoded string.
 function utilities.utf8_to_utf16le_hexencoded (str)
    return utilities.hexencoded(utilities.utf8_to_utf16le(str))
 end
@@ -824,8 +835,7 @@ function utilities.subContent (content)
       "SU.ast.subContent",
       "0.15.0",
       "0.17.0",
-      [[
-    Note that the new implementation no longer introduces an id="stuff" key.]]
+      [[Note that the new implementation no longer introduces an id="stuff" key.]]
    )
    return utilities.ast.subContent(content)
 end

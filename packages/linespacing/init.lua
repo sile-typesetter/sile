@@ -72,7 +72,7 @@ local linespacingLeading = function (_, vbox, previous)
 
    -- For these methods, we need to read the font metrics
    if not metrics then
-      SU.error("'" .. method .. "' line spacing method requires font metrics module, which is not available.")
+      SU.error("'" .. method .. "' line spacing method requires font metrics module, which is not available")
    end
 
    local thismetrics = getLineMetrics(vbox)

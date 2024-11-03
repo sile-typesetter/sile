@@ -9,8 +9,8 @@ if FONT_DOWNLOAD_TOOLS
 	[ -h .sources ] || mkdir -p $@
 
 fonttooling:
-	$(if $(BSDTAR),,$(error Please set BSDTAR with path or `./configure --enable-developer`))
-	$(if $(CURL),,$(error Please set CURL with path or `./configure --enable-developer`))
+	$(if $(BSDTAR),,$(error Please set BSDTAR with path or `./configure --enable-developer-mode`))
+	$(if $(CURL),,$(error Please set CURL with path or `./configure --enable-developer-mode`))
 
 # Don't let make delete things we had to download
 .PRECIOUS: .fonts/% .sources/%
@@ -101,7 +101,7 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 .sources/LateefGR-1.200.zip: | .sources
 	$(CURL) -fsSL https://software.sil.org/downloads/r/lateef/$(notdir $@) -o $@
 
-.sources/Libertinus-%.tar.xz: | .sources
+.sources/Libertinus-%.tar.zst: | .sources
 	$(CURL) -fsSL https://github.com/alerque/libertinus/releases/download/v$*/$(notdir $@) -o $@
 
 .sources/roboto-unhinted.zip: | .sources
@@ -138,7 +138,7 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 	$(BSDTAR) -x -f $< -C $(dir $@) $(notdir $@) && \
 	touch $@
 
-.fonts/Libertinus%: .sources/Libertinus-7.020.tar.xz | .fonts
+.fonts/Libertinus%: .sources/Libertinus-7.050.tar.zst | .fonts
 	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 3 $(basename $(basename $(<F)))/static/OTF/$(notdir $@) && \
 	touch $@
 

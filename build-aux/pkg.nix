@@ -33,6 +33,7 @@
 
   # Developer environment dependencies
   stylua,
+  typos,
 
   # This package
   libtexpdf-src,
@@ -122,6 +123,7 @@ stdenv.mkDerivation (finalAttrs: {
 
       # Developer tooling
       stylua
+      typos
   ] ++ lib.optional stdenv.hostPlatform.isDarwin darwin.apple_sdk.frameworks.AppKit;
 
   configureFlags =

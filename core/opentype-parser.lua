@@ -427,7 +427,7 @@ local parseDeviceTable = function (offset, fd)
    elseif header.deltaFormat == 0x0003 then
       buf = vstruct.read("> " .. math.ceil(size / 2) .. "*[2| i8 i8 ]", fd)
    else
-      SU.warn("DeltaFormat " .. header.deltaFormat .. " in Device Table is not supported. Ignore the table.")
+      SU.warn("DeltaFormat " .. header.deltaFormat .. " in Device Table is not supported; ignore the table")
       return nil
    end
    local deviceTable = {}
@@ -450,7 +450,7 @@ local parseCoverage = function (offset, fd)
          for glyphID = ranges[i].startGlyphID, ranges[i].endGlyphID do
             local index = ranges[i].startCoverageIndex + glyphID - ranges[i].startGlyphID + 1 -- array in lua is one-based
             if coverage[index] then
-               SU.error(glyphID .. " already exist in converage when processing " .. ranges[i])
+               SU.error(glyphID .. " already exist in coverage when processing " .. ranges[i])
             end
             coverage[index] = glyphID
          end

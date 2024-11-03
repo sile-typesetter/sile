@@ -78,16 +78,17 @@ function class:registerCommands ()
 
    self:registerCommand("noindent", function (_, content)
       if #SILE.typesetter.state.nodes ~= 0 then
-         SU.warn([[\noindent was called after paragraph content has already been procesed.
+         SU.warn([[
+            \noindent was called after paragraph content has already been processed
 
-  This will not result in avoiding the current paragraph being indented.
-  This function must be called before any content belonging to the
-  paragraph is processed. If the intent was to suppress indentation of a
-  following paragraph, first explicitly close the current paragraph. From
-  an input document this is typically done with an empty line between
-  paragraphs, but calling the \par command explicitly or from Lua code
-  running SILE.call("par") will end the current paragraph.
-]])
+            This will not result in avoiding the current paragraph being indented. This
+            function must be called before any content belonging to the paragraph is
+            processed. If the intent was to suppress indentation of a following paragraph,
+            first explicitly close the current paragraph. From an input document this is
+            typically done with an empty line between paragraphs, but calling the \par
+            command explicitly or from Lua code running SILE.call("par") will end
+            the current paragraph.
+         ]])
       end
       SILE.settings:set("current.parindent", SILE.types.node.glue())
       SILE.process(content)
@@ -181,14 +182,22 @@ function class:registerCommands ()
 
    self:registerCommand("framebreak", function (_, _)
       if not SILE.typesetter:vmode() then
-         SU.warn("framebreak was not intended to work in horizontal mode. Behaviour may change in future versions")
+         SU.warn([[
+            \\framebreak was not intended to work in horizontal mode
+
+            Behavior may change in future versions.
+         ]])
       end
       SILE.call("penalty", { penalty = -10000, vertical = true })
    end, "Requests a frame break (switching to vertical mode if needed)")
 
    self:registerCommand("pagebreak", function (_, _)
       if not SILE.typesetter:vmode() then
-         SU.warn("pagebreak was not intended to work in horizontal mode. Behaviour may change in future versions")
+         SU.warn([[
+            \\pagebreak was not intended to work in horizontal mode
+
+            Behavior may change in future versions.
+         ]])
       end
       SILE.call("penalty", { penalty = -20000, vertical = true })
    end, "Requests a non-negotiable page break (switching to vertical mode if needed)")
@@ -263,7 +272,11 @@ function class:registerCommands ()
 
    self:registerCommand("center", function (_, content)
       if #SILE.typesetter.state.nodes ~= 0 then
-         SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
+         SU.warn([[
+            \\center environment started after other nodes in a paragraph
+
+            Content may not be centered as expected.
+         ]])
       end
       SILE.settings:temporarily(function ()
          local lskip = SILE.settings:get("document.lskip") or SILE.types.node.glue()
@@ -366,12 +379,13 @@ function class:registerCommands ()
          "0.14.5",
          "0.16.0",
          [[
-  The \quote command has *such* bad output it is being completely
-  deprecated as unsuitable for general purpose use.
-  The pullquote package (\use[module=packages.pullquote]) provides one
-  alternative, and the blockquote environment provides another.
-  But you can also copy and adapt the original source from the plain
-  class if you need to maintain exact output past SILE v0.16.0.]]
+            The \quote command has *such* bad output it is being completely deprecated as
+            unsuitable for general purpose use. The pullquote package
+            (\use[module=packages.pullquote]) provides one alternative, and the blockquote
+            environment provides another. But you can also copy and adapt the original
+            source from the plain class if you need to maintain exact output past
+            SILE v0.16.0.
+         ]]
       )
       SILE.call("smallskip")
       SILE.call("par")
@@ -395,10 +409,11 @@ function class:registerCommands ()
          "0.14.6",
          "0.16.0",
          [[
-  The new list package (\use[module=packages.lists) has much better
-  typography for lists. If you want to maintain the exact output of listitem
-  past SILE v0.16.0 copy the source of \listitem from the plain class into
-  your project.]]
+            The new list package (\use[module=packages.lists) has much better typography
+            for lists. If you want to maintain the exact output of listitem past
+            SILE v0.16.0 copy the source of \listitem from the plain class into your
+            project.
+         ]]
       )
       SILE.call("medskip")
       SILE.typesetter:typeset("• ")
@@ -418,7 +433,11 @@ function class:registerCommands ()
       local hbox, hlist = SILE.typesetter:makeHbox(content)
       SILE.typesetter:pushHbox(hbox)
       if #hlist > 0 then
-         SU.warn("Hbox has migrating content (ignored for now, but likely to break in future versions)")
+         SU.warn([[
+            \\hbox has migrating content
+
+            Ignored for now, but likely to break in future versions.
+         ]])
          -- Ugly shim:
          -- One day we ought to do SILE.typesetter:pushHlist(hlist) here, so as to push
          -- back the migrating contents from within the hbox'ed content.

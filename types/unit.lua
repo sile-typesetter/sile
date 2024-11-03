@@ -76,6 +76,13 @@ unittypes["pc"] = {
    definition = "0.166666667in",
 }
 
+-- Pixel, by convention 1px = 1/96in = 0.75pt
+-- (CSS Values and Units Module Level 3, §5.2)
+-- Used in MathML, etc.
+unittypes["px"] = {
+   definition = "0.75pt",
+}
+
 local checkPaperDefined = function ()
    if not SILE.documentState or not SILE.documentState.orgPaperSize then
       SU.error("A measurement tried to measure the paper size before the paper was defined", true)
@@ -216,16 +223,16 @@ unittypes["zw"] = {
    relative = true,
    definition = function (v)
       local zenkakuchar = SILE.settings:get("document.zenkakuchar")
-      local measureable, zenkaku = pcall(SILE.shaper.measureChar, SILE.shaper, zenkakuchar)
-      if not measureable then
-         SU.warn(string.format(
-            [[Zenkaku width (全角幅) unit zw is falling back to 1em == 1zw as we
-  cannot measure %s. Either change this char to one suitable for your
-  language, or load a font that has it.]],
-            zenkakuchar
-         ))
+      local measurable, zenkaku = pcall(SILE.shaper.measureChar, SILE.shaper, zenkakuchar)
+      if not measurable then
+         SU.warn(([[
+            Zenkaku width (全角幅) unit zw is falling back to 1em == 1zw as we cannot measure %s
+
+            Either change this char to one suitable for your language, or load a font that
+            has it.
+         ]]):format(zenkakuchar))
       end
-      local width = measureable and zenkaku.width or SILE.settings:get("font.size")
+      local width = measurable and zenkaku.width or SILE.settings:get("font.size")
       return v * width
    end,
 }

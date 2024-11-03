@@ -24,7 +24,12 @@ QUE_PROGVAR([cmp])
 QUE_PROGVAR([find])
 QUE_PROGVAR([jq])
 QUE_PROGVAR([pdfinfo])
+QUE_PROGVAR([sort])
 QUE_PROGVAR([xargs])
+
+# Disable ranlib to avoid it being run on our rusile.so module, already LTO
+# optimized but libtool wants to relink it...
+RANLIB=:
 
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
@@ -145,7 +150,7 @@ AM_COND_IF([SYSTEM_LIBTEXPDF],
                             [AC_MSG_FAILURE([--with-system-libtexpdf was given, but test for libtexpdf failed])])],
             [AC_CONFIG_SUBDIRS([libtexpdf])])
 
-PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
+PKG_CHECK_MODULES(ICU, icu-uc icu-i18n icu-io, [
     with_icu=yes
 ],[
     AC_CHECK_TOOL(ICU_CONFIG, icu-config, no)
@@ -180,9 +185,9 @@ AM_COND_IF([DEVELOPER_MODE], [
     QUE_PROGVAR([nix])
     QUE_PROGVAR([npm])
     QUE_PROGVAR([perl])
-    QUE_PROGVAR([sort])
     QUE_PROGVAR([stylua])
     QUE_PROGVAR([tr])
+    QUE_PROGVAR([typos])
 ])
 
 AX_PROG_LUA([5.1])
@@ -280,7 +285,9 @@ AC_SUBST([ROCKREV], [1])
 
 QUE_SUBST_MAN_DATE
 
-AC_CONFIG_FILES([build-aux/list-dist-files.sh], [chmod +x build-aux/list-dist-files.sh])
+AC_CONFIG_FILES([build-aux/list-distfiles.sh], [chmod +x build-aux/list-distfiles.sh])
+AC_CONFIG_FILES([build-aux/import-tex-hyphens.sh], [chmod +x build-aux/import-tex-hyphens.sh])
+AC_CONFIG_FILES([build-aux/transpile-tex-hyphen-patterns.lua], [chmod +x build-aux/transpile-tex-hyphen-patterns.lua])
 AC_CONFIG_FILES([Makefile justenough/Makefile sile-lua.1 core/features.lua core/pathsetup.lua core/version.lua])
 AC_CONFIG_FILES([sile-lua:sile.in], [chmod +x sile-lua])
 AC_CONFIG_FILES([tests/regressions.pl], [chmod +x tests/regressions.pl])

@@ -1,11 +1,17 @@
 use clap::Parser;
 use std::path::PathBuf;
 
-/// The SILE typesetter reads an input file(s), by default in either SIL or XML format, and
-/// processes them to generate an output file, by default in PDF format. The output will be written
-/// to a file with the same name as the first input file with the extension changed to .pdf unless
-/// the `--output` argument is used. Additional input or output formats can be handled by loading
-/// a module with the `--use` argument to add support for them first.
+/// The SILE Typesetter reads input file(s) and typesets the content into a rendered document
+/// format, typically PDF.
+///
+/// By default, input files may be in declarative SIL markup, structured XML, or programmatic Lua.
+/// The input format is automatically detected by the active modules. By default, the output will
+/// be a file with the same name as the first input file with the extension changed to .pdf. The
+/// output filename can be overridden with the `--output` argument. Using `--backend` one can
+/// change to a different output format (or a different driver for the same format). Additional
+/// input or output formats can be handled by loading a 3rd party module that supports them by
+/// adding `--use` argument on the command line (which will load prior to attempting to read input
+/// documents).
 #[derive(Parser, Debug)]
 #[clap(author, name = "SILE", bin_name = "sile")]
 pub struct Cli {
@@ -85,9 +91,9 @@ pub struct Cli {
     /// Set or override document class options.
     ///
     /// Can be used to change default options or override the ones specified in a document.
-    /// For example setting `--options papersize=letter` would override both the default `papersize` of A4 and any specific one set in the document’s options.
+    /// For example setting `--option papersize=letter` would override both the default `papersize` of A4 and any specific one set in the document’s options.
     /// May be specified more than once.
-    #[clap(short = 'O', long)]
+    #[clap(short = 'O', long, alias = "options")]
     pub option: Option<Vec<String>>,
 
     /// Include the contents of a SIL, XML, or other resource file before the input document content.

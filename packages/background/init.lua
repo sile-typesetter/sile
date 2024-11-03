@@ -67,7 +67,7 @@ As its name implies, the \autodoc:package{background} package allows you to set 
 The package provides a \autodoc:command{\background} command which requires one of the following parameters:
 \begin{itemize}
 \item{\autodoc:parameter{color=<color specification>} sets the background of the current and all following pages to that color. The color specification has the same syntax as specified in the \autodoc:package{color} package.}
-\item{\autodoc:parameter{src=<file>} sets the backgound of the current and all following pages to the specified image. The latter will be scaled to the target dimension.}
+\item{\autodoc:parameter{src=<file>} sets the background of the current and all following pages to the specified image. The latter will be scaled to the target dimension.}
 \end{itemize}
 
 The background extends to the page trim area (“page bleed”) if the latter is defined.
