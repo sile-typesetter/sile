@@ -3,30 +3,39 @@
 # `flake.nix`. In Nixpkgs, we don't need `libtexpdf-src` because we use
 # `fetchFromGitHub` with fetchSubmodules = true;`.
 {
-  lib,
-  stdenv,
-  darwin,
-  version,
-  src,
-  libtexpdf-src,
-  makeWrapper,
+  # Nix specific packaging and flake tooling
   autoreconfHook,
-  rustPlatform,
+  darwin,
   gitMinimal,
+  lib,
+  makeFontsConf,
+  makeWrapper,
   runCommand,
-  pkg-config,
+  rustPlatform,
+  src,
+  stdenv,
+  version,
+
+  # Upstream build time dependencies
   cargo,
+  jq,
+  pkg-config,
+  poppler_utils,
+  rustc,
+
+  # Upstream run time dependencies
   fontconfig,
   gentium,
   harfbuzz,
   icu,
-  jq,
   libiconv,
   lua,
-  makeFontsConf,
-  poppler_utils,
-  rustc,
+
+  # Developer environment dependencies
   stylua,
+
+  # This package
+  libtexpdf-src,
 }:
 
 let
@@ -51,9 +60,11 @@ let
       luautf8
       penlight
       vstruct
+
       # lua packages needed for testing
       busted
       luacheck
+
       # packages needed for building api docs
       ldoc
     ]
@@ -83,13 +94,13 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   nativeBuildInputs = [
-    makeWrapper
     autoreconfHook
-    pkg-config
-    rustPlatform.cargoSetupHook
+    cargo
     gitMinimal
     jq
-    cargo
+    makeWrapper
+    pkg-config
+    rustPlatform.cargoSetupHook
     rustc
   ];
 
@@ -103,24 +114,25 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs =
     [
-      luaEnv
+      fontconfig
       harfbuzz
       icu
-      fontconfig
       libiconv
+      luaEnv
+
+      # Developer tooling
       stylua
-    ]
-    ++ lib.optionals stdenv.isDarwin [
-      darwin.apple_sdk.frameworks.AppKit
-    ];
+  ] ++ lib.optional stdenv.hostPlatform.isDarwin darwin.apple_sdk.frameworks.AppKit;
 
   configureFlags =
     [
       # Build SILE's internal VM against headers from the Nix supplied Lua
       "--with-system-lua-sources"
+
       # Nix will supply all the Lua dependencies, so stop the build system from
       # bundling vendored copies of them.
       "--with-system-luarocks"
+
       # The automake check target uses pdfinfo to confirm the output of a test
       # run, and uses autotools to discover it. Nix builds have to that test
       # because it is run from the source directory with a binary already built
@@ -140,7 +152,7 @@ stdenv.mkDerivation (finalAttrs: {
     patchShebangs build-aux/*.sh build-aux/git-version-gen
   '';
 
-  NIX_LDFLAGS = lib.optionalString stdenv.isDarwin "-framework AppKit";
+  NIX_LDFLAGS = lib.optionalString stdenv.hostPlatform.isDarwin "-framework AppKit";
 
   FONTCONFIG_FILE = makeFontsConf {
     fontDirectories = [
@@ -160,7 +172,7 @@ stdenv.mkDerivation (finalAttrs: {
     # So it will be easier to inspect this environment, in comparison to others
     inherit luaEnv;
     # Copied from Makefile.am
-    tests.test = lib.optionalAttrs (!(stdenv.isDarwin && stdenv.isAarch64)) (
+    tests.test = lib.optionalAttrs (!(stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64)) (
       runCommand "${finalAttrs.pname}-test"
         {
           nativeBuildInputs = [
@@ -185,7 +197,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   meta = {
-    description = "A typesetting system";
+    description = "Typesetting system";
     longDescription = ''
       SILE is a typesetting system; its job is to produce beautiful
       printed documents. Conceptually, SILE is similar to TeX—from
