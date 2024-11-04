@@ -79,6 +79,14 @@ AC_ARG_WITH([system-luarocks],
 AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
 AC_SUBST([SYSTEM_LUAROCKS])
 
+AC_ARG_WITH([vendored-luarocks-dir],
+            AS_HELP_STRING([--with-vendored-luarocks-dir=PATH],
+                           [Specify a custom vendored location from which to load ‘system’ luarocks]),
+            [],
+            [with_vendored_luarocks_dir=no])
+AM_CONDITIONAL([VENDORED_LUAROCKS], [test "x$with_vendored_luarocks_dir" != "xno"])
+AC_SUBST([VENDORED_LUAROCKS])
+
 AC_ARG_WITH([system-lua-sources],
             AS_HELP_STRING([--with-system-lua-sources],
                            [Don’t compile against vendored Lua sources, use system headers]))
@@ -266,15 +274,19 @@ AM_COND_IF([DEVELOPER_MODE], [
 AC_DEFINE_UNQUOTED([SILE_PATH], ["${SILE_PATH}"], [Path for SILE packages and classes])
 AC_SUBST([SILE_PATH])
 
-# In order for our Rust CLI binary to use the same default package.path as the system Lua,
-# we test the system Lua (required only at build not run time) for its current package.path.
+# In order for our Rust CLI binary to use the same default package.(c)path as the system Lua,
+# we test the system Lua (required only at build not run time) for its current package.(c)path.
 adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.path)')"], [SYSTEM_LUA_PATH])
-AC_DEFINE_UNQUOTED([SYSTEM_LUA_PATH], ["${SYSTEM_LUA_PATH}"],[System Lua package path])
-AC_SUBST([SYSTEM_LUA_PATH])
-
 adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.cpath)')"], [SYSTEM_LUA_CPATH])
+AC_DEFINE_UNQUOTED([SYSTEM_LUA_PATH], ["${SYSTEM_LUA_PATH}"],[System Lua package path])
 AC_DEFINE_UNQUOTED([SYSTEM_LUA_CPATH], ["${SYSTEM_LUA_CPATH}"], [System Lua package cpath])
+AC_SUBST([SYSTEM_LUA_PATH])
 AC_SUBST([SYSTEM_LUA_CPATH])
+
+# Accommodate Homebrew and/or other distros that pretend a vendored location is the system.
+AM_COND_IF([VENDORED_LUAROCKS],
+        [VENDORED_LUAROCKS_DIR="$with_vendored_luarocks_dir"])
+AC_SUBST([VENDORED_LUAROCKS_DIR])
 
 adl_RECURSIVE_EVAL(["${libdir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"], [Path for SILE libraries])

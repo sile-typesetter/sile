@@ -93,6 +93,10 @@ extendPaths("@SILE_LIB_PATH@", true)
 -- development mode source directory or expected system installation location).
 if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
    extendPathsRocks("@SILE_PATH@/lua_modules")
+elseif "@VENDORED_LUAROCKS_TRUE@" == "" then -- see ./configure --with-vendored-luarocks=DIR
+   -- Accommodate Homebrew (and any other distros that pretend a vendored location is the system) in handling their
+   -- preferred location without clobbering users’ ability to setup 3rd party packages using `luarocks path`.
+   extendPathsRocks("@VENDORED_LUAROCKS_DIR@")
 end
 
 -- Stuff the variants of system Lua Rocks paths with sile suffixes added back at higher priority that regular paths.
