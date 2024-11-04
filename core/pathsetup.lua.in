@@ -6,16 +6,17 @@ if "@SYSTEM_LUA_PATH@" ~= "" then
 end
 -- stylua: ignore end
 
--- In the event the user has exported Lua environment variables, use them like a system Lua VM would. This essentially
--- nukes the existing runtime path and uses only the new value. This is useful for using `eval $(luarocks --local path)`
+-- In the event the user has exported Lua environment variables, use them like a system Lua VM would. This can either
+-- nuke the existing value and fully replace it, or using the Lua convention of ';;' to signify the default path, we can
+-- extend what we deduced about the system at build time. This is useful for using `eval $(luarocks --local path)`
 -- or similar incantations that setup a path that will reach 3rd party modules.
 local env_lua_path = os.getenv("LUA_PATH")
 if env_lua_path then
-   package.path = env_lua_path
+   package.path = env_lua_path:gsub(";;", (";%s;"):format(package.path))
 end
 local env_lua_cpath = os.getenv("LUA_CPATH")
 if env_lua_cpath then
-   package.cpath = env_lua_cpath
+   package.cpath = env_lua_cpath:gsub(";;", (";%s;"):format(package.cpath))
 end
 
 local executable = debug.getinfo(3, "S").source
