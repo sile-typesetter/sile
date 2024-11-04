@@ -19,7 +19,7 @@ function inputter.appropriate (round, filename, doc)
 end
 
 function inputter.parse (_, doc)
-   local result, err = load(doc)
+   local result, err = load(doc, SILE.currentlyProcessingFile)
    if not result then
       SU.error(err)
    end
