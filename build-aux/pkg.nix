@@ -3,37 +3,36 @@
 # `flake.nix`. In Nixpkgs, we don't need `libtexpdf-src` because we use
 # `fetchFromGitHub` with fetchSubmodules = true;`.
 {
-  # Nix specific packaging and flake tooling
-  autoreconfHook,
-  darwin,
-  gitMinimal,
   lib,
-  makeFontsConf,
-  makeWrapper,
-  runCommand,
-  rustPlatform,
-  src,
   stdenv,
+  autoreconfHook,
+  gitMinimal,
+  src,
   version,
 
-  # Upstream build time dependencies
-  cargo,
-  jq,
+  # nativeBuildInputs
   pkg-config,
-  poppler_utils,
+  jq,
+  cargo,
   rustc,
+  rustPlatform,
 
-  # Upstream run time dependencies
-  fontconfig,
-  gentium,
+  # buildInputs
+  lua,
   harfbuzz,
   icu,
+  fontconfig,
   libiconv,
-  lua,
-
-  # Developer environment dependencies
   stylua,
   typos,
+  darwin,
+  # FONTCONFIG_FILE
+  makeFontsConf,
+  gentium,
+
+  # passthru.tests
+  runCommand,
+  poppler_utils,
 
   # This package
   libtexpdf-src,
@@ -82,6 +81,24 @@ stdenv.mkDerivation (finalAttrs: {
   pname = "sile";
   inherit version src;
 
+  # In Nixpkgs, we don't copy the Cargo.lock file from the repo to Nixpkgs'
+  # repo, but we inherit src, and specify a hash (it is a fixed output
+  # derivation). `nix-update` and `nixpkgs-update` should be able to catch that
+  # hash and update it as well when performing updates.
+  cargoDeps = rustPlatform.importCargoLock {
+    lockFile = ../Cargo.lock;
+  };
+
+  nativeBuildInputs = [
+    autoreconfHook
+    gitMinimal
+    pkg-config
+    jq
+    cargo
+    rustc
+    rustPlatform.cargoSetupHook
+  ];
+
   preAutoreconf = ''
     # Add the libtexpdf src instead of the git submodule. (From some reason
     # without --no-preserve=mode flag, libtexpdf/ is unwriteable). As explained
@@ -94,47 +111,26 @@ stdenv.mkDerivation (finalAttrs: {
     sed -i -e 's/tarball-version/flake-version/' configure.ac
   '';
 
-  nativeBuildInputs = [
-    autoreconfHook
-    cargo
-    gitMinimal
-    jq
-    makeWrapper
-    pkg-config
-    rustPlatform.cargoSetupHook
-    rustc
-  ];
-
-  # In Nixpkgs, we don't copy the Cargo.lock file from the repo to Nixpkgs'
-  # repo, but we inherit src, and specify a hash (it is a fixed output
-  # derivation). `nix-update` and `nixpkgs-update` should be able to catch that
-  # hash and update it as well when performing updates.
-  cargoDeps = rustPlatform.importCargoLock {
-    lockFile = ../Cargo.lock;
-  };
-
   buildInputs =
     [
-      fontconfig
+      luaEnv
       harfbuzz
       icu
+      fontconfig
       libiconv
-      luaEnv
-
-      # Developer tooling
       stylua
       typos
-  ] ++ lib.optional stdenv.hostPlatform.isDarwin darwin.apple_sdk.frameworks.AppKit;
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
+      darwin.apple_sdk.frameworks.AppKit
+    ];
 
   configureFlags =
     [
-      # Build SILE's internal VM against headers from the Nix supplied Lua
-      "--with-system-lua-sources"
-
       # Nix will supply all the Lua dependencies, so stop the build system from
       # bundling vendored copies of them.
+      "--with-system-lua-sources"
       "--with-system-luarocks"
-
       # The automake check target uses pdfinfo to confirm the output of a test
       # run, and uses autotools to discover it. Nix builds have to that test
       # because it is run from the source directory with a binary already built
@@ -153,8 +149,6 @@ stdenv.mkDerivation (finalAttrs: {
   postPatch = ''
     patchShebangs build-aux/*.sh build-aux/git-version-gen
   '';
-
-  NIX_LDFLAGS = lib.optionalString stdenv.hostPlatform.isDarwin "-framework AppKit";
 
   FONTCONFIG_FILE = makeFontsConf {
     fontDirectories = [
