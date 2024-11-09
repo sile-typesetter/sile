@@ -280,8 +280,17 @@ local function isOperatorKind (tree, typeOfAtom, typeOfSymbol)
    return false
 end
 
-local function isBigOperator (tree)
-   return isOperatorKind(tree, "big", atomType.bigOperator)
+local function isMoveableLimits (tree)
+   if tree.command ~= "mo" then
+      return false
+   end
+   if tree.options and SU.boolean(tree.options.movablelimits, false) then
+      return true
+   end
+   if tree[1] and symbolDefaults[tree[1]] and SU.boolean(symbolDefaults[tree[1]].movablelimits, false) then
+      return true
+   end
+   return false
 end
 local function isCloseOperator (tree)
    return isOperatorKind(tree, "close", atomType.closeSymbol)
@@ -414,13 +423,13 @@ local function compileToMathML_aux (_, arg_env, tree)
       tree.options = {}
    -- Translate TeX-like sub/superscripts to `munderover` or `msubsup`,
    -- depending on whether the base is a big operator
-   elseif tree.id == "sup" and isBigOperator(tree[1]) then
+   elseif tree.id == "sup" and isMoveableLimits(tree[1]) then
       tree.command = "mover"
-   elseif tree.id == "sub" and isBigOperator(tree[1]) then
+   elseif tree.id == "sub" and isMoveableLimits(tree[1]) then
       tree.command = "munder"
-   elseif tree.id == "subsup" and isBigOperator(tree[1]) then
+   elseif tree.id == "subsup" and isMoveableLimits(tree[1]) then
       tree.command = "munderover"
-   elseif tree.id == "supsub" and isBigOperator(tree[1]) then
+   elseif tree.id == "supsub" and isMoveableLimits(tree[1]) then
       tree.command = "munderover"
       local tmp = tree[2]
       tree[2] = tree[3]
@@ -589,20 +598,20 @@ compileToMathML(
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
 
-  \def{lim}{\mo[atom=big]{lim}}
+  \def{lim}{\mo[movablelimits=true]{lim}}
 
   % From amsmath:
   \def{to}{\mo[atom=bin]{→}}
-  \def{gcd}{\mo[atom=big]{gcd}}
-  \def{sup}{\mo[atom=big]{sup}}
-  \def{inf}{\mo[atom=big]{inf}}
-  \def{max}{\mo[atom=big]{max}}
-  \def{min}{\mo[atom=big]{min}}
+  \def{gcd}{\mo[movablelimits=true]{gcd}}
+  \def{sup}{\mo[movablelimits=true]{sup}}
+  \def{inf}{\mo[movablelimits=true]{inf}}
+  \def{max}{\mo[movablelimits=true]{max}}
+  \def{min}{\mo[movablelimits=true]{min}}
   % Those use U+202F NARROW NO-BREAK SPACE in their names
-  \def{limsup}{\mo[atom=big]{lim sup}}
-  \def{liminf}{\mo[atom=big]{lim inf}}
-  \def{projlim}{\mo[atom=big]{proj lim}}
-  \def{injlim}{\mo[atom=big]{inj lim}}
+  \def{limsup}{\mo[movablelimits=true]{lim sup}}
+  \def{liminf}{\mo[movablelimits=true]{lim inf}}
+  \def{projlim}{\mo[movablelimits=true]{proj lim}}
+  \def{injlim}{\mo[movablelimits=true]{inj lim}}
 
   % Standard spaces gleaned from plain TeX
   \def{thinspace}{\mspace[width=thin]}

@@ -718,17 +718,13 @@ function elements.underOver:_stretchyReshapeToBase (part)
 end
 
 function elements.underOver:shape ()
-   local isBaseLargeOp = SU.boolean(self.base and self.base.largeop, false)
-   if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) and isBaseLargeOp then
-      -- FIXME
-      -- Added the "largeop" condition, but it's kind of a workaround:
-      -- It should rather be the "moveablelimits" property in MathML, but we do not have that yet.
-      -- When the base is a moveable limit, the under/over scripts are not placed under/over the base,
+   local isMovableLimits = SU.boolean(self.base and self.base.movablelimits, false)
+   if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) and isMovableLimits then
+      -- When the base is a movable limit, the under/over scripts are not placed under/over the base,
       -- but other to the right of it, when display mode is not used.
       -- Notable effects:
       --   Mozilla MathML test 19 (on "k times" > overbrace > base)
       --   Maxwell's Equations in MathML3 Test Suite "complex1" (on the vectors in fractions)
-      -- For now, go with the "largeop" property, but this is not correct.
       self.isUnderOver = true
       elements.subscript.shape(self)
       return
