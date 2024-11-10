@@ -195,7 +195,7 @@ pub fn run(
             let spec = spec?;
             let module: LuaString = spec.get("module")?;
             let options: LuaTable = spec.get("options")?;
-            r#use.call::<(LuaString, LuaTable)>((module, options))?;
+            r#use.call::<LuaValue>((module, options))?;
         }
         let input_filenames: LuaTable = sile_input.get("filenames")?;
         let process_file: LuaFunction = sile.get("processFile")?;
