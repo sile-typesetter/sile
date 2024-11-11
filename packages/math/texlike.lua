@@ -1,11 +1,13 @@
+local atoms = require("packages.math.atoms")
 local syms = require("packages.math.unicode-symbols")
 local bits = require("core.parserbits")
 
 local epnf = require("epnf")
 local lpeg = require("lpeg")
 
-local atomType = syms.atomType
-local symbolDefaults = syms.symbolDefaults
+local atomType = atoms.atomType
+local atomTypeShort = atoms.atomTypeShort
+local operatorDict = syms.operatorDict
 local symbols = syms.symbols
 
 -- Grammar to parse TeX-like math
@@ -260,7 +262,7 @@ local compileToStr = function (argEnv, mathlist)
    end
 end
 
-local function isOperatorKind (tree, typeOfAtom, typeOfSymbol)
+local function isOperatorKind (tree, typeOfAtom)
    if not tree then
       return false -- safeguard
    end
@@ -274,8 +276,8 @@ local function isOperatorKind (tree, typeOfAtom, typeOfSymbol)
    end
    -- Case \mo{ops} where ops is registered with the resquested type
    -- E.g. \mo{∑) or \sum
-   if tree[1] and symbolDefaults[tree[1]] and symbolDefaults[tree[1]].atom == typeOfSymbol then
-      return true
+   if tree[1] and operatorDict[tree[1]] and operatorDict[tree[1]].atom then
+      return operatorDict[tree[1]].atom == atomTypeShort[typeOfAtom]
    end
    return false
 end
@@ -287,20 +289,32 @@ local function isMoveableLimits (tree)
    if tree.options and SU.boolean(tree.options.movablelimits, false) then
       return true
    end
-   if tree[1] and symbolDefaults[tree[1]] and SU.boolean(symbolDefaults[tree[1]].movablelimits, false) then
-      return true
+   if tree[1] and operatorDict[tree[1]] and operatorDict[tree[1]].forms then
+      -- Leap of faith: We have not idea yet which form the operator will take
+      -- in the final MathML.
+      -- In the MathML operator dictionary, some operators have a movablelimits
+      -- in some forms and not in others.
+      -- Ex. \Join (U+2A1D) and \bigtriangleleft (U+2A1E) have it prefix but not
+      -- infix, for some unspecified reason (?).
+      -- Assume that if at least one form has movablelimits, the operator is
+      -- considered to have movablelimits "in general".
+      for _, form in pairs(operatorDict[tree[1]].forms) do
+         if SU.boolean(form.movablelimits, false) then
+            return true
+         end
+      end
    end
    return false
 end
 local function isCloseOperator (tree)
-   return isOperatorKind(tree, "close", atomType.closeSymbol)
+   return isOperatorKind(tree, "close")
 end
 local function isOpeningOperator (tree)
-   return isOperatorKind(tree, "open", atomType.openingSymbol)
+   return isOperatorKind(tree, "open")
 end
 
 local function isAccentSymbol (symbol)
-   return symbolDefaults[symbol] and symbolDefaults[symbol].atom == atomType.accentSymbol
+   return operatorDict[symbol] and operatorDict[symbol].atom == atomType.accentSymbol
 end
 
 local function compileToMathML_aux (_, arg_env, tree)
@@ -666,8 +680,12 @@ compileToMathML(
   \def{mathtt}{\mi[mathvariant=monospace]{#1}}
 
   % Modulus operator forms
-  \def{bmod}{\mo{mod}}
-  \def{pmod}{\quad(\mo{mod} #1)}
+  % See Michael Downes & Barbara Beeton, "Short Math Guide for LaTeX"
+  % American Mathematical Society (v2.0, 2017), §7.1 p. 18
+  \def{bmod}{\mo[atom=bin]{mod}}
+  \def{pmod}{\quad(\mo[atom=ord]{mod}\>#1)}
+  \def{mod}{\quad \mo[atom=ord]{mod}\>#1}
+  \def{pod}{\quad(#1)}
 
   % Phantom commands from TeX/LaTeX
   \def{phantom}{\mphantom{#1}}

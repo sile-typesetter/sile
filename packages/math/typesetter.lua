@@ -1,30 +1,90 @@
 -- Interpret a MathML or TeX-like AST, typeset it and add it to the output.
+local atoms = require("packages.math.atoms")
 local b = require("packages.math.base-elements")
 local syms = require("packages.math.unicode-symbols")
 local mathvariants = require("packages.math.unicode-mathvariants")
 local mathVariantToScriptType, scriptType = mathvariants.mathVariantToScriptType, mathvariants.scriptType
-
--- Shorthands for atom types, used in the `atom` command option
-local atomTypeShort = {
-   ord = b.atomType.ordinary,
-   big = b.atomType.bigOperator,
-   bin = b.atomType.binaryOperator,
-   rel = b.atomType.relationalOperator,
-   open = b.atomType.openingSymbol,
-   close = b.atomType.closeSymbol,
-   punct = b.atomType.punctuationSymbol,
-   inner = b.atomType.inner,
-   over = b.atomType.overSymbol,
-   under = b.atomType.underSymbol,
-   accent = b.atomType.accentSymbol,
-   radical = b.atomType.radicalSymbol,
-   vcenter = b.atomType.vcenter,
-}
+local atomTypeShort = atoms.atomTypeShort
 
 local ConvertMathML
 
+-- See MathML Core "Algorithm for determining the form of an embellished operator"
+local scriptedElements = {
+   mmultiscripts = true,
+   mover = true,
+   msub = true,
+   msubsup = true,
+   msup = true,
+   munder = true,
+   munderover = true,
+}
+local groupingElements = {
+   maction = true,
+   math = true,
+   merror = true,
+   mphantom = true,
+   mprescripts = true,
+   mrow = true,
+   mstyle = true,
+   semantics = true,
+}
+local spaceLikeElements = {
+   mtext = true,
+   mspace = true,
+}
+
+-- Space like elements are:
+-- an mtext or mspace;
+-- or a grouping element or mpadded all of whose in-flow children are space-like.
+local function isSpaceLike (tree)
+   if spaceLikeElements[tree.command] then
+      return true
+   end
+   if groupingElements[tree.command] or tree.command == "mpadded" then
+      for _, n in ipairs(tree) do
+         if not isSpaceLike(n) then
+            return false
+         end
+      end
+      return true
+   end
+end
+-- Grouping-like elements in this operator embellishing context are:
+-- a grouping element
+-- or an mpadded or msqrt element.
+local isGroupingLike = function (tree)
+   return groupingElements[tree.command] or tree.command == "mpadded" or tree.command == "msqrt"
+end
+
+local function embellishOperatorInPlace (tree)
+   local lastChild
+   local lastMo
+   local groupLike = isGroupingLike(tree)
+   local scripLike = scriptedElements[tree.command]
+   for _, n in ipairs(tree) do
+      -- FIXME Maybe ncomplete vs. "core form" (of other elements) in MathML Core
+      -- This specification would make anyone's eyes bleed :D
+      if n.command == "mo" then
+         lastMo = n
+         n.options.form = n.options.form
+            or groupLike and not lastChild and "prefix" -- first-in-flow child
+            or scripLike and lastChild and "postfix" -- last-in-flow child of a scripted element other than the first
+            or nil
+      end
+      if n.command and not isSpaceLike(n) then
+         lastChild = n
+      end
+   end
+   if lastMo then
+      lastMo.options.form = lastMo.options.form
+         or groupLike and lastMo == lastChild and "postfix" -- last-in-flow child
+         or nil
+   end
+end
+
 local function convertChildren (tree)
    local mboxes = {}
+   embellishOperatorInPlace(tree)
    for _, n in ipairs(tree) do
       local box = ConvertMathML(nil, n)
       if box then
@@ -68,14 +128,20 @@ function ConvertMathML (_, content)
       script = script or (luautf8.len(text) == 1 and scriptType.italic or scriptType.upright)
       return b.text("identifier", {}, script, text)
    elseif content.command == "mo" then
+      content.options.form = content.options.form or "infix"
       local script = content.options.mathvariant and mathVariantToScriptType(content.options.mathvariant)
          or scriptType.upright
       local text = content[1]
       local attributes = {}
-      -- Attributes from the (default) oerator table
-      if syms.symbolDefaults[text] then
-         for attribute, value in pairs(syms.symbolDefaults[text]) do
-            attributes[attribute] = value
+      -- Attributes from the (default) operator table
+      if syms.operatorDict[text] then
+         attributes.atom = syms.operatorDict[text].atom
+         local forms = syms.operatorDict[text].forms
+         local defaultOps = forms and (forms[content.options.form] or forms.infix or forms.prefix or forms.postfix)
+         if defaultOps then
+            for attribute, value in pairs(defaultOps) do
+               attributes[attribute] = value
+            end
          end
       end
       -- Overwrite with attributes from the element

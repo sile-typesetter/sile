@@ -1,12 +1,11 @@
 local nodefactory = require("types.node")
 local hb = require("justenoughharfbuzz")
 local ot = require("core.opentype-parser")
-local syms = require("packages.math.unicode-symbols")
+local atoms = require("packages.math.atoms")
 local mathvariants = require("packages.math.unicode-mathvariants")
 local convertMathVariantScript = mathvariants.convertMathVariantScript
 
-local atomType = syms.atomType
-local symbolDefaults = syms.symbolDefaults
+local atomType = atoms.atomType
 
 local elements = {}
 
@@ -423,7 +422,7 @@ function elements.stackbox:shape ()
       end
       -- Handle stretchy operators
       for _, elt in ipairs(self.children) do
-         if elt.is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
+         if elt:is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
             elt:_vertStretchyReshape(self.depth, self.height)
          end
       end
@@ -694,14 +693,14 @@ function elements.underOver:_stretchyReshapeToBase (part)
    --   MathML3 "complex1" torture test: Maxwell's Equations (vectors in fractions)
    if #part.children == 0 then
       local elt = part
-      if elt.is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
+      if elt:is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
          elt:_horizStretchyReshape(self.base.width)
       end
    elseif part:is_a(elements.underOver) then
       -- Big assumption here: only considering one level of stacked under/over.
       local hasStretched = false
       for _, elt in ipairs(part.children) do
-         if elt.is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
+         if elt:is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
             local stretched = elt:_horizStretchyReshape(self.base.width)
             if stretched then
                hasStretched = true
@@ -1652,8 +1651,6 @@ function elements.bevelledFraction:output (x, y, line)
 end
 
 elements.mathMode = mathMode
-elements.atomType = atomType
-elements.symbolDefaults = symbolDefaults
 elements.newSubscript = newSubscript
 elements.newUnderOver = newUnderOver
 
