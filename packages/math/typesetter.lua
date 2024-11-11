@@ -147,7 +147,9 @@ function ConvertMathML (_, content)
       if #children ~= 2 then
          SU.error("Wrong number of children in mfrac: " .. #children)
       end
-      return b.fraction(content.options, children[1], children[2])
+      return SU.boolean(content.options.bevelled, false)
+            and b.bevelledFraction(content.options, children[1], children[2])
+         or b.fraction(content.options, children[1], children[2])
    elseif content.command == "msqrt" then
       local children = convertChildren(content)
       -- "The <msqrt> element generates an anonymous <mrow> box called the msqrt base
