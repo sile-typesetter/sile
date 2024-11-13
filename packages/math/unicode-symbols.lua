@@ -2628,14 +2628,14 @@ symbolDefaults["="] = { atom = atomType.relationalOperator }
 symbolDefaults["≠"] = { atom = atomType.relationalOperator }
 symbolDefaults["∈"] = { atom = atomType.relationalOperator }
 symbolDefaults["⊆"] = { atom = atomType.relationalOperator }
-symbolDefaults["∑"] = { atom = atomType.bigOperator, largeop = true }
-symbolDefaults["∏"] = { atom = atomType.bigOperator, largeop = true }
-symbolDefaults["⋀"] = { atom = atomType.bigOperator, largeop = true }
-symbolDefaults["⋁"] = { atom = atomType.bigOperator, largeop = true }
-symbolDefaults["⋂"] = { atom = atomType.bigOperator, largeop = true }
-symbolDefaults["⋃"] = { atom = atomType.bigOperator, largeop = true }
-symbolDefaults["⨅"] = { atom = atomType.bigOperator, largeop = true }
-symbolDefaults["⨆"] = { atom = atomType.bigOperator, largeop = true }
+symbolDefaults["∑"] = { atom = atomType.bigOperator, largeop = true, movablelimits = true }
+symbolDefaults["∏"] = { atom = atomType.bigOperator, largeop = true, movablelimits = true }
+symbolDefaults["⋀"] = { atom = atomType.bigOperator, largeop = true, movablelimits = true }
+symbolDefaults["⋁"] = { atom = atomType.bigOperator, largeop = true, movablelimits = true }
+symbolDefaults["⋂"] = { atom = atomType.bigOperator, largeop = true, movablelimits = true }
+symbolDefaults["⋃"] = { atom = atomType.bigOperator, largeop = true, movablelimits = true }
+symbolDefaults["⨅"] = { atom = atomType.bigOperator, largeop = true, movablelimits = true }
+symbolDefaults["⨆"] = { atom = atomType.bigOperator, largeop = true, movablelimits = true }
 symbolDefaults["∫"] = { largeop = true }
 symbolDefaults["∬"] = { largeop = true }
 symbolDefaults["∭"] = { largeop = true }
