@@ -216,38 +216,36 @@ local mathScriptConversionTable = {
       end,
       [scriptType.boldItalic] = function (codepoint)
          -- MathML Core "bold-italic" (annex C.2)
-         -- TODO NOT ADDRESSED
-         -- ∇ U+2207 𝜵 U+1D735
-         return codepoint == 0x3F4 and 0x1D6A - 0x391 -- capital theta
-            or codepoint + 0x1D71C - 0x391
+         return codepoint == 0x3F4 and 0x1D72D -- capital theta
+            or codepoint == 0x2207 and 0x1D735 -- nabla
+            or codepoint + 0x1D71C - 0x391 -- other characters
       end,
       [scriptType.bold] = function (codepoint)
          -- MathML Core "italic" (annex C.4)
-         -- TODO NOT ADDRESSED
-         -- ∇ U+2207 𝛁 U+1D6C1
-         -- ϴ U+03F4 𝚹 U+1D6B9
-         return codepoint + 0x1D6A8 - 0x391
+         -- NOT ADDRESSED: Digamma exists only in upright and bold
+         -- Should we care? Not sure it's used in practice in math!
+         -- Ϝ U+03DC 𝟊 U+1D7CA
+         return codepoint == 0x3F4 and 0x1D6B9 -- capital theta
+            or codepoint == 0x2207 and 0x1D6C1 -- nabla
+            or codepoint + 0x1D6A8 - 0x391 -- other characters
       end,
       [scriptType.italic] = function (codepoint)
          -- MathML Core "italic" (annex C.13)
-         -- TODO NOT ADDRESSED
-         -- ϴ U+03F4 𝛳 U+1D6F3
-         -- ∇ U+2207 𝛻 U+1D6FB
-         return codepoint + 0x1D6E2 - 0x391
+         return codepoint == 0x3F4 and 0x1D6F3 -- capital theta
+            or codepoint == 0x2207 and 0x1D6FB -- nabla
+            or codepoint + 0x1D6E2 - 0x391 -- other characters
       end,
       [scriptType.sansSerifBoldItalic] = function (codepoint)
          -- MathML Core "sans-serif-bold-italic" (annex C.15)
-         -- TODO NOT ADDRESSED
-         -- ϴ U+03F4 𝞡 U+1D7A1
-         -- ∇ U+2207 𝞩 U+1D7A9
-         return codepoint + 0x1D790 - 0x391
+         return codepoint == 0x3F4 and 0x1D7A1 -- capital theta
+            or codepoint == 0x2207 and 0x1D7A9 -- nabla
+            or codepoint + 0x1D790 - 0x391 -- other characters
       end,
       [scriptType.boldSansSerif] = function (codepoint)
          -- MathML Core "sans-serif-italic" (annex C.17)
-         -- TODO NOT ADDRESSED
-         -- ϴ U+03F4 𝝧 U+1D767
-         -- ∇ U+2207 𝝯 U+1D76F
-         return codepoint + 0x1D756 - 0x391
+         return codepoint == 0x3F4 and 0x1D767 -- capital theta
+            or codepoint == 0x2207 and 0x1D76F -- nabla
+            or codepoint + 0x1D756 - 0x391 -- other characters
       end,
    },
    greekLower = {
@@ -256,61 +254,56 @@ local mathScriptConversionTable = {
       end,
       [scriptType.boldItalic] = function (codepoint)
          -- MathML Core "bold-italic" (annex C.2)
-         -- TODO NOT ADDRESSED
-         -- ϑ U+03D1 𝝑 U+1D751
-         -- ϰ U+03F0 𝝒 U+1D752
-         -- ϕ U+03D5 𝝓 U+1D753
-         -- ϱ U+03F1 𝝔 U+1D754
-         -- ϖ U+03D6 𝝕 U+1D755
-         return codepoint + 0x1D736 - 0x3B1
+         return codepoint == 0x3D1 and 0x1D751 -- theta
+            or codepoint == 0x3D5 and 0x1D753 -- phi
+            or codepoint == 0x3D6 and 0x1D755 -- pi
+            or codepoint == 0x3F0 and 0x1D752 -- kappa
+            or codepoint == 0x3F1 and 0x1D754 -- rho
+            or codepoint == 0x3F5 and 0x1D750 -- epsilon
+            or codepoint + 0x1D736 - 0x3B1 -- other characters
       end,
       [scriptType.bold] = function (codepoint)
          -- MathML Core "italic" (annex C.4)
-         -- TODO NOT ADDRESSED
-         -- ϵ U+03F5 𝛜 U+1D6DC
-         -- ϑ U+03D1 𝛝 U+1D6DD
-         -- ϰ U+03F0 𝛞 U+1D6DE
-         -- ϕ U+03D5 𝛟 U+1D6DF
-         -- ϱ U+03F1 𝛠 U+1D6E0
-         -- ϖ U+03D6 𝛡 U+1D6E1
-         -- Ϝ U+03DC 𝟊 U+1D7CA
+         -- NOT ADDRESSED: Digamma exists only in upright and bold
+         -- Should we care? Not sure it's used in practice in math!
          -- ϝ U+03DD 𝟋 U+1D7CB
-         return codepoint + 0x1D6C2 - 0x3B1
+         return codepoint == 0x3D1 and 0x1D6DD -- theta
+            or codepoint == 0x3D5 and 0x1D6DF -- phi
+            or codepoint == 0x3D6 and 0x1D6E1 -- pi
+            or codepoint == 0x3F0 and 0x1D6DE -- kappa
+            or codepoint == 0x3F1 and 0x1D6E0 -- rho
+            or codepoint == 0x3F5 and 0x1D6DC -- epsilon
+            or codepoint + 0x1D6C2 - 0x3B1
       end,
       [scriptType.italic] = function (codepoint)
          -- MathML Core "italic" (annex C.13)
-         -- TODO NOT ADDRESSED
-         -- ϵ U+03F5 𝜖 U+1D716
-         -- ϑ U+03D1 𝜗 U+1D717
-         -- ϰ U+03F0 𝜘 U+1D718
-         -- ϕ U+03D5 𝜙 U+1D719
-         -- ϱ U+03F1 𝜚 U+1D71A
-         -- ϖ U+03D6 𝜛 U+1D71B
-         return codepoint + 0x1D6FC - 0x3B1
+         return codepoint == 0x3D1 and 0x1D717 -- theta
+            or codepoint == 0x3D5 and 0x1D719 -- phi
+            or codepoint == 0x3D6 and 0x1D71B -- pi
+            or codepoint == 0x3F0 and 0x1D718 -- kappa
+            or codepoint == 0x3F1 and 0x1D71A -- rho
+            or codepoint == 0x3F5 and 0x1D716 -- epsilon
+            or codepoint + 0x1D6FC - 0x3B1
       end,
       [scriptType.sansSerifBoldItalic] = function (codepoint)
          -- MathML Core "sans-serif-bold-italic" (annex C.15)
-         -- TODO NOT ADDRESSED
-         -- ∂ U+2202 𝟃 U+1D7C3
-         -- ϵ U+03F5 𝟄 U+1D7C4
-         -- ϑ U+03D1 𝟅 U+1D7C5
-         -- ϰ U+03F0 𝟆 U+1D7C6
-         -- ϕ U+03D5 𝟇 U+1D7C7
-         -- ϱ U+03F1 𝟈 U+1D7C8
-         -- ϖ U+03D6 𝟉 U+1D7C9
-         return codepoint + 0x1D7AA - 0x3B1
+         return codepoint == 0x3D1 and 0x1D7C5 -- theta
+            or codepoint == 0x3D5 and 0x1D7C7 -- phi
+            or codepoint == 0x3D6 and 0x1D7C9 -- pi
+            or codepoint == 0x3F0 and 0x1D7C6 -- kappa
+            or codepoint == 0x3F1 and 0x1D7C8 -- rho
+            or codepoint == 0x3F5 and 0x1D7C4 -- epsilon
+            or codepoint + 0x1D7AA - 0x3B1 -- other characters
       end,
       [scriptType.boldSansSerif] = function (codepoint)
          -- MathML Core "sans-serif-italic" (annex C.17)
-         -- TODO NOT ADDRESSED
-         -- ∂ U+2202 𝞉 U+1D789
-         -- ϵ U+03F5 𝞊 U+1D78A
-         -- ϑ U+03D1 𝞋 U+1D78B
-         -- ϰ U+03F0 𝞌 U+1D78C
-         -- ϕ U+03D5 𝞍 U+1D78D
-         -- ϱ U+03F1 𝞎 U+1D78E
-         -- ϖ U+03D6 𝞏 U+1D78F
-         return codepoint + 0x1D770 - 0x3B1
+         return codepoint == 0x3D1 and 0x1D78B -- theta
+            or codepoint == 0x3D5 and 0x1D78D -- phi
+            or codepoint == 0x3D6 and 0x1D78F -- pi
+            or codepoint == 0x3F0 and 0x1D78C -- kappa
+            or codepoint == 0x3F1 and 0x1D78E -- rho
+            or codepoint == 0x3F5 and 0x1D78A -- epsilon
+            or codepoint + 0x1D770 - 0x3B1 -- other characters
       end,
    },
 }
@@ -326,9 +319,23 @@ local function convertMathVariantScript (text, script)
          converter = mathScriptConversionTable.latinLower[script]
       elseif uchr >= 0x30 and uchr <= 0x39 then
          converter = mathScriptConversionTable.number[script]
-      elseif uchr >= 0x391 and uchr <= 0x3A9 and uchr ~= 0x3A2 then
+      elseif
+         uchr >= 0x391
+            and uchr <= 0x3A9 -- Greek capital letters
+            and uchr ~= 0x3A2 -- invalid character
+         or uchr == 0x3F4
+         or uchr == 0x2207 -- capital theta, nabla symbols
+      then
          converter = mathScriptConversionTable.greekUpper[script]
-      elseif uchr >= 0x3B1 and uchr <= 0x3C9 then
+      elseif
+         uchr >= 0x3B1 and uchr <= 0x3C9 -- Greek small letters
+         or uchr == 0x03D1 -- theta variant
+         or uchr == 0x03D5 -- phi variant
+         or uchr == 0x03D6 -- pi variant
+         or uchr == 0x03F0 -- kappa variant
+         or uchr == 0x03F1 -- rho variant
+         or uchr == 0x03F5 -- epsilon variant
+      then
          converter = mathScriptConversionTable.greekLower[script]
       end
       dst_char = converter and luautf8.char(converter(uchr)) or dst_char

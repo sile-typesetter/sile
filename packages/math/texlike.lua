@@ -412,6 +412,12 @@ local function compileToMathML_aux (_, arg_env, tree)
             or cp >= SU.codepoint("a") and cp <= SU.codepoint("z")
             or cp >= SU.codepoint("Α") and cp <= SU.codepoint("Ω")
             or cp >= SU.codepoint("α") and cp <= SU.codepoint("ω")
+            or cp == SU.codepoint("ϑ")
+            or cp == SU.codepoint("ϕ")
+            or cp == SU.codepoint("ϰ")
+            or cp == SU.codepoint("ϱ")
+            or cp == SU.codepoint("ϖ")
+            or cp == SU.codepoint("ϵ")
          )
       then
          tree.command = "mi"
