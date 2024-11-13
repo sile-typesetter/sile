@@ -365,13 +365,9 @@ Harfbuzz, run \code{sile --debug=versions} on any file:
 
 \begin[type=autodoc:codeblock]{raw}
 $ sile --debug=versions hello.sil
-
 ...
-
 Harfbuzz version: 2.4.0
-
 Shapers enabled: graphite2, ot, coretext, coretext_aat, fallback
-
 ...
 \end{raw}
 
