@@ -93,11 +93,6 @@ AC_ARG_WITH([system-lua-sources],
 AM_CONDITIONAL([SYSTEM_LUA_SOURCES], [test "x$with_system_lua_sources" = "xyes"])
 AC_SUBST([SYSTEM_LUA_SOURCES])
 
-AC_ARG_WITH([luajit],
-            AS_HELP_STRING([--without-luajit],
-                           [Prefer LuaJIT over PUC Lua, even if the latter is newer]))
-AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" != "xno"])
-
 AC_ARG_WITH([manual],
             AS_HELP_STRING([--with-manual],
                            [Rebuild manual and install to system’s PDF documentation directory]))
@@ -198,7 +193,7 @@ AM_COND_IF([DEVELOPER_MODE], [
     QUE_PROGVAR([typos])
 ])
 
-AX_PROG_LUA([5.1])
+AX_PROG_LUA([5.1], [], [], [], [prefer])
 AX_LUA_HEADERS
 AX_LUA_LIBS
 
@@ -209,9 +204,9 @@ AM_COND_IF([SYSTEM_LUAROCKS], [
         ])
     ])
     AX_LUA_MODULE([cassowary], [cassowary])
-    AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 53], [
         AX_LUA_MODULE([compat53], [compat53])
-    )
+    ])
     AX_LUA_MODULE([cldr], [cldr])
     AX_LUA_MODULE([fluent], [fluent])
     AX_LUA_MODULE([linenoise], [linenoise])
