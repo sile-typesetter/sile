@@ -112,7 +112,7 @@ zsh = [ "completions" ]
 lto = true
 
 [workspace.dependencies.mlua]
-version = "0.10.0"
+version = "0.10"
 features = [ "anyhow" ]
 
 [dependencies.anyhow]
