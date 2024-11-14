@@ -66,6 +66,7 @@ extend-ignore-identifiers-re = [
   "^Tyre$",
   "PoDoFo",
   "_Flate",
+  "pointint",
   "DEPENDEES",
   "EPdf",
   "FileAttachement"
