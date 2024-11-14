@@ -1594,12 +1594,12 @@ end
 
 function elements.padded.output (_, _, _, _) end
 
--- Bevelled fractions are not part of MathML Core, and MathML4 does not
+-- Beveled fractions are not part of MathML Core, and MathML4 does not
 -- exactly specify how to compute the layout.
-elements.bevelledFraction = pl.class(elements.fraction) -- Inherit from fraction
-elements.fraction._type = "BevelledFraction"
+elements.beveledFraction = pl.class(elements.fraction) -- Inherit from fraction
+elements.fraction._type = "BeveledFraction"
 
-function elements.bevelledFraction:shape ()
+function elements.beveledFraction:shape ()
    local constants = self:getMathMetrics().constants
    local scaleDown = self:getScaleDown()
    local hSkew = constants.skewedFractionHorizontalGap * scaleDown
@@ -1628,7 +1628,7 @@ function elements.bevelledFraction:shape ()
    self.barX = self.numerator.relX + self.numerator.width
 end
 
-function elements.bevelledFraction:output (x, y, line)
+function elements.beveledFraction:output (x, y, line)
    local h = self.height:tonumber()
    local d = self.depth:tonumber()
    local barwidth = scaleWidth(self.barWidth, line):tonumber()

@@ -147,8 +147,8 @@ function ConvertMathML (_, content)
       if #children ~= 2 then
          SU.error("Wrong number of children in mfrac: " .. #children)
       end
-      return SU.boolean(content.options.bevelled, false)
-            and b.bevelledFraction(content.options, children[1], children[2])
+      return SU.boolean(content.options.beveled, false)
+            and b.beveledFraction(content.options, children[1], children[2])
          or b.fraction(content.options, children[1], children[2])
    elseif content.command == "msqrt" then
       local children = convertChildren(content)
@@ -214,7 +214,7 @@ local function handleMath (_, mbox, options)
 
    if mode == "display" then
       -- See https://github.com/sile-typesetter/sile/issues/2160
-      --    We are not excactly doing the right things here with respect to
+      --    We are not exactly doing the right things here with respect to
       --    paragraphing expectations.
       -- The vertical penalty will flush the previous paragraph, if any.
       SILE.call("penalty", { penalty = SILE.settings:get("math.predisplaypenalty"), vertical = true })
