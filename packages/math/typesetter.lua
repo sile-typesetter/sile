@@ -214,7 +214,7 @@ local function handleMath (_, mbox, options)
 
    if mode == "display" then
       -- See https://github.com/sile-typesetter/sile/issues/2160
-      --    We are not excactly doing the right things here with respect to
+      --    We are not exactly doing the right things here with respect to
       --    paragraphing expectations.
       -- The vertical penalty will flush the previous paragraph, if any.
       SILE.call("penalty", { penalty = SILE.settings:get("math.predisplaypenalty"), vertical = true })
