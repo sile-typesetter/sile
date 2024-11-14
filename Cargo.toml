@@ -73,6 +73,8 @@ extend-ignore-identifiers-re = [
 ]
 
   [package.metadata.typos.default.extend-words]
+  beveled = "bevelled"
+  bevelled = "bevelled"
   craters = "creators"
   neet = "need"
 
