@@ -11,7 +11,7 @@
 ## What is SILE?
 
 SILE is a [typesetting][typesetting] system; its job is to produce beautiful printed documents.
-Conceptually, SILE is similar to [TeX][tex]—from which it borrows some concepts and even syntax and algorithms—but the similarities end there.
+Conceptually, SILE is similar to [TeX][tex]—from which it borrows some concepts and algorithms—but the similarities end there.
 Rather than being a derivative of the TeX family SILE is a new typesetting and layout engine written from the ground up using modern technologies and borrowing some ideas from graphical systems such as [InDesign][indesign].
 
 ## Where does it run?
