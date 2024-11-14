@@ -5,7 +5,7 @@
 Stretchy parentheses, text, MathML:
 <mathml>
   <mrow>
-    <mi>Γ</mi><mo>(</mo><mfrac><mi>ζ</mi><mn>2</mn></mfrac><mo>)</mo>
+    <mi mathvariant="normal">Γ</mi><mo>(</mo><mfrac><mi>ζ</mi><mn>2</mn></mfrac><mo>)</mo>
     <mo>+</mo> <msup><mi>x</mi><mn>2</mn></msup>
     <mrow>
       <mo>(</mo><mi>x</mi><mo>+</mo><mn>1</mn><mo>)</mo>
@@ -16,7 +16,7 @@ Stretchy parentheses, text, MathML:
 Stretchy parentheses, display, MathML:
 <mathml mode="display">
   <mrow>
-    <mi>Γ</mi><mo>(</mo><mfrac><mi>ζ</mi><mn>2</mn></mfrac><mo>)</mo>
+    <mi mathvariant="normal">Γ</mi><mo>(</mo><mfrac><mi>ζ</mi><mn>2</mn></mfrac><mo>)</mo>
     <mo>+</mo> <msup><mi>x</mi><mn>2</mn></msup>
     <mrow>
       <mo>(</mo><mi>x</mi><mo>+</mo><mn>1</mn><mo>)</mo>

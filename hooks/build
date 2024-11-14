@@ -1,14 +1,14 @@
 #!/usr/bin/env sh
 set -e
 
-: "${ARCHTAG:=}"
+: "${ARCHTAG:=latest}"
 : "${DOCKERFILE:=Dockerfile}"
 
 REVISION=$(git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g')
 
 RUNTIME_DEPS='fontconfig freetype2 gentium-plus-font glibc harfbuzz icu libpng luajit zlib'\
-' libertinus-font luarocks noto-fonts-cjk ttf-hack'
-BUILD_DEPS='cargo git jq lua51 poppler'
+' otf-libertinus luarocks noto-fonts-cjk ttf-hack'
+BUILD_DEPS='base-devel cargo clang git jq mold poppler'
 
 : "${DOCKER_BUILDKIT:=1}"
 export DOCKER_BUILDKIT

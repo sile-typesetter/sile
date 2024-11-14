@@ -427,7 +427,7 @@ local parseDeviceTable = function (offset, fd)
    elseif header.deltaFormat == 0x0003 then
       buf = vstruct.read("> " .. math.ceil(size / 2) .. "*[2| i8 i8 ]", fd)
    else
-      SU.warn("DeltaFormat " .. header.deltaFormat .. " in Device Table is not supported. Ignore the table.")
+      SU.warn("DeltaFormat " .. header.deltaFormat .. " in Device Table is not supported; ignore the table")
       return nil
    end
    local deviceTable = {}

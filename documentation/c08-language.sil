@@ -155,7 +155,7 @@ The default is \code{left}.
 \font[family=Noto Sans Ethiopic]{ሰላም፡ልዑል}
 
 \\set[parameter=languages.am.justification,value=centered]
-\font[family=Noto Sans Ethiopic]{ሰላም፡ልዑል}
+\font[family=Noto Sans Ethiopic]{ሰላም፡ልዑል}​
 \end{autodoc:codeblock}
 
 \font[family=Noto Sans Ethiopic,language=am]{ሰላም፡ልዑል}

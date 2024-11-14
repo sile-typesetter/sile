@@ -11,7 +11,6 @@ fn main() -> Result<()> {
         .unwrap_or("")
         .to_string();
     let app = Cli::command().version(version).long_version(long_version);
-    #[allow(unused_variables)]
     let matches = app.get_matches();
     let args = Cli::from_arg_matches(&matches).expect("Unable to parse arguments");
     sile::run(

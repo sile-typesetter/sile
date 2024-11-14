@@ -31,7 +31,7 @@ SILE.languageSupport = {
             )
          )
       end
-      local ftlresource = string.format("i18n.%s", language)
+      local ftlresource = string.format("languages.%s.messages", language)
       SU.debug("fluent", "Loading FTL resource", ftlresource, "into locale", language)
       -- This needs to be set so that we load localizations into the right bundle,
       -- but this breaks the sync enabled by the hook in the document.language

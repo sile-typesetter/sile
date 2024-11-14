@@ -21,10 +21,11 @@ function settings:_init ()
       default = "en",
       hook = function (language)
          if SILE.scratch.loaded_languages and not SILE.scratch.loaded_languages[language] then
-            SU.warn(([[Setting document.language to '%s', but support for '%s' has not been loaded!
+            SU.warn(([[
+               Setting document.language to '%s', but support for '%s' has not been loaded
 
-  Consider invoking \language[main=%s] which loads language support before
-  setting it or manually calling SILE.languageSupport.loadLanguage("%s").
+               Consider invoking \language[main=%s] which loads language support before
+               setting it or manually calling SILE.languageSupport.loadLanguage("%s").
             ]]):format(language, language, language, language))
          end
          fluent:set_locale(language)
@@ -256,7 +257,7 @@ function settings:set (parameter, value, makedefault, reset)
    end
    if reset then
       if makedefault then
-         SU.error("Can't set a new default and revert to and old default setting at the same time!")
+         SU.error("Can't set a new default and revert to and old default setting at the same time")
       end
       value = self.defaults[parameter]
    else

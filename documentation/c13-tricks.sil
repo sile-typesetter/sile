@@ -447,7 +447,7 @@ Sometimes it’s useful for you to try out Lua code within the SILE environment;
 If you call SILE with no input file names, it enters the REPL:
 
 \begin{autodoc:codeblock}
-\sileversion
+​\sileversion
 > \em{l = SILE.types.length("22mm")}
 > \em{l.length}
 22mm

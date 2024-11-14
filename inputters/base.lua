@@ -2,10 +2,10 @@
 -- @interfaces inputters
 
 local _deprecated = [[
-  You appear to be using a document class '%s' programmed for SILE <= v0.12.5.
-  This system was refactored in v0.13.0 and the shims trying to make it
-  work temporarily without refactoring your classes have been removed
-  in v0.14.0. Please see v0.13.0 release notes for help.
+   You appear to be using a document class '%s' programmed for SILE <= v0.12.5.
+   This system was refactored in v0.13.0 and the shims trying to make it
+   work temporarily without refactoring your classes have been removed
+   in v0.14.0. Please see v0.13.0 release notes for help.
 ]]
 
 local inputter = pl.class()
@@ -49,6 +49,10 @@ end
 function inputter:process (doc)
    -- Input parsers can already return multiple ASTs, but so far we only process one
    local tree = self:parse(doc)[1]
+   if SU.debugging("inputter") and SU.debugging("ast") then
+      SU.debug("inputter", "Dumping AST tree before processing...\n")
+      SU.dump(tree)
+   end
    self:requireClass(tree)
    return SILE.process(tree)
 end
@@ -64,7 +68,7 @@ local function process_ambles (ambles)
          SILE.processFile(amble)
       elseif type(amble) == "function" then
          SU.warn(
-            "Passing functions as pre/postambles is not officially sactioned and may go away without being marked as a breaking change."
+            "Passing functions as pre/postambles is not officially sactioned and may go away without being marked as a breaking change"
          )
          amble()
       elseif type(amble) == "table" then

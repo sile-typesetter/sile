@@ -42,8 +42,11 @@ local mathGrammar = function (_ENV)
          return ret
       end
    local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
+   -- Simple amsmath-like \text command (no embedded math)
+   local textgroup = P"{" * C((1-P"}")^1) * (P"}" + E("`}` expected"))
    local element_no_infix =
       V"def" +
+      V"text" + -- Important: before command
       V"command" +
       group +
       V"argument" +
@@ -115,6 +118,11 @@ local mathGrammar = function (_ENV)
    sub = element_no_infix * _ * P"_" * _ * element_no_infix
    atom = natural + C(utf8code - S"\\{}%^_&") +
       (P"\\{" + P"\\}") / function (s) return string.sub(s, -1) end
+   text = (
+         P"\\text" *
+         Cg(parameters, "options") *
+         textgroup
+      )
    command = (
          P"\\" *
          Cg(ctrl_sequence_name, "command") *
@@ -252,6 +260,49 @@ local compileToStr = function (argEnv, mathlist)
    end
 end
 
+local function isOperatorKind (tree, typeOfAtom, typeOfSymbol)
+   if not tree then
+      return false -- safeguard
+   end
+   if tree.command ~= "mo" then
+      return false
+   end
+   -- Case \mo[atom=big]{ops}
+   -- E.g. \mo[atom=big]{lim}
+   if tree.options and tree.options.atom == typeOfAtom then
+      return true
+   end
+   -- Case \mo{ops} where ops is registered with the resquested type
+   -- E.g. \mo{∑) or \sum
+   if tree[1] and symbolDefaults[tree[1]] and symbolDefaults[tree[1]].atom == typeOfSymbol then
+      return true
+   end
+   return false
+end
+
+local function isMoveableLimits (tree)
+   if tree.command ~= "mo" then
+      return false
+   end
+   if tree.options and SU.boolean(tree.options.movablelimits, false) then
+      return true
+   end
+   if tree[1] and symbolDefaults[tree[1]] and SU.boolean(symbolDefaults[tree[1]].movablelimits, false) then
+      return true
+   end
+   return false
+end
+local function isCloseOperator (tree)
+   return isOperatorKind(tree, "close", atomType.closeSymbol)
+end
+local function isOpeningOperator (tree)
+   return isOperatorKind(tree, "open", atomType.openingSymbol)
+end
+
+local function isAccentSymbol (symbol)
+   return symbolDefaults[symbol] and symbolDefaults[symbol].atom == atomType.accentSymbol
+end
+
 local function compileToMathML_aux (_, arg_env, tree)
    if type(tree) == "string" then
       return tree
@@ -298,12 +349,56 @@ local function compileToMathML_aux (_, arg_env, tree)
       -- Turn mathlist into `mrow` except if it has exactly one `mtr` or `mtd`
       -- child.
       -- Note that `def`s have already been compiled away at this point.
-      if #tree == 1 and (tree[1].command == "mtr" or tree[1].command == "mtd") then
-         return tree[1]
+      if #tree == 1 then
+         if tree[1].command == "mtr" or tree[1].command == "mtd" then
+            return tree[1]
+         else
+            tree.command = "mrow"
+         end
       else
+         -- Re-wrap content from opening to closing operator in an implicit mrow,
+         -- so stretchy operators apply to the correct span of content.
+         local children = {}
+         local stack = {}
+         for _, child in ipairs(tree) do
+            if isOpeningOperator(child) then
+               table.insert(stack, children)
+               local mrow = {
+                  command = "mrow",
+                  options = {},
+                  child,
+               }
+               table.insert(children, mrow)
+               children = mrow
+            elseif isCloseOperator(child) then
+               table.insert(children, child)
+               if #stack > 0 then
+                  children = table.remove(stack)
+               end
+            elseif
+               (child.command == "msubsup" or child.command == "msub" or child.command == "msup")
+               and isCloseOperator(child[1]) -- child[1] is the base
+            then
+               if #stack > 0 then
+                  -- Special case for closing operator with sub/superscript:
+                  -- (....)^i must be interpreted as {(....)}^i, not as (...{)}^i
+                  -- Push the closing operator into the mrow
+                  table.insert(children, child[1])
+                  -- Move the mrow into the msubsup, replacing the closing operator
+                  child[1] = children
+                  -- And insert the msubsup into the parent
+                  children = table.remove(stack)
+                  children[#children] = child
+               else
+                  table.insert(children, child)
+               end
+            else
+               table.insert(children, child)
+            end
+         end
+         tree = #stack > 0 and stack[1] or children
          tree.command = "mrow"
       end
-      tree.command = "mrow"
    elseif tree.id == "atom" then
       local codepoints = {}
       for _, cp in luautf8.codes(tree[1]) do
@@ -317,6 +412,12 @@ local function compileToMathML_aux (_, arg_env, tree)
             or cp >= SU.codepoint("a") and cp <= SU.codepoint("z")
             or cp >= SU.codepoint("Α") and cp <= SU.codepoint("Ω")
             or cp >= SU.codepoint("α") and cp <= SU.codepoint("ω")
+            or cp == SU.codepoint("ϑ")
+            or cp == SU.codepoint("ϕ")
+            or cp == SU.codepoint("ϰ")
+            or cp == SU.codepoint("ϱ")
+            or cp == SU.codepoint("ϖ")
+            or cp == SU.codepoint("ϵ")
          )
       then
          tree.command = "mi"
@@ -328,21 +429,13 @@ local function compileToMathML_aux (_, arg_env, tree)
       tree.options = {}
    -- Translate TeX-like sub/superscripts to `munderover` or `msubsup`,
    -- depending on whether the base is a big operator
-   elseif tree.id == "sup" and tree[1].command == "mo" and tree[1].atom == atomType.bigOperator then
+   elseif tree.id == "sup" and isMoveableLimits(tree[1]) then
       tree.command = "mover"
-   elseif tree.id == "sub" and tree[1].command == "mo" and symbolDefaults[tree[1][1]].atom == atomType.bigOperator then
+   elseif tree.id == "sub" and isMoveableLimits(tree[1]) then
       tree.command = "munder"
-   elseif
-      tree.id == "subsup"
-      and tree[1].command == "mo"
-      and symbolDefaults[tree[1][1]].atom == atomType.bigOperator
-   then
+   elseif tree.id == "subsup" and isMoveableLimits(tree[1]) then
       tree.command = "munderover"
-   elseif
-      tree.id == "supsub"
-      and tree[1].command == "mo"
-      and symbolDefaults[tree[1][1]].atom == atomType.bigOperator
-   then
+   elseif tree.id == "supsub" and isMoveableLimits(tree[1]) then
       tree.command = "munderover"
       local tmp = tree[2]
       tree[2] = tree[3]
@@ -365,6 +458,8 @@ local function compileToMathML_aux (_, arg_env, tree)
          return compileToMathML_aux(nil, compiledArgs, tree[1])
       end)
       return nil
+   elseif tree.id == "text" then
+      tree.command = "mtext"
    elseif tree.id == "command" and commands[tree.command] then
       local argTypes = commands[tree.command][1]
       local cmdFun = commands[tree.command][2]
@@ -405,7 +500,36 @@ local function compileToMathML_aux (_, arg_env, tree)
       return res
    elseif tree.id == "command" and symbols[tree.command] then
       local atom = { id = "atom", [1] = symbols[tree.command] }
-      tree = compileToMathML_aux(nil, arg_env, atom)
+      if isAccentSymbol(symbols[tree.command]) and #tree > 0 then
+         -- LaTeX-style accents \vec{v} = <mover accent="true"><mi>v</mi><mo>→</mo></mover>
+         local accent = {
+            id = "command",
+            command = "mover",
+            options = {
+               accent = "true",
+            },
+         }
+         accent[1] = compileToMathML_aux(nil, arg_env, tree[1])
+         accent[2] = compileToMathML_aux(nil, arg_env, atom)
+         tree = accent
+      elseif #tree > 0 then
+         -- Play cool with LaTeX-style commands that don't take arguments:
+         -- Edge case for non-accent symbols so we don't loose bracketed groups
+         -- that might have been seen as command arguments.
+         -- Ex. \langle{x}\rangle (without space after \langle)
+         local sym = compileToMathML_aux(nil, arg_env, atom)
+         -- Compile all children in-place
+         for i, child in ipairs(tree) do
+            tree[i] = compileToMathML_aux(nil, arg_env, child)
+         end
+         -- Insert symbol at the beginning,
+         -- And add a wrapper mrow to be unwrapped in the parent.
+         table.insert(tree, 1, sym)
+         tree.command = "mrow"
+         tree.id = "wrapper"
+      else
+         tree = compileToMathML_aux(nil, arg_env, atom)
+      end
    elseif tree.id == "argument" then
       if arg_env[tree.index] then
          return arg_env[tree.index]
@@ -425,7 +549,7 @@ local function printMathML (tree)
    if tree.options then
       local options = {}
       for k, v in pairs(tree.options) do
-         table.insert(options, k .. "=" .. v)
+         table.insert(options, k .. "=" .. tostring(v))
       end
       if #options > 0 then
          result = result .. "[" .. table.concat(options, ", ") .. "]"
@@ -476,8 +600,24 @@ compileToMathML(
    convertTexlike(nil, {
       [==[
   \def{frac}{\mfrac{#1}{#2}}
+  \def{sqrt}{\msqrt{#1}}
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
+
+  \def{lim}{\mo[movablelimits=true]{lim}}
+
+  % From amsmath:
+  \def{to}{\mo[atom=bin]{→}}
+  \def{gcd}{\mo[movablelimits=true]{gcd}}
+  \def{sup}{\mo[movablelimits=true]{sup}}
+  \def{inf}{\mo[movablelimits=true]{inf}}
+  \def{max}{\mo[movablelimits=true]{max}}
+  \def{min}{\mo[movablelimits=true]{min}}
+  % Those use U+202F NARROW NO-BREAK SPACE in their names
+  \def{limsup}{\mo[movablelimits=true]{lim sup}}
+  \def{liminf}{\mo[movablelimits=true]{lim inf}}
+  \def{projlim}{\mo[movablelimits=true]{proj lim}}
+  \def{injlim}{\mo[movablelimits=true]{inj lim}}
 
   % Standard spaces gleaned from plain TeX
   \def{thinspace}{\mspace[width=thin]}
@@ -495,9 +635,45 @@ compileToMathML(
   \def{quad}{\mspace[width=1em]}
   \def{qquad}{\mspace[width=2em]}
 
+  % MathML says a single-character identifier must be in italic by default.
+  % TeX however has the following Greek capital macros rendered in upright shape.
+  % It so common that you've probably never seen Γ(x) written with an italic gamma.
+  \def{Gamma}{\mi[mathvariant=normal]{Γ}}
+  \def{Delta}{\mi[mathvariant=normal]{Δ}}
+  \def{Theta}{\mi[mathvariant=normal]{Θ}}
+  \def{Lambda}{\mi[mathvariant=normal]{Λ}}
+  \def{Xi}{\mi[mathvariant=normal]{Ξ}}
+  \def{Pi}{\mi[mathvariant=normal]{Π}}
+  \def{Sigma}{\mi[mathvariant=normal]{Σ}}
+  \def{Upsilon}{\mi[mathvariant=normal]{Υ}}
+  \def{Phi}{\mi[mathvariant=normal]{Φ}}
+  \def{Psi}{\mi[mathvariant=normal]{Ψ}}
+  \def{Omega}{\mi[mathvariant=normal]{Ω}}
+  % Some calligraphic (script), fraktur, double-struck styles:
+  % Convenience for compatibility with LaTeX.
+  \def{mathcal}{\mi[mathvariant=script]{#1}}
+  \def{mathfrak}{\mi[mathvariant=fraktur]{#1}}
+  \def{mathbb}{\mi[mathvariant=double-struck]{#1}}
+  % Some style-switching commands for compatibility with LaTeX math.
+  % Caveat emptor: LaTeX would allow these to apply to a whole formula.
+  % We can't do that in MathML, as mathvariant applies to token elements only.
+  % Also note that LaTeX and related packages may have many more such commands.
+  % We only provide a few common ('historical') ones here.
+  \def{mathrm}{\mi[mathvariant=normal]{#1}}
+  \def{mathbf}{\mi[mathvariant=bold]{#1}}
+  \def{mathit}{\mi[mathvariant=italic]{#1}}
+  \def{mathsf}{\mi[mathvariant=sans-serif]{#1}}
+  \def{mathtt}{\mi[mathvariant=monospace]{#1}}
+
   % Modulus operator forms
   \def{bmod}{\mo{mod}}
   \def{pmod}{\quad(\mo{mod} #1)}
+
+  % Phantom commands from TeX/LaTeX
+  \def{phantom}{\mphantom{#1}}
+  \def{hphantom}{\mpadded[height=0, depth=0]{\mphantom{#1}}}
+  \def{vphantom}{\mpadded[width=0]{\mphantom{#1}}}
+  %\mphantom[special=v]{#1}}}
 ]==],
    })
 )

@@ -110,9 +110,7 @@ command.” So if we want to a command which makes things red, we can say:
 
 \begin[type=autodoc:codeblock]{raw}
 \define[command=red]{\color[color=red]{\process}}
-
 …
-
 Making things red is a \red{silly} way to emphasize text.
 \end{raw}
 
