@@ -1,36 +1,49 @@
 [workspace]
 resolver = "2"
-members = [
-  ".",
-  "rusile",
-]
+members = [ ".", "rusile" ]
 
-[workspace.package]
-version = "0.15.5"
-edition = "2021"
-rust-version = "1.71.0"
-authors = [
+  [workspace.package]
+  version = "0.15.5"
+  edition = "2021"
+  rust-version = "1.71.0"
+  authors = [
   "Simon Cozens",
   "Caleb Maclennan <caleb@alerque.com>",
   "Olivier Nicole",
   "Didier Willis"
 ]
-homepage = "https://sile-typesetter.org"
-repository = "https://github.com/sile-typesetter/sile"
-license = "MIT"
+  homepage = "https://sile-typesetter.org"
+  repository = "https://github.com/sile-typesetter/sile"
+  license = "MIT"
+
+[workspace.dependencies.mlua]
+version = "0.10"
+features = [ "anyhow" ]
 
 [package]
 name = "sile"
 description = "Simon’s Improved Layout Engine"
 readme = "README.md"
 build = "build-aux/build.rs"
-version.workspace = true
-edition.workspace = true
-rust-version.workspace = true
-authors.workspace = true
-homepage.workspace = true
-repository.workspace = true
-license.workspace = true
+version = "0.15.6"
+
+  [package.edition]
+  workspace = true
+
+  [package.rust-version]
+  workspace = true
+
+  [package.authors]
+  workspace = true
+
+  [package.homepage]
+  workspace = true
+
+  [package.repository]
+  workspace = true
+
+  [package.license]
+  workspace = true
 
 [package.metadata.bacon.jobs]
 cmd = [ "cargo", "build", "--color", "always" ]
@@ -110,10 +123,6 @@ zsh = [ "completions" ]
 
 [profile.release]
 lto = true
-
-[workspace.dependencies.mlua]
-version = "0.10"
-features = [ "anyhow" ]
 
 [dependencies.anyhow]
 version = "1.0"

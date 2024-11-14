@@ -307,9 +307,9 @@ dependencies = [
 
 [[package]]
 name = "cpufeatures"
-version = "0.2.15"
+version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ca741a962e1b0bff6d724a1a0958b686406e853bb14061f218562e1896f95e6"
+checksum = "608697df725056feaccfa42cffdaeeec3fccc4ffc38358ecd19b243e716a78e0"
 dependencies = [
  "libc",
 ]
@@ -1668,7 +1668,7 @@ dependencies = [
 
 [[package]]
 name = "sile"
-version = "0.15.5"
+version = "0.15.6"
 dependencies = [
  "anyhow",
  "clap",
