@@ -33,4 +33,16 @@ describe("rusile", function ()
          end)
       end)
    end)
+
+   describe("setenv", function ()
+      local setenv = rusile.setenv
+
+      it("should effectively set variables before executing system commands", function ()
+         local before = os.getenv("FOO")
+         assert.is.equal(type(before), "nil")
+         setenv("FOO", "bar")
+         local after = os.getenv("FOO")
+         assert.is.equal(after, "bar")
+      end)
+   end)
 end)

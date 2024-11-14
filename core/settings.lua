@@ -1,3 +1,5 @@
+local setenv = require("rusile").setenv
+
 --- core settings instance
 --- @module SILE.settings
 
@@ -29,6 +31,8 @@ function settings:_init ()
             ]]):format(language, language, language, language))
          end
          fluent:set_locale(language)
+         os.setlocale(language)
+         setenv("LANG", language)
       end,
       help = "Locale for localized language support",
    })
