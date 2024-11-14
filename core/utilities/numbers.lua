@@ -135,18 +135,25 @@ setmetatable(formatNumber, {
             "0.14.6",
             "0.16.0",
             [[
-  Previous syntax was SU.formatNumber(num, format[, case]) with a format string
-  New syntax is SU.formatNumber(num, options[, case]) with an options table,
-  possibly containing:
-    - system: a numbering system string, e.g. "latn" (= "arabic"), "roman", "arab", etc.
-      With the addition of "alpha" and "greek".
-      Casing is taken into account (e.g. roman, Roman, ROMAN) unless specified
-    - style: a format style string, i.e. "default", "decimal", "ordinal", "string")
-      E.g. in English and latin script:   1234        1,234     1,124th    one thousand...
-      Possibly extended by additional language-specific formatting rules.
-  Note that the new syntax doesn't handle casing on the format style, for separation of
-  concerns.
-]]
+               Previous syntax was SU.formatNumber(num, format[, case]) with a format string
+               New syntax is SU.formatNumber(num, options[, case]) with an options table,
+               possibly containing:
+
+                 - system: a numbering system string
+
+                   e.g. "latn" (= "arabic"), "roman", "arab", etc. with the addition of
+                   "alpha" and "greek". Casing is taken into account (e.g. roman, Roman,
+                   ROMAN) unless specified.
+
+                 - style: a format style string
+
+                   i.e. "default", "decimal", "ordinal", "string"). E.g. in English and latin
+                   script: 1234    1,234    1,124th    one thousand    ...
+                   Possibly extended by additional language-specific formatting rules.
+
+               Note that the new syntax doesn't handle casing on the format style, for
+               separation of concerns.
+            ]]
          )
          if not case then
             if options:match("^%l") then

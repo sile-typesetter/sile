@@ -1,0 +1,39 @@
+#syntax=docker/dockerfile:1.2
+
+FROM docker.io/library/archlinux:base
+
+ARG RUNTIME_DEPS
+ARG BUILD_DEPS
+
+# Freshen all base system packages
+RUN pacman --needed --noconfirm -Syuq
+
+# Install build and run-time dependencies
+RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS $BUILD_DEPS
+
+# Remove autotools, building the source distributions should not require them
+RUN pacman --noconfirm -Rn autoconf automake libtool base-devel hwloc onetbb clang mold
+
+# Setup LuaRocks for use with LuaJIT roughly matching SILE's internal VM
+RUN luarocks config lua_version 5.1 && \
+    luarocks config lua_interpreter luajit && \
+    luarocks config variables.LUA "$(command -v luajit)" && \
+    luarocks config variables.LUA_INCDIR /usr/include/luajit-2.1/
+
+# Set at build time, forces Docker’s layer caching to reset at this point
+ARG VERSION
+
+COPY ./sile-$VERSION /src
+WORKDIR /src
+
+RUN ./configure \
+        --with-system-lua-sources \
+        --without-system-luarocks \
+        --without-manual
+RUN make
+RUN make install
+
+# We can't properly test path handling from inside the source directory!
+WORKDIR /tmp
+
+RUN sile --version | grep $VERSION

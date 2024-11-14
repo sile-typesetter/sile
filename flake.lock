@@ -21,11 +21,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1710146030,
-        "narHash": "sha256-SZ5L6eA7HJ/nmkzGG7/ISclqe6oZdOZTNoesiInkXPQ=",
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "b1d9ab70662946ef0850d488da1c9019f3a9752a",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
         "type": "github"
       },
       "original": {
@@ -57,11 +57,11 @@
     "libtexpdf-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1662109873,
-        "narHash": "sha256-yThIb+D/m1xeJZESojRd3u4OugbWl7f2s8oJohspwZs=",
+        "lastModified": 1725528813,
+        "narHash": "sha256-pWpDdb7oy3XhrDKTb7sR0WleHBnGgjM8KZi6Q8WpsN4=",
         "owner": "sile-typesetter",
         "repo": "libtexpdf",
-        "rev": "736a5e7530c13582ea704a061a358d0caa774916",
+        "rev": "1891bee5e0b73165e4a259f910d3ea3fe1df0b42",
         "type": "github"
       },
       "original": {
@@ -72,11 +72,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1717459389,
-        "narHash": "sha256-I8/plBsua4/NZ5bKgj+z7/ThiWuud1YFwLsn1QQ5PgE=",
+        "lastModified": 1731245184,
+        "narHash": "sha256-vmLS8+x+gHRv1yzj3n+GTAEObwmhxmkkukB2DwtJRdU=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "3b01abcc24846ae49957b30f4345bab4b3f1d14b",
+        "rev": "aebe249544837ce42588aa4b2e7972222ba12e8f",
         "type": "github"
       },
       "original": {

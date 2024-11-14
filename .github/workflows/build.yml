@@ -49,7 +49,7 @@ jobs:
           ./bootstrap.sh
           ./configure \
             --enable-developer-mode \
-            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false \
+            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false TYPOS=cat \
             --disable-font-variations \
             --with-manual \
             ${{ matrix.configuration[1] }}
@@ -63,18 +63,18 @@ jobs:
         run: |
           make dist
       - name: Upload source dist artifact
-        if: ${{ matrix.configuration[0] == 'dynamic' && !contains(github.ref, 'refs/tags/v') }}
+        if: matrix.configuration[0] == 'dynamic' && !startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
           name: sile-${{ env.VERSION }}
           path: sile-${{ env.VERSION }}.zip
       - name: Append architecture to static binary
-        if: ${{ matrix.configuration[0] == 'static' }}
+        if: matrix.configuration[0] == 'static'
         run: |
           cp sile sile-${{ env.CARCH }}
           sha256sum sile-${{ env.CARCH }} | tee -a sile-${{ env.VERSION }}.sha256.txt
       - name: Upload static binary artifact
-        if: ${{ matrix.configuration[0] == 'static' && !contains(github.ref, 'refs/tags/v') }}
+        if: matrix.configuration[0] == 'static' && !startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
           name: sile-${{ env.CARCH }}
@@ -90,6 +90,43 @@ jobs:
             sile-${{ env.VERSION }}.tar.zst
             sile-${{ env.CARCH }}
             sile-${{ env.VERSION }}.sha256.txt
+
+  build-from-dist:
+    runs-on: ubuntu-22.04
+    name: Build from source tarball without automake
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Cache lua_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            lua_modules
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install jq libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libluajit-5.1-dev libpng-dev luajit lua-sec lua-socket lua-zlib-dev luarocks
+      - name: Configure
+        run: |
+          ./bootstrap.sh
+          ./configure \
+            --enable-developer-mode \
+            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false TYPOS=cat FCMATCH=true PDFINFO=false CARGO=true \
+            --disable-font-variations \
+            --with-system-lua-sources \
+            --without-manual
+          echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
+          echo "MAKEFLAGS=-j$(nproc) -Otarget" >> $GITHUB_ENV
+      - name: Package
+        run: |
+          make fake-manual
+          make distdir
+      - name: Build from dist tree
+        run: |
+          make docker-test-dist
 
   build-nix:
     runs-on: ubuntu-22.04
@@ -107,9 +144,9 @@ jobs:
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v12
+        uses: DeterminateSystems/nix-installer-action@v15
       - name: Cache Nix dependencies
-        uses: DeterminateSystems/magic-nix-cache-action@v7
+        uses: DeterminateSystems/magic-nix-cache-action@v8
       - name: Setup developer environment
         run: |
           nix develop --command ./bootstrap.sh

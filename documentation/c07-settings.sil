@@ -41,7 +41,7 @@ or:
 \end{raw}
 
 If the \autodoc:command{\set} command is provided with any content, then the change of
-setting is localised to the content of the argument. In other words, this code:
+setting is localized to the content of the argument. In other words, this code:
 
 \begin[type=autodoc:codeblock]{raw}
 \set[parameter=typesetter.orphanpenalty, value=250]{\lorem}
@@ -365,13 +365,9 @@ Harfbuzz, run \code{sile --debug=versions} on any file:
 
 \begin[type=autodoc:codeblock]{raw}
 $ sile --debug=versions hello.sil
-
 ...
-
 Harfbuzz version: 2.4.0
-
 Shapers enabled: graphite2, ot, coretext, coretext_aat, fallback
-
 ...
 \end{raw}
 

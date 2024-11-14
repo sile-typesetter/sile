@@ -38,13 +38,13 @@ end
 
 local function _error_if_immutable (input)
    if type(input) == "table" and not input._mutable then
-      SU.error("Not so fast, we can't do mutating arithmetic except on 'pt' unit measurements!", true)
+      SU.error("Not so fast, we can't do mutating arithmetic except on 'pt' unit measurements", true)
    end
 end
 
 local function _error_if_relative (a, b)
    if type(a) == "table" and a.relative or type(b) == "table" and b.relative then
-      SU.error("Cannot do arithmetic on a relative measurement without explicitly absolutizing it.", true)
+      SU.error("Cannot do arithmetic on a relative measurement without explicitly absolutizing it", true)
    end
 end
 

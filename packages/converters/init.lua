@@ -124,7 +124,6 @@ We do this by registering a converter with the \autodoc:command{\converters:regi
 
 \begin[type=autodoc:codeblock]{raw}
 \use[module=packages.converters]
-
 \converters:register[from=.gif,to=.jpg,command=convert $SOURCE $TARGET]
 \end{raw}
 
@@ -140,7 +139,6 @@ This trick also works for text files:
 
 \begin[type=autodoc:codeblock]{raw}
 \converters:register[from=.md, to=.sil, command=pandoc -o $TARGET $SOURCE]
-
 \include[src=document.md]
 \end{raw}
 \end{document}

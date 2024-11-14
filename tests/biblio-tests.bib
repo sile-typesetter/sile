@@ -1,4 +1,18 @@
-% -- article
+-- SILE skips these fields:
+@preamble{"\newcommand{\noop}[1]{}"}
+@comment{jabref-meta: databaseType:bibtex;}
+
+-- strings and concatenation
+@string{journalof = {The Journal of }}
+@string{myjournal = journalof # {Typography}}
+
+-- xdata
+% Not supposed to be referenced, but supplementing other entries.
+@xdata{sileorg,
+  publisher = "SILE " # "organization",
+}
+
+-- article
 %
 % An article from a journal or magazine.
 % Required fields: author, title, journal, year.
@@ -7,11 +21,11 @@
 @article{MinimalArticle,
   author   = "Doe, John",
   title    = "My Awesome Article",
-  journal  = "The Journal of Typography",
+  journaltitle  = myjournal,
   year     = 2022,
 }
 
-% With month remove, as a check for the chigago style
+% With month removed, as a check for the chigago style
 @article{FullArticle,
   author   = "Doe, John",
   title    = "My Complete Article",
@@ -34,7 +48,7 @@
   url      = "https://technobabblers.com/2020/123"
 }
 
-% -- book
+-- book
 %
 % A book with an explicit publisher.
 % Required fields: author or editor, title, publisher, year.
@@ -43,14 +57,14 @@
 @book{MinimalBook1,
   author    = "Doe, John and Smith, Jane",
   title     = "A Minimal Book Entry",
-  publisher = "SILE organization",
+  xdata     = "sileorg",
   year      = 2020,
 }
 
 @book{MinimalBook2,
   editor    = "Doe, John and Smith, Jane",
   title     = "Another Minimal Book Entry",
-  publisher = "SILE organization",
+  xdata     = "sileorg",
   address   = "London",
   year      = 2022,
 }
@@ -58,8 +72,7 @@
 @book{FullBook,
   author    = "Doe, John and Smith, Jane",
   title     = "A Complete Book",
-  publisher = "SILE organization",
-  address   = "London",
+  xdata     = "sileorg",
   year      = 2022,
   volume    = 10,
   series    = "The Collected Templates",
@@ -69,7 +82,7 @@
   note      = "illustrated",
 }
 
-% -- booklet
+-- booklet
 %
 % A work that is printed and bound, but without a named publisher or sponsoring institution.
 % Required field: title.
@@ -89,7 +102,7 @@
   note         = "Accessed: 2022"
 }
 
-% -- conference
+-- conference
 %
 % = Same as "inproceedings"
 
@@ -105,12 +118,12 @@
   pages     = "207--216",
   organization = "Ministry of Forestry",
   address   = "London",
-  publisher = "SILE orgnization",
+  publisher = "SILE organization",
   month     = apr,
   note      = "Incl. 5 figures",
 }
 
-% -- inbook
+-- inbook
 %
 % A part of a book, which may be a chapter (or section or whatever) and/or a range of pages.
 % Required fields: author or editor, title, chapter and/or pages, publisher, year.
@@ -141,7 +154,7 @@
   note      = "Revised edition"
 }
 
-% -- incollection
+-- incollection
 %
 % A part of a book having its own title.
 % Required fields: author, title, booktitle, publisher, year.
@@ -150,17 +163,13 @@
 @incollection{MinimalInCollection,
   author    = "Doe, John and Smith, Jane",
   title     = "Our In-Collection Contribution",
-  booktitle = "The Book of Everyting",
+  booktitle = "The Book of Everything",
   publisher = "Springer",
   year      = 2022,
 }
 
 @incollection{FullInCollection,
-  author    = "Doe, John and Smith, Jane",
-  title     = "Our In-Collection Contribution",
-  booktitle = "The Book of Everyting",
-  publisher = "Springer",
-  year      = 2022,
+  crossref  = {MinimalInCollection},
   publisher = "SILE organization",
   editor    = "Wills, Donald",
   volume    = 10,
@@ -173,7 +182,7 @@
   note      = "revised and augmented"
 }
 
-% -- inproceedings
+-- inproceedings
 %
 % An article in a conference proceedings.
 % Required fields: author, title, booktitle, year.
@@ -191,12 +200,12 @@
   pages     = "207--216",
   organization = "Ministry of Forestry",
   address   = "London",
-  publisher = "SILE orgnization",
+  publisher = "SILE organization",
   month     = apr,
   note      = "Incl. 5 figures",
 }
 
-% -- manual
+-- manual
 %
 % Technical documentation.
 % Required field: title.
@@ -217,7 +226,7 @@
   note         = "unabridged"
 }
 
-% -- mastersthesis
+-- mastersthesis
 %
 % A Master’s thesis.
 % Required fields: author, title, school, year.
@@ -241,7 +250,7 @@
   note    = "University archives"
 }
 
-% -- misc
+-- misc
 %
 % Use this type when nothing else fits...
 % Required fields: none. WE WILL ASSUME AT LEAST A TITLE!
@@ -256,7 +265,7 @@
   note         = "Last accessed: 2020-05-06"
 }
 
-% -- phdthesis
+-- phdthesis
 %
 % A PhD thesis
 % Required fields: author, title, school, year.
@@ -274,7 +283,7 @@
   note    = "University archives"
 }
 
-% -- proceedings
+-- proceedings
 %
 % The proceedings of a conference.
 % Required fields: title, year.
@@ -290,7 +299,7 @@
   year      = 2018
 }
 
-% -- techreport
+-- techreport
 %
 % A report published by a school or other institution, usually numbered within a series.
 % Required fields: author, title, institution, year.
@@ -308,7 +317,7 @@
   note        = "Technical note"
 }
 
-% -- unpublished
+-- unpublished
 %
 % A document having an author and title, but not formally published.
 % Required fields: author, title, note.
@@ -328,14 +337,12 @@
   year   = 2023,
 }
 
-@comment{jabref-meta: databaseType:bibtex;}
-
-% -- comment
+-- comment
 %
-% Should not be parsed
-% For test: same "MinimalArticle' key as above, to check this is not used!
+% Should not be parsed, as stated above.
+% For test: same "MinimalArticle' key as above, to check this is indeed not used!
 @comment{MinimalArticle,
-  Author    = {Doe, John},
-  Title     = {I SHALL NOT BE VISIBLE},
-  Year      = {2022},
+  author    = {Doe, John},
+  title     = {I SHALL NOT BE VISIBLE},
+  year      = {2022},
 }

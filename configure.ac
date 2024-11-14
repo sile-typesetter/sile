@@ -5,22 +5,31 @@ AC_CONFIG_MACRO_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign tar-pax dist-zstd dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
+# Load up re-usable m4 bits shared across Caleb's projects
 QUE_GIT_VERSION
 QUE_TRANSFORM_PACKAGE_NAME
 QUE_DEVELOPER_MODE
 QUE_DIST_CHECKSUMS
+
+# Extend the QUE checksums feature with support for the PDF manual
 SILE_DIST_CHECKSUMS
 
-# Checks for programs.
-AC_PROG_CC
-AC_PROG_OBJC
-
+# Check for and set variables for tooling used during our build process
 AC_PROG_AWK
+AC_PROG_CC
 AC_PROG_GREP
+AC_PROG_OBJC
 AC_PROG_SED
-
 QUE_PROGVAR([cmp])
 QUE_PROGVAR([find])
+QUE_PROGVAR([jq])
+QUE_PROGVAR([pdfinfo])
+QUE_PROGVAR([sort])
+QUE_PROGVAR([xargs])
+
+# Disable ranlib to avoid it being run on our rusile.so module, already LTO
+# optimized but libtool wants to relink it...
+RANLIB=:
 
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
@@ -70,16 +79,19 @@ AC_ARG_WITH([system-luarocks],
 AM_CONDITIONAL([SYSTEM_LUAROCKS], [test "x$with_system_luarocks" = "xyes"])
 AC_SUBST([SYSTEM_LUAROCKS])
 
+AC_ARG_WITH([vendored-luarocks-dir],
+            AS_HELP_STRING([--with-vendored-luarocks-dir=PATH],
+                           [Specify a custom vendored location from which to load ‘system’ luarocks]),
+            [],
+            [with_vendored_luarocks_dir=no])
+AM_CONDITIONAL([VENDORED_LUAROCKS], [test "x$with_vendored_luarocks_dir" != "xno"])
+AC_SUBST([VENDORED_LUAROCKS])
+
 AC_ARG_WITH([system-lua-sources],
             AS_HELP_STRING([--with-system-lua-sources],
                            [Don’t compile against vendored Lua sources, use system headers]))
 AM_CONDITIONAL([SYSTEM_LUA_SOURCES], [test "x$with_system_lua_sources" = "xyes"])
 AC_SUBST([SYSTEM_LUA_SOURCES])
-
-AC_ARG_WITH([luajit],
-            AS_HELP_STRING([--without-luajit],
-                           [Prefer LuaJIT over PUC Lua, even if the latter is newer]))
-AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" != "xno"])
 
 AC_ARG_WITH([manual],
             AS_HELP_STRING([--with-manual],
@@ -89,13 +101,6 @@ AM_CONDITIONAL([MANUAL], [test "x$with_manual" = "xyes"])
 AM_CONDITIONAL([FONT_DOWNLOAD_TOOLS], [test -z ${DEVELOPER_MODE_TRUE} || (test -z ${SOURCE_IS_DIST_TRUE} && test -z ${MANUAL_TRUE})])
 AC_SUBST([FONT_DOWNLOAD_TOOLS])
 
-AC_MSG_NOTICE([checking for SILE specific build dependencies])
-
-QUE_FONT(Gentium Plus)
-
-QUE_PROGVAR([pdfinfo])
-QUE_PROGVAR([jq])
-QUE_PROGVAR([xargs])
 AM_COND_IF([MANUAL], [
             QUE_PROGVAR([dot])
             QUE_PROGVAR([gs])
@@ -125,6 +130,7 @@ case $host_os in
         AC_MSG_RESULT([no])
         ;;
 esac
+AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
 
 AM_COND_IF([FONTCONFIG],
             [PKG_CHECK_MODULES(FONTCONFIG, [fontconfig],
@@ -147,7 +153,7 @@ AM_COND_IF([SYSTEM_LIBTEXPDF],
                             [AC_MSG_FAILURE([--with-system-libtexpdf was given, but test for libtexpdf failed])])],
             [AC_CONFIG_SUBDIRS([libtexpdf])])
 
-PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
+PKG_CHECK_MODULES(ICU, icu-uc icu-i18n icu-io, [
     with_icu=yes
 ],[
     AC_CHECK_TOOL(ICU_CONFIG, icu-config, no)
@@ -161,40 +167,7 @@ PKG_CHECK_MODULES(ICU, icu-uc icu-io, [
         AC_MSG_FAILURE([Required ICU library not found])
     fi
 ])
-
-AX_PROG_LUA([5.1])
-AX_LUA_HEADERS
-AX_LUA_LIBS
-
-AM_COND_IF([SYSTEM_LUAROCKS], [
-    AS_IF([test "$LUA_SHORT_VERSION" -lt 52], [
-        AM_COND_IF([LUAJIT], [], [
-            AX_LUA_MODULE([bit32], [bit32])
-        ])
-    ])
-    AX_LUA_MODULE([cassowary], [cassowary])
-    AS_IF([test "$LUA_SHORT_VERSION" -lt 53],
-        AX_LUA_MODULE([compat53], [compat53])
-    )
-    AX_LUA_MODULE([cldr], [cldr])
-    AX_LUA_MODULE([fluent], [fluent])
-    AX_LUA_MODULE([linenoise], [linenoise])
-    AX_LUA_MODULE([loadkit], [loadkit])
-    AX_LUA_MODULE([lpeg], [lpeg])
-    AX_LUA_MODULE([zlib], [lua-zlib])
-    AX_LUA_MODULE([cliargs], [lua_cliargs])
-    AX_LUA_MODULE([epnf], [luaepnf])
-    AX_LUA_MODULE([lxp], [luaexpat])
-    AX_LUA_MODULE([lfs], [luafilesystem])
-    AX_LUA_MODULE([repl], [luarepl])
-    AX_LUA_MODULE([ssl], [luasec])
-    AX_LUA_MODULE([socket], [luasocket])
-    AX_LUA_MODULE([lua-utf8], [luautf8])
-    AX_LUA_MODULE([pl], [penlight])
-    AX_LUA_MODULE([vstruct], [vstruct])
-], [
-    QUE_PROGVAR([luarocks])
-])
+AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
 
 # Required for downloading fonts for the manual and for tests
 # Since the source tarball includes a prebuilt manual we only need this for Git source builds
@@ -215,13 +188,48 @@ AM_COND_IF([DEVELOPER_MODE], [
     QUE_PROGVAR([nix])
     QUE_PROGVAR([npm])
     QUE_PROGVAR([perl])
-    QUE_PROGVAR([sort])
     QUE_PROGVAR([stylua])
     QUE_PROGVAR([tr])
+    QUE_PROGVAR([typos])
 ])
 
-AM_CONDITIONAL([APPKIT], [test "x$have_appkit" = "xyes"])
-AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
+AX_PROG_LUA([5.1], [], [], [], [prefer])
+AX_LUA_HEADERS
+AX_LUA_LIBS
+
+AM_COND_IF([SYSTEM_LUAROCKS], [
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 52], [
+        AM_COND_IF([LUAJIT], [], [
+            AX_LUA_MODULE([bit32], [bit32])
+        ])
+    ])
+    AX_LUA_MODULE([cassowary], [cassowary])
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 53], [
+        AX_LUA_MODULE([compat53], [compat53])
+    ])
+    AX_LUA_MODULE([cldr], [cldr])
+    AX_LUA_MODULE([fluent], [fluent])
+    AX_LUA_MODULE([linenoise], [linenoise])
+    AX_LUA_MODULE([loadkit], [loadkit])
+    AX_LUA_MODULE([lpeg], [lpeg])
+    AX_LUA_MODULE([zlib], [lua-zlib])
+    AX_LUA_MODULE([cliargs], [lua_cliargs])
+    AX_LUA_MODULE([epnf], [luaepnf])
+    AX_LUA_MODULE([lxp], [luaexpat])
+    AX_LUA_MODULE([lfs], [luafilesystem])
+    AX_LUA_MODULE([repl], [luarepl])
+    AX_LUA_MODULE([ssl], [luasec])
+    AX_LUA_MODULE([socket], [luasocket])
+    AX_LUA_MODULE([lua-utf8], [luautf8])
+    AX_LUA_MODULE([pl], [penlight])
+    AX_LUA_MODULE([vstruct], [vstruct])
+], [
+    QUE_PROGVAR([luarocks])
+    QUE_PROGVAR([git]) # required for luarocks to install zlib rock
+])
+
+QUE_FONT(Gentium Plus)
+
 
 AC_SUBST([APPKIT_TRUE])
 AC_SUBST([FONTCONFIG_TRUE])
@@ -261,15 +269,19 @@ AM_COND_IF([DEVELOPER_MODE], [
 AC_DEFINE_UNQUOTED([SILE_PATH], ["${SILE_PATH}"], [Path for SILE packages and classes])
 AC_SUBST([SILE_PATH])
 
-# In order for our Rust CLI binary to use the same default package.path as the system Lua,
-# we test the system Lua (required only at build not run time) for its current package.path.
+# In order for our Rust CLI binary to use the same default package.(c)path as the system Lua,
+# we test the system Lua (required only at build not run time) for its current package.(c)path.
 adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.path)')"], [SYSTEM_LUA_PATH])
-AC_DEFINE_UNQUOTED([SYSTEM_LUA_PATH], ["${SYSTEM_LUA_PATH}"],[System Lua package path])
-AC_SUBST([SYSTEM_LUA_PATH])
-
 adl_RECURSIVE_EVAL(["$(${LUA} -e 'print(package.cpath)')"], [SYSTEM_LUA_CPATH])
+AC_DEFINE_UNQUOTED([SYSTEM_LUA_PATH], ["${SYSTEM_LUA_PATH}"],[System Lua package path])
 AC_DEFINE_UNQUOTED([SYSTEM_LUA_CPATH], ["${SYSTEM_LUA_CPATH}"], [System Lua package cpath])
+AC_SUBST([SYSTEM_LUA_PATH])
 AC_SUBST([SYSTEM_LUA_CPATH])
+
+# Accommodate Homebrew and/or other distros that pretend a vendored location is the system.
+AM_COND_IF([VENDORED_LUAROCKS],
+        [VENDORED_LUAROCKS_DIR="$with_vendored_luarocks_dir"])
+AC_SUBST([VENDORED_LUAROCKS_DIR])
 
 adl_RECURSIVE_EVAL(["${libdir}/${TRANSFORMED_PACKAGE_NAME}"], [SILE_LIB_PATH])
 AC_DEFINE_UNQUOTED([SILE_LIB_PATH],["${SILE_LIB_PATH}"], [Path for SILE libraries])
@@ -280,7 +292,9 @@ AC_SUBST([ROCKREV], [1])
 
 QUE_SUBST_MAN_DATE
 
-AC_CONFIG_FILES([build-aux/list-dist-files.sh], [chmod +x build-aux/list-dist-files.sh])
+AC_CONFIG_FILES([build-aux/list-distfiles.sh], [chmod +x build-aux/list-distfiles.sh])
+AC_CONFIG_FILES([build-aux/import-tex-hyphens.sh], [chmod +x build-aux/import-tex-hyphens.sh])
+AC_CONFIG_FILES([build-aux/transpile-tex-hyphen-patterns.lua], [chmod +x build-aux/transpile-tex-hyphen-patterns.lua])
 AC_CONFIG_FILES([Makefile justenough/Makefile sile-lua.1 core/features.lua core/pathsetup.lua core/version.lua])
 AC_CONFIG_FILES([sile-lua:sile.in], [chmod +x sile-lua])
 AC_CONFIG_FILES([tests/regressions.pl], [chmod +x tests/regressions.pl])
@@ -291,3 +305,11 @@ AC_OUTPUT
 
 AC_MSG_NOTICE([monkey-patching configure to ignore core directory])
 m4_esyscmd_s([build-aux/decore-automake.sh])
+
+# Avoid the perceived need to run automake again when building from source
+# tarballs. The assorted AM include macros assume two passes are needed to
+# generate a makefile since one pass has to generate the includes and the
+# second one inlines them, but we're distributing a ready-to-use version and
+# hence one pass is enough. We can skip ahead and assume the Makefile template
+# is ready to go an this point, avoiding the need for autotools at all.
+AM_COND_IF([SOURCE_IS_DIST], [touch -r aminclude.am Makefile.in])

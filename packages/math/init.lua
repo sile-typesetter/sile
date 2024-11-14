@@ -56,6 +56,31 @@ function package.declareSettings (_)
       type = "VGlue",
       default = SILE.types.node.vglue("2ex plus 1pt"),
    })
+
+   -- Penalties for breaking before and after a display math formula
+   -- See TeX's \predisplaypenalty and \postdisplaypenalty
+   SILE.settings:declare({
+      parameter = "math.predisplaypenalty",
+      type = "integer",
+      default = 10000, -- strict no break by default as in (La)TeX
+      help = "Penalty for breaking before a display math formula",
+   })
+   SILE.settings:declare({
+      parameter = "math.postdisplaypenalty",
+      type = "integer",
+      -- (La)TeX's default is 0 (a normal line break penalty allowing a break
+      -- after a display math formula)
+      -- See https://github.com/sile-typesetter/sile/issues/2160
+      --    And see implementation in handleMath(): we are not yet doing the right
+      --    things with respect to paragraphing, so setting a lower value for now
+      --    to ease breaking after a display math formula rather than before
+      --    when the formula is in the middle of a paragraph.
+      --    (In TeX, these penalties would apply in horizontal mode, with a display
+      --    math formula being a horizontal full-width box, our implementation
+      --    currently use them as vertical penalties).
+      default = -50,
+      help = "Penalty for breaking after a display math formula",
+   })
 end
 
 function package:registerCommands ()

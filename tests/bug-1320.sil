@@ -3,10 +3,10 @@
 \neverindent
 \nofolios
 \use[module=packages.rules]
-\language[main=und]% Disable hyphenation to have shrinked§stretched lines easily
+\language[main=und]% Disable hyphenation to have shrunk/stretched lines easily
 
 % Manually forced stretch
-Have some \underline{streched\hfill underlined} text.
+Have some \underline{stretched\hfill underlined} text.
 
 % Natural shrinking with line justification
 % The 'dolorsitamet' causes line-overflowing, but at least we get some good shrinking.

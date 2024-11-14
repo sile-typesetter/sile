@@ -4,7 +4,9 @@
 #
 # SYNOPSIS
 #
-#   AX_PROG_LUA[([MINIMUM-VERSION], [TOO-BIG-VERSION], [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])]
+#   AX_PROG_LUA[([MINIMUM-VERSION], [TOO-BIG-VERSION],
+#                [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND],
+#                [ENABLE_LUAJIT])]
 #   AX_LUA_HEADERS[([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])]
 #   AX_LUA_LIBS[([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])]
 #   AX_LUA_READLINE[([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])]
@@ -49,19 +51,21 @@
 #   interpreter. If LUA is blank, the user's path is searched for an
 #   suitable interpreter.
 #
-#   Optionally a LUAJIT option may be set ahead of time to look for and
-#   validate a LuaJIT install instead of PUC Lua. Usage might look like:
-#
-#     AC_ARG_WITH(luajit, [AS_HELP_STRING([--with-luajit],
-#         [Prefer LuaJIT over PUC Lua, even if the latter is newer. Default: no])
-#     ])
-#     AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" != 'xno'])
-#
 #   If MINIMUM-VERSION is supplied, then only Lua interpreters with a
 #   version number greater or equal to MINIMUM-VERSION will be accepted. If
 #   TOO-BIG-VERSION is also supplied, then only Lua interpreters with a
 #   version number greater or equal to MINIMUM-VERSION and less than
 #   TOO-BIG-VERSION will be accepted.
+#
+#   Optionally, the fifth argument ENABLE_LUAJIT can be set to control whether
+#   LuaJIT or PUC Lua should be considered during discovery. An empty value or
+#   'never' means only PUC Lua installations will be considered; a value of
+#   'always' means PUC is not even considered and only LuaJIT is discovered;
+#   'prefer' means LuaJIT should be used if found but allow PUC , and finally
+#   'allow' means it should not be chosen if any PUC Lua version is found but
+#   it could be used as a last resort. For 'default' and 'allow' a new
+#   configure flag will be provided to the user --with-luajit with the default
+#   option being either 'yes' or 'no' respectively.
 #
 #   The Lua version number, LUA_VERSION, is found from the interpreter, and
 #   substituted. LUA_PLATFORM is also found, but not currently supported (no
@@ -90,7 +94,7 @@
 #   appropriate Automake primary, e.g. lua_SCRIPS or luaexec_LIBRARIES.
 #
 #   If an acceptable Lua interpreter is found, then ACTION-IF-FOUND is
-#   performed, otherwise ACTION-IF-NOT-FOUND is preformed. If ACTION-IF-NOT-
+#   performed, otherwise ACTION-IF-NOT-FOUND is performed. If ACTION-IF-NOT-
 #   FOUND is blank, then it will default to printing an error. To prevent
 #   the default behavior, give ':' as an action.
 #
@@ -190,11 +194,12 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-#serial 45
+#serial 48
 
 dnl =========================================================================
 dnl AX_PROG_LUA([MINIMUM-VERSION], [TOO-BIG-VERSION],
-dnl             [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+dnl             [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND]
+dnl             [ENABLE_LUAJIT])
 dnl =========================================================================
 AC_DEFUN([AX_PROG_LUA],
 [
@@ -205,10 +210,35 @@ AC_DEFUN([AX_PROG_LUA],
   dnl Make LUA a precious variable.
   AC_ARG_VAR([LUA], [The Lua interpreter, e.g. /usr/bin/lua5.1])
 
+  dnl Figure out whether we should expose LuaJIT as a user facing configure flag
+  AS_CASE(["m4_default([$5], [never])"],
+    [never], [ default_luajit=no; with_luajit=no ],
+    [always], [ default_luajit=yes; with_luajit=yes ],
+    [allow], [
+      default_luajit=no
+      m4_if([$5], [allow], [
+        AC_ARG_WITH([luajit],
+          [AS_HELP_STRING([--with-luajit],
+            [prefer LuaJIT over PUC Lua, even if the latter is newer])])
+        ])
+      test "x$with_luajit" != 'xyes' && with_luajit=no
+    ],
+    [prefer], [
+      default_luajit=yes
+      m4_if([$5], [prefer], [
+        AC_ARG_WITH([luajit],
+          [AS_HELP_STRING([--without-luajit],
+            [prefer PUC Lua over LuaJIT])])
+        ])
+      test "x$with_luajit" != 'xno' && with_luajit=yes
+    ],
+    [AC_MSG_ERROR([Unrecognized value for ENABLE_LUAJIT])])
+  AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" == "xyes"])
+
   dnl Find a Lua interpreter.
   AM_COND_IF([LUAJIT],
-        [_ax_lua_interpreter_list='luajit luajit-2.1.0-beta3 luajit-2.0.5 luajit-2.0.4 luajit-2.0.3'],
-        [_ax_lua_interpreter_list='lua lua5.4 lua54 lua5.3 lua53 lua5.2 lua52 lua5.1 lua51 lua5.0 lua50'])
+    [_ax_lua_interpreter_list='luajit luajit-2.1.0-beta3 luajit-2.0.5 luajit-2.0.4 luajit-2.0.3'],
+    [_ax_lua_interpreter_list='lua lua5.4 lua54 lua5.3 lua53 lua5.2 lua52 lua5.1 lua51 lua5.0 lua50'])
 
   m4_if([$1], [],
   [ dnl No version check is needed. Find any Lua interpreter.
@@ -218,12 +248,12 @@ AC_DEFUN([AX_PROG_LUA],
 
     AS_IF([test "x$LUA" != 'x:'],
       [ dnl At least check if this is a Lua interpreter.
-    AC_MSG_CHECKING([if $LUA is a Lua interpreter])
-    _AX_LUA_CHK_IS_INTRP([$LUA],
-      [AC_MSG_RESULT([yes])],
-      [ AC_MSG_RESULT([no])
-        AC_MSG_ERROR([not a Lua interpreter])
-      ])
+        AC_MSG_CHECKING([if $LUA is a Lua interpreter])
+        _AX_LUA_CHK_IS_INTRP([$LUA],
+          [AC_MSG_RESULT([yes])],
+          [ AC_MSG_RESULT([no])
+            AC_MSG_ERROR([not a Lua interpreter])
+          ])
       ])
   ],
   [ dnl A version check is needed.
@@ -371,11 +401,7 @@ AC_DEFUN([AX_PROG_LUA],
 ])
 
 dnl AX_WITH_LUA is now the same thing as AX_PROG_LUA.
-AC_DEFUN([AX_WITH_LUA],
-[
-  AC_MSG_WARN([[$0 is deprecated, please use AX_PROG_LUA instead]])
-  AX_PROG_LUA
-])
+AU_DEFUN([AX_WITH_LUA], [AX_PROG_LUA], [$0 is deprecated, please use AX_PROG_LUA instead])
 
 
 dnl =========================================================================
@@ -428,17 +454,6 @@ AC_DEFUN([_AX_LUA_CHK_VER],
     end'`]
     AS_IF([test "x$_ax_lua_good_version" = "xyes"],
       [$4], [$5])
-])
-
-AC_DEFUN([_AX_LUAJIT_CHK_VER],
-[
-  AS_IF([$1 2>/dev/null -e '
-    function norm (v)
-    i,j=v:match "(%d+)%.(%d+)" if i then return 100 * i + j end
-    end
-    v, toobig=norm (jit.version), norm "$3" or math.huge
-    os.exit ((v >= norm ("$2") and v < toobig) and 0 or 1)'],
-    [$4], [$5])
 ])
 
 
@@ -539,9 +554,9 @@ AC_DEFUN([AX_LUA_HEADERS],
          test "x$ac_cv_header_lua_h" != 'xyes' ||
          test "x$with_luajit" != 'xno' &&
          test "x$ac_cv_header_luajit_h" != 'xyes'],
-      [ dnl Try some common include paths.
+    [ dnl Try some common include paths.
       for _ax_include_path in $_ax_lua_include_list; do
-      test ! -d "$_ax_include_path" && continue
+        test ! -d "$_ax_include_path" && continue
 
         AC_MSG_CHECKING([for Lua headers in])
         AC_MSG_RESULT([$_ax_include_path])
@@ -674,25 +689,25 @@ AC_DEFUN([AX_LUA_LIBS],
     _ax_lua_saved_libs=$LIBS
     LIBS="$LIBS $LUA_LIB"
     AM_COND_IF([LUAJIT],
-        [AC_SEARCH_LIBS([lua_load],
-          [ luajit$LUA_VERSION \
-            luajit$LUA_SHORT_VERSION \
-            luajit-$LUA_VERSION \
-            luajit-$LUA_SHORT_VERSION \
-            luajit],
-          [_ax_found_lua_libs='yes'],
-          [_ax_found_lua_libs='no'],
-          [$_ax_lua_extra_libs])],
-        [AC_SEARCH_LIBS([lua_load],
-          [ lua$LUA_VERSION \
-            lua$LUA_SHORT_VERSION \
-            lua-$LUA_VERSION \
-            lua-$LUA_SHORT_VERSION \
-            lua \
-          ],
-          [_ax_found_lua_libs='yes'],
-          [_ax_found_lua_libs='no'],
-          [$_ax_lua_extra_libs])])
+      [AC_SEARCH_LIBS([lua_load],
+        [ luajit$LUA_VERSION \
+          luajit$LUA_SHORT_VERSION \
+          luajit-$LUA_VERSION \
+          luajit-$LUA_SHORT_VERSION \
+          luajit],
+        [_ax_found_lua_libs='yes'],
+        [_ax_found_lua_libs='no'],
+        [$_ax_lua_extra_libs])],
+      [AC_SEARCH_LIBS([lua_load],
+        [ lua$LUA_VERSION \
+          lua$LUA_SHORT_VERSION \
+          lua-$LUA_VERSION \
+          lua-$LUA_SHORT_VERSION \
+          lua \
+        ],
+        [_ax_found_lua_libs='yes'],
+        [_ax_found_lua_libs='no'],
+        [$_ax_lua_extra_libs])])
     LIBS=$_ax_lua_saved_libs
 
     AS_IF([test "x$ac_cv_search_lua_load" != 'xno' &&
@@ -718,15 +733,4 @@ AC_DEFUN([AX_LUA_READLINE],
       $1
     ],
     [$2])
-])
-
-AC_DEFUN([AX_LUA_MODULE],
-[
-  AC_MSG_CHECKING([for required Lua library $1])
-  AS_IF([$LUA -e 'require("$1")' 2>/dev/null], [
-  AC_MSG_RESULT([found])
-  $3],
-  [
-  AC_MSG_RESULT([not found])
-  m4_default([$4], [AC_MSG_ERROR([cannot find Lua library $1 - install from luarocks package $2])])])
 ])

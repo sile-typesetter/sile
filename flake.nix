@@ -22,103 +22,111 @@
     flake = false;
   };
 
-  outputs = { self
-    , nixpkgs
-    , flake-utils
-    , flake-compat
-    , gitignore
-    , libtexpdf-src
-  }:
-  flake-utils.lib.eachDefaultSystem (system:
-    let
-      pkgs = import nixpkgs {
-        inherit system;
-      };
-      inherit (gitignore.lib) gitignoreSource;
-      # https://discourse.nixos.org/t/passing-git-commit-hash-and-tag-to-build-with-flakes/11355/2
-      version_rev = if (self ? rev) then (builtins.substring 0 7 self.rev) else "dirty";
-      sile = pkgs.callPackage ./build-aux/pkg.nix {
-        version = "${(pkgs.lib.importJSON ./package.json).version}-${version_rev}-flake";
-        src = pkgs.lib.cleanSourceWith {
-          # Ignore many files that gitignoreSource doesn't ignore, see:
-          # https://github.com/hercules-ci/gitignore.nix/issues/9#issuecomment-635458762
-          filter = path: type:
-          ! (builtins.any (r: (builtins.match r (builtins.baseNameOf path)) != null) [
-            # Nix files
-            "flake.nix"
-            "flake.lock"
-            "default.nix"
-            "shell.nix"
-            # git commit and editing format files
-            ".commitlintrc.yml"
-            "package.json"
-            ".husky"
-            ".editorconfig"
-            # CI files
-            ".cirrus.yml"
-            ".github"
-            "action.yml"
-            "azure-pipelines.yml"
-            "Dockerfile"
-            # Git files
-            ".gitattributes"
-            ".git"
-          ]);
-          src = gitignoreSource ./.;
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      flake-compat,
+      gitignore,
+      libtexpdf-src,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
         };
-        inherit libtexpdf-src;
-      };
-      inherit (sile.passthru) luaEnv;
-    in rec {
-      devShells = {
-        default = pkgs.mkShell {
-          inherit (sile)
-            buildInputs
-            nativeCheckInputs
-            FONTCONFIG_FILE
-          ;
-          configureFlags =  sile.configureFlags ++ [ "--enable-developer-mode" "--with-manual" ];
-          nativeBuildInputs = sile.nativeBuildInputs ++ [
-            pkgs.luarocks
-            # For regression test diff highlighting
-            pkgs.delta
-            # For commitlint git hook
-            pkgs.yarn
-            # For npx
-            pkgs.nodejs
-            # For gs, dot, and bsdtar used in building the manual
-            pkgs.ghostscript
-            pkgs.graphviz
-            pkgs.libarchive
-          ];
+        inherit (gitignore.lib) gitignoreSource;
+        # https://discourse.nixos.org/t/passing-git-commit-hash-and-tag-to-build-with-flakes/11355/2
+        version_rev = if (self ? rev) then (builtins.substring 0 7 self.rev) else "dirty";
+        sile = pkgs.callPackage ./build-aux/pkg.nix {
+          version = "${(pkgs.lib.importJSON ./package.json).version}-${version_rev}-flake";
+          src = pkgs.lib.cleanSourceWith {
+            # Ignore many files that gitignoreSource doesn't ignore, see:
+            # https://github.com/hercules-ci/gitignore.nix/issues/9#issuecomment-635458762
+            filter =
+              path: type:
+              !(builtins.any (r: (builtins.match r (builtins.baseNameOf path)) != null) [
+                # Nix files
+                "flake.nix"
+                "flake.lock"
+                "default.nix"
+                "shell.nix"
+                # git commit and editing format files
+                ".commitlintrc.yml"
+                "package.json"
+                ".husky"
+                ".editorconfig"
+                # CI files
+                ".cirrus.yml"
+                ".github"
+                "action.yml"
+                "azure-pipelines.yml"
+                "Dockerfile"
+                # Git files
+                ".gitattributes"
+                ".git"
+              ]);
+            src = gitignoreSource ./.;
+          };
+          inherit libtexpdf-src;
         };
-      };
-      packages = {
-        sile-lua5_2 = sile;
-        sile-lua5_3 = sile.override {
-          lua = pkgs.lua5_3;
+        inherit (sile.passthru) luaEnv;
+      in
+      rec {
+        devShells = {
+          default = pkgs.mkShell {
+            inherit (sile)
+              buildInputs
+              nativeCheckInputs
+              FONTCONFIG_FILE
+              ;
+            configureFlags = sile.configureFlags ++ [
+              "--enable-developer-mode"
+              "--with-manual"
+            ];
+            nativeBuildInputs = sile.nativeBuildInputs ++ [
+              pkgs.luarocks
+              # For regression test diff highlighting
+              pkgs.delta
+              # For commitlint git hook
+              pkgs.yarn
+              # For npx
+              pkgs.nodejs
+              # For gs, dot, and bsdtar used in building the manual
+              pkgs.ghostscript
+              pkgs.graphviz
+              pkgs.libarchive
+            ];
+          };
         };
-        sile-lua5_4 = sile.override {
-          lua = pkgs.lua5_4;
+        packages = {
+          sile-lua5_2 = sile;
+          sile-lua5_3 = sile.override {
+            lua = pkgs.lua5_3;
+          };
+          sile-lua5_4 = sile.override {
+            lua = pkgs.lua5_4;
+          };
+          sile-luajit = sile.override {
+            lua = pkgs.luajit;
+          };
+          sile-clang = sile.override {
+            lua = pkgs.luajit;
+            # Use the same clang version as Nixpkgs' rust clang stdenv
+            stdenv = pkgs.rustc.llvmPackages.stdenv;
+          };
         };
-        sile-luajit = sile.override {
-          lua = pkgs.luajit;
+        defaultPackage = packages.sile-luajit;
+        apps = rec {
+          default = sile;
+          sile = {
+            type = "app";
+            program = "${self.defaultPackage.${system}}/bin/sile";
+          };
         };
-        sile-clang = sile.override {
-          lua = pkgs.luajit;
-          # Use the same clang version as Nixpkgs' rust clang stdenv
-          stdenv = pkgs.rustc.llvmPackages.stdenv;
-        };
-      };
-      defaultPackage = packages.sile-luajit;
-      apps = rec {
-        default = sile;
-        sile = {
-          type = "app";
-          program = "${self.defaultPackage.${system}}/bin/sile";
-        };
-      };
-      defaultApp = apps.sile;
-    }
-  );
+        defaultApp = apps.sile;
+      }
+    );
 }

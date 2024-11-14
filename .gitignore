@@ -21,7 +21,9 @@ build-aux/ltsugar.m4
 build-aux/ltversion.m4
 build-aux/lt~obsolete.m4
 build-aux/missing
-build-aux/list-dist-files.sh
+build-aux/import-tex-hyphens.sh
+build-aux/list-distfiles.sh
+build-aux/transpile-tex-hyphen-patterns.lua
 tests/regressions.pl
 
 # Other autojunk
@@ -88,17 +90,18 @@ sile-lua.1
 .version
 .version-prev
 .tarball-version
+.flake-version
 .built-subdirs
 *.so
 *.o
-core/version.lua
-core/features.lua
-target/
 completions/
+core/features.lua
 core/pathsetup.lua
-src/embed.rs
+core/version.lua
 src/embed-includes.rs
+src/embed.rs
 src/sile-entry.sh
+target/
 *.asc
 
 # Nix symlink to builds

@@ -5,10 +5,13 @@ local nostd = function ()
       "0.13.0",
       "0.14.0",
       [[
-  Lua stdlib (std.*) is no longer provided by SILE, you may use
-      local std = require("std")
-  in your project directly if needed. Note you may need to install the Lua
-  rock as well since it no longer ships as a dependency.]]
+         Lua stdlib (std.*) is no longer provided by SILE. You may use
+
+           local std = require("std")
+
+         in your project directly if needed. Note you may need to install the Lua rock
+         as well since it no longer ships as a dependency.
+      ]]
    )
 end
 -- luacheck: push ignore std
@@ -31,12 +34,12 @@ local fluentglobal = function ()
       "0.14.0",
       "0.15.0",
       [[
-  The SILE.fluent object was never more than just an instance of a
-  third party library with no relation the scope of the SILE object.
-  This was even confusing me and marking it awkward to work on
-  SILE-as-a-library. Making it a provided global clarifies whot it
-  is and is not. Maybe someday we'll actually make a wrapper that
-  tracks the state of the document language.]]
+         The SILE.fluent object was never more than just an instance of a third party
+         library with no relation the scope of the SILE object. This was even confusing
+         me and marking it awkward to work on SILE-as-a-library. Making it a provided
+         global clarifies whot it is and is not. Maybe someday we'll actually make a
+         wrapper that tracks the state of the document language.
+      ]]
    )
    fluent_once = true
 end
@@ -52,8 +55,9 @@ local nobaseclass = function ()
       "0.13.0",
       "0.14.0",
       [[
-  The inheritance system for SILE classes has been refactored using a different
-  object model.]]
+         The inheritance system for SILE classes has been refactored using a different
+         object model.
+      ]]
    )
 end
 SILE.baseClass = setmetatable({}, {
@@ -89,13 +93,13 @@ local usetypes = function (type)
       "0.15.0",
       "0.16.0",
       ([[
-  In order to keep things tidy internally, more easily allow 3rd party
-  packages to override core functions, and substitute some slow bits
-  with Rust modules, internal types have been moved from the top level
-  SILE global to a types namespace.
+         In order to keep things tidy internally, more easily allow 3rd party packages
+         to override core functions, and substitute some slow bits with Rust modules,
+         internal types have been moved from the top level SILE global to a types
+         namespace.
 
-  Please substitute 'SILE.%s()' with 'SILE.types.%s()'.
-  ]]):format(type, type)
+         Please substitute 'SILE.%s()' with 'SILE.types.%s()'.
+      ]]):format(type, type)
    )
    return SILE.types[type]
 end
@@ -134,13 +138,13 @@ local usetypes2 = function (old, new, type)
       "0.15.0",
       "0.16.0",
       ([[
-  In order to keep things tidy internally, more easily allow 3rd party
-  packages to override core functions, and substitute some slow bits
-  with Rust modules, internal types have been moved from the top level
-  SILE global to a types namespace.
+         In order to keep things tidy internally, more easily allow 3rd party packages
+         to override core functions, and substitute some slow bits with Rust modules,
+         internal types have been moved from the top level SILE global to a types
+         namespace.
 
-  Please substitute 'SILE.%s.%s()' with 'SILE.types.%s.%s()'.
-  ]]):format(old, type, new, type)
+         Please substitute 'SILE.%s.%s()' with 'SILE.types.%s.%s()'.
+      ]]):format(old, type, new, type)
    )
    return SILE.types[new][type]
 end
@@ -174,7 +178,7 @@ function SILE.doTexlike (doc)
       "SILE.processString",
       "0.14.0",
       "0.16.0",
-      [[Add format argument "sil" to skip content detection and assume SIL input]]
+      [[Add format argument "sil" to skip content detection and assume SIL input.]]
    )
    return SILE.processString(doc, "sil")
 end
@@ -186,14 +190,14 @@ local nopackagemanager = function ()
       "0.13.2",
       "0.15.0",
       [[
-  The built in SILE package manager has been completely deprecated. In its place
-    SILE can now load classes, packages, and other resources installed via
-    LuaRocks. Any SILE package may be published on LuaRocks.org or any private
-    repository. Rocks may be installed to the host system root filesystem, a user
-    directory, or a custom location. Please see the SILE manual for usage
-    instructions. Package authors especially can review the template repository
-    on GitHub for how to create a package.
-  ]]
+         The built in SILE package manager has been completely deprecated. In its place
+         SILE can now load classes, packages, and other resources installed via
+         LuaRocks. Any SILE package may be published on LuaRocks.org or any private
+         repository. Rocks may be installed to the host system root filesystem, a user
+         directory, or a custom location. Please see the SILE manual for usage
+         instructions. Package authors especially can review the template repository
+         on GitHub for how to create a package.
+      ]]
    )
 end
 

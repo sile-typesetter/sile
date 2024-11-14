@@ -26,16 +26,6 @@ describe("SILE.utilities", function ()
       end)
    end)
 
-   describe("setenv", function ()
-      it("should effectively set variables before executing system commands", function ()
-         local before = os.getenv("FOO")
-         assert.is.equal(type(before), "nil")
-         SU.setenv("FOO", "bar")
-         local after = os.getenv("FOO")
-         assert.is.equal(after, "bar")
-      end)
-   end)
-
    describe("formatNumber", function ()
       local icu = require("justenoughicu")
       local icu73plus = tostring(icu.version()) >= "73.0"
@@ -302,7 +292,7 @@ describe("SILE.utilities", function ()
             -- I've not idea however, so let's BREAK the default French rules for testing!
             SU.collatedSort.fr = { caseFirst = "upper", numericOrdering = false }
             local sortme = pl.tablex.copy(original)
-            SU.collatedSort(sortme) -- with default options as overriden.
+            SU.collatedSort(sortme) -- with default options as overridden.
             assert.is.same({
                -- Alain and the Jean guys are the guinea pigs!
                "Alain",
@@ -316,6 +306,52 @@ describe("SILE.utilities", function ()
                "jeanne",
                "Jean-Paul",
             }, sortme)
+         end)
+         it("should sort complex tables with callback comparison function", function ()
+            local sortme = {
+               { name = "Jean", age = 30 },
+               { name = "Charlie", age = 25 },
+               { name = "Bob", age = 30 },
+               { name = "Alice", age = 25 },
+            }
+            SU.collatedSort(sortme, nil, function (a, b, stringCompare)
+               -- Sort by ascending age then ascending name
+               if a.age < b.age then
+                  return true
+               end
+               if a.age > b.age then
+                  return false
+               end
+               return stringCompare(a.name, b.name) < 0
+            end)
+            assert.is.same({
+               { name = "Alice", age = 25 },
+               { name = "Charlie", age = 25 },
+               { name = "Bob", age = 30 },
+               { name = "Jean", age = 30 },
+            }, sortme)
+            local namesAndYears = {
+               { name = "Alice", year = 2005 },
+               { name = "Charlie", year = 1995 },
+               { name = "Bob", year = 1990 },
+               { name = "Alice", year = 1995 },
+            }
+            SU.collatedSort(namesAndYears, nil, function (a, b, stringCompare)
+               local nameCompare = stringCompare(a.name, b.name)
+               if nameCompare < 0 then
+                  return true
+               end
+               if nameCompare > 0 then
+                  return false
+               end
+               return a.year < b.year
+            end)
+            assert.is.same({
+               { name = "Alice", year = 1995 },
+               { name = "Alice", year = 2005 },
+               { name = "Bob", year = 1990 },
+               { name = "Charlie", year = 1995 },
+            }, namesAndYears)
          end)
       end)
    end)

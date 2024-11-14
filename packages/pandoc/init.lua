@@ -177,7 +177,7 @@ function package:registerCommands ()
 
    self:registerCommand("Emph", function (_, content)
       SILE.call("em", {}, content)
-   end, "Creates an inline element representing emphasised text.")
+   end, "Creates an inline element representing emphasized text.")
 
    self:registerCommand("Image", function (options, _)
       local wrapper, options_ = handlePandocOptions(options)

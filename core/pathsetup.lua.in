@@ -1,19 +1,22 @@
 -- Allow autoconf to setup system lua paths at compile time, not run time (only used in developer mode).
+-- stylua: ignore start
 if "@SYSTEM_LUA_PATH@" ~= "" then
    package.path = "@SYSTEM_LUA_PATH@"
    package.cpath = "@SYSTEM_LUA_CPATH@"
 end
+-- stylua: ignore end
 
--- In the event the user has exported Lua environment variables, use them like a system Lua VM would. This essentially
--- nukes the existing runtime path and uses only the new value. This is useful for using `eval $(luarocks --local path)`
+-- In the event the user has exported Lua environment variables, use them like a system Lua VM would. This can either
+-- nuke the existing value and fully replace it, or using the Lua convention of ';;' to signify the default path, we can
+-- extend what we deduced about the system at build time. This is useful for using `eval $(luarocks --local path)`
 -- or similar incantations that setup a path that will reach 3rd party modules.
 local env_lua_path = os.getenv("LUA_PATH")
 if env_lua_path then
-   package.path = env_lua_path
+   package.path = env_lua_path:gsub(";;", (";%s;"):format(package.path))
 end
 local env_lua_cpath = os.getenv("LUA_CPATH")
 if env_lua_cpath then
-   package.cpath = env_lua_cpath
+   package.cpath = env_lua_cpath:gsub(";;", (";%s;"):format(package.cpath))
 end
 
 local executable = debug.getinfo(3, "S").source
@@ -24,7 +27,7 @@ local luaversion = _VERSION:match("%d+%.%d+")
 package.path = package.path:gsub("/%./", "/")
 package.cpath = package.cpath:gsub("/%./", "/")
 
--- Utility function so that last-added paths take precidence and are not duplicated.
+-- Utility function so that last-added paths take precedence and are not duplicated.
 local function prepend_and_dedup (segment, path)
    local escaped = segment:gsub("[%-%.%+%[%]%(%)%$%^%%%?%*]", "%%%1") -- copied from pl.utils.escape() which we can't load yet
    local striped = path:gsub(("^%s"):format(escaped), ""):gsub((";%s"):format(escaped), "")
@@ -37,7 +40,7 @@ local function prependPath (path)
    package.path = prepend_and_dedup(path .. "/?.lua", package.path)
 end
 
--- Prepand paths specifically for C modules.
+-- Prepend paths specifically for C modules.
 local function prependCPath (path)
    package.cpath = prepend_and_dedup(path .. "/?.@SHARED_LIB_EXT@", package.cpath)
 end
@@ -51,7 +54,7 @@ local function extendPathsRocks (path)
    prependPath(path .. "/share/lua/" .. luaversion .. "/sile")
 end
 
--- Take a given path and iterate over the permutations of subdirectories we expect to finde SILE/Lua/C modules under.
+-- Take a given path and iterate over the permutations of subdirectories we expect to find SILE/Lua/C modules under.
 -- The second argument enables extra paths that we *only* expect to find in SILE source checkouts, and should not be
 -- found in system, user, toolkit, or project level paths.
 local function extendPaths (path, silesourcedir)
@@ -65,7 +68,7 @@ local function extendPaths (path, silesourcedir)
       prependPath(path .. "/sile")
    end
    -- These paths are *only* used in developer mode for build testing
-   if "@DEVELOPER_FALSE@" ~= "" then -- see ./configure --(en|dis)able-developer
+   if "@DEVELOPER_MODE_TRUE@" == "" then -- see ./configure --(en|dis)able-developer-mode
       prependCPath(path .. "/libtexpdf/.libs")
       prependCPath(path .. "/justenough/.libs")
    end
@@ -82,14 +85,18 @@ end
 package.path = table.concat(luapath, ";")
 
 -- This path is set by autoconf at configure time, and could be the full path to the source directory if in developer
--- mode or the expeted system istalation location otherwise.
+-- mode or the expected system istalation location otherwise.
 extendPaths("@SILE_PATH@", true)
 extendPaths("@SILE_LIB_PATH@", true)
 
 -- If the configure time option to use system luarocks is disabled, use ones local to the source (again could be the
--- development mode source directory or expected system instalation location).
+-- development mode source directory or expected system installation location).
 if "@SYSTEM_LUAROCKS_FALSE@" == "" then -- see ./configure --with[out]-system-luarocks
    extendPathsRocks("@SILE_PATH@/lua_modules")
+elseif "@VENDORED_LUAROCKS_TRUE@" == "" then -- see ./configure --with-vendored-luarocks=DIR
+   -- Accommodate Homebrew (and any other distros that pretend a vendored location is the system) in handling their
+   -- preferred location without clobbering users’ ability to setup 3rd party packages using `luarocks path`.
+   extendPathsRocks("@VENDORED_LUAROCKS_DIR@")
 end
 
 -- Stuff the variants of system Lua Rocks paths with sile suffixes added back at higher priority that regular paths.
