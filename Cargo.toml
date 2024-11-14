@@ -165,3 +165,6 @@ features = [ "derive" ]
 version = "8.2"
 default-features = false
 features = [ "build", "cargo", "git", "gitoxide" ]
+
+[package.metadata.docs.rs]
+features = [ "luajit", "vendored" ]
