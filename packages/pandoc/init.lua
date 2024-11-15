@@ -280,7 +280,7 @@ function package:registerCommands ()
 
    self:registerCommand("ListItemTerm", function (_, content)
       SILE.call("smallskip")
-      SILE.call("strong", content)
+      SILE.call("strong", {}, content)
       SILE.typesetter:typeset(" : ")
    end)
 

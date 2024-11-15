@@ -299,6 +299,7 @@ function package:registerCommands ()
       end
       self:doItem(options, content)
    end)
+
 end
 
 package.documentation = [[
