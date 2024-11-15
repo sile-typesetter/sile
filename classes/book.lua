@@ -256,20 +256,15 @@ function class:registerCommands ()
    end, "Begin a new subsection")
 
    self:registerCommand("book:chapterfont", function (_, content)
-      SILE.settings:temporarily(function ()
-         SILE.call("font", { weight = 800, size = "22pt" }, content)
-      end)
+      SILE.call("font", { weight = 800, size = "22pt" }, content)
    end)
+
    self:registerCommand("book:sectionfont", function (_, content)
-      SILE.settings:temporarily(function ()
-         SILE.call("font", { weight = 800, size = "15pt" }, content)
-      end)
+      SILE.call("font", { weight = 800, size = "15pt" }, content)
    end)
 
    self:registerCommand("book:subsectionfont", function (_, content)
-      SILE.settings:temporarily(function ()
-         SILE.call("font", { weight = 800, size = "12pt" }, content)
-      end)
+      SILE.call("font", { weight = 800, size = "12pt" }, content)
    end)
 end
 
