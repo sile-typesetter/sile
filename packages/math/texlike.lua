@@ -595,9 +595,6 @@ local function convertTexlike (_, content)
    return ret
 end
 
-registerCommand("%", {}, function ()
-   return { "%", command = "mo", options = {} }
-end)
 registerCommand("mi", { [1] = objType.str }, function (x)
    return x
 end)
@@ -617,6 +614,7 @@ compileToMathML(
   \def{sqrt}{\msqrt{#1}}
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
+  \def{vec}{\mover[accent=true]{#1}{\rightarrow}}
 
   \def{lim}{\mo[movablelimits=true]{lim}}
 
@@ -691,7 +689,6 @@ compileToMathML(
   \def{phantom}{\mphantom{#1}}
   \def{hphantom}{\mpadded[height=0, depth=0]{\mphantom{#1}}}
   \def{vphantom}{\mpadded[width=0]{\mphantom{#1}}}
-  %\mphantom[special=v]{#1}}}
 ]==],
    })
 )

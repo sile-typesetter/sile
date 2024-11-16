@@ -19,6 +19,9 @@ local function addAlias (symbol, alias)
    symbols[symbol] = symbols[alias]
 end
 
+-- \% in TeX is the regular ordinary mathpercent symbol (U+0025)
+addAlias("%", "mathpercent")
+
 -- Additional TeX-like operators
 addAlias("dots", "unicodeellipsis")
 addAlias("ldots", "unicodeellipsis")
