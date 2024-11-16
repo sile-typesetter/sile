@@ -1,3 +1,4 @@
+% KNOWNBAD https://github.com/sile-typesetter/sile/issues/2168
 \begin[papersize=a6]{document}
 \nofolios
 \neverindent
