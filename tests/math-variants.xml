@@ -6,14 +6,14 @@ Math variants, text, MathML:
 <mathml>
   <mrow>
   <mo>∀</mo><mi>n</mi><mo>∈</mo><mi mathvariant="double-struck">N</mi>
-  <mo>,</mo> <mo>(</mo> <msup> <mi mathvariant="normal">e</mi>
+  <mo>,</mo> <mrow><mo>(</mo> <msup> <mi mathvariant="normal">e</mi>
     <mi>n</mi> </msup> <mo>,</mo> <mo mathvariant="double-struck">sin</mo>
-  <mo>(</mo><mi>n</mi><mo>)</mo> <mo>)</mo>
+  <mrow><mo>(</mo><mi>n</mi><mo>)</mo></mrow> <mo>)</mo></mrow>
   <mo>∈</mo>
   <msup>
     <mrow>
       <mo>(</mo><mi mathvariant="double-struck">R</mi>
-      <mo>⧵</mo><mi mathvariant="double-struck">Q</mi><mo>)</mo>
+      <mo>∖</mo><mi mathvariant="double-struck">Q</mi><mo>)</mo>
     </mrow>
     <mn>2</mn>
   </msup>
@@ -25,14 +25,14 @@ Math variants, text (large font), MathML:
   <mathml>
     <mrow>
     <mo>∀</mo><mi>n</mi><mo>∈</mo><mi mathvariant="double-struck">N</mi>
-    <mo>,</mo> <mo>(</mo> <msup> <mi mathvariant="normal">e</mi>
+    <mo>,</mo> <mrow><mo>(</mo> <msup> <mi mathvariant="normal">e</mi>
       <mi>n</mi> </msup> <mo>,</mo> <mo mathvariant="double-struck">sin</mo>
-    <mo>(</mo><mi>n</mi><mo>)</mo> <mo>)</mo>
+    <mrow><mo>(</mo><mi>n</mi><mo>)</mo></mrow> <mo>)</mo></mrow>
     <mo>∈</mo>
     <msup>
       <mrow>
         <mo>(</mo><mi mathvariant="double-struck">R</mi>
-        <mo>⧵</mo><mi mathvariant="double-struck">Q</mi><mo>)</mo>
+        <mo>∖</mo><mi mathvariant="double-struck">Q</mi><mo>)</mo>
       </mrow>
       <mn>2</mn>
     </msup>
@@ -44,14 +44,14 @@ Math variants, display, MathML:
 <mathml mode="display">
   <mrow>
   <mo>∀</mo><mi>n</mi><mo>∈</mo><mi mathvariant="double-struck">N</mi>
-  <mo>,</mo> <mo>(</mo> <msup> <mi mathvariant="normal">e</mi>
+  <mo>,</mo> <mrow><mo>(</mo> <msup> <mi mathvariant="normal">e</mi>
     <mi>n</mi> </msup> <mo>,</mo> <mo mathvariant="double-struck">sin</mo>
-  <mo>(</mo><mi>n</mi><mo>)</mo> <mo>)</mo>
+  <mrow><mo>(</mo><mi>n</mi><mo>)</mo></mrow> <mo>)</mo></mrow>
   <mo>∈</mo>
   <msup>
     <mrow>
       <mo>(</mo><mi mathvariant="double-struck">R</mi>
-      <mo>⧵</mo><mi mathvariant="double-struck">Q</mi><mo>)</mo>
+      <mo>∖</mo><mi mathvariant="double-struck">Q</mi><mo>)</mo>
     </mrow>
     <mn>2</mn>
   </msup>
@@ -63,14 +63,14 @@ Math variants, display (large font), MathML:
   <mathml mode="display">
     <mrow>
     <mo>∀</mo><mi>n</mi><mo>∈</mo><mi mathvariant="double-struck">N</mi>
-    <mo>,</mo> <mo>(</mo> <msup> <mi mathvariant="normal">e</mi>
+    <mo>,</mo> <mrow><mo>(</mo> <msup> <mi mathvariant="normal">e</mi>
       <mi>n</mi> </msup> <mo>,</mo> <mo mathvariant="double-struck">sin</mo>
-    <mo>(</mo><mi>n</mi><mo>)</mo> <mo>)</mo>
+    <mrow><mo>(</mo><mi>n</mi><mo>)</mo></mrow> <mo>)</mo></mrow>
     <mo>∈</mo>
     <msup>
       <mrow>
         <mo>(</mo><mi mathvariant="double-struck">R</mi>
-        <mo>⧵</mo><mi mathvariant="double-struck">Q</mi><mo>)</mo>
+        <mo>∖</mo><mi mathvariant="double-struck">Q</mi><mo>)</mo>
       </mrow>
       <mn>2</mn>
     </msup>
