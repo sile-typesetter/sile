@@ -18,7 +18,19 @@ local mathGrammar = function (_ENV)
    local _ = WS^0
    local eol = S"\r\n"
    local digit = R("09")
-   local natural = digit^1 / tostring
+   local natural = (
+      -- TeX doesn't really knows what a number in a formula is.
+      -- It handles any sequence of "ordinary" characters, including period(s):
+      -- See for instance The TeXbook, p. 132.
+      -- When later converting to MathML, we'll ideally want <mn>0.0123</mn>
+      -- instead of, say, <mn>0</mn><mo>.</mo><mn>0123</mn> (not only wrong
+      -- in essence, but also taking the risk of using a <mo> operator, then
+      -- considered as a punctuation, thus inserting a space)
+      -- We cannot be general, but checking MathJax and TeMML's behavior, they
+      -- are not general either in this regard.
+         digit^0 * P(".")^-1 * digit^1 + -- Decimal number (ex: 1.23, 0.23, .23)
+         digit^1 -- Integer (digits only, ex: 123)
+      ) / tostring
    local pos_natural = R("19") * digit^0 / tonumber
    local ctrl_word = R("AZ", "az")^1
    local ctrl_symbol = P(1) - S"{}\\"
