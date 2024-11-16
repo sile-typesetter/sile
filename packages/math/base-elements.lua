@@ -297,41 +297,84 @@ local spaceKind = {
    thick = "thick",
 }
 
--- Indexed by left atom
+-- Spacing table indexed by left atom, as in TeXbook p. 170.
+-- Notes
+--  - the "notScript" key is used to prevent spaces in script and scriptscript modes
+--    (= parenthesized non-zero value in The TeXbook's table).
+--  - Cases commented are as expected, just listed for clarity and completeness.
+--    (= no space i.e. 0 in in The TeXbook's table)
+--  - Cases marked as impossible are not expected to happen (= stars in the TeXbook):
+--    "... such cases never arise, because binary atoms must be preceded and followed
+--    by atoms compatible with the nature of binary operations."
+--    This must be understood with the context explained onp. 133:
+--     "... binary operations are treated as ordinary symbols if they don’t occur
+--     between two quantities that they can operate on." (a rule which notably helps
+--     addressing binary atoms used as unary operators.)
 local spacingRules = {
    [atomType.ordinary] = {
+      -- [atomType.ordinary] = nil
       [atomType.bigOperator] = { spaceKind.thin },
       [atomType.binaryOperator] = { spaceKind.med, notScript = true },
       [atomType.relationalOperator] = { spaceKind.thick, notScript = true },
+      -- [atomType.openingSymbol] = nil
+      -- [atomType.closeSymbol] = nil
+      -- [atomType.punctuationSymbol] = nil
       [atomType.inner] = { spaceKind.thin, notScript = true },
    },
    [atomType.bigOperator] = {
       [atomType.ordinary] = { spaceKind.thin },
       [atomType.bigOperator] = { spaceKind.thin },
+      [atomType.binaryOperator] = { impossible = true },
       [atomType.relationalOperator] = { spaceKind.thick, notScript = true },
+      -- [atomType.openingSymbol] = nil
+      -- [atomType.closeSymbol] = nil
+      -- [atomType.punctuationSymbol] = nil
       [atomType.inner] = { spaceKind.thin, notScript = true },
    },
    [atomType.binaryOperator] = {
       [atomType.ordinary] = { spaceKind.med, notScript = true },
       [atomType.bigOperator] = { spaceKind.med, notScript = true },
+      [atomType.binaryOperator] = { impossible = true },
+      [atomType.relationalOperator] = { impossible = true },
       [atomType.openingSymbol] = { spaceKind.med, notScript = true },
+      [atomType.closeSymbol] = { impossible = true },
+      [atomType.punctuationSymbol] = { impossible = true },
       [atomType.inner] = { spaceKind.med, notScript = true },
    },
    [atomType.relationalOperator] = {
       [atomType.ordinary] = { spaceKind.thick, notScript = true },
       [atomType.bigOperator] = { spaceKind.thick, notScript = true },
+      [atomType.binaryOperator] = { impossible = true },
+      -- [atomType.relationalOperator] = nil
       [atomType.openingSymbol] = { spaceKind.thick, notScript = true },
+      -- [atomType.closeSymbol] = nil
+      -- [atomType.punctuationSymbol] = nil
       [atomType.inner] = { spaceKind.thick, notScript = true },
    },
+   [atomType.openingSymbol] = {
+      -- [atomType.ordinary] = nil
+      -- [atomType.bigOperator] = nil
+      [atomType.binaryOperator] = { impossible = true },
+      -- [atomType.relationalOperator] = nil
+      -- [atomType.openingSymbol] = nil
+      -- [atomType.closeSymbol] = nil
+      -- [atomType.punctuationSymbol] = nil
+      -- [atomType.inner] = nil
+   },
    [atomType.closeSymbol] = {
+      -- [atomType.ordinary] = nil
       [atomType.bigOperator] = { spaceKind.thin },
       [atomType.binaryOperator] = { spaceKind.med, notScript = true },
       [atomType.relationalOperator] = { spaceKind.thick, notScript = true },
+      -- [atomType.openingSymbol] = nil
+      -- [atomType.closeSymbol] = nil
+      -- [atomType.punctuationSymbol] = nil
       [atomType.inner] = { spaceKind.thin, notScript = true },
    },
    [atomType.punctuationSymbol] = {
       [atomType.ordinary] = { spaceKind.thin, notScript = true },
       [atomType.bigOperator] = { spaceKind.thin, notScript = true },
+      [atomType.binaryOperator] = { impossible = true },
       [atomType.relationalOperator] = { spaceKind.thin, notScript = true },
       [atomType.openingSymbol] = { spaceKind.thin, notScript = true },
       [atomType.closeSymbol] = { spaceKind.thin, notScript = true },
@@ -345,6 +388,7 @@ local spacingRules = {
       [atomType.relationalOperator] = { spaceKind.thick, notScript = true },
       [atomType.openingSymbol] = { spaceKind.thin, notScript = true },
       [atomType.punctuationSymbol] = { spaceKind.thin, notScript = true },
+      -- [atomType.closeSymbol] = nil
       [atomType.inner] = { spaceKind.thin, notScript = true },
    },
 }
@@ -377,14 +421,51 @@ function elements.stackbox:styleChildren ()
    end
    if self.direction == "H" then
       -- Insert spaces according to the atom type, following Knuth's guidelines
-      -- in the TeXbook
+      -- in The TeXbook, p. 170 (amended with p. 133 for binary operators)
+      -- FIXME: This implementation is not using the atom form and the MathML logic (lspace/rspace).
+      -- (This is notably unsatisfactory for <mphantom> elements)
       local spaces = {}
+      if #self.children >= 1 then
+         -- An interpretation of the TeXbook p. 133 for binary operator exceptions:
+         -- A binary operator at the beginning of the expression is treated as an ordinary atom
+         -- (so as to be considered as a unary operator, without more context).
+         local v = self.children[1]
+         if v.atom == atomType.binaryOperator then
+            v.atom = atomType.ordinary
+         end
+      end
       for i = 1, #self.children - 1 do
          local v = self.children[i]
          local v2 = self.children[i + 1]
          if spacingRules[v.atom] and spacingRules[v.atom][v2.atom] then
             local rule = spacingRules[v.atom][v2.atom]
-            if not (rule.notScript and (isScriptMode(self.mode) or isScriptScriptMode(self.mode))) then
+            if rule.impossible then
+               -- Another interpretation of the TeXbook p. 133 for binary operator exceptions:
+               if v2.atom == atomType.binaryOperator then
+                  -- If a binary atom follows an atom that is not compatible with it, make it an ordinary.
+                  -- (so as to be conidered as a unary operator).
+                  -- Typical case: "a = -b" (ord rel bin ord), "a + -b" (ord bin bin ord)
+                  v2.atom = atomType.ordinary
+               else
+                  -- If a binary atom precedes an atom that is not compatible with it, make it an ordinary.
+                  -- Quite unusual case (bin, rel/close/punct) unlikely to happen in practice.
+                  -- (Not seen in 80+ test formulas)
+                  -- We might address it a bit late here, the preceding atom has already based its spacing
+                  -- on the binary atom... but this might not be a big deal.
+                  -- (i.e. rather than add an extra look-ahead just for this case).
+                  -- Artificial example: "a + = b" (ord bin rel ord)
+                  v.atom = atomType.ordinary
+               end
+               rule = spacingRules[v.atom][v2.atom]
+               if rule and rule.impossible then
+                  -- Should not occur if we did our table based on the TeXbook correctly?
+                  -- We can still handle it by ignoring the rule: no spacing sounds logical.
+                  -- But let's have a warning so it might be investigated further.
+                  SU.warn("Impossible spacing rule for (" .. v.atom .. ", " .. v2.atom .. "), please report this issue")
+                  rule = nil
+               end
+            end
+            if rule and not (rule.notScript and (isScriptMode(self.mode) or isScriptScriptMode(self.mode))) then
                spaces[i + 1] = rule[1]
             end
          end
