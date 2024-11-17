@@ -19,12 +19,12 @@ local atomTypeShort = atoms.atomTypeShort
 
 --- Transform a list of codepoints into a string
 local function U (...)
-   local t = { ... }
-   local str = ""
-   for i = 1, #t do
-      str = str .. luautf8.char(t[i])
-   end
-   return str
+  local t = { ... }
+  local str = ""
+  for i = 1, #t do
+    str = str .. luautf8.char(t[i])
+  end
+  return str
 end
 
 local symbols = {}
@@ -37,272 +37,200 @@ local operatorDict = {}
 -- @tparam string _         Unicode name of the symbol (informative)
 -- @tparam table  ops       List of operator forms and their properties
 local function addSymbol (str, shortatom, mathlatex, _, ops)
-   if mathlatex then
-      SU.debug("math.symbols", "Registering symbol", str, "as", mathlatex)
-      symbols[mathlatex] = str
-   end
-   local op = {}
-   op.atom = atomTypeShort[shortatom]
-   if ops then
-      op.forms = {}
-      for _, v in pairs(ops) do
-         if v.form then
-            v.lspace = SILE.types.length(v.lspace and ("%smu"):format(v.lspace) or "0mu")
-            v.rspace = SILE.types.length(v.rspace and ("%smu"):format(v.rspace) or "0mu")
-            op.forms[v.form] = v
-         else
-            SU.warn("No form for operator " .. str .. " (operator dictionary is probably incomplete)")
-         end
+  if mathlatex then
+    SU.debug("math.symbols", "Registering symbol", str, "as", mathlatex)
+    symbols[mathlatex] = str
+  end
+  local op = {}
+  op.atom = atomTypeShort[shortatom]
+  if ops then
+    op.forms = {}
+    for _, v in pairs(ops) do
+      if v.form then
+        -- NOTE: At this point the mu unit is not yet defined, so keep it as a string.
+        v.lspace = v.lspace and ("%smu"):format(v.lspace) or "0mu"
+        v.rspace = v.rspace and ("%smu"):format(v.rspace) or "0mu"
+        op.forms[v.form] = v
+      else
+        SU.warn("No form for operator " .. str .. " (operator dictionary is probably incomplete)")
       end
-   end
-   operatorDict[str] = op
+    end
+  end
+  operatorDict[str] = op
 end
 
+
 addSymbol(U(0x00021), "ord", "mathexclam", "EXCLAMATION MARK", {
-   { form = "postfix", lspace = 0, priority = 820, rspace = 0 },
-   { form = "prefix", lspace = 0, priority = 280, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 820, rspace = 0 },
+  { form = "prefix", lspace = 0, priority = 280, rspace = 0 }})
 addSymbol(U(0x00021, 0x00021), "ord", nil, "MULTIPLE CHARACTER OPERATOR: !!", {
-   { form = "postfix", lspace = 0, priority = 820, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 820, rspace = 0 }})
 addSymbol(U(0x00021, 0x0003D), "ord", nil, "MULTIPLE CHARACTER OPERATOR: !=", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x00022), "ord", nil, "QUOTATION MARK", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x00023), "ord", "mathoctothorpe", "NUMBER SIGN", nil)
 addSymbol(U(0x00024), "ord", "mathdollar", "DOLLAR SIGN", nil)
 addSymbol(U(0x00025), "ord", "mathpercent", "PERCENT SIGN", {
-   { form = "postfix", lspace = 0, priority = 820, rspace = 0 },
-   { form = "infix", lspace = 3, priority = 640, rspace = 3 },
-})
+  { form = "postfix", lspace = 0, priority = 820, rspace = 0 },
+  { form = "infix", lspace = 3, priority = 640, rspace = 3 }})
 addSymbol(U(0x00026), "ord", "mathampersand", "AMPERSAND", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x00026, 0x00026), "ord", nil, "MULTIPLE CHARACTER OPERATOR: &&", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x00027), "ord", nil, "APOSTROPHE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x00028), "open", "lparen", "LEFT PARENTHESIS", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x00029), "close", "rparen", "RIGHT PARENTHESIS", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0002A), "ord", nil, "ASTERISK", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x0002A, 0x0002A), "ord", nil, "MULTIPLE CHARACTER OPERATOR: **", {
-   { form = "infix", lspace = 3, priority = 760, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 760, rspace = 3 }})
 addSymbol(U(0x0002A, 0x0003D), "ord", nil, "MULTIPLE CHARACTER OPERATOR: *=", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0002B), "bin", "mathplus", "PLUS SIGN", {
-   { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x0002B, 0x0002B), "ord", nil, "MULTIPLE CHARACTER OPERATOR: ++", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x0002B, 0x0003D), "ord", nil, "MULTIPLE CHARACTER OPERATOR: +=", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0002C), "punct", "mathcomma", "COMMA", {
-   { form = "infix", linebreakstyle = "after", lspace = 0, priority = 160, rspace = 3, separator = true },
-})
+  { form = "infix", linebreakstyle = "after", lspace = 0, priority = 160, rspace = 3, separator = true }})
 addSymbol(U(0x0002D), "ord", nil, "HYPHEN-MINUS", {
-   { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x0002D, 0x0002D), "ord", nil, "MULTIPLE CHARACTER OPERATOR: --", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x0002D, 0x0003D), "ord", nil, "MULTIPLE CHARACTER OPERATOR: -=", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0002D, 0x0003E), "ord", nil, "MULTIPLE CHARACTER OPERATOR: ->", {
-   { form = "infix", lspace = 5, priority = 220, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 220, rspace = 5 }})
 addSymbol(U(0x0002E), "punct", "mathperiod", "FULL STOP", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x0002F), "bin", "mathslash", "SOLIDUS", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x0002F, 0x0002F), "ord", nil, "MULTIPLE CHARACTER OPERATOR: //", {
-   { form = "infix", lspace = 5, priority = 240, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 240, rspace = 5 }})
 addSymbol(U(0x0002F, 0x0003D), "ord", nil, "MULTIPLE CHARACTER OPERATOR: /=", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0003A), "punct", "mathcolon", "COLON", {
-   { form = "infix", lspace = 0, priority = 180, rspace = 3 },
-})
+  { form = "infix", lspace = 0, priority = 180, rspace = 3 }})
 addSymbol(U(0x0003A, 0x0003D), "ord", nil, "MULTIPLE CHARACTER OPERATOR: :=", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0003B), "punct", "mathsemicolon", "SEMICOLON", {
-   { form = "infix", linebreakstyle = "after", lspace = 0, priority = 140, rspace = 3, separator = true },
-})
+  { form = "infix", linebreakstyle = "after", lspace = 0, priority = 140, rspace = 3, separator = true }})
 addSymbol(U(0x0003C), "rel", "less", "LESS-THAN SIGN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0003C, 0x0003D), "ord", nil, "MULTIPLE CHARACTER OPERATOR: <=", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0003C, 0x0003E), "ord", nil, "MULTIPLE CHARACTER OPERATOR: <>", {
-   { form = "infix", lspace = 3, priority = 800, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 800, rspace = 3 }})
 addSymbol(U(0x0003D), "rel", "equal", "EQUALS SIGN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0003D, 0x0003D), "ord", nil, "MULTIPLE CHARACTER OPERATOR: ==", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0003E), "rel", "greater", "GREATER-THAN SIGN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0003E, 0x0003D), "ord", nil, "MULTIPLE CHARACTER OPERATOR: >=", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0003F), "punct", "mathquestion", "QUESTION MARK", {
-   { form = "infix", lspace = 3, priority = 840, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 840, rspace = 3 }})
 addSymbol(U(0x00040), "ord", "mathatsign", "COMMERCIAL AT", {
-   { form = "infix", lspace = 3, priority = 560, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 560, rspace = 3 }})
 addSymbol(U(0x0005B), "open", "lbrack", "LEFT SQUARE BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0005C), "bin", "backslash", "REVERSE SOLIDUS", {
-   { form = "infix", lspace = 0, priority = 660, rspace = 0 },
-})
+  { form = "infix", lspace = 0, priority = 660, rspace = 0 }})
 addSymbol(U(0x0005D), "close", "rbrack", "RIGHT SQUARE BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0005E), "ord", nil, "CIRCUMFLEX ACCENT", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-   { form = "infix", lspace = 3, priority = 800, rspace = 3 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
+  { form = "infix", lspace = 3, priority = 800, rspace = 3 }})
 addSymbol(U(0x0005F), "ord", nil, "LOW LINE", {
-   { form = "infix", lspace = 0, priority = 940, rspace = 0 },
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "infix", lspace = 0, priority = 940, rspace = 0 },
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x00060), "ord", nil, "GRAVE ACCENT", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x0007B), "open", "lbrace", "LEFT CURLY BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0007C), "ord", "vert", "VERTICAL LINE", {
-   { fence = true, form = "infix", lspace = 5, priority = 320, rspace = 5 },
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "infix", lspace = 5, priority = 320, rspace = 5 },
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0007C, 0x0007C), "ord", nil, "MULTIPLE CHARACTER OPERATOR: ||", {
-   { fence = true, form = "infix", lspace = 5, priority = 320, rspace = 5 },
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0 },
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0 },
-})
+  { fence = true, form = "infix", lspace = 5, priority = 320, rspace = 5 },
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0 },
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0 }})
 addSymbol(U(0x0007D), "close", "rbrace", "RIGHT CURLY BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0007E), "ord", nil, "TILDE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x000A1), "punct", nil, "INVERTED EXCLAMATION MARK", nil)
 addSymbol(U(0x000A3), "ord", "mathsterling", "POUND SIGN", nil)
 addSymbol(U(0x000A5), "ord", "mathyen", "YEN SIGN", nil)
 addSymbol(U(0x000A7), "ord", "mathsection", "SECTION SIGN", nil)
 addSymbol(U(0x000A8), "ord", nil, "DIAERESIS", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x000AC), "ord", "neg", "NOT SIGN", {
-   { form = "prefix", lspace = 0, priority = 280, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 280, rspace = 0 }})
 addSymbol(U(0x000AF), "ord", nil, "MACRON", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x000B0), "ord", nil, "DEGREE SIGN", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x000B1), "bin", "pm", "PLUS-MINUS SIGN", {
-   { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x000B2), "ord", nil, "SUPERSCRIPT TWO", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x000B3), "ord", nil, "SUPERSCRIPT THREE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x000B4), "ord", nil, "ACUTE ACCENT", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x000B6), "ord", "mathparagraph", "PILCROW SIGN", nil)
 addSymbol(U(0x000B7), "bin", "cdotp", "MIDDLE DOT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x000B8), "ord", nil, "CEDILLA", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x000B9), "ord", nil, "SUPERSCRIPT ONE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x000BF), "punct", nil, "INVERTED QUESTION MARK", nil)
 addSymbol(U(0x000D7), "bin", "times", "MULTIPLICATION SIGN", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x000F0), "ord", "matheth", "LATIN SMALL LETTER ETH", nil)
 addSymbol(U(0x000F7), "bin", "div", "DIVISION SIGN", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x001B5), "ord", "Zbar", "LATIN CAPITAL LETTER Z WITH STROKE", nil)
 addSymbol(U(0x002C6), "ord", nil, "MODIFIER LETTER CIRCUMFLEX ACCENT", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x002C7), "ord", nil, "CARON", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x002C9), "ord", nil, "MODIFIER LETTER MACRON", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x002CA), "ord", nil, "MODIFIER LETTER ACUTE ACCENT", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x002CB), "ord", nil, "MODIFIER LETTER GRAVE ACCENT", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x002CD), "ord", nil, "MODIFIER LETTER LOW MACRON", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x002D8), "ord", nil, "BREVE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x002D9), "ord", nil, "DOT ABOVE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x002DA), "ord", nil, "RING ABOVE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x002DC), "ord", nil, "SMALL TILDE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x002DD), "ord", nil, "DOUBLE ACUTE ACCENT", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x002F7), "ord", nil, "MODIFIER LETTER LOW TILDE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x00300), "accent", "grave", "COMBINING GRAVE ACCENT", nil)
 addSymbol(U(0x00301), "accent", "acute", "COMBINING ACUTE ACCENT", nil)
 addSymbol(U(0x00302), "accent", "hat", "COMBINING CIRCUMFLEX ACCENT", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x00303), "accent", "tilde", "COMBINING TILDE", nil)
 addSymbol(U(0x00304), "accent", "bar", "COMBINING MACRON", nil)
 addSymbol(U(0x00305), "accent", "overbar", "COMBINING OVERLINE", nil)
@@ -314,8 +242,7 @@ addSymbol(U(0x0030A), "accent", "ocirc", "COMBINING RING ABOVE", nil)
 addSymbol(U(0x0030C), "accent", "check", "COMBINING CARON", nil)
 addSymbol(U(0x00310), "ord", "candra", "COMBINING CANDRABINDU", nil)
 addSymbol(U(0x00311), "accent", nil, "COMBINING INVERTED BREVE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x00312), "ord", "oturnedcomma", "COMBINING TURNED COMMA ABOVE", nil)
 addSymbol(U(0x00315), "ord", "ocommatopright", "COMBINING COMMA ABOVE RIGHT", nil)
 addSymbol(U(0x0031A), "ord", "droang", "COMBINING LEFT ANGLE ABOVE", nil)
@@ -392,98 +319,74 @@ addSymbol(U(0x003F1), "ord", "mupvarrho", "GREEK RHO SYMBOL", nil)
 addSymbol(U(0x003F4), "ord", "mupvarTheta", "GREEK CAPITAL THETA SYMBOL", nil)
 addSymbol(U(0x003F5), "ord", "mupepsilon", "GREEK LUNATE EPSILON SYMBOL", nil)
 addSymbol(U(0x003F6), "ord", "upbackepsilon", "GREEK REVERSED LUNATE EPSILON SYMBOL", nil)
-addSymbol(U(0x00606), "big", nil, "ARABIC-INDIC CUBE ROOT", nil)
-addSymbol(U(0x00607), "big", nil, "ARABIC-INDIC FOURTH ROOT", nil)
+addSymbol(U(0x00606), "op", nil, "ARABIC-INDIC CUBE ROOT", nil)
+addSymbol(U(0x00607), "op", nil, "ARABIC-INDIC FOURTH ROOT", nil)
 addSymbol(U(0x02010), "punct", "mathhyphen", "HYPHEN", nil)
 addSymbol(U(0x02012), "punct", nil, "FIGURE DASH", nil)
 addSymbol(U(0x02013), "punct", nil, "EN DASH", nil)
 addSymbol(U(0x02014), "punct", nil, "EM DASH", nil)
 addSymbol(U(0x02015), "ord", "horizbar", "HORIZONTAL BAR", nil)
 addSymbol(U(0x02016), "ord", "Vert", "DOUBLE VERTICAL LINE", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02017), "ord", "twolowline", "DOUBLE LOW LINE", nil)
 addSymbol(U(0x02018), "ord", nil, "LEFT SINGLE QUOTATION MARK", {
-   { fence = true, form = "prefix", lspace = 0, priority = 100, rspace = 0 },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 100, rspace = 0 }})
 addSymbol(U(0x02019), "ord", nil, "RIGHT SINGLE QUOTATION MARK", {
-   { fence = true, form = "postfix", lspace = 0, priority = 100, rspace = 0 },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 100, rspace = 0 }})
 addSymbol(U(0x0201A), "ord", nil, "SINGLE LOW-9 QUOTATION MARK", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x0201B), "ord", nil, "SINGLE HIGH-REVERSED-9 QUOTATION MARK", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x0201C), "ord", nil, "LEFT DOUBLE QUOTATION MARK", {
-   { fence = true, form = "prefix", lspace = 0, priority = 100, rspace = 0 },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 100, rspace = 0 }})
 addSymbol(U(0x0201D), "ord", nil, "RIGHT DOUBLE QUOTATION MARK", {
-   { fence = true, form = "postfix", lspace = 0, priority = 100, rspace = 0 },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 100, rspace = 0 }})
 addSymbol(U(0x0201E), "ord", nil, "DOUBLE LOW-9 QUOTATION MARK", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x0201F), "ord", nil, "DOUBLE HIGH-REVERSED-9 QUOTATION MARK", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x02020), "rel", "dagger", "DAGGER", nil)
 addSymbol(U(0x02021), "rel", "ddagger", "DOUBLE DAGGER", nil)
 addSymbol(U(0x02022), "bin", "smblkcircle", "BULLET", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02025), "ord", "enleadertwodots", "TWO DOT LEADER", nil)
 addSymbol(U(0x02026), "ord", "unicodeellipsis", "HORIZONTAL ELLIPSIS", nil)
 addSymbol(U(0x02032), "ord", "prime", "PRIME", {
-   { form = "postfix", lspace = 0, priority = 820, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 820, rspace = 0 }})
 addSymbol(U(0x02033), "ord", "dprime", "DOUBLE PRIME", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x02034), "ord", "trprime", "TRIPLE PRIME", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x02035), "ord", "backprime", "REVERSED PRIME", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x02036), "ord", "backdprime", "REVERSED DOUBLE PRIME", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x02037), "ord", "backtrprime", "REVERSED TRIPLE PRIME", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x02038), "ord", "caretinsert", "CARET", nil)
 addSymbol(U(0x0203C), "ord", "Exclam", "DOUBLE EXCLAMATION MARK", nil)
 addSymbol(U(0x0203E), "ord", nil, "OVERLINE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x02040), "bin", "tieconcat", "CHARACTER TIE", nil)
 addSymbol(U(0x02043), "ord", "hyphenbullet", "HYPHEN BULLET", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02044), "bin", "fracslash", "FRACTION SLASH", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x02047), "ord", "Question", "DOUBLE QUESTION MARK", nil)
 addSymbol(U(0x0204E), "bin", nil, "LOW ASTERISK", nil)
 addSymbol(U(0x0204F), "rel", nil, "REVERSED SEMICOLON", nil)
 addSymbol(U(0x02050), "rel", "closure", "CLOSE UP", nil)
 addSymbol(U(0x02057), "ord", "qprime", "QUADRUPLE PRIME", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x02061), "bin", nil, "FUNCTION APPLICATION", {
-   { form = "infix", lspace = 0, priority = 880, rspace = 0 },
-})
+  { form = "infix", lspace = 0, priority = 880, rspace = 0 }})
 addSymbol(U(0x02062), "bin", nil, "INVISIBLE TIMES", {
-   { form = "infix", lspace = 0, priority = 620, rspace = 0 },
-})
+  { form = "infix", lspace = 0, priority = 620, rspace = 0 }})
 addSymbol(U(0x02063), "punct", nil, "INVISIBLE SEPARATOR", {
-   { form = "infix", linebreakstyle = "after", lspace = 0, priority = 160, rspace = 0, separator = true },
-})
+  { form = "infix", linebreakstyle = "after", lspace = 0, priority = 160, rspace = 0, separator = true }})
 addSymbol(U(0x02064), "ord", nil, "INVISIBLE PLUS", {
-   { form = "infix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "infix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x020AC), "ord", "euro", "EURO SIGN", nil)
 addSymbol(U(0x020D0), "accent", "leftharpoonaccent", "COMBINING LEFT HARPOON ABOVE", nil)
 addSymbol(U(0x020D1), "accent", "rightharpoonaccent", "COMBINING RIGHT HARPOON ABOVE", nil)
@@ -493,11 +396,9 @@ addSymbol(U(0x020D5), "accent", nil, "COMBINING CLOCKWISE ARROW ABOVE", nil)
 addSymbol(U(0x020D6), "accent", "overleftarrow", "COMBINING LEFT ARROW ABOVE", nil)
 addSymbol(U(0x020D7), "accent", "overrightarrow", "COMBINING RIGHT ARROW ABOVE", nil)
 addSymbol(U(0x020DB), "accent", "dddot", "COMBINING THREE DOTS ABOVE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x020DC), "accent", "ddddot", "COMBINING FOUR DOTS ABOVE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x020DD), "ord", "enclosecircle", "COMBINING ENCLOSING CIRCLE", nil)
 addSymbol(U(0x020DE), "ord", "enclosesquare", "COMBINING ENCLOSING SQUARE", nil)
 addSymbol(U(0x020DF), "ord", "enclosediamond", "COMBINING ENCLOSING DIAMOND", nil)
@@ -551,1140 +452,772 @@ addSymbol(U(0x0213C), "ord", "Bbbpi", "DOUBLE-STRUCK SMALL PI", nil)
 addSymbol(U(0x0213D), "ord", "Bbbgamma", "DOUBLE-STRUCK SMALL GAMMA", nil)
 addSymbol(U(0x0213E), "ord", "BbbGamma", "DOUBLE-STRUCK CAPITAL GAMMA", nil)
 addSymbol(U(0x0213F), "ord", "BbbPi", "DOUBLE-STRUCK CAPITAL PI", nil)
-addSymbol(U(0x02140), "big", "Bbbsum", "DOUBLE-STRUCK N-ARY SUMMATION", nil)
+addSymbol(U(0x02140), "op", "Bbbsum", "DOUBLE-STRUCK N-ARY SUMMATION", nil)
 addSymbol(U(0x02141), "ord", "Game", "TURNED SANS-SERIF CAPITAL G", nil)
 addSymbol(U(0x02142), "ord", "sansLturned", "TURNED SANS-SERIF CAPITAL L", nil)
 addSymbol(U(0x02143), "ord", "sansLmirrored", "REVERSED SANS-SERIF CAPITAL L", nil)
 addSymbol(U(0x02144), "ord", "Yup", "TURNED SANS-SERIF CAPITAL Y", nil)
 addSymbol(U(0x02145), "ord", "mitBbbD", "DOUBLE-STRUCK ITALIC CAPITAL D", {
-   { form = "prefix", lspace = 3, priority = 780, rspace = 0 },
-})
+  { form = "prefix", lspace = 3, priority = 780, rspace = 0 }})
 addSymbol(U(0x02146), "ord", "mitBbbd", "DOUBLE-STRUCK ITALIC SMALL D", {
-   { form = "prefix", lspace = 3, priority = 780, rspace = 0 },
-})
+  { form = "prefix", lspace = 3, priority = 780, rspace = 0 }})
 addSymbol(U(0x02147), "ord", "mitBbbe", "DOUBLE-STRUCK ITALIC SMALL E", nil)
 addSymbol(U(0x02148), "ord", "mitBbbi", "DOUBLE-STRUCK ITALIC SMALL I", nil)
 addSymbol(U(0x02149), "ord", "mitBbbj", "DOUBLE-STRUCK ITALIC SMALL J", nil)
 addSymbol(U(0x0214A), "ord", "PropertyLine", "PROPERTY LINE", nil)
 addSymbol(U(0x0214B), "ord", "upand", "TURNED AMPERSAND", nil)
 addSymbol(U(0x02190), "rel", "leftarrow", "LEFTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02191), "rel", "uparrow", "UPWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02192), "rel", "rightarrow", "RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02193), "rel", "downarrow", "DOWNWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02194), "rel", "leftrightarrow", "LEFT RIGHT ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02195), "rel", "updownarrow", "UP DOWN ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02196), "rel", "nwarrow", "NORTH WEST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02197), "rel", "nearrow", "NORTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02198), "rel", "searrow", "SOUTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02199), "rel", "swarrow", "SOUTH WEST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0219A), "rel", "nleftarrow", "LEFTWARDS ARROW WITH STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0219B), "rel", "nrightarrow", "RIGHTWARDS ARROW WITH STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0219C), "rel", "leftwavearrow", "LEFTWARDS WAVE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0219D), "rel", "rightwavearrow", "RIGHTWARDS WAVE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0219E), "rel", "twoheadleftarrow", "LEFTWARDS TWO HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0219F), "rel", "twoheaduparrow", "UPWARDS TWO HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021A0), "rel", "twoheadrightarrow", "RIGHTWARDS TWO HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021A1), "rel", "twoheaddownarrow", "DOWNWARDS TWO HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021A2), "rel", "leftarrowtail", "LEFTWARDS ARROW WITH TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021A3), "rel", "rightarrowtail", "RIGHTWARDS ARROW WITH TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021A4), "rel", "mapsfrom", "LEFTWARDS ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021A5), "rel", "mapsup", "UPWARDS ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021A6), "rel", "mapsto", "RIGHTWARDS ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021A7), "rel", "mapsdown", "DOWNWARDS ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021A8), "rel", "updownarrowbar", "UP DOWN ARROW WITH BASE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021A9), "rel", "hookleftarrow", "LEFTWARDS ARROW WITH HOOK", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021AA), "rel", "hookrightarrow", "RIGHTWARDS ARROW WITH HOOK", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021AB), "rel", "looparrowleft", "LEFTWARDS ARROW WITH LOOP", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021AC), "rel", "looparrowright", "RIGHTWARDS ARROW WITH LOOP", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021AD), "rel", "leftrightsquigarrow", "LEFT RIGHT WAVE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021AE), "rel", "nleftrightarrow", "LEFT RIGHT ARROW WITH STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021AF), "rel", "downzigzagarrow", "DOWNWARDS ZIGZAG ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x021B0), "rel", "Lsh", "UPWARDS ARROW WITH TIP LEFTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021B1), "rel", "Rsh", "UPWARDS ARROW WITH TIP RIGHTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021B2), "rel", "Ldsh", "DOWNWARDS ARROW WITH TIP LEFTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021B3), "rel", "Rdsh", "DOWNWARDS ARROW WITH TIP RIGHTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021B4), "ord", "linefeed", "RIGHTWARDS ARROW WITH CORNER DOWNWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021B5), "ord", "carriagereturn", "DOWNWARDS ARROW WITH CORNER LEFTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021B6), "rel", "curvearrowleft", "ANTICLOCKWISE TOP SEMICIRCLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x021B7), "rel", "curvearrowright", "CLOCKWISE TOP SEMICIRCLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x021B8), "ord", "barovernorthwestarrow", "NORTH WEST ARROW TO LONG BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x021B9), "ord", "barleftarrowrightarrowbar", "LEFTWARDS ARROW TO BAR OVER RIGHTWARDS ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021BA), "rel", "acwopencirclearrow", "ANTICLOCKWISE OPEN CIRCLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x021BB), "rel", "cwopencirclearrow", "CLOCKWISE OPEN CIRCLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x021BC), "rel", "leftharpoonup", "LEFTWARDS HARPOON WITH BARB UPWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021BD), "rel", "leftharpoondown", "LEFTWARDS HARPOON WITH BARB DOWNWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021BE), "rel", "upharpoonright", "UPWARDS HARPOON WITH BARB RIGHTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021BF), "rel", "upharpoonleft", "UPWARDS HARPOON WITH BARB LEFTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021C0), "rel", "rightharpoonup", "RIGHTWARDS HARPOON WITH BARB UPWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021C1), "rel", "rightharpoondown", "RIGHTWARDS HARPOON WITH BARB DOWNWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021C2), "rel", "downharpoonright", "DOWNWARDS HARPOON WITH BARB RIGHTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021C3), "rel", "downharpoonleft", "DOWNWARDS HARPOON WITH BARB LEFTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021C4), "rel", "rightleftarrows", "RIGHTWARDS ARROW OVER LEFTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021C5), "rel", "updownarrows", "UPWARDS ARROW LEFTWARDS OF DOWNWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021C6), "rel", "leftrightarrows", "LEFTWARDS ARROW OVER RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021C7), "rel", "leftleftarrows", "LEFTWARDS PAIRED ARROWS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021C8), "rel", "upuparrows", "UPWARDS PAIRED ARROWS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021C9), "rel", "rightrightarrows", "RIGHTWARDS PAIRED ARROWS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021CA), "rel", "downdownarrows", "DOWNWARDS PAIRED ARROWS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021CB), "rel", "leftrightharpoons", "LEFTWARDS HARPOON OVER RIGHTWARDS HARPOON", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021CC), "rel", "rightleftharpoons", "RIGHTWARDS HARPOON OVER LEFTWARDS HARPOON", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021CD), "rel", "nLeftarrow", "LEFTWARDS DOUBLE ARROW WITH STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021CE), "rel", "nLeftrightarrow", "LEFT RIGHT DOUBLE ARROW WITH STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021CF), "rel", "nRightarrow", "RIGHTWARDS DOUBLE ARROW WITH STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021D0), "rel", "Leftarrow", "LEFTWARDS DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021D1), "rel", "Uparrow", "UPWARDS DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021D2), "rel", "Rightarrow", "RIGHTWARDS DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021D3), "rel", "Downarrow", "DOWNWARDS DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021D4), "rel", "Leftrightarrow", "LEFT RIGHT DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021D5), "rel", "Updownarrow", "UP DOWN DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021D6), "rel", "Nwarrow", "NORTH WEST DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x021D7), "rel", "Nearrow", "NORTH EAST DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x021D8), "rel", "Searrow", "SOUTH EAST DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x021D9), "rel", "Swarrow", "SOUTH WEST DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x021DA), "rel", "Lleftarrow", "LEFTWARDS TRIPLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021DB), "rel", "Rrightarrow", "RIGHTWARDS TRIPLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021DC), "rel", "leftsquigarrow", "LEFTWARDS SQUIGGLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021DD), "rel", "rightsquigarrow", "RIGHTWARDS SQUIGGLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021DE), "rel", "nHuparrow", "UPWARDS ARROW WITH DOUBLE STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021DF), "rel", "nHdownarrow", "DOWNWARDS ARROW WITH DOUBLE STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021E0), "rel", "leftdasharrow", "LEFTWARDS DASHED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021E1), "rel", "updasharrow", "UPWARDS DASHED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021E2), "rel", "rightdasharrow", "RIGHTWARDS DASHED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021E3), "rel", "downdasharrow", "DOWNWARDS DASHED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021E4), "rel", "barleftarrow", "LEFTWARDS ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021E5), "rel", "rightarrowbar", "RIGHTWARDS ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021E6), "rel", "leftwhitearrow", "LEFTWARDS WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021E7), "rel", "upwhitearrow", "UPWARDS WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021E8), "rel", "rightwhitearrow", "RIGHTWARDS WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021E9), "rel", "downwhitearrow", "DOWNWARDS WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021EA), "rel", "whitearrowupfrombar", "UPWARDS WHITE ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021EB), "rel", nil, "UPWARDS WHITE ARROW ON PEDESTAL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021EC), "rel", nil, "UPWARDS WHITE ARROW ON PEDESTAL WITH HORIZONTAL BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021ED), "rel", nil, "UPWARDS WHITE ARROW ON PEDESTAL WITH VERTICAL BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021EE), "rel", nil, "UPWARDS WHITE DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021EF), "rel", nil, "UPWARDS WHITE DOUBLE ARROW ON PEDESTAL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021F0), "rel", nil, "RIGHTWARDS WHITE ARROW FROM WALL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021F1), "rel", nil, "NORTH WEST ARROW TO CORNER", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x021F2), "rel", nil, "SOUTH EAST ARROW TO CORNER", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x021F3), "rel", nil, "UP DOWN WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021F4), "rel", "circleonrightarrow", "RIGHT ARROW WITH SMALL CIRCLE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021F5), "rel", "downuparrows", "DOWNWARDS ARROW LEFTWARDS OF UPWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021F6), "rel", "rightthreearrows", "THREE RIGHTWARDS ARROWS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021F7), "rel", "nvleftarrow", "LEFTWARDS ARROW WITH VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021F8), "rel", "nvrightarrow", "RIGHTWARDS ARROW WITH VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021F9), "rel", "nvleftrightarrow", "LEFT RIGHT ARROW WITH VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021FA), "rel", "nVleftarrow", "LEFTWARDS ARROW WITH DOUBLE VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021FB), "rel", "nVrightarrow", "RIGHTWARDS ARROW WITH DOUBLE VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021FC), "rel", "nVleftrightarrow", "LEFT RIGHT ARROW WITH DOUBLE VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021FD), "rel", "leftarrowtriangle", "LEFTWARDS OPEN-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021FE), "rel", "rightarrowtriangle", "RIGHTWARDS OPEN-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x021FF), "rel", "leftrightarrowtriangle", "LEFT RIGHT OPEN-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02200), "ord", "forall", "FOR ALL", {
-   { form = "prefix", lspace = 0, priority = 280, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 280, rspace = 0 }})
 addSymbol(U(0x02201), "ord", "complement", "COMPLEMENT", {
-   { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 720, rspace = 0 }})
 addSymbol(U(0x02202), "ord", "partial", "PARTIAL DIFFERENTIAL", {
-   { form = "prefix", lspace = 3, priority = 780, rspace = 0 },
-})
+  { form = "prefix", lspace = 3, priority = 780, rspace = 0 }})
 addSymbol(U(0x02203), "ord", "exists", "THERE EXISTS", {
-   { form = "prefix", lspace = 0, priority = 280, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 280, rspace = 0 }})
 addSymbol(U(0x02204), "ord", "nexists", "THERE DOES NOT EXIST", {
-   { form = "prefix", lspace = 0, priority = 280, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 280, rspace = 0 }})
 addSymbol(U(0x02205), "ord", "varnothing", "EMPTY SET", nil)
 addSymbol(U(0x02206), "ord", "increment", "INCREMENT", {
-   { form = "infix", lspace = 0, priority = 720, rspace = 0 },
-})
+  { form = "infix", lspace = 0, priority = 720, rspace = 0 }})
 addSymbol(U(0x02207), "ord", "nabla", "NABLA", {
-   { form = "prefix", lspace = 0, priority = 780, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 780, rspace = 0 }})
 addSymbol(U(0x02208), "rel", "in", "ELEMENT OF", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02209), "rel", "notin", "NOT AN ELEMENT OF", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x0220A), "rel", "smallin", "SMALL ELEMENT OF", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x0220B), "rel", "ni", "CONTAINS AS MEMBER", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x0220C), "rel", "nni", "DOES NOT CONTAIN AS MEMBER", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x0220D), "rel", "smallni", "SMALL CONTAINS AS MEMBER", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x0220E), "ord", "QED", "END OF PROOF", nil)
-addSymbol(U(0x0220F), "big", "prod", "N-ARY PRODUCT", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 540, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02210), "big", "coprod", "N-ARY COPRODUCT", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 540, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02211), "big", "sum", "N-ARY SUMMATION", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 440, rspace = 3, symmetric = true },
-})
+addSymbol(U(0x0220F), "op", "prod", "N-ARY PRODUCT", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 540, rspace = 3, symmetric = true }})
+addSymbol(U(0x02210), "op", "coprod", "N-ARY COPRODUCT", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 540, rspace = 3, symmetric = true }})
+addSymbol(U(0x02211), "op", "sum", "N-ARY SUMMATION", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 440, rspace = 3, symmetric = true }})
 addSymbol(U(0x02212), "bin", "minus", "MINUS SIGN", {
-   { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02213), "bin", "mp", "MINUS-OR-PLUS SIGN", {
-   { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02214), "bin", "dotplus", "DOT PLUS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02215), "bin", "divslash", "DIVISION SLASH", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x02216), "bin", "setminus", "SET MINUS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02217), "bin", "ast", "ASTERISK OPERATOR", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02218), "bin", "vysmwhtcircle", "RING OPERATOR", {
-   { form = "infix", lspace = 3, priority = 900, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 900, rspace = 3 }})
 addSymbol(U(0x02219), "bin", "vysmblkcircle", "BULLET OPERATOR", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
-addSymbol(U(0x0221A), "big", "sqrt", "SQUARE ROOT", {
-   { form = "prefix", lspace = 3, priority = 860, rspace = 0 },
-})
-addSymbol(U(0x0221B), "big", "cuberoot", "CUBE ROOT", {
-   { form = "prefix", lspace = 3, priority = 860, rspace = 0 },
-})
-addSymbol(U(0x0221C), "big", "fourthroot", "FOURTH ROOT", {
-   { form = "prefix", lspace = 3, priority = 860, rspace = 0 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
+addSymbol(U(0x0221A), "op", "sqrt", "SQUARE ROOT", {
+  { form = "prefix", lspace = 3, priority = 860, rspace = 0 }})
+addSymbol(U(0x0221B), "op", "cuberoot", "CUBE ROOT", {
+  { form = "prefix", lspace = 3, priority = 860, rspace = 0 }})
+addSymbol(U(0x0221C), "op", "fourthroot", "FOURTH ROOT", {
+  { form = "prefix", lspace = 3, priority = 860, rspace = 0 }})
 addSymbol(U(0x0221D), "rel", "propto", "PROPORTIONAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0221E), "ord", "infty", "INFINITY", nil)
 addSymbol(U(0x0221F), "ord", "rightangle", "RIGHT ANGLE", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x02220), "ord", "angle", "ANGLE", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x02221), "ord", "measuredangle", "MEASURED ANGLE", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x02222), "ord", "sphericalangle", "SPHERICAL ANGLE", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x02223), "rel", "mid", "DIVIDES", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02224), "rel", "nmid", "DOES NOT DIVIDE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02225), "rel", "parallel", "PARALLEL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02226), "rel", "nparallel", "NOT PARALLEL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02227), "bin", "wedge", "LOGICAL AND", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x02228), "bin", "vee", "LOGICAL OR", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02229), "bin", "cap", "INTERSECTION", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x0222A), "bin", "cup", "UNION", {
-   { form = "infix", lspace = 4, priority = 360, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 360, rspace = 4 }})
 addSymbol(U(0x0222B), "ord", "int", "INTEGRAL", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x0222C), "ord", "iint", "DOUBLE INTEGRAL", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x0222D), "ord", "iiint", "TRIPLE INTEGRAL", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x0222E), "ord", "oint", "CONTOUR INTEGRAL", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x0222F), "ord", "oiint", "SURFACE INTEGRAL", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02230), "ord", "oiiint", "VOLUME INTEGRAL", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02231), "ord", "intclockwise", "CLOCKWISE INTEGRAL", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02232), "ord", "varointclockwise", "CLOCKWISE CONTOUR INTEGRAL", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02233), "ord", "ointctrclockwise", "ANTICLOCKWISE CONTOUR INTEGRAL", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02234), "rel", "therefore", "THEREFORE", {
-   { form = "prefix", lspace = 0, priority = 200, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 200, rspace = 0 }})
 addSymbol(U(0x02235), "rel", "because", "BECAUSE", {
-   { form = "prefix", lspace = 0, priority = 200, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 200, rspace = 0 }})
 addSymbol(U(0x02236), "rel", "mathratio", "RATIO", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x02237), "rel", "Colon", "PROPORTION", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02238), "bin", "dotminus", "DOT MINUS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02239), "rel", "dashcolon", "EXCESS", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0223A), "rel", "dotsminusdots", "GEOMETRIC PROPORTION", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0223B), "rel", "kernelcontraction", "HOMOTHETIC", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0223C), "rel", "sim", "TILDE OPERATOR", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-   { form = "prefix", lspace = 0, priority = 280, rspace = 0 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 },
+  { form = "prefix", lspace = 0, priority = 280, rspace = 0 }})
 addSymbol(U(0x0223D), "rel", "backsim", "REVERSED TILDE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0223E), "bin", "invlazys", "INVERTED LAZY S", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0223F), "ord", "sinewave", "SINE WAVE", nil)
 addSymbol(U(0x02240), "bin", "wr", "WREATH PRODUCT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02241), "rel", "nsim", "NOT TILDE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02242), "rel", "eqsim", "MINUS TILDE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02243), "rel", "simeq", "ASYMPTOTICALLY EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02244), "rel", "nsime", "NOT ASYMPTOTICALLY EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02245), "rel", "cong", "APPROXIMATELY EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02246), "rel", "simneqq", "APPROXIMATELY BUT NOT ACTUALLY EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02247), "rel", "ncong", "NEITHER APPROXIMATELY NOR ACTUALLY EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02248), "rel", "approx", "ALMOST EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02249), "rel", "napprox", "NOT ALMOST EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0224A), "rel", "approxeq", "ALMOST EQUAL OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0224B), "rel", "approxident", "TRIPLE TILDE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0224C), "rel", "backcong", "ALL EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0224D), "rel", "asymp", "EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0224E), "rel", "Bumpeq", "GEOMETRICALLY EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0224F), "rel", "bumpeq", "DIFFERENCE BETWEEN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02250), "rel", "doteq", "APPROACHES THE LIMIT", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02251), "rel", "Doteq", "GEOMETRICALLY EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02252), "rel", "fallingdotseq", "APPROXIMATELY EQUAL TO OR THE IMAGE OF", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02253), "rel", "risingdotseq", "IMAGE OF OR APPROXIMATELY EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02254), "rel", "coloneq", "COLON EQUALS", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02255), "rel", "eqcolon", "EQUALS COLON", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02256), "rel", "eqcirc", "RING IN EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02257), "rel", "circeq", "RING EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02258), "rel", "arceq", "CORRESPONDS TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02259), "rel", "wedgeq", "ESTIMATES", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0225A), "rel", "veeeq", "EQUIANGULAR TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0225B), "rel", "stareq", "STAR EQUALS", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0225C), "rel", "triangleq", "DELTA EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0225D), "rel", "eqdef", "EQUAL TO BY DEFINITION", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0225E), "rel", "measeq", "MEASURED BY", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0225F), "rel", "questeq", "QUESTIONED EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02260), "rel", "ne", "NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02261), "rel", "equiv", "IDENTICAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02262), "rel", "nequiv", "NOT IDENTICAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02263), "rel", "Equiv", "STRICTLY EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02264), "rel", "leq", "LESS-THAN OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02265), "rel", "geq", "GREATER-THAN OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02266), "rel", "leqq", "LESS-THAN OVER EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02267), "rel", "geqq", "GREATER-THAN OVER EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02268), "rel", "lneqq", "LESS-THAN BUT NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02269), "rel", "gneqq", "GREATER-THAN BUT NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0226A), "rel", "ll", "MUCH LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0226B), "rel", "gg", "MUCH GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0226C), "rel", "between", "BETWEEN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0226D), "rel", "nasymp", "NOT EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0226E), "rel", "nless", "NOT LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0226F), "rel", "ngtr", "NOT GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02270), "rel", "nleq", "NEITHER LESS-THAN NOR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02271), "rel", "ngeq", "NEITHER GREATER-THAN NOR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02272), "rel", "lesssim", "LESS-THAN OR EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02273), "rel", "gtrsim", "GREATER-THAN OR EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02274), "rel", "nlesssim", "NEITHER LESS-THAN NOR EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02275), "rel", "ngtrsim", "NEITHER GREATER-THAN NOR EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02276), "rel", "lessgtr", "LESS-THAN OR GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02277), "rel", "gtrless", "GREATER-THAN OR LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02278), "rel", "nlessgtr", "NEITHER LESS-THAN NOR GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02279), "rel", "ngtrless", "NEITHER GREATER-THAN NOR LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0227A), "rel", "prec", "PRECEDES", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0227B), "rel", "succ", "SUCCEEDS", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0227C), "rel", "preccurlyeq", "PRECEDES OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0227D), "rel", "succcurlyeq", "SUCCEEDS OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0227E), "rel", "precsim", "PRECEDES OR EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0227F), "rel", "succsim", "SUCCEEDS OR EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02280), "rel", "nprec", "DOES NOT PRECEDE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02281), "rel", "nsucc", "DOES NOT SUCCEED", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02282), "rel", "subset", "SUBSET OF", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02283), "rel", "supset", "SUPERSET OF", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02284), "rel", "nsubset", "NOT A SUBSET OF", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02285), "rel", "nsupset", "NOT A SUPERSET OF", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02286), "rel", "subseteq", "SUBSET OF OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02287), "rel", "supseteq", "SUPERSET OF OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02288), "rel", "nsubseteq", "NEITHER A SUBSET OF NOR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02289), "rel", "nsupseteq", "NEITHER A SUPERSET OF NOR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x0228A), "rel", "subsetneq", "SUBSET OF WITH NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x0228B), "rel", "supsetneq", "SUPERSET OF WITH NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x0228C), "bin", "cupleftarrow", "MULTISET", {
-   { form = "infix", lspace = 4, priority = 360, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 360, rspace = 4 }})
 addSymbol(U(0x0228D), "bin", "cupdot", "MULTISET MULTIPLICATION", {
-   { form = "infix", lspace = 4, priority = 360, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 360, rspace = 4 }})
 addSymbol(U(0x0228E), "bin", "uplus", "MULTISET UNION", {
-   { form = "infix", lspace = 4, priority = 360, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 360, rspace = 4 }})
 addSymbol(U(0x0228F), "rel", "sqsubset", "SQUARE IMAGE OF", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02290), "rel", "sqsupset", "SQUARE ORIGINAL OF", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02291), "rel", "sqsubseteq", "SQUARE IMAGE OF OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02292), "rel", "sqsupseteq", "SQUARE ORIGINAL OF OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02293), "bin", "sqcap", "SQUARE CAP", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02294), "bin", "sqcup", "SQUARE CUP", {
-   { form = "infix", lspace = 4, priority = 360, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 360, rspace = 4 }})
 addSymbol(U(0x02295), "bin", "oplus", "CIRCLED PLUS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02296), "bin", "ominus", "CIRCLED MINUS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02297), "bin", "otimes", "CIRCLED TIMES", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02298), "bin", "oslash", "CIRCLED DIVISION SLASH", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x02299), "bin", "odot", "CIRCLED DOT OPERATOR", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x0229A), "bin", "circledcirc", "CIRCLED RING OPERATOR", {
-   { form = "infix", lspace = 3, priority = 900, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 900, rspace = 3 }})
 addSymbol(U(0x0229B), "bin", "circledast", "CIRCLED ASTERISK OPERATOR", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x0229C), "bin", "circledequal", "CIRCLED EQUALS", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x0229D), "bin", "circleddash", "CIRCLED DASH", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x0229E), "bin", "boxplus", "SQUARED PLUS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x0229F), "bin", "boxminus", "SQUARED MINUS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x022A0), "bin", "boxtimes", "SQUARED TIMES", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x022A1), "bin", "boxdot", "SQUARED DOT OPERATOR", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x022A2), "rel", "vdash", "RIGHT TACK", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x022A3), "rel", "dashv", "LEFT TACK", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x022A4), "ord", "top", "DOWN TACK", nil)
 addSymbol(U(0x022A5), "rel", "bot", "UP TACK", nil)
 addSymbol(U(0x022A6), "rel", "assert", "ASSERTION", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022A7), "rel", "models", "MODELS", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x022A8), "rel", "vDash", "TRUE", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x022A9), "rel", "Vdash", "FORCES", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x022AA), "rel", "Vvdash", "TRIPLE VERTICAL BAR RIGHT TURNSTILE", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x022AB), "rel", "VDash", "DOUBLE VERTICAL BAR DOUBLE RIGHT TURNSTILE", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x022AC), "rel", "nvdash", "DOES NOT PROVE", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x022AD), "rel", "nvDash", "NOT TRUE", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x022AE), "rel", "nVdash", "DOES NOT FORCE", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x022AF), "rel", "nVDash", "NEGATED DOUBLE VERTICAL BAR DOUBLE RIGHT TURNSTILE", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x022B0), "rel", "prurel", "PRECEDES UNDER RELATION", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022B1), "rel", "scurel", "SUCCEEDS UNDER RELATION", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022B2), "rel", "vartriangleleft", "NORMAL SUBGROUP OF", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022B3), "rel", "vartriangleright", "CONTAINS AS NORMAL SUBGROUP", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022B4), "rel", "trianglelefteq", "NORMAL SUBGROUP OF OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022B5), "rel", "trianglerighteq", "CONTAINS AS NORMAL SUBGROUP OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022B6), "rel", "origof", "ORIGINAL OF", {
-   { form = "infix", lspace = 5, priority = 220, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 220, rspace = 5 }})
 addSymbol(U(0x022B7), "rel", "imageof", "IMAGE OF", {
-   { form = "infix", lspace = 5, priority = 220, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 220, rspace = 5 }})
 addSymbol(U(0x022B8), "rel", "multimap", "MULTIMAP", {
-   { form = "infix", lspace = 5, priority = 220, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 220, rspace = 5 }})
 addSymbol(U(0x022B9), "bin", "hermitmatrix", "HERMITIAN CONJUGATE MATRIX", nil)
 addSymbol(U(0x022BA), "bin", "intercal", "INTERCALATE", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x022BB), "bin", "veebar", "XOR", {
-   { form = "infix", lspace = 4, priority = 420, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 420, rspace = 4 }})
 addSymbol(U(0x022BC), "bin", "barwedge", "NAND", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x022BD), "bin", "barvee", "NOR", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x022BE), "ord", "measuredrightangle", "RIGHT ANGLE WITH ARC", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x022BF), "ord", "varlrtriangle", "RIGHT TRIANGLE", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
-addSymbol(U(0x022C0), "big", "bigwedge", "N-ARY LOGICAL AND", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x022C1), "big", "bigvee", "N-ARY LOGICAL OR", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x022C2), "big", "bigcap", "N-ARY INTERSECTION", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x022C3), "big", "bigcup", "N-ARY UNION", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 500, rspace = 3, symmetric = true },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
+addSymbol(U(0x022C0), "op", "bigwedge", "N-ARY LOGICAL AND", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true }})
+addSymbol(U(0x022C1), "op", "bigvee", "N-ARY LOGICAL OR", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true }})
+addSymbol(U(0x022C2), "op", "bigcap", "N-ARY INTERSECTION", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true }})
+addSymbol(U(0x022C3), "op", "bigcup", "N-ARY UNION", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 500, rspace = 3, symmetric = true }})
 addSymbol(U(0x022C4), "bin", "smwhtdiamond", "DIAMOND OPERATOR", {
-   { form = "infix", lspace = 3, priority = 900, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 900, rspace = 3 }})
 addSymbol(U(0x022C5), "bin", "cdot", "DOT OPERATOR", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x022C6), "bin", "star", "STAR OPERATOR", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x022C7), "bin", "divideontimes", "DIVISION TIMES", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x022C8), "rel", "bowtie", "BOWTIE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022C9), "bin", "ltimes", "LEFT NORMAL FACTOR SEMIDIRECT PRODUCT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x022CA), "bin", "rtimes", "RIGHT NORMAL FACTOR SEMIDIRECT PRODUCT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x022CB), "bin", "leftthreetimes", "LEFT SEMIDIRECT PRODUCT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x022CC), "bin", "rightthreetimes", "RIGHT SEMIDIRECT PRODUCT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x022CD), "rel", "backsimeq", "REVERSED TILDE EQUALS", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022CE), "bin", "curlyvee", "CURLY LOGICAL OR", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x022CF), "bin", "curlywedge", "CURLY LOGICAL AND", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x022D0), "rel", "Subset", "DOUBLE SUBSET", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022D1), "rel", "Supset", "DOUBLE SUPERSET", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022D2), "bin", "Cap", "DOUBLE INTERSECTION", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x022D3), "bin", "Cup", "DOUBLE UNION", {
-   { form = "infix", lspace = 4, priority = 360, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 360, rspace = 4 }})
 addSymbol(U(0x022D4), "rel", "pitchfork", "PITCHFORK", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022D5), "rel", "equalparallel", "EQUAL AND PARALLEL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022D6), "rel", "lessdot", "LESS-THAN WITH DOT", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022D7), "rel", "gtrdot", "GREATER-THAN WITH DOT", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022D8), "rel", "lll", "VERY MUCH LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022D9), "rel", "ggg", "VERY MUCH GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022DA), "rel", "lesseqgtr", "LESS-THAN EQUAL TO OR GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022DB), "rel", "gtreqless", "GREATER-THAN EQUAL TO OR LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022DC), "rel", "eqless", "EQUAL TO OR LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022DD), "rel", "eqgtr", "EQUAL TO OR GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022DE), "rel", "curlyeqprec", "EQUAL TO OR PRECEDES", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022DF), "rel", "curlyeqsucc", "EQUAL TO OR SUCCEEDS", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022E0), "rel", "npreccurlyeq", "DOES NOT PRECEDE OR EQUAL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022E1), "rel", "nsucccurlyeq", "DOES NOT SUCCEED OR EQUAL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022E2), "rel", "nsqsubseteq", "NOT SQUARE IMAGE OF OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022E3), "rel", "nsqsupseteq", "NOT SQUARE ORIGINAL OF OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022E4), "rel", "sqsubsetneq", "SQUARE IMAGE OF OR NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022E5), "rel", "sqsupsetneq", "SQUARE ORIGINAL OF OR NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022E6), "rel", "lnsim", "LESS-THAN BUT NOT EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022E7), "rel", "gnsim", "GREATER-THAN BUT NOT EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022E8), "rel", "precnsim", "PRECEDES BUT NOT EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022E9), "rel", "succnsim", "SUCCEEDS BUT NOT EQUIVALENT TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x022EA), "rel", "nvartriangleleft", "NOT NORMAL SUBGROUP OF", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022EB), "rel", "nvartriangleright", "DOES NOT CONTAIN AS NORMAL SUBGROUP", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022EC), "rel", "ntrianglelefteq", "NOT NORMAL SUBGROUP OF OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022ED), "rel", "ntrianglerighteq", "DOES NOT CONTAIN AS NORMAL SUBGROUP OR EQUAL", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022EE), "rel", "vdots", "VERTICAL ELLIPSIS", nil)
 addSymbol(U(0x022EF), "rel", "unicodecdots", "MIDLINE HORIZONTAL ELLIPSIS", nil)
 addSymbol(U(0x022F0), "rel", "adots", "UP RIGHT DIAGONAL ELLIPSIS", nil)
 addSymbol(U(0x022F1), "rel", "ddots", "DOWN RIGHT DIAGONAL ELLIPSIS", nil)
 addSymbol(U(0x022F2), "rel", "disin", "ELEMENT OF WITH LONG HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022F3), "rel", "varisins", "ELEMENT OF WITH VERTICAL BAR AT END OF HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022F4), "rel", "isins", "SMALL ELEMENT OF WITH VERTICAL BAR AT END OF HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022F5), "rel", "isindot", "ELEMENT OF WITH DOT ABOVE", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022F6), "rel", "varisinobar", "ELEMENT OF WITH OVERBAR", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022F7), "rel", "isinobar", "SMALL ELEMENT OF WITH OVERBAR", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022F8), "rel", "isinvb", "ELEMENT OF WITH UNDERBAR", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022F9), "rel", "isinE", "ELEMENT OF WITH TWO HORIZONTAL STROKES", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022FA), "rel", "nisd", "CONTAINS WITH LONG HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022FB), "rel", "varnis", "CONTAINS WITH VERTICAL BAR AT END OF HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022FC), "rel", "nis", "SMALL CONTAINS WITH VERTICAL BAR AT END OF HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022FD), "rel", "varniobar", "CONTAINS WITH OVERBAR", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022FE), "rel", "niobar", "SMALL CONTAINS WITH OVERBAR", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x022FF), "rel", "bagmember", "Z NOTATION BAG MEMBERSHIP", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02300), "ord", "diameter", "DIAMETER SIGN", nil)
 addSymbol(U(0x02301), "ord", nil, "ELECTRIC ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02302), "ord", "house", "HOUSE", nil)
 addSymbol(U(0x02305), "bin", "varbarwedge", "PROJECTIVE", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02306), "bin", "vardoublebarwedge", "PERSPECTIVE", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02308), "open", "lceil", "LEFT CEILING", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02309), "close", "rceil", "RIGHT CEILING", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0230A), "open", "lfloor", "LEFT FLOOR", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0230B), "close", "rfloor", "RIGHT FLOOR", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02310), "ord", "invnot", "REVERSED NOT SIGN", {
-   { form = "prefix", lspace = 0, priority = 280, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 280, rspace = 0 }})
 addSymbol(U(0x02311), "ord", "sqlozenge", "SQUARE LOZENGE", nil)
 addSymbol(U(0x02312), "ord", "profline", "ARC", nil)
 addSymbol(U(0x02313), "ord", "profsurf", "SEGMENT", nil)
 addSymbol(U(0x02317), "ord", "viewdata", "VIEWDATA SQUARE", nil)
 addSymbol(U(0x02319), "ord", "turnednot", "TURNED NOT SIGN", {
-   { form = "prefix", lspace = 0, priority = 280, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 280, rspace = 0 }})
 addSymbol(U(0x0231C), "open", "ulcorner", "TOP LEFT CORNER", nil)
 addSymbol(U(0x0231D), "close", "urcorner", "TOP RIGHT CORNER", nil)
 addSymbol(U(0x0231E), "open", "llcorner", "BOTTOM LEFT CORNER", nil)
@@ -1692,17 +1225,13 @@ addSymbol(U(0x0231F), "close", "lrcorner", "BOTTOM RIGHT CORNER", nil)
 addSymbol(U(0x02320), "ord", "inttop", "TOP HALF INTEGRAL", nil)
 addSymbol(U(0x02321), "ord", "intbottom", "BOTTOM HALF INTEGRAL", nil)
 addSymbol(U(0x02322), "rel", "frown", "FROWN", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x02323), "rel", "smile", "SMILE", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x02329), "ord", nil, "LEFT-POINTING ANGLE BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0232A), "ord", nil, "RIGHT-POINTING ANGLE BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0232C), "ord", "varhexagonlrbonds", "BENZENE RING", nil)
 addSymbol(U(0x02332), "ord", "conictaper", "CONICAL TAPER", nil)
 addSymbol(U(0x02336), "ord", "topbot", "APL FUNCTIONAL SYMBOL I-BEAM", nil)
@@ -1712,11 +1241,9 @@ addSymbol(U(0x02340), "ord", "APLnotbackslash", "APL FUNCTIONAL SYMBOL BACKSLASH
 addSymbol(U(0x02353), "ord", "APLboxupcaret", "APL FUNCTIONAL SYMBOL QUAD UP CARET", nil)
 addSymbol(U(0x02370), "ord", "APLboxquestion", "APL FUNCTIONAL SYMBOL QUAD QUESTION", nil)
 addSymbol(U(0x0237C), "rel", "rangledownzigzagarrow", "RIGHT ANGLE WITH DOWNWARDS ZIGZAG ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0238B), "ord", nil, "BROKEN CIRCLE WITH NORTHWEST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02394), "ord", "hexagon", "SOFTWARE-FUNCTION SYMBOL", nil)
 addSymbol(U(0x0239B), "ord", "lparenuend", "LEFT PARENTHESIS UPPER HOOK", nil)
 addSymbol(U(0x0239C), "ord", "lparenextender", "LEFT PARENTHESIS EXTENSION", nil)
@@ -1744,37 +1271,28 @@ addSymbol(U(0x023B1), "rel", "rmoustache", "UPPER RIGHT OR LOWER LEFT CURLY BRAC
 addSymbol(U(0x023B2), "ord", "sumtop", "SUMMATION TOP", nil)
 addSymbol(U(0x023B3), "ord", "sumbottom", "SUMMATION BOTTOM", nil)
 addSymbol(U(0x023B4), "ord", "overbracket", "TOP SQUARE BRACKET", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x023B5), "ord", "underbracket", "BOTTOM SQUARE BRACKET", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x023B6), "ord", "bbrktbrk", "BOTTOM SQUARE BRACKET OVER TOP SQUARE BRACKET", nil)
 addSymbol(U(0x023B7), "ord", "sqrtbottom", "RADICAL SYMBOL BOTTOM", nil)
 addSymbol(U(0x023B8), "ord", "lvboxline", "LEFT VERTICAL BOX LINE", nil)
 addSymbol(U(0x023B9), "ord", "rvboxline", "RIGHT VERTICAL BOX LINE", nil)
 addSymbol(U(0x023CD), "ord", nil, "SQUARE FOOT", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0 },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0 }})
 addSymbol(U(0x023CE), "ord", "varcarriagereturn", "RETURN SYMBOL", nil)
 addSymbol(U(0x023DC), "ord", "overparen", "TOP PARENTHESIS", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x023DD), "ord", "underparen", "BOTTOM PARENTHESIS", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x023DE), "ord", "overbrace", "TOP CURLY BRACKET", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x023DF), "ord", "underbrace", "BOTTOM CURLY BRACKET", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x023E0), "ord", "obrbrak", "TOP TORTOISE SHELL BRACKET", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x023E1), "ord", "ubrbrak", "BOTTOM TORTOISE SHELL BRACKET", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x023E2), "ord", "trapezium", "WHITE TRAPEZIUM", nil)
 addSymbol(U(0x023E3), "ord", "benzenr", "BENZENE RING WITH CIRCLE", nil)
 addSymbol(U(0x023E4), "ord", "strns", "STRAIGHTNESS", nil)
@@ -1934,137 +1452,94 @@ addSymbol(U(0x0272A), "ord", "circledstar", "CIRCLED WHITE STAR", nil)
 addSymbol(U(0x02736), "ord", "varstar", "SIX POINTED BLACK STAR", nil)
 addSymbol(U(0x0273D), "ord", "dingasterisk", "HEAVY TEARDROP-SPOKED ASTERISK", nil)
 addSymbol(U(0x02772), "open", "lbrbrak", "LIGHT LEFT TORTOISE SHELL BRACKET ORNAMENT", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02773), "close", "rbrbrak", "LIGHT RIGHT TORTOISE SHELL BRACKET ORNAMENT", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02794), "ord", nil, "HEAVY WIDE-HEADED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02795), "ord", nil, "HEAVY PLUS SIGN", {
-   { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02796), "ord", nil, "HEAVY MINUS SIGN", {
-   { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "prefix", lspace = 0, priority = 720, rspace = 0 },
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02797), "ord", nil, "HEAVY DIVISION SIGN", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x02798), "ord", nil, "HEAVY SOUTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02799), "ord", nil, "HEAVY RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0279A), "ord", nil, "HEAVY NORTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0279B), "ord", "draftingarrow", "DRAFTING POINT RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0279C), "ord", nil, "HEAVY ROUND-TIPPED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0279D), "ord", nil, "TRIANGLE-HEADED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0279E), "ord", nil, "HEAVY TRIANGLE-HEADED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0279F), "ord", nil, "DASHED TRIANGLE-HEADED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027A0), "ord", nil, "HEAVY DASHED TRIANGLE-HEADED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027A1), "ord", nil, "BLACK RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027A5), "ord", nil, "HEAVY BLACK CURVED DOWNWARDS AND RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027A6), "ord", nil, "HEAVY BLACK CURVED UPWARDS AND RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027A7), "ord", nil, "SQUAT BLACK RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x027A8), "ord", nil, "HEAVY CONCAVE-POINTED BLACK RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027A9), "ord", nil, "RIGHT-SHADED WHITE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027AA), "ord", nil, "LEFT-SHADED WHITE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027AB), "ord", nil, "BACK-TILTED SHADOWED WHITE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027AC), "ord", nil, "FRONT-TILTED SHADOWED WHITE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027AD), "ord", nil, "HEAVY LOWER RIGHT-SHADOWED WHITE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027AE), "ord", nil, "HEAVY UPPER RIGHT-SHADOWED WHITE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027AF), "ord", nil, "NOTCHED LOWER RIGHT-SHADOWED WHITE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027B1), "ord", nil, "NOTCHED UPPER RIGHT-SHADOWED WHITE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027B2), "ord", nil, "CIRCLED HEAVY WHITE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x027B3), "ord", nil, "WHITE-FEATHERED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027B4), "ord", nil, "BLACK-FEATHERED SOUTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x027B5), "ord", nil, "BLACK-FEATHERED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027B6), "ord", nil, "BLACK-FEATHERED NORTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x027B7), "ord", nil, "HEAVY BLACK-FEATHERED SOUTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x027B8), "ord", nil, "HEAVY BLACK-FEATHERED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027B9), "ord", nil, "HEAVY BLACK-FEATHERED NORTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x027BA), "ord", nil, "TEARDROP-BARBED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027BB), "ord", nil, "HEAVY TEARDROP-SHANKED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027BC), "ord", nil, "WEDGE-TAILED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027BD), "ord", nil, "HEAVY WEDGE-TAILED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027BE), "ord", nil, "OPEN-OUTLINED RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027C0), "ord", "threedangle", "THREE DIMENSIONAL ANGLE", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x027C1), "ord", "whiteinwhitetriangle", "WHITE TRIANGLE CONTAINING SMALL WHITE TRIANGLE", nil)
 addSymbol(U(0x027C2), "rel", "perp", "PERPENDICULAR", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x027C3), "rel", "subsetcirc", "OPEN SUBSET", nil)
 addSymbol(U(0x027C4), "rel", "supsetcirc", "OPEN SUPERSET", nil)
 addSymbol(U(0x027C5), "rel", "lbag", "LEFT S-SHAPED BAG DELIMITER", nil)
@@ -2074,12 +1549,10 @@ addSymbol(U(0x027C8), "rel", "bsolhsub", "REVERSE SOLIDUS PRECEDING SUBSET", nil
 addSymbol(U(0x027C9), "rel", "suphsol", "SUPERSET PRECEDING SOLIDUS", nil)
 addSymbol(U(0x027CA), "rel", nil, "VERTICAL BAR WITH HORIZONTAL STROKE", nil)
 addSymbol(U(0x027CB), "rel", "diagup", "MATHEMATICAL RISING DIAGONAL", {
-   { form = "infix", lspace = 3, priority = 680, rspace = 3 },
-})
-addSymbol(U(0x027CC), "big", "longdivision", "LONG DIVISION", nil)
+  { form = "infix", lspace = 3, priority = 680, rspace = 3 }})
+addSymbol(U(0x027CC), "op", "longdivision", "LONG DIVISION", nil)
 addSymbol(U(0x027CD), "rel", "diagdown", "MATHEMATICAL FALLING DIAGONAL", {
-   { form = "infix", lspace = 3, priority = 680, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 680, rspace = 3 }})
 addSymbol(U(0x027CE), "bin", nil, "SQUARED LOGICAL AND", nil)
 addSymbol(U(0x027CF), "bin", nil, "SQUARED LOGICAL OR", nil)
 addSymbol(U(0x027D0), "ord", "diamondcdot", "WHITE DIAMOND WITH CENTRED DOT", nil)
@@ -2087,11 +1560,11 @@ addSymbol(U(0x027D1), "bin", "wedgedot", "AND WITH DOT", nil)
 addSymbol(U(0x027D2), "rel", "upin", "ELEMENT OF OPENING UPWARDS", nil)
 addSymbol(U(0x027D3), "rel", "pullback", "LOWER RIGHT CORNER WITH DOT", nil)
 addSymbol(U(0x027D4), "rel", "pushout", "UPPER LEFT CORNER WITH DOT", nil)
-addSymbol(U(0x027D5), "big", "leftouterjoin", "LEFT OUTER JOIN", nil)
-addSymbol(U(0x027D6), "big", "rightouterjoin", "RIGHT OUTER JOIN", nil)
-addSymbol(U(0x027D7), "big", "fullouterjoin", "FULL OUTER JOIN", nil)
-addSymbol(U(0x027D8), "big", "bigbot", "LARGE UP TACK", nil)
-addSymbol(U(0x027D9), "big", "bigtop", "LARGE DOWN TACK", nil)
+addSymbol(U(0x027D5), "op", "leftouterjoin", "LEFT OUTER JOIN", nil)
+addSymbol(U(0x027D6), "op", "rightouterjoin", "RIGHT OUTER JOIN", nil)
+addSymbol(U(0x027D7), "op", "fullouterjoin", "FULL OUTER JOIN", nil)
+addSymbol(U(0x027D8), "op", "bigbot", "LARGE UP TACK", nil)
+addSymbol(U(0x027D9), "op", "bigtop", "LARGE DOWN TACK", nil)
 addSymbol(U(0x027DA), "rel", "DashVDash", "LEFT AND RIGHT DOUBLE TURNSTILE", nil)
 addSymbol(U(0x027DB), "rel", "dashVdash", "LEFT AND RIGHT TACK", nil)
 addSymbol(U(0x027DC), "rel", "multimapinv", "LEFT MULTIMAP", nil)
@@ -2105,689 +1578,410 @@ addSymbol(U(0x027E3), "bin", "concavediamondtickright", "WHITE CONCAVE-SIDED DIA
 addSymbol(U(0x027E4), "bin", "whitesquaretickleft", "WHITE SQUARE WITH LEFTWARDS TICK", nil)
 addSymbol(U(0x027E5), "bin", "whitesquaretickright", "WHITE SQUARE WITH RIGHTWARDS TICK", nil)
 addSymbol(U(0x027E6), "open", "lBrack", "MATHEMATICAL LEFT WHITE SQUARE BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x027E7), "close", "rBrack", "MATHEMATICAL RIGHT WHITE SQUARE BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x027E8), "open", "langle", "MATHEMATICAL LEFT ANGLE BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x027E9), "close", "rangle", "MATHEMATICAL RIGHT ANGLE BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x027EA), "open", "lAngle", "MATHEMATICAL LEFT DOUBLE ANGLE BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x027EB), "close", "rAngle", "MATHEMATICAL RIGHT DOUBLE ANGLE BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x027EC), "open", "Lbrbrak", "MATHEMATICAL LEFT WHITE TORTOISE SHELL BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x027ED), "close", "Rbrbrak", "MATHEMATICAL RIGHT WHITE TORTOISE SHELL BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x027EE), "open", "lgroup", "MATHEMATICAL LEFT FLATTENED PARENTHESIS", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x027EF), "close", "rgroup", "MATHEMATICAL RIGHT FLATTENED PARENTHESIS", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x027F0), "rel", "UUparrow", "UPWARDS QUADRUPLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027F1), "rel", "DDownarrow", "DOWNWARDS QUADRUPLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027F2), "rel", "acwgapcirclearrow", "ANTICLOCKWISE GAPPED CIRCLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x027F3), "rel", "cwgapcirclearrow", "CLOCKWISE GAPPED CIRCLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x027F4), "rel", "rightarrowonoplus", "RIGHT ARROW WITH CIRCLED PLUS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027F5), "rel", "longleftarrow", "LONG LEFTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027F6), "rel", "longrightarrow", "LONG RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027F7), "rel", "longleftrightarrow", "LONG LEFT RIGHT ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027F8), "rel", "Longleftarrow", "LONG LEFTWARDS DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027F9), "rel", "Longrightarrow", "LONG RIGHTWARDS DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027FA), "rel", "Longleftrightarrow", "LONG LEFT RIGHT DOUBLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027FB), "rel", "longmapsfrom", "LONG LEFTWARDS ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027FC), "rel", "longmapsto", "LONG RIGHTWARDS ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027FD), "rel", "Longmapsfrom", "LONG LEFTWARDS DOUBLE ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027FE), "rel", "Longmapsto", "LONG RIGHTWARDS DOUBLE ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x027FF), "rel", "longrightsquigarrow", "LONG RIGHTWARDS SQUIGGLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02900), "rel", "nvtwoheadrightarrow", "RIGHTWARDS TWO-HEADED ARROW WITH VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02901), "rel", "nVtwoheadrightarrow", "RIGHTWARDS TWO-HEADED ARROW WITH DOUBLE VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02902), "rel", "nvLeftarrow", "LEFTWARDS DOUBLE ARROW WITH VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02903), "rel", "nvRightarrow", "RIGHTWARDS DOUBLE ARROW WITH VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02904), "rel", "nvLeftrightarrow", "LEFT RIGHT DOUBLE ARROW WITH VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02905), "rel", "twoheadmapsto", "RIGHTWARDS TWO-HEADED ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02906), "rel", "Mapsfrom", "LEFTWARDS DOUBLE ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02907), "rel", "Mapsto", "RIGHTWARDS DOUBLE ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02908), "rel", "downarrowbarred", "DOWNWARDS ARROW WITH HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02909), "rel", "uparrowbarred", "UPWARDS ARROW WITH HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0290A), "rel", "Uuparrow", "UPWARDS TRIPLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0290B), "rel", "Ddownarrow", "DOWNWARDS TRIPLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0290C), "rel", "leftbkarrow", "LEFTWARDS DOUBLE DASH ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0290D), "rel", "rightbkarrow", "RIGHTWARDS DOUBLE DASH ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0290E), "rel", "leftdbkarrow", "LEFTWARDS TRIPLE DASH ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0290F), "rel", "dbkarrow", "RIGHTWARDS TRIPLE DASH ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02910), "rel", "drbkarrow", "RIGHTWARDS TWO-HEADED TRIPLE DASH ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02911), "rel", "rightdotarrow", "RIGHTWARDS ARROW WITH DOTTED STEM", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02912), "rel", "baruparrow", "UPWARDS ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02913), "rel", "downarrowbar", "DOWNWARDS ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02914), "rel", "nvrightarrowtail", "RIGHTWARDS ARROW WITH TAIL WITH VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02915), "rel", "nVrightarrowtail", "RIGHTWARDS ARROW WITH TAIL WITH DOUBLE VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02916), "rel", "twoheadrightarrowtail", "RIGHTWARDS TWO-HEADED ARROW WITH TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02917), "rel", "nvtwoheadrightarrowtail", "RIGHTWARDS TWO-HEADED ARROW WITH TAIL WITH VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
-addSymbol(
-   U(0x02918),
-   "rel",
-   "nVtwoheadrightarrowtail",
-   "RIGHTWARDS TWO-HEADED ARROW WITH TAIL WITH DOUBLE VERTICAL STROKE",
-   {
-      { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-   }
-)
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
+addSymbol(U(0x02918), "rel", "nVtwoheadrightarrowtail", "RIGHTWARDS TWO-HEADED ARROW WITH TAIL WITH DOUBLE VERTICAL STROKE", {
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02919), "rel", "lefttail", "LEFTWARDS ARROW-TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0291A), "rel", "righttail", "RIGHTWARDS ARROW-TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0291B), "rel", "leftdbltail", "LEFTWARDS DOUBLE ARROW-TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0291C), "rel", "rightdbltail", "RIGHTWARDS DOUBLE ARROW-TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0291D), "rel", "diamondleftarrow", "LEFTWARDS ARROW TO BLACK DIAMOND", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0291E), "rel", "rightarrowdiamond", "RIGHTWARDS ARROW TO BLACK DIAMOND", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0291F), "rel", "diamondleftarrowbar", "LEFTWARDS ARROW FROM BAR TO BLACK DIAMOND", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02920), "rel", "barrightarrowdiamond", "RIGHTWARDS ARROW FROM BAR TO BLACK DIAMOND", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02921), "rel", "nwsearrow", "NORTH WEST AND SOUTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02922), "rel", "neswarrow", "NORTH EAST AND SOUTH WEST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02923), "rel", "hknwarrow", "NORTH WEST ARROW WITH HOOK", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02924), "rel", "hknearrow", "NORTH EAST ARROW WITH HOOK", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02925), "rel", "hksearrow", "SOUTH EAST ARROW WITH HOOK", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02926), "rel", "hkswarrow", "SOUTH WEST ARROW WITH HOOK", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02927), "rel", "tona", "NORTH WEST ARROW AND NORTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02928), "rel", "toea", "NORTH EAST ARROW AND SOUTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02929), "rel", "tosa", "SOUTH EAST ARROW AND SOUTH WEST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0292A), "rel", "towa", "SOUTH WEST ARROW AND NORTH WEST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0292B), "rel", "rdiagovfdiag", "RISING DIAGONAL CROSSING FALLING DIAGONAL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0292C), "rel", "fdiagovrdiag", "FALLING DIAGONAL CROSSING RISING DIAGONAL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0292D), "rel", "seovnearrow", "SOUTH EAST ARROW CROSSING NORTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0292E), "rel", "neovsearrow", "NORTH EAST ARROW CROSSING SOUTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0292F), "rel", "fdiagovnearrow", "FALLING DIAGONAL CROSSING NORTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02930), "rel", "rdiagovsearrow", "RISING DIAGONAL CROSSING SOUTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02931), "rel", "neovnwarrow", "NORTH EAST ARROW CROSSING NORTH WEST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02932), "rel", "nwovnearrow", "NORTH WEST ARROW CROSSING NORTH EAST ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02933), "rel", "rightcurvedarrow", "WAVE ARROW POINTING DIRECTLY RIGHT", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02934), "rel", "uprightcurvearrow", "ARROW POINTING RIGHTWARDS THEN CURVING UPWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02935), "rel", "downrightcurvedarrow", "ARROW POINTING RIGHTWARDS THEN CURVING DOWNWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02936), "rel", "leftdowncurvedarrow", "ARROW POINTING DOWNWARDS THEN CURVING LEFTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02937), "rel", "rightdowncurvedarrow", "ARROW POINTING DOWNWARDS THEN CURVING RIGHTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02938), "rel", "cwrightarcarrow", "RIGHT-SIDE ARC CLOCKWISE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02939), "rel", "acwleftarcarrow", "LEFT-SIDE ARC ANTICLOCKWISE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0293A), "rel", "acwoverarcarrow", "TOP ARC ANTICLOCKWISE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0293B), "rel", "acwunderarcarrow", "BOTTOM ARC ANTICLOCKWISE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0293C), "rel", "curvearrowrightminus", "TOP ARC CLOCKWISE ARROW WITH MINUS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0293D), "rel", "curvearrowleftplus", "TOP ARC ANTICLOCKWISE ARROW WITH PLUS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0293E), "rel", "cwundercurvearrow", "LOWER RIGHT SEMICIRCULAR CLOCKWISE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x0293F), "rel", "ccwundercurvearrow", "LOWER LEFT SEMICIRCULAR ANTICLOCKWISE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02940), "rel", "acwcirclearrow", "ANTICLOCKWISE CLOSED CIRCLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02941), "rel", "cwcirclearrow", "CLOCKWISE CLOSED CIRCLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02942), "rel", "rightarrowshortleftarrow", "RIGHTWARDS ARROW ABOVE SHORT LEFTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02943), "rel", "leftarrowshortrightarrow", "LEFTWARDS ARROW ABOVE SHORT RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02944), "rel", "shortrightarrowleftarrow", "SHORT RIGHTWARDS ARROW ABOVE LEFTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02945), "rel", "rightarrowplus", "RIGHTWARDS ARROW WITH PLUS BELOW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02946), "rel", "leftarrowplus", "LEFTWARDS ARROW WITH PLUS BELOW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02947), "rel", "rightarrowx", "RIGHTWARDS ARROW THROUGH X", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02948), "rel", "leftrightarrowcircle", "LEFT RIGHT ARROW THROUGH SMALL CIRCLE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02949), "rel", "twoheaduparrowcircle", "UPWARDS TWO-HEADED ARROW FROM SMALL CIRCLE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0294A), "rel", "leftrightharpoonupdown", "LEFT BARB UP RIGHT BARB DOWN HARPOON", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0294B), "rel", "leftrightharpoondownup", "LEFT BARB DOWN RIGHT BARB UP HARPOON", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0294C), "rel", "updownharpoonrightleft", "UP BARB RIGHT DOWN BARB LEFT HARPOON", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0294D), "rel", "updownharpoonleftright", "UP BARB LEFT DOWN BARB RIGHT HARPOON", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0294E), "rel", "leftrightharpoonupup", "LEFT BARB UP RIGHT BARB UP HARPOON", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0294F), "rel", "updownharpoonrightright", "UP BARB RIGHT DOWN BARB RIGHT HARPOON", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02950), "rel", "leftrightharpoondowndown", "LEFT BARB DOWN RIGHT BARB DOWN HARPOON", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02951), "rel", "updownharpoonleftleft", "UP BARB LEFT DOWN BARB LEFT HARPOON", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02952), "rel", "barleftharpoonup", "LEFTWARDS HARPOON WITH BARB UP TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02953), "rel", "rightharpoonupbar", "RIGHTWARDS HARPOON WITH BARB UP TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02954), "rel", "barupharpoonright", "UPWARDS HARPOON WITH BARB RIGHT TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02955), "rel", "downharpoonrightbar", "DOWNWARDS HARPOON WITH BARB RIGHT TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02956), "rel", "barleftharpoondown", "LEFTWARDS HARPOON WITH BARB DOWN TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02957), "rel", "rightharpoondownbar", "RIGHTWARDS HARPOON WITH BARB DOWN TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02958), "rel", "barupharpoonleft", "UPWARDS HARPOON WITH BARB LEFT TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02959), "rel", "downharpoonleftbar", "DOWNWARDS HARPOON WITH BARB LEFT TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0295A), "rel", "leftharpoonupbar", "LEFTWARDS HARPOON WITH BARB UP FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0295B), "rel", "barrightharpoonup", "RIGHTWARDS HARPOON WITH BARB UP FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0295C), "rel", "upharpoonrightbar", "UPWARDS HARPOON WITH BARB RIGHT FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0295D), "rel", "bardownharpoonright", "DOWNWARDS HARPOON WITH BARB RIGHT FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0295E), "rel", "leftharpoondownbar", "LEFTWARDS HARPOON WITH BARB DOWN FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0295F), "rel", "barrightharpoondown", "RIGHTWARDS HARPOON WITH BARB DOWN FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02960), "rel", "upharpoonleftbar", "UPWARDS HARPOON WITH BARB LEFT FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02961), "rel", "bardownharpoonleft", "DOWNWARDS HARPOON WITH BARB LEFT FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
-addSymbol(
-   U(0x02962),
-   "rel",
-   "leftharpoonsupdown",
-   "LEFTWARDS HARPOON WITH BARB UP ABOVE LEFTWARDS HARPOON WITH BARB DOWN",
-   {
-      { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-   }
-)
-addSymbol(
-   U(0x02963),
-   "rel",
-   "upharpoonsleftright",
-   "UPWARDS HARPOON WITH BARB LEFT BESIDE UPWARDS HARPOON WITH BARB RIGHT",
-   {
-      { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-   }
-)
-addSymbol(
-   U(0x02964),
-   "rel",
-   "rightharpoonsupdown",
-   "RIGHTWARDS HARPOON WITH BARB UP ABOVE RIGHTWARDS HARPOON WITH BARB DOWN",
-   {
-      { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-   }
-)
-addSymbol(
-   U(0x02965),
-   "rel",
-   "downharpoonsleftright",
-   "DOWNWARDS HARPOON WITH BARB LEFT BESIDE DOWNWARDS HARPOON WITH BARB RIGHT",
-   {
-      { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-   }
-)
-addSymbol(
-   U(0x02966),
-   "rel",
-   "leftrightharpoonsup",
-   "LEFTWARDS HARPOON WITH BARB UP ABOVE RIGHTWARDS HARPOON WITH BARB UP",
-   {
-      { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-   }
-)
-addSymbol(
-   U(0x02967),
-   "rel",
-   "leftrightharpoonsdown",
-   "LEFTWARDS HARPOON WITH BARB DOWN ABOVE RIGHTWARDS HARPOON WITH BARB DOWN",
-   {
-      { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-   }
-)
-addSymbol(
-   U(0x02968),
-   "rel",
-   "rightleftharpoonsup",
-   "RIGHTWARDS HARPOON WITH BARB UP ABOVE LEFTWARDS HARPOON WITH BARB UP",
-   {
-      { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-   }
-)
-addSymbol(
-   U(0x02969),
-   "rel",
-   "rightleftharpoonsdown",
-   "RIGHTWARDS HARPOON WITH BARB DOWN ABOVE LEFTWARDS HARPOON WITH BARB DOWN",
-   {
-      { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-   }
-)
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
+addSymbol(U(0x02962), "rel", "leftharpoonsupdown", "LEFTWARDS HARPOON WITH BARB UP ABOVE LEFTWARDS HARPOON WITH BARB DOWN", {
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
+addSymbol(U(0x02963), "rel", "upharpoonsleftright", "UPWARDS HARPOON WITH BARB LEFT BESIDE UPWARDS HARPOON WITH BARB RIGHT", {
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
+addSymbol(U(0x02964), "rel", "rightharpoonsupdown", "RIGHTWARDS HARPOON WITH BARB UP ABOVE RIGHTWARDS HARPOON WITH BARB DOWN", {
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
+addSymbol(U(0x02965), "rel", "downharpoonsleftright", "DOWNWARDS HARPOON WITH BARB LEFT BESIDE DOWNWARDS HARPOON WITH BARB RIGHT", {
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
+addSymbol(U(0x02966), "rel", "leftrightharpoonsup", "LEFTWARDS HARPOON WITH BARB UP ABOVE RIGHTWARDS HARPOON WITH BARB UP", {
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
+addSymbol(U(0x02967), "rel", "leftrightharpoonsdown", "LEFTWARDS HARPOON WITH BARB DOWN ABOVE RIGHTWARDS HARPOON WITH BARB DOWN", {
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
+addSymbol(U(0x02968), "rel", "rightleftharpoonsup", "RIGHTWARDS HARPOON WITH BARB UP ABOVE LEFTWARDS HARPOON WITH BARB UP", {
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
+addSymbol(U(0x02969), "rel", "rightleftharpoonsdown", "RIGHTWARDS HARPOON WITH BARB DOWN ABOVE LEFTWARDS HARPOON WITH BARB DOWN", {
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0296A), "rel", "leftharpoonupdash", "LEFTWARDS HARPOON WITH BARB UP ABOVE LONG DASH", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0296B), "rel", "dashleftharpoondown", "LEFTWARDS HARPOON WITH BARB DOWN BELOW LONG DASH", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0296C), "rel", "rightharpoonupdash", "RIGHTWARDS HARPOON WITH BARB UP ABOVE LONG DASH", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0296D), "rel", "dashrightharpoondown", "RIGHTWARDS HARPOON WITH BARB DOWN BELOW LONG DASH", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
-addSymbol(
-   U(0x0296E),
-   "rel",
-   "updownharpoonsleftright",
-   "UPWARDS HARPOON WITH BARB LEFT BESIDE DOWNWARDS HARPOON WITH BARB RIGHT",
-   {
-      { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-   }
-)
-addSymbol(
-   U(0x0296F),
-   "rel",
-   "downupharpoonsleftright",
-   "DOWNWARDS HARPOON WITH BARB LEFT BESIDE UPWARDS HARPOON WITH BARB RIGHT",
-   {
-      { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-   }
-)
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
+addSymbol(U(0x0296E), "rel", "updownharpoonsleftright", "UPWARDS HARPOON WITH BARB LEFT BESIDE DOWNWARDS HARPOON WITH BARB RIGHT", {
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
+addSymbol(U(0x0296F), "rel", "downupharpoonsleftright", "DOWNWARDS HARPOON WITH BARB LEFT BESIDE UPWARDS HARPOON WITH BARB RIGHT", {
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02970), "rel", "rightimply", "RIGHT DOUBLE ARROW WITH ROUNDED HEAD", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02971), "rel", "equalrightarrow", "EQUALS SIGN ABOVE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02972), "rel", "similarrightarrow", "TILDE OPERATOR ABOVE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02973), "rel", "leftarrowsimilar", "LEFTWARDS ARROW ABOVE TILDE OPERATOR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02974), "rel", "rightarrowsimilar", "RIGHTWARDS ARROW ABOVE TILDE OPERATOR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02975), "rel", "rightarrowapprox", "RIGHTWARDS ARROW ABOVE ALMOST EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02976), "rel", "ltlarr", "LESS-THAN ABOVE LEFTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02977), "rel", "leftarrowless", "LEFTWARDS ARROW THROUGH LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02978), "rel", "gtrarr", "GREATER-THAN ABOVE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02979), "rel", "subrarr", "SUBSET ABOVE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x0297A), "rel", "leftarrowsubset", "LEFTWARDS ARROW THROUGH SUBSET", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x0297B), "rel", "suplarr", "SUPERSET ABOVE LEFTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x0297C), "rel", "leftfishtail", "LEFT FISH TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0297D), "rel", "rightfishtail", "RIGHT FISH TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0297E), "rel", "upfishtail", "UP FISH TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x0297F), "rel", "downfishtail", "DOWN FISH TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02980), "ord", "Vvert", "TRIPLE VERTICAL BAR DELIMITER", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02981), "ord", "mdsmblkcircle", "Z NOTATION SPOT", {
-   { form = "infix", lspace = 5, priority = 140, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 140, rspace = 5 }})
 addSymbol(U(0x02982), "ord", "typecolon", "Z NOTATION TYPE COLON", {
-   { form = "infix", lspace = 5, priority = 180, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 180, rspace = 5 }})
 addSymbol(U(0x02983), "open", "lBrace", "LEFT WHITE CURLY BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02984), "close", "rBrace", "RIGHT WHITE CURLY BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02985), "open", "lParen", "LEFT WHITE PARENTHESIS", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02986), "close", "rParen", "RIGHT WHITE PARENTHESIS", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02987), "open", "llparenthesis", "Z NOTATION LEFT IMAGE BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02988), "close", "rrparenthesis", "Z NOTATION RIGHT IMAGE BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02989), "open", "llangle", "Z NOTATION LEFT BINDING BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0298A), "close", "rrangle", "Z NOTATION RIGHT BINDING BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0298B), "open", "lbrackubar", "LEFT SQUARE BRACKET WITH UNDERBAR", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0298C), "close", "rbrackubar", "RIGHT SQUARE BRACKET WITH UNDERBAR", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0298D), "open", "lbrackultick", "LEFT SQUARE BRACKET WITH TICK IN TOP CORNER", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0298E), "close", "rbracklrtick", "RIGHT SQUARE BRACKET WITH TICK IN BOTTOM CORNER", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0298F), "open", "lbracklltick", "LEFT SQUARE BRACKET WITH TICK IN BOTTOM CORNER", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02990), "close", "rbrackurtick", "RIGHT SQUARE BRACKET WITH TICK IN TOP CORNER", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02991), "open", "langledot", "LEFT ANGLE BRACKET WITH DOT", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02992), "close", "rangledot", "RIGHT ANGLE BRACKET WITH DOT", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02993), "open", "lparenless", "LEFT ARC LESS-THAN BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02994), "close", "rparengtr", "RIGHT ARC GREATER-THAN BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02995), "open", "Lparengtr", "DOUBLE LEFT ARC GREATER-THAN BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02996), "close", "Rparenless", "DOUBLE RIGHT ARC LESS-THAN BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02997), "open", "lblkbrbrak", "LEFT BLACK TORTOISE SHELL BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02998), "close", "rblkbrbrak", "RIGHT BLACK TORTOISE SHELL BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x02999), "ord", "fourvdots", "DOTTED FENCE", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x0299A), "ord", "vzigzag", "VERTICAL ZIGZAG LINE", nil)
 addSymbol(U(0x0299B), "ord", "measuredangleleft", "MEASURED ANGLE OPENING LEFT", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x0299C), "ord", "rightanglesqr", "RIGHT ANGLE VARIANT WITH SQUARE", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x0299D), "ord", "rightanglemdot", "MEASURED RIGHT ANGLE WITH DOT", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x0299E), "ord", "angles", "ANGLE WITH S INSIDE", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x0299F), "ord", "angdnr", "ACUTE ANGLE", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029A0), "ord", "gtlpar", "SPHERICAL ANGLE OPENING LEFT", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029A1), "ord", "sphericalangleup", "SPHERICAL ANGLE OPENING UP", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029A2), "ord", "turnangle", "TURNED ANGLE", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029A3), "ord", "revangle", "REVERSED ANGLE", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029A4), "ord", "angleubar", "ANGLE WITH UNDERBAR", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029A5), "ord", "revangleubar", "REVERSED ANGLE WITH UNDERBAR", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029A6), "ord", "wideangledown", "OBLIQUE ANGLE OPENING UP", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029A7), "ord", "wideangleup", "OBLIQUE ANGLE OPENING DOWN", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029A8), "ord", "measanglerutone", "MEASURED ANGLE WITH OPEN ARM ENDING IN ARROW POINTING UP AND RIGHT", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029A9), "ord", "measanglelutonw", "MEASURED ANGLE WITH OPEN ARM ENDING IN ARROW POINTING UP AND LEFT", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
-addSymbol(
-   U(0x029AA),
-   "ord",
-   "measanglerdtose",
-   "MEASURED ANGLE WITH OPEN ARM ENDING IN ARROW POINTING DOWN AND RIGHT",
-   {
-      { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-   }
-)
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
+addSymbol(U(0x029AA), "ord", "measanglerdtose", "MEASURED ANGLE WITH OPEN ARM ENDING IN ARROW POINTING DOWN AND RIGHT", {
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029AB), "ord", "measangleldtosw", "MEASURED ANGLE WITH OPEN ARM ENDING IN ARROW POINTING DOWN AND LEFT", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029AC), "ord", "measangleurtone", "MEASURED ANGLE WITH OPEN ARM ENDING IN ARROW POINTING RIGHT AND UP", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029AD), "ord", "measangleultonw", "MEASURED ANGLE WITH OPEN ARM ENDING IN ARROW POINTING LEFT AND UP", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
-addSymbol(
-   U(0x029AE),
-   "ord",
-   "measangledrtose",
-   "MEASURED ANGLE WITH OPEN ARM ENDING IN ARROW POINTING RIGHT AND DOWN",
-   {
-      { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-   }
-)
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
+addSymbol(U(0x029AE), "ord", "measangledrtose", "MEASURED ANGLE WITH OPEN ARM ENDING IN ARROW POINTING RIGHT AND DOWN", {
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029AF), "ord", "measangledltosw", "MEASURED ANGLE WITH OPEN ARM ENDING IN ARROW POINTING LEFT AND DOWN", {
-   { form = "prefix", lspace = 0, priority = 580, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 580, rspace = 0 }})
 addSymbol(U(0x029B0), "ord", "revemptyset", "REVERSED EMPTY SET", nil)
 addSymbol(U(0x029B1), "ord", "emptysetobar", "EMPTY SET WITH OVERBAR", nil)
 addSymbol(U(0x029B2), "ord", "emptysetocirc", "EMPTY SET WITH SMALL CIRCLE ABOVE", nil)
@@ -2795,120 +1989,87 @@ addSymbol(U(0x029B3), "ord", "emptysetoarr", "EMPTY SET WITH RIGHT ARROW ABOVE",
 addSymbol(U(0x029B4), "ord", "emptysetoarrl", "EMPTY SET WITH LEFT ARROW ABOVE", nil)
 addSymbol(U(0x029B5), "ord", "circlehbar", "CIRCLE WITH HORIZONTAL BAR", nil)
 addSymbol(U(0x029B6), "bin", "circledvert", "CIRCLED VERTICAL BAR", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029B7), "bin", "circledparallel", "CIRCLED PARALLEL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029B8), "bin", "obslash", "CIRCLED REVERSE SOLIDUS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x029B9), "bin", "operp", "CIRCLED PERPENDICULAR", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029BA), "ord", "obot", "CIRCLE DIVIDED BY HORIZONTAL BAR AND TOP HALF DIVIDED BY VERTICAL BAR", nil)
 addSymbol(U(0x029BB), "ord", "olcross", "CIRCLE WITH SUPERIMPOSED X", nil)
 addSymbol(U(0x029BC), "ord", "odotslashdot", "CIRCLED ANTICLOCKWISE-ROTATED DIVISION SIGN", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x029BD), "ord", "uparrowoncircle", "UP ARROW THROUGH CIRCLE", nil)
 addSymbol(U(0x029BE), "ord", "circledwhitebullet", "CIRCLED WHITE BULLET", nil)
 addSymbol(U(0x029BF), "ord", "circledbullet", "CIRCLED BULLET", nil)
 addSymbol(U(0x029C0), "bin", "olessthan", "CIRCLED LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029C1), "bin", "ogreaterthan", "CIRCLED GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029C2), "ord", "cirscir", "CIRCLE WITH SMALL CIRCLE TO THE RIGHT", nil)
 addSymbol(U(0x029C3), "ord", "cirE", "CIRCLE WITH TWO HORIZONTAL STROKES TO THE RIGHT", nil)
 addSymbol(U(0x029C4), "bin", "boxdiag", "SQUARED RISING DIAGONAL SLASH", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x029C5), "bin", "boxbslash", "SQUARED FALLING DIAGONAL SLASH", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x029C6), "bin", "boxast", "SQUARED ASTERISK", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x029C7), "bin", "boxcircle", "SQUARED SMALL CIRCLE", {
-   { form = "infix", lspace = 3, priority = 900, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 900, rspace = 3 }})
 addSymbol(U(0x029C8), "bin", "boxbox", "SQUARED SQUARE", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x029C9), "ord", "boxonbox", "TWO JOINED SQUARES", nil)
 addSymbol(U(0x029CA), "ord", "triangleodot", "TRIANGLE WITH DOT ABOVE", nil)
 addSymbol(U(0x029CB), "ord", "triangleubar", "TRIANGLE WITH UNDERBAR", nil)
 addSymbol(U(0x029CC), "ord", "triangles", "S IN TRIANGLE", nil)
 addSymbol(U(0x029CD), "ord", "triangleserifs", "TRIANGLE WITH SERIFS AT BOTTOM", nil)
 addSymbol(U(0x029CE), "rel", "rtriltri", "RIGHT TRIANGLE ABOVE LEFT TRIANGLE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029CF), "rel", "ltrivb", "LEFT TRIANGLE BESIDE VERTICAL BAR", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029D0), "rel", "vbrtri", "VERTICAL BAR BESIDE RIGHT TRIANGLE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029D1), "rel", "lfbowtie", "BOWTIE WITH LEFT HALF BLACK", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029D2), "rel", "rfbowtie", "BOWTIE WITH RIGHT HALF BLACK", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029D3), "rel", "fbowtie", "BLACK BOWTIE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029D4), "rel", "lftimes", "TIMES WITH LEFT HALF BLACK", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x029D5), "rel", "rftimes", "TIMES WITH RIGHT HALF BLACK", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x029D6), "bin", "hourglass", "WHITE HOURGLASS", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x029D7), "bin", "blackhourglass", "BLACK HOURGLASS", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x029D8), "open", "lvzigzag", "LEFT WIGGLY FENCE", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x029D9), "close", "rvzigzag", "RIGHT WIGGLY FENCE", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x029DA), "open", "Lvzigzag", "LEFT DOUBLE WIGGLY FENCE", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x029DB), "close", "Rvzigzag", "RIGHT DOUBLE WIGGLY FENCE", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x029DC), "ord", "iinfin", "INCOMPLETE INFINITY", nil)
 addSymbol(U(0x029DD), "ord", "tieinfty", "TIE OVER INFINITY", nil)
 addSymbol(U(0x029DE), "ord", "nvinfty", "INFINITY NEGATED WITH VERTICAL BAR", nil)
 addSymbol(U(0x029DF), "rel", "dualmap", "DOUBLE-ENDED MULTIMAP", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x029E0), "ord", "laplac", "SQUARE WITH CONTOURED OUTLINE", nil)
 addSymbol(U(0x029E1), "rel", "lrtriangleeq", "INCREASES AS", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029E2), "bin", "shuffle", "SHUFFLE PRODUCT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x029E3), "rel", "eparsl", "EQUALS SIGN AND SLANTED PARALLEL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029E4), "rel", "smeparsl", "EQUALS SIGN AND SLANTED PARALLEL WITH TILDE ABOVE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029E5), "rel", "eqvparsl", "IDENTICAL TO AND SLANTED PARALLEL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029E6), "rel", "gleichstark", "GLEICH STARK", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x029E7), "ord", "thermod", "THERMODYNAMIC", nil)
 addSymbol(U(0x029E8), "ord", "downtriangleleftblack", "DOWN-POINTING TRIANGLE WITH LEFT HALF BLACK", nil)
 addSymbol(U(0x029E9), "ord", "downtrianglerightblack", "DOWN-POINTING TRIANGLE WITH RIGHT HALF BLACK", nil)
@@ -2923,855 +2084,574 @@ addSymbol(U(0x029F1), "ord", "errbarblackdiamond", "ERROR-BARRED BLACK DIAMOND",
 addSymbol(U(0x029F2), "ord", "errbarcircle", "ERROR-BARRED WHITE CIRCLE", nil)
 addSymbol(U(0x029F3), "ord", "errbarblackcircle", "ERROR-BARRED BLACK CIRCLE", nil)
 addSymbol(U(0x029F4), "rel", "ruledelayed", "RULE-DELAYED", {
-   { form = "infix", lspace = 5, priority = 220, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 220, rspace = 5 }})
 addSymbol(U(0x029F5), "bin", "reversesolidus", "REVERSE SOLIDUS OPERATOR", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x029F6), "bin", "dsol", "SOLIDUS WITH OVERBAR", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x029F7), "bin", "rsolbar", "REVERSE SOLIDUS WITH HORIZONTAL STROKE", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
-addSymbol(U(0x029F8), "big", "xsol", "BIG SOLIDUS", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
-addSymbol(U(0x029F9), "big", "xbsol", "BIG REVERSE SOLIDUS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
+addSymbol(U(0x029F8), "op", "xsol", "BIG SOLIDUS", {
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
+addSymbol(U(0x029F9), "op", "xbsol", "BIG REVERSE SOLIDUS", {
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x029FA), "bin", "doubleplus", "DOUBLE PLUS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x029FB), "bin", "tripleplus", "TRIPLE PLUS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x029FC), "open", "lcurvyangle", "LEFT-POINTING CURVED ANGLE BRACKET", {
-   { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "prefix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x029FD), "close", "rcurvyangle", "RIGHT-POINTING CURVED ANGLE BRACKET", {
-   { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true },
-})
+  { fence = true, form = "postfix", lspace = 0, priority = 120, rspace = 0, stretchy = true, symmetric = true }})
 addSymbol(U(0x029FE), "bin", "tplus", "TINY", nil)
 addSymbol(U(0x029FF), "bin", "tminus", "MINY", nil)
-addSymbol(U(0x02A00), "big", "bigodot", "N-ARY CIRCLED DOT OPERATOR", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A01), "big", "bigoplus", "N-ARY CIRCLED PLUS OPERATOR", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 460, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A02), "big", "bigotimes", "N-ARY CIRCLED TIMES OPERATOR", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A03), "big", "bigcupdot", "N-ARY UNION OPERATOR WITH DOT", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 500, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A04), "big", "biguplus", "N-ARY UNION OPERATOR WITH PLUS", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 500, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A05), "big", "bigsqcap", "N-ARY SQUARE INTERSECTION OPERATOR", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A06), "big", "bigsqcup", "N-ARY SQUARE UNION OPERATOR", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A07), "big", "conjquant", "TWO LOGICAL AND OPERATOR", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A08), "big", "disjquant", "TWO LOGICAL OR OPERATOR", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A09), "big", "bigtimes", "N-ARY TIMES OPERATOR", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A0A), "big", "modtwosum", "MODULO TWO SUM", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 440, rspace = 3, symmetric = true },
-})
+addSymbol(U(0x02A00), "op", "bigodot", "N-ARY CIRCLED DOT OPERATOR", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A01), "op", "bigoplus", "N-ARY CIRCLED PLUS OPERATOR", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 460, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A02), "op", "bigotimes", "N-ARY CIRCLED TIMES OPERATOR", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A03), "op", "bigcupdot", "N-ARY UNION OPERATOR WITH DOT", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 500, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A04), "op", "biguplus", "N-ARY UNION OPERATOR WITH PLUS", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 500, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A05), "op", "bigsqcap", "N-ARY SQUARE INTERSECTION OPERATOR", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A06), "op", "bigsqcup", "N-ARY SQUARE UNION OPERATOR", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A07), "op", "conjquant", "TWO LOGICAL AND OPERATOR", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A08), "op", "disjquant", "TWO LOGICAL OR OPERATOR", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A09), "op", "bigtimes", "N-ARY TIMES OPERATOR", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A0A), "op", "modtwosum", "MODULO TWO SUM", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 440, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A0B), "ord", "sumint", "SUMMATION WITH INTEGRAL", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 440, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 440, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A0C), "ord", "iiiint", "QUADRUPLE INTEGRAL OPERATOR", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A0D), "ord", "intbar", "FINITE PART INTEGRAL", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A0E), "ord", "intBar", "INTEGRAL WITH DOUBLE STROKE", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A0F), "ord", "fint", "INTEGRAL AVERAGE WITH SLASH", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A10), "big", "cirfnint", "CIRCULATION FUNCTION", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A11), "big", "awint", "ANTICLOCKWISE INTEGRATION", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A12), "big", "rppolint", "LINE INTEGRATION WITH RECTANGULAR PATH AROUND POLE", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A13), "big", "scpolint", "LINE INTEGRATION WITH SEMICIRCULAR PATH AROUND POLE", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A14), "big", "npolint", "LINE INTEGRATION NOT INCLUDING THE POLE", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A10), "op", "cirfnint", "CIRCULATION FUNCTION", {
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A11), "op", "awint", "ANTICLOCKWISE INTEGRATION", {
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A12), "op", "rppolint", "LINE INTEGRATION WITH RECTANGULAR PATH AROUND POLE", {
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A13), "op", "scpolint", "LINE INTEGRATION WITH SEMICIRCULAR PATH AROUND POLE", {
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A14), "op", "npolint", "LINE INTEGRATION NOT INCLUDING THE POLE", {
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A15), "ord", "pointint", "INTEGRAL AROUND A POINT OPERATOR", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A16), "ord", "sqint", "QUATERNION INTEGRAL OPERATOR", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A17), "ord", "intlarhk", "INTEGRAL WITH LEFTWARDS ARROW WITH HOOK", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A18), "ord", "intx", "INTEGRAL WITH TIMES SIGN", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A19), "ord", "intcap", "INTEGRAL WITH INTERSECTION", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A1A), "ord", "intcup", "INTEGRAL WITH UNION", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A1B), "ord", "upint", "INTEGRAL WITH OVERBAR", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
 addSymbol(U(0x02A1C), "ord", "lowint", "INTEGRAL WITH UNDERBAR", {
-   { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A1D), "big", "Join", "JOIN", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 440, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A1E), "big", "bigtriangleleft", "LARGE LEFT TRIANGLE OPERATOR", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 440, rspace = 3, symmetric = true },
-})
-addSymbol(U(0x02A1F), "big", "zcmp", "Z NOTATION SCHEMA COMPOSITION", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
-addSymbol(U(0x02A20), "big", "zpipe", "Z NOTATION SCHEMA PIPING", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
-addSymbol(U(0x02A21), "big", "zproject", "Z NOTATION SCHEMA PROJECTION", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "prefix", largeop = true, lspace = 3, priority = 480, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A1D), "op", "Join", "JOIN", {
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 },
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 440, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A1E), "op", "bigtriangleleft", "LARGE LEFT TRIANGLE OPERATOR", {
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 },
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 440, rspace = 3, symmetric = true }})
+addSymbol(U(0x02A1F), "op", "zcmp", "Z NOTATION SCHEMA COMPOSITION", {
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
+addSymbol(U(0x02A20), "op", "zpipe", "Z NOTATION SCHEMA PIPING", {
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
+addSymbol(U(0x02A21), "op", "zproject", "Z NOTATION SCHEMA PROJECTION", {
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02A22), "bin", "ringplus", "PLUS SIGN WITH SMALL CIRCLE ABOVE", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A23), "bin", "plushat", "PLUS SIGN WITH CIRCUMFLEX ACCENT ABOVE", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A24), "bin", "simplus", "PLUS SIGN WITH TILDE ABOVE", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A25), "bin", "plusdot", "PLUS SIGN WITH DOT BELOW", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A26), "bin", "plussim", "PLUS SIGN WITH TILDE BELOW", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A27), "bin", "plussubtwo", "PLUS SIGN WITH SUBSCRIPT TWO", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A28), "bin", "plustrif", "PLUS SIGN WITH BLACK TRIANGLE", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A29), "bin", "commaminus", "MINUS SIGN WITH COMMA ABOVE", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A2A), "bin", "minusdot", "MINUS SIGN WITH DOT BELOW", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A2B), "bin", "minusfdots", "MINUS SIGN WITH FALLING DOTS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A2C), "bin", "minusrdots", "MINUS SIGN WITH RISING DOTS", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A2D), "bin", "opluslhrim", "PLUS SIGN IN LEFT HALF CIRCLE", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A2E), "bin", "oplusrhrim", "PLUS SIGN IN RIGHT HALF CIRCLE", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A2F), "bin", "vectimes", "VECTOR OR CROSS PRODUCT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A30), "bin", "dottimes", "MULTIPLICATION SIGN WITH DOT ABOVE", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A31), "bin", "timesbar", "MULTIPLICATION SIGN WITH UNDERBAR", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A32), "bin", "btimes", "SEMIDIRECT PRODUCT WITH BOTTOM CLOSED", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A33), "bin", "smashtimes", "SMASH PRODUCT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A34), "bin", "otimeslhrim", "MULTIPLICATION SIGN IN LEFT HALF CIRCLE", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A35), "bin", "otimesrhrim", "MULTIPLICATION SIGN IN RIGHT HALF CIRCLE", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A36), "bin", "otimeshat", "CIRCLED MULTIPLICATION SIGN WITH CIRCUMFLEX ACCENT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A37), "bin", "Otimes", "MULTIPLICATION SIGN IN DOUBLE CIRCLE", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A38), "bin", "odiv", "CIRCLED DIVISION SIGN", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x02A39), "bin", "triangleplus", "PLUS SIGN IN TRIANGLE", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A3A), "bin", "triangleminus", "MINUS SIGN IN TRIANGLE", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A3B), "bin", "triangletimes", "MULTIPLICATION SIGN IN TRIANGLE", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A3C), "bin", "intprod", "INTERIOR PRODUCT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A3D), "bin", "intprodr", "RIGHTHAND INTERIOR PRODUCT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A3E), "bin", "fcmp", "Z NOTATION RELATIONAL COMPOSITION", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02A3F), "bin", "amalg", "AMALGAMATION OR COPRODUCT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A40), "bin", "capdot", "INTERSECTION WITH DOT", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02A41), "bin", "uminus", "UNION WITH MINUS SIGN", {
-   { form = "infix", lspace = 4, priority = 360, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 360, rspace = 4 }})
 addSymbol(U(0x02A42), "bin", "barcup", "UNION WITH OVERBAR", {
-   { form = "infix", lspace = 4, priority = 360, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 360, rspace = 4 }})
 addSymbol(U(0x02A43), "bin", "barcap", "INTERSECTION WITH OVERBAR", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02A44), "bin", "capwedge", "INTERSECTION WITH LOGICAL AND", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02A45), "bin", "cupvee", "UNION WITH LOGICAL OR", {
-   { form = "infix", lspace = 4, priority = 360, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 360, rspace = 4 }})
 addSymbol(U(0x02A46), "bin", "cupovercap", "UNION ABOVE INTERSECTION", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02A47), "bin", "capovercup", "INTERSECTION ABOVE UNION", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02A48), "bin", "cupbarcap", "UNION ABOVE BAR ABOVE INTERSECTION", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02A49), "bin", "capbarcup", "INTERSECTION ABOVE BAR ABOVE UNION", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02A4A), "bin", "twocups", "UNION BESIDE AND JOINED WITH UNION", {
-   { form = "infix", lspace = 4, priority = 360, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 360, rspace = 4 }})
 addSymbol(U(0x02A4B), "bin", "twocaps", "INTERSECTION BESIDE AND JOINED WITH INTERSECTION", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02A4C), "bin", "closedvarcup", "CLOSED UNION WITH SERIFS", {
-   { form = "infix", lspace = 4, priority = 360, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 360, rspace = 4 }})
 addSymbol(U(0x02A4D), "bin", "closedvarcap", "CLOSED INTERSECTION WITH SERIFS", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02A4E), "bin", "Sqcap", "DOUBLE SQUARE INTERSECTION", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02A4F), "bin", "Sqcup", "DOUBLE SQUARE UNION", {
-   { form = "infix", lspace = 4, priority = 360, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 360, rspace = 4 }})
 addSymbol(U(0x02A50), "bin", "closedvarcupsmashprod", "CLOSED UNION WITH SERIFS AND SMASH PRODUCT", {
-   { form = "infix", lspace = 3, priority = 620, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 620, rspace = 3 }})
 addSymbol(U(0x02A51), "bin", "wedgeodot", "LOGICAL AND WITH DOT ABOVE", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x02A52), "bin", "veeodot", "LOGICAL OR WITH DOT ABOVE", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A53), "bin", "Wedge", "DOUBLE LOGICAL AND", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x02A54), "bin", "Vee", "DOUBLE LOGICAL OR", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A55), "bin", "wedgeonwedge", "TWO INTERSECTING LOGICAL AND", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x02A56), "bin", "veeonvee", "TWO INTERSECTING LOGICAL OR", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A57), "bin", "bigslopedvee", "SLOPING LARGE OR", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A58), "bin", "bigslopedwedge", "SLOPING LARGE AND", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x02A59), "rel", "veeonwedge", "LOGICAL OR OVERLAPPING LOGICAL AND", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x02A5A), "bin", "wedgemidvert", "LOGICAL AND WITH MIDDLE STEM", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x02A5B), "bin", "veemidvert", "LOGICAL OR WITH MIDDLE STEM", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A5C), "bin", "midbarwedge", "LOGICAL AND WITH HORIZONTAL DASH", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x02A5D), "bin", "midbarvee", "LOGICAL OR WITH HORIZONTAL DASH", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A5E), "bin", "doublebarwedge", "LOGICAL AND WITH DOUBLE OVERBAR", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x02A5F), "bin", "wedgebar", "LOGICAL AND WITH UNDERBAR", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x02A60), "bin", "wedgedoublebar", "LOGICAL AND WITH DOUBLE UNDERBAR", {
-   { form = "infix", lspace = 4, priority = 600, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 600, rspace = 4 }})
 addSymbol(U(0x02A61), "bin", "varveebar", "SMALL VEE WITH UNDERBAR", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A62), "bin", "doublebarvee", "LOGICAL OR WITH DOUBLE OVERBAR", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A63), "bin", "veedoublebar", "LOGICAL OR WITH DOUBLE UNDERBAR", {
-   { form = "infix", lspace = 4, priority = 400, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 400, rspace = 4 }})
 addSymbol(U(0x02A64), "bin", "dsub", "Z NOTATION DOMAIN ANTIRESTRICTION", {
-   { form = "infix", lspace = 3, priority = 700, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 700, rspace = 3 }})
 addSymbol(U(0x02A65), "bin", "rsub", "Z NOTATION RANGE ANTIRESTRICTION", {
-   { form = "infix", lspace = 3, priority = 700, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 700, rspace = 3 }})
 addSymbol(U(0x02A66), "rel", "eqdot", "EQUALS SIGN WITH DOT BELOW", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A67), "rel", "dotequiv", "IDENTICAL WITH DOT ABOVE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A68), "rel", "equivVert", "TRIPLE HORIZONTAL BAR WITH DOUBLE VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A69), "rel", "equivVvert", "TRIPLE HORIZONTAL BAR WITH TRIPLE VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A6A), "rel", "dotsim", "TILDE OPERATOR WITH DOT ABOVE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A6B), "rel", "simrdots", "TILDE OPERATOR WITH RISING DOTS", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A6C), "rel", "simminussim", "SIMILAR MINUS SIMILAR", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A6D), "rel", "congdot", "CONGRUENT WITH DOT ABOVE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A6E), "rel", "asteq", "EQUALS WITH ASTERISK", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A6F), "rel", "hatapprox", "ALMOST EQUAL TO WITH CIRCUMFLEX ACCENT", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A70), "rel", "approxeqq", "APPROXIMATELY EQUAL OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A71), "bin", "eqqplus", "EQUALS SIGN ABOVE PLUS SIGN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A72), "bin", "pluseqq", "PLUS SIGN ABOVE EQUALS SIGN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A73), "rel", "eqqsim", "EQUALS SIGN ABOVE TILDE OPERATOR", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A74), "rel", "Coloneq", "DOUBLE COLON EQUAL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A75), "rel", "eqeq", "TWO CONSECUTIVE EQUALS SIGNS", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A76), "rel", "eqeqeq", "THREE CONSECUTIVE EQUALS SIGNS", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A77), "rel", "ddotseq", "EQUALS SIGN WITH TWO DOTS ABOVE AND TWO DOTS BELOW", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A78), "rel", "equivDD", "EQUIVALENT WITH FOUR DOTS ABOVE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A79), "rel", "ltcir", "LESS-THAN WITH CIRCLE INSIDE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A7A), "rel", "gtcir", "GREATER-THAN WITH CIRCLE INSIDE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A7B), "rel", "ltquest", "LESS-THAN WITH QUESTION MARK ABOVE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A7C), "rel", "gtquest", "GREATER-THAN WITH QUESTION MARK ABOVE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A7D), "rel", "leqslant", "LESS-THAN OR SLANTED EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A7E), "rel", "geqslant", "GREATER-THAN OR SLANTED EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A7F), "rel", "lesdot", "LESS-THAN OR SLANTED EQUAL TO WITH DOT INSIDE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A80), "rel", "gesdot", "GREATER-THAN OR SLANTED EQUAL TO WITH DOT INSIDE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A81), "rel", "lesdoto", "LESS-THAN OR SLANTED EQUAL TO WITH DOT ABOVE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A82), "rel", "gesdoto", "GREATER-THAN OR SLANTED EQUAL TO WITH DOT ABOVE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A83), "rel", "lesdotor", "LESS-THAN OR SLANTED EQUAL TO WITH DOT ABOVE RIGHT", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A84), "rel", "gesdotol", "GREATER-THAN OR SLANTED EQUAL TO WITH DOT ABOVE LEFT", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A85), "rel", "lessapprox", "LESS-THAN OR APPROXIMATE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A86), "rel", "gtrapprox", "GREATER-THAN OR APPROXIMATE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A87), "rel", "lneq", "LESS-THAN AND SINGLE-LINE NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A88), "rel", "gneq", "GREATER-THAN AND SINGLE-LINE NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A89), "rel", "lnapprox", "LESS-THAN AND NOT APPROXIMATE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A8A), "rel", "gnapprox", "GREATER-THAN AND NOT APPROXIMATE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A8B), "rel", "lesseqqgtr", "LESS-THAN ABOVE DOUBLE-LINE EQUAL ABOVE GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A8C), "rel", "gtreqqless", "GREATER-THAN ABOVE DOUBLE-LINE EQUAL ABOVE LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A8D), "rel", "lsime", "LESS-THAN ABOVE SIMILAR OR EQUAL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A8E), "rel", "gsime", "GREATER-THAN ABOVE SIMILAR OR EQUAL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A8F), "rel", "lsimg", "LESS-THAN ABOVE SIMILAR ABOVE GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A90), "rel", "gsiml", "GREATER-THAN ABOVE SIMILAR ABOVE LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A91), "rel", "lgE", "LESS-THAN ABOVE GREATER-THAN ABOVE DOUBLE-LINE EQUAL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A92), "rel", "glE", "GREATER-THAN ABOVE LESS-THAN ABOVE DOUBLE-LINE EQUAL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A93), "rel", "lesges", "LESS-THAN ABOVE SLANTED EQUAL ABOVE GREATER-THAN ABOVE SLANTED EQUAL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A94), "rel", "gesles", "GREATER-THAN ABOVE SLANTED EQUAL ABOVE LESS-THAN ABOVE SLANTED EQUAL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A95), "rel", "eqslantless", "SLANTED EQUAL TO OR LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A96), "rel", "eqslantgtr", "SLANTED EQUAL TO OR GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A97), "rel", "elsdot", "SLANTED EQUAL TO OR LESS-THAN WITH DOT INSIDE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A98), "rel", "egsdot", "SLANTED EQUAL TO OR GREATER-THAN WITH DOT INSIDE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A99), "rel", "eqqless", "DOUBLE-LINE EQUAL TO OR LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A9A), "rel", "eqqgtr", "DOUBLE-LINE EQUAL TO OR GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A9B), "rel", "eqqslantless", "DOUBLE-LINE SLANTED EQUAL TO OR LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A9C), "rel", "eqqslantgtr", "DOUBLE-LINE SLANTED EQUAL TO OR GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A9D), "rel", "simless", "SIMILAR OR LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A9E), "rel", "simgtr", "SIMILAR OR GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02A9F), "rel", "simlE", "SIMILAR ABOVE LESS-THAN ABOVE EQUALS SIGN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AA0), "rel", "simgE", "SIMILAR ABOVE GREATER-THAN ABOVE EQUALS SIGN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AA1), "rel", "Lt", "DOUBLE NESTED LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AA2), "rel", "Gt", "DOUBLE NESTED GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AA3), "rel", "partialmeetcontraction", "DOUBLE NESTED LESS-THAN WITH UNDERBAR", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AA4), "rel", "glj", "GREATER-THAN OVERLAPPING LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AA5), "rel", "gla", "GREATER-THAN BESIDE LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AA6), "rel", "ltcc", "LESS-THAN CLOSED BY CURVE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AA7), "rel", "gtcc", "GREATER-THAN CLOSED BY CURVE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AA8), "rel", "lescc", "LESS-THAN CLOSED BY CURVE ABOVE SLANTED EQUAL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AA9), "rel", "gescc", "GREATER-THAN CLOSED BY CURVE ABOVE SLANTED EQUAL", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AAA), "rel", "smt", "SMALLER THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AAB), "rel", "lat", "LARGER THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AAC), "rel", "smte", "SMALLER THAN OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AAD), "rel", "late", "LARGER THAN OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AAE), "rel", "bumpeqq", "EQUALS SIGN WITH BUMPY ABOVE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AAF), "rel", "preceq", "PRECEDES ABOVE SINGLE-LINE EQUALS SIGN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AB0), "rel", "succeq", "SUCCEEDS ABOVE SINGLE-LINE EQUALS SIGN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AB1), "rel", "precneq", "PRECEDES ABOVE SINGLE-LINE NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AB2), "rel", "succneq", "SUCCEEDS ABOVE SINGLE-LINE NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AB3), "rel", "preceqq", "PRECEDES ABOVE EQUALS SIGN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AB4), "rel", "succeqq", "SUCCEEDS ABOVE EQUALS SIGN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AB5), "rel", "precneqq", "PRECEDES ABOVE NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AB6), "rel", "succneqq", "SUCCEEDS ABOVE NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AB7), "rel", "precapprox", "PRECEDES ABOVE ALMOST EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AB8), "rel", "succapprox", "SUCCEEDS ABOVE ALMOST EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AB9), "rel", "precnapprox", "PRECEDES ABOVE NOT ALMOST EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02ABA), "rel", "succnapprox", "SUCCEEDS ABOVE NOT ALMOST EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02ABB), "rel", "Prec", "DOUBLE PRECEDES", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02ABC), "rel", "Succ", "DOUBLE SUCCEEDS", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02ABD), "rel", "subsetdot", "SUBSET WITH DOT", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02ABE), "rel", "supsetdot", "SUPERSET WITH DOT", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02ABF), "rel", "subsetplus", "SUBSET WITH PLUS SIGN BELOW", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AC0), "rel", "supsetplus", "SUPERSET WITH PLUS SIGN BELOW", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AC1), "rel", "submult", "SUBSET WITH MULTIPLICATION SIGN BELOW", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AC2), "rel", "supmult", "SUPERSET WITH MULTIPLICATION SIGN BELOW", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AC3), "rel", "subedot", "SUBSET OF OR EQUAL TO WITH DOT ABOVE", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AC4), "rel", "supedot", "SUPERSET OF OR EQUAL TO WITH DOT ABOVE", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AC5), "rel", "subseteqq", "SUBSET OF ABOVE EQUALS SIGN", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AC6), "rel", "supseteqq", "SUPERSET OF ABOVE EQUALS SIGN", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AC7), "rel", "subsim", "SUBSET OF ABOVE TILDE OPERATOR", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AC8), "rel", "supsim", "SUPERSET OF ABOVE TILDE OPERATOR", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AC9), "rel", "subsetapprox", "SUBSET OF ABOVE ALMOST EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02ACA), "rel", "supsetapprox", "SUPERSET OF ABOVE ALMOST EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02ACB), "rel", "subsetneqq", "SUBSET OF ABOVE NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02ACC), "rel", "supsetneqq", "SUPERSET OF ABOVE NOT EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02ACD), "rel", "lsqhook", "SQUARE LEFT OPEN BOX OPERATOR", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02ACE), "rel", "rsqhook", "SQUARE RIGHT OPEN BOX OPERATOR", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02ACF), "rel", "csub", "CLOSED SUBSET", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AD0), "rel", "csup", "CLOSED SUPERSET", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AD1), "rel", "csube", "CLOSED SUBSET OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AD2), "rel", "csupe", "CLOSED SUPERSET OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AD3), "rel", "subsup", "SUBSET ABOVE SUPERSET", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AD4), "rel", "supsub", "SUPERSET ABOVE SUBSET", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AD5), "rel", "subsub", "SUBSET ABOVE SUBSET", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AD6), "rel", "supsup", "SUPERSET ABOVE SUPERSET", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AD7), "rel", "suphsub", "SUPERSET BESIDE SUBSET", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AD8), "rel", "supdsub", "SUPERSET BESIDE AND JOINED BY DASH WITH SUBSET", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02AD9), "rel", "forkv", "ELEMENT OF OPENING DOWNWARDS", {
-   { form = "infix", lspace = 5, priority = 300, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 300, rspace = 5 }})
 addSymbol(U(0x02ADA), "rel", "topfork", "PITCHFORK WITH TEE TOP", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02ADB), "rel", "mlcp", "TRANSVERSAL INTERSECTION", {
-   { form = "infix", lspace = 4, priority = 380, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 380, rspace = 4 }})
 addSymbol(U(0x02ADC), "rel", "forks", "FORKING", {
-   { form = "infix", lspace = 3, priority = 740, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 740, rspace = 3 }})
 addSymbol(U(0x02ADD), "rel", "forksnot", "NONFORKING", {
-   { form = "infix", lspace = 3, priority = 740, rspace = 3 },
-})
+  { form = "infix", lspace = 3, priority = 740, rspace = 3 }})
 addSymbol(U(0x02ADE), "rel", "shortlefttack", "SHORT LEFT TACK", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02ADF), "rel", "shortdowntack", "SHORT DOWN TACK", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AE0), "rel", "shortuptack", "SHORT UP TACK", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AE1), "ord", "perps", "PERPENDICULAR WITH S", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AE2), "rel", "vDdash", "VERTICAL BAR TRIPLE RIGHT TURNSTILE", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AE3), "rel", "dashV", "DOUBLE VERTICAL BAR LEFT TURNSTILE", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AE4), "rel", "Dashv", "VERTICAL BAR DOUBLE LEFT TURNSTILE", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AE5), "rel", "DashV", "DOUBLE VERTICAL BAR DOUBLE LEFT TURNSTILE", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AE6), "rel", "varVdash", "LONG DASH FROM LEFT MEMBER OF DOUBLE VERTICAL", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AE7), "rel", "Barv", "SHORT DOWN TACK WITH OVERBAR", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AE8), "rel", "vBar", "SHORT UP TACK WITH UNDERBAR", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AE9), "rel", "vBarv", "SHORT UP TACK ABOVE SHORT DOWN TACK", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AEA), "rel", "barV", "DOUBLE DOWN TACK", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AEB), "rel", "Vbar", "DOUBLE UP TACK", {
-   { form = "infix", lspace = 5, priority = 260, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 260, rspace = 5 }})
 addSymbol(U(0x02AEC), "rel", "Not", "DOUBLE STROKE NOT SIGN", {
-   { form = "prefix", lspace = 0, priority = 280, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 280, rspace = 0 }})
 addSymbol(U(0x02AED), "rel", "bNot", "REVERSED DOUBLE STROKE NOT SIGN", {
-   { form = "prefix", lspace = 0, priority = 280, rspace = 0 },
-})
+  { form = "prefix", lspace = 0, priority = 280, rspace = 0 }})
 addSymbol(U(0x02AEE), "rel", "revnmid", "DOES NOT DIVIDE WITH REVERSED NEGATION SLASH", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AEF), "rel", "cirmid", "VERTICAL LINE WITH CIRCLE ABOVE", nil)
 addSymbol(U(0x02AF0), "rel", "midcir", "VERTICAL LINE WITH CIRCLE BELOW", nil)
 addSymbol(U(0x02AF1), "ord", "topcir", "DOWN TACK WITH CIRCLE BELOW", nil)
 addSymbol(U(0x02AF2), "rel", "nhpar", "PARALLEL WITH HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AF3), "rel", "parsim", "PARALLEL WITH TILDE OPERATOR", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AF4), "bin", "interleave", "TRIPLE VERTICAL BAR BINARY RELATION", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AF5), "bin", "nhVvert", "TRIPLE VERTICAL BAR WITH HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AF6), "bin", "threedotcolon", "TRIPLE COLON OPERATOR", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x02AF7), "rel", "lllnest", "TRIPLE NESTED LESS-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AF8), "rel", "gggnest", "TRIPLE NESTED GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AF9), "rel", "leqqslant", "DOUBLE-LINE SLANTED LESS-THAN OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AFA), "rel", "geqqslant", "DOUBLE-LINE SLANTED GREATER-THAN OR EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x02AFB), "bin", "trslash", "TRIPLE SOLIDUS BINARY RELATION", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
-addSymbol(U(0x02AFC), "big", "biginterleave", "LARGE TRIPLE VERTICAL BAR OPERATOR", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
+addSymbol(U(0x02AFC), "op", "biginterleave", "LARGE TRIPLE VERTICAL BAR OPERATOR", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true }})
 addSymbol(U(0x02AFD), "bin", "sslash", "DOUBLE SOLIDUS OPERATOR", {
-   { form = "infix", lspace = 4, priority = 680, rspace = 4 },
-})
+  { form = "infix", lspace = 4, priority = 680, rspace = 4 }})
 addSymbol(U(0x02AFE), "bin", "talloblong", "WHITE VERTICAL BAR", {
-   { form = "infix", lspace = 3, priority = 680, rspace = 3 },
-})
-addSymbol(U(0x02AFF), "big", "bigtalloblong", "N-ARY WHITE VERTICAL BAR", {
-   { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true },
-})
+  { form = "infix", lspace = 3, priority = 680, rspace = 3 }})
+addSymbol(U(0x02AFF), "op", "bigtalloblong", "N-ARY WHITE VERTICAL BAR", {
+  { form = "prefix", largeop = true, lspace = 3, movablelimits = true, priority = 520, rspace = 3, symmetric = true }})
 addSymbol(U(0x02B00), "rel", nil, "NORTH EAST WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B01), "rel", nil, "NORTH WEST WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B02), "rel", nil, "SOUTH EAST WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B03), "rel", nil, "SOUTH WEST WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B04), "rel", nil, "LEFT RIGHT WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B05), "rel", nil, "LEFTWARDS BLACK ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B06), "rel", nil, "UPWARDS BLACK ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B07), "rel", nil, "DOWNWARDS BLACK ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B08), "rel", nil, "NORTH EAST BLACK ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B09), "rel", nil, "NORTH WEST BLACK ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B0A), "rel", nil, "SOUTH EAST BLACK ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B0B), "rel", nil, "SOUTH WEST BLACK ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B0C), "rel", nil, "LEFT RIGHT BLACK ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B0D), "rel", nil, "UP DOWN BLACK ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B0E), "rel", nil, "RIGHTWARDS ARROW WITH TIP DOWNWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B0F), "rel", nil, "RIGHTWARDS ARROW WITH TIP UPWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B10), "rel", nil, "LEFTWARDS ARROW WITH TIP DOWNWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B11), "rel", nil, "LEFTWARDS ARROW WITH TIP UPWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B12), "ord", "squaretopblack", "SQUARE WITH TOP HALF BLACK", nil)
 addSymbol(U(0x02B13), "ord", "squarebotblack", "SQUARE WITH BOTTOM HALF BLACK", nil)
 addSymbol(U(0x02B14), "ord", "squareurblack", "SQUARE WITH UPPER RIGHT DIAGONAL HALF BLACK", nil)
@@ -3803,346 +2683,230 @@ addSymbol(U(0x02B2D), "ord", "whthorzoval", "WHITE HORIZONTAL ELLIPSE", nil)
 addSymbol(U(0x02B2E), "ord", "blkvertoval", "BLACK VERTICAL ELLIPSE", nil)
 addSymbol(U(0x02B2F), "ord", "whtvertoval", "WHITE VERTICAL ELLIPSE", nil)
 addSymbol(U(0x02B30), "rel", "circleonleftarrow", "LEFT ARROW WITH SMALL CIRCLE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B31), "rel", "leftthreearrows", "THREE LEFTWARDS ARROWS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B32), "rel", "leftarrowonoplus", "LEFT ARROW WITH CIRCLED PLUS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B33), "rel", "longleftsquigarrow", "LONG LEFTWARDS SQUIGGLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B34), "rel", "nvtwoheadleftarrow", "LEFTWARDS TWO-HEADED ARROW WITH VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B35), "rel", "nVtwoheadleftarrow", "LEFTWARDS TWO-HEADED ARROW WITH DOUBLE VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B36), "rel", "twoheadmapsfrom", "LEFTWARDS TWO-HEADED ARROW FROM BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B37), "rel", "twoheadleftdbkarrow", "LEFTWARDS TWO-HEADED TRIPLE DASH ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B38), "rel", "leftdotarrow", "LEFTWARDS ARROW WITH DOTTED STEM", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B39), "rel", "nvleftarrowtail", "LEFTWARDS ARROW WITH TAIL WITH VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B3A), "rel", "nVleftarrowtail", "LEFTWARDS ARROW WITH TAIL WITH DOUBLE VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B3B), "rel", "twoheadleftarrowtail", "LEFTWARDS TWO-HEADED ARROW WITH TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B3C), "rel", "nvtwoheadleftarrowtail", "LEFTWARDS TWO-HEADED ARROW WITH TAIL WITH VERTICAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
-addSymbol(
-   U(0x02B3D),
-   "rel",
-   "nVtwoheadleftarrowtail",
-   "LEFTWARDS TWO-HEADED ARROW WITH TAIL WITH DOUBLE VERTICAL STROKE",
-   {
-      { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-   }
-)
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
+addSymbol(U(0x02B3D), "rel", "nVtwoheadleftarrowtail", "LEFTWARDS TWO-HEADED ARROW WITH TAIL WITH DOUBLE VERTICAL STROKE", {
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B3E), "rel", "leftarrowx", "LEFTWARDS ARROW THROUGH X", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B3F), "rel", "leftcurvedarrow", "WAVE ARROW POINTING DIRECTLY LEFT", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B40), "rel", "equalleftarrow", "EQUALS SIGN ABOVE LEFTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B41), "rel", "bsimilarleftarrow", "REVERSE TILDE OPERATOR ABOVE LEFTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B42), "rel", "leftarrowbackapprox", "LEFTWARDS ARROW ABOVE REVERSE ALMOST EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B43), "rel", "rightarrowgtr", "RIGHTWARDS ARROW THROUGH GREATER-THAN", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B44), "rel", "rightarrowsupset", "RIGHTWARDS ARROW THROUGH SUPERSET", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B45), "ord", "LLeftarrow", "LEFTWARDS QUADRUPLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B46), "ord", "RRightarrow", "RIGHTWARDS QUADRUPLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B47), "rel", "bsimilarrightarrow", "REVERSE TILDE OPERATOR ABOVE RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B48), "rel", "rightarrowbackapprox", "RIGHTWARDS ARROW ABOVE REVERSE ALMOST EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B49), "rel", "similarleftarrow", "TILDE OPERATOR ABOVE LEFTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B4A), "rel", "leftarrowapprox", "LEFTWARDS ARROW ABOVE ALMOST EQUAL TO", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B4B), "rel", "leftarrowbsimilar", "LEFTWARDS ARROW ABOVE REVERSE TILDE OPERATOR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B4C), "rel", "rightarrowbsimilar", "RIGHTWARDS ARROW ABOVE REVERSE TILDE OPERATOR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B4D), "ord", nil, "DOWNWARDS TRIANGLE-HEADED ZIGZAG ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B4E), "ord", nil, "SHORT SLANTED NORTH ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B4F), "ord", nil, "SHORT BACKSLANTED SOUTH ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B50), "ord", "medwhitestar", "WHITE MEDIUM STAR", nil)
 addSymbol(U(0x02B51), "ord", "medblackstar", "BLACK SMALL STAR", nil)
 addSymbol(U(0x02B52), "ord", "smwhitestar", "WHITE SMALL STAR", nil)
 addSymbol(U(0x02B53), "ord", "rightpentagonblack", "BLACK RIGHT-POINTING PENTAGON", nil)
 addSymbol(U(0x02B54), "ord", "rightpentagon", "WHITE RIGHT-POINTING PENTAGON", nil)
 addSymbol(U(0x02B5A), "ord", nil, "SLANTED NORTH ARROW WITH HOOKED HEAD", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B5B), "ord", nil, "BACKSLANTED SOUTH ARROW WITH HOOKED TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B5C), "ord", nil, "SLANTED NORTH ARROW WITH HORIZONTAL TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B5D), "ord", nil, "BACKSLANTED SOUTH ARROW WITH HORIZONTAL TAIL", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B5E), "ord", nil, "BENT ARROW POINTING DOWNWARDS THEN NORTH EAST", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B5F), "ord", nil, "SHORT BENT ARROW POINTING DOWNWARDS THEN NORTH EAST", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B60), "ord", nil, "LEFTWARDS TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B61), "ord", nil, "UPWARDS TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B62), "ord", nil, "RIGHTWARDS TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B63), "ord", nil, "DOWNWARDS TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B64), "ord", nil, "LEFT RIGHT TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B65), "ord", nil, "UP DOWN TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B66), "ord", nil, "NORTH WEST TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B67), "ord", nil, "NORTH EAST TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B68), "ord", nil, "SOUTH EAST TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B69), "ord", nil, "SOUTH WEST TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B6A), "ord", nil, "LEFTWARDS TRIANGLE-HEADED DASHED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B6B), "ord", nil, "UPWARDS TRIANGLE-HEADED DASHED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B6C), "ord", nil, "RIGHTWARDS TRIANGLE-HEADED DASHED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B6D), "ord", nil, "DOWNWARDS TRIANGLE-HEADED DASHED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B6E), "ord", nil, "CLOCKWISE TRIANGLE-HEADED OPEN CIRCLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B6F), "ord", nil, "ANTICLOCKWISE TRIANGLE-HEADED OPEN CIRCLE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B70), "ord", nil, "LEFTWARDS TRIANGLE-HEADED ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B71), "ord", nil, "UPWARDS TRIANGLE-HEADED ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B72), "ord", nil, "RIGHTWARDS TRIANGLE-HEADED ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B73), "ord", nil, "DOWNWARDS TRIANGLE-HEADED ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B76), "ord", nil, "NORTH WEST TRIANGLE-HEADED ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B77), "ord", nil, "NORTH EAST TRIANGLE-HEADED ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B78), "ord", nil, "SOUTH EAST TRIANGLE-HEADED ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B79), "ord", nil, "SOUTH WEST TRIANGLE-HEADED ARROW TO BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B7A), "ord", nil, "LEFTWARDS TRIANGLE-HEADED ARROW WITH DOUBLE HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B7B), "ord", nil, "UPWARDS TRIANGLE-HEADED ARROW WITH DOUBLE HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B7C), "ord", nil, "RIGHTWARDS TRIANGLE-HEADED ARROW WITH DOUBLE HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B7D), "ord", nil, "DOWNWARDS TRIANGLE-HEADED ARROW WITH DOUBLE HORIZONTAL STROKE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B80), "ord", nil, "LEFTWARDS TRIANGLE-HEADED ARROW OVER RIGHTWARDS TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B81), "ord", nil, "UPWARDS TRIANGLE-HEADED ARROW LEFTWARDS OF DOWNWARDS TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B82), "ord", nil, "RIGHTWARDS TRIANGLE-HEADED ARROW OVER LEFTWARDS TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B83), "ord", nil, "DOWNWARDS TRIANGLE-HEADED ARROW LEFTWARDS OF UPWARDS TRIANGLE-HEADED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B84), "ord", nil, "LEFTWARDS TRIANGLE-HEADED PAIRED ARROWS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B85), "ord", nil, "UPWARDS TRIANGLE-HEADED PAIRED ARROWS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B86), "ord", nil, "RIGHTWARDS TRIANGLE-HEADED PAIRED ARROWS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B87), "ord", nil, "DOWNWARDS TRIANGLE-HEADED PAIRED ARROWS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02B88), "ord", nil, "LEFTWARDS BLACK CIRCLED WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B89), "ord", nil, "UPWARDS BLACK CIRCLED WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B8A), "ord", nil, "RIGHTWARDS BLACK CIRCLED WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B8B), "ord", nil, "DOWNWARDS BLACK CIRCLED WHITE ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B8C), "ord", nil, "ANTICLOCKWISE TRIANGLE-HEADED RIGHT U-SHAPED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B8D), "ord", nil, "ANTICLOCKWISE TRIANGLE-HEADED BOTTOM U-SHAPED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B8E), "ord", nil, "ANTICLOCKWISE TRIANGLE-HEADED LEFT U-SHAPED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B8F), "ord", nil, "ANTICLOCKWISE TRIANGLE-HEADED TOP U-SHAPED ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B94), "ord", nil, "FOUR CORNER ARROWS CIRCLING ANTICLOCKWISE", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02B95), "ord", nil, "RIGHTWARDS BLACK ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BA0), "ord", nil, "DOWNWARDS TRIANGLE-HEADED ARROW WITH LONG TIP LEFTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BA1), "ord", nil, "DOWNWARDS TRIANGLE-HEADED ARROW WITH LONG TIP RIGHTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BA2), "ord", nil, "UPWARDS TRIANGLE-HEADED ARROW WITH LONG TIP LEFTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BA3), "ord", nil, "UPWARDS TRIANGLE-HEADED ARROW WITH LONG TIP RIGHTWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BA4), "ord", nil, "LEFTWARDS TRIANGLE-HEADED ARROW WITH LONG TIP UPWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BA5), "ord", nil, "RIGHTWARDS TRIANGLE-HEADED ARROW WITH LONG TIP UPWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BA6), "ord", nil, "LEFTWARDS TRIANGLE-HEADED ARROW WITH LONG TIP DOWNWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BA7), "ord", nil, "RIGHTWARDS TRIANGLE-HEADED ARROW WITH LONG TIP DOWNWARDS", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BA8), "ord", nil, "BLACK CURVED DOWNWARDS AND LEFTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BA9), "ord", nil, "BLACK CURVED DOWNWARDS AND RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BAA), "ord", nil, "BLACK CURVED UPWARDS AND LEFTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BAB), "ord", nil, "BLACK CURVED UPWARDS AND RIGHTWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BAC), "ord", nil, "BLACK CURVED LEFTWARDS AND UPWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BAD), "ord", nil, "BLACK CURVED RIGHTWARDS AND UPWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BAE), "ord", nil, "BLACK CURVED LEFTWARDS AND DOWNWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BAF), "ord", nil, "BLACK CURVED RIGHTWARDS AND DOWNWARDS ARROW", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BB0), "ord", nil, "RIBBON ARROW DOWN LEFT", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02BB1), "ord", nil, "RIBBON ARROW DOWN RIGHT", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02BB2), "ord", nil, "RIBBON ARROW UP LEFT", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02BB3), "ord", nil, "RIBBON ARROW UP RIGHT", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02BB4), "ord", nil, "RIBBON ARROW LEFT UP", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02BB5), "ord", nil, "RIBBON ARROW RIGHT UP", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02BB6), "ord", nil, "RIBBON ARROW LEFT DOWN", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02BB7), "ord", nil, "RIBBON ARROW RIGHT DOWN", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5 }})
 addSymbol(U(0x02BB8), "ord", nil, "UPWARDS WHITE ARROW FROM BAR WITH HORIZONTAL BAR", {
-   { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true },
-})
+  { form = "infix", lspace = 5, priority = 340, rspace = 5, stretchy = true }})
 addSymbol(U(0x02BD1), "ord", nil, "UNCERTAINTY SIGN", {
-   { form = "infix", lspace = 5, priority = 320, rspace = 5 },
-})
+  { form = "infix", lspace = 5, priority = 320, rspace = 5 }})
 addSymbol(U(0x03012), "ord", "postalmark", "POSTAL MARK", nil)
 addSymbol(U(0x03030), "ord", "hzigzag", "WAVY DASH", nil)
 addSymbol(U(0x1D400), "ord", "mbfA", "MATHEMATICAL BOLD CAPITAL A", nil)
@@ -5142,13 +3906,11 @@ addSymbol(U(0x1D7FD), "ord", "mttseven", "MATHEMATICAL MONOSPACE DIGIT SEVEN", n
 addSymbol(U(0x1D7FE), "ord", "mtteight", "MATHEMATICAL MONOSPACE DIGIT EIGHT", nil)
 addSymbol(U(0x1D7FF), "ord", "mttnine", "MATHEMATICAL MONOSPACE DIGIT NINE", nil)
 addSymbol(U(0x1EEF0), "ord", "arabicmaj", "ARABIC MATHEMATICAL OPERATOR MEEM WITH HAH WITH TATWEEL", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 addSymbol(U(0x1EEF1), "ord", "arabichad", "ARABIC MATHEMATICAL OPERATOR HAH WITH DAL", {
-   { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true },
-})
+  { form = "postfix", lspace = 0, priority = 920, rspace = 0, stretchy = true }})
 
 return {
-   operatorDict = operatorDict,
-   symbols = symbols,
+  operatorDict = operatorDict,
+  symbols = symbols
 }

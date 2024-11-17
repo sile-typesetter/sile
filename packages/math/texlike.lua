@@ -281,8 +281,8 @@ local function isOperatorKind (tree, typeOfAtom)
    if tree.command ~= "mo" then
       return false
    end
-   -- Case \mo[atom=big]{ops}
-   -- E.g. \mo[atom=big]{lim}
+   -- Case \mo[atom=xxx]{ops}
+   -- E.g. \mo[atom=op]{lim}
    if tree.options and tree.options.atom == typeOfAtom then
       return true
    end
@@ -391,6 +391,7 @@ local function compileToMathML_aux (_, arg_env, tree)
                table.insert(stack, children)
                local mrow = {
                   command = "mrow",
+                  is_paired = true, -- Internal flag to mark this re-wrapped mrow
                   options = {},
                   child,
                }
@@ -454,7 +455,7 @@ local function compileToMathML_aux (_, arg_env, tree)
       end
       tree.options = {}
    -- Translate TeX-like sub/superscripts to `munderover` or `msubsup`,
-   -- depending on whether the base is a big operator
+   -- depending on whether the base is an operator with moveable limits.
    elseif tree.id == "sup" and isMoveableLimits(tree[1]) then
       tree.command = "mover"
    elseif tree.id == "sub" and isMoveableLimits(tree[1]) then
@@ -628,20 +629,19 @@ compileToMathML(
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
   \def{vec}{\mover[accent=true]{#1}{\rightarrow}}
 
-  \def{lim}{\mo[movablelimits=true]{lim}}
-
   % From amsmath:
   \def{to}{\mo[atom=bin]{→}}
-  \def{gcd}{\mo[movablelimits=true]{gcd}}
-  \def{sup}{\mo[movablelimits=true]{sup}}
-  \def{inf}{\mo[movablelimits=true]{inf}}
-  \def{max}{\mo[movablelimits=true]{max}}
-  \def{min}{\mo[movablelimits=true]{min}}
+  \def{lim}{\mo[atom=op, movablelimits=true]{lim}}
+  \def{gcd}{\mo[atom=op, movablelimits=true]{gcd}}
+  \def{sup}{\mo[atom=op, movablelimits=true]{sup}}
+  \def{inf}{\mo[atom=op, movablelimits=true]{inf}}
+  \def{max}{\mo[atom=op, movablelimits=true]{max}}
+  \def{min}{\mo[atom=op, movablelimits=true]{min}}
   % Those use U+202F NARROW NO-BREAK SPACE in their names
-  \def{limsup}{\mo[movablelimits=true]{lim sup}}
-  \def{liminf}{\mo[movablelimits=true]{lim inf}}
-  \def{projlim}{\mo[movablelimits=true]{proj lim}}
-  \def{injlim}{\mo[movablelimits=true]{inj lim}}
+  \def{limsup}{\mo[atom=op, movablelimits=true]{lim sup}}
+  \def{liminf}{\mo[atom=op, movablelimits=true]{lim inf}}
+  \def{projlim}{\mo[atom=op, movablelimits=true]{proj lim}}
+  \def{injlim}{\mo[atom=op, movablelimits=true]{inj lim}}
 
   % Standard spaces gleaned from plain TeX
   \def{thinspace}{\mspace[width=thin]}

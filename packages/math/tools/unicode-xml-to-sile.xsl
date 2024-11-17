@@ -49,26 +49,26 @@
       <xsl:choose>
         <xsl:when test="$combclass = '220'">botaccent</xsl:when>
         <xsl:when test="$combclass = '230'">accent</xsl:when>
-        <xsl:otherwise>ord</xsl:otherwise><!-- assuming atomType.ordinary -->
+        <xsl:otherwise>ord</xsl:otherwise><!-- assuming ordinary -->
       </xsl:choose>
     </xsl:when>
-    <xsl:when test="$class = 'F'">ord</xsl:when><!-- Fence = mathfence = atomType.ordinary -->
-    <xsl:when test="$class = 'G'">ord</xsl:when><!-- Glyph Part = assuming atomType.ordinary -->
+    <xsl:when test="$class = 'F'">ord</xsl:when><!-- Fence = assiming ordinary -->
+    <xsl:when test="$class = 'G'">ord</xsl:when><!-- Glyph Part = assuming ordinary -->
     <xsl:when test="$class = 'L'"><!-- Large -->
       <xsl:choose>
         <!-- SILE uses the atom for spacing currently (ignoring lspace and rspace) -->
-        <!-- HACK: integral signs are NOTconsidered as big for spacing purpose -->
+        <!-- HACK: integral signs are NOT considered as mathop for spacing purpose -->
         <xsl:when test="contains($description,'INTEGRAL')">ord</xsl:when>
-        <xsl:otherwise>big</xsl:otherwise><!-- mathop = atomType.bigOperator -->
+        <xsl:otherwise>op</xsl:otherwise><!-- mathop = atomType.bigOperator -->
       </xsl:choose>
     </xsl:when>
-    <xsl:when test="$class = 'O'">open</xsl:when><!-- Opening = mathopen = atomType.openingSymbol -->
-    <xsl:when test="$class = 'P'">punct</xsl:when><!-- Punctuation = mathpunct = atomType.punctuationSymbol -->
-    <xsl:when test="$class = 'R'">rel</xsl:when><!-- Relation = mathrel = atomType.relationalOperator -->
-    <xsl:when test="$class = 'S'">ord</xsl:when><!-- Space = assuming atomType.ordinary -->
-    <xsl:when test="$class = 'U'">ord</xsl:when><!-- Unary = mathord = atomType.ordinary -->
-    <xsl:when test="$class = 'V'">bin</xsl:when><!-- Vary = assume mathbin = atomType.binaryOperator -->    
-    <xsl:otherwise>ord</xsl:otherwise><!-- assuming atomType.ordinary if not specified -->
+    <xsl:when test="$class = 'O'">open</xsl:when><!-- Opening -->
+    <xsl:when test="$class = 'P'">punct</xsl:when><!-- Punctuation -->
+    <xsl:when test="$class = 'R'">rel</xsl:when><!-- Relation -->
+    <xsl:when test="$class = 'S'">ord</xsl:when><!-- Space = assuming ordinary -->
+    <xsl:when test="$class = 'U'">ord</xsl:when><!-- Unary = assuming ordinary -->
+    <xsl:when test="$class = 'V'">bin</xsl:when><!-- Vary = assume binary and let the logic decide later -->
+    <xsl:otherwise>ord</xsl:otherwise><!-- assuming ordinary if not specified -->
   </xsl:choose>
 </xsl:template>
 
@@ -129,8 +129,9 @@ local function addSymbol (str, shortatom, mathlatex, _, ops)
     op.forms = {}
     for _, v in pairs(ops) do
       if v.form then
-        v.lspace = SILE.types.length(v.lspace and ("%smu"):format(v.lspace) or "0mu")
-        v.rspace = SILE.types.length(v.rspace and ("%smu"):format(v.rspace) or "0mu")
+        -- NOTE: At this point the mu unit is not yet defined, so keep it as a string.
+        v.lspace = v.lspace and ("%smu"):format(v.lspace) or "0mu"
+        v.rspace = v.rspace and ("%smu"):format(v.rspace) or "0mu"
         op.forms[v.form] = v
       else
         SU.warn("No form for operator " .. str .. " (operator dictionary is probably incomplete)")

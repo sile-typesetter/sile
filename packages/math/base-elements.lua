@@ -437,6 +437,9 @@ function elements.stackbox:styleChildren ()
       for i = 1, #self.children - 1 do
          local v = self.children[i]
          local v2 = self.children[i + 1]
+         -- Handle re-wrapped paired open/close symbols
+         v = v.is_paired and v.children[#v.children] or v
+         v2 = v2.is_paired and v2.children[1] or v2
          if spacingRules[v.atom] and spacingRules[v.atom][v2.atom] then
             local rule = spacingRules[v.atom][v2.atom]
             if rule.impossible then

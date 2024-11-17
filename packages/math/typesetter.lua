@@ -113,10 +113,11 @@ function ConvertMathML (_, content)
    if content.command == "math" or content.command == "mathml" then -- toplevel
       return b.stackbox("H", convertChildren(content))
    elseif content.command == "mrow" then
-      return b.stackbox("H", convertChildren(content))
+      local ret = b.stackbox("H", convertChildren(content))
+      -- Internal property to keep tracks or paired open/close in TeX-like syntax
+      ret.is_paired = content.is_paired
+      return ret
    elseif content.command == "mphantom" then
-      -- MathML's standard mphantom corresponds to TeX's \phantom only.
-      -- Let's support a special attribute "h" or "v" for TeX-like \hphantom or \vphantom.
       local special = content.options.special
       return b.phantom(convertChildren(content), special)
    elseif content.command == "mi" then
