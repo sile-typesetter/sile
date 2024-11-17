@@ -58,7 +58,7 @@
       <xsl:choose>
         <!-- SILE uses the atom for spacing currently (ignoring lspace and rspace) -->
         <!-- HACK: integral signs are NOT considered as mathop for spacing purpose -->
-        <xsl:when test="contains($description,'INTEGRAL')">ord</xsl:when>
+        <xsl:when test="contains($description,'INTEGRAL') or contains($description,'INTEGRATION')">ord</xsl:when>
         <xsl:otherwise>op</xsl:otherwise><!-- mathop = atomType.bigOperator -->
       </xsl:choose>
     </xsl:when>
@@ -97,7 +97,6 @@
 --
 
 local atoms = require("packages/math/atoms")
-local atomTypeShort = atoms.atomTypeShort
 
 --- Transform a list of codepoints into a string
 local function U (...)
@@ -124,7 +123,7 @@ local function addSymbol (str, shortatom, mathlatex, _, ops)
     symbols[mathlatex] = str
   end
   local op = {}
-  op.atom = atomTypeShort[shortatom]
+  op.atom = atoms.types[shortatom]
   if ops then
     op.forms = {}
     for _, v in pairs(ops) do

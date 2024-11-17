@@ -5,8 +5,6 @@ local bits = require("core.parserbits")
 local epnf = require("epnf")
 local lpeg = require("lpeg")
 
-local atomType = atoms.atomType
-local atomTypeShort = atoms.atomTypeShort
 local operatorDict = syms.operatorDict
 local symbols = syms.symbols
 
@@ -283,13 +281,13 @@ local function isOperatorKind (tree, typeOfAtom)
    end
    -- Case \mo[atom=xxx]{ops}
    -- E.g. \mo[atom=op]{lim}
-   if tree.options and tree.options.atom == typeOfAtom then
-      return true
+   if tree.options and tree.options.atom then
+      return atoms.types[tree.options.atom] == typeOfAtom
    end
    -- Case \mo{ops} where ops is registered with the resquested type
    -- E.g. \mo{∑) or \sum
    if tree[1] and operatorDict[tree[1]] and operatorDict[tree[1]].atom then
-      return operatorDict[tree[1]].atom == atomTypeShort[typeOfAtom]
+      return operatorDict[tree[1]].atom == typeOfAtom
    end
    return false
 end
@@ -319,14 +317,14 @@ local function isMoveableLimits (tree)
    return false
 end
 local function isCloseOperator (tree)
-   return isOperatorKind(tree, "close")
+   return isOperatorKind(tree, atoms.types.close)
 end
 local function isOpeningOperator (tree)
-   return isOperatorKind(tree, "open")
+   return isOperatorKind(tree, atoms.types.open)
 end
 
 local function isAccentSymbol (symbol)
-   return operatorDict[symbol] and operatorDict[symbol].atom == atomType.accentSymbol
+   return operatorDict[symbol] and operatorDict[symbol].atom == atoms.types.accent
 end
 
 local function compileToMathML_aux (_, arg_env, tree)

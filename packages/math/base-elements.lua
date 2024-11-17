@@ -5,8 +5,6 @@ local atoms = require("packages.math.atoms")
 local mathvariants = require("packages.math.unicode-mathvariants")
 local convertMathVariantScript = mathvariants.convertMathVariantScript
 
-local atomType = atoms.atomType
-
 local elements = {}
 
 local mathMode = {
@@ -210,7 +208,7 @@ function elements.mbox:_init ()
    self.relY = SILE.types.length(0) -- y position relative to its parent box
    self.value = {}
    self.mode = mathMode.display
-   self.atom = atomType.ordinary
+   self.atom = atoms.types.ord
    local font = {
       family = SILE.settings:get("math.font.family"),
       size = SILE.settings:get("math.font.size"),
@@ -311,85 +309,85 @@ local spaceKind = {
 --     between two quantities that they can operate on." (a rule which notably helps
 --     addressing binary atoms used as unary operators.)
 local spacingRules = {
-   [atomType.ordinary] = {
-      -- [atomType.ordinary] = nil
-      [atomType.bigOperator] = { spaceKind.thin },
-      [atomType.binaryOperator] = { spaceKind.med, notScript = true },
-      [atomType.relationalOperator] = { spaceKind.thick, notScript = true },
-      -- [atomType.openingSymbol] = nil
-      -- [atomType.closeSymbol] = nil
-      -- [atomType.punctuationSymbol] = nil
-      [atomType.inner] = { spaceKind.thin, notScript = true },
+   [atoms.types.ord] = {
+      -- [atoms.types.ord] = nil
+      [atoms.types.op] = { spaceKind.thin },
+      [atoms.types.bin] = { spaceKind.med, notScript = true },
+      [atoms.types.rel] = { spaceKind.thick, notScript = true },
+      -- [atoms.types.open] = nil
+      -- [atoms.types.close] = nil
+      -- [atoms.types.punct] = nil
+      [atoms.types.inner] = { spaceKind.thin, notScript = true },
    },
-   [atomType.bigOperator] = {
-      [atomType.ordinary] = { spaceKind.thin },
-      [atomType.bigOperator] = { spaceKind.thin },
-      [atomType.binaryOperator] = { impossible = true },
-      [atomType.relationalOperator] = { spaceKind.thick, notScript = true },
-      -- [atomType.openingSymbol] = nil
-      -- [atomType.closeSymbol] = nil
-      -- [atomType.punctuationSymbol] = nil
-      [atomType.inner] = { spaceKind.thin, notScript = true },
+   [atoms.types.op] = {
+      [atoms.types.ord] = { spaceKind.thin },
+      [atoms.types.op] = { spaceKind.thin },
+      [atoms.types.bin] = { impossible = true },
+      [atoms.types.rel] = { spaceKind.thick, notScript = true },
+      -- [atoms.types.open] = nil
+      -- [atoms.types.close] = nil
+      -- [atoms.types.punct] = nil
+      [atoms.types.inner] = { spaceKind.thin, notScript = true },
    },
-   [atomType.binaryOperator] = {
-      [atomType.ordinary] = { spaceKind.med, notScript = true },
-      [atomType.bigOperator] = { spaceKind.med, notScript = true },
-      [atomType.binaryOperator] = { impossible = true },
-      [atomType.relationalOperator] = { impossible = true },
-      [atomType.openingSymbol] = { spaceKind.med, notScript = true },
-      [atomType.closeSymbol] = { impossible = true },
-      [atomType.punctuationSymbol] = { impossible = true },
-      [atomType.inner] = { spaceKind.med, notScript = true },
+   [atoms.types.bin] = {
+      [atoms.types.ord] = { spaceKind.med, notScript = true },
+      [atoms.types.op] = { spaceKind.med, notScript = true },
+      [atoms.types.bin] = { impossible = true },
+      [atoms.types.rel] = { impossible = true },
+      [atoms.types.open] = { spaceKind.med, notScript = true },
+      [atoms.types.close] = { impossible = true },
+      [atoms.types.punct] = { impossible = true },
+      [atoms.types.inner] = { spaceKind.med, notScript = true },
    },
-   [atomType.relationalOperator] = {
-      [atomType.ordinary] = { spaceKind.thick, notScript = true },
-      [atomType.bigOperator] = { spaceKind.thick, notScript = true },
-      [atomType.binaryOperator] = { impossible = true },
-      -- [atomType.relationalOperator] = nil
-      [atomType.openingSymbol] = { spaceKind.thick, notScript = true },
-      -- [atomType.closeSymbol] = nil
-      -- [atomType.punctuationSymbol] = nil
-      [atomType.inner] = { spaceKind.thick, notScript = true },
+   [atoms.types.rel] = {
+      [atoms.types.ord] = { spaceKind.thick, notScript = true },
+      [atoms.types.op] = { spaceKind.thick, notScript = true },
+      [atoms.types.bin] = { impossible = true },
+      -- [atoms.types.rel] = nil
+      [atoms.types.open] = { spaceKind.thick, notScript = true },
+      -- [atoms.types.close] = nil
+      -- [atoms.types.punct] = nil
+      [atoms.types.inner] = { spaceKind.thick, notScript = true },
    },
-   [atomType.openingSymbol] = {
-      -- [atomType.ordinary] = nil
-      -- [atomType.bigOperator] = nil
-      [atomType.binaryOperator] = { impossible = true },
-      -- [atomType.relationalOperator] = nil
-      -- [atomType.openingSymbol] = nil
-      -- [atomType.closeSymbol] = nil
-      -- [atomType.punctuationSymbol] = nil
-      -- [atomType.inner] = nil
+   [atoms.types.open] = {
+      -- [atoms.types.ord] = nil
+      -- [atoms.types.op] = nil
+      [atoms.types.bin] = { impossible = true },
+      -- [atoms.types.rel] = nil
+      -- [atoms.types.open] = nil
+      -- [atoms.types.close] = nil
+      -- [atoms.types.punct] = nil
+      -- [atoms.types.inner] = nil
    },
-   [atomType.closeSymbol] = {
-      -- [atomType.ordinary] = nil
-      [atomType.bigOperator] = { spaceKind.thin },
-      [atomType.binaryOperator] = { spaceKind.med, notScript = true },
-      [atomType.relationalOperator] = { spaceKind.thick, notScript = true },
-      -- [atomType.openingSymbol] = nil
-      -- [atomType.closeSymbol] = nil
-      -- [atomType.punctuationSymbol] = nil
-      [atomType.inner] = { spaceKind.thin, notScript = true },
+   [atoms.types.close] = {
+      -- [atoms.types.ord] = nil
+      [atoms.types.op] = { spaceKind.thin },
+      [atoms.types.bin] = { spaceKind.med, notScript = true },
+      [atoms.types.rel] = { spaceKind.thick, notScript = true },
+      -- [atoms.types.open] = nil
+      -- [atoms.types.close] = nil
+      -- [atoms.types.punct] = nil
+      [atoms.types.inner] = { spaceKind.thin, notScript = true },
    },
-   [atomType.punctuationSymbol] = {
-      [atomType.ordinary] = { spaceKind.thin, notScript = true },
-      [atomType.bigOperator] = { spaceKind.thin, notScript = true },
-      [atomType.binaryOperator] = { impossible = true },
-      [atomType.relationalOperator] = { spaceKind.thin, notScript = true },
-      [atomType.openingSymbol] = { spaceKind.thin, notScript = true },
-      [atomType.closeSymbol] = { spaceKind.thin, notScript = true },
-      [atomType.punctuationSymbol] = { spaceKind.thin, notScript = true },
-      [atomType.inner] = { spaceKind.thin, notScript = true },
+   [atoms.types.punct] = {
+      [atoms.types.ord] = { spaceKind.thin, notScript = true },
+      [atoms.types.op] = { spaceKind.thin, notScript = true },
+      [atoms.types.bin] = { impossible = true },
+      [atoms.types.rel] = { spaceKind.thin, notScript = true },
+      [atoms.types.open] = { spaceKind.thin, notScript = true },
+      [atoms.types.close] = { spaceKind.thin, notScript = true },
+      [atoms.types.punct] = { spaceKind.thin, notScript = true },
+      [atoms.types.inner] = { spaceKind.thin, notScript = true },
    },
-   [atomType.inner] = {
-      [atomType.ordinary] = { spaceKind.thin, notScript = true },
-      [atomType.bigOperator] = { spaceKind.thin },
-      [atomType.binaryOperator] = { spaceKind.med, notScript = true },
-      [atomType.relationalOperator] = { spaceKind.thick, notScript = true },
-      [atomType.openingSymbol] = { spaceKind.thin, notScript = true },
-      [atomType.punctuationSymbol] = { spaceKind.thin, notScript = true },
-      -- [atomType.closeSymbol] = nil
-      [atomType.inner] = { spaceKind.thin, notScript = true },
+   [atoms.types.inner] = {
+      [atoms.types.ord] = { spaceKind.thin, notScript = true },
+      [atoms.types.op] = { spaceKind.thin },
+      [atoms.types.bin] = { spaceKind.med, notScript = true },
+      [atoms.types.rel] = { spaceKind.thick, notScript = true },
+      [atoms.types.open] = { spaceKind.thin, notScript = true },
+      [atoms.types.punct] = { spaceKind.thin, notScript = true },
+      -- [atoms.types.close] = nil
+      [atoms.types.inner] = { spaceKind.thin, notScript = true },
    },
 }
 
@@ -430,8 +428,8 @@ function elements.stackbox:styleChildren ()
          -- A binary operator at the beginning of the expression is treated as an ordinary atom
          -- (so as to be considered as a unary operator, without more context).
          local v = self.children[1]
-         if v.atom == atomType.binaryOperator then
-            v.atom = atomType.ordinary
+         if v.atom == atoms.types.bin then
+            v.atom = atoms.types.ord
          end
       end
       for i = 1, #self.children - 1 do
@@ -444,11 +442,11 @@ function elements.stackbox:styleChildren ()
             local rule = spacingRules[v.atom][v2.atom]
             if rule.impossible then
                -- Another interpretation of the TeXbook p. 133 for binary operator exceptions:
-               if v2.atom == atomType.binaryOperator then
+               if v2.atom == atoms.types.bin then
                   -- If a binary atom follows an atom that is not compatible with it, make it an ordinary.
                   -- (so as to be conidered as a unary operator).
                   -- Typical case: "a = -b" (ord rel bin ord), "a + -b" (ord bin bin ord)
-                  v2.atom = atomType.ordinary
+                  v2.atom = atoms.types.ord
                else
                   -- If a binary atom precedes an atom that is not compatible with it, make it an ordinary.
                   -- Quite unusual case (bin, rel/close/punct) unlikely to happen in practice.
@@ -457,7 +455,7 @@ function elements.stackbox:styleChildren ()
                   -- on the binary atom... but this might not be a big deal.
                   -- (i.e. rather than add an extra look-ahead just for this case).
                   -- Artificial example: "a + = b" (ord bin rel ord)
-                  v.atom = atomType.ordinary
+                  v.atom = atoms.types.ord
                end
                rule = spacingRules[v.atom][v2.atom]
                if rule and rule.impossible then
@@ -912,7 +910,7 @@ function elements.underOver:calculateItalicsCorrection ()
          -- If this is a big operator, and we are in display style, then the
          -- base glyph may be bigger than the font size. We need to adjust the
          -- italic correction accordingly.
-         if self.base.atom == atomType.bigOperator and isDisplayMode(self.mode) then
+         if SU.boolean(self.base.largeop) and isDisplayMode(self.mode) then
             c = c * (self.base and self.base.font.size / self.font.size or 1.0)
          end
          return c

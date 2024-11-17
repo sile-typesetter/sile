@@ -4,7 +4,6 @@ local b = require("packages.math.base-elements")
 local syms = require("packages.math.unicode-symbols")
 local mathvariants = require("packages.math.unicode-mathvariants")
 local mathVariantToScriptType, scriptType = mathvariants.mathVariantToScriptType, mathvariants.scriptType
-local atomTypeShort = atoms.atomTypeShort
 
 local ConvertMathML
 
@@ -150,10 +149,10 @@ function ConvertMathML (_, content)
          attributes[attribute] = value
       end
       if content.options.atom then
-         if not atomTypeShort[content.options.atom] then
+         if not atoms.types[content.options.atom] then
             SU.error("Unknown atom type " .. content.options.atom)
          else
-            attributes.atom = atomTypeShort[content.options.atom]
+            attributes.atom = atoms.types[content.options.atom]
          end
       end
       if type(text) ~= "string" then
