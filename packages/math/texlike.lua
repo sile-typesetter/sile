@@ -641,6 +641,35 @@ compileToMathML(
   \def{projlim}{\mo[atom=op, movablelimits=true]{proj lim}}
   \def{injlim}{\mo[atom=op, movablelimits=true]{inj lim}}
 
+  % Other pre-defined operators from the TeXbook, p. 162:
+  % TeX of course defines them with \mathop, so we use atom=op here.
+  % MathML would use a <mi> here.
+  % But we use a <mo> so the atom type is handled
+  \def{arccos}{\mo[atom=op]{arccos}}
+  \def{arcsin}{\mo[atom=op]{arcsin}}
+  \def{arctan}{\mo[atom=op]{arctan}}
+  \def{arg}{\mo[atom=op]{arg}}
+  \def{cos}{\mo[atom=op]{cos}}
+  \def{cosh}{\mo[atom=op]{cosh}}
+  \def{cot}{\mo[atom=op]{cot}}
+  \def{coth}{\mo[atom=op]{coth}}
+  \def{csc}{\mo[atom=op]{csc}}
+  \def{deg}{\mo[atom=op]{deg}}
+  \def{det}{\mo[atom=op]{det}}
+  \def{dim}{\mo[atom=op]{dim}}
+  \def{exp}{\mo[atom=op]{exp}}
+  \def{hom}{\mo[atom=op]{hom}}
+  \def{ker}{\mo[atom=op]{ker}}
+  \def{lg}{\mo[atom=op]{lg}}
+  \def{ln}{\mo[atom=op]{ln}}
+  \def{log}{\mo[atom=op]{log}}
+  \def{Pr}{\mo[atom=op]{Pr}}
+  \def{sec}{\mo[atom=op]{sec}}
+  \def{sin}{\mo[atom=op]{sin}}
+  \def{sinh}{\mo[atom=op]{sinh}}
+  \def{tan}{\mo[atom=op]{tan}}
+  \def{tanh}{\mo[atom=op]{tanh}}
+
   % Standard spaces gleaned from plain TeX
   \def{thinspace}{\mspace[width=thin]}
   \def{negthinspace}{\mspace[width=-thin]}
