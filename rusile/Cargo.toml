@@ -1,7 +1,7 @@
 [package]
 name = "rusile"
 description = "Rusty components for the SILE typesetter"
-readme = "README.md"
+readme = "../README.md"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -11,10 +11,7 @@ repository.workspace = true
 license.workspace = true
 
 [lib]
-crate-type = ["rlib", "cdylib", "staticlib"]
-
-[dependencies.sile]
-path = ".."
+crate-type = [ "rlib", "cdylib", "staticlib" ]
 
 [features]
 default = []
@@ -24,6 +21,9 @@ lua52 = [ "mlua/lua52" ]
 lua51 = [ "mlua/lua51" ]
 luajit = [ "mlua/luajit" ]
 vendored = [ "mlua/vendored" ]
+
+[dependencies.sile]
+workspace = true
 
 [dependencies.mlua]
 workspace = true

@@ -1,25 +1,3 @@
-[workspace]
-resolver = "2"
-members = [ ".", "rusile" ]
-
-  [workspace.package]
-  version = "0.15.5"
-  edition = "2021"
-  rust-version = "1.71.0"
-  authors = [
-  "Simon Cozens",
-  "Caleb Maclennan <caleb@alerque.com>",
-  "Olivier Nicole",
-  "Didier Willis"
-]
-  homepage = "https://sile-typesetter.org"
-  repository = "https://github.com/sile-typesetter/sile"
-  license = "MIT"
-
-[workspace.dependencies.mlua]
-version = "0.10"
-features = [ "anyhow" ]
-
 [package]
 name = "sile"
 description = "Simon’s Improved Layout Engine"
@@ -27,75 +5,51 @@ readme = "README.md"
 build = "build-aux/build.rs"
 version = "0.15.6"
 
-  [package.edition]
-  workspace = true
-
-  [package.rust-version]
-  workspace = true
-
-  [package.authors]
-  workspace = true
-
-  [package.homepage]
-  workspace = true
-
-  [package.repository]
-  workspace = true
-
-  [package.license]
-  workspace = true
-
-[package.metadata.bacon.jobs]
-cmd = [ "cargo", "build", "--color", "always" ]
-
-[package.metadata.typos.default]
-locale = "en-us"
-extend-ignore-re = [
-  "(?s)(#|//|--|%)\\s*typos: ignore start.*?\\n\\s*(#|//|--|%)\\s*typos: ignore end"
+[workspace.package]
+version = "0.15.6"
+edition = "2021"
+rust-version = "1.71.0"
+authors = [
+  "Simon Cozens",
+  "Caleb Maclennan <caleb@alerque.com>",
+  "Olivier Nicole",
+  "Didier Willis"
 ]
-extend-ignore-identifiers-re = [
-  "[a-f0-9]{7}",
-  "^.{2,3}$",
-  "^twords?",
-  "[Pp]arms",
-  "wdth",
-  "0fpt",
-  "^ot",
-  "^hb_ot",
-  "^HB_",
-  "^Tyre$",
-  "PoDoFo",
-  "_Flate",
-  "pointint",
-  "DEPENDEES",
-  "EPdf",
-  "FileAttachement"
+homepage = "https://sile-typesetter.org"
+repository = "https://github.com/sile-typesetter/sile"
+license = "MIT"
+
+[workspace]
+resolver = "2"
+members = [
+  ".",
+  "rusile"
 ]
 
-  [package.metadata.typos.default.extend-words]
-  beveled = "bevelled"
-  bevelled = "bevelled"
-  craters = "creators"
-  neet = "need"
+[package.edition]
+workspace = true
 
-[package.metadata.typos.files]
-ignore-hidden = false
-extend-exclude = [
-  "/.git",
-  "CHANGELOG.md",
-  "build-aux/ax*",
-  "languages/*/hyphens*",
-  "lua-libraries/*",
-  "lua_modules/*",
-  "node_modules/*",
-  "tests/*.expected",
-  "cmake/*.diff",
-  "libtexpdf"
-]
+[package.rust-version]
+workspace = true
+
+[package.authors]
+workspace = true
+
+[package.homepage]
+workspace = true
+
+[package.repository]
+workspace = true
+
+[package.license]
+workspace = true
 
 [[bin]]
 name = "sile"
 required-features = [ "cli" ]
+
+[profile.release]
+lto = true
 
 [features]
 default = [
@@ -124,8 +78,13 @@ manpage = [ "clap_mangen" ]
 powershell = [ "completions" ]
 zsh = [ "completions" ]
 
-[profile.release]
-lto = true
+[workspace.dependencies.mlua]
+version = "0.10"
+features = [ "anyhow" ]
+
+[workspace.dependencies.sile]
+path = "."
+version = "0.15.6"
 
 [dependencies.anyhow]
 version = "1.0"
@@ -171,3 +130,48 @@ features = [ "build", "cargo", "git", "gitoxide" ]
 
 [package.metadata.docs.rs]
 features = [ "luajit", "vendored" ]
+
+[package.metadata.typos.default]
+locale = "en-us"
+extend-ignore-re = [
+  "(?s)(#|//|--|%)\\s*typos: ignore start.*?\\n\\s*(#|//|--|%)\\s*typos: ignore end"
+]
+extend-ignore-identifiers-re = [
+  "[a-f0-9]{7}",
+  "^.{2,3}$",
+  "^twords?",
+  "[Pp]arms",
+  "wdth",
+  "0fpt",
+  "^ot",
+  "^hb_ot",
+  "^HB_",
+  "^Tyre$",
+  "PoDoFo",
+  "_Flate",
+  "pointint",
+  "DEPENDEES",
+  "EPdf",
+  "FileAttachement"
+]
+
+[package.metadata.typos.default.extend-words]
+beveled = "bevelled"
+bevelled = "bevelled"
+craters = "creators"
+neet = "need"
+
+[package.metadata.typos.files]
+ignore-hidden = false
+extend-exclude = [
+  "/.git",
+  "CHANGELOG.md",
+  "build-aux/ax*",
+  "languages/*/hyphens*",
+  "lua-libraries/*",
+  "lua_modules/*",
+  "node_modules/*",
+  "tests/*.expected",
+  "cmake/*.diff",
+  "libtexpdf"
+]
