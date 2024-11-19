@@ -1,4 +1,5 @@
 const TOML = require('@iarna/toml')
+const { exec } = require('node:child_process')
 
 module.exports.readVersion = function (contents) {
   const data = TOML.parse(contents)
@@ -6,7 +7,11 @@ module.exports.readVersion = function (contents) {
 }
 
 module.exports.writeVersion = function (contents, version) {
-  const data = TOML.parse(contents)
-  data.package.version = version
-  return TOML.stringify(data)
+  exec('cargo-set-version set-version ' + version, (err, output) => {
+    if (err) {
+      console.error("Could not run Cargo subcommand to set version: ", err)
+      return
+    }
+  })
+  return contents
 }

@@ -178,6 +178,7 @@ AM_COND_IF([FONT_DOWNLOAD_TOOLS], [
 
 AM_COND_IF([DEVELOPER_MODE], [
     QUE_PROGVAR([busted])
+    QUE_PROGVAR([cargosetversion], [cargo-set-version])
     QUE_PROGVAR([curl])
     QUE_PROGVAR([delta])
     QUE_PROGVAR([diff])
@@ -189,6 +190,7 @@ AM_COND_IF([DEVELOPER_MODE], [
     QUE_PROGVAR([npm])
     QUE_PROGVAR([perl])
     QUE_PROGVAR([stylua])
+    QUE_PROGVAR([taplo])
     QUE_PROGVAR([tr])
     QUE_PROGVAR([typos])
 ])
