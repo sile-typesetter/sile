@@ -11,20 +11,20 @@ repository.workspace = true
 license.workspace = true
 
 [lib]
-crate-type = [ "rlib", "cdylib", "staticlib" ]
+crate-type = ["rlib", "cdylib", "staticlib"]
 
 [features]
 default = []
-lua54 = [ "mlua/lua54" ]
-lua53 = [ "mlua/lua53" ]
-lua52 = [ "mlua/lua52" ]
-lua51 = [ "mlua/lua51" ]
-luajit = [ "mlua/luajit" ]
-vendored = [ "mlua/vendored" ]
+lua54 = ["mlua/lua54"]
+lua53 = ["mlua/lua53"]
+lua52 = ["mlua/lua52"]
+lua51 = ["mlua/lua51"]
+luajit = ["mlua/luajit"]
+vendored = ["mlua/vendored"]
 
 [dependencies.sile]
 workspace = true
 
 [dependencies.mlua]
 workspace = true
-features = [ "macros", "module" ]
+features = ["macros", "module"]
