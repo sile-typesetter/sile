@@ -107,16 +107,49 @@ local mathGrammar = function (_ENV)
          return pl.utils.unpack(t)
          end
 
+   -- TeX uses the regular asterisk (* = U+002A) in superscripts or subscript:
+   -- The TeXbook exercice 18.32 (p. 179, 330) for instance.
+   -- Fonts usually have the asterisk raised too high, so using the Unicode
+   -- asterisk operator U+2217 looks better (= \ast in TeX).
+   local astop = P"*" / luautf8.char(0x2217)
+   -- TeX interprets apostrophes as primes in math mode:
+   -- The TeXbook p. 130 expands ' to ^\prime commands and repeats the \prime
+   -- for multiple apostrophes.
+   -- The TeXbook p. 134: "Then there is the character ', which we know is used
+   -- as an abbreviation for \prime superscripts."
+   -- (So we are really sure superscript primes are really the intended meaning.)
+   -- Here we use the Unicode characters for primes, but the intent is the same.
+   local primes = (
+         P"''''" / luautf8.char(0x2057) + -- quadruple prime
+         P"'''" / luautf8.char(0x2034) + -- triple prime
+         P"''" / luautf8.char(0x2033) + -- double prime
+         P"'" / luautf8.char(0x2032) -- prime
+      ) / function (s)
+            return { id="atom", s }
+         end
+   local primes_sup = (
+         primes * _ * P"^" * _ * element_no_infix / function (p, e)
+            -- Combine the prime with the superscript in the same mathlist
+            if e.id == "mathlist" then
+               table.insert(e, 1, p)
+               return e
+            end
+            return { id="mathlist", p, e }
+         end
+         + primes -- or standalone primes
+      )
+
    START "math"
    math = V"mathlist" * EOF"Unexpected character at end of math code"
    mathlist = (comment + (WS * _) + element)^0
-   supsub = element_no_infix * _ * P"^" * _ * element_no_infix * _ *
-      P"_" * _ * element_no_infix
-   subsup = element_no_infix * _ * P"_" * _ * element_no_infix * _ *
-      P"^" * _ * element_no_infix
-   sup = element_no_infix * _ * P"^" * _ * element_no_infix
+   supsub = element_no_infix * _ * primes_sup                  * _ *  P"_" * _ * element_no_infix +
+            element_no_infix * _ * P"^" * _ * element_no_infix * _ *  P"_" * _ * element_no_infix
+   subsup = element_no_infix * _ * P"_" * _ * element_no_infix * primes_sup +
+            element_no_infix * _ * P"_" * _ * element_no_infix * _ * P"^" * _ * element_no_infix
+   sup =  element_no_infix * _ * primes_sup +
+          element_no_infix * _ * P"^" * _ * element_no_infix
    sub = element_no_infix * _ * P"_" * _ * element_no_infix
-   atom = natural + C(utf8code - S"\\{}%^_&") +
+   atom = natural + astop + C(utf8code - S"\\{}%^_&'") +
       (P"\\{" + P"\\}") / function (s) return string.sub(s, -1) end
    text = (
          P"\\text" *
