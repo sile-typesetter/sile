@@ -17,7 +17,7 @@ T	29 w=2.2900	(:)
 Draw line	154.6577	48.8335	37.9800	0.6500
 Mx 	171.7877
 My 	46.9585
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
 T	18 w=3.7200	(nil)
 Mx 	154.6577
 My 	57.6215
@@ -27,7 +27,7 @@ T	12 w=5.1840	(nil)
 Draw line	164.3117	55.2815	27.5760	0.5200
 Mx 	176.7047
 My 	53.7815
-Set font 	Libertinus Math;6;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;6;400;Regular;normal;+ssty=2;;LTR
 T	18 w=2.7900	(nil)
 Mx 	164.3117
 My 	62.8495
@@ -61,7 +61,7 @@ T	12 w=6.4800	(nil)
 Draw line	205.1412	48.8335	3.7200	0.6500
 Mx 	205.1412
 My 	46.9585
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
 T	18 w=3.7200	(nil)
 My 	56.5585
 T	19 w=3.7200	(nil)
@@ -92,7 +92,7 @@ T	12 w=6.4800	(nil)
 Draw line	281.9868	110.8003	29.8020	0.6500
 Mx 	295.0278
 My 	108.9253
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
 T	18 w=3.7200	(nil)
 Mx 	281.9868
 My 	119.5883
@@ -102,7 +102,7 @@ T	12 w=5.1840	(nil)
 Draw line	291.6408	117.2483	19.3980	0.5200
 Mx 	299.9448
 My 	115.7483
-Set font 	Libertinus Math;6;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;6;400;Regular;normal;+ssty=2;;LTR
 T	18 w=2.7900	(nil)
 Mx 	291.6408
 My 	124.8163
@@ -147,7 +147,7 @@ T	29 w=2.2900	(:)
 Draw line	136.5094	144.6193	37.9800	0.6500
 Mx 	153.6394
 My 	142.7443
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
 T	18 w=3.7200	(nil)
 Mx 	136.5094
 My 	153.4073
@@ -157,7 +157,7 @@ T	12 w=5.1840	(nil)
 Draw line	146.1634	151.0673	27.5760	0.5200
 Mx 	158.5564
 My 	149.5673
-Set font 	Libertinus Math;6;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;6;400;Regular;normal;+ssty=2;;LTR
 T	18 w=2.7900	(nil)
 Mx 	146.1634
 My 	158.6353
@@ -191,7 +191,7 @@ T	12 w=6.4800	(nil)
 Draw line	186.9970	144.6193	3.7200	0.6500
 Mx 	186.9970
 My 	142.7443
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
 T	18 w=3.7200	(nil)
 My 	152.3443
 T	19 w=3.7200	(nil)
@@ -222,7 +222,7 @@ T	12 w=6.4800	(nil)
 Draw line	281.9868	206.5861	29.8020	0.6500
 Mx 	295.0278
 My 	204.7111
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
 T	18 w=3.7200	(nil)
 Mx 	281.9868
 My 	215.3741
@@ -232,7 +232,7 @@ T	12 w=5.1840	(nil)
 Draw line	291.6408	213.0341	19.3980	0.5200
 Mx 	299.9448
 My 	211.5341
-Set font 	Libertinus Math;6;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;6;400;Regular;normal;+ssty=2;;LTR
 T	18 w=2.7900	(nil)
 Mx 	291.6408
 My 	220.6021
@@ -263,7 +263,7 @@ T	19 w=4.6500	(nil)
 Draw line	50.5138	240.4851	10.7360	0.6500
 Mx 	50.5138
 My 	238.6101
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
 T	2753 w=1.8320	(nil)
 Mx 	52.3458
 T	12 w=5.1840	(nil)
