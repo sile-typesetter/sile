@@ -18,12 +18,14 @@
   rustPlatform,
 
   # buildInputs
+  cargo-edit,
   lua,
   harfbuzz,
   icu,
   fontconfig,
   libiconv,
   stylua,
+  taplo,
   typos,
   darwin,
   # FONTCONFIG_FILE
@@ -113,12 +115,14 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs =
     [
+      cargo-edit
       luaEnv
       harfbuzz
       icu
       fontconfig
       libiconv
       stylua
+      taplo
       typos
     ]
     ++ lib.optionals stdenv.hostPlatform.isDarwin [
