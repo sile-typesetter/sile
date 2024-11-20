@@ -21,7 +21,9 @@ AC_PROG_GREP
 AC_PROG_OBJC
 AC_PROG_SED
 QUE_PROGVAR([cmp])
+QUE_PROGVAR([diff])
 QUE_PROGVAR([find])
+QUE_PROGVAR([head])
 QUE_PROGVAR([jq])
 QUE_PROGVAR([pdfinfo])
 QUE_PROGVAR([sort])
@@ -176,13 +178,15 @@ AM_COND_IF([FONT_DOWNLOAD_TOOLS], [
     QUE_PROGVAR([bsdtar])
 ])
 
+AM_COND_IF([DEVELOPER_MODE], [
+    AX_WITH_PROG([DELTA], [delta], [cat])
+    AX_WITH_PROG([PERL], [perl])
+])
+
 AM_COND_IF([DEVELOPER_TOOLS], [
     QUE_PROGVAR([busted])
     QUE_PROGVAR([cargosetversion], [cargo-set-version])
     QUE_PROGVAR([curl])
-    QUE_PROGVAR([delta])
-    QUE_PROGVAR([diff])
-    QUE_PROGVAR([head])
     QUE_PROGVAR([ldoc])
     QUE_PROGVAR([luacheck])
     QUE_PROGVAR([luarocks])
