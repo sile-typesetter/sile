@@ -31,19 +31,9 @@ jobs:
           ./bootstrap.sh
           ./configure \
             --enable-developer-mode \
+            BSDTAR=false BUSTED=false CARGOSETVERSION=false DELTA=false FCMATCH=true LDOC=false LUACHECK=false LUAROCKS=false NIX=false PDFINFO=false STYLUA=false TAPLO=false TYPOS=false \
             --without-harfbuzz \
-            --disable-font-variations \
-            BSDTAR=false \
-            BUSTED=false \
-            DELTA=false \
-            FCMATCH=true \
-            LDOC=false \
-            LUACHECK=false \
-            LUAROCKS=false \
-            NIX=false \
-            PDFINFO=false \
-            STYLUA=false \
-            TYPOS=false
+            --disable-font-variations
       - name: Publish Docker Image to GH Container Registry
         run: |
           make docker-build-push

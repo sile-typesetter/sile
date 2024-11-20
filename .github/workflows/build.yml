@@ -49,7 +49,7 @@ jobs:
           ./bootstrap.sh
           ./configure \
             --enable-developer-mode \
-            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false TYPOS=cat \
+            BUSTED=false CARGOSETVERSION=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false TAPLO=false TYPOS=cat \
             --disable-font-variations \
             --with-manual \
             ${{ matrix.configuration[1] }}
