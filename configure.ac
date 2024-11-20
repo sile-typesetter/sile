@@ -176,7 +176,7 @@ AM_COND_IF([FONT_DOWNLOAD_TOOLS], [
     QUE_PROGVAR([bsdtar])
 ])
 
-AM_COND_IF([DEVELOPER_MODE], [
+AM_COND_IF([DEVELOPER_TOOLS], [
     QUE_PROGVAR([busted])
     QUE_PROGVAR([cargosetversion], [cargo-set-version])
     QUE_PROGVAR([curl])

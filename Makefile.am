@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS = -I build-aux
-AM_DISTCHECK_CONFIGURE_FLAGS = --enable-developer-mode
+AM_DISTCHECK_CONFIGURE_FLAGS = --enable-developer-mode --without-developer-tools PDFINFO=$(PDFINFO)
 
 .ONESHELL:
 .SECONDARY:
