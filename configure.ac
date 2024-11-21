@@ -205,30 +205,28 @@ AX_LUA_LIBS
 
 AM_COND_IF([SYSTEM_LUAROCKS], [
     AS_IF([test "$LUA_SHORT_VERSION" -lt 52], [
-        AM_COND_IF([LUAJIT], [], [
-            AX_LUA_MODULE([bit32], [bit32])
+            AM_COND_IF([LUAJIT], [], [AX_LUA_REQUIRE([bit32])])
+        ],
+        [test "$LUA_SHORT_VERSION" -lt 53], [
+            AX_LUA_REQUIRE([compat53])
         ])
-    ])
-    AX_LUA_MODULE([cassowary], [cassowary])
-    AS_IF([test "$LUA_SHORT_VERSION" -lt 53], [
-        AX_LUA_MODULE([compat53], [compat53])
-    ])
-    AX_LUA_MODULE([cldr], [cldr])
-    AX_LUA_MODULE([fluent], [fluent])
-    AX_LUA_MODULE([linenoise], [linenoise])
-    AX_LUA_MODULE([loadkit], [loadkit])
-    AX_LUA_MODULE([lpeg], [lpeg])
-    AX_LUA_MODULE([zlib], [lua-zlib])
-    AX_LUA_MODULE([cliargs], [lua_cliargs])
-    AX_LUA_MODULE([epnf], [luaepnf])
-    AX_LUA_MODULE([lxp], [luaexpat])
-    AX_LUA_MODULE([lfs], [luafilesystem])
-    AX_LUA_MODULE([repl], [luarepl])
-    AX_LUA_MODULE([ssl], [luasec])
-    AX_LUA_MODULE([socket], [luasocket])
-    AX_LUA_MODULE([lua-utf8], [luautf8])
-    AX_LUA_MODULE([pl], [penlight])
-    AX_LUA_MODULE([vstruct], [vstruct])
+    AX_LUA_REQUIRE([cassowary])
+    AX_LUA_REQUIRE([cldr])
+    AX_LUA_REQUIRE([fluent])
+    AX_LUA_REQUIRE([linenoise])
+    AX_LUA_REQUIRE([loadkit])
+    AX_LUA_REQUIRE([lpeg])
+    AX_LUA_REQUIRE([zlib], [lua-zlib])
+    AX_LUA_REQUIRE([cliargs], [lua_cliargs])
+    AX_LUA_REQUIRE([epnf], [luaepnf])
+    AX_LUA_REQUIRE([lxp], [luaexpat])
+    AX_LUA_REQUIRE([lfs], [luafilesystem])
+    AX_LUA_REQUIRE([repl], [luarepl])
+    AX_LUA_REQUIRE([ssl], [luasec])
+    AX_LUA_REQUIRE([socket], [luasocket])
+    AX_LUA_REQUIRE([lua-utf8], [luautf8])
+    AX_LUA_REQUIRE([pl], [penlight])
+    AX_LUA_REQUIRE([vstruct])
 ], [
     QUE_PROGVAR([luarocks])
     QUE_PROGVAR([git]) # required for luarocks to install zlib rock
