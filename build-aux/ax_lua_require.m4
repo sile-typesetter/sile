@@ -4,7 +4,7 @@
 #
 # SYNOPSIS
 #
-#   AX_LUA_REQUIRE([MODULE], [ROCKNAME])
+#   AX_LUA_REQUIRE([MODULE], [ACTION_IF_FOUND], [ACTION_IF_NOT_FOUND])
 #
 # DESCRIPTION
 #
@@ -35,22 +35,31 @@
 
 AC_DEFUN([AX_LUA_REQUIRE],[
     # Make sure we have a Lua interpreter
-    AS_IF([test -z "$LUA"], [
-        AC_MSG_ERROR([No Lua VM set, consider using [AX_PROG_LUA] to set one])
-    ])
+    if test -z "$LUA"; then
+        AX_PROG_LUA
+        if test -z "$LUA"; then
+            AC_MSG_ERROR([No Lua VM set])
+        fi
+    fi
 
     AC_PREREQ([2.61])
 
     pushdef([MODULE],$1)
-    pushdef([ROCKNAME],m4_default($2,$1))
+    pushdef([ACTION_IF_FOUND],$2)
+    pushdef([ACTION_IF_NOT_FOUND],$3)
+
     AC_MSG_CHECKING([whether Lua can load module MODULE])
     AS_IF([$LUA -e 'require("MODULE")' 2>/dev/null], [
         AC_MSG_RESULT([loaded])
+        ACTION_IF_FOUND
     ], [
         AC_MSG_RESULT([unable to load])
-        AC_MSG_ERROR([cannot find Lua library MODULE, consider installing ROCKNAME via luarocks])
+        m4_ifset([ACTION_IF_NOT_FOUND][ACTION_IF_NOT_FOUND],
+            [AC_MSG_FAILURE([cannot find Lua module MODULE])])
     ])
+
     popdef([MODULE])
-    popdef([ROCKNAME])
+    popdef([ACTION_IF_FOUND])
+    popdef([ACTION_IF_NOT_FOUND])
 ])
 
