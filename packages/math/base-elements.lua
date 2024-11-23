@@ -947,6 +947,17 @@ end
 
 function elements.text:shape ()
    self.font.size = self.font.size * self:getScaleDown()
+   if isScriptMode(self.mode) then
+      local scriptFeature = SILE.settings:get("math.font.script.feature")
+      if scriptFeature then
+         self.font.features = ("+%s=1"):format(scriptFeature)
+      end
+   elseif isScriptScriptMode(self.mode) then
+      local scriptFeature = SILE.settings:get("math.font.script.feature")
+      if scriptFeature then
+         self.font.features = ("+%s=2"):format(scriptFeature)
+      end
+   end
    local face = SILE.font.cache(self.font, SILE.shaper.getFace)
    local mathMetrics = self:getMathMetrics()
    local glyphs = SILE.shaper:shapeToken(self.text, self.font)
