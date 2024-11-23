@@ -27,9 +27,9 @@
 --
 -- luacheck: no unused args
 
-local CslLocale = require("csl.core.locale").CslLocale
+local CslLocale = require("packages.bibtex.csl.locale")
 
-local superfolding = require("csl.core.utils.superfolding")
+local superfolding = require("packages.bibtex.csl.utils.superfolding")
 local endash = luautf8.char(0x2013)
 local emdash = luautf8.char(0x2014)
 
@@ -1505,6 +1505,4 @@ function CslEngine:reference (entries)
    return self:_process(entries, "bibliography")
 end
 
-return {
-   CslEngine = CslEngine,
-}
+return CslEngine

@@ -1,12 +1,12 @@
 SILE = require("core.sile")
 
-local CslLocale = require("csl.core.locale").CslLocale
-local CslStyle = require("csl.core.style").CslStyle
-local CslEngine = require("csl.core.engine").CslEngine
+local CslLocale = require("packages.bibtex.csl.locale")
+local CslStyle = require("packages.bibtex.csl.style")
+local CslEngine = require("packages.bibtex.csl.engine")
 
 describe("CSL engine", function ()
-   local locale, err1 = CslLocale.read("csl/locales/locales-en-US.xml")
-   local style, err2 = CslStyle.read("csl/styles/chicago-author-date.csl")
+   local locale, err1 = CslLocale.read("packages/bibtex/csl/locales/locales-en-US.xml")
+   local style, err2 = CslStyle.read("packages/bibtex/csl/styles/chicago-author-date.csl")
 
    -- The expected internal representation of the CSL entry is similar to CSL-JSON
    -- but with some differences:

@@ -7,7 +7,8 @@
 --  - (static method) CslStyle.read(filename) -> CslStyle
 --
 
-local xmlparser = require("csl.core.utils.xmlparser")
+local xmlparser = require("packages.bibtex.csl.utils.xmlparser")
+
 local parse = xmlparser.parse
 local rules = {
    prefix = "cs:",
@@ -95,6 +96,4 @@ function CslStyle.read (filename)
    return CslStyle.parse(doc)
 end
 
-return {
-   CslStyle = CslStyle,
-}
+return CslStyle

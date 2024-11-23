@@ -4,13 +4,13 @@ local loadkit = require("loadkit")
 local cslStyleLoader = loadkit.make_loader("csl")
 local cslLocaleLoader = loadkit.make_loader("xml")
 
-local CslLocale = require("csl.core.locale").CslLocale
-local CslStyle = require("csl.core.style").CslStyle
-local CslEngine = require("csl.core.engine").CslEngine
+local CslLocale = require("packages.bibtex.csl.locale")
+local CslStyle = require("packages.bibtex.csl.style")
+local CslEngine = require("packages.bibtex.csl.engine")
 
 local function loadCslLocale (name)
-   local filename = SILE.resolveFile("csl/locales/locales-" .. name .. ".xml")
-      or cslLocaleLoader("csl.locales.locales-" .. name)
+   local filename = SILE.resolveFile("packages/bibtex/csl/locales/locales-" .. name .. ".xml")
+      or cslLocaleLoader("packages.bibtex.csl.locales.locales-" .. name)
    if not filename then
       SU.error("Could not find CSL locale '" .. name .. "'")
    end
@@ -22,7 +22,8 @@ local function loadCslLocale (name)
    return locale
 end
 local function loadCslStyle (name)
-   local filename = SILE.resolveFile("csl/styles/" .. name .. ".csl") or cslStyleLoader("csl.styles." .. name)
+   local filename = SILE.resolveFile("packages/bibtex/csl/styles/" .. name .. ".csl")
+      or cslStyleLoader("packages.bibtex.csl.styles." .. name)
    if not filename then
       SU.error("Could not find CSL style '" .. name .. "'")
    end

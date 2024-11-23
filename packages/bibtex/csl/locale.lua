@@ -11,9 +11,9 @@
 --  - CslLocale:case(text, textCase) -> string
 --
 
-local casing = require("csl.core.utils.casing")
+local casing = require("packages.bibtex.csl.utils.casing")
+local xmlparser = require("packages.bibtex.csl.utils.xmlparser")
 
-local xmlparser = require("csl.core.utils.xmlparser")
 local parse = xmlparser.parse
 local rules = {
    prefix = "cs:",
@@ -241,6 +241,4 @@ function CslLocale.read (filename)
    return CslLocale.parse(doc)
 end
 
-return {
-   CslLocale = CslLocale,
-}
+return CslLocale
