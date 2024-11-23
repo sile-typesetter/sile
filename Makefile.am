@@ -76,6 +76,7 @@ dist_license_DATA = LICENSE.md
 EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/config.ld build-aux/decore-automake.sh build-aux/git-version-gen
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
+EXTRA_DIST += build-aux/xml-entities-to-lua.xsl
 EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(FIGURES)
@@ -93,6 +94,10 @@ EXTRA_RUNTIME_DEPS = $(pkglib_LIBRARIES)
 else !SHARED
 EXTRA_RUNTIME_DEPS =
 endif
+
+MATHML_ENTITIES = packages/math/mathml-entities.lua
+EXTRA_DIST += $(MATHML_ENTITIES)
+BUILT_SOURCES += $(MATHML_ENTITIES)
 
 CLEANFILES = $(MANUAL)
 
@@ -311,6 +316,18 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(EXTRA_R
 %.pdf: %.dot
 	$(DOT) -Tpdf $< -o $@.gs
 	$(GS) -q -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -o $@ $@.gs
+
+XML_ENTITIES = .sources/unicode.xml
+XML_ENTITIES_COMMIT = 77acf14428202e4e1dba54ff1e5ed43fe5ab474f
+
+.sources:
+	[ -h .sources ] || mkdir -p $@
+
+$(XML_ENTITIES):
+	$(CURL) https://raw.githubusercontent.com/w3c/xml-entities/$(XML_ENTITIES_COMMIT)/unicode.xml -o $@
+
+$(MATHML_ENTITIES): build-aux/xml-entities-to-lua.xsl
+	$(XSLTPROC) $< $(XML_ENTITIES) | $(or $(STYLUA),cat) - > $@
 
 .PHONY: force
 force: ;

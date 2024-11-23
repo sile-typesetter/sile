@@ -175,8 +175,8 @@ AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
 # Required for downloading fonts for the manual and for tests
 # Since the source tarball includes a prebuilt manual we only need this for Git source builds
 AM_COND_IF([FONT_DOWNLOAD_TOOLS], [
-    QUE_PROGVAR([curl])
     QUE_PROGVAR([bsdtar])
+    QUE_PROGVAR([curl])
 ])
 
 AM_COND_IF([DEVELOPER_MODE], [
@@ -197,6 +197,7 @@ AM_COND_IF([DEVELOPER_TOOLS], [
     QUE_PROGVAR([taplo])
     QUE_PROGVAR([tr])
     QUE_PROGVAR([typos])
+    QUE_PROGVAR([xsltproc])
 ])
 
 AX_PROG_LUA([5.1], [], [], [], [prefer])

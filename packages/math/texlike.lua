@@ -1,11 +1,11 @@
+local atoms = require("packages.math.atoms")
 local syms = require("packages.math.unicode-symbols")
 local bits = require("core.parserbits")
 
 local epnf = require("epnf")
 local lpeg = require("lpeg")
 
-local atomType = syms.atomType
-local symbolDefaults = syms.symbolDefaults
+local operatorDict = syms.operatorDict
 local symbols = syms.symbols
 
 -- Grammar to parse TeX-like math
@@ -16,7 +16,19 @@ local mathGrammar = function (_ENV)
    local _ = WS^0
    local eol = S"\r\n"
    local digit = R("09")
-   local natural = digit^1 / tostring
+   local natural = (
+      -- TeX doesn't really knows what a number in a formula is.
+      -- It handles any sequence of "ordinary" characters, including period(s):
+      -- See for instance The TeXbook, p. 132.
+      -- When later converting to MathML, we'll ideally want <mn>0.0123</mn>
+      -- instead of, say, <mn>0</mn><mo>.</mo><mn>0123</mn> (not only wrong
+      -- in essence, but also taking the risk of using a <mo> operator, then
+      -- considered as a punctuation, thus inserting a space)
+      -- We cannot be general, but checking MathJax and TeMML's behavior, they
+      -- are not general either in this regard.
+         digit^0 * P(".")^-1 * digit^1 + -- Decimal number (ex: 1.23, 0.23, .23)
+         digit^1 -- Integer (digits only, ex: 123)
+      ) / tostring
    local pos_natural = R("19") * digit^0 / tonumber
    local ctrl_word = R("AZ", "az")^1
    local ctrl_symbol = P(1) - S"{}\\"
@@ -293,22 +305,22 @@ local compileToStr = function (argEnv, mathlist)
    end
 end
 
-local function isOperatorKind (tree, typeOfAtom, typeOfSymbol)
+local function isOperatorKind (tree, typeOfAtom)
    if not tree then
       return false -- safeguard
    end
    if tree.command ~= "mo" then
       return false
    end
-   -- Case \mo[atom=big]{ops}
-   -- E.g. \mo[atom=big]{lim}
-   if tree.options and tree.options.atom == typeOfAtom then
-      return true
+   -- Case \mo[atom=xxx]{ops}
+   -- E.g. \mo[atom=op]{lim}
+   if tree.options and tree.options.atom then
+      return atoms.types[tree.options.atom] == typeOfAtom
    end
    -- Case \mo{ops} where ops is registered with the resquested type
    -- E.g. \mo{∑) or \sum
-   if tree[1] and symbolDefaults[tree[1]] and symbolDefaults[tree[1]].atom == typeOfSymbol then
-      return true
+   if tree[1] and operatorDict[tree[1]] and operatorDict[tree[1]].atom then
+      return operatorDict[tree[1]].atom == typeOfAtom
    end
    return false
 end
@@ -320,20 +332,32 @@ local function isMoveableLimits (tree)
    if tree.options and SU.boolean(tree.options.movablelimits, false) then
       return true
    end
-   if tree[1] and symbolDefaults[tree[1]] and SU.boolean(symbolDefaults[tree[1]].movablelimits, false) then
-      return true
+   if tree[1] and operatorDict[tree[1]] and operatorDict[tree[1]].forms then
+      -- Leap of faith: We have not idea yet which form the operator will take
+      -- in the final MathML.
+      -- In the MathML operator dictionary, some operators have a movablelimits
+      -- in some forms and not in others.
+      -- Ex. \Join (U+2A1D) and \bigtriangleleft (U+2A1E) have it prefix but not
+      -- infix, for some unspecified reason (?).
+      -- Assume that if at least one form has movablelimits, the operator is
+      -- considered to have movablelimits "in general".
+      for _, form in pairs(operatorDict[tree[1]].forms) do
+         if SU.boolean(form.movablelimits, false) then
+            return true
+         end
+      end
    end
    return false
 end
 local function isCloseOperator (tree)
-   return isOperatorKind(tree, "close", atomType.closeSymbol)
+   return isOperatorKind(tree, atoms.types.close)
 end
 local function isOpeningOperator (tree)
-   return isOperatorKind(tree, "open", atomType.openingSymbol)
+   return isOperatorKind(tree, atoms.types.open)
 end
 
 local function isAccentSymbol (symbol)
-   return symbolDefaults[symbol] and symbolDefaults[symbol].atom == atomType.accentSymbol
+   return operatorDict[symbol] and operatorDict[symbol].atom == atoms.types.accent
 end
 
 local function compileToMathML_aux (_, arg_env, tree)
@@ -398,6 +422,7 @@ local function compileToMathML_aux (_, arg_env, tree)
                table.insert(stack, children)
                local mrow = {
                   command = "mrow",
+                  is_paired = true, -- Internal flag to mark this re-wrapped mrow
                   options = {},
                   child,
                }
@@ -461,7 +486,7 @@ local function compileToMathML_aux (_, arg_env, tree)
       end
       tree.options = {}
    -- Translate TeX-like sub/superscripts to `munderover` or `msubsup`,
-   -- depending on whether the base is a big operator
+   -- depending on whether the base is an operator with moveable limits.
    elseif tree.id == "sup" and isMoveableLimits(tree[1]) then
       tree.command = "mover"
    elseif tree.id == "sub" and isMoveableLimits(tree[1]) then
@@ -614,9 +639,6 @@ local function convertTexlike (_, content)
    return ret
 end
 
-registerCommand("%", {}, function ()
-   return { "%", command = "mo", options = {} }
-end)
 registerCommand("mi", { [1] = objType.str }, function (x)
    return x
 end)
@@ -636,21 +658,50 @@ compileToMathML(
   \def{sqrt}{\msqrt{#1}}
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
-
-  \def{lim}{\mo[movablelimits=true]{lim}}
+  \def{vec}{\mover[accent=true]{#1}{\rightarrow}}
 
   % From amsmath:
   \def{to}{\mo[atom=bin]{→}}
-  \def{gcd}{\mo[movablelimits=true]{gcd}}
-  \def{sup}{\mo[movablelimits=true]{sup}}
-  \def{inf}{\mo[movablelimits=true]{inf}}
-  \def{max}{\mo[movablelimits=true]{max}}
-  \def{min}{\mo[movablelimits=true]{min}}
+  \def{lim}{\mo[atom=op, movablelimits=true]{lim}}
+  \def{gcd}{\mo[atom=op, movablelimits=true]{gcd}}
+  \def{sup}{\mo[atom=op, movablelimits=true]{sup}}
+  \def{inf}{\mo[atom=op, movablelimits=true]{inf}}
+  \def{max}{\mo[atom=op, movablelimits=true]{max}}
+  \def{min}{\mo[atom=op, movablelimits=true]{min}}
   % Those use U+202F NARROW NO-BREAK SPACE in their names
-  \def{limsup}{\mo[movablelimits=true]{lim sup}}
-  \def{liminf}{\mo[movablelimits=true]{lim inf}}
-  \def{projlim}{\mo[movablelimits=true]{proj lim}}
-  \def{injlim}{\mo[movablelimits=true]{inj lim}}
+  \def{limsup}{\mo[atom=op, movablelimits=true]{lim sup}}
+  \def{liminf}{\mo[atom=op, movablelimits=true]{lim inf}}
+  \def{projlim}{\mo[atom=op, movablelimits=true]{proj lim}}
+  \def{injlim}{\mo[atom=op, movablelimits=true]{inj lim}}
+
+  % Other pre-defined operators from the TeXbook, p. 162:
+  % TeX of course defines them with \mathop, so we use atom=op here.
+  % MathML would use a <mi> here.
+  % But we use a <mo> so the atom type is handled
+  \def{arccos}{\mo[atom=op]{arccos}}
+  \def{arcsin}{\mo[atom=op]{arcsin}}
+  \def{arctan}{\mo[atom=op]{arctan}}
+  \def{arg}{\mo[atom=op]{arg}}
+  \def{cos}{\mo[atom=op]{cos}}
+  \def{cosh}{\mo[atom=op]{cosh}}
+  \def{cot}{\mo[atom=op]{cot}}
+  \def{coth}{\mo[atom=op]{coth}}
+  \def{csc}{\mo[atom=op]{csc}}
+  \def{deg}{\mo[atom=op]{deg}}
+  \def{det}{\mo[atom=op]{det}}
+  \def{dim}{\mo[atom=op]{dim}}
+  \def{exp}{\mo[atom=op]{exp}}
+  \def{hom}{\mo[atom=op]{hom}}
+  \def{ker}{\mo[atom=op]{ker}}
+  \def{lg}{\mo[atom=op]{lg}}
+  \def{ln}{\mo[atom=op]{ln}}
+  \def{log}{\mo[atom=op]{log}}
+  \def{Pr}{\mo[atom=op]{Pr}}
+  \def{sec}{\mo[atom=op]{sec}}
+  \def{sin}{\mo[atom=op]{sin}}
+  \def{sinh}{\mo[atom=op]{sinh}}
+  \def{tan}{\mo[atom=op]{tan}}
+  \def{tanh}{\mo[atom=op]{tanh}}
 
   % Standard spaces gleaned from plain TeX
   \def{thinspace}{\mspace[width=thin]}
@@ -699,14 +750,17 @@ compileToMathML(
   \def{mathtt}{\mi[mathvariant=monospace]{#1}}
 
   % Modulus operator forms
-  \def{bmod}{\mo{mod}}
-  \def{pmod}{\quad(\mo{mod} #1)}
+  % See Michael Downes & Barbara Beeton, "Short Math Guide for LaTeX"
+  % American Mathematical Society (v2.0, 2017), §7.1 p. 18
+  \def{bmod}{\mo[atom=bin]{mod}}
+  \def{pmod}{\quad(\mo[atom=ord]{mod}\>#1)}
+  \def{mod}{\quad \mo[atom=ord]{mod}\>#1}
+  \def{pod}{\quad(#1)}
 
   % Phantom commands from TeX/LaTeX
   \def{phantom}{\mphantom{#1}}
   \def{hphantom}{\mpadded[height=0, depth=0]{\mphantom{#1}}}
   \def{vphantom}{\mpadded[width=0]{\mphantom{#1}}}
-  %\mphantom[special=v]{#1}}}
 ]==],
    })
 )
