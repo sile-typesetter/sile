@@ -1,4 +1,5 @@
 -- Interpret a MathML or TeX-like AST, typeset it and add it to the output.
+local lpeg = require("lpeg")
 local atoms = require("packages.math.atoms")
 local b = require("packages.math.base-elements")
 local syms = require("packages.math.unicode-symbols")
@@ -157,6 +158,42 @@ function ConvertMathML (_, content)
       end
       if type(text) ~= "string" then
          SU.error("mo command contains content which is not text")
+      end
+      local cp = text and luautf8.len(text) == 1 and luautf8.codepoint(text, 1)
+      if cp and cp >= 0x2061 and cp <= 0x2064 then
+         -- "Invisible operators"
+         --  - Several test cases in Joe Javawaski's Browser Test and the
+         --  - The MathML Test Suite use these too, with ad hoc spacing attributes.
+         -- MathML Core doesn't mention anything special about these.
+         -- MathML4 §8.3: "They are especially important new additions to the UCS
+         -- because they provide textual clues which can increase the quality of
+         -- print rendering (...)" (Note the absence of indication on how "print"
+         -- rendering is supposed to be improved.)
+         -- MathML4 §3.1.1: "they usually render invisibly (...) but may influence
+         -- visual spacing." (Note the ill-defined "usually" and "may" in this
+         -- specification.)
+         -- The best we can do is to suppress these operators, but handle any
+         -- explicitspacing (despite not handling rsup/rspace attributes on other
+         -- operators in our TeX-based spacing logic).
+         -- stylua: ignore start
+         local number = lpeg.R("09")^0  * (lpeg.P(".")^-1 * lpeg.R("09")^1)^0 / tonumber
+         -- stylua: ignore end
+         -- 0 something is 0 in whatever unit (ex. "0", "0mu", "0em" etc.)
+         local rspace, lspace = number:match(attributes.rspace), number:match(attributes.lspace)
+         if rspace == 0 and lspace == 0 then
+            return nil -- Just skip the invisible operator.
+         end
+         -- Skip it but honor the non-zero spacing.
+         if rspace == 0 then
+            return b.space(attributes.lspace, 0, 0)
+         end
+         if lspace == 0 then
+            return b.space(attributes.rspace, 0, 0)
+         end
+         -- I haven't found examples of invisible operators with both rspace and lspace set,
+         -- but it may happen, whatever spaces around something invisible mean.
+         -- We'll just stack the spaces in this case (as we can only return one box).
+         return b.stackbox("H", { b.space(attributes.lspace, 0, 0), b.space(attributes.rspace, 0, 0) })
       end
       return b.text("operator", attributes, script, text)
    elseif content.command == "mn" then
