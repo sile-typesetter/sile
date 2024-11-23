@@ -49,7 +49,7 @@ jobs:
           ./bootstrap.sh
           ./configure \
             --enable-developer-mode \
-            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false TYPOS=cat \
+            --without-developer-tools \
             --disable-font-variations \
             --with-manual \
             ${{ matrix.configuration[1] }}
@@ -113,8 +113,11 @@ jobs:
         run: |
           ./bootstrap.sh
           ./configure \
+              FCMATCH=true \
+              PDFINFO=false \
             --enable-developer-mode \
-            BUSTED=false DELTA=false LDOC=false LUACHECK=false NIX=false STYLUA=false TYPOS=cat FCMATCH=true PDFINFO=false CARGO=true \
+            --without-developer-tools \
+              DOCKER=$(which docker) \
             --disable-font-variations \
             --with-system-lua-sources \
             --without-manual
@@ -144,7 +147,7 @@ jobs:
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v15
+        uses: DeterminateSystems/nix-installer-action@v16
       - name: Cache Nix dependencies
         uses: DeterminateSystems/magic-nix-cache-action@v8
       - name: Setup developer environment

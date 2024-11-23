@@ -15,5 +15,12 @@ AC_DEFUN([QUE_DEVELOPER_MODE], [
                 [USE_DEVELOPER_MODE=]m4_if(_que_developer_def, [enable], [no], [yes]))
         AC_MSG_RESULT([$USE_DEVELOPER_MODE])
         AM_CONDITIONAL([DEVELOPER_MODE], [test $USE_DEVELOPER_MODE = yes])
-
+        AM_COND_IF([DEVELOPER_MODE], [
+                AC_ARG_WITH([developer-tools],
+                        AS_HELP_STRING([--without-developer-tools],
+                                        [Avoid checks for developer workflow tooling]))
+        ], [
+                with_developer_tools=no
+        ])
+        AM_CONDITIONAL([DEVELOPER_TOOLS], [test "x$with_developer_tools" != "xno"])
 ])

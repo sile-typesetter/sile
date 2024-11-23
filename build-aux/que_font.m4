@@ -3,7 +3,7 @@ AC_DEFUN([QUE_FONT], [
         if test -z "$FCMATCH"; then
                 AC_PATH_PROG(FCMATCH, fc-match)
                 if test -z "$FCMATCH"; then
-                AC_MSG_ERROR([can't find fc-match])
+                        AC_MSG_ERROR([can't find fc-match])
                 fi
         fi
         pushdef([FONT],$1)

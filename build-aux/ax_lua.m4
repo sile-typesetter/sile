@@ -57,15 +57,15 @@
 #   version number greater or equal to MINIMUM-VERSION and less than
 #   TOO-BIG-VERSION will be accepted.
 #
-#   Optionally, the fifth argument ENABLE_LUAJIT can be set to control whether
-#   LuaJIT or PUC Lua should be considered during discovery. An empty value or
+#   Optionally, the fifth argument ENABLE_LUAJIT can be set to control
+#   whether LuaJIT or PUC Lua should be considered. An empty empty value or
 #   'never' means only PUC Lua installations will be considered; a value of
 #   'always' means PUC is not even considered and only LuaJIT is discovered;
-#   'prefer' means LuaJIT should be used if found but allow PUC , and finally
-#   'allow' means it should not be chosen if any PUC Lua version is found but
-#   it could be used as a last resort. For 'default' and 'allow' a new
-#   configure flag will be provided to the user --with-luajit with the default
-#   option being either 'yes' or 'no' respectively.
+#   'prefer' means LuaJIT should be used if found but allow PUC, and finally
+#   'allow' means it should not be chosen if any PUC Lua version is found
+#   but it could be used as a last resort. For 'default' and 'allow' a new
+#   configure flag will be provided to the user --with-luajit with the
+#   default option being either 'yes' or 'no' respectively.
 #
 #   The Lua version number, LUA_VERSION, is found from the interpreter, and
 #   substituted. LUA_PLATFORM is also found, but not currently supported (no
@@ -198,7 +198,7 @@
 
 dnl =========================================================================
 dnl AX_PROG_LUA([MINIMUM-VERSION], [TOO-BIG-VERSION],
-dnl             [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND]
+dnl             [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND],
 dnl             [ENABLE_LUAJIT])
 dnl =========================================================================
 AC_DEFUN([AX_PROG_LUA],
@@ -210,29 +210,31 @@ AC_DEFUN([AX_PROG_LUA],
   dnl Make LUA a precious variable.
   AC_ARG_VAR([LUA], [The Lua interpreter, e.g. /usr/bin/lua5.1])
 
-  dnl Figure out whether we should expose LuaJIT as a user facing configure flag
-  AS_CASE(["m4_default([$5], [never])"],
-    [never], [ default_luajit=no; with_luajit=no ],
-    [always], [ default_luajit=yes; with_luajit=yes ],
+  dnl Figure out whether we should expose LuaJIT as a user facing configure
+  dnl flag and if so whether the default option should be with or without.
+  m4_case(m4_default([$5], [never]),
+    [never], [
+      with_luajit=no
+    ],
+    [always], [
+      with_luajit=yes
+    ],
     [allow], [
-      default_luajit=no
-      m4_if([$5], [allow], [
-        AC_ARG_WITH([luajit],
-          [AS_HELP_STRING([--with-luajit],
-            [prefer LuaJIT over PUC Lua, even if the latter is newer])])
-        ])
+      AC_ARG_WITH([luajit],
+        [AS_HELP_STRING([--with-luajit],
+          [prefer LuaJIT over PUC Lua, even if the latter is newer])])
       test "x$with_luajit" != 'xyes' && with_luajit=no
     ],
     [prefer], [
-      default_luajit=yes
-      m4_if([$5], [prefer], [
-        AC_ARG_WITH([luajit],
-          [AS_HELP_STRING([--without-luajit],
-            [prefer PUC Lua over LuaJIT])])
-        ])
+      AC_ARG_WITH([luajit],
+        [AS_HELP_STRING([--without-luajit],
+          [prefer PUC Lua over LuaJIT])])
       test "x$with_luajit" != 'xno' && with_luajit=yes
     ],
-    [AC_MSG_ERROR([Unrecognized value for ENABLE_LUAJIT])])
+    [
+      AC_MSG_ERROR([Unrecognized value for ENABLE_LUAJIT])
+    ]
+  )
   AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" == "xyes"])
 
   dnl Find a Lua interpreter.
@@ -401,7 +403,11 @@ AC_DEFUN([AX_PROG_LUA],
 ])
 
 dnl AX_WITH_LUA is now the same thing as AX_PROG_LUA.
-AU_DEFUN([AX_WITH_LUA], [AX_PROG_LUA], [$0 is deprecated, please use AX_PROG_LUA instead])
+AC_DEFUN([AX_WITH_LUA],
+[
+  AC_MSG_WARN([[$0 is deprecated, please use AX_PROG_LUA instead]])
+  AX_PROG_LUA
+])
 
 
 dnl =========================================================================

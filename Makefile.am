@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS = -I build-aux
-AM_DISTCHECK_CONFIGURE_FLAGS = --enable-developer-mode
+AM_DISTCHECK_CONFIGURE_FLAGS = --enable-developer-mode --without-developer-tools PDFINFO=$(PDFINFO)
 
 .ONESHELL:
 .SECONDARY:
@@ -211,7 +211,7 @@ sile-$(VERSION).pdf: $(MANUAL)
 sile-%.md: CHANGELOG.md
 	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' CHANGELOG.md | \
 		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' |
-	$(or $(filter cat,$(TYPOS)),$(TYPOS) --write-changes -) > $@
+	$(if $(TYPOS),$(TYPOS) --write-changes,cat) - > $@
 
 check: selfcheck
 

@@ -1,7 +1,6 @@
 SILE = require("core.sile")
 
 describe("Language module", function ()
-
    it("should set env locale", function ()
       SILE.call("language", { main = "tr" })
       local syslang = os.getenv("LANG")

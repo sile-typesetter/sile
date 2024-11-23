@@ -54,7 +54,7 @@ Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
 T	2750 w=3.8100	(nil)
 Mx 	196.6642
 My 	37.4447
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
 T	2753 w=1.8320	(nil)
 Mx 	198.4962
 T	3421 w=4.5776	(nil)
@@ -101,7 +101,7 @@ Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
 T	2750 w=3.8100	(nil)
 Mx 	199.7501
 My 	49.5701
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
 T	2753 w=1.8320	(nil)
 Mx 	201.5821
 T	3413 w=3.5152	(nil)

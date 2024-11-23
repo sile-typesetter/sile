@@ -389,7 +389,7 @@ function package:registerCommands ()
                SILE.call("novbreak")
                SILE.call("fullrule", { thickness = "0.5pt" })
                SILE.call("novbreak")
-               SILE.typesetter:pushVglue(-bs-ex)
+               SILE.typesetter:pushVglue(-bs - ex)
                SILE.call("novbreak")
             end)
          end

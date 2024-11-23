@@ -30,20 +30,14 @@ jobs:
           echo "REF=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV
           ./bootstrap.sh
           ./configure \
+              BSDTAR=false \
+              FCMATCH=true \
+              PDFINFO=false \
             --enable-developer-mode \
+            --without-developer-tools \
+              DOCKER=$(which docker) \
             --without-harfbuzz \
-            --disable-font-variations \
-            BSDTAR=false \
-            BUSTED=false \
-            DELTA=false \
-            FCMATCH=true \
-            LDOC=false \
-            LUACHECK=false \
-            LUAROCKS=false \
-            NIX=false \
-            PDFINFO=false \
-            STYLUA=false \
-            TYPOS=false
+            --disable-font-variations
       - name: Publish Docker Image to GH Container Registry
         run: |
           make docker-build-push
