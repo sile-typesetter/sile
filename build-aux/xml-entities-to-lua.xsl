@@ -1,10 +1,4 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-<!--
-  Stylesheet to convert the unicode.xml file to a SILE Lua file:
-  xsltproc unicode-xml-to-sile.xsl unicode.xml > ../packages/math/unicode-symbols-generated.lua
-  Where unicode.xml is:
-  https://raw.githubusercontent.com/w3c/xml-entities/gh-pages/unicode.xml
--->
 <xsl:output method="text" indent="no"/>
 
 <xsl:template name="format-value">
@@ -96,16 +90,16 @@
 --    Originally designed by Sebastian Rahtz in conjunction with Barbara Beeton for the STIX project
 --
 
-local atoms = require("packages/math/atoms")
+local atoms = require("packages.math.atoms")
 
 --- Transform a list of codepoints into a string
 local function U (...)
-  local t = { ... }
-  local str = ""
-  for i = 1, #t do
-    str = str .. luautf8.char(t[i])
-  end
-  return str
+   local t = { ... }
+   local str = ""
+   for i = 1, #t do
+      str = str .. luautf8.char(t[i])
+   end
+   return str
 end
 
 local symbols = {}
@@ -118,33 +112,33 @@ local operatorDict = {}
 -- @tparam string _         Unicode name of the symbol (informative)
 -- @tparam table  ops       List of operator forms and their properties
 local function addSymbol (str, shortatom, mathlatex, _, ops)
-  if mathlatex then
-    SU.debug("math.symbols", "Registering symbol", str, "as", mathlatex)
-    symbols[mathlatex] = str
-  end
-  local op = {}
-  op.atom = atoms.types[shortatom]
-  if ops then
-    op.forms = {}
-    for _, v in pairs(ops) do
-      if v.form then
-        -- NOTE: At this point the mu unit is not yet defined, so keep it as a string.
-        v.lspace = v.lspace and ("%smu"):format(v.lspace) or "0mu"
-        v.rspace = v.rspace and ("%smu"):format(v.rspace) or "0mu"
-        op.forms[v.form] = v
-      else
-        SU.warn("No form for operator " .. str .. " (operator dictionary is probably incomplete)")
+   if mathlatex then
+      SU.debug("math.symbols", "Registering symbol", str, "as", mathlatex)
+      symbols[mathlatex] = str
+   end
+   local op = {}
+   op.atom = atoms.types[shortatom]
+   if ops then
+      op.forms = {}
+      for _, v in pairs(ops) do
+         if v.form then
+            -- NOTE: At this point the mu unit is not yet defined, so keep it as a string.
+            v.lspace = v.lspace and ("%smu"):format(v.lspace) or "0mu"
+            v.rspace = v.rspace and ("%smu"):format(v.rspace) or "0mu"
+            op.forms[v.form] = v
+         else
+            SU.warn("No form for operator " .. str .. " (operator dictionary is probably incomplete)")
+         end
       end
-    end
-  end
-  operatorDict[str] = op
+   end
+   operatorDict[str] = op
 end
 
 <xsl:apply-templates select="charlist/character" />
 
 return {
-  operatorDict = operatorDict,
-  symbols = symbols
+   operatorDict = operatorDict,
+   symbols = symbols,
 }
 </xsl:template>
 
@@ -160,42 +154,46 @@ return {
     </xsl:call-template>
   </xsl:variable>
   <xsl:if test="$atom != 'ord' or $mathlatex or operator-dictionary">
-    <xsl:text>
-addSymbol(</xsl:text>
-    <!-- Codepoints -->
+    <xsl:text>addSymbol(</xsl:text>
+      <!-- Codepoints -->
     <xsl:call-template name="format-codepoint">
       <xsl:with-param name="codepoint" select="@id" />
     </xsl:call-template>
     <!-- Atom type -->
-    <xsl:text>, "</xsl:text><xsl:value-of select="$atom" /><xsl:text>", </xsl:text>
+    <xsl:text>,"</xsl:text><xsl:value-of select="$atom" /><xsl:text>",</xsl:text>
     <!-- Math latex name or nil -->
     <xsl:call-template name="format-mathlatex">
       <xsl:with-param name="mathlatex" select="$mathlatex" />
     </xsl:call-template>
     <!-- Description -->
-    <xsl:text>, "</xsl:text><xsl:value-of select="description" /><xsl:text>"</xsl:text>
+    <xsl:text>,"</xsl:text><xsl:value-of select="description" /><xsl:text>"</xsl:text>
     <!-- Operator dictionary or nil -->
     <xsl:choose>
       <xsl:when test="operator-dictionary">
-        <xsl:text>, {</xsl:text>
-          <xsl:apply-templates select="operator-dictionary">
-            <xsl:sort select="@priority" data-type="number" order="descending" /><!-- sort by @priority -->
-          </xsl:apply-templates>
+        <xsl:text>,{</xsl:text>
+        <xsl:apply-templates select="operator-dictionary">
+          <!-- sort by @priority -->
+          <xsl:sort select="@priority" data-type="number" order="descending" />
+        </xsl:apply-templates>
         <xsl:text>}</xsl:text>
       </xsl:when>
-      <xsl:otherwise><xsl:text>, nil</xsl:text></xsl:otherwise>
+      <xsl:otherwise><xsl:text>,nil</xsl:text></xsl:otherwise>
     </xsl:choose>
     <xsl:text>)</xsl:text>
   </xsl:if>
 </xsl:template>
 
 <xsl:template match="operator-dictionary">
-  { <xsl:for-each select="@*">
+  {
+  <xsl:for-each select="@*">
     <xsl:sort select="name()" />
-    <xsl:value-of select="name()" /> = <xsl:call-template name="format-value">
-      <xsl:with-param name="value" select="." />
-    </xsl:call-template><xsl:if test="position() != last()">, </xsl:if>
-  </xsl:for-each> }<xsl:if test="position() != last()">,</xsl:if>
+    <xsl:value-of select="name()" />
+    =
+      <xsl:call-template name="format-value">
+        <xsl:with-param name="value" select="." />
+      </xsl:call-template>,
+    </xsl:for-each>
+  },
 </xsl:template>
 
 </xsl:stylesheet>

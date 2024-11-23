@@ -24,6 +24,7 @@
   icu,
   fontconfig,
   libiconv,
+  libxslt,
   stylua,
   taplo,
   typos,
@@ -125,6 +126,7 @@ stdenv.mkDerivation (finalAttrs: {
       icu
       fontconfig
       libiconv
+      libxslt
       stylua
       taplo
       typos

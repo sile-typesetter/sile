@@ -1,7 +1,7 @@
 --- Extend the unicode-symbols-generated symbols with additional aliases.
-local gen = require("packages/math/unicode-symbols-generated")
-local symbols = gen.symbols
-local operatorDict = gen.operatorDict
+local mathml_entities = require("packages.math.mathml-entities")
+local symbols = mathml_entities.symbols
+local operatorDict = mathml_entities.operatorDict
 
 --- Add aliases for symbols that have multiple names.
 -- We check that the alias is already defined in the generated dictionary,
