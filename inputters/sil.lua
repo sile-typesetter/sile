@@ -80,18 +80,28 @@ local function getline (str, pos)
    return lno, col
 end
 
-local function massage_ast (tree, doc)
+local function ast_from_parse_tree (tree, doc, depth)
    if type(tree) == "string" then
       return tree
    end
+
    if tree.pos then
       tree.lno, tree.col = getline(doc, tree.pos)
       tree.pos = nil
    end
-   SU.debug("inputter", "Processing ID:", tree.id)
-   if false or tree.id == "comment" then
-      SU.debug("inputter", "Discarding comment:", pl.stringx.strip(tree[1]))
-      return {}
+
+   local sep -- luacheck: ignore 211
+   if SU.debugging("inputter") then
+      depth = depth + 1
+      sep = ("   "):rep(depth)
+   end
+   SU.debug("inputter", sep and (sep .. "Processing ID:"), tree.id)
+
+   local res
+   if tree.id == "comment" then
+      -- Drop comments
+      SU.debug("inputter", sep and (sep .. "Discarding comment"))
+      res = {}
    elseif
       false
       or tree.id == "document"
@@ -99,50 +109,96 @@ local function massage_ast (tree, doc)
       or tree.id == "passthrough_content"
       or tree.id == "braced_passthrough_content"
       or tree.id == "env_passthrough_content"
-   then
-      SU.debug("inputter", "Re-massage subtree", tree.id)
-      return massage_ast(tree[1], doc)
-   elseif
-      false
       or tree.id == "text"
       or tree.id == "passthrough_text"
       or tree.id == "braced_passthrough_text"
       or tree.id == "env_passthrough_text"
    then
-      SU.debug("inputter", "  - Collapse subtree")
-      return tree[1]
-   elseif false or tree.id == "content" or tree.id == "environment" or tree.id == "command" then
-      SU.debug("inputter", "  - Massage in place", tree.id)
-      for key, val in ipairs(tree) do
-         SU.debug("inputter", "    -", val.id)
-         if val.id == "content" then
-            SU.splice(tree, key, key, massage_ast(val, doc))
-         elseif val.id then -- requiring an id discards nodes with no content such as comments
-            tree[key] = massage_ast(val, doc)
+      -- These nodes have only one child, which needs recursion.
+      SU.debug("inputter", sep and (sep .. "Massaging a node"))
+      res = ast_from_parse_tree(tree[1], doc, depth)
+      --res = #res > 1 and not res.id and res or res[1]
+   elseif false or tree.id == "environment" or tree.id == "command" then
+      -- These nodes have multiple children, which need recursion.
+      SU.debug("inputter", sep and (sep .. "Processing command"), tree.command, #tree, "subtrees")
+      local newtree = { -- I don't think we can avoid a shallow copy here
+         command = tree.command,
+         options = tree.options,
+         id = tree.id,
+         lno = tree.lno,
+         col = tree.col,
+      }
+      for _, node in ipairs(tree) do
+         if type(node) == "table" then
+            SU.debug("inputter", sep and (sep .. " -"), node.id or "table")
+            local ast_node = ast_from_parse_tree(node, doc, depth)
+            if type(ast_node) == "table" and not ast_node.id then
+               SU.debug("inputter", sep and (sep .. " -"), "Collapsing subtree")
+               -- Comments can an empty table, skip them
+               if #ast_node > 0 then
+                  -- Simplify the tree if it's just a plain list
+                  for _, child in ipairs(ast_node) do
+                     if type(child) ~= "table" or child.id or #child > 0 then
+                        table.insert(newtree, child)
+                     end
+                  end
+               end
+            else
+               table.insert(newtree, ast_node)
+            end
          end
+         -- Non table nodes are skipped (e.g. extraneous text from 'raw' commands)
       end
-      return tree
+      res = newtree
+   elseif tree.id == "content" then
+      -- This node has multiple children, which need recursion
+      -- And the node itself needs to be replaced with its children
+      SU.debug("inputter", sep and (sep .. "Massage content node"), #tree, "subtrees")
+      local newtree = {} -- I don't think we can avoid a shallow copy here
+      for i, node in ipairs(tree) do
+         SU.debug("inputter", sep and (sep .. " -"), node.id)
+         newtree[i] = ast_from_parse_tree(node, doc, depth)
+      end
+      -- Simplify the tree if it has only one child
+      res = #newtree == 1 and not newtree.id and newtree[1] or newtree
+   elseif tree.id then
+      -- Shouldn't happen, or we missed something
+      SU.error("Unknown node type: " .. tree.id)
+   else
+      SU.debug("inputter", sep and (sep .. "Table node"), #tree, "subtrees")
+      res = #tree == 1 and tree[1] or tree
    end
+   SU.debug("inputter", sep and (sep .. "Returning a"), type(res) == "table" and res.id or "string")
+   return res
 end
 
 function inputter:parse (doc)
    local status, result = pcall(self._parser, doc)
    if not status then
-      return SU.error(([[Unable to parse input document to an AST tree. Parser error:
+      return SU.error(([[
+         Unable to parse input document to an AST tree
 
-%s  thrown from document beginning]]):format(pl.stringx.indent(result, 6)))
+         Parser error:
+
+           %s
+
+         thrown from document beginning.]]):format(pl.stringx.indent(result, 6)))
    end
    resetCache()
-   local top = massage_ast(result[1], doc)
+   local top = ast_from_parse_tree(result[1], doc, 0)
    local tree
    -- Content not part of a tagged command could either be part of a document
    -- fragment or junk (e.g. comments, whitespace) outside of a document tag. We
    -- need to either capture the document tag only or decide this is a fragment
    -- and wrap it in a document tag.
-   for _, leaf in ipairs(top) do
-      if leaf.command and (leaf.command == "document" or leaf.command == "sile") then
-         tree = leaf
-         break
+   if top.command == "document" or top.command == "sile" then
+      tree = top
+   elseif type(top) == "table" then
+      for _, leaf in ipairs(top) do
+         if leaf.command and (leaf.command == "document" or leaf.command == "sile") then
+            tree = leaf
+            break
+         end
       end
    end
    -- In the event we didn't isolate a top level document tag above, assume this
@@ -150,7 +206,6 @@ function inputter:parse (doc)
    if not tree then
       tree = { top, command = "document" }
    end
-   -- SU.dump(tree)
    return { tree }
 end
 

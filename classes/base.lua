@@ -122,7 +122,7 @@ function class:declareOptions ()
          if self._legacy then
             self._name = name
          elseif name ~= self._name then
-            SU.error("Cannot change class name after instantiation, derive a new class instead.")
+            SU.error("Cannot change class name after instantiation, derive a new class instead")
          end
       end
       return self._name
@@ -247,10 +247,11 @@ function class:initPackage (pack, options)
       "0.14.0",
       "0.16.0",
       [[
-  This package appears to be a legacy format package. It returns a table
-  and expects SILE to guess about what to do. New packages inherit
-  from the base class and have a constructor function (_init) that
-  automatically handles setup.]]
+         This package appears to be a legacy format package. It returns a table and
+         expects SILE to guess about what to do. New packages inherit from the base
+         class and have a constructor function (_init) that automatically handles
+         setup.
+      ]]
    )
    if type(pack) == "table" then
       if pack.exports then
@@ -391,7 +392,11 @@ function class:registerCommands ()
          self:registerCommand(options["command"], content)
          return
       elseif options.command == "process" then
-         SU.warn("Did you mean to re-definine the `\\process` macro? That probably won't go well.")
+         SU.warn([[
+            Did you mean to re-definine the `\\process` macro?
+
+            That probably won't go well.
+         ]])
       end
       self:registerCommand(options["command"], function (_, inner_content)
          SU.debug("macros", "Processing macro \\" .. options["command"])
@@ -438,7 +443,7 @@ function class:registerCommands ()
    self:registerCommand("comment", function (_, _) end, "Ignores any text within this command's body.")
 
    self:registerCommand("process", function ()
-      SU.error("Encountered unsubstituted \\process.")
+      SU.error("Encountered unsubstituted \\process")
    end, "Within a macro definition, processes the contents of the macro body.")
 
    self:registerCommand("script", function (options, content)
@@ -450,22 +455,21 @@ function class:registerCommands ()
             "0.15.0",
             "0.16.0",
             ([[
-      The \script function has been deprecated. It was overloaded to mean
-      too many different things and more targeted tools were introduced in
-      SILE v0.14.0. To load 3rd party modules designed for use with SILE,
-      replace \script[src=...] with \use[module=...]. To run arbitrary Lua
-      code inline use \lua{}, optionally with a require= parameter to load
-      a (non-SILE) Lua module using the Lua module path or src= to load a
-      file by file path.
+               The \script function has been deprecated. It was overloaded to mean too many
+               different things and more targeted tools were introduced in SILE v0.14.0. To
+               load 3rd party modules designed for use with SILE, replace \script[src=...]
+               with \use[module=...]. To run arbitrary Lua code inline use \lua{}, optionally
+               with a require= parameter to load a (non-SILE) Lua module using the Lua module
+               path or src= to load a file by file path.
 
-      For this use case consider replacing:
+               For this use case consider replacing:
 
-          %s
+               %s
 
-      with:
+               with:
 
-          %s
-      ]]):format(original, suggested)
+               %s
+            ]]):format(original, suggested)
          )
       end
       if SU.ast.hasContent(content) then
@@ -548,9 +552,12 @@ function class:registerCommands ()
             SILE.processString(doc, "lua", nil, packopts)
          else
             if options.src then
-               SU.warn(
-                  "Use of 'src' with \\use is discouraged because some of it's path handling\n  will eventually be deprecated. Use 'module' instead when possible."
-               )
+               SU.warn([[
+                  Use of 'src' with \\use is discouraged.
+
+                  Its path handling  will eventually be deprecated.
+                  Use 'module' instead when possible.
+               ]])
                SILE.processFile(options.src, "lua", packopts)
             else
                local module = SU.required(options, "module", "use")

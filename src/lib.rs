@@ -1,23 +1,24 @@
 // rust-embed include attributes have issues with lots of matches...
 #![recursion_limit = "2048"]
 
+#[cfg(not(feature = "static"))]
 use mlua::chunk;
 use mlua::prelude::*;
-#[cfg(not(feature = "static"))]
-use std::env;
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
 #[cfg(feature = "cli")]
 pub mod cli;
 
 #[cfg(feature = "static")]
 pub mod embed;
 
+pub mod types;
+
 pub type Result<T> = anyhow::Result<T>;
 
 pub fn start_luavm() -> crate::Result<Lua> {
     let lua = unsafe { Lua::unsafe_new() };
     #[cfg(feature = "static")]
-    crate::embed::inject_embedded_loader(&lua);
+    crate::embed::inject_embedded_loaders(&lua);
     inject_paths(&lua);
     load_sile(&lua);
     inject_version(&lua);
@@ -26,7 +27,10 @@ pub fn start_luavm() -> crate::Result<Lua> {
 
 pub fn inject_paths(lua: &Lua) {
     #[cfg(feature = "static")]
-    lua.load(r#"require("core.pathsetup")"#).exec().unwrap();
+    lua.load(r#"require("core.pathsetup")"#)
+        .set_name("relative pathsetup loader")
+        .exec()
+        .unwrap();
     #[cfg(not(feature = "static"))]
     {
         let datadir = env!("CONFIGURE_DATADIR").to_string();
@@ -45,9 +49,22 @@ pub fn inject_paths(lua: &Lua) {
                 dofile("./core/pathsetup.lua")
             end
         })
+        .set_name("hard coded pathsetup loader")
         .exec()
         .unwrap();
     }
+}
+
+pub fn get_rusile_exports(lua: &Lua) -> LuaResult<LuaTable> {
+    let exports = lua.create_table()?;
+    exports.set("semver", LuaFunction::wrap_raw(types::semver::semver))?;
+    exports.set("setenv", LuaFunction::wrap_raw(setenv))?;
+    Ok(exports)
+}
+
+fn setenv(key: String, value: String) -> LuaResult<()> {
+    env::set_var(key, value);
+    Ok(())
 }
 
 pub fn inject_version(lua: &Lua) {
@@ -60,7 +77,7 @@ pub fn inject_version(lua: &Lua) {
 pub fn load_sile(lua: &Lua) {
     let entry: LuaString = lua.create_string("core.sile").unwrap();
     let require: LuaFunction = lua.globals().get("require").unwrap();
-    require.call::<LuaString, ()>(entry).unwrap();
+    require.call::<LuaTable>(entry).unwrap();
 }
 
 pub fn version() -> crate::Result<String> {
@@ -133,27 +150,34 @@ pub fn run(
         has_input_filename = true;
     }
     if let Some(options) = options {
-        sile_input.set("options", options)?;
+        let parameters: LuaAnyUserData = sile.get::<LuaTable>("parserBits")?.get("parameters")?;
+        let input_options: LuaTable = sile_input.get("options")?;
+        for option in options.iter() {
+            let parameters: LuaTable = parameters
+                .call_method("match", lua.create_string(option)?)
+                .context("failed to call `parameters:match()`")?;
+            for parameter in parameters.pairs::<LuaValue, LuaValue>() {
+                let (key, value) = parameter?;
+                let _ = input_options.set(key, value);
+            }
+        }
     }
     if let Some(modules) = uses {
-        // let parser_bits: LuaTable = sile.get("parserBits")?;
-        // let cliuse: LuaAnyUserData = parser_bits.get("cliuse")?;
-        // sile_input.get("uses")?;
+        let cliuse: LuaAnyUserData = sile.get::<LuaTable>("parserBits")?.get("cliuse")?;
+        let input_uses: LuaTable = sile_input.get("uses")?;
         for module in modules.iter() {
             let module = lua.create_string(module)?;
-            lua.load(chunk! {
-                local spec = SILE.parserBits.cliuse:match($module);
-                table.insert(SILE.input.uses, spec)
-            })
-            .eval::<()>()?;
-            // let spec = cliuse.call_function::<_, _, _>("match", module);
+            let spec: LuaTable = cliuse
+                .call_method::<_>("match", module)
+                .context("failed to call `cliuse:match()`")?;
+            let _ = input_uses.push(spec);
         }
     }
     if !quiet {
         eprintln!("{full_version}");
     }
     let init: LuaFunction = sile.get("init")?;
-    init.call::<_, ()>(())?;
+    init.call::<LuaValue>(())?;
     if let Some(inputs) = inputs {
         let input_filenames: LuaTable = lua.create_table()?;
         for input in inputs.iter() {
@@ -175,20 +199,20 @@ pub fn run(
             let spec = spec?;
             let module: LuaString = spec.get("module")?;
             let options: LuaTable = spec.get("options")?;
-            r#use.call::<(LuaString, LuaTable), ()>((module, options))?;
+            r#use.call::<LuaValue>((module, options))?;
         }
         let input_filenames: LuaTable = sile_input.get("filenames")?;
         let process_file: LuaFunction = sile.get("processFile")?;
         for file in input_filenames.sequence_values::<LuaString>() {
-            process_file.call::<LuaString, ()>(file?)?;
+            process_file.call::<LuaValue>(file?)?;
         }
         let finish: LuaFunction = sile.get("finish")?;
-        finish.call::<_, ()>(())?;
+        finish.call::<LuaValue>(())?;
     } else {
         let repl_module: LuaString = lua.create_string("core.repl")?;
         let require: LuaFunction = lua.globals().get("require")?;
-        let repl: LuaTable = require.call::<LuaString, LuaTable>(repl_module)?;
-        repl.call_method::<_, ()>("enter", ())?;
+        let repl: LuaTable = require.call::<LuaTable>(repl_module)?;
+        repl.call_method::<LuaValue>("enter", ())?;
     }
     Ok(())
 }

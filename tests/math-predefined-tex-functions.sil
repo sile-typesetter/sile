@@ -1,0 +1,17 @@
+\begin[papersize=a5]{document}
+\use[module=packages.math]
+
+% TeXbook p. 162
+\math[mode=display]{\sin2\theta=2\sin\theta\cos\theta}
+
+\math[mode=display]{O(n\log n\log\log n)}
+
+\math[mode=display]{\Pr(X>x)=\exp(-x/\mu)}
+
+\math[mode=display]{\max_{1\le n\le m}\log_2P_n}
+
+\math[mode=display]{\lim_{x\to0}\frac{\sin x}{x}=1}
+
+% Extra check for spacing
+\math[mode=display]{\sin x \sin(x) \sin^2 x \sin^2(x) \lim_\infty F(n)}
+\end{document}

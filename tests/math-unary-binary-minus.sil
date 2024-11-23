@@ -1,0 +1,16 @@
+\begin[papersize=a5]{document}
+\use[module=packages.math]
+
+% Unicode U+002D (hyphen-minus) in binary context
+\math[mode=display]{\pi=\sum_{k=0}^\infty\frac{1}{16^k}(\frac{4}{8k+1} - \frac{2}{8k+4} - \frac{1}{8k+5} - \frac{1}{8k+6})}
+
+% Unicode U+2212 (minus sign) in binary context
+\math[mode=display]{\pi=\sum_{k=0}^\infty\frac{1}{16^k}(\frac{4}{8k+1} − \frac{2}{8k+4} − \frac{1}{8k+5} − \frac{1}{8k+6})}
+
+% Unicode U+002D (hyphen-minus) in unary context
+\math[mode=display]{e^{i\pi} = -1}
+
+% Unicode U+2212 (minus sign) in unary context
+\math[mode=display]{e^{i\pi} = −1}
+
+\end{document}

@@ -3,7 +3,7 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "retrograde"
 
-local semver = require("semver")
+local semver = require("rusile").semver
 
 local semver_descending = function (a, b)
    a, b = semver(a), semver(b)

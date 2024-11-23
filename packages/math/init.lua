@@ -36,6 +36,12 @@ function package.declareSettings (_)
       default = 400,
    })
    SILE.settings:declare({
+      parameter = "math.font.script.feature",
+      type = "string or nil",
+      default = "ssty",
+      help = "OpenType feature for the math script-style alternates (esp. primes), theoretically ssty",
+   })
+   SILE.settings:declare({
       parameter = "math.font.filename",
       type = "string",
       default = "",
@@ -55,6 +61,31 @@ function package.declareSettings (_)
       parameter = "math.displayskip",
       type = "VGlue",
       default = SILE.types.node.vglue("2ex plus 1pt"),
+   })
+
+   -- Penalties for breaking before and after a display math formula
+   -- See TeX's \predisplaypenalty and \postdisplaypenalty
+   SILE.settings:declare({
+      parameter = "math.predisplaypenalty",
+      type = "integer",
+      default = 10000, -- strict no break by default as in (La)TeX
+      help = "Penalty for breaking before a display math formula",
+   })
+   SILE.settings:declare({
+      parameter = "math.postdisplaypenalty",
+      type = "integer",
+      -- (La)TeX's default is 0 (a normal line break penalty allowing a break
+      -- after a display math formula)
+      -- See https://github.com/sile-typesetter/sile/issues/2160
+      --    And see implementation in handleMath(): we are not yet doing the right
+      --    things with respect to paragraphing, so setting a lower value for now
+      --    to ease breaking after a display math formula rather than before
+      --    when the formula is in the middle of a paragraph.
+      --    (In TeX, these penalties would apply in horizontal mode, with a display
+      --    math formula being a horizontal full-width box, our implementation
+      --    currently use them as vertical penalties).
+      default = -50,
+      help = "Penalty for breaking after a display math formula",
    })
 end
 
@@ -107,12 +138,15 @@ The \autodoc:package{math} package provides typesetting of formulas directly in 
 As such, it lacks some features and may contain bugs.
 Feedback and contributions are always welcome.}
 
-\noindent To typeset mathematics, you will need an OpenType math font installed on your system.%
-%\footnote{A list of freely available math fonts can be found at \href[src=https://www.ctan.org/pkg/unicode-math]{https://www.ctan.org/pkg/unicode-math}}
+\noindent To typeset mathematics, you will need an OpenType math font installed on your system.
 By default, this package uses Libertinus Math, so it will fail if Libertinus Math can’t be found.
 Another font may be specified via the setting \autodoc:setting{math.font.family}.
 If required, you can set the font style and weight via \autodoc:setting{math.font.style} and \autodoc:setting{math.font.weight}.
 The font size can be set via \autodoc:setting{math.font.size}.
+The \autodoc:setting{math.font.script.feature} setting can be used to specify OpenType features for the math font, which are applied to the smaller script styles.
+It defaults to \code{ssty} (script style alternates), notably to ensure that some symbols such as the prime, double prime, etc. are displayed correctly.
+The default setting applies to Libertinus Math and well-designed math fonts, but some fonts may require different features.
+(The STIX Two Math font has a stylitic set \code{ss04} from primes only, but also supports, according to its documentation, \code{ssty}, which provides other optical adjustments.)
 
 \paragraph{MathML}
 The first way to typeset math formulas is to enter them in the MathML format.
@@ -187,28 +221,39 @@ Its main difference from the SILE syntax is that \code{\\mycommand\{arg1\}\{arg2
 If it’s more convenient, you can use these Unicode characters directly.
 The symbol shorthands are the same as in the TeX package \href[src=https://www.ctan.org/pkg/unicode-math]{\code{unicode-math}}.
 
+The TeX-like syntax also supports several familiar constructs, pre-defined with appropriate spacing, movable limits and other properties, such as \code{\\sin}, \code{\\cos}, \code{\\lim}, etc.
+These are just macro-definitions (see further below); for instance, \code{\\lim} is a shorthand for \code{\\mo[atom=op, movablelimits=true]\{lim\}}.
+\begin[mode=display]{math}
+    \sin 2\theta = 2\sin \theta \cos \theta
+\end{math}
+\begin[mode=display]{math}
+    \math{\lim_{n\to\infty} F(n) = 0}
+\end{math}
+
 \code{\{formula\}} is a shorthand for \code{\\mrow\{formula\}}.
-Since parentheses—among other glyphs—stretch vertically to the size of their englobing \code{mrow}, this is useful to typeset parentheses of different sizes on the same line:
+Delimiters—among other glyphs—stretch vertically to the size of their englobing \code{mrow}, which is useful for their size to adapt to the content.
+SILE automatically wraps paired delimiters in such a construct, so these adapt to their inner content only.
 
 \begin[type=autodoc:codeblock]{raw}
 \Gamma (\frac{\zeta}{2}) + x^2(x+1)
 \end{raw}
 
-\noindent renders as
+\noindent directly renders as
 
 \begin[mode=display]{math}
     \Gamma (\frac{\zeta}{2}) + x^2(x+1)
 \end{math}
 
-\noindent which is ugly.
-To keep parentheses around \math{x+1} small, you should put braces around the expression:
+\noindent which is neat.
+But for cases when stretchy delimiters are not paired in an obvious way, these can end up too large.
+To keep them small, you should put braces around the expression:
 
 \begin[type=autodoc:codeblock]{raw}
-\Gamma (\frac{\zeta}{2}) + x^2{(x+1)}
+\Vert v \Vert = \sqrt{x^2 + y^2} \text{ vs. } {\Vert v \Vert} = \sqrt{x^2 + y^2}
 \end{raw}
 
 \begin[mode=display]{math}
-    \Gamma (\frac{\zeta}{2}) + x^2{(x+1)}
+\Vert v \Vert = \sqrt{x^2 + y^2} \text{ vs. } {\Vert v \Vert} = \sqrt{x^2 + y^2}
 \end{math}
 
 \noindent To print a brace in a formula, you need to escape it with a backslash.
@@ -221,10 +266,11 @@ To avoid that, you can specify that \math{\mi{sin}} is an identifier by writing 
 If you prefer it in “double struck” style, this is permitted by the \code{mathvariant} attribute: \code{\\mi[mathvariant=double-struck]\{sin\}(x)} renders as \math{\mi[mathvariant=double-struck]{sin}(x)}.
 
 \paragraph{Atom types and spacing}
+The current implementation does not follow the MathML rules for spacing, but rather the rules defined in the TeXbook, based on atom types.
 Each token automatically gets assigned an atom type from the list below:
 \begin{itemize}
   \item{\code{ord}: \code{mi} and \code{mn} tokens, as well as unclassified operators}
-  \item{\code{big}: big operators like ‘\math{\sum}’ or ‘\math{\prod}’}
+  \item{\code{op}: large operators like ‘\math{\sum}’ or ‘\math{\prod}’}
   \item{\code{bin}: binary operators like ‘\math{+}’ or ‘\math{\%}’}
   \item{\code{rel}: relation operators like ‘\math{=}’ or ‘\math{<}’}
   \item{\code{open}: opening operators like ‘\math{(}’ or ‘\math{[}’}
@@ -235,8 +281,7 @@ Each token automatically gets assigned an atom type from the list below:
   %\item{\code{over}}
   %\item{\code{under}}
   %\item{\code{accent}}
-  %\item{\code{radical}}
-  %\item{\code{vcenter}}
+  %\item{\code{bothaccent}}
 \end{itemize}
 \noindent The spacing between any two successive tokens is set automatically based on their atom types, and hence may not reflect the actual spacing used in the input.
 To make an operator behave like it has a certain atom type, you can use the \code{atom} attribute. For example, \code{a \\mo[atom=bin]\{div\} b} renders as \math[mode=display]{a \mo[atom=bin]{div} b.}

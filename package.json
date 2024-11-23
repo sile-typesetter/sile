@@ -1,6 +1,6 @@
 {
   "name": "sile",
-  "version": "0.15.5",
+  "version": "0.15.6",
   "description": "The SILE Typesetter",
   "main": "sile",
   "scripts": {
@@ -51,7 +51,7 @@
       }
     ],
     "scripts": {
-      "postbump": "cargo generate-lockfile --offline",
+      "postbump": "taplo format Cargo.toml && cargo generate-lockfile --offline",
       "postcommit": "git add -u Cargo.lock && git commit --amend --no-edit"
     },
     "infile": "CHANGELOG.md",

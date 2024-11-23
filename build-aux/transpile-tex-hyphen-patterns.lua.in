@@ -1,0 +1,118 @@
+#!@LUA@
+
+local function parsePattern (doc)
+   local pattern = {}
+   for line in doc:gmatch("[^\r\n]+") do
+      local content = line:match("[^%%]*") -- ignore comments
+      -- Patterns are space separated
+      for word in content:gmatch("%S+") do
+         table.insert(pattern, word)
+      end
+   end
+   return pattern
+end
+
+local function parseTagLeftRight (doc, pos)
+   local _, eg, tag = doc:find("[%s]*(%w+):[%s]*", pos)
+   if eg then
+      -- They might be in any order...
+      if tag == "generation" or tag == "typesetting" then
+         local _, e1, left = doc:find("left:%s*(%d+)", eg)
+         local _, e2, right = doc:find("right:%s*(%d+)", eg)
+         if left and right then
+            return tag, left, right, e2 > e1 and e2 or e1
+         end
+      end
+   end
+end
+
+local function transpilePatterns (doc)
+   -- Look for this block:
+   -- % hyphenmins:
+   -- %     generation:
+   -- %         left:  2
+   -- %         right: 2
+   -- %     typesetting:
+   -- %         left: 2
+   -- %         right: 2
+   local hyphenmins = {}
+   local sp, ep = doc:find("%% hyphenmins:[%s]*%%")
+   if sp then
+      local tag, left, right, nep = parseTagLeftRight(doc, ep)
+      if nep then
+         hyphenmins[tag] = { left = left, right = right }
+         ep = nep
+         tag, left, right, nep = parseTagLeftRight(doc, ep)
+         if nep then
+            hyphenmins[tag] = { left = left, right = right }
+         end
+      end
+   end
+
+   -- Remove all comments
+   doc = doc:gsub("%%[^\r\n]*", "")
+
+   -- Look for patterns
+   local patterns = doc:match("\\patterns{([^}]+)}")
+   local t = {}
+   if patterns then
+      t = parsePattern(patterns)
+   end
+   -- Look for exceptions
+   local hyphenations = doc:match("\\hyphenation{([^}]+)}")
+   local e = {}
+   if hyphenations then
+      e = parsePattern(hyphenations)
+   end
+   -- Look for input -- TODO: Can there be more than one in standard files?
+   local input = doc:match("\\input %s*([^%s]+)")
+   if input then
+      input = input:gsub("%.tex$", "")
+   end
+   return { hyphenmins = hyphenmins, patterns = t, exceptions = e, input = input }
+end
+
+local function readPatterns ()
+   local doc = io.stdin:read("*a")
+   io.stdin:close()
+   return doc
+end
+
+local function writePatterns (data)
+   local headline = "-- AUTOMATICALLY GENERATED FILE --\n"
+   io.write(headline)
+   io.write("return {\n")
+   io.write("   hyphenmins = {\n")
+   for k, v in pairs(data.hyphenmins) do
+      io.write("      ", k, " = {left = ", v.left, ", right = ", v.right, "},\n")
+   end
+   io.write("   },\n")
+   io.write("   patterns = {\n")
+   for _, v in ipairs(data.patterns) do
+      io.write('      "', v, '",\n')
+   end
+   io.write("   },\n")
+   if #data.exceptions > 0 then
+      io.write("   exceptions = {\n")
+      for _, v in ipairs(data.exceptions) do
+         io.write('      "', v, '",\n')
+      end
+      io.write("   },\n")
+   end
+   if data.input then
+      io.write('   input = { "', data.input, '" },\n')
+   end
+   io.write("}\n")
+end
+
+local doc = readPatterns()
+
+local res, _ = transpilePatterns(doc)
+
+if #res.patterns == 0 and #res.exceptions == 0 and not res.input then
+   error("- Nothing found, skipping")
+end
+
+io.stderr:write("- Patterns: " .. #res.patterns .. ", exceptions: " .. #res.exceptions .. "\n")
+
+writePatterns(res)

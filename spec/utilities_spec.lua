@@ -18,7 +18,7 @@ describe("SILE.utilities", function ()
       end)
    end)
 
-   describe("utf8_to_utf16be_hexencoded ", function ()
+   describe("utf8_to_utf16be_hexencoded", function ()
       it("should hex encode input", function ()
          local str = "foo"
          local out = "feff0066006f006f"
@@ -306,6 +306,52 @@ describe("SILE.utilities", function ()
                "jeanne",
                "Jean-Paul",
             }, sortme)
+         end)
+         it("should sort complex tables with callback comparison function", function ()
+            local sortme = {
+               { name = "Jean", age = 30 },
+               { name = "Charlie", age = 25 },
+               { name = "Bob", age = 30 },
+               { name = "Alice", age = 25 },
+            }
+            SU.collatedSort(sortme, nil, function (a, b, stringCompare)
+               -- Sort by ascending age then ascending name
+               if a.age < b.age then
+                  return true
+               end
+               if a.age > b.age then
+                  return false
+               end
+               return stringCompare(a.name, b.name) < 0
+            end)
+            assert.is.same({
+               { name = "Alice", age = 25 },
+               { name = "Charlie", age = 25 },
+               { name = "Bob", age = 30 },
+               { name = "Jean", age = 30 },
+            }, sortme)
+            local namesAndYears = {
+               { name = "Alice", year = 2005 },
+               { name = "Charlie", year = 1995 },
+               { name = "Bob", year = 1990 },
+               { name = "Alice", year = 1995 },
+            }
+            SU.collatedSort(namesAndYears, nil, function (a, b, stringCompare)
+               local nameCompare = stringCompare(a.name, b.name)
+               if nameCompare < 0 then
+                  return true
+               end
+               if nameCompare > 0 then
+                  return false
+               end
+               return a.year < b.year
+            end)
+            assert.is.same({
+               { name = "Alice", year = 1995 },
+               { name = "Alice", year = 2005 },
+               { name = "Bob", year = 1990 },
+               { name = "Charlie", year = 1995 },
+            }, namesAndYears)
          end)
       end)
    end)

@@ -115,15 +115,18 @@ function shaper.getFace (opts)
    elseif (face.variations ~= "") or (bitshim.rshift(face.index, 16) ~= 0) then
       if not SILE.features.font_variations then
          SU.warn([[
-  This build of SILE was compiled with font variations support disabled,
-  likely due to not having the subsetter library included in HarfBuzz >= 6.
-  This document specifies font variations which cannot be correctly rendered.
-  Please rebuild SILE with the necessary library support. Alternatively to proceed
-  anyway *incorrectly* render this document run:
+            This build of SILE was compiled with font variations support disabled
 
-      sile -e 'SILE.features.font_variations = true' ....
+            This is likely due to the configuration script not detecting the subsetter
+            library included in HarfBuzz >= 6. This document specifies font variations
+            which cannot be correctly rendered. Please rebuild SILE with the necessary
+            library support. Alternatively to proceed anyway *incorrectly* render this
+            document run:
 
-  Or modify the document to remove variations options from font commands.]])
+              sile -e 'SILE.features.font_variations = true' ...
+
+            Or modify the document to remove variations options from font commands.
+         ]])
       end
       SU.error("Failed to instantiate: " .. _pretty_varitions(face))
    end
@@ -189,9 +192,11 @@ function shaper.checkHBProblems (_, text, face)
    end
    if hb.version_lessthan(2, 3, 0) and hb.get_table(face, "CFF "):len() > 0 and not substwarnings["CFF "] then
       SILE.status.unsupported = true
-      SU.warn(
-         "Vertical spacing of CFF fonts may be subtly inconsistent between systems. Upgrade to Harfbuzz 2.3.0 if you need absolute consistency."
-      )
+      SU.warn([[
+         Vertical spacing of CFF fonts may be subtly inconsistent between systems
+
+         Upgrade to Harfbuzz 2.3.0 if you need absolute consistency.
+      ]])
       substwarnings["CFF "] = true
    end
    return false

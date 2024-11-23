@@ -217,13 +217,11 @@ Here are a few more examples of SILE commands:
 
 \begin[type=autodoc:codeblock]{raw}
 \eject                                   % A command with no parameters or argument
-
 \font[family=Times,size=10pt]            % Parameters, but no argument
-
 \chapter{Introducing SILE}               % Argument but no parameters
-
 \font[family=Times,size=10pt]{Hi there!} % Parameters and argument
 \end{raw}%
+
 \subsection{Environments}
 
 Commands like \autodoc:command{\chapter} (to start a chapter) and \autodoc:command{\em} (to emphasize text) are normally used to enclose a relatively small piece of text—a few lines at most.

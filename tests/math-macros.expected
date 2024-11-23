@@ -1,130 +1,126 @@
 Set paper size 	595.275597	841.8897729
 Begin page
-Mx 	241.7172
-My 	51.6845
+Mx 	243.0172
+My 	52.1045
 Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
 T	84 74 79 w=12.0300	(nil)
-Mx 	253.7472
+Mx 	255.0472
 My 	47.9345
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
 T	9 w=2.8480	(nil)
-Mx 	256.5952
+Mx 	257.8952
 T	19 w=3.7200	(nil)
-Mx 	260.3152
-T	2725 w=3.7328	(nil)
-Mx 	264.0480
+Mx 	261.6152
+T	2758 w=3.7328	(nil)
+Mx 	265.3480
 T	12 w=5.1840	(nil)
-Mx 	269.2320
+Mx 	270.5320
 T	18 w=3.7200	(nil)
-Mx 	272.9520
+Mx 	274.2520
 T	10 w=2.8480	(nil)
-Mx 	276.2300
-My 	51.6845
+Mx 	277.5300
+My 	52.1045
 Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
-Mx 	3.0000
-T	3653 a=4.2100	(nil)
-Mx 	280.4400
-T	2735 w=5.4100	(nil)
-Mx 	285.8500
-Mx 	2.9900
-T	3654 a=4.2100	(nil)
+T	9 w=3.5600	(nil)
+Mx 	281.0900
+T	2768 w=5.4100	(nil)
+Mx 	286.5000
+T	10 w=3.5600	(nil)
 Mx 	292.8378
 T	30 w=6.4800	(nil)
 Mx 	302.0956
 T	9 w=3.5600	(nil)
 Mx 	305.6556
-T	2061 18 w=11.1300	(nil)
+T	2088 18 w=11.1300	(nil)
 Mx 	316.7856
 T	10 w=3.5600	(nil)
 Mx 	320.3456
-My 	47.9345
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
-T	2725 w=3.7328	(nil)
+My 	47.1045
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
+T	2758 w=3.7328	(nil)
 Mx 	326.5084
-My 	51.6845
+My 	52.1045
 Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
 T	68 80 84 w=13.2200	(nil)
 Mx 	339.7284
-Mx 	3.0000
-T	3653 a=4.2100	(nil)
-Mx 	343.9384
-T	2735 w=5.4100	(nil)
-Mx 	349.3484
-Mx 	2.9900
-T	3654 a=4.2100	(nil)
-Draw line	275.3007	84.0086	11.3900	0.6500
+T	9 w=3.5600	(nil)
+Mx 	343.2884
+T	2768 w=5.4100	(nil)
+Mx 	348.6984
+T	10 w=3.5600	(nil)
+Draw line	275.3007	84.4286	11.3900	0.6500
 Mx 	275.3007
-My 	79.6886
+My 	80.1086
 T	69 w=5.0600	(nil)
 Mx 	280.3607
-T	2779 w=6.3300	(nil)
+T	2812 w=6.3300	(nil)
 Mx 	276.9507
-My 	93.9336
+My 	94.3536
 T	69 w=5.0600	(nil)
 Mx 	282.0107
-T	2731 w=3.0300	(nil)
-Mx 	289.4685
-My 	86.9336
+T	2764 w=3.0300	(nil)
+Mx 	290.2185
+My 	87.3536
 T	30 w=6.4800	(nil)
-Mx 	298.7262
-My 	86.8386
+Mx 	299.4762
+My 	87.2586
 Mx 	10.6300
-T	3665 a=12.4300	(nil)
-Mx 	304.0252
-My 	97.5426
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
-T	2720 w=1.8320	(nil)
-Mx 	312.8229
-My 	86.9336
+T	3985 a=12.4300	(nil)
+Mx 	304.7752
+My 	97.9626
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
+T	2753 w=1.8320	(nil)
+Mx 	313.5729
+My 	87.3536
 Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
-T	2743 w=6.0300	(nil)
-Mx 	317.7129
-My 	89.0336
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
-T	2720 w=1.8320	(nil)
-Mx 	261.3836
-My 	124.0866
+T	2776 w=6.0300	(nil)
+Mx 	318.4629
+My 	89.4536
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
+T	2753 w=1.8320	(nil)
+Mx 	262.2436
+My 	124.5066
 Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
 Mx 	2.8200
 T	9 a=3.5600	(nil)
-Mx 	264.9436
-T	877 w=5.7000	(nil)
-Mx 	270.6436
-My 	126.1866
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
+Mx 	265.8036
+T	3424 w=5.6700	(nil)
+Mx 	270.4736
+My 	126.6066
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
 T	17 w=3.7200	(nil)
-Mx 	274.7936
-My 	124.0866
+Mx 	274.6236
+My 	124.5066
 Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
 T	13 w=2.2000	(nil)
-Mx 	278.6603
-T	877 w=5.7000	(nil)
-Mx 	284.3603
-My 	126.1866
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
+Mx 	278.4903
+T	3424 w=5.6700	(nil)
+Mx 	283.1603
+My 	126.6066
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
 T	18 w=3.7200	(nil)
-Mx 	288.5103
-My 	124.0866
+Mx 	287.3103
+My 	124.5066
 Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
 T	13 w=2.2000	(nil)
-Mx 	292.3770
+Mx 	291.1770
 T	1769 w=7.4900	(nil)
-Mx 	299.8670
+Mx 	298.6670
 T	13 w=2.2000	(nil)
-Mx 	303.7336
-T	877 w=5.7000	(nil)
-Mx 	309.4336
-My 	126.1866
-Set font 	Libertinus Math;8;400;Regular;normal;;;LTR
-T	2725 w=3.7328	(nil)
-Mx 	313.5964
-My 	124.0866
+Mx 	302.5336
+T	3424 w=5.6700	(nil)
+Mx 	307.2036
+My 	126.6066
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
+T	2758 w=3.7328	(nil)
+Mx 	311.3664
+My 	124.5066
 Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
 Mx 	2.8200
 T	10 a=3.5600	(nil)
-Mx 	319.9342
-T	2051 w=5.0000	(nil)
-Mx 	327.7120
+Mx 	317.7042
+T	2078 w=6.3700	(nil)
+Mx 	326.8520
 T	1887 w=6.1800	(nil)
 Mx 	295.2916
 My 	780.6177

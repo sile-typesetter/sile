@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS = -I build-aux
-AM_DISTCHECK_CONFIGURE_FLAGS = --enable-developer-mode
+AM_DISTCHECK_CONFIGURE_FLAGS = --enable-developer-mode --without-developer-tools PDFINFO=$(PDFINFO)
 
 .ONESHELL:
 .SECONDARY:
@@ -55,24 +55,28 @@ endif
 
 $(MANUAL): $(FIGURES)
 
-BUILT_LUA_SOURCES = core/features.lua core/pathsetup.lua core/version.lua
+BUILT_SOURCES_LUA = core/features.lua core/pathsetup.lua core/version.lua
+RUSILE_SOURCES = rusile/Cargo.toml rusile/src/lib.rs
 
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
 nodist_man_MANS =
 dist_man_MANS = sile-lua.1
-sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
+sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs src/types.rs src/types/semver.rs
 EXTRA_sile_SOURCES =
 if !EMBEDDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
-nobase_nodist_pkgdata_DATA = $(BUILT_LUA_SOURCES) $(LUAMODULES)
-endif
+nobase_nodist_pkgdata_DATA = $(BUILT_SOURCES_LUA) $(LUAMODULES)
+pkglib_LIBRARIES = rusile.so
+rusile_so_SOURCES = $(RUSILE_SOURCES)
+endif !EMBEDDED_RESOURCES
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE.md
 EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/config.ld build-aux/decore-automake.sh build-aux/git-version-gen
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
+EXTRA_DIST += build-aux/xml-entities-to-lua.xsl
 EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
 EXTRA_DIST += $(FIGURES)
@@ -83,7 +87,17 @@ if EMBEDDED_RESOURCES
 EXTRA_DIST += $(SILEDATA) $(LUALIBRARIES)
 endif
 
-BUILT_SOURCES = $(BUILT_LUA_SOURCES) Makefile-distfiles
+BUILT_SOURCES = $(BUILT_SOURCES_LUA) Makefile-distfiles
+
+if SHARED
+EXTRA_RUNTIME_DEPS = $(pkglib_LIBRARIES)
+else !SHARED
+EXTRA_RUNTIME_DEPS =
+endif
+
+MATHML_ENTITIES = packages/math/mathml-entities.lua
+EXTRA_DIST += $(MATHML_ENTITIES)
+BUILT_SOURCES += $(MATHML_ENTITIES)
 
 CLEANFILES = $(MANUAL)
 
@@ -122,11 +136,15 @@ $(CARGO_BIN): justenough/.libs/justenoughicu.a
 $(CARGO_BIN): justenough/.libs/justenoughlibtexpdf.a
 $(CARGO_BIN): justenough/.libs/svg.a
 $(CARGO_BIN): libtexpdf/.libs/libtexpdf.a
+if !EMBEDDED_RESOURCES
+$(CARGO_BIN): rusile.so
+endif !EMBEDDED_RESOURCES
 
 src/embed-includes.rs: Makefile-distfiles
 	{
-		echo $(BUILT_LUA_SOURCES)
-		$(GREP) -E '^(SILEDATA|LUALIBRARIES|LUAMODULES) = ' $<
+		echo $(BUILT_SOURCES_LUA)
+		$(SED) -ze 's/\\\n\t//g' $< |
+			$(GREP) -E '^(SILEDATA|LUALIBRARIES|LUAMODULES) = '
 	} |
 		$(SED) -E -e 's/^.* = //;s/ /\n/g' |
 		while read file; do
@@ -146,6 +164,7 @@ else
 MLUAVER = lua$(LUA_SHORT_VERSION)
 endif
 CARGO_FEATURE_ARGS = --features $(MLUAVER)
+RUSILE_FEATURE_ARG = --features $(MLUAVER)
 
 if !SYSTEM_LUA_SOURCES
 CARGO_FEATURE_ARGS += --features vendored
@@ -158,6 +177,10 @@ endif
 if FONT_VARIATIONS
 CARGO_FEATURE_ARGS += --features variations
 endif
+
+rusile.so: $(rusile_so_SOURCES) $(bin_PROGRAMS)
+	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(RUSILE_FEATURE_ARG) $(CARGO_RELEASE_ARGS) -p rusile
+	$(INSTALL) @builddir@/target/@RUST_TARGET_SUBDIR@/lib$@ $@
 
 DEPDIR := .deps
 LOCALFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
@@ -193,12 +216,12 @@ sile-$(VERSION).pdf: $(MANUAL)
 sile-%.md: CHANGELOG.md
 	$(SED) -e '/\.\.\.v$*/,/\.\.\.v/!d' CHANGELOG.md | \
 		$(SED) -e '1,3d;N;$$!P;$$!D;$$d' |
-	$(or $(filter cat,$(TYPOS)),$(TYPOS) --write-changes -) > $@
+	$(if $(TYPOS),$(TYPOS) --write-changes,cat) - > $@
 
 check: selfcheck
 
 .PHONY: selfcheck
-selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS)
+selfcheck: | $(bin_PROGRAMS) $(_BUILT_SUBDIRS) $(EXTRA_RUNTIME_DEPS)
 	output=$$(mktemp -t selfcheck-XXXXXX.pdf)
 	trap '$(RM) $$output' EXIT HUP TERM
 	echo "<sile>foo</sile>" | $(LOCALPATHS) ./$(bin_PROGRAMS) -o $$output -
@@ -249,9 +272,6 @@ _FORCED = $(and $(SILE_COVERAGE)$(CLEAN),force)
 _TEST_DEPS = $(and $$(filter tests/%,$@),$(addprefix .fonts/,$(TESTFONTFILES)))
 _DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTFILES)))
 
-# TODO: remove _BUILT_SUBDIRS hack and replace it with something sensible when
-# these subdirs don't do crazy things like copying files outside of their own trees!
-_BUILT_SUBDIRS = .built-subdirs
 _SUBDIR_TELLS =
 
 if SHARED
@@ -282,7 +302,7 @@ CLEANFILES += $(_BUILT_SUBDIRS)
 $(_SUBDIR_TELLS):
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
-patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
+patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(EXTRA_RUNTIME_DEPS) $(DEPDIRS) $(LUAMODLOCK) $(_BUILT_SUBDIRS)
 
 %.pdf: %.sil $$(patterndeps)
 	$(runsile)
@@ -296,6 +316,18 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(DEPDIRS
 %.pdf: %.dot
 	$(DOT) -Tpdf $< -o $@.gs
 	$(GS) -q -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -o $@ $@.gs
+
+XML_ENTITIES = .sources/unicode.xml
+XML_ENTITIES_COMMIT = 77acf14428202e4e1dba54ff1e5ed43fe5ab474f
+
+.sources:
+	[ -h .sources ] || mkdir -p $@
+
+$(XML_ENTITIES):
+	$(CURL) https://raw.githubusercontent.com/w3c/xml-entities/$(XML_ENTITIES_COMMIT)/unicode.xml -o $@
+
+$(MATHML_ENTITIES): build-aux/xml-entities-to-lua.xsl
+	$(XSLTPROC) $< $(XML_ENTITIES) | $(or $(STYLUA),cat) - > $@
 
 .PHONY: force
 force: ;
@@ -365,8 +397,15 @@ if !SYSTEM_LUAROCKS
 	packagepath+=(./lua_modules/share/lua/$(LUA_VERSION)/?{,/init}.lua)
 	packagecpath+=(./lua_modules/lib/lua/$(LUA_VERSION)/?.$(SHARED_LIB_EXT))
 endif
-# Note: use of --lua causes this to be passed back through a shell loosing one layer of quoting. Drop single quotes if removing.
+# Note: Busted tests can't run with out static build since the Rusile module is
+# only available embedded into it. We can test on the dynamic builds where it
+# is available as a use space module. This could change if we enable a lua vm
+# pass through mode and use that as busted's interpreter.
+if SHARED
+# Note: use of --lua causes this to be passed back through a shell loosing one
+# layer of quoting. Drop single quotes if removing.
 	$(LOCALFONTS) $(BUSTED) --lua=$(LUA) --lpath="'$${packagepath[*]};;'" --cpath="'$${packagecpath[*]};;'" $(BUSTEDFLAGS) .
+endif
 
 coverage: export SILE_COVERAGE=1
 coverage: BUSTEDFLAGS += -c

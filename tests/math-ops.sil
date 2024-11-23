@@ -24,7 +24,7 @@ Custom atom types:
 Modulus operator:
 
 \math[mode=display]{42 \bmod 11 = 9}
-\math[mode=display]{42 \% 11 = 9}
+\math[mode=display]{42 \mo[atom=bin]{\%} 11 = 9}
 \math[mode=display]{\mi{mod}(42, 11) = 9}
 \math[mode=display]{42 ≡ 9 \pmod{11}}
 

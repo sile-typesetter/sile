@@ -95,14 +95,16 @@ end
 -- to package modules...
 
 local _deprecate_class_funcs = [[
-  Please explicitly use functions provided by packages by referencing
-  them in the document class's list of loaded packages rather than the
-  legacy solution that added non-method functions to the class.]]
+   Please explicitly use functions provided by packages by referencing them in
+   the document class's list of loaded packages rather than the legacy solution
+   that added non-method functions to the class.
+]]
 
 local _deprecate_exports_table = [[
-  Please explicitly use functions provided by packages by referencing
-  them in the document class's list of loaded packages rather than the
-  legacy solution of calling them from an exports table.]]
+   Please explicitly use functions provided by packages by referencing them in
+   the document class's list of loaded packages rather than the legacy solution
+   of calling them from an exports table.
+]]
 
 function package:deprecatedExport (name, func, noclass, notable)
    if not noclass then

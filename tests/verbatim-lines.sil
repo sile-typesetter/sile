@@ -1,0 +1,33 @@
+% KNOWNBAD https://github.com/sile-typesetter/sile/issues/2168
+\begin[papersize=a6]{document}
+\nofolios
+\neverindent
+\use[module=packages.verbatim]
+\use[module=packages.autodoc]
+
+\begin{verbatim}
+Foo
+
+Bar
+Bar
+
+    Baz
+\end{verbatim}
+
+\begin[type=autodoc:codeblock]{raw}
+Foo
+
+Bar
+Bar
+
+    Baz
+\end{raw}
+
+\begin{verbatim}
+Two
+
+
+Lines
+\end{verbatim}
+
+\end{document}

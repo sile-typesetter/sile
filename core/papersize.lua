@@ -79,9 +79,12 @@ setmetatable(papersize, {
          return geometry
       end
       SU.error(string.format(
-         [[Unable to parse papersize '%s'.
-  Custom sizes may be entered with 'papersize=<measurement> x <measurement>'.
-  Predefined paper sizes include: %s]],
+         [[
+            Unable to parse papersize '%s'
+
+            Custom sizes may be entered with 'papersize=<measurement> x <measurement>'.
+            Predefined paper sizes include: %s
+         ]],
          size,
          table.concat(pl.tablex.keys(papersize), ", ")
       ))
