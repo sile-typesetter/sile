@@ -45,6 +45,10 @@ let
     ps:
     with ps;
     [
+      # used for module detection, also recommended at runtime for 3rd party module installation
+      luarocks
+
+      # modules used at runtime
       cassowary
       cldr
       fluent

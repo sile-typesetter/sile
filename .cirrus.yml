@@ -50,6 +50,7 @@ task:
       --disable-font-variations \
       --with-system-lua-sources \
       --with-system-luarocks \
+      --with-luarocks=luarocks51 \
       --without-manual
   make_script:
     - gmake all

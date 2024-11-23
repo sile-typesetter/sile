@@ -25,6 +25,7 @@ QUE_PROGVAR([diff])
 QUE_PROGVAR([find])
 QUE_PROGVAR([head])
 QUE_PROGVAR([jq])
+QUE_PROGVAR([luarocks])
 QUE_PROGVAR([pdfinfo])
 QUE_PROGVAR([sort])
 QUE_PROGVAR([xargs])
@@ -189,7 +190,6 @@ AM_COND_IF([DEVELOPER_TOOLS], [
     QUE_PROGVAR([curl])
     QUE_PROGVAR([ldoc])
     QUE_PROGVAR([luacheck])
-    QUE_PROGVAR([luarocks])
     QUE_PROGVAR([nix])
     QUE_PROGVAR([npm])
     QUE_PROGVAR([perl])
@@ -227,7 +227,6 @@ AM_COND_IF([SYSTEM_LUAROCKS], [
     AX_LUA_MODULE(penlight, pl)
     AX_LUA_MODULE(vstruct)
 ], [
-    QUE_PROGVAR([luarocks])
     QUE_PROGVAR([git]) # required for luarocks to install zlib rock
 ])
 

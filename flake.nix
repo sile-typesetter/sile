@@ -87,7 +87,6 @@
               "--with-manual"
             ];
             nativeBuildInputs = sile.nativeBuildInputs ++ [
-              pkgs.luarocks
               # For regression test diff highlighting
               pkgs.delta
               # For commitlint git hook
