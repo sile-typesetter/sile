@@ -256,6 +256,18 @@ To keep them small, you should put braces around the expression:
 \Vert v \Vert = \sqrt{x^2 + y^2} \text{ vs. } {\Vert v \Vert} = \sqrt{x^2 + y^2}
 \end{math}
 
+Alternatively, you can use the \code{\\left} and \code{\\right} commands to automatically adjust the size of the delimiters to the inner content.
+Since SILE does it automatically for paired delimiters, it only really useful if you took a TeX formula using these commands and want to keep it as is, or if you want to use delimiters that are not paired in an obvious way.
+In this construct, the period is also supported for a null delimiter, as with TeX.
+
+\begin[type=autodoc:codeblock]{raw}
+\left\rangle \frac{\zeta}{2} \right\langle \quad \left\}\frac{\zeta}{2} \right.
+\end{raw}
+
+\begin[mode=display]{math}
+\left\rangle \frac{\zeta}{2} \right\langle \quad \left\}\frac{\zeta}{2} \right.
+\end{math}
+
 \noindent To print a brace in a formula, you need to escape it with a backslash.
 
 \paragraph{Token kinds}
