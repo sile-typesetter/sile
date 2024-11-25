@@ -30,9 +30,21 @@ local mathGrammar = function (_ENV)
          digit^1 -- Integer (digits only, ex: 123)
       ) / tostring
    local pos_natural = R("19") * digit^0 / tonumber
+
+   -- \left and \right delimiters = The TeXbook p. 148.
+   -- Characters with a delcode in TeX: The TeXbook p. 341
+   -- These are for use in \left...\right pairs.
+   -- We add the period (null delimiter) from p. 149-150.
+   -- We don't include the backslash here and handle it just after.
+   local delcode = S"([</|)]>."
+   -- Left/right is followed by a delimiter with delcode, or a command.
+   -- We use the delcode or backslash as terminator: commands such as
+   -- \rightarrow must still be allowed.
+   local leftright = function (s) return P(s) * (delcode + P"\\") end
+
    local ctrl_word = R("AZ", "az")^1
    local ctrl_symbol = P(1) - S"{}\\"
-   local ctrl_sequence_name = C(ctrl_word + ctrl_symbol) / 1
+   local ctrl_sequence_name = C(ctrl_word + ctrl_symbol) - leftright("left") - leftright("right") / 1
    local comment = (
          P"%" *
          P(1-eol)^0 *
@@ -56,7 +68,57 @@ local mathGrammar = function (_ENV)
    local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
    -- Simple amsmath-like \text command (no embedded math)
    local textgroup = P"{" * C((1-P"}")^1) * (P"}" + E("`}` expected"))
+   -- TeX \left...\right group
+   local delim =
+      -- Delimiter with delcode
+      C(delcode) / function (d)
+         if d ~= "." then
+            return {
+               id = "atom",
+               d
+            }
+         end
+         return nil
+      end
+      -- Delimiter as escaped \{ or \}
+      + P"\\" * C(S"{}") / function (d)
+         return {
+            id = "atom",
+            d
+         }
+      end
+      -- Delimiter as command ex. \langle
+      + P"\\" * C(ctrl_sequence_name) / 1 / function (cmd)
+         return {
+            id = "command",
+            command = cmd
+         }
+      end
+
+      local leftrightgroup = P"\\left" * delim * V"mathlist" * P"\\right" * delim
+         / function (left, subformula, right)
+            if not left and not right then
+               -- No delimiters, return the subformula as-is
+               return subformula
+            end
+            -- Rewrap the subformula in a flagged mathlist
+            local mrow = {
+               id = "mathlist",
+               options = {},
+               is_paired_explicit = true, -- Internal flag
+               subformula
+            }
+            if left then
+               table.insert(mrow, 1, left)
+            end
+            if right then
+               table.insert(mrow, right)
+            end
+            return mrow
+         end
+
    local element_no_infix =
+      leftrightgroup + -- Important: before command
       V"def" +
       V"text" + -- Important: before command
       V"command" +
@@ -412,6 +474,14 @@ local function compileToMathML_aux (_, arg_env, tree)
          else
             tree.command = "mrow"
          end
+      elseif tree.is_paired_explicit then
+         -- We already did the re-wrapping of open/close delimiters in the parser
+         -- via \left...\right, doing it would not harm but would add an extra mrow,
+         -- which we can avoid directly to keep the tree minimal.
+         -- N.B. We could have used the same flag, but it's easier to debug this way.
+         tree.is_paired = true
+         tree.is_paired_explicit = nil
+         tree.command = "mrow"
       else
          -- Re-wrap content from opening to closing operator in an implicit mrow,
          -- so stretchy operators apply to the correct span of content.
