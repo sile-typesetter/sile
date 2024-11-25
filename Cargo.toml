@@ -145,9 +145,11 @@ extend-ignore-identifiers-re = [
 ]
 
 [package.metadata.typos.default.extend-words]
-beveled = "bevelled"
-bevelled = "bevelled"
+beveled = "bevelled"  # mathML uses en-gb spelling
+bevelled = "bevelled" # mathML uses en-gb spelling
+centred = "centred"   # Unicode character description
 craters = "creators"
+lamda = "lamda"       # Unicode character description
 neet = "need"
 
 [package.metadata.typos.files]
