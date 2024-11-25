@@ -179,7 +179,7 @@ CARGO_FEATURE_ARGS += --features variations
 endif
 
 rusile.so: $(rusile_so_SOURCES) $(bin_PROGRAMS)
-	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) $(RUSILE_FEATURE_ARG) $(CARGO_RELEASE_ARGS) -p rusile
+	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) --target $(CARGO_TARGET_TRIPLE) $(RUSILE_FEATURE_ARG) $(CARGO_RELEASE_ARGS) -p rusile
 	$(INSTALL) @builddir@/target/@RUST_TARGET_SUBDIR@/lib$@ $@
 
 DEPDIR := .deps

@@ -22,13 +22,17 @@ AC_DEFUN_ONCE([QUE_RUST_BOILERPLATE], [
                 QUE_PROGVAR([rustfmt])
         ])
 
+        AC_ARG_VAR(CARGO_TARGET_TRIPLE, "Target triple for Rust compilations")
+        if test -z "$CARGO_TARGET_TRIPLE"; then
+                CARGO_TARGET_TRIPLE="$($RUSTC -vV | $SED -n 's/host: //p')"
+        fi
         AC_MSG_CHECKING([whether to build Rust code with debugging information])
         AM_COND_IF([DEBUG_RELEASE], [
                 AC_MSG_RESULT(yes)
-                RUST_TARGET_SUBDIR=debug
+                RUST_TARGET_SUBDIR=$CARGO_TARGET_TRIPLE/debug
         ], [
                 AC_MSG_RESULT(no)
-                RUST_TARGET_SUBDIR=release
+                RUST_TARGET_SUBDIR=$CARGO_TARGET_TRIPLE/release
         ])
         AC_SUBST([RUST_TARGET_SUBDIR])
 
