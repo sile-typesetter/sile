@@ -377,8 +377,9 @@ function package:registerCommands ()
       -- we trim it off here.
       content = SU.ast.trimSubContent(content)
       SILE.typesetter:leaveHmode()
-      local lskip = SILE.settings:get("document.lskip") or SILE.types.node.glue()
-      local rskip = SILE.settings:get("document.rskip") or SILE.types.node.glue()
+      local parindent = SILE.settings:get("document.parindent"):absolute()
+      local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()).width:absolute() + parindent
+      local rskip = (SILE.settings:get("document.rskip") or SILE.types.node.glue()).width:absolute() + parindent
       SILE.settings:temporarily(function ()
          -- Note: We avoid using the verbatim environment and simplify things a bit
          -- (and try to better enforce novbreak points of insertion)
@@ -394,8 +395,8 @@ function package:registerCommands ()
          end
          SILE.settings:set("typesetter.parseppattern", "\n")
          SILE.settings:set("typesetter.obeyspaces", true)
-         SILE.settings:set("document.lskip", SILE.types.node.glue(lskip.width.length))
-         SILE.settings:set("document.rskip", SILE.types.node.glue(rskip.width.length))
+         SILE.settings:set("document.lskip", SILE.types.node.glue(lskip))
+         SILE.settings:set("document.rskip", SILE.types.node.glue(rskip))
          SILE.settings:set("document.parindent", SILE.types.node.glue())
          SILE.settings:set("document.parskip", SILE.types.node.vglue())
          SILE.settings:set("document.spaceskip", SILE.types.length("1spc"))
@@ -407,8 +408,8 @@ function package:registerCommands ()
             SILE.call("novbreak")
             pushline("1ex")
          end)
+         SILE.typesetter:leaveHmode()
       end)
-      SILE.typesetter:leaveHmode()
    end, "Outputs its content as a standardized block of code")
 
    self:registerCommand("autodoc:example", function (_, content)
