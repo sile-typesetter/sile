@@ -112,10 +112,10 @@ version = "4.4"
 optional = true
 features = ["derive"]
 
-[build-dependencies.vergen]
-version = "8.2"
+[build-dependencies.vergen-gix]
+version = "1.0"
 default-features = false
-features = ["build", "cargo", "git", "gitoxide"]
+features = ["build", "cargo", "rustc"]
 
 [package.metadata.docs.rs]
 features = ["luajit", "vendored"]
