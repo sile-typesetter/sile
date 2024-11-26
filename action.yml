@@ -7,7 +7,7 @@ inputs:
     default: ""
 runs:
   using: docker
-  image: docker://ghcr.io/sile-typesetter/sile:v0.15.6
+  image: docker://ghcr.io/sile-typesetter/sile:v0.15.7
   entrypoint: sh
   args:
     - -c
