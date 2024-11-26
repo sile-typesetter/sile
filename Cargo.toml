@@ -93,7 +93,7 @@ optional = true
 features = ["include-exclude"]
 
 [dependencies.harfbuzz-sys]
-version = "0.5"
+version = "0.6"
 optional = true
 
 [dependencies.semver]
