@@ -89,9 +89,7 @@
             nativeBuildInputs = sile.nativeBuildInputs ++ [
               # For regression test diff highlighting
               pkgs.delta
-              # For commitlint git hook
-              pkgs.yarn
-              # For npx
+              # For npx & commitlint git hook
               pkgs.nodejs
               # For gs, dot, and bsdtar used in building the manual
               pkgs.ghostscript
