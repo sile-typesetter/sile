@@ -17,8 +17,8 @@ description = {
       from the ground up using modern technologies and borrowing some ideas from
       graphical systems such as InDesign.]],
    license = "MIT",
-   homepage = "https://github.com/sile-typesetter/fontproof",
-   issues_url = "https://github.com/sile-typesetter/fontproof/issues",
+   homepage = "https://github.com/sile-typesetter/sile",
+   issues_url = "https://github.com/sile-typesetter/sile/issues",
    maintainer = "Caleb Maclennan <caleb@alerque.com>",
    labels = { "typesetting" },
 }
