@@ -77,8 +77,8 @@ local mathScriptConversionTable = {
       [scriptType.fraktur] = function (codepoint)
          -- MathML Core "fraktur" (annex C.5)
          return codepoint == 0x43 and 0x212D -- C
-            or codepoint == 0x48 and 0x210B -- H
-            or codepoint == 0x49 and 0x2110 -- I
+            or codepoint == 0x48 and 0x210C -- H
+            or codepoint == 0x49 and 0x2111 -- I
             or codepoint == 0x52 and 0x211C -- R
             or codepoint == 0x5A and 0x2128 -- Z
             or codepoint + 0x1D504 - 0x41
