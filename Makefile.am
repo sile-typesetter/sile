@@ -73,7 +73,7 @@ endif !EMBEDDED_RESOURCES
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE.md
-EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
+EXTRA_DIST = spec tests documentation sile-dev-1.rockspec rusile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/config.ld build-aux/decore-automake.sh build-aux/git-version-gen
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
 EXTRA_DIST += build-aux/xml-entities-to-lua.xsl
