@@ -732,8 +732,25 @@ local function isNotEmpty (element)
    return element and (element:is_a(elements.terminal) or #element.children > 0)
 end
 
+local function unwrapSingleElementMrow (elt)
+   -- CODE SMELL.
+   -- For \overset or \underset in LaTeX, MathML would use <mover> or <munder>.
+   -- It would need to inherit the base's atom type, especially if the later is an operator
+   -- (binary, relational etc.), which is a fairly common case, e.g.
+   --   \overset{R}{=} (equality with a R above the equal in some Ramanujan summations),
+   -- but we can't remove 1-element mrow's in the math typesetter, or have them inherit
+   -- their base's atom type here above, because it breaks tables for some reasons
+   -- that I couldn't figure out.
+   if elt:is_a(elements.stackbox) and elt.direction == "H" and #elt.children == 1 then
+      return unwrapSingleElementMrow(elt.children[1])
+   else
+      return elt
+   end
+end
+
 function elements.underOver:_init (base, sub, sup)
    elements.mbox._init(self)
+   base = unwrapSingleElementMrow(base)
    self.atom = base.atom
    self.base = base
    self.sub = isNotEmpty(sub) and sub or nil
