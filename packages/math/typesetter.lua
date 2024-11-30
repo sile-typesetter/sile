@@ -3,6 +3,7 @@ local lpeg = require("lpeg")
 local atoms = require("packages.math.atoms")
 local b = require("packages.math.base-elements")
 local syms = require("packages.math.unicode-symbols")
+local accents = require("packages.math.unicode-accents")
 local mathvariants = require("packages.math.unicode-mathvariants")
 local mathVariantToScriptType, scriptType = mathvariants.mathVariantToScriptType, mathvariants.scriptType
 
@@ -134,6 +135,12 @@ function ConvertMathML (_, content)
          or scriptType.upright
       local text = content[1]
       local attributes = {}
+      if luautf8.len(text) == 1 then
+         -- Re-encode single combining character as non-combining when feasible.
+         -- HACK: This is for "accents", but it's not what MathML Core expects.
+         -- See comment on that function.
+         text = accents.makeNonCombining(text)
+      end
       -- Attributes from the (default) operator table
       if syms.operatorDict[text] then
          attributes.atom = syms.operatorDict[text].atom
@@ -230,21 +237,25 @@ function ConvertMathML (_, content)
    elseif content.command == "munder" then
       local children = convertChildren(content)
       if #children ~= 2 then
-         SU.error("Wrong number of children in munder")
+         SU.error("Wrong number of children in munder" .. #children)
       end
-      return b.newUnderOver({ base = children[1], sub = children[2] })
+      local elt = b.newUnderOver({ attributes = content.options, base = children[1], sub = children[2] })
+      elt.movablelimits = content.is_hacked_movablelimits
+      return elt
    elseif content.command == "mover" then
       local children = convertChildren(content)
       if #children ~= 2 then
          SU.error("Wrong number of children in mover")
       end
-      return b.newUnderOver({ base = children[1], sup = children[2] })
+      local elt = b.newUnderOver({ attributes = content.options, base = children[1], sup = children[2] })
+      elt.movablelimits = content.is_hacked_movablelimits
+      return elt
    elseif content.command == "munderover" then
       local children = convertChildren(content)
       if #children ~= 3 then
          SU.error("Wrong number of children in munderover")
       end
-      return b.newUnderOver({ base = children[1], sub = children[2], sup = children[3] })
+      return b.newUnderOver({ attributes = content.options, base = children[1], sub = children[2], sup = children[3] })
    elseif content.command == "mfrac" then
       local children = convertChildren(content)
       if #children ~= 2 then

@@ -396,9 +396,24 @@ local function isOperatorKind (tree, typeOfAtom)
    return false
 end
 
-local function isMoveableLimits (tree)
+local function isMoveableLimitsOrAlwaysStacked (tree)
+   if not tree then
+      return false -- safeguard
+   end
+   if tree.is_always_stacked then
+      -- We use an internal flag to mark commands that are always stacking
+      -- their sup/sub arguments, such as brace-like commands.
+      return true
+   end
    if tree.command ~= "mo" then
-      return false
+      -- On the recursion:
+      -- MathML allows movablelimits on <mo> elements, but "embellished operators"
+      -- can be other elements inheriting the property from their "core operator",
+      -- see MathML Core §3.2.4.1, which is full of intricacies so we are probably
+      -- not even doing the right thing here.
+      -- On the hack:
+      -- See variant commands for limits further down.
+      return SU.boolean(tree.is_hacked_movablelimits, false) or isMoveableLimitsOrAlwaysStacked(tree[1])
    end
    if tree.options and SU.boolean(tree.options.movablelimits, false) then
       return true
@@ -429,6 +444,9 @@ end
 
 local function isAccentSymbol (symbol)
    return operatorDict[symbol] and operatorDict[symbol].atom == atoms.types.accent
+end
+local function isBottomAccentSymbol (symbol)
+   return operatorDict[symbol] and operatorDict[symbol].atom == atoms.types.botaccent
 end
 
 local function compileToMathML_aux (_, arg_env, tree)
@@ -565,14 +583,15 @@ local function compileToMathML_aux (_, arg_env, tree)
       end
       tree.options = {}
    -- Translate TeX-like sub/superscripts to `munderover` or `msubsup`,
-   -- depending on whether the base is an operator with moveable limits.
-   elseif tree.id == "sup" and isMoveableLimits(tree[1]) then
+   -- depending on whether the base is an operator with moveable limits,
+   -- or a brace-like command.
+   elseif tree.id == "sup" and isMoveableLimitsOrAlwaysStacked(tree[1]) then
       tree.command = "mover"
-   elseif tree.id == "sub" and isMoveableLimits(tree[1]) then
+   elseif tree.id == "sub" and isMoveableLimitsOrAlwaysStacked(tree[1]) then
       tree.command = "munder"
-   elseif tree.id == "subsup" and isMoveableLimits(tree[1]) then
+   elseif tree.id == "subsup" and isMoveableLimitsOrAlwaysStacked(tree[1]) then
       tree.command = "munderover"
-   elseif tree.id == "supsub" and isMoveableLimits(tree[1]) then
+   elseif tree.id == "supsub" and isMoveableLimitsOrAlwaysStacked(tree[1]) then
       tree.command = "munderover"
       local tmp = tree[2]
       tree[2] = tree[3]
@@ -638,12 +657,24 @@ local function compileToMathML_aux (_, arg_env, tree)
    elseif tree.id == "command" and symbols[tree.command] then
       local atom = { id = "atom", [1] = symbols[tree.command] }
       if isAccentSymbol(symbols[tree.command]) and #tree > 0 then
-         -- LaTeX-style accents \vec{v} = <mover accent="true"><mi>v</mi><mo>→</mo></mover>
+         -- LaTeX-style accents \overrightarrow{v} = <mover accent="true"><mi>v</mi><mo>&#x20D7;</mo></mover>
          local accent = {
             id = "command",
             command = "mover",
             options = {
                accent = "true",
+            },
+         }
+         accent[1] = compileToMathML_aux(nil, arg_env, tree[1])
+         accent[2] = compileToMathML_aux(nil, arg_env, atom)
+         tree = accent
+      elseif isBottomAccentSymbol(symbols[tree.command]) and #tree > 0 then
+         -- LaTeX-style bottom accents \underleftarrow{v} = <munder accent="true"><mi>v</mi><mo>&#x20EE;</mo></munder>
+         local accent = {
+            id = "command",
+            command = "munder",
+            options = {
+               accentunder = "true",
             },
          }
          accent[1] = compileToMathML_aux(nil, arg_env, tree[1])
@@ -728,6 +759,80 @@ registerCommand("mn", { [1] = objType.str }, function (x)
    return x
 end)
 
+-- Register a limit-like variant command
+-- Variants of superior, inferior, projective and injective limits are special:
+-- They accept a sub/sup behaving as a movablelimits, but also have a symbol
+-- on top of the limit symbol, which is not a movablelimits.
+-- I can't see in the MathML specification how to do this properly: MathML Core
+-- seems to only allow movablelimits on <mo> elements, and <mover>/<munder> may
+-- inherit that property from their "core operator", but in this case we do not
+-- want the accent to be movable, only the limit sup/sub.
+-- So we use a hack, and also avoid "\def" here to prevent unwanted mrows.
+-- @tparam string name    TeX command name
+-- @tparam string command MathML command (mover or munder)
+-- @tparam number symbol  Unicode codepoint for the accent symbol
+-- @tparam string text    Text representation
+local function registerVarLimits (name, command, symbol, text)
+   registerCommand(name, {}, function ()
+      local options = command == "mover" and { accent = "true" } or { accentunder = "true" }
+      return {
+         command = command,
+         is_hacked_movablelimits = true, -- Internal flag to mark this as a hack
+         options = options,
+         {
+            command = "mo",
+            options = { atom = "op", movablelimits = false },
+            text,
+         },
+         {
+            command = "mo",
+            options = { accentunder = "true" },
+            luautf8.char(symbol),
+         },
+      }
+   end)
+end
+registerVarLimits("varlimsup", "mover", 0x203E, "lim") -- U+203E OVERLINE
+registerVarLimits("varliminf", "munder", 0x203E, "lim") -- U+203E OVERLINE
+registerVarLimits("varprojlim", "munder", 0x2190, "lim") -- U+2190 LEFTWARDS ARROW
+registerVarLimits("varinjlim", "munder", 0x2192, "lim") -- U+2192 RIGHTWARDS ARROW
+
+-- Register a brace-like commands.
+-- Those symbols are accents per-se in MathML, and are non-combining in Unicode.
+-- But TeX treats them as "pseudo-accent" stretchy symbols.
+-- Moreover, they accept a sub/sup which is always stacked, and not movable.
+-- So we use an internal flag.
+-- We also avoid "\def" here to prevent unwanted mrows resulting from the
+-- compilation of the argument.
+-- @tparam string name    TeX command name
+-- @tparam string command MathML command (mover or munder)
+-- @tparam number symbol  Unicode codepoint for the brace symbol
+local function registerBraceLikeCommands (name, command, symbol)
+   registerCommand(name, {
+      [1] = objType.tree,
+   }, function (tree)
+      local options = command == "mover" and { accent = "true" } or { accentunder = "true" }
+      return {
+         command = command,
+         is_always_stacked = true, -- Internal flag to mark this as a brace-like command
+         options = options,
+         tree[1],
+         {
+            command = "mo",
+            options = { stretchy = "true" },
+            luautf8.char(symbol),
+         },
+      }
+   end)
+end
+-- Note: the following overriddes the default commands from xml-entities / unicode-math.
+registerBraceLikeCommands("overbrace", "mover", 0x23DE) -- U+23DE TOP CURLY BRACKET
+registerBraceLikeCommands("underbrace", "munder", 0x23DF) -- U+23DF BOTTOM CURLY BRACKET
+registerBraceLikeCommands("overparen", "mover", 0x23DC) -- U+23DC TOP PARENTHESIS
+registerBraceLikeCommands("underparen", "munder", 0x23DD) -- U+23DD BOTTOM PARENTHESIS
+registerBraceLikeCommands("overbracket", "mover", 0x23B4) -- U+23B4 TOP SQUARE BRACKET
+registerBraceLikeCommands("underbracket", "munder", 0x23B5) -- U+23B5 BOTTOM SQUARE BRACKET
+
 compileToMathML(
    nil,
    {},
@@ -737,7 +842,6 @@ compileToMathML(
   \def{sqrt}{\msqrt{#1}}
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
-  \def{vec}{\mover[accent=true]{#1}{\rightarrow}}
 
   % From amsmath:
   \def{to}{\mo[atom=bin]{→}}

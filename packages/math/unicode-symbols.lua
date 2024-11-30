@@ -2,6 +2,7 @@
 local mathml_entities = require("packages.math.mathml-entities")
 local symbols = mathml_entities.symbols
 local operatorDict = mathml_entities.operatorDict
+local atoms = require("packages.math.atoms")
 
 --- Add aliases for symbols that have multiple names.
 -- We check that the alias is already defined in the generated dictionary,
@@ -63,6 +64,21 @@ addAlias("lozenge", "mdlgwhtlozenge")
 addAlias("circlearrowleft", "acwcirclearrow")
 addAlias("circlearrowright", "cwcirclearrow")
 addAlias("blacklozenge", "mdlgblklozenge")
+
+-- Additional aliases for "accents"
+addAlias("overline", "overbar")
+addAlias("underline", "mathunderbar")
+addAlias("underbar", "mathunderbar")
+addAlias("overrightharpoon", "rightharpoonaccent")
+addAlias("overleftharpoon", "leftharpoonaccent")
+-- Caveat emptor:
+-- For some of them, TeX would consider one to be stretchy, the other not...
+-- It's completely insane to still have to deal with this in the 21st century,
+-- so let's not bother and just make them aliases to at least get something working for now.
+addAlias("utilde", "wideutilde")
+addAlias("widecheck", "check")
+addAlias("widehat", "hat")
+addAlias("widetilde", "tilde")
 
 -- (Original-TeX) TeX-like greek letters
 symbols.alpha = "α"
@@ -127,6 +143,27 @@ symbols.Digamma = "Ϝ" -- Supported by LaTeX's unicode-math
 -- properties from to the minus sign (U+2212).
 -- In our TeX-like syntax, they should however lead to the same symbol.
 operatorDict["-"] = operatorDict["−"]
+
+-- Override the atom type of a symbol in the operator dictionary.
+-- @tparam string symbol Symbol to override
+-- @tparam string atom   New atom type
+local function overrideAtom (symbol, atom)
+   if not symbols[symbol] then
+      SU.error("Symbol " .. symbol .. " not defined (operator dictionary is probably broken)")
+   end
+   operatorDict[symbols[symbol]].atom = atom
+end
+
+-- In xml-entities's unicode.xml, we derived "ord" for U+034D COMBINING LEFT RIGHT ARROW BELOW
+-- as is doesn't have a "D" class (diacritic)
+-- Actually it's not the fault of xml-entities, such a character is not covered in the latest
+-- Unicode MathClass file: https://www.unicode.org/Public/math/revision-15/MathClassEx-15.html
+-- It should clearly be a "botaccent" however, for \underleftrightarrow to work as do other accents.
+-- Note the U+20E1 COMBINING LEFT RIGHT ARROW ABOVE has s a "D" and we thus mapped to an "accent",
+-- used for \overleftrightarrow, so the asymmetry is at least weird.
+-- For future reference, see also https://github.com/w3c/xml-entities/issues/12 but it's probably
+-- not where the discussion should happen...
+overrideAtom("underleftrightarrow", atoms.types.botaccent)
 
 return {
    symbols = symbols,
