@@ -54,7 +54,7 @@ AC_DEFUN([AX_LUA_REQUIRE],[
         ACTION_IF_FOUND
     ], [
         AC_MSG_RESULT([unable to load])
-        m4_ifset([ACTION_IF_NOT_FOUND][ACTION_IF_NOT_FOUND],
+        m4_ifset([ACTION_IF_NOT_FOUND],[ACTION_IF_NOT_FOUND],
             [AC_MSG_FAILURE([cannot find Lua module MODULE])])
     ])
 
