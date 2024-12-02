@@ -258,13 +258,22 @@ local commands = {}
 local objType = {
    tree = 1,
    str = 2,
+   unknown = 3,
 }
 
 local function inferArgTypes_aux (accumulator, typeRequired, body)
    if type(body) == "table" then
       if body.id == "argument" then
          local ret = accumulator
-         table.insert(ret, body.index, typeRequired)
+         while #ret < body.index do
+            -- Don't leave holes in the argument list.
+            -- This may happen if the argument are not used orderly, and the
+            -- entry might later be filled with the appropriate type... unless
+            -- the argument is not used at all.
+            -- CODE SMELL, but this recursive inference is hard to assess.
+            table.insert(ret, objType.unknown)
+         end
+         ret[body.index] = typeRequired
          return ret
       elseif body.id == "command" then
          if commands[body.command] then
@@ -831,6 +840,20 @@ compileToMathML(
   \def{phantom}{\mphantom{#1}}
   \def{hphantom}{\mpadded[height=0, depth=0]{\mphantom{#1}}}
   \def{vphantom}{\mpadded[width=0]{\mphantom{#1}}}
+
+  % Stacking commands
+  % Plain LaTeX \stackrel is only supposed to be used on binary relations.
+  % It's a poor naming choice, and a poor design choice as well.
+  % Package "stackrel" on CTAN redefine its for relational operators, and
+  % provides a \stackbin for binary operators.
+  % Users would, without respect for semantics, use them interchangeably.
+  % We use the same definition for both, and expect the MathML layer to handle
+  % the content as appropriate based on the actual operators...
+  \def{stackrel}{\mover{#2}{#1}}
+  \def{stackbin}{\mover{#2}{#1}}
+  % Package "amsmath" went with its own generic \overset and \underset.
+  \def{overset}{\mover{#2}{#1}}
+  \def{underset}{\munder{#2}{#1}}
 ]==],
    })
 )

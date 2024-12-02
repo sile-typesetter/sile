@@ -1,0 +1,25 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\use[module=packages.math]
+% Test for TeX-like operator stacking (overset/underset)
+
+% Arrows have a rel atom type.
+\math[mode=display]{A \rightarrow B}% For comparison
+\math[mode=display]{A \underset{f}{\rightarrow} B}
+\math[mode=display]{A \overset{f}{\rightarrow} B}
+% Longer overset text.
+\math[mode=display]{A \implies B}% For comparison
+\math[mode=display]{A \overset{\text{def}}{\implies} B}
+% Even long underset text (bigger than the operator)
+\math[mode=display]{A \underset{\text{almost}}{\implies} B}
+
+% The = has a rel atom type too
+\math[mode=display]{A = B}% For comparison
+\math[mode=display]{A \overset{\mathrm{R}}{=} B}
+
+% \otimes has a bin atom type
+\math[mode=display]{A \otimes B}% For comparison
+\math[mode=display]{A \underset{\mathrm{H}}{\otimes} B}
+
+\end{document}
