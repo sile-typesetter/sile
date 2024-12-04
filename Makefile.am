@@ -320,9 +320,6 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(EXTRA_R
 XML_ENTITIES = .sources/unicode.xml
 XML_ENTITIES_COMMIT = 77acf14428202e4e1dba54ff1e5ed43fe5ab474f
 
-.sources:
-	[ -h .sources ] || mkdir -p $@
-
 $(XML_ENTITIES):
 	$(CURL) https://raw.githubusercontent.com/w3c/xml-entities/$(XML_ENTITIES_COMMIT)/unicode.xml -o $@
 

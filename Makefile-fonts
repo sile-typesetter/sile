@@ -1,13 +1,14 @@
 .PHONY: fonttooling
 
-if FONT_DOWNLOAD_TOOLS
-
-# Target defined in Makefile.am, just adding a dependency here
 .sources: fonttooling
+	[ -h .sources ] || mkdir -p $@
 
 .fonts: fonttooling
 	[ -h .fonts ] || mkdir -p $@
 
+if FONT_DOWNLOAD_TOOLS
+
+# Also defined as a dummy on other side of conditional
 fonttooling:
 	$(if $(BSDTAR),,$(error Please set BSDTAR with path or `./configure --enable-developer-mode`))
 	$(if $(CURL),,$(error Please set CURL with path or `./configure --enable-developer-mode`))
@@ -153,5 +154,9 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 .fonts/Symbola%: .sources/Symbola.zip | .fonts
 	$(BSDTAR) -x -f $< -C $(dir $@) $(notdir $@) && \
 	touch $@
+
+else !FONT_DOWNLOAD_TOOLS
+
+fonttooling: ;
 
 endif
