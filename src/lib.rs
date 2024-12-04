@@ -4,9 +4,7 @@
 #[cfg(not(feature = "static"))]
 use mlua::chunk;
 use mlua::prelude::*;
-#[cfg(not(feature = "static"))]
-use std::env;
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
 #[cfg(feature = "cli")]
 pub mod cli;
 
@@ -60,7 +58,13 @@ pub fn inject_paths(lua: &Lua) {
 pub fn get_rusile_exports(lua: &Lua) -> LuaResult<LuaTable> {
     let exports = lua.create_table()?;
     exports.set("semver", LuaFunction::wrap_raw(types::semver::semver))?;
+    exports.set("setenv", LuaFunction::wrap_raw(setenv))?;
     Ok(exports)
+}
+
+fn setenv(key: String, value: String) -> LuaResult<()> {
+    env::set_var(key, value);
+    Ok(())
 }
 
 pub fn inject_version(lua: &Lua) {

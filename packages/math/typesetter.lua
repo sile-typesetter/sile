@@ -1,30 +1,90 @@
 -- Interpret a MathML or TeX-like AST, typeset it and add it to the output.
+local lpeg = require("lpeg")
+local atoms = require("packages.math.atoms")
 local b = require("packages.math.base-elements")
 local syms = require("packages.math.unicode-symbols")
 local mathvariants = require("packages.math.unicode-mathvariants")
 local mathVariantToScriptType, scriptType = mathvariants.mathVariantToScriptType, mathvariants.scriptType
 
--- Shorthands for atom types, used in the `atom` command option
-local atomTypeShort = {
-   ord = b.atomType.ordinary,
-   big = b.atomType.bigOperator,
-   bin = b.atomType.binaryOperator,
-   rel = b.atomType.relationalOperator,
-   open = b.atomType.openingSymbol,
-   close = b.atomType.closeSymbol,
-   punct = b.atomType.punctuationSymbol,
-   inner = b.atomType.inner,
-   over = b.atomType.overSymbol,
-   under = b.atomType.underSymbol,
-   accent = b.atomType.accentSymbol,
-   radical = b.atomType.radicalSymbol,
-   vcenter = b.atomType.vcenter,
+local ConvertMathML
+
+-- See MathML Core "Algorithm for determining the form of an embellished operator"
+local scriptedElements = {
+   mmultiscripts = true,
+   mover = true,
+   msub = true,
+   msubsup = true,
+   msup = true,
+   munder = true,
+   munderover = true,
+}
+local groupingElements = {
+   maction = true,
+   math = true,
+   merror = true,
+   mphantom = true,
+   mprescripts = true,
+   mrow = true,
+   mstyle = true,
+   semantics = true,
+}
+local spaceLikeElements = {
+   mtext = true,
+   mspace = true,
 }
 
-local ConvertMathML
+-- Space like elements are:
+-- an mtext or mspace;
+-- or a grouping element or mpadded all of whose in-flow children are space-like.
+local function isSpaceLike (tree)
+   if spaceLikeElements[tree.command] then
+      return true
+   end
+   if groupingElements[tree.command] or tree.command == "mpadded" then
+      for _, n in ipairs(tree) do
+         if not isSpaceLike(n) then
+            return false
+         end
+      end
+      return true
+   end
+end
+-- Grouping-like elements in this operator embellishing context are:
+-- a grouping element
+-- or an mpadded or msqrt element.
+local isGroupingLike = function (tree)
+   return groupingElements[tree.command] or tree.command == "mpadded" or tree.command == "msqrt"
+end
+
+local function embellishOperatorInPlace (tree)
+   local lastChild
+   local lastMo
+   local groupLike = isGroupingLike(tree)
+   local scripLike = scriptedElements[tree.command]
+   for _, n in ipairs(tree) do
+      -- FIXME Maybe ncomplete vs. "core form" (of other elements) in MathML Core
+      -- This specification would make anyone's eyes bleed :D
+      if n.command == "mo" then
+         lastMo = n
+         n.options.form = n.options.form
+            or groupLike and not lastChild and "prefix" -- first-in-flow child
+            or scripLike and lastChild and "postfix" -- last-in-flow child of a scripted element other than the first
+            or nil
+      end
+      if n.command and not isSpaceLike(n) then
+         lastChild = n
+      end
+   end
+   if lastMo then
+      lastMo.options.form = lastMo.options.form
+         or groupLike and lastMo == lastChild and "postfix" -- last-in-flow child
+         or nil
+   end
+end
 
 local function convertChildren (tree)
    local mboxes = {}
+   embellishOperatorInPlace(tree)
    for _, n in ipairs(tree) do
       local box = ConvertMathML(nil, n)
       if box then
@@ -53,10 +113,11 @@ function ConvertMathML (_, content)
    if content.command == "math" or content.command == "mathml" then -- toplevel
       return b.stackbox("H", convertChildren(content))
    elseif content.command == "mrow" then
-      return b.stackbox("H", convertChildren(content))
+      local ret = b.stackbox("H", convertChildren(content))
+      -- Internal property to keep tracks or paired open/close in TeX-like syntax
+      ret.is_paired = content.is_paired
+      return ret
    elseif content.command == "mphantom" then
-      -- MathML's standard mphantom corresponds to TeX's \phantom only.
-      -- Let's support a special attribute "h" or "v" for TeX-like \hphantom or \vphantom.
       local special = content.options.special
       return b.phantom(convertChildren(content), special)
    elseif content.command == "mi" then
@@ -68,14 +129,20 @@ function ConvertMathML (_, content)
       script = script or (luautf8.len(text) == 1 and scriptType.italic or scriptType.upright)
       return b.text("identifier", {}, script, text)
    elseif content.command == "mo" then
+      content.options.form = content.options.form or "infix"
       local script = content.options.mathvariant and mathVariantToScriptType(content.options.mathvariant)
          or scriptType.upright
       local text = content[1]
       local attributes = {}
-      -- Attributes from the (default) oerator table
-      if syms.symbolDefaults[text] then
-         for attribute, value in pairs(syms.symbolDefaults[text]) do
-            attributes[attribute] = value
+      -- Attributes from the (default) operator table
+      if syms.operatorDict[text] then
+         attributes.atom = syms.operatorDict[text].atom
+         local forms = syms.operatorDict[text].forms
+         local defaultOps = forms and (forms[content.options.form] or forms.infix or forms.prefix or forms.postfix)
+         if defaultOps then
+            for attribute, value in pairs(defaultOps) do
+               attributes[attribute] = value
+            end
          end
       end
       -- Overwrite with attributes from the element
@@ -83,14 +150,50 @@ function ConvertMathML (_, content)
          attributes[attribute] = value
       end
       if content.options.atom then
-         if not atomTypeShort[content.options.atom] then
+         if not atoms.types[content.options.atom] then
             SU.error("Unknown atom type " .. content.options.atom)
          else
-            attributes.atom = atomTypeShort[content.options.atom]
+            attributes.atom = atoms.types[content.options.atom]
          end
       end
       if type(text) ~= "string" then
          SU.error("mo command contains content which is not text")
+      end
+      local cp = text and luautf8.len(text) == 1 and luautf8.codepoint(text, 1)
+      if cp and cp >= 0x2061 and cp <= 0x2064 then
+         -- "Invisible operators"
+         --  - Several test cases in Joe Javawaski's Browser Test and the
+         --  - The MathML Test Suite use these too, with ad hoc spacing attributes.
+         -- MathML Core doesn't mention anything special about these.
+         -- MathML4 §8.3: "They are especially important new additions to the UCS
+         -- because they provide textual clues which can increase the quality of
+         -- print rendering (...)" (Note the absence of indication on how "print"
+         -- rendering is supposed to be improved.)
+         -- MathML4 §3.1.1: "they usually render invisibly (...) but may influence
+         -- visual spacing." (Note the ill-defined "usually" and "may" in this
+         -- specification.)
+         -- The best we can do is to suppress these operators, but handle any
+         -- explicitspacing (despite not handling rsup/rspace attributes on other
+         -- operators in our TeX-based spacing logic).
+         -- stylua: ignore start
+         local number = lpeg.R("09")^0  * (lpeg.P(".")^-1 * lpeg.R("09")^1)^0 / tonumber
+         -- stylua: ignore end
+         -- 0 something is 0 in whatever unit (ex. "0", "0mu", "0em" etc.)
+         local rspace, lspace = number:match(attributes.rspace), number:match(attributes.lspace)
+         if rspace == 0 and lspace == 0 then
+            return nil -- Just skip the invisible operator.
+         end
+         -- Skip it but honor the non-zero spacing.
+         if rspace == 0 then
+            return b.space(attributes.lspace, 0, 0)
+         end
+         if lspace == 0 then
+            return b.space(attributes.rspace, 0, 0)
+         end
+         -- I haven't found examples of invisible operators with both rspace and lspace set,
+         -- but it may happen, whatever spaces around something invisible mean.
+         -- We'll just stack the spaces in this case (as we can only return one box).
+         return b.stackbox("H", { b.space(attributes.lspace, 0, 0), b.space(attributes.rspace, 0, 0) })
       end
       return b.text("operator", attributes, script, text)
    elseif content.command == "mn" then
@@ -214,7 +317,7 @@ local function handleMath (_, mbox, options)
 
    if mode == "display" then
       -- See https://github.com/sile-typesetter/sile/issues/2160
-      --    We are not excactly doing the right things here with respect to
+      --    We are not exactly doing the right things here with respect to
       --    paragraphing expectations.
       -- The vertical penalty will flush the previous paragraph, if any.
       SILE.call("penalty", { penalty = SILE.settings:get("math.predisplaypenalty"), vertical = true })

@@ -1,128 +1,79 @@
-[workspace]
-resolver = "2"
-members = [ ".", "rusile" ]
-
-  [workspace.package]
-  version = "0.15.5"
-  edition = "2021"
-  rust-version = "1.71.0"
-  authors = [
-  "Simon Cozens",
-  "Caleb Maclennan <caleb@alerque.com>",
-  "Olivier Nicole",
-  "Didier Willis"
-]
-  homepage = "https://sile-typesetter.org"
-  repository = "https://github.com/sile-typesetter/sile"
-  license = "MIT"
-
-[workspace.dependencies.mlua]
-version = "0.10"
-features = [ "anyhow" ]
-
 [package]
 name = "sile"
 description = "Simon’s Improved Layout Engine"
 readme = "README.md"
 build = "build-aux/build.rs"
-version = "0.15.6"
+version = "0.15.7"
 
-  [package.edition]
-  workspace = true
-
-  [package.rust-version]
-  workspace = true
-
-  [package.authors]
-  workspace = true
-
-  [package.homepage]
-  workspace = true
-
-  [package.repository]
-  workspace = true
-
-  [package.license]
-  workspace = true
-
-[package.metadata.bacon.jobs]
-cmd = [ "cargo", "build", "--color", "always" ]
-
-[package.metadata.typos.default]
-locale = "en-us"
-extend-ignore-re = [
-  "(?s)(#|//|--|%)\\s*typos: ignore start.*?\\n\\s*(#|//|--|%)\\s*typos: ignore end"
+[workspace.package]
+version = "0.15.7"
+edition = "2021"
+rust-version = "1.71.0"
+authors = [
+  "Simon Cozens",
+  "Caleb Maclennan <caleb@alerque.com>",
+  "Olivier Nicole",
+  "Didier Willis",
 ]
-extend-ignore-identifiers-re = [
-  "[a-f0-9]{7}",
-  "^.{2,3}$",
-  "^twords?",
-  "[Pp]arms",
-  "wdth",
-  "0fpt",
-  "^ot",
-  "^hb_ot",
-  "^HB_",
-  "^Tyre$",
-  "PoDoFo",
-  "_Flate",
-  "DEPENDEES",
-  "EPdf",
-  "FileAttachement"
-]
+homepage = "https://sile-typesetter.org"
+repository = "https://github.com/sile-typesetter/sile"
+license = "MIT"
 
-  [package.metadata.typos.default.extend-words]
-  craters = "creators"
-  neet = "need"
+[workspace]
+resolver = "2"
+members = [".", "rusile"]
 
-[package.metadata.typos.files]
-ignore-hidden = false
-extend-exclude = [
-  "/.git",
-  "CHANGELOG.md",
-  "build-aux/ax*",
-  "languages/*/hyphens*",
-  "lua-libraries/*",
-  "lua_modules/*",
-  "node_modules/*",
-  "tests/*.expected",
-  "cmake/*.diff",
-  "libtexpdf"
-]
+[package.edition]
+workspace = true
+
+[package.rust-version]
+workspace = true
+
+[package.authors]
+workspace = true
+
+[package.homepage]
+workspace = true
+
+[package.repository]
+workspace = true
+
+[package.license]
+workspace = true
 
 [[bin]]
 name = "sile"
-required-features = [ "cli" ]
-
-[features]
-default = [
-  "cli",
-  "bash",
-  "elvish",
-  "fish",
-  "manpage",
-  "powershell",
-  "zsh"
-]
-lua54 = [ "mlua/lua54" ]
-lua53 = [ "mlua/lua53" ]
-lua52 = [ "mlua/lua52" ]
-lua51 = [ "mlua/lua51" ]
-luajit = [ "mlua/luajit" ]
-vendored = [ "mlua/vendored" ]
-static = [ "rust-embed" ]
-variations = [ ]
-completions = [ "cli", "clap_complete" ]
-cli = [ "clap" ]
-bash = [ "completions" ]
-elvish = [ "completions" ]
-fish = [ "completions" ]
-manpage = [ "clap_mangen" ]
-powershell = [ "completions" ]
-zsh = [ "completions" ]
+required-features = ["cli"]
 
 [profile.release]
 lto = true
+
+[features]
+default = ["cli", "bash", "elvish", "fish", "manpage", "powershell", "zsh"]
+lua54 = ["mlua/lua54"]
+lua53 = ["mlua/lua53"]
+lua52 = ["mlua/lua52"]
+lua51 = ["mlua/lua51"]
+luajit = ["mlua/luajit"]
+vendored = ["mlua/vendored"]
+static = ["rust-embed"]
+variations = []
+completions = ["cli", "clap_complete"]
+cli = ["clap"]
+bash = ["completions"]
+elvish = ["completions"]
+fish = ["completions"]
+manpage = ["clap_mangen"]
+powershell = ["completions"]
+zsh = ["completions"]
+
+[workspace.dependencies.mlua]
+version = "0.10"
+features = ["anyhow"]
+
+[workspace.dependencies.sile]
+path = "."
+version = "0.15.7"
 
 [dependencies.anyhow]
 version = "1.0"
@@ -130,19 +81,19 @@ version = "1.0"
 [dependencies.clap]
 version = "4.4"
 optional = true
-features = [ "derive", "string", "wrap_help" ]
+features = ["derive", "string", "wrap_help"]
 
 [dependencies.mlua]
 workspace = true
-features = [ "macros" ]
+features = ["macros"]
 
 [dependencies.rust-embed]
 version = "8.0"
 optional = true
-features = [ "include-exclude" ]
+features = ["include-exclude"]
 
 [dependencies.harfbuzz-sys]
-version = "0.5"
+version = "0.6"
 optional = true
 
 [dependencies.semver]
@@ -159,9 +110,59 @@ optional = true
 [build-dependencies.clap]
 version = "4.4"
 optional = true
-features = [ "derive" ]
+features = ["derive"]
 
-[build-dependencies.vergen]
-version = "8.2"
+[build-dependencies.vergen-gix]
+version = "1.0"
 default-features = false
-features = [ "build", "cargo", "git", "gitoxide" ]
+features = ["build", "cargo", "rustc"]
+
+[package.metadata.docs.rs]
+features = ["luajit", "vendored"]
+
+[package.metadata.typos.default]
+locale = "en-us"
+extend-ignore-re = [
+  "(?s)(#|//|--|%)\\s*typos: ignore start.*?\\n\\s*(#|//|--|%)\\s*typos: ignore end",
+]
+extend-ignore-identifiers-re = [
+  "[a-f0-9]{7}",
+  "^.{2,3}$",
+  "^twords?",
+  "[Pp]arms",
+  "wdth",
+  "0fpt",
+  "^ot",
+  "^hb_ot",
+  "^HB_",
+  "^Tyre$",
+  "PoDoFo",
+  "_Flate",
+  "pointint",
+  "DEPENDEES",
+  "EPdf",
+  "FileAttachement",
+]
+
+[package.metadata.typos.default.extend-words]
+beveled = "bevelled"  # mathML uses en-gb spelling
+bevelled = "bevelled" # mathML uses en-gb spelling
+centred = "centred"   # Unicode character description
+craters = "creators"
+lamda = "lamda"       # Unicode character description
+neet = "need"
+
+[package.metadata.typos.files]
+ignore-hidden = false
+extend-exclude = [
+  "/.git",
+  "CHANGELOG.md",
+  "build-aux/ax*",
+  "languages/*/hyphens*",
+  "lua-libraries/*",
+  "lua_modules/*",
+  "node_modules/*",
+  "tests/*.expected",
+  "cmake/*.diff",
+  "libtexpdf",
+]

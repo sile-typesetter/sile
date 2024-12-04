@@ -2,11 +2,11 @@
 
 if FONT_DOWNLOAD_TOOLS
 
+# Target defined in Makefile.am, just adding a dependency here
+.sources: fonttooling
+
 .fonts: fonttooling
 	[ -h .fonts ] || mkdir -p $@
-
-.sources: fonttooling
-	[ -h .sources ] || mkdir -p $@
 
 fonttooling:
 	$(if $(BSDTAR),,$(error Please set BSDTAR with path or `./configure --enable-developer-mode`))

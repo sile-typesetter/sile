@@ -1,11 +1,11 @@
+local atoms = require("packages.math.atoms")
 local syms = require("packages.math.unicode-symbols")
 local bits = require("core.parserbits")
 
 local epnf = require("epnf")
 local lpeg = require("lpeg")
 
-local atomType = syms.atomType
-local symbolDefaults = syms.symbolDefaults
+local operatorDict = syms.operatorDict
 local symbols = syms.symbols
 
 -- Grammar to parse TeX-like math
@@ -16,11 +16,35 @@ local mathGrammar = function (_ENV)
    local _ = WS^0
    local eol = S"\r\n"
    local digit = R("09")
-   local natural = digit^1 / tostring
+   local natural = (
+      -- TeX doesn't really knows what a number in a formula is.
+      -- It handles any sequence of "ordinary" characters, including period(s):
+      -- See for instance The TeXbook, p. 132.
+      -- When later converting to MathML, we'll ideally want <mn>0.0123</mn>
+      -- instead of, say, <mn>0</mn><mo>.</mo><mn>0123</mn> (not only wrong
+      -- in essence, but also taking the risk of using a <mo> operator, then
+      -- considered as a punctuation, thus inserting a space)
+      -- We cannot be general, but checking MathJax and TeMML's behavior, they
+      -- are not general either in this regard.
+         digit^0 * P(".")^-1 * digit^1 + -- Decimal number (ex: 1.23, 0.23, .23)
+         digit^1 -- Integer (digits only, ex: 123)
+      ) / tostring
    local pos_natural = R("19") * digit^0 / tonumber
+
+   -- \left and \right delimiters = The TeXbook p. 148.
+   -- Characters with a delcode in TeX: The TeXbook p. 341
+   -- These are for use in \left...\right pairs.
+   -- We add the period (null delimiter) from p. 149-150.
+   -- We don't include the backslash here and handle it just after.
+   local delcode = S"([</|)]>."
+   -- Left/right is followed by a delimiter with delcode, or a command.
+   -- We use the delcode or backslash as terminator: commands such as
+   -- \rightarrow must still be allowed.
+   local leftright = function (s) return P(s) * (delcode + P"\\") end
+
    local ctrl_word = R("AZ", "az")^1
    local ctrl_symbol = P(1) - S"{}\\"
-   local ctrl_sequence_name = C(ctrl_word + ctrl_symbol) / 1
+   local ctrl_sequence_name = C(ctrl_word + ctrl_symbol) - leftright("left") - leftright("right") / 1
    local comment = (
          P"%" *
          P(1-eol)^0 *
@@ -44,7 +68,57 @@ local mathGrammar = function (_ENV)
    local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
    -- Simple amsmath-like \text command (no embedded math)
    local textgroup = P"{" * C((1-P"}")^1) * (P"}" + E("`}` expected"))
+   -- TeX \left...\right group
+   local delim =
+      -- Delimiter with delcode
+      C(delcode) / function (d)
+         if d ~= "." then
+            return {
+               id = "atom",
+               d
+            }
+         end
+         return nil
+      end
+      -- Delimiter as escaped \{ or \}
+      + P"\\" * C(S"{}") / function (d)
+         return {
+            id = "atom",
+            d
+         }
+      end
+      -- Delimiter as command ex. \langle
+      + P"\\" * C(ctrl_sequence_name) / 1 / function (cmd)
+         return {
+            id = "command",
+            command = cmd
+         }
+      end
+
+      local leftrightgroup = P"\\left" * delim * V"mathlist" * P"\\right" * delim
+         / function (left, subformula, right)
+            if not left and not right then
+               -- No delimiters, return the subformula as-is
+               return subformula
+            end
+            -- Rewrap the subformula in a flagged mathlist
+            local mrow = {
+               id = "mathlist",
+               options = {},
+               is_paired_explicit = true, -- Internal flag
+               subformula
+            }
+            if left then
+               table.insert(mrow, 1, left)
+            end
+            if right then
+               table.insert(mrow, right)
+            end
+            return mrow
+         end
+
    local element_no_infix =
+      leftrightgroup + -- Important: before command
       V"def" +
       V"text" + -- Important: before command
       V"command" +
@@ -107,16 +181,49 @@ local mathGrammar = function (_ENV)
          return pl.utils.unpack(t)
          end
 
+   -- TeX uses the regular asterisk (* = U+002A) in superscripts or subscript:
+   -- The TeXbook exercice 18.32 (p. 179, 330) for instance.
+   -- Fonts usually have the asterisk raised too high, so using the Unicode
+   -- asterisk operator U+2217 looks better (= \ast in TeX).
+   local astop = P"*" / luautf8.char(0x2217)
+   -- TeX interprets apostrophes as primes in math mode:
+   -- The TeXbook p. 130 expands ' to ^\prime commands and repeats the \prime
+   -- for multiple apostrophes.
+   -- The TeXbook p. 134: "Then there is the character ', which we know is used
+   -- as an abbreviation for \prime superscripts."
+   -- (So we are really sure superscript primes are really the intended meaning.)
+   -- Here we use the Unicode characters for primes, but the intent is the same.
+   local primes = (
+         P"''''" / luautf8.char(0x2057) + -- quadruple prime
+         P"'''" / luautf8.char(0x2034) + -- triple prime
+         P"''" / luautf8.char(0x2033) + -- double prime
+         P"'" / luautf8.char(0x2032) -- prime
+      ) / function (s)
+            return { id="atom", s }
+         end
+   local primes_sup = (
+         primes * _ * P"^" * _ * element_no_infix / function (p, e)
+            -- Combine the prime with the superscript in the same mathlist
+            if e.id == "mathlist" then
+               table.insert(e, 1, p)
+               return e
+            end
+            return { id="mathlist", p, e }
+         end
+         + primes -- or standalone primes
+      )
+
    START "math"
    math = V"mathlist" * EOF"Unexpected character at end of math code"
    mathlist = (comment + (WS * _) + element)^0
-   supsub = element_no_infix * _ * P"^" * _ * element_no_infix * _ *
-      P"_" * _ * element_no_infix
-   subsup = element_no_infix * _ * P"_" * _ * element_no_infix * _ *
-      P"^" * _ * element_no_infix
-   sup = element_no_infix * _ * P"^" * _ * element_no_infix
+   supsub = element_no_infix * _ * primes_sup                  * _ *  P"_" * _ * element_no_infix +
+            element_no_infix * _ * P"^" * _ * element_no_infix * _ *  P"_" * _ * element_no_infix
+   subsup = element_no_infix * _ * P"_" * _ * element_no_infix * primes_sup +
+            element_no_infix * _ * P"_" * _ * element_no_infix * _ * P"^" * _ * element_no_infix
+   sup =  element_no_infix * _ * primes_sup +
+          element_no_infix * _ * P"^" * _ * element_no_infix
    sub = element_no_infix * _ * P"_" * _ * element_no_infix
-   atom = natural + C(utf8code - S"\\{}%^_&") +
+   atom = natural + astop + C(utf8code - S"\\{}%^_&'") +
       (P"\\{" + P"\\}") / function (s) return string.sub(s, -1) end
    text = (
          P"\\text" *
@@ -260,22 +367,22 @@ local compileToStr = function (argEnv, mathlist)
    end
 end
 
-local function isOperatorKind (tree, typeOfAtom, typeOfSymbol)
+local function isOperatorKind (tree, typeOfAtom)
    if not tree then
       return false -- safeguard
    end
    if tree.command ~= "mo" then
       return false
    end
-   -- Case \mo[atom=big]{ops}
-   -- E.g. \mo[atom=big]{lim}
-   if tree.options and tree.options.atom == typeOfAtom then
-      return true
+   -- Case \mo[atom=xxx]{ops}
+   -- E.g. \mo[atom=op]{lim}
+   if tree.options and tree.options.atom then
+      return atoms.types[tree.options.atom] == typeOfAtom
    end
    -- Case \mo{ops} where ops is registered with the resquested type
    -- E.g. \mo{∑) or \sum
-   if tree[1] and symbolDefaults[tree[1]] and symbolDefaults[tree[1]].atom == typeOfSymbol then
-      return true
+   if tree[1] and operatorDict[tree[1]] and operatorDict[tree[1]].atom then
+      return operatorDict[tree[1]].atom == typeOfAtom
    end
    return false
 end
@@ -287,20 +394,32 @@ local function isMoveableLimits (tree)
    if tree.options and SU.boolean(tree.options.movablelimits, false) then
       return true
    end
-   if tree[1] and symbolDefaults[tree[1]] and SU.boolean(symbolDefaults[tree[1]].movablelimits, false) then
-      return true
+   if tree[1] and operatorDict[tree[1]] and operatorDict[tree[1]].forms then
+      -- Leap of faith: We have not idea yet which form the operator will take
+      -- in the final MathML.
+      -- In the MathML operator dictionary, some operators have a movablelimits
+      -- in some forms and not in others.
+      -- Ex. \Join (U+2A1D) and \bigtriangleleft (U+2A1E) have it prefix but not
+      -- infix, for some unspecified reason (?).
+      -- Assume that if at least one form has movablelimits, the operator is
+      -- considered to have movablelimits "in general".
+      for _, form in pairs(operatorDict[tree[1]].forms) do
+         if SU.boolean(form.movablelimits, false) then
+            return true
+         end
+      end
    end
    return false
 end
 local function isCloseOperator (tree)
-   return isOperatorKind(tree, "close", atomType.closeSymbol)
+   return isOperatorKind(tree, atoms.types.close)
 end
 local function isOpeningOperator (tree)
-   return isOperatorKind(tree, "open", atomType.openingSymbol)
+   return isOperatorKind(tree, atoms.types.open)
 end
 
 local function isAccentSymbol (symbol)
-   return symbolDefaults[symbol] and symbolDefaults[symbol].atom == atomType.accentSymbol
+   return operatorDict[symbol] and operatorDict[symbol].atom == atoms.types.accent
 end
 
 local function compileToMathML_aux (_, arg_env, tree)
@@ -355,6 +474,14 @@ local function compileToMathML_aux (_, arg_env, tree)
          else
             tree.command = "mrow"
          end
+      elseif tree.is_paired_explicit then
+         -- We already did the re-wrapping of open/close delimiters in the parser
+         -- via \left...\right, doing it would not harm but would add an extra mrow,
+         -- which we can avoid directly to keep the tree minimal.
+         -- N.B. We could have used the same flag, but it's easier to debug this way.
+         tree.is_paired = true
+         tree.is_paired_explicit = nil
+         tree.command = "mrow"
       else
          -- Re-wrap content from opening to closing operator in an implicit mrow,
          -- so stretchy operators apply to the correct span of content.
@@ -365,6 +492,7 @@ local function compileToMathML_aux (_, arg_env, tree)
                table.insert(stack, children)
                local mrow = {
                   command = "mrow",
+                  is_paired = true, -- Internal flag to mark this re-wrapped mrow
                   options = {},
                   child,
                }
@@ -428,7 +556,7 @@ local function compileToMathML_aux (_, arg_env, tree)
       end
       tree.options = {}
    -- Translate TeX-like sub/superscripts to `munderover` or `msubsup`,
-   -- depending on whether the base is a big operator
+   -- depending on whether the base is an operator with moveable limits.
    elseif tree.id == "sup" and isMoveableLimits(tree[1]) then
       tree.command = "mover"
    elseif tree.id == "sub" and isMoveableLimits(tree[1]) then
@@ -581,9 +709,6 @@ local function convertTexlike (_, content)
    return ret
 end
 
-registerCommand("%", {}, function ()
-   return { "%", command = "mo", options = {} }
-end)
 registerCommand("mi", { [1] = objType.str }, function (x)
    return x
 end)
@@ -603,21 +728,50 @@ compileToMathML(
   \def{sqrt}{\msqrt{#1}}
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
-
-  \def{lim}{\mo[movablelimits=true]{lim}}
+  \def{vec}{\mover[accent=true]{#1}{\rightarrow}}
 
   % From amsmath:
   \def{to}{\mo[atom=bin]{→}}
-  \def{gcd}{\mo[movablelimits=true]{gcd}}
-  \def{sup}{\mo[movablelimits=true]{sup}}
-  \def{inf}{\mo[movablelimits=true]{inf}}
-  \def{max}{\mo[movablelimits=true]{max}}
-  \def{min}{\mo[movablelimits=true]{min}}
+  \def{lim}{\mo[atom=op, movablelimits=true]{lim}}
+  \def{gcd}{\mo[atom=op, movablelimits=true]{gcd}}
+  \def{sup}{\mo[atom=op, movablelimits=true]{sup}}
+  \def{inf}{\mo[atom=op, movablelimits=true]{inf}}
+  \def{max}{\mo[atom=op, movablelimits=true]{max}}
+  \def{min}{\mo[atom=op, movablelimits=true]{min}}
   % Those use U+202F NARROW NO-BREAK SPACE in their names
-  \def{limsup}{\mo[movablelimits=true]{lim sup}}
-  \def{liminf}{\mo[movablelimits=true]{lim inf}}
-  \def{projlim}{\mo[movablelimits=true]{proj lim}}
-  \def{injlim}{\mo[movablelimits=true]{inj lim}}
+  \def{limsup}{\mo[atom=op, movablelimits=true]{lim sup}}
+  \def{liminf}{\mo[atom=op, movablelimits=true]{lim inf}}
+  \def{projlim}{\mo[atom=op, movablelimits=true]{proj lim}}
+  \def{injlim}{\mo[atom=op, movablelimits=true]{inj lim}}
+
+  % Other pre-defined operators from the TeXbook, p. 162:
+  % TeX of course defines them with \mathop, so we use atom=op here.
+  % MathML would use a <mi> here.
+  % But we use a <mo> so the atom type is handled
+  \def{arccos}{\mo[atom=op]{arccos}}
+  \def{arcsin}{\mo[atom=op]{arcsin}}
+  \def{arctan}{\mo[atom=op]{arctan}}
+  \def{arg}{\mo[atom=op]{arg}}
+  \def{cos}{\mo[atom=op]{cos}}
+  \def{cosh}{\mo[atom=op]{cosh}}
+  \def{cot}{\mo[atom=op]{cot}}
+  \def{coth}{\mo[atom=op]{coth}}
+  \def{csc}{\mo[atom=op]{csc}}
+  \def{deg}{\mo[atom=op]{deg}}
+  \def{det}{\mo[atom=op]{det}}
+  \def{dim}{\mo[atom=op]{dim}}
+  \def{exp}{\mo[atom=op]{exp}}
+  \def{hom}{\mo[atom=op]{hom}}
+  \def{ker}{\mo[atom=op]{ker}}
+  \def{lg}{\mo[atom=op]{lg}}
+  \def{ln}{\mo[atom=op]{ln}}
+  \def{log}{\mo[atom=op]{log}}
+  \def{Pr}{\mo[atom=op]{Pr}}
+  \def{sec}{\mo[atom=op]{sec}}
+  \def{sin}{\mo[atom=op]{sin}}
+  \def{sinh}{\mo[atom=op]{sinh}}
+  \def{tan}{\mo[atom=op]{tan}}
+  \def{tanh}{\mo[atom=op]{tanh}}
 
   % Standard spaces gleaned from plain TeX
   \def{thinspace}{\mspace[width=thin]}
@@ -666,14 +820,17 @@ compileToMathML(
   \def{mathtt}{\mi[mathvariant=monospace]{#1}}
 
   % Modulus operator forms
-  \def{bmod}{\mo{mod}}
-  \def{pmod}{\quad(\mo{mod} #1)}
+  % See Michael Downes & Barbara Beeton, "Short Math Guide for LaTeX"
+  % American Mathematical Society (v2.0, 2017), §7.1 p. 18
+  \def{bmod}{\mo[atom=bin]{mod}}
+  \def{pmod}{\quad(\mo[atom=ord]{mod}\>#1)}
+  \def{mod}{\quad \mo[atom=ord]{mod}\>#1}
+  \def{pod}{\quad(#1)}
 
   % Phantom commands from TeX/LaTeX
   \def{phantom}{\mphantom{#1}}
   \def{hphantom}{\mpadded[height=0, depth=0]{\mphantom{#1}}}
   \def{vphantom}{\mpadded[width=0]{\mphantom{#1}}}
-  %\mphantom[special=v]{#1}}}
 ]==],
    })
 )

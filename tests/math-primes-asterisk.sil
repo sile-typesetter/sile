@@ -1,0 +1,30 @@
+
+\begin[papersize=a5]{document}
+\use[module=packages.math]
+
+% TeX * = \ast
+\math[mode=display]{a * b \quad a \ast b \quad a^* \quad a^\ast \quad a^\ast_0}
+
+% TeX ' and '' and ''' expand to superscripted \prime
+\math[mode=display]{a' \quad a'' \quad a''' \quad  a'_0 \quad a''_0 \quad a'''_0}
+
+% TeX-like prime commands used in superscript lead to the same result
+\math[mode=display]{a^\prime \quad a^\dprime \quad a^\prime_0 \quad a^\dprime_0}
+
+% TeX allows ' etc. with another superscript
+\math[mode=display]{b'^2 \quad b''^2 \quad b'''^2 \quad b'^2_0 \quad b''^2_0 \quad b'''^2_0}
+% The TeXbook p. 130 exercise 16.4 moreover combines ' with superscript and subscript
+% The rule is not detailed, but Knuth's example speaks for itself:
+\math[mode=display]{f'[g(x)]g'(x) \quad y_1'+y_2'' \quad y'_1+y''_2 \quad y'''_3+g'^2}
+% Knuth's last example implies the following:
+\math[mode=display]{
+       x'^2     = x^{\prime2} % sup (atoms)
+ \quad x'^{n+1} = x^{\prime n+1} % sup (expression)
+ \quad x_0'^2   = x_0^{\prime2} % subsup
+ \quad x'^2_1   = x^{\prime2}_1 % supsub
+}
+
+% Check one level up
+\math[mode=display]{x'^{y'}}
+
+\end{document}

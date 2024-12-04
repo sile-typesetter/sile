@@ -56,6 +56,12 @@ function package:_init ()
    self:loadPackage("rules")
    self:loadPackage("url")
    self:loadPackage("verbatim")
+   self.class:registerPostinit(function ()
+      -- Override the url package which styles URLs as code, something Pandoc content tends to double up on
+      self:registerCommand("urlstyle", function (_, content)
+         SILE.process(content)
+      end)
+   end)
 end
 
 function package:registerCommands ()
@@ -280,7 +286,7 @@ function package:registerCommands ()
 
    self:registerCommand("ListItemTerm", function (_, content)
       SILE.call("smallskip")
-      SILE.call("strong", content)
+      SILE.call("strong", {}, content)
       SILE.typesetter:typeset(" : ")
    end)
 

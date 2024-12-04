@@ -1,6 +1,12 @@
 SILE = require("core.sile")
 
 describe("Language module", function ()
+   it("should set env locale", function ()
+      SILE.call("language", { main = "tr" })
+      local syslang = os.getenv("LANG")
+      assert.is.equal("tr", syslang)
+   end)
+
    describe("Norwegian", function ()
       local hyphenate = SILE.showHyphenationPoints
 

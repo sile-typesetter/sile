@@ -371,40 +371,42 @@ function package:registerCommands ()
 
    -- Homogenizing the appearance of blocks of code
    self:registerCommand("autodoc:codeblock", function (_, content)
+      -- The way we use this command in the SILE manual is both on it's own *and* nested inside
+      -- a \raw environment. For this purpose we don't care about and don't want to bother with
+      -- making sure the leading and trailing whitespace is minimized in the SIL source, so
+      -- we trim it off here.
+      content = SU.ast.trimSubContent(content)
       SILE.typesetter:leaveHmode()
-      local lskip = SILE.settings:get("document.lskip") or SILE.types.node.glue()
-      local rskip = SILE.settings:get("document.rskip") or SILE.types.node.glue()
+      local parindent = SILE.settings:get("document.parindent"):absolute()
+      local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()).width:absolute() + parindent
+      local rskip = (SILE.settings:get("document.rskip") or SILE.types.node.glue()).width:absolute() + parindent
       SILE.settings:temporarily(function ()
          -- Note: We avoid using the verbatim environment and simplify things a bit
          -- (and try to better enforce novbreak points of insertion)
          SILE.call("verbatim:font")
          SILE.call("language", { main = "und" })
          -- Rather than absolutizing 4 different values, just do it once and cache it
-         local bs = SILE.types.measurement("1bs"):absolute()
-         local ex = SILE.types.measurement("1ex"):absolute()
-         local pushline = function ()
+         local pushline = function (offset)
             colorWrapper("note", function ()
-               SILE.call("novbreak")
-               SILE.typesetter:pushVglue(-bs)
-               SILE.call("novbreak")
-               SILE.call("fullrule", { thickness = "0.5pt" })
-               SILE.call("novbreak")
-               SILE.typesetter:pushVglue(-bs-ex)
-               SILE.call("novbreak")
+               SILE.call("raise", { height = offset }, function ()
+                  SILE.call("hrule", { thickness = "0.5pt", width = "100%lw" })
+               end)
             end)
          end
          SILE.settings:set("typesetter.parseppattern", "\n")
          SILE.settings:set("typesetter.obeyspaces", true)
-         SILE.settings:set("document.lskip", SILE.types.node.glue(lskip.width.length))
-         SILE.settings:set("document.rskip", SILE.types.node.glue(rskip.width.length))
+         SILE.settings:set("document.lskip", SILE.types.node.glue(lskip))
+         SILE.settings:set("document.rskip", SILE.types.node.glue(rskip))
          SILE.settings:set("document.parindent", SILE.types.node.glue())
          SILE.settings:set("document.parskip", SILE.types.node.vglue())
          SILE.settings:set("document.spaceskip", SILE.types.length("1spc"))
          SILE.settings:set("shaper.variablespaces", false)
          colorWrapper("codeblock", function ()
-            pushline()
+            pushline("0.2ex")
+            SILE.call("novbreak")
             SILE.process(content)
-            pushline()
+            SILE.call("novbreak")
+            pushline("1ex")
          end)
          SILE.typesetter:leaveHmode()
       end)

@@ -18,12 +18,15 @@
   rustPlatform,
 
   # buildInputs
+  cargo-edit,
   lua,
   harfbuzz,
   icu,
   fontconfig,
   libiconv,
+  libxslt,
   stylua,
+  taplo,
   typos,
   darwin,
   # FONTCONFIG_FILE
@@ -43,6 +46,10 @@ let
     ps:
     with ps;
     [
+      # used for module detection, also recommended at runtime for 3rd party module installation
+      luarocks
+
+      # modules used at runtime
       cassowary
       cldr
       fluent
@@ -113,12 +120,15 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs =
     [
+      cargo-edit
       luaEnv
       harfbuzz
       icu
       fontconfig
       libiconv
+      libxslt
       stylua
+      taplo
       typos
     ]
     ++ lib.optionals stdenv.hostPlatform.isDarwin [

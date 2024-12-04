@@ -41,11 +41,16 @@ task:
     - git fetch --prune --tags ||:
     - ./bootstrap.sh
   configure_script: |
-    ./configure MAKE=gmake \
-      --enable-developer-mode LDOC=false LUAROCKS=false LUACHECK=false BUSTED=false DELTA=cat PDFINFO=false NIX=false NPM=false DOCKER=false STYLUA=false TYPOS=false \
+    ./configure \
+        DOCKER=false \
+        MAKE=gmake \
+        PDFINFO=false \
+      --enable-developer-mode \
+      --without-developer-tools \
       --disable-font-variations \
       --with-system-lua-sources \
       --with-system-luarocks \
+      --with-luarocks=luarocks51 \
       --without-manual
   make_script:
     - gmake all

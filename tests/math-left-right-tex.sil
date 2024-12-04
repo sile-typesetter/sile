@@ -1,0 +1,39 @@
+
+\begin[papersize=a5]{document}
+\nofolios
+\neverindent
+\use[module=packages.math]
+
+% Without \left...\right construct = default open-close pairing
+\begin[mode=display]{math}
+\Gamma(\frac{\zeta}{2}) + (x+1)^2
+\end{math}
+
+% With \left...\right construct = explicit open-close pairing
+\begin[mode=display]{math}
+\Gamma\left(\frac{\zeta}{2}\right) + \left(x+1\right)^2
+\end{math}
+
+% Left-right with unpaired atom, incl. null delimiter cases
+\begin[mode=display]{math}
+      \left|\frac{\zeta}{2}\right|
+\quad \left|\frac{\zeta}{2}\right.
+\quad \left.\frac{\zeta}{2}\right|
+\quad \left.\frac{\zeta}{2}\right.
+\end{math}
+
+% Left-right with paired command
+\begin[mode=display]{math}
+      \left\langle\frac{\zeta}{2}\right\rangle
+\quad \left\langle\frac{\zeta}{2}\right.
+\quad \left.\frac{\zeta}{2}\right\rangle
+\end{math}
+
+% Left-right with unpaired command
+\begin[mode=display]{math}
+      \left\}\frac{\zeta}{2}\right\{
+\quad \left]\frac{\zeta}{2}\right[
+\quad \left\rangle\frac{\zeta}{2}\right\langle
+\end{math}
+
+\end{document}

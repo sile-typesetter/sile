@@ -21,8 +21,11 @@ AC_PROG_GREP
 AC_PROG_OBJC
 AC_PROG_SED
 QUE_PROGVAR([cmp])
+QUE_PROGVAR([diff])
 QUE_PROGVAR([find])
+QUE_PROGVAR([head])
 QUE_PROGVAR([jq])
+QUE_PROGVAR([luarocks])
 QUE_PROGVAR([pdfinfo])
 QUE_PROGVAR([sort])
 QUE_PROGVAR([xargs])
@@ -172,25 +175,29 @@ AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
 # Required for downloading fonts for the manual and for tests
 # Since the source tarball includes a prebuilt manual we only need this for Git source builds
 AM_COND_IF([FONT_DOWNLOAD_TOOLS], [
-    QUE_PROGVAR([curl])
     QUE_PROGVAR([bsdtar])
+    QUE_PROGVAR([curl])
 ])
 
 AM_COND_IF([DEVELOPER_MODE], [
+    AX_WITH_PROG([DELTA], [delta], [cat])
+    AX_WITH_PROG([PERL], [perl])
+])
+
+AM_COND_IF([DEVELOPER_TOOLS], [
     QUE_PROGVAR([busted])
+    QUE_PROGVAR([cargosetversion], [cargo-set-version])
     QUE_PROGVAR([curl])
-    QUE_PROGVAR([delta])
-    QUE_PROGVAR([diff])
-    QUE_PROGVAR([head])
     QUE_PROGVAR([ldoc])
     QUE_PROGVAR([luacheck])
-    QUE_PROGVAR([luarocks])
     QUE_PROGVAR([nix])
     QUE_PROGVAR([npm])
     QUE_PROGVAR([perl])
     QUE_PROGVAR([stylua])
+    QUE_PROGVAR([taplo])
     QUE_PROGVAR([tr])
     QUE_PROGVAR([typos])
+    QUE_PROGVAR([xsltproc])
 ])
 
 AX_PROG_LUA([5.1], [], [], [], [prefer])
@@ -199,37 +206,32 @@ AX_LUA_LIBS
 
 AM_COND_IF([SYSTEM_LUAROCKS], [
     AS_IF([test "$LUA_SHORT_VERSION" -lt 52], [
-        AM_COND_IF([LUAJIT], [], [
-            AX_LUA_MODULE([bit32], [bit32])
-        ])
+        AM_COND_IF([LUAJIT], [], [AX_LUA_MODULE(bit32)])
     ])
-    AX_LUA_MODULE([cassowary], [cassowary])
-    AS_IF([test "$LUA_SHORT_VERSION" -lt 53], [
-        AX_LUA_MODULE([compat53], [compat53])
-    ])
-    AX_LUA_MODULE([cldr], [cldr])
-    AX_LUA_MODULE([fluent], [fluent])
-    AX_LUA_MODULE([linenoise], [linenoise])
-    AX_LUA_MODULE([loadkit], [loadkit])
-    AX_LUA_MODULE([lpeg], [lpeg])
-    AX_LUA_MODULE([zlib], [lua-zlib])
-    AX_LUA_MODULE([cliargs], [lua_cliargs])
-    AX_LUA_MODULE([epnf], [luaepnf])
-    AX_LUA_MODULE([lxp], [luaexpat])
-    AX_LUA_MODULE([lfs], [luafilesystem])
-    AX_LUA_MODULE([repl], [luarepl])
-    AX_LUA_MODULE([ssl], [luasec])
-    AX_LUA_MODULE([socket], [luasocket])
-    AX_LUA_MODULE([lua-utf8], [luautf8])
-    AX_LUA_MODULE([pl], [penlight])
-    AX_LUA_MODULE([vstruct], [vstruct])
+    AX_LUA_MODULE(cassowary)
+    AS_IF([test "$LUA_SHORT_VERSION" -lt 53], [AX_LUA_MODULE(compat53)])
+    AX_LUA_MODULE(cldr)
+    AX_LUA_MODULE(fluent)
+    AX_LUA_MODULE(linenoise)
+    AX_LUA_MODULE(loadkit)
+    AX_LUA_MODULE(lpeg)
+    AX_LUA_MODULE(lua-zlib, zlib)
+    AX_LUA_MODULE(lua_cliargs, cliargs)
+    AX_LUA_MODULE(luaepnf, epnf)
+    AX_LUA_MODULE(luaexpat, lxp)
+    AX_LUA_MODULE(luafilesystem, lfs)
+    AX_LUA_MODULE(luafilesystem)
+    AX_LUA_MODULE(luarepl, repl)
+    AX_LUA_MODULE(luasec, ssl)
+    AX_LUA_MODULE(luasocket, socket)
+    AX_LUA_MODULE(luautf8, lua-utf8)
+    AX_LUA_MODULE(penlight, pl)
+    AX_LUA_MODULE(vstruct)
 ], [
-    QUE_PROGVAR([luarocks])
     QUE_PROGVAR([git]) # required for luarocks to install zlib rock
 ])
 
 QUE_FONT(Gentium Plus)
-
 
 AC_SUBST([APPKIT_TRUE])
 AC_SUBST([FONTCONFIG_TRUE])
