@@ -58,6 +58,7 @@ end
 \end{raw}
 
 If you want to specify what font the verbatim environment should use, you can redefine the \autodoc:command{\verbatim:font} command.
+Unless otherwise set, the default verbatim font will be \em{Hack}.
 For example you could change it from XML like this:
 
 \begin[type=autodoc:codeblock]{raw}
