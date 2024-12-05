@@ -14,7 +14,7 @@ local atomType = {
    over = 8, -- Unused for now (used for overlines etc. in The TeXbook)
    under = 9, -- Unused for now (used for underlines etc. in The TeXbook)
    accent = 10,
-   botaccent = 11, -- Unused for now but botaccent is encoded in our dictionary
+   botaccent = 11,
 }
 
 return { types = atomType }
