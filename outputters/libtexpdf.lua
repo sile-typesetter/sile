@@ -68,12 +68,13 @@ end
 function outputter._endHook (_) end
 
 function outputter:finish ()
-   self:_ensureInit()
-   pdf.endpage()
-   self:runHooks("prefinish")
-   pdf.finish()
-   started = false
-   lastkey = nil
+   if started then
+      pdf.endpage()
+      self:runHooks("prefinish")
+      pdf.finish()
+      started = false
+      lastkey = nil
+   end
 end
 
 function outputter.getCursor (_)
