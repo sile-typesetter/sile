@@ -181,10 +181,10 @@ local function runEvals (evals, arg)
    for _, snippet in ipairs(evals) do
       local pId = SILE.traceStack:pushText(snippet)
       local status, func = pcall(load, snippet)
-      if status then
+      if status and type(func) == "function" then
          func()
       else
-         SU.error(("Error parsing code provided in --%s snippet: %s"):format(arg, func))
+         SU.error(("Error parsing code provided in --%s snippet: %s"):format(arg, snippet))
       end
       SILE.traceStack:pop(pId)
    end
