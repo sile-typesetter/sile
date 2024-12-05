@@ -56,7 +56,7 @@ extern "C-unwind" {
 /// Register a Lua function in the loaders/searchers table to return C modules linked into the CLI
 /// binary and another to return embedded Lua resources as Lua modules. See discussion in mlua:
 /// https://github.com/khvzak/mlua/discussions/322
-pub fn inject_embedded_loaders(lua: &Lua) {
+pub fn inject_embedded_loaders(lua: Lua) -> crate::Result<Lua> {
     let package: LuaTable = lua.globals().get("package").unwrap();
     let loaders: LuaTable = match package.get("loaders").unwrap() {
         LuaValue::Table(loaders) => loaders,
@@ -164,4 +164,5 @@ pub fn inject_embedded_loaders(lua: &Lua) {
         })
         .unwrap();
     loaders.push(embedded_ftl_loader).unwrap();
+    Ok(lua)
 }

@@ -78,6 +78,9 @@ version = "0.15.7"
 [dependencies.anyhow]
 version = "1.0"
 
+[dependencies.snafu]
+version = "0.8"
+
 [dependencies.clap]
 version = "4.4"
 optional = true
