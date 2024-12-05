@@ -247,7 +247,6 @@ AC_SUBST([ICU_LIBS])
 
 case $host_os in
     darwin*)
-        LUAROCKSARGS="EXPAT_DIR=/usr/local/opt/expat OPENSSL_DIR=/usr/local/opt/openssl ZLIB_DIR=/usr/local/opt/zlib"
         SHARED_LIB_EXT="so"
         ;;
     cygwin*|mingw*)
