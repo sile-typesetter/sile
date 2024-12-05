@@ -39,6 +39,12 @@ function package:registerCommands ()
    end)
 end
 
+function package:registerRawHandlers ()
+   self:registerRawHandler("verbatim", function (options, content)
+      SILE.call("verbatim", options, { content[1] })
+   end)
+end
+
 package.documentation = [[
 \begin{document}
 The \autodoc:package{verbatim} package is useful when quoting pieces of computer code and other text for which formatting is significant.
