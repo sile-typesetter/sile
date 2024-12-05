@@ -178,9 +178,11 @@ if FONT_VARIATIONS
 CARGO_FEATURE_ARGS += --features variations
 endif
 
-rusile.so: $(rusile_so_SOURCES) $(bin_PROGRAMS)
+@builddir@/target/@RUST_TARGET_SUBDIR@/librusile.$(SHARED_LIB_EXT): $(rusile_so_SOURCES) $(bin_PROGRAMS)
 	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) --target $(CARGO_TARGET_TRIPLE) $(RUSILE_FEATURE_ARG) $(CARGO_RELEASE_ARGS) -p rusile
-	$(INSTALL) @builddir@/target/@RUST_TARGET_SUBDIR@/lib$@ $@
+
+rusile.so: @builddir@/target/@RUST_TARGET_SUBDIR@/librusile.$(SHARED_LIB_EXT)
+	$(INSTALL) $< $@
 
 DEPDIR := .deps
 LOCALFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf

@@ -247,7 +247,7 @@ AC_SUBST([ICU_LIBS])
 
 case $host_os in
     darwin*)
-        SHARED_LIB_EXT="so"
+        SHARED_LIB_EXT="dylib"
         ;;
     cygwin*|mingw*)
         SHARED_LIB_EXT="dll"
