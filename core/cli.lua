@@ -90,7 +90,7 @@ cli.parseArguments = function ()
       table.insert(SILE.input.evaluateAfters, statement)
    end
    if opts.fontmanager then
-      SILE.forceFontManager = opts.fontmanager
+      SILE.input.fontmanager = opts.fontmanager
    end
    if opts.makedeps then
       SILE.makeDeps = require("core.makedeps")

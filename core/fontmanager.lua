@@ -6,8 +6,8 @@ end)
 
 fontManager.face = function (self, ...)
    local manager
-   if SILE.forceFontManager then
-      manager = self[SILE.forceFontManager]
+   if SILE.input.fontmanager then
+      manager = self[SILE.input.fontmanager]
    else
       manager = self.macfonts and self.macfonts or self.fontconfig
    end

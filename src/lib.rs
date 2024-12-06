@@ -136,7 +136,7 @@ pub fn run(
         sile_input.set("backend", backend)?;
     }
     if let Some(fontmanager) = fontmanager {
-        sile.set("fontmanager", fontmanager)?;
+        sile_input.set("fontmanager", fontmanager)?;
     }
     if let Some(class) = class {
         sile_input.set("class", class)?;
