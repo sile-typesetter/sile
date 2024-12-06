@@ -56,7 +56,7 @@ endif
 $(MANUAL): $(FIGURES)
 
 BUILT_SOURCES_LUA = core/features.lua core/pathsetup.lua core/version.lua
-RUSILE_SOURCES = rusile/Cargo.toml rusile/src/lib.rs
+RUSILE_SOURCES = rusile/Cargo.toml rusile/src/lib.rs build-aux/module.rs
 
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
