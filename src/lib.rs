@@ -133,7 +133,7 @@ pub fn run(
         sile_input.set("evaluateAfters", expressions)?;
     }
     if let Some(backend) = backend {
-        sile.set("backend", backend)?;
+        sile_input.set("backend", backend)?;
     }
     if let Some(fontmanager) = fontmanager {
         sile.set("fontmanager", fontmanager)?;

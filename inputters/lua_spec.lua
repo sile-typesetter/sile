@@ -1,5 +1,5 @@
 SILE = require("core.sile")
-SILE.backend = "dummy"
+SILE.input.backend = "dummy"
 SILE.init()
 SILE.utilities.error = error
 

@@ -1,5 +1,5 @@
 SILE = require("core.sile")
-SILE.backend = "debug"
+SILE.input.backend = "debug"
 SILE.forceFontManager = "fontconfig"
 SILE.init()
 

@@ -1,6 +1,6 @@
 SILE = require("core.sile")
 
-SILE.backend = "dummy"
+SILE.input.backend = "dummy"
 SILE.init()
 
 local base = require("classes.base")
