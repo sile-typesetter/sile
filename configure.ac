@@ -11,6 +11,23 @@ QUE_TRANSFORM_PACKAGE_NAME
 QUE_DEVELOPER_MODE
 QUE_DIST_CHECKSUMS
 
+AC_CANONICAL_HOST
+
+# Load Rust module bits, early since it stuffs rules in aminclude.am
+case $host_os in
+    darwin*)
+        SHARED_LIB_EXT="dylib"
+        ;;
+    cygwin*|mingw*)
+        SHARED_LIB_EXT="dll"
+        ;;
+    *)
+        SHARED_LIB_EXT="so"
+        ;;
+esac
+AC_SUBST([SHARED_LIB_EXT])
+QUE_RUST_MODULE([rusile])
+
 # Extend the QUE checksums feature with support for the PDF manual
 SILE_DIST_CHECKSUMS
 
@@ -244,19 +261,6 @@ AC_SUBST([HARFBUZZ_SUBSET_LIBS])
 AC_SUBST([ICU_TRUE])
 AC_SUBST([ICU_CFLAGS])
 AC_SUBST([ICU_LIBS])
-
-case $host_os in
-    darwin*)
-        SHARED_LIB_EXT="dylib"
-        ;;
-    cygwin*|mingw*)
-        SHARED_LIB_EXT="dll"
-        ;;
-    *)
-        SHARED_LIB_EXT="so"
-        ;;
-esac
-AC_SUBST([SHARED_LIB_EXT])
 AC_SUBST([LUAROCKSARGS])
 
 # Avoid need for `--datarootdir=$(cd ..; pwd)` hack to run locally for

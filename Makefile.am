@@ -56,7 +56,6 @@ endif
 $(MANUAL): $(FIGURES)
 
 BUILT_SOURCES_LUA = core/features.lua core/pathsetup.lua core/version.lua
-RUSILE_SOURCES = rusile/Cargo.toml rusile/src/lib.rs build-aux/module.rs
 
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
@@ -67,8 +66,6 @@ EXTRA_sile_SOURCES =
 if !EMBEDDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = $(BUILT_SOURCES_LUA) $(LUAMODULES)
-pkglib_LIBRARIES = rusile.so
-rusile_so_SOURCES = $(RUSILE_SOURCES)
 endif !EMBEDDED_RESOURCES
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
@@ -137,7 +134,7 @@ $(CARGO_BIN): justenough/.libs/justenoughlibtexpdf.a
 $(CARGO_BIN): justenough/.libs/svg.a
 $(CARGO_BIN): libtexpdf/.libs/libtexpdf.a
 if !EMBEDDED_RESOURCES
-$(CARGO_BIN): rusile.so
+$(CARGO_BIN): rusile.$(SHARED_LIB_EXT)
 endif !EMBEDDED_RESOURCES
 
 src/embed-includes.rs: Makefile-distfiles
@@ -164,7 +161,7 @@ else
 MLUAVER = lua$(LUA_SHORT_VERSION)
 endif
 CARGO_FEATURE_ARGS = --features $(MLUAVER)
-RUSILE_FEATURE_ARG = --features $(MLUAVER)
+rusile_FEATURE_ARGS = --features $(MLUAVER)
 
 if !SYSTEM_LUA_SOURCES
 CARGO_FEATURE_ARGS += --features vendored
@@ -177,12 +174,6 @@ endif
 if FONT_VARIATIONS
 CARGO_FEATURE_ARGS += --features variations
 endif
-
-@builddir@/target/@RUST_TARGET_SUBDIR@/librusile.$(SHARED_LIB_EXT): $(rusile_so_SOURCES) $(bin_PROGRAMS)
-	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) --target $(CARGO_TARGET_TRIPLE) $(RUSILE_FEATURE_ARG) $(CARGO_RELEASE_ARGS) -p rusile
-
-rusile.so: @builddir@/target/@RUST_TARGET_SUBDIR@/librusile.$(SHARED_LIB_EXT)
-	$(INSTALL) $< $@
 
 DEPDIR := .deps
 LOCALFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf

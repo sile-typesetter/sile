@@ -44,3 +44,14 @@ $($SED -E "s/@PACKAGE_VAR@/$PACKAGE_VAR/g;s/@PACKAGE_NAME@/$PACKAGE_NAME/g" buil
 ])dnl
 
 ])
+
+AC_DEFUN([QUE_RUST_MODULE], [
+
+        AC_REQUIRE([AX_AM_MACROS])
+        AX_ADD_AM_MACRO([dnl
+EXTRA_DIST += build-aux/que_rust_module.am
+
+$($SED -E "s/@MODULE@/$1/g;s/@SHARED_LIB_EXT@/$SHARED_LIB_EXT/g" build-aux/que_rust_module.am)
+])dnl
+
+])
