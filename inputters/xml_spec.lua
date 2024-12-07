@@ -36,6 +36,11 @@ describe("#XML #inputter", function ()
          assert.is.equal("bar", t[1])
       end)
 
+      it("commands should parse only named arguments", function ()
+         local t = inputter:parse([[<foo baz="qiz">bar</foo>]])[1][1]
+         assert.is.equal(0, #t.options)
+      end)
+
       -- it("commands with quoted arg with escape", function()
       --   local t = inputter:parse([[<foo baz="qiz \"qiz\"">bar</bar>]])
       --   assert.is.equal("foo", t.command)
