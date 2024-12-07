@@ -2,6 +2,7 @@ AC_PREREQ([2.69])
 AC_INIT([sile], [m4_esyscmd(build-aux/git-version-gen .tarball-version)], [caleb@alerque.com])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux])
+AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([foreign tar-pax dist-zstd dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
@@ -10,23 +11,6 @@ QUE_GIT_VERSION
 QUE_TRANSFORM_PACKAGE_NAME
 QUE_DEVELOPER_MODE
 QUE_DIST_CHECKSUMS
-
-AC_CANONICAL_HOST
-
-# Load Rust module bits, early since it stuffs rules in aminclude.am
-case $host_os in
-    darwin*)
-        SHARED_LIB_EXT="dylib"
-        ;;
-    cygwin*|mingw*)
-        SHARED_LIB_EXT="dll"
-        ;;
-    *)
-        SHARED_LIB_EXT="so"
-        ;;
-esac
-AC_SUBST([SHARED_LIB_EXT])
-QUE_RUST_MODULE([rusile])
 
 # Extend the QUE checksums feature with support for the PDF manual
 SILE_DIST_CHECKSUMS
@@ -54,10 +38,23 @@ RANLIB=:
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
-AC_CANONICAL_HOST
-
 QUE_RUST_BOILERPLATE
 QUE_DOCKER_BOILERPLATE
+
+# Load Rust module bits, early since it stuffs rules in aminclude.am
+case $target_os in
+    darwin*)
+        SHARED_LIB_EXT="dylib"
+        ;;
+    cygwin*|mingw*)
+        SHARED_LIB_EXT="dll"
+        ;;
+    *)
+        SHARED_LIB_EXT="so"
+        ;;
+esac
+AC_SUBST([SHARED_LIB_EXT])
+QUE_RUST_MODULE([rusile])
 
 AM_CONDITIONAL([SHARED], [test "x$enable_shared" = "xyes"])
 AM_CONDITIONAL([STATIC], [test "x$enable_static" = "xyes"])
@@ -128,7 +125,7 @@ AM_COND_IF([MANUAL], [
 
 AC_MSG_CHECKING([for OS X])
 have_appkit=no
-case $host_os in
+case $target_os in
     darwin*)
         AC_MSG_RESULT([yes])
         AC_MSG_CHECKING([for AppKit works])
