@@ -188,7 +188,8 @@ jobs:
             --with-system-lua-sources \
             --with-manual
           echo "VERSION=$(./build-aux/git-version-gen .tarball-version)" >> $GITHUB_ENV
-          echo "MAKEFLAGS=-j$(sysctl -n hw.ncpu) -Otarget" >> $GITHUB_ENV
+          # Note don't use -Otarget for macOS, Homebrew's old make is too buggy
+          echo "MAKEFLAGS=-j$(sysctl -n hw.ncpu)" >> $GITHUB_ENV
       - name: Make
         run: |
           make
