@@ -73,7 +73,7 @@ cli.parseArguments = function ()
       SILE.input.filenames = opts.INPUTS
    end
    if opts.backend then
-      SILE.backend = opts.backend
+      SILE.input.backend = opts.backend
    end
    if opts.class then
       SILE.input.class = opts.class
@@ -90,7 +90,7 @@ cli.parseArguments = function ()
       table.insert(SILE.input.evaluateAfters, statement)
    end
    if opts.fontmanager then
-      SILE.forceFontManager = opts.fontmanager
+      SILE.input.fontmanager = opts.fontmanager
    end
    if opts.makedeps then
       SILE.makeDeps = require("core.makedeps")

@@ -1,6 +1,6 @@
 SILE = require("core.sile")
 -- Using French below requires the shaper to be initialized
-SILE.backend = "debug"
+SILE.input.backend = "debug"
 SILE.init()
 
 describe("Hyphenation module", function ()

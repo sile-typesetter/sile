@@ -1,6 +1,6 @@
 SILE = require("core.sile")
-SILE.backend = "debug"
-SILE.forceFontManager = "fontconfig"
+SILE.input.backend = "debug"
+SILE.input.fontmanager = "fontconfig"
 SILE.init()
 
 -- These tests depend on loading specific fonts from our test fixtures. Running
