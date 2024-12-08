@@ -3,7 +3,7 @@ AC_DEFUN_ONCE([QUE_DOCKER_BOILERPLATE], [
         QUE_TRANSFORM_PACKAGE_NAME
 
         AC_MSG_NOTICE([checking for tools used by automake to build Docker projects])
-        AC_PROG_INSTALL
+        AC_REQUIRE([AC_PROG_INSTALL])
         AM_COND_IF([DEVELOPER_MODE], [
                 QUE_PROGVAR([docker])
         ])
