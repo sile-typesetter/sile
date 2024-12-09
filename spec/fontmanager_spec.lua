@@ -32,7 +32,6 @@ describe("The fontconfig manager", function ()
 end)
 
 describe("The macfonts manager", function ()
-
    if not SILE.fontManager.macfonts then
       return
    end
