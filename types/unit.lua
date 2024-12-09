@@ -223,8 +223,8 @@ unittypes["zw"] = {
    relative = true,
    definition = function (v)
       local zenkakuchar = SILE.settings:get("document.zenkakuchar")
-      local measurable, zenkaku = pcall(SILE.shaper.measureChar, SILE.shaper, zenkakuchar)
-      if not measurable then
+      local measurable, zenkaku, found = pcall(SILE.shaper.measureChar, SILE.shaper, zenkakuchar)
+      if not found or not measurable then
          SU.warn(([[
             Zenkaku width (全角幅) unit zw is falling back to 1em == 1zw as we cannot measure %s
 
@@ -232,7 +232,7 @@ unittypes["zw"] = {
             has it.
          ]]):format(zenkakuchar))
       end
-      local width = measurable and zenkaku.width or SILE.settings:get("font.size")
+      local width = found and measurable and zenkaku.width or SILE.settings:get("font.size")
       return v * width
    end,
 }
