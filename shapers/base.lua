@@ -67,8 +67,18 @@ function shaper:measureChar (char)
    local options = SILE.font.loadDefaults({})
    options.tracking = SILE.settings:get("shaper.tracking")
    local items = self:shapeToken(char, options)
-   if #items > 0 then
-      return { height = items[1].height, width = items[1].width, depth = items[1].depth }
+   SU.dump({ char, items })
+   if #items >= 1 then
+      local item = items[1]
+      if item.name == ".notdef" then
+         SU.warn(
+            ("No glyph available for '%s' in %s, returning measurements of '.notdef' instead"):format(
+               char,
+               options.family
+            )
+         )
+      end
+      return { height = item.height, width = item.width, depth = item.depth, name = item.name }
    else
       SU.error("Unable to measure character", char)
    end

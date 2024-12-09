@@ -224,7 +224,7 @@ unittypes["zw"] = {
    definition = function (v)
       local zenkakuchar = SILE.settings:get("document.zenkakuchar")
       local measurable, zenkaku = pcall(SILE.shaper.measureChar, SILE.shaper, zenkakuchar)
-      if not measurable then
+      if not measurable or zenkaku.name == ".notdef" then
          SU.warn(([[
             Zenkaku width (全角幅) unit zw is falling back to 1em == 1zw as we cannot measure %s
 
