@@ -232,7 +232,7 @@ AC_DEFUN([AX_PROG_LUA],
       test "x$with_luajit" != 'xno' && with_luajit=yes
     ],
     [
-      AC_MSG_ERROR([Unrecognized value for ENABLE_LUAJIT])
+      m4_if($5, [], [], m4_fatal([$0: invalid luajit policy $5. Valid policies: never, always, allow, or prefer]))
     ]
   )
   AM_CONDITIONAL([LUAJIT], [test "x$with_luajit" == "xyes"])

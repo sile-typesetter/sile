@@ -1,5 +1,5 @@
 # ===========================================================================
-#     https://www.gnu.org/software/autoconf-archive/ax_lua_require.html
+#      https://www.gnu.org/software/autoconf-archive/ax_lua_require.html
 # ===========================================================================
 #
 # SYNOPSIS
@@ -15,12 +15,12 @@
 #     AX_LUA_REQUIRE(lpeg)
 #
 #   Note: this is an alternative to AX_LUAROCKS_ROCK which queries the
-#   LuaRocks manifest for whether something is installed. Sometimes a
-#   proper manifest is not available, and this tests whether a given
-#   module name is actually loadable.
+#   LuaRocks manifest for whether something is installed. Sometimes a proper
+#   manifest is not available, and this tests whether a given module name is
+#   actually loadable.
 #
-#   It can also be useful to test for libraries that may or may not be
-#   built into Lua VMs. Builtin modules will return a success.
+#   It can also be useful to test for libraries that may or may not be built
+#   into Lua VMs. Builtin modules will return a success.
 #
 # LICENSE
 #
@@ -62,4 +62,3 @@ AC_DEFUN([AX_LUA_REQUIRE],[
     popdef([ACTION_IF_FOUND])
     popdef([ACTION_IF_NOT_FOUND])
 ])
-

@@ -1,5 +1,5 @@
 # ===========================================================================
-#     https://www.gnu.org/software/autoconf-archive/ax_lua_module.html
+#      https://www.gnu.org/software/autoconf-archive/ax_lua_module.html
 # ===========================================================================
 #
 # SYNOPSIS
@@ -13,7 +13,7 @@
 #   back to attempting to load a module directly.
 #
 #   If the module name is the same as the rock name, the second argument can
-#   be ommitted.
+#   be omitted.
 #
 #   Example usage:
 #
@@ -49,5 +49,3 @@ AC_DEFUN([AX_LUA_MODULE],[
     popdef([ROCKNAME])
     popdef([MODULE])
 ])
-
-
