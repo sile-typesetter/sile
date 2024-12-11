@@ -10,16 +10,16 @@ AC_DEFUN_ONCE([QUE_RUST_BOILERPLATE], [
         AM_CONDITIONAL([DEBUG_RELEASE], [test "x$debug_release" = "xyes"])
 
         AC_MSG_NOTICE([checking for tools used by automake to build Rust projects])
-        AC_PROG_INSTALL
-        AC_PROG_SED
-        QUE_PROGVAR([cargo])
-        QUE_PROGVAR([jq])
-        QUE_PROGVAR([rustc])
-        QUE_PROGVAR([cmp])
-        QUE_PROGVAR([xargs])
+        AC_REQUIRE([AC_PROG_INSTALL])
+        AC_REQUIRE([AC_PROG_SED])
+        AX_REQUIRE_PROG([cargo])
+        AX_REQUIRE_PROG([jq])
+        AX_REQUIRE_PROG([rustc])
+        AX_REQUIRE_PROG([cmp])
+        AX_REQUIRE_PROG([xargs])
         AM_COND_IF([DEVELOPER_MODE], [
-                QUE_PROGVAR([git])
-                QUE_PROGVAR([rustfmt])
+                AX_REQUIRE_PROG([git])
+                AX_REQUIRE_PROG([rustfmt])
         ])
 
         AC_ARG_VAR(CARGO_TARGET_TRIPLE, "Target triple for Rust compilations")
