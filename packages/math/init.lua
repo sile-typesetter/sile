@@ -427,7 +427,7 @@ The \code{counter} or the direct value \code{number} is passed as a parameter to
 
 \paragraph{Missing features}
 This package still lacks support for some mathematical constructs, but hopefully we’ll get there.
-Among unsupported constructs are: decorating symbols with so-called accents, such as arrows or hats, “over” or “under” braces, and line breaking inside a formula.
+Among unsupported features, we can mention line breaking inside a formula.
 
 \font:remove-fallback
 \end{document}

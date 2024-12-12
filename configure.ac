@@ -2,6 +2,7 @@ AC_PREREQ([2.69])
 AC_INIT([sile], [m4_esyscmd(build-aux/git-version-gen .tarball-version)], [caleb@alerque.com])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux])
+AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([foreign tar-pax dist-zstd dist-zip no-dist-gzip color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
@@ -20,15 +21,15 @@ AC_PROG_CC
 AC_PROG_GREP
 AC_PROG_OBJC
 AC_PROG_SED
-QUE_PROGVAR([cmp])
-QUE_PROGVAR([diff])
-QUE_PROGVAR([find])
-QUE_PROGVAR([head])
-QUE_PROGVAR([jq])
-QUE_PROGVAR([luarocks])
-QUE_PROGVAR([pdfinfo])
-QUE_PROGVAR([sort])
-QUE_PROGVAR([xargs])
+AX_REQUIRE_PROG([cmp])
+AX_REQUIRE_PROG([diff])
+AX_REQUIRE_PROG([find])
+AX_REQUIRE_PROG([head])
+AX_REQUIRE_PROG([jq])
+AX_REQUIRE_PROG([luarocks])
+AX_REQUIRE_PROG([pdfinfo])
+AX_REQUIRE_PROG([sort])
+AX_REQUIRE_PROG([xargs])
 
 # Disable ranlib to avoid it being run on our rusile.so module, already LTO
 # optimized but libtool wants to relink it...
@@ -37,10 +38,23 @@ RANLIB=:
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
-AC_CANONICAL_HOST
-
 QUE_RUST_BOILERPLATE
 QUE_DOCKER_BOILERPLATE
+
+# Load Rust module bits, early since it stuffs rules in aminclude.am
+case $target_os in
+    darwin*)
+        SHARED_LIB_EXT="dylib"
+        ;;
+    cygwin*|mingw*)
+        SHARED_LIB_EXT="dll"
+        ;;
+    *)
+        SHARED_LIB_EXT="so"
+        ;;
+esac
+AC_SUBST([SHARED_LIB_EXT])
+QUE_RUST_MODULE([rusile])
 
 AM_CONDITIONAL([SHARED], [test "x$enable_shared" = "xyes"])
 AM_CONDITIONAL([STATIC], [test "x$enable_static" = "xyes"])
@@ -105,13 +119,13 @@ AM_CONDITIONAL([FONT_DOWNLOAD_TOOLS], [test -z ${DEVELOPER_MODE_TRUE} || (test -
 AC_SUBST([FONT_DOWNLOAD_TOOLS])
 
 AM_COND_IF([MANUAL], [
-            QUE_PROGVAR([dot])
-            QUE_PROGVAR([gs])
+            AX_REQUIRE_PROG([dot])
+            AX_REQUIRE_PROG([gs])
             ])
 
 AC_MSG_CHECKING([for OS X])
 have_appkit=no
-case $host_os in
+case $target_os in
     darwin*)
         AC_MSG_RESULT([yes])
         AC_MSG_CHECKING([for AppKit works])
@@ -175,8 +189,8 @@ AM_CONDITIONAL([ICU], [test "x$with_icu" = "xyes"])
 # Required for downloading fonts for the manual and for tests
 # Since the source tarball includes a prebuilt manual we only need this for Git source builds
 AM_COND_IF([FONT_DOWNLOAD_TOOLS], [
-    QUE_PROGVAR([bsdtar])
-    QUE_PROGVAR([curl])
+    AX_REQUIRE_PROG([bsdtar])
+    AX_REQUIRE_PROG([curl])
 ])
 
 AM_COND_IF([DEVELOPER_MODE], [
@@ -185,19 +199,19 @@ AM_COND_IF([DEVELOPER_MODE], [
 ])
 
 AM_COND_IF([DEVELOPER_TOOLS], [
-    QUE_PROGVAR([busted])
-    QUE_PROGVAR([cargosetversion], [cargo-set-version])
-    QUE_PROGVAR([curl])
-    QUE_PROGVAR([ldoc])
-    QUE_PROGVAR([luacheck])
-    QUE_PROGVAR([nix])
-    QUE_PROGVAR([npm])
-    QUE_PROGVAR([perl])
-    QUE_PROGVAR([stylua])
-    QUE_PROGVAR([taplo])
-    QUE_PROGVAR([tr])
-    QUE_PROGVAR([typos])
-    QUE_PROGVAR([xsltproc])
+    AX_REQUIRE_PROG([busted])
+    AX_REQUIRE_PROG([cargo-set-version])
+    AX_REQUIRE_PROG([curl])
+    AX_REQUIRE_PROG([ldoc])
+    AX_REQUIRE_PROG([luacheck])
+    AX_REQUIRE_PROG([nix])
+    AX_REQUIRE_PROG([npm])
+    AX_REQUIRE_PROG([perl])
+    AX_REQUIRE_PROG([stylua])
+    AX_REQUIRE_PROG([taplo])
+    AX_REQUIRE_PROG([tr])
+    AX_REQUIRE_PROG([typos])
+    AX_REQUIRE_PROG([xsltproc])
 ])
 
 AX_PROG_LUA([5.1], [], [], [], [prefer])
@@ -228,7 +242,7 @@ AM_COND_IF([SYSTEM_LUAROCKS], [
     AX_LUA_MODULE(penlight, pl)
     AX_LUA_MODULE(vstruct)
 ], [
-    QUE_PROGVAR([git]) # required for luarocks to install zlib rock
+    AX_REQUIRE_PROG([git]) # required for luarocks to install zlib rock
 ])
 
 QUE_FONT(Gentium Plus)
@@ -244,20 +258,6 @@ AC_SUBST([HARFBUZZ_SUBSET_LIBS])
 AC_SUBST([ICU_TRUE])
 AC_SUBST([ICU_CFLAGS])
 AC_SUBST([ICU_LIBS])
-
-case $host_os in
-    darwin*)
-        LUAROCKSARGS="EXPAT_DIR=/usr/local/opt/expat OPENSSL_DIR=/usr/local/opt/openssl ZLIB_DIR=/usr/local/opt/zlib"
-        SHARED_LIB_EXT="so"
-        ;;
-    cygwin*|mingw*)
-        SHARED_LIB_EXT="dll"
-        ;;
-    *)
-        SHARED_LIB_EXT="so"
-        ;;
-esac
-AC_SUBST([SHARED_LIB_EXT])
 AC_SUBST([LUAROCKSARGS])
 
 # Avoid need for `--datarootdir=$(cd ..; pwd)` hack to run locally for
@@ -300,6 +300,7 @@ AC_CONFIG_FILES([build-aux/transpile-tex-hyphen-patterns.lua], [chmod +x build-a
 AC_CONFIG_FILES([Makefile justenough/Makefile sile-lua.1 core/features.lua core/pathsetup.lua core/version.lua])
 AC_CONFIG_FILES([sile-lua:sile.in], [chmod +x sile-lua])
 AC_CONFIG_FILES([tests/regressions.pl], [chmod +x tests/regressions.pl])
+AC_CONFIG_FILES([rusile-dev-1.rockspec:rusile.rockspec.in])
 AC_CONFIG_FILES([sile-dev-1.rockspec:sile.rockspec.in])
 AC_CONFIG_FILES([src/sile-entry.sh], [chmod +x src/sile-entry.sh])
 

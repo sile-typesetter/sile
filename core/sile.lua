@@ -181,10 +181,10 @@ local function runEvals (evals, arg)
    for _, snippet in ipairs(evals) do
       local pId = SILE.traceStack:pushText(snippet)
       local status, func = pcall(load, snippet)
-      if status then
+      if status and type(func) == "function" then
          func()
       else
-         SU.error(("Error parsing code provided in --%s snippet: %s"):format(arg, func))
+         SU.error(("Error parsing code provided in --%s snippet: %s"):format(arg, snippet))
       end
       SILE.traceStack:pop(pId)
    end
@@ -205,22 +205,26 @@ end
 --
 -- Does not move on to processing input document(s).
 function SILE.init ()
-   if not SILE.backend then
-      SILE.backend = "libtexpdf"
+   if SILE.backend then
+      SU.deprecated("SILE.backend", "SILE.input.backend", "0.15.7", "0.17.0")
+      SILE.input.backend = SILE.backend
    end
-   if SILE.backend == "libtexpdf" then
+   if not SILE.input.backend then
+      SILE.input.backend = "libtexpdf"
+   end
+   if SILE.input.backend == "libtexpdf" then
       SILE.shaper = SILE.shapers.harfbuzz()
       SILE.outputter = SILE.outputters.libtexpdf()
-   elseif SILE.backend == "cairo" then
+   elseif SILE.input.backend == "cairo" then
       SILE.shaper = SILE.shapers.pango()
       SILE.outputter = SILE.outputters.cairo()
-   elseif SILE.backend == "debug" then
+   elseif SILE.input.backend == "debug" then
       SILE.shaper = SILE.shapers.harfbuzz()
       SILE.outputter = SILE.outputters.debug()
-   elseif SILE.backend == "text" then
+   elseif SILE.input.backend == "text" then
       SILE.shaper = SILE.shapers.harfbuzz()
       SILE.outputter = SILE.outputters.text()
-   elseif SILE.backend == "dummy" then
+   elseif SILE.input.backend == "dummy" then
       SILE.shaper = SILE.shapers.harfbuzz()
       SILE.outputter = SILE.outputters.dummy()
    end

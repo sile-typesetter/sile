@@ -43,6 +43,9 @@ end
 -- Prepend paths specifically for C modules.
 local function prependCPath (path)
    package.cpath = prepend_and_dedup(path .. "/?.@SHARED_LIB_EXT@", package.cpath)
+   if "@SHARED_LIB_EXT@" ~= "so" then
+      package.cpath = prepend_and_dedup(path .. "/?.so", package.cpath)
+   end
 end
 
 -- Take a given path and iterate over permutations of paths that LuaRocks might have installed a rock to that are

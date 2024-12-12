@@ -7,6 +7,12 @@ inputter._name = "xml"
 inputter.order = 2
 
 local function startcommand (parser, command, options)
+   -- Discard list values (non-key/value), stuffed by LXP/expat to make it possible to deduce the order of keys in
+   -- the source. We're not using it, so we don't care and it is clutter in the AST that makes it different from
+   -- ASTs generated from SIL inputs.
+   for i = 1, #options do
+      options[i] = nil
+   end
    local stack = parser:getcallbacks().stack
    local lno, col, pos = parser:pos()
    local position = { lno = lno, col = col, pos = pos }

@@ -9,8 +9,8 @@ EXTRA_DIST += build-aux/que_dist_checksums.am
 
         AM_COND_IF([DEVELOPER_MODE], [
 
-                QUE_PROGVAR([sha256sum])
-                QUE_PROGVAR([tee])
+                AX_REQUIRE_PROG([sha256sum])
+                AX_REQUIRE_PROG([tee])
 
                 AX_ADD_AM_MACRO([dnl
 $(cat build-aux/que_dist_checksums.am)

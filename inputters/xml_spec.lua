@@ -1,5 +1,5 @@
 SILE = require("core.sile")
-SILE.backend = "dummy"
+SILE.input.backend = "dummy"
 SILE.init()
 SILE.utilities.error = error
 
@@ -34,6 +34,11 @@ describe("#XML #inputter", function ()
          assert.is.equal("qiz", t.options.baz)
          assert.is.equal("baz", t.options.qiz)
          assert.is.equal("bar", t[1])
+      end)
+
+      it("commands should parse only named arguments", function ()
+         local t = inputter:parse([[<foo baz="qiz">bar</foo>]])[1][1]
+         assert.is.equal(0, #t.options)
       end)
 
       -- it("commands with quoted arg with escape", function()

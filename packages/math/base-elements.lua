@@ -732,9 +732,41 @@ local function isNotEmpty (element)
    return element and (element:is_a(elements.terminal) or #element.children > 0)
 end
 
-function elements.underOver:_init (base, sub, sup)
+local function getAccentMode (mode)
+   -- Size unchanged but leave display mode
+   -- See MathML Core §3.4.3
+   if mode == mathMode.display then
+      return mathMode.text
+   end
+   if mode == mathMode.displayCramped then
+      return mathMode.textCramped
+   end
+   return mode
+end
+
+local function unwrapSingleElementMrow (elt)
+   -- CODE SMELL.
+   -- For \overset or \underset in LaTeX, MathML would use <mover> or <munder>.
+   -- It would need to inherit the base's atom type, especially if the later is an operator
+   -- (binary, relational etc.), which is a fairly common case, e.g.
+   --   \overset{R}{=} (equality with a R above the equal in some Ramanujan summations),
+   -- but we can't remove 1-element mrow's in the math typesetter, or have them inherit
+   -- their base's atom type here above, because it breaks tables for some reasons
+   -- that I couldn't figure out.
+   if elt:is_a(elements.stackbox) and elt.direction == "H" and #elt.children == 1 then
+      return unwrapSingleElementMrow(elt.children[1])
+   else
+      return elt
+   end
+end
+
+function elements.underOver:_init (attributes, base, sub, sup)
    elements.mbox._init(self)
+   base = unwrapSingleElementMrow(base)
    self.atom = base.atom
+   self.attributes = attributes or {}
+   self.attributes.accent = SU.boolean(self.attributes.accent, false)
+   self.attributes.accentunder = SU.boolean(self.attributes.accentunder, false)
    self.base = base
    self.sub = isNotEmpty(sub) and sub or nil
    self.sup = isNotEmpty(sup) and sup or nil
@@ -754,10 +786,10 @@ function elements.underOver:styleChildren ()
       self.base.mode = self.mode
    end
    if self.sub then
-      self.sub.mode = getSubscriptMode(self.mode)
+      self.sub.mode = self.attributes.accentunder and getAccentMode(self.mode) or getSubscriptMode(self.mode)
    end
    if self.sup then
-      self.sup.mode = getSuperscriptMode(self.mode)
+      self.sup.mode = self.attributes.accent and getAccentMode(self.mode) or getSuperscriptMode(self.mode)
    end
 end
 
@@ -799,7 +831,10 @@ function elements.underOver:_stretchyReshapeToBase (part)
 end
 
 function elements.underOver:shape ()
+   local constants = self:getMathMetrics().constants
+   local scaleDown = self:getScaleDown()
    local isMovableLimits = SU.boolean(self.base and self.base.movablelimits, false)
+   local itCorr = self:calculateItalicsCorrection() * scaleDown
    if not (self.mode == mathMode.display or self.mode == mathMode.displayCramped) and isMovableLimits then
       -- When the base is a movable limit, the under/over scripts are not placed under/over the base,
       -- but other to the right of it, when display mode is not used.
@@ -810,32 +845,54 @@ function elements.underOver:shape ()
       elements.subscript.shape(self)
       return
    end
-   local constants = self:getMathMetrics().constants
-   local scaleDown = self:getScaleDown()
    -- Determine relative Ys
    if self.base then
       self.base.relY = SILE.types.length(0)
    end
    if self.sub then
       self:_stretchyReshapeToBase(self.sub)
-      self.sub.relY = self.base.depth
-         + SILE.types.length(
-            math.max(
-               (self.sub.height + constants.lowerLimitGapMin * scaleDown):tonumber(),
-               constants.lowerLimitBaselineDropMin * scaleDown
+      -- TODO These rules are incomplete and even wrong if we were to fully implement MathML Core.
+      if self.attributes.accentunder then
+         self.sub.relY = self.base.depth
+            + SILE.types.length(
+               (self.sub.height + constants.lowerLimitGapMin * scaleDown):tonumber()
+               -- We assume that the accent is aligned on the base.
             )
-         )
+      else
+         self.sub.relY = self.base.depth
+            + SILE.types.length(
+               math.max(
+                  (self.sub.height + constants.lowerLimitGapMin * scaleDown):tonumber(),
+                  constants.lowerLimitBaselineDropMin * scaleDown
+               )
+            )
+      end
    end
    if self.sup then
       self:_stretchyReshapeToBase(self.sup)
-      self.sup.relY = 0
-         - self.base.height
-         - SILE.types.length(
-            math.max(
-               (constants.upperLimitGapMin * scaleDown + self.sup.depth):tonumber(),
-               constants.upperLimitBaselineRiseMin * scaleDown
+      -- TODO These rules are incomplete if we were to fully implement MathML Core.
+      if self.attributes.accent then
+         self.sup.relY = 0 - self.base.height
+         -- MathML Core wants to align on the accentBaseHeight...
+         local overShift = math.max(0, constants.accentBaseHeight * scaleDown - self.base.height:tonumber())
+         self.sup.relY = self.sup.relY - SILE.types.length(overShift)
+         -- HACK: .... but improperly dimensioned accents can overshoot the base glyph.
+         -- So we try some guesswork to correct this.
+         -- Typically some non-combining symbols are in this case...
+         local heuristics = 0.5 * constants.flattenedAccentBaseHeight + 0.5 * constants.accentBaseHeight
+         if self.sup.height > SILE.types.length(heuristics * scaleDown) then
+            self.sup.relY = self.sup.relY + SILE.types.length(constants.accentBaseHeight * scaleDown)
+         end
+      else
+         self.sup.relY = 0
+            - self.base.height
+            - SILE.types.length(
+               math.max(
+                  (constants.upperLimitGapMin * scaleDown + self.sup.depth):tonumber(),
+                  constants.upperLimitBaselineRiseMin * scaleDown
+               )
             )
-         )
+      end
    end
    -- Determine relative Xs based on widest symbol
    local widest, a, b
@@ -876,7 +933,6 @@ function elements.underOver:shape ()
    if b then
       b.relX = c - b.width / 2
    end
-   local itCorr = self:calculateItalicsCorrection() * scaleDown
    if self.sup then
       self.sup.relX = self.sup.relX + itCorr / 2
    end
@@ -1184,7 +1240,10 @@ end
 function elements.text:_vertStretchyReshape (depth, height)
    local hasStretched = self:_stretchyReshape(depth + height, true)
    if hasStretched then
-      -- HACK: see output routine
+      -- RESCALING HACK: see output routine
+      -- We only do it if the scaling logic found constructions on the vertical block axis.
+      -- It's a dirty hack until we properly implement assembly of glyphs in the case we couldn't
+      -- find a big enough variant.
       self.vertExpectedSz = height + depth
       self.vertScalingRatio = (depth + height):tonumber() / (self.height:tonumber() + self.depth:tonumber())
       self.height = height
@@ -1195,12 +1254,21 @@ end
 
 function elements.text:_horizStretchyReshape (width)
    local hasStretched = self:_stretchyReshape(width, false)
-   if hasStretched then
-      -- HACK: see output routine
-      self.horizScalingRatio = width:tonumber() / self.width:tonumber()
-      self.width = width
+   if not hasStretched and width:tonumber() < self.width:tonumber() then
+      -- Never shrink glyphs, it looks ugly
+      return false
    end
-   return hasStretched
+   -- But if stretching couldn't be done, it will be ugly anyway, so we will force
+   -- a re-scaling of the glyph.
+   -- (So it slightly different from the vertical case, 'cause MathML just has one stretchy
+   -- attribute, whether for stretching on the vertical (block) or horizontal (inline) axis,
+   -- and we cannot know which axis is meant unless we implement yet another mapping table
+   -- as the one in the MathML Core appendices. Frankly, how many non-normative appendices
+   -- do we need to implement MathML correctly?)
+   -- RESCALING HACK: see output routine
+   self.horizScalingRatio = width:tonumber() / self.width:tonumber()
+   self.width = width
+   return true
 end
 
 function elements.text:output (x, y, line)
@@ -1339,7 +1407,7 @@ local function newSubscript (spec)
 end
 
 local function newUnderOver (spec)
-   return elements.underOver(spec.base, spec.sub, spec.sup)
+   return elements.underOver(spec.attributes, spec.base, spec.sub, spec.sup)
 end
 
 -- TODO replace with penlight equivalent

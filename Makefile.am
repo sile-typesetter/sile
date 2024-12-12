@@ -56,7 +56,6 @@ endif
 $(MANUAL): $(FIGURES)
 
 BUILT_SOURCES_LUA = core/features.lua core/pathsetup.lua core/version.lua
-RUSILE_SOURCES = rusile/Cargo.toml rusile/src/lib.rs
 
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
@@ -67,13 +66,11 @@ EXTRA_sile_SOURCES =
 if !EMBEDDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
 nobase_nodist_pkgdata_DATA = $(BUILT_SOURCES_LUA) $(LUAMODULES)
-pkglib_LIBRARIES = rusile.so
-rusile_so_SOURCES = $(RUSILE_SOURCES)
 endif !EMBEDDED_RESOURCES
 dist_doc_DATA = README.md CHANGELOG.md
 dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE.md
-EXTRA_DIST = spec tests documentation sile-dev-1.rockspec fontconfig.conf
+EXTRA_DIST = spec tests documentation sile-dev-1.rockspec rusile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/config.ld build-aux/decore-automake.sh build-aux/git-version-gen
 EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
 EXTRA_DIST += build-aux/xml-entities-to-lua.xsl
@@ -137,7 +134,7 @@ $(CARGO_BIN): justenough/.libs/justenoughlibtexpdf.a
 $(CARGO_BIN): justenough/.libs/svg.a
 $(CARGO_BIN): libtexpdf/.libs/libtexpdf.a
 if !EMBEDDED_RESOURCES
-$(CARGO_BIN): rusile.so
+$(CARGO_BIN): rusile.$(SHARED_LIB_EXT)
 endif !EMBEDDED_RESOURCES
 
 src/embed-includes.rs: Makefile-distfiles
@@ -164,7 +161,7 @@ else
 MLUAVER = lua$(LUA_SHORT_VERSION)
 endif
 CARGO_FEATURE_ARGS = --features $(MLUAVER)
-RUSILE_FEATURE_ARG = --features $(MLUAVER)
+rusile_FEATURE_ARGS = --features $(MLUAVER)
 
 if !SYSTEM_LUA_SOURCES
 CARGO_FEATURE_ARGS += --features vendored
@@ -177,10 +174,6 @@ endif
 if FONT_VARIATIONS
 CARGO_FEATURE_ARGS += --features variations
 endif
-
-rusile.so: $(rusile_so_SOURCES) $(bin_PROGRAMS)
-	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) --target $(CARGO_TARGET_TRIPLE) $(RUSILE_FEATURE_ARG) $(CARGO_RELEASE_ARGS) -p rusile
-	$(INSTALL) @builddir@/target/@RUST_TARGET_SUBDIR@/lib$@ $@
 
 DEPDIR := .deps
 LOCALFONTS := FONTCONFIG_FILE=$(PWD)/fontconfig.conf
@@ -319,9 +312,6 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(EXTRA_R
 
 XML_ENTITIES = .sources/unicode.xml
 XML_ENTITIES_COMMIT = 77acf14428202e4e1dba54ff1e5ed43fe5ab474f
-
-.sources:
-	[ -h .sources ] || mkdir -p $@
 
 $(XML_ENTITIES):
 	$(CURL) https://raw.githubusercontent.com/w3c/xml-entities/$(XML_ENTITIES_COMMIT)/unicode.xml -o $@

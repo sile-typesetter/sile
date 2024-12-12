@@ -16,6 +16,7 @@
   cargo,
   rustc,
   rustPlatform,
+  luarocks,
 
   # buildInputs
   cargo-edit,
@@ -28,7 +29,6 @@
   stylua,
   taplo,
   typos,
-  darwin,
   # FONTCONFIG_FILE
   makeFontsConf,
   gentium,
@@ -41,49 +41,6 @@
   libtexpdf-src,
 }:
 
-let
-  luaEnv = lua.withPackages (
-    ps:
-    with ps;
-    [
-      # used for module detection, also recommended at runtime for 3rd party module installation
-      luarocks
-
-      # modules used at runtime
-      cassowary
-      cldr
-      fluent
-      linenoise
-      loadkit
-      lpeg
-      lua-zlib
-      lua_cliargs
-      luaepnf
-      luaexpat
-      luafilesystem
-      luarepl
-      luasec
-      luasocket
-      luautf8
-      penlight
-      vstruct
-
-      # lua packages needed for testing
-      busted
-      luacheck
-
-      # packages needed for building api docs
-      ldoc
-    ]
-    ++ lib.optionals (lib.versionOlder lua.luaversion "5.2") [
-      bit32
-    ]
-    ++ lib.optionals (lib.versionOlder lua.luaversion "5.3") [
-      compat53
-    ]
-  );
-
-in
 stdenv.mkDerivation (finalAttrs: {
   pname = "sile";
   inherit version src;
@@ -104,7 +61,10 @@ stdenv.mkDerivation (finalAttrs: {
     cargo
     rustc
     rustPlatform.cargoSetupHook
+    luarocks
   ];
+  # luarocks propagates cmake, but it shouldn't be used as a build system.
+  dontUseCmakeConfigure = true;
 
   preAutoreconf = ''
     # Add the libtexpdf src instead of the git submodule. (From some reason
@@ -120,8 +80,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs =
     [
+      finalAttrs.finalPackage.passthru.luaEnv
       cargo-edit
-      luaEnv
       harfbuzz
       icu
       fontconfig
@@ -130,9 +90,6 @@ stdenv.mkDerivation (finalAttrs: {
       stylua
       taplo
       typos
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isDarwin [
-      darwin.apple_sdk.frameworks.AppKit
     ];
 
   configureFlags =
@@ -175,8 +132,41 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   passthru = {
-    # So it will be easier to inspect this environment, in comparison to others
-    inherit luaEnv;
+
+    luaPackages =
+      [
+        # modules used at runtime
+        "cassowary"
+        "cldr"
+        "fluent"
+        "linenoise"
+        "loadkit"
+        "lpeg"
+        "lua-zlib"
+        "lua_cliargs"
+        "luaepnf"
+        "luaexpat"
+        "luafilesystem"
+        "luarepl"
+        "luasec"
+        "luasocket"
+        "luautf8"
+        "penlight"
+        "vstruct"
+        # lua packages needed for testing
+        "busted"
+        "luacheck"
+        # packages needed for building api docs
+        "ldoc"
+      ]
+      ++ lib.optionals (lib.versionOlder lua.luaversion "5.2") [
+        "bit32"
+      ]
+      ++ lib.optionals (lib.versionOlder lua.luaversion "5.3") [
+        "compat53"
+      ];
+    luaEnv = lua.withPackages (ps: lib.attrVals finalAttrs.finalPackage.passthru.luaPackages ps);
+
     # Copied from Makefile.am
     tests.test = lib.optionalAttrs (!(stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64)) (
       runCommand "${finalAttrs.pname}-test"
