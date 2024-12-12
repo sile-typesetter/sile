@@ -29,6 +29,10 @@ end
 
 function outputter.newPage () end
 
+function outputter:abort ()
+   return self:finish() -- unless otherwise defined
+end
+
 function outputter:finish ()
    self:runHooks("prefinish")
 end

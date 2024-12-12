@@ -46,6 +46,14 @@ function outputter:newPage ()
    self:_writeline("New page")
 end
 
+function outputter:abort ()
+   if started then
+      self:_writeline("Aborted")
+      outfile:close()
+      started = false
+   end
+end
+
 function outputter:finish ()
    if SILE.status.unsupported then
       self:_writeline("UNSUPPORTED")
@@ -54,6 +62,7 @@ function outputter:finish ()
    self:runHooks("prefinish")
    self:_writeline("Finish")
    outfile:close()
+   started = false
 end
 
 function outputter.getCursor (_)

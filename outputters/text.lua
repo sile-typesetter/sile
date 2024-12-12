@@ -15,7 +15,8 @@ outputter.extension = "txt"
 -- function outputter:_init () end
 
 function outputter:_ensureInit ()
-   if not outfile then
+   if not started then
+      started = true
       local fname = self:getOutputFilename()
       outfile = fname == "-" and io.stdout or io.open(fname, "w+")
    end
@@ -34,10 +35,17 @@ function outputter:newPage ()
    outfile:write("")
 end
 
+function outputter.abort ()
+   if started then
+      outfile:close()
+      started = false
+   end
+end
 function outputter:finish ()
    self:_ensureInit()
    self:runHooks("prefinish")
    outfile:close()
+   started = false
 end
 
 function outputter.getCursor (_)
@@ -79,7 +87,6 @@ function outputter:drawHbox (value, width)
    end
    self:_writeline(value.text)
    if width > 0 then
-      started = true
       cursorX = cursorX + width
    end
 end

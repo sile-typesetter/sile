@@ -67,13 +67,23 @@ end
 -- pdf structure package needs a tie in here
 function outputter._endHook (_) end
 
+function outputter.abort ()
+   if started then
+      pdf.endpage()
+      pdf.finish()
+      started = false
+      lastkey = false
+   end
+end
+
 function outputter:finish ()
+   -- allows generation of empty PDFs
    self:_ensureInit()
    pdf.endpage()
    self:runHooks("prefinish")
    pdf.finish()
    started = false
-   lastkey = nil
+   lastkey = false
 end
 
 function outputter.getCursor (_)
