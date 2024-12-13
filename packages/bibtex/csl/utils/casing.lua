@@ -15,8 +15,6 @@ local capitalizeFirst = function (text, lang)
    return icu.case(first, lang, "upper") .. rest
 end
 
---- Text casing methods for CSL.
--- @table casing methods for lower, upper, capitalize-first, capitalize-all, title, sentence
 local casing = {
    -- Straightforward
    ["lowercase"] = function (text, lang)
