@@ -134,7 +134,7 @@ $(CARGO_BIN): justenough/.libs/justenoughlibtexpdf.a
 $(CARGO_BIN): justenough/.libs/svg.a
 $(CARGO_BIN): libtexpdf/.libs/libtexpdf.a
 if !EMBEDDED_RESOURCES
-$(CARGO_BIN): rusile.$(SHARED_LIB_EXT)
+$(CARGO_BIN): rusile$(LIBEXT)
 endif !EMBEDDED_RESOURCES
 
 src/embed-includes.rs: Makefile-distfiles
@@ -268,13 +268,13 @@ _DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTF
 _SUBDIR_TELLS =
 
 if SHARED
-_SUBDIR_TELLS += justenough/.libs/fontmetrics.$(SHARED_LIB_EXT) \
-				justenough/.libs/justenoughfontconfig.$(SHARED_LIB_EXT) \
-				justenough/.libs/justenoughharfbuzz.$(SHARED_LIB_EXT) \
-				justenough/.libs/justenoughicu.$(SHARED_LIB_EXT) \
-				justenough/.libs/justenoughlibtexpdf.$(SHARED_LIB_EXT) \
-				justenough/.libs/svg.$(SHARED_LIB_EXT) \
-				libtexpdf/.libs/libtexpdf.$(SHARED_LIB_EXT).0.0.0
+_SUBDIR_TELLS += justenough/.libs/fontmetrics$(LIBEXT) \
+				justenough/.libs/justenoughfontconfig$(LIBEXT) \
+				justenough/.libs/justenoughharfbuzz$(LIBEXT) \
+				justenough/.libs/justenoughicu$(LIBEXT) \
+				justenough/.libs/justenoughlibtexpdf$(LIBEXT) \
+				justenough/.libs/svg$(LIBEXT) \
+				libtexpdf/.libs/libtexpdf$(LIBEXT).0.0.0
 endif
 
 if STATIC
@@ -382,10 +382,10 @@ typos:
 busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'
 	packagepath=(./{,lua-libraries/}?{,/init}.lua)
-	packagecpath=(./{,core/,{libtexpdf,justenough}/.libs/}?.$(SHARED_LIB_EXT))
+	packagecpath=(./{,core/,{libtexpdf,justenough}/.libs/}?$(LIBEXT))
 if !SYSTEM_LUAROCKS
 	packagepath+=(./lua_modules/share/lua/$(LUA_VERSION)/?{,/init}.lua)
-	packagecpath+=(./lua_modules/lib/lua/$(LUA_VERSION)/?.$(SHARED_LIB_EXT))
+	packagecpath+=(./lua_modules/lib/lua/$(LUA_VERSION)/?$(LIBEXT))
 endif
 # Note: Busted tests can't run with out static build since the Rusile module is
 # only available embedded into it. We can test on the dynamic builds where it

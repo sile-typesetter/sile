@@ -11,6 +11,7 @@ QUE_GIT_VERSION
 QUE_TRANSFORM_PACKAGE_NAME
 QUE_DEVELOPER_MODE
 QUE_DIST_CHECKSUMS
+QUE_LIBEXT
 
 # Extend the QUE checksums feature with support for the PDF manual
 SILE_DIST_CHECKSUMS
@@ -38,22 +39,8 @@ RANLIB=:
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
-QUE_RUST_BOILERPLATE
 QUE_DOCKER_BOILERPLATE
-
-# Load Rust module bits, early since it stuffs rules in aminclude.am
-case $target_os in
-    darwin*)
-        SHARED_LIB_EXT="dylib"
-        ;;
-    cygwin*|mingw*)
-        SHARED_LIB_EXT="dll"
-        ;;
-    *)
-        SHARED_LIB_EXT="so"
-        ;;
-esac
-AC_SUBST([SHARED_LIB_EXT])
+QUE_RUST_BOILERPLATE
 QUE_RUST_MODULE([rusile])
 
 AM_CONDITIONAL([SHARED], [test "x$enable_shared" = "xyes"])
