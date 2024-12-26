@@ -59,6 +59,7 @@ BUILT_SOURCES_LUA = core/features.lua core/pathsetup.lua core/version.lua
 
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
+pkglib_LIBRARIES =
 nodist_man_MANS =
 dist_man_MANS = sile-lua.1
 sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs src/types.rs src/types/semver.rs
@@ -134,7 +135,7 @@ $(CARGO_BIN): justenough/.libs/justenoughlibtexpdf.a
 $(CARGO_BIN): justenough/.libs/svg.a
 $(CARGO_BIN): libtexpdf/.libs/libtexpdf.a
 if !EMBEDDED_RESOURCES
-$(CARGO_BIN): rusile$(LIBEXT)
+$(CARGO_BIN): $(pkglib_LIBRARIES)
 endif !EMBEDDED_RESOURCES
 
 src/embed-includes.rs: Makefile-distfiles

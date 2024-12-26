@@ -11,5 +11,8 @@ AC_DEFUN_ONCE([QUE_LIBEXT], [
             LIBEXT=.so
         ;;
     esac
+    AM_CONDITIONAL([LIB_IS_SO], [test $LIBEXT = .so])
+    AM_CONDITIONAL([LIB_IS_DYLIB], [test $LIBEXT = .dylib])
+    AM_CONDITIONAL([LIB_IS_DLL], [test $LIBEXT = .dll])
     AC_SUBST([LIBEXT])
 ])

@@ -1,8 +1,40 @@
-pkglib_LIBRARIES = @MODULE@@LIBEXT@
-@MODULE@_@_LIBEXT@_SOURCES = @MODULE@/Cargo.toml @MODULE@/src/lib.rs @MODULE@/build.rs
+@MODULE@_srcs = @MODULE@/Cargo.toml @MODULE@/src/lib.rs @MODULE@/build.rs
 
-@builddir@/target/@RUST_TARGET_SUBDIR@/lib@MODULE@@LIBEXT@: $(@MODULE@_@_LIBEXT@_SOURCES)
+if LIB_IS_SO
+pkglib_LIBRARIES += rusile.so
+@MODULE@_so_SOURCES = $(@MODULE@_srcs)
+endif
+
+if LIB_IS_DYLIB
+pkglib_LIBRARIES += rusile.dylib
+@MODULE@_dylib_SOURCES = $(@MODULE@_srcs)
+endif
+
+if LIB_IS_DLL
+pkglib_LIBRARIES += rusile.dll
+@MODULE@_dll_SOURCES = $(@MODULE@_srcs)
+endif
+
+@MODULE@_so_AR = :
+@MODULE@_so_RANLIB = :
+@MODULE@_so_LINK = :
+
+@MODULE@_dylib_AR = :
+@MODULE@_dylib_RANLIB = :
+@MODULE@_dylib_LINK = :
+
+@MODULE@_dll_AR = :
+@MODULE@_dll_RANLIB = :
+@MODULE@_dll_LINK = :
+
+@builddir@/target/@RUST_TARGET_SUBDIR@/lib@MODULE@.so @builddir@/target/@RUST_TARGET_SUBDIR@/lib@MODULE@.dylib @builddir@/target/@RUST_TARGET_SUBDIR@/lib@MODULE@.dll: $(@MODULE@_srcs)
 	$(CARGO_ENV) $(CARGO) build $(CARGO_VERBOSE) --target $(CARGO_TARGET_TRIPLE) $(@MODULE@_FEATURE_ARGS) $(CARGO_RELEASE_ARGS) -p @MODULE@
 
-@MODULE@@LIBEXT@: @builddir@/target/@RUST_TARGET_SUBDIR@/lib@MODULE@@LIBEXT@
+@MODULE@.so: @builddir@/target/@RUST_TARGET_SUBDIR@/lib@MODULE@.so
+	$(INSTALL) $< $@
+
+@MODULE@.dylib: @builddir@/target/@RUST_TARGET_SUBDIR@/lib@MODULE@.dylib
+	$(INSTALL) $< $@
+
+@MODULE@.dll: @builddir@/target/@RUST_TARGET_SUBDIR@/lib@MODULE@.dll
 	$(INSTALL) $< $@
