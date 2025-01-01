@@ -1492,7 +1492,7 @@ function CslEngine:_process (entries, mode)
 end
 
 --- Generate a citation string.
--- @tparam table entry List of CSL entries
+-- @tparam table entries List of CSL entries
 -- @treturn string The XML citation string
 function CslEngine:cite (entries)
    entries = type(entries) == "table" and not entries.type and entries or { entries }
@@ -1500,7 +1500,7 @@ function CslEngine:cite (entries)
 end
 
 --- Generate a reference string.
--- @tparam table entry List of CSL entries
+-- @tparam table entries List of CSL entries
 -- @treturn string The XML reference string
 function CslEngine:reference (entries)
    entries = type(entries) == "table" and not entries.type and entries or { entries }
