@@ -61,7 +61,7 @@ function package:registerCommands ()
       for n in pairs(index) do
          table.insert(sortedIndex, n)
       end
-      table.sort(sortedIndex)
+      SU.collatedSort(sortedIndex)
       SILE.call("bigskip")
       for _, k in ipairs(sortedIndex) do
          local pageno = table.concat(index[k], ", ")
