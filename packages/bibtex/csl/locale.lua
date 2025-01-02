@@ -181,7 +181,6 @@ end
 --- Lookup an ordinal term in the locale.
 -- Reserved for ordinal terms.
 -- @tparam number number The numeric value to be formatted
--- @tparam string name The name of the term
 -- @tparam string form The form of the term (default: "short")
 -- @tparam string genderf The gender-form of the term (default: "neuter")
 -- @tparam boolean plural Whether to return the plural form (default: false)
