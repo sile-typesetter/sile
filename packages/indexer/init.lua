@@ -3,9 +3,9 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "indexer"
 
-function package:buildIndex ()
+function package.buildIndex (class) -- Called from the class, not as a package method
    local nodes = SILE.scratch.info.thispage.index
-   local thisPage = self.class.packages.counters:formatCounter(SILE.scratch.counters.folio)
+   local thisPage = class.packages.counters:formatCounter(SILE.scratch.counters.folio)
    if not nodes then
       return
    end
@@ -22,21 +22,14 @@ function package:buildIndex ()
       end
    end
 end
--- if content then
---   for i = 1, #content do
---     if not SILE.scratch.index.commands[content[i].label] then
---       SILE.scratch.index.commands[content[i].label] = {}
---     end
---     SILE.scratch.index.commands[content[i].label][class:formatCounter(SILE.scratch.counters.folio)] = 1
---   end
--- end
 
 function package:_init ()
    base._init(self)
+   self:loadPackage("infonode")
+   self.class:registerHook("endpage", self.buildIndex)
    if not SILE.scratch.index then
       SILE.scratch.index = {}
    end
-   self:deprecatedExport("buildIndex", self.buildIndex)
 end
 
 function package:registerCommands ()
@@ -60,7 +53,6 @@ function package:registerCommands ()
    end)
 
    self:registerCommand("printindex", function (options, _)
-      self:buildIndex()
       if not options.index then
          options.index = "main"
       end
@@ -99,7 +91,6 @@ The entry can be styled using the \autodoc:command{\index:item} command.
 
 Multiple indexes are available and an index can be selected by passing the \autodoc:parameter{index=<name>} parameter to \autodoc:command{\indexentry} and \autodoc:command{\printindex}.
 
-Classes using the indexer will need to call its exported function \code{buildIndex} as part of the end page routine.
 \end{document}
 ]]
 
