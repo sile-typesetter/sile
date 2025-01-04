@@ -134,9 +134,6 @@ $(CARGO_BIN): justenough/.libs/justenoughicu.a
 $(CARGO_BIN): justenough/.libs/justenoughlibtexpdf.a
 $(CARGO_BIN): justenough/.libs/svg.a
 $(CARGO_BIN): libtexpdf/.libs/libtexpdf.a
-if !EMBEDDED_RESOURCES
-$(CARGO_BIN): $(pkglib_LIBRARIES)
-endif !EMBEDDED_RESOURCES
 
 src/embed-includes.rs: Makefile-distfiles
 	{
@@ -154,7 +151,10 @@ src/embed.rs: src/embed.rs.in src/embed-includes.rs
 		-e '/@EMBEDDED_INCLUDE_LIST@/r $(word 2,$^)' \
 		-e '/@EMBEDDED_INCLUDE_LIST@/d' \
 		$< > $@
-endif EMBEDDED_RESOURCES
+
+else !EMBEDDED_RESOURCES
+$(CARGO_BIN): $(pkglib_LIBRARIES)
+endif !EMBEDDED_RESOURCES
 
 if LUAJIT
 MLUAVER = luajit
