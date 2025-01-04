@@ -3,7 +3,7 @@ AC_INIT([sile], [m4_esyscmd(build-aux/git-version-gen .tarball-version)], [caleb
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux])
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE([foreign tar-pax dist-zstd dist-zip no-dist-gzip color-tests subdir-objects])
+AM_INIT_AUTOMAKE([foreign tar-pax dist-zstd dist-zip no-dist-gzip no-dependencies color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
 # Load up re-usable m4 bits shared across Caleb's projects
