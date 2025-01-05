@@ -63,6 +63,24 @@ local function _addDelimiter (t, sep)
    return ret
 end
 
+-- Simplify the second number in an Arabic page range.
+-- @tparam string p1 The first page number (assumed to be in Arabic format).
+-- @tparam string p2 The second page number (assumed to be in Arabic format).
+-- @tparam string format The format to use (either 'minimal' or 'minimal-two').
+-- @treturn string The simplified second page number.
+local function _simplifyArabicInRange (p1, p2, format)
+   if #p1 > 1 and #p1 == #p2 then
+      local ending = format == 'minimal' and 1 or 2
+      for i = 1, #p1 - ending do
+         if p1:sub(i, i) ~= p2:sub(i, i) then
+            return p2:sub(i, -1)
+         end
+      end
+      return p2:sub(#p1 - ending + 1, -1)
+   end
+   return p2
+end
+
 function package.buildIndex ()
    local nodes = SILE.scratch.info.thispage.index
    local pageno = pl.tablex.copy(SILE.scratch.counters.folio)
@@ -98,22 +116,33 @@ function package:_init (options)
    end
 end
 
+-- Format a list of pages, collapsing consecutive pages into ranges.
+-- @tparam table pages A list of pages with pageno and link fields.
+-- @treturn table A list of formatted page ranges.
 function package:formatPageRanges (pages)
    local ranges = {}
    for _, range in ipairs(_groupPageRanges(pages)) do
       if #range == 1 then
          table.insert(ranges, _linkWrapper(range[1].link, self.class.packages.counters:formatCounter(range[1].pageno)))
       else
+         local p1 = self.class.packages.counters:formatCounter(range[1].pageno)
+         local p2 = self.class.packages.counters:formatCounter(range[#range].pageno)
+         if self.config['page-range-format'] ~= 'expanded' and range[1].pageno.display == "arabic" then
+            p2 = _simplifyArabicInRange(p1, p2, self.config['page-range-format'])
+         end
          table.insert(ranges, {
-            _linkWrapper(range[1].link, self.class.packages.counters:formatCounter(range[1].pageno)),
+            _linkWrapper(range[1].link, p1),
             self.config['page-range-delimiter'],
-            _linkWrapper(range[#range].link, self.class.packages.counters:formatCounter(range[#range].pageno))
+            _linkWrapper(range[#range].link, p2)
          })
       end
    end
    return _addDelimiter(ranges, self.config['page-delimiter'])
 end
 
+-- Format a list of pages.
+-- @tparam table pages A list of pages with pageno and link fields.
+-- @treturn table A list of formatted pages.
 function package:formatPages (pages)
    if self.config['page-range-format'] ~= 'none' then
       return self:formatPageRanges(pages)
@@ -195,7 +224,13 @@ An index is essentially the same thing as a table of contents, but sorted.
 The package accepts several configuration options:
 \begin{itemize}
 \item{\autodoc:parameter{page-range-format}: The format used to display page ranges.
-Possible values are \autodoc:parameter{expanded} (default), \autodoc:parameter{none}.}
+Possible values are:
+\begin{itemize}
+\item{\code{none}: All numbers are displayed, without page range collapsing.}
+\item{\code{expanded}: All digits are displayed in both numbers in a page range: 42–45, 321–328, 2787–2816.}
+\item{\code{minimal}: All digits repeated in the second number are left out in a page range: 42–5, 321–8, 2787–816}
+\item{\code{minimal-two}: As \code{minimal}, but at least two digits are kept in the second number when it has two or more digits long.}
+\end{itemize}}
 \item{\autodoc:parameter{page-range-delimiter}: The delimiter between the start and end of a page range.}
 \item{\autodoc:parameter{page-delimiter}: The delimiter between pages.}
 \end{itemize}
