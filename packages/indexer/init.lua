@@ -19,7 +19,7 @@ local function _isNotSamePage (p1, p2)
 end
 
 -- Group pages into ranges of consecutive pages.
--- @tparam table pages A list of pages with pageno and link fields.
+-- @tparam table pages A list of pages with pageno (counter) and link (internal string) fields.
 -- @treturn table A list of ranges, each containing a list of pages.
 local function _groupPageRanges(pages)
    local ret = {}
@@ -200,19 +200,21 @@ function package:registerCommands ()
       SU.collatedSort(sortedIndex)
       SILE.call("bigskip")
       for _, k in ipairs(sortedIndex) do
-         local pageno = self:formatPages(index[k])
-         SILE.call("index:item", { pageno = pageno }, { k })
+         local pages = self:formatPages(index[k])
+         SILE.call("index:item", { pages = pages, index = options.index }, { k })
       end
    end, "Print the index")
 
    self:registerCommand("index:item", function (options, content)
-      -- Unconventional: options.pageno is an AST
+      -- Unconventional: options.pages is an AST
+      local pages = options.pages
+      options.pages = nil
       SILE.settings:temporarily(function ()
          if self.config.filler ~= "comma" then
             SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
          end
          SILE.settings:set("current.parindent", SILE.types.node.glue())
-         SILE.call("code", {}, content)
+         SILE.call("index:entry:style", options, content)
          if self.config.filler == "dotfill" then
             SILE.call("dotfill")
          elseif self.config.filler == "fill" then
@@ -222,10 +224,19 @@ function package:registerCommands ()
          else
             SU.error("Unknown filler: " .. self.config.filler)
          end
-         SILE.process(options.pageno)
+         SILE.call("index:pages:style", options, pages)
          SILE.call("smallskip")
       end)
-   end, "Output an index item")
+   end, "Output an index item (normally an internal command)")
+
+   -- Hooks for styling the index
+   self:registerCommand("index:entry:style", function (_, content)
+      SILE.process(content)
+   end, "Hook for styling an index entry")
+
+   self:registerCommand("index:pages:style", function (_, content)
+      SILE.process(content)
+   end, "Hook for styling index pages")
 end
 
 package.documentation = [[
@@ -254,11 +265,17 @@ Possible values are:
 
 This package provides the \autodoc:command{\indexentry} command, which can be called as either \autodoc:command{\indexentry[label=<text>]} or \autodoc:command{\indexentry{<text>}} (so that it can be called from a macro).
 Index entries are collated at the end of each page, and the command \autodoc:command{\printindex} will deposit them in a list.
-The entry can be styled using the \autodoc:command{\index:item} command.
 
 Multiple indexes are available and an index can be selected by passing the \autodoc:parameter{index=<name>} parameter to \autodoc:command{\indexentry} and \autodoc:command{\printindex}.
 
 If the \autodoc:package{pdf} package is loaded, then pages in the index will be hyperlinked to the relevant references.
+
+The following commands just process their content by default, but can be overridden to style the index at your convenience:
+\begin{itemize}
+\item{\autodoc:command{\index:entry:style}: Hook for styling the index entry.}
+\item{\autodoc:command{\index:pages:style}: Hook for styling the page numbers.}
+\end{itemize}
+When called, they are being passed, as parameters, the index name and the content to be styled.
 
 \end{document}
 ]]
