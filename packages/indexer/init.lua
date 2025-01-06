@@ -107,9 +107,11 @@ function package:_init (options)
    self.config = pl.tablex.merge({
       ["page-range-format"] = "expanded",
       ["page-range-delimiter"] = "–",
-      ["page-delimiter"] = ", "
+      ["page-delimiter"] = ", ",
+      filler = "dotfill"
    }, options, true)
    self:loadPackage("infonode")
+   self:loadPackage("leaders")
    self.class:registerHook("endpage", self.buildIndex)
    if not SILE.scratch.index then
       SILE.scratch.index = {}
@@ -206,11 +208,20 @@ function package:registerCommands ()
    self:registerCommand("index:item", function (options, content)
       -- Unconventional: options.pageno is an AST
       SILE.settings:temporarily(function ()
-         SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+         if self.config.filler ~= "comma" then
+            SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+         end
          SILE.settings:set("current.parindent", SILE.types.node.glue())
          SILE.call("code", {}, content)
-         -- Ideally, leaders
-         SILE.call("hss")
+         if self.config.filler == "dotfill" then
+            SILE.call("dotfill")
+         elseif self.config.filler == "fill" then
+            SILE.call("hss")
+         elseif self.config.filler == "comma" then
+            SILE.typesetter:typeset(", ")
+         else
+            SU.error("Unknown filler: " .. self.config.filler)
+         end
          SILE.process(options.pageno)
          SILE.call("smallskip")
       end)
@@ -223,16 +234,22 @@ An index is essentially the same thing as a table of contents, but sorted.
 
 The package accepts several configuration options:
 \begin{itemize}
-\item{\autodoc:parameter{page-range-format}: The format used to display page ranges.
+\item{\autodoc:parameter{page-range-format}: The format used to display page ranges for arabic numbers.
 Possible values are:
 \begin{itemize}
 \item{\code{none}: All numbers are displayed, without page range collapsing.}
-\item{\code{expanded}: All digits are displayed in both numbers in a page range: 42–45, 321–328, 2787–2816.}
-\item{\code{minimal}: All digits repeated in the second number are left out in a page range: 42–5, 321–8, 2787–816}
-\item{\code{minimal-two}: As \code{minimal}, but at least two digits are kept in the second number when it has two or more digits long.}
+\item{\code{expanded} (default): All digits are displayed in a page range: 42–45, 321–328, 2787–2816.}
+\item{\code{minimal}: All digits repeated in the second number are left out in a page range: 42–5, 321–8, 2787–816.}
+\item{\code{minimal-two}: As \code{minimal}, but at least two digits are kept in the second number when it has two or more digits long: 42–45, 321–28, 2787–816.}
 \end{itemize}}
 \item{\autodoc:parameter{page-range-delimiter}: The delimiter between the start and end of a page range.}
 \item{\autodoc:parameter{page-delimiter}: The delimiter between pages.}
+\item{\autodoc:parameter{filler}: The filler between the index item and the page number. Possible values are:
+\begin{itemize}
+\item{\code{dotfill} (default): Fill with dots (leaders).}
+\item{\code{fill}: Fill with a stretchable space.}
+\item{\code{comma}: Use a comma, and page numbers are not flushed to the end of the line.}
+\end{itemize}}
 \end{itemize}
 
 This package provides the \autodoc:command{\indexentry} command, which can be called as either \autodoc:command{\indexentry[label=<text>]} or \autodoc:command{\indexentry{<text>}} (so that it can be called from a macro).
