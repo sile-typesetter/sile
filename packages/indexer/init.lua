@@ -81,7 +81,38 @@ local function _simplifyArabicInRange (p1, p2, format)
    return p2
 end
 
-function package.buildIndex ()
+local _indexer_used = false
+
+function package.writeIndex (_) -- not a package method, called as a hook from the class
+   local idxdata = pl.pretty.write(SILE.scratch.index)
+   local idxfile, err = io.open(pl.path.splitext(SILE.input.filenames[1]) .. ".idx", "w")
+   if not idxfile then
+      return SU.error(err)
+   end
+   idxfile:write("return " .. idxdata)
+   idxfile:close()
+   if _indexer_used and not pl.tablex.deepcompare(SILE.scratch.index, SILE.scratch._index) then
+      SU.msg("Notice: the index has changed, please rerun SILE to update it.")
+   end
+end
+
+function package.readIndex (_) -- not a package method, called as a hook from the class
+   if SILE.scratch._index and #SILE.scratch._index > 0 then
+      -- already loaded
+      return SILE.scratch._index
+   end
+   local idxfile_name = (pl.path.splitext(SILE.input.filenames[1]) .. ".idx")
+   local idxfile, _ = io.open(idxfile_name)
+   if not idxfile then
+      return false -- No index yet
+   end
+   local doc = idxfile:read("*all")
+   local idx = assert(load(doc), idxfile_name, "r")()
+   SILE.scratch._index = idx
+   return SILE.scratch._index
+end
+
+function package.buildIndex () -- not a package method, called as a hook from the class
    local nodes = SILE.scratch.info.thispage.index
    local pageno = pl.tablex.copy(SILE.scratch.counters.folio)
    if not nodes then
@@ -113,6 +144,7 @@ function package:_init (options)
    self:loadPackage("infonode")
    self:loadPackage("leaders")
    self.class:registerHook("endpage", self.buildIndex)
+   self.class:registerHook("finish", self.writeIndex)
    if not SILE.scratch.index then
       SILE.scratch.index = {}
    end
@@ -189,10 +221,21 @@ function package:registerCommands ()
    end, "Add an entry to the index")
 
    self:registerCommand("printindex", function (options, _)
+      _indexer_used = true
+      local idx = self:readIndex()
+      if idx == false then
+         SU.warn("The index is not available yet, rerun SILE to generate it")
+         return
+      end
       if not options.index then
          options.index = "main"
       end
-      local index = SILE.scratch.index[options.index]
+      local index = idx[options.index]
+      if not index then
+         -- Either the index is not up-to-date (and we should rerun SILE), or it does not exist at all.
+         SU.warn("Index '" .. options.index .. "' does not exist, rerun SILE or check the index name")
+         return
+      end
       local sortedIndex = {}
       for n in pairs(index) do
          table.insert(sortedIndex, n)
