@@ -7,10 +7,10 @@ if not SILE.scratch.pdf_destination_counter then
    SILE.scratch.pdf_destination_counter = 1
 end
 
--- Check if page p2 is not the same as previous page p1.
--- @tparam table p1 A page counter value or nil (if no previous page yet).
--- @tparam table p2 A page counter value.
--- @treturn boolean True if p2 is not the same as p1.
+--- Check if page p2 is not the same as previous page p1.
+-- @tparam table p1 A page counter value or nil (if no previous page yet)
+-- @tparam table p2 A page counter value
+-- @treturn boolean True if p2 is not the same as p1
 local function _isNotSamePage (p1, p2)
    if not p1 then
       return true
@@ -18,9 +18,9 @@ local function _isNotSamePage (p1, p2)
    return p1.display ~= p2.display or p1.value ~= p2.value
 end
 
--- Group pages into ranges of consecutive pages.
--- @tparam table pages A list of pages with pageno (counter) and link (internal string) fields.
--- @treturn table A list of ranges, each containing a list of pages.
+--- Group pages into ranges of consecutive pages.
+-- @tparam table pages A list of pages with pageno (counter) and link (internal string) fields
+-- @treturn table A list of ranges, each containing a list of pages
 local function _groupPageRanges(pages)
    local ret = {}
    for _, page in ipairs(pages) do
@@ -36,10 +36,10 @@ local function _groupPageRanges(pages)
    return ret
 end
 
--- Wrap content in a link if a destination is provided.
--- @tparam string dest The destination name.
--- @tparam string page The page number.
--- @treturn table The content AST, possibly wrapped in a link.
+--- Wrap content in a link if a destination is provided.
+-- @tparam string dest The destination name
+-- @tparam string page The page number
+-- @treturn table The content AST, possibly wrapped in a link
 local function _linkWrapper (dest, page)
    if dest and SILE.Commands["pdf:link"] then
       return SU.ast.createCommand("pdf:link", { dest = dest }, page)
@@ -47,10 +47,10 @@ local function _linkWrapper (dest, page)
    return page
 end
 
--- Add a delimiter between elements of a table.
--- @tparam table t A list of elements.
--- @tparam string sep The delimiter.
--- @treturn table A new list with the delimiter inserted between elements.
+--- Add a delimiter between elements of a table.
+-- @tparam table t A list of elements
+-- @tparam string sep The delimiter
+-- @treturn table A new list with the delimiter inserted between elements
 local function _addDelimiter (t, sep)
    local ret = {}
    for i = 1, #t - 1 do
@@ -63,11 +63,11 @@ local function _addDelimiter (t, sep)
    return ret
 end
 
--- Simplify the second number in an Arabic page range.
--- @tparam string p1 The first page number (assumed to be in Arabic format).
--- @tparam string p2 The second page number (assumed to be in Arabic format).
--- @tparam string format The format to use (either 'minimal' or 'minimal-two').
--- @treturn string The simplified second page number.
+--- Simplify the second number in an Arabic page range.
+-- @tparam string p1 The first page number (assumed to be in Arabic format)
+-- @tparam string p2 The second page number (assumed to be in Arabic format)
+-- @tparam string format The format to use (either 'minimal' or 'minimal-two')
+-- @treturn string The simplified second page number
 local function _simplifyArabicInRange (p1, p2, format)
    if #p1 > 1 and #p1 == #p2 then
       local ending = format == 'minimal' and 1 or 2
@@ -83,7 +83,9 @@ end
 
 local _indexer_used = false
 
-function package.writeIndex (_) -- not a package method, called as a hook from the class
+--- Write the index to a file.
+-- This function is called as a hook from the class, not as a method of the package.
+function package.writeIndex ()
    local idxdata = pl.pretty.write(SILE.scratch.index)
    local idxfile, err = io.open(pl.path.splitext(SILE.input.filenames[1]) .. ".idx", "w")
    if not idxfile then
@@ -96,7 +98,9 @@ function package.writeIndex (_) -- not a package method, called as a hook from t
    end
 end
 
-function package.readIndex (_) -- not a package method, called as a hook from the class
+--- Read the index from a file.
+-- This function is called as a hook from the class, not as a method of the package.
+function package.readIndex ()
    if SILE.scratch._index and #SILE.scratch._index > 0 then
       -- already loaded
       return SILE.scratch._index
@@ -112,7 +116,9 @@ function package.readIndex (_) -- not a package method, called as a hook from th
    return SILE.scratch._index
 end
 
-function package.buildIndex () -- not a package method, called as a hook from the class
+--- Collect index entries from the current page.
+-- This function is called as a hook from the class, not as a method of the package.
+function package.buildIndex ()
    local nodes = SILE.scratch.info.thispage.index
    local pageno = pl.tablex.copy(SILE.scratch.counters.folio)
    if not nodes then
@@ -133,6 +139,8 @@ function package.buildIndex () -- not a package method, called as a hook from th
    end
 end
 
+--- Initialize the package.
+-- @tparam table options Configuration options
 function package:_init (options)
    base._init(self)
    self.config = pl.tablex.merge({
@@ -212,6 +220,7 @@ function package:outputIndexEntry (options, entry, pages)
    end)
 end
 
+-- Register the indexer commands.
 function package:registerCommands ()
    self:registerCommand("indexentry", function (options, content)
       if not options.label then
@@ -277,7 +286,9 @@ end
 
 package.documentation = [[
 \begin{document}
-An index is essentially the same thing as a table of contents, but sorted.
+The \autodoc:package{indexer} package provides a way to create indexex of terms in a document.
+An index functions similarly to a table of contents but organizes entries alphabetically by the indexed terms.
+The sorting order is based on the conventions of the current language.
 
 The package accepts several configuration options:
 \begin{itemize}
@@ -299,8 +310,12 @@ Possible values are:
 \end{itemize}}
 \end{itemize}
 
-This package provides the \autodoc:command{\indexentry} command, which can be called as either \autodoc:command{\indexentry[label=<text>]} or \autodoc:command{\indexentry{<text>}} (so that it can be called from a macro).
-Index entries are collated at the end of each page, and the command \autodoc:command{\printindex} will deposit them in a list.
+The package provides the \autodoc:command{\indexentry} command, which can be called as either \autodoc:command{\indexentry[label=<text>]} or \autodoc:command{\indexentry{<text>}}.
+Index entries are gathered and collated at the end of each page, tracking their page numbers.
+
+The \autodoc:command{\printindex} command outputs the collected entries as a formatted list.
+Since page numbers are finalized after rendering, the index appears on the second pass.
+If the index occurs early and affects pagination, a third pass may be needed for accuracy.
 
 Multiple indexes are available and an index can be selected by passing the \autodoc:parameter{index=<name>} parameter to \autodoc:command{\indexentry} and \autodoc:command{\printindex}.
 
