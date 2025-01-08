@@ -215,16 +215,8 @@ end
 function package:registerCommands ()
    self:registerCommand("indexentry", function (options, content)
       if not options.label then
-         -- Reconstruct the text.
-         SILE.typesetter:pushState()
-         SILE.process(content)
-         local text = ""
-         local nl = SILE.typesetter.state.nodes
-         for i = 2, #nl do
-            text = text .. nl[i]:toText()
-         end
-         options.label = text
-         SILE.typesetter:popState()
+         -- Reconstruct the text from the content tree
+         options.label = SILE.typesetter:contentToText(content)
       end
       if not options.index then
          options.index = "main"
