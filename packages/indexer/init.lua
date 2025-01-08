@@ -187,6 +187,31 @@ function package:formatPages (pages)
    return _addDelimiter(ret, self.config['page-delimiter'])
 end
 
+-- Output an index entry.
+-- @tparam table options The index entry options (passed to the style hooks).
+-- @tparam table entry The index entry as a SILE AST.
+-- @tparam table pages The formatted pages as a SILE AST.
+function package:outputIndexEntry (options, entry, pages)
+   SILE.settings:temporarily(function ()
+      if self.config.filler ~= "comma" then
+         SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+      end
+      SILE.settings:set("current.parindent", SILE.types.node.glue())
+      SILE.call("index:entry:style", options, entry)
+      if self.config.filler == "dotfill" then
+         SILE.call("dotfill")
+      elseif self.config.filler == "fill" then
+         SILE.call("hss")
+      elseif self.config.filler == "comma" then
+         SILE.typesetter:typeset(", ")
+      else
+         SU.error("Unknown filler: " .. self.config.filler)
+      end
+      SILE.call("index:pages:style", options, pages)
+      SILE.call("smallskip")
+   end)
+end
+
 function package:registerCommands ()
    self:registerCommand("indexentry", function (options, content)
       if not options.label then
@@ -242,35 +267,11 @@ function package:registerCommands ()
       end
       SU.collatedSort(sortedIndex)
       SILE.call("bigskip")
-      for _, k in ipairs(sortedIndex) do
-         local pages = self:formatPages(index[k])
-         SILE.call("index:item", { pages = pages, index = options.index }, { k })
+      for _, entry in ipairs(sortedIndex) do
+         local pages = self:formatPages(index[entry])
+         self:outputIndexEntry({ index = options.index }, { entry }, pages)
       end
    end, "Print the index")
-
-   self:registerCommand("index:item", function (options, content)
-      -- Unconventional: options.pages is an AST
-      local pages = options.pages
-      options.pages = nil
-      SILE.settings:temporarily(function ()
-         if self.config.filler ~= "comma" then
-            SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
-         end
-         SILE.settings:set("current.parindent", SILE.types.node.glue())
-         SILE.call("index:entry:style", options, content)
-         if self.config.filler == "dotfill" then
-            SILE.call("dotfill")
-         elseif self.config.filler == "fill" then
-            SILE.call("hss")
-         elseif self.config.filler == "comma" then
-            SILE.typesetter:typeset(", ")
-         else
-            SU.error("Unknown filler: " .. self.config.filler)
-         end
-         SILE.call("index:pages:style", options, pages)
-         SILE.call("smallskip")
-      end)
-   end, "Output an index item (normally an internal command)")
 
    -- Hooks for styling the index
    self:registerCommand("index:entry:style", function (_, content)
