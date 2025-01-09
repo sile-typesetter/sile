@@ -1081,7 +1081,7 @@ end
 --- Any unclosed liner is reopened on the current line, so we clone and repeat it.
 -- An assumption is that the inserts are done after the current slice content,
 -- supposed to be just before meaningful (visible) content.
--- @tparam slice slice
+-- @tparam table slice Flat nodes from current line
 -- @treturn boolean Whether a liner was reopened
 function typesetter:_repeatEnterLiners (slice)
    local m = self.state.liners
@@ -1502,7 +1502,7 @@ end
 
 --- Flatten a node list into just its string representation.
 -- @tparam table nodes Typeset nodes
--- @treturn string Textual Text reconstruction of the nodes
+-- @treturn string Text reconstruction of the nodes
 local function _nodesToText (nodes)
    -- A real interword space width depends on several settings (depending on variable
    -- spaces being enabled or not, etc.), and the computation below takes that into
