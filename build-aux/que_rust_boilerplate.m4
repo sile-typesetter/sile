@@ -15,7 +15,6 @@ AC_DEFUN_ONCE([QUE_RUST_BOILERPLATE], [
         AX_REQUIRE_PROG([cargo])
         AX_REQUIRE_PROG([jq])
         AX_REQUIRE_PROG([rustc])
-        AX_REQUIRE_PROG([cmp])
         AX_REQUIRE_PROG([xargs])
         AM_COND_IF([DEVELOPER_MODE], [
                 AX_REQUIRE_PROG([git])
