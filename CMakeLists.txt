@@ -210,7 +210,7 @@ target_link_options(svg PUBLIC /EXPORT:luaopen_svg)
 set(LUA "luajit.exe")
 set(SILE_PATH "debug.getinfo(1, 'S').source:match('@?.*[/\\\\]') or '.'")
 set(SILE_LIB_PATH "debug.getinfo(1, 'S').source:match('@?.*[/\\\\]') or '.'")
-set(SHARED_LIB_EXT "dll")
+set(LIBEXT "dll")
 configure_file(sile.in sile.lua)
 
 if (WIN32)

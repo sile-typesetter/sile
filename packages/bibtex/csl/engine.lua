@@ -103,14 +103,16 @@ function CslEngine:_init (style, locale, extras)
    }
 
    self.subsequentAuthorSubstitute = self.inheritable["bibliography"]["subsequent-author-substitute"]
-   local _, count = luautf8.gsub(self.subsequentAuthorSubstitute, "[%-_–—]", "") -- naive count
-   if count > 0 then
-      -- With many fonts, a sequence of dashes is not looking that great.
-      -- So replace them with a command, and let the typesetter decide for a better rendering.
-      -- NOTE: Avoid (quoted) attributes and dashes in tags, as some global
-      -- substitutions might affect quotes...So we use a simple "wrapper" command.
-      local trail = luautf8.gsub(self.subsequentAuthorSubstitute, "^[%-–—_]+", "")
-      self.subsequentAuthorSubstitute = "<bibRule>" .. count .. "</bibRule>" .. trail
+   if self.subsequentAuthorSubstitute then
+      local _, count = luautf8.gsub(self.subsequentAuthorSubstitute, "[%-_–—]", "") -- naive count
+      if count > 0 then
+         -- With many fonts, a sequence of dashes is not looking that great.
+         -- So replace them with a command, and let the typesetter decide for a better rendering.
+         -- NOTE: Avoid (quoted) attributes and dashes in tags, as some global
+         -- substitutions might affect quotes...So we use a simple "wrapper" command.
+         local trail = luautf8.gsub(self.subsequentAuthorSubstitute, "^[%-–—_]+", "")
+         self.subsequentAuthorSubstitute = "<bibRule>" .. count .. "</bibRule>" .. trail
+      end
    end
 end
 
@@ -1490,7 +1492,7 @@ function CslEngine:_process (entries, mode)
 end
 
 --- Generate a citation string.
--- @tparam table entry List of CSL entries
+-- @tparam table entries List of CSL entries
 -- @treturn string The XML citation string
 function CslEngine:cite (entries)
    entries = type(entries) == "table" and not entries.type and entries or { entries }
@@ -1498,7 +1500,7 @@ function CslEngine:cite (entries)
 end
 
 --- Generate a reference string.
--- @tparam table entry List of CSL entries
+-- @tparam table entries List of CSL entries
 -- @treturn string The XML reference string
 function CslEngine:reference (entries)
    entries = type(entries) == "table" and not entries.type and entries or { entries }

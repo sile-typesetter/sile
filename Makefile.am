@@ -59,6 +59,7 @@ BUILT_SOURCES_LUA = core/features.lua core/pathsetup.lua core/version.lua
 
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
+pkglib_LIBRARIES =
 nodist_man_MANS =
 dist_man_MANS = sile-lua.1
 sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs src/types.rs src/types/semver.rs
@@ -72,7 +73,7 @@ dist_pdf_DATA = $(_MANUAL)
 dist_license_DATA = LICENSE.md
 EXTRA_DIST = spec tests documentation sile-dev-1.rockspec rusile-dev-1.rockspec fontconfig.conf
 EXTRA_DIST += build-aux/action-updater.js build-aux/cargo-updater.js build-aux/config.ld build-aux/decore-automake.sh build-aux/git-version-gen
-EXTRA_DIST += Dockerfile build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
+EXTRA_DIST += Dockerfile bootstrap.sh build-aux/docker-bootstrap.sh build-aux/docker-fontconfig.conf hooks/build
 EXTRA_DIST += build-aux/xml-entities-to-lua.xsl
 EXTRA_DIST += default.nix flake.nix flake.lock shell.nix build-aux/pkg.nix
 EXTRA_DIST += package.json # imported by both Nix and Docker
@@ -133,9 +134,6 @@ $(CARGO_BIN): justenough/.libs/justenoughicu.a
 $(CARGO_BIN): justenough/.libs/justenoughlibtexpdf.a
 $(CARGO_BIN): justenough/.libs/svg.a
 $(CARGO_BIN): libtexpdf/.libs/libtexpdf.a
-if !EMBEDDED_RESOURCES
-$(CARGO_BIN): rusile.$(SHARED_LIB_EXT)
-endif !EMBEDDED_RESOURCES
 
 src/embed-includes.rs: Makefile-distfiles
 	{
@@ -153,7 +151,10 @@ src/embed.rs: src/embed.rs.in src/embed-includes.rs
 		-e '/@EMBEDDED_INCLUDE_LIST@/r $(word 2,$^)' \
 		-e '/@EMBEDDED_INCLUDE_LIST@/d' \
 		$< > $@
-endif EMBEDDED_RESOURCES
+
+else !EMBEDDED_RESOURCES
+$(CARGO_BIN): $(pkglib_LIBRARIES)
+endif !EMBEDDED_RESOURCES
 
 if LUAJIT
 MLUAVER = luajit
@@ -268,13 +269,13 @@ _DOCS_DEPS = $(and $$(filter documentation/%,$@),$(addprefix .fonts/,$(DOCSFONTF
 _SUBDIR_TELLS =
 
 if SHARED
-_SUBDIR_TELLS += justenough/.libs/fontmetrics.$(SHARED_LIB_EXT) \
-				justenough/.libs/justenoughfontconfig.$(SHARED_LIB_EXT) \
-				justenough/.libs/justenoughharfbuzz.$(SHARED_LIB_EXT) \
-				justenough/.libs/justenoughicu.$(SHARED_LIB_EXT) \
-				justenough/.libs/justenoughlibtexpdf.$(SHARED_LIB_EXT) \
-				justenough/.libs/svg.$(SHARED_LIB_EXT) \
-				libtexpdf/.libs/libtexpdf.$(SHARED_LIB_EXT).0.0.0
+_SUBDIR_TELLS += justenough/.libs/fontmetrics$(LIBEXT) \
+				justenough/.libs/justenoughfontconfig$(LIBEXT) \
+				justenough/.libs/justenoughharfbuzz$(LIBEXT) \
+				justenough/.libs/justenoughicu$(LIBEXT) \
+				justenough/.libs/justenoughlibtexpdf$(LIBEXT) \
+				justenough/.libs/svg$(LIBEXT) \
+				libtexpdf/.libs/libtexpdf$(LIBEXT).0.0.0
 endif
 
 if STATIC
@@ -382,10 +383,10 @@ typos:
 busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'
 	packagepath=(./{,lua-libraries/}?{,/init}.lua)
-	packagecpath=(./{,core/,{libtexpdf,justenough}/.libs/}?.$(SHARED_LIB_EXT))
+	packagecpath=(./{,core/,{libtexpdf,justenough}/.libs/}?$(LIBEXT))
 if !SYSTEM_LUAROCKS
 	packagepath+=(./lua_modules/share/lua/$(LUA_VERSION)/?{,/init}.lua)
-	packagecpath+=(./lua_modules/lib/lua/$(LUA_VERSION)/?.$(SHARED_LIB_EXT))
+	packagecpath+=(./lua_modules/lib/lua/$(LUA_VERSION)/?$(LIBEXT))
 endif
 # Note: Busted tests can't run with out static build since the Rusile module is
 # only available embedded into it. We can test on the dynamic builds where it

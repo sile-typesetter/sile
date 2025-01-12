@@ -332,7 +332,7 @@ function utilities.error (message, isbug)
    utilities.warn(message, isbug)
    _skip_traceback_levels = 2
    io.stderr:flush()
-   SILE.outputter:finish()
+   SILE.outputter:abort()
    SILE.scratch.caughterror = true
    error("", 2)
 end

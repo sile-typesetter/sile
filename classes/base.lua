@@ -479,7 +479,9 @@ function class:registerCommands ()
          local module = options.src:gsub("%/", ".")
          local original = (("\\script[src=%s]"):format(options.src))
          local result = SILE.require(options.src)
-         local suggested = (result._name and "\\use[module=%s]" or "\\lua[require=%s]"):format(module)
+         local suggested = (type(result) == "table" and result._name and "\\use[module=%s]" or "\\lua[require=%s]"):format(
+            module
+         )
          _deprecated(original, suggested)
          return result
       else

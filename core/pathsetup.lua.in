@@ -42,8 +42,8 @@ end
 
 -- Prepend paths specifically for C modules.
 local function prependCPath (path)
-   package.cpath = prepend_and_dedup(path .. "/?.@SHARED_LIB_EXT@", package.cpath)
-   if "@SHARED_LIB_EXT@" ~= "so" then
+   package.cpath = prepend_and_dedup(path .. "/?@LIBEXT@", package.cpath)
+   if "@LIBEXT@" ~= "so" then
       package.cpath = prepend_and_dedup(path .. "/?.so", package.cpath)
    end
 end

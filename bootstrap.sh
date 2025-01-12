@@ -47,13 +47,4 @@ touch aminclude.am
 
 autoreconf --install
 
-# See discussion in https://github.com/sile-typesetter/sile/issues/82 and
-# https://web.archive.org/web/20170111053341/http://blog.gaku.net/autoconf/
-case $(uname) in
-    Darwin*)
-        glibtoolize -W none
-        autoreconf --force -W none
-        ;;
-esac
-
 build-aux/decore-automake.sh

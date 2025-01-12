@@ -3,7 +3,7 @@ AC_INIT([sile], [m4_esyscmd(build-aux/git-version-gen .tarball-version)], [caleb
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux])
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE([foreign tar-pax dist-zstd dist-zip no-dist-gzip color-tests subdir-objects])
+AM_INIT_AUTOMAKE([foreign tar-pax dist-zstd dist-zip no-dist-gzip no-dependencies color-tests subdir-objects])
 AM_SILENT_RULES([yes])
 
 # Load up re-usable m4 bits shared across Caleb's projects
@@ -11,6 +11,7 @@ QUE_GIT_VERSION
 QUE_TRANSFORM_PACKAGE_NAME
 QUE_DEVELOPER_MODE
 QUE_DIST_CHECKSUMS
+QUE_LIBEXT
 
 # Extend the QUE checksums feature with support for the PDF manual
 SILE_DIST_CHECKSUMS
@@ -38,22 +39,8 @@ RANLIB=:
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
 
-QUE_RUST_BOILERPLATE
 QUE_DOCKER_BOILERPLATE
-
-# Load Rust module bits, early since it stuffs rules in aminclude.am
-case $target_os in
-    darwin*)
-        SHARED_LIB_EXT="dylib"
-        ;;
-    cygwin*|mingw*)
-        SHARED_LIB_EXT="dll"
-        ;;
-    *)
-        SHARED_LIB_EXT="so"
-        ;;
-esac
-AC_SUBST([SHARED_LIB_EXT])
+QUE_RUST_BOILERPLATE
 QUE_RUST_MODULE([rusile])
 
 AM_CONDITIONAL([SHARED], [test "x$enable_shared" = "xyes"])
