@@ -50,6 +50,7 @@ build/
 *.debug
 gh-pages
 sile-[0-9\.]*
+sile-vendored-crates-[0-9\.]*
 *.rockslock
 .dockerignore
 luacov.*.out
@@ -68,6 +69,7 @@ node_modules
 lua_modules
 lua_modules_dist
 package-lock.json
+vendor
 
 # Editor entrails
 .vscode/
