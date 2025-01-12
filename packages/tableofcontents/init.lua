@@ -59,45 +59,6 @@ local function _linkWrapper (dest, func)
    end
 end
 
--- Flatten a node list into just its string representation.
--- (Similar to SU.ast.contentToString(), but allows passing typeset
--- objects to functions that need plain strings).
-local function _nodesToText (nodes)
-   -- A real interword space width depends on several settings (depending on variable
-   -- spaces being enabled or not, etc.), and the computation below takes that into
-   -- account.
-   local iwspc = SILE.shaper:measureSpace(SILE.font.loadDefaults({}))
-   local iwspcmin = (iwspc.length - iwspc.shrink):tonumber()
-
-   local string = ""
-   for i = 1, #nodes do
-      local node = nodes[i]
-      if node.is_nnode or node.is_unshaped then
-         string = string .. node:toText()
-      elseif node.is_glue or node.is_kern then
-         -- What we want to avoid is "small" glues or kerns to be expanded as full
-         -- spaces.
-         -- Comparing them to half of the smallest width of a possibly shrinkable
-         -- interword space is fairly fragile and empirical: the content could contain
-         -- font changes, so the comparison is wrong in the general case.
-         -- It's a simplistic approach. We cannot really be sure what a "space" meant
-         -- at the point where the kern or glue got absolutized.
-         if node.width:tonumber() > iwspcmin * 0.5 then
-            string = string .. " "
-         end
-      elseif not (node.is_zerohbox or node.is_migrating) then
-         -- Here, typically, the main case is an hbox.
-         -- Even if extracting its content could be possible in some regular cases
-         -- we cannot take a general decision, as it is a versatile object  and its
-         -- outputYourself() method could moreover have been redefined to do fancy
-         -- things. Better warn and skip.
-         SU.warn("Some content could not be converted to text: " .. node)
-      end
-   end
-   -- Trim leading and trailing spaces, and simplify internal spaces.
-   return pl.stringx.strip(string):gsub("%s%s+", " ")
-end
-
 if not SILE.scratch.pdf_destination_counter then
    SILE.scratch.pdf_destination_counter = 1
 end
@@ -166,10 +127,8 @@ function package:registerCommands ()
       if SILE.Commands["pdf:destination"] then
          dest = "dest" .. tostring(SILE.scratch.pdf_destination_counter)
          SILE.call("pdf:destination", { name = dest })
-         SILE.typesetter:pushState()
-         SILE.process(content)
-         local title = _nodesToText(SILE.typesetter.state.nodes)
-         SILE.typesetter:popState()
+         -- Reconstruct a textual representation of the content tree
+         local title = SILE.typesetter:contentToText(content)
          SILE.call("pdf:bookmark", { title = title, dest = dest, level = options.level })
          SILE.scratch.pdf_destination_counter = SILE.scratch.pdf_destination_counter + 1
       end
