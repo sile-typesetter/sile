@@ -49,6 +49,10 @@ function class:_init (options)
          left = "a",
          right = "b",
       },
+		ftn_frames = {
+			ftn_left = "c",
+			ftn_right = "d",
+		},
    })
 end
 
