@@ -216,6 +216,13 @@ end
 
 function package:_init(options)
    base._init(self, options)
+
+   -- Load necessary packages
+   self:loadPackage("rebox") -- for footnote:rule
+   self:loadPackage("rules") -- for footnote:rule
+   self:loadPackage("counters") -- for footnote counting
+   self:loadPackage("raiselower") -- for footnote superscript mark
+
    SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
    if type(options.frames) ~= "table" then
       SU.error([[
