@@ -124,6 +124,21 @@ local balanceFramesWithDummyContent = function(offset)
    SU.debug(package._name, "Balanced frames to height: ", maxHeight)
 end
 
+-- Measure the width of a string in the current font context, typically used for footnote markers.
+local measureStringWidth = function(str)
+   -- Shape the string using the current font settings.
+   local shapedText = SILE.shaper:shapeToken(str, SILE.font.loadDefaults({}))
+
+   -- Calculate the total width by summing the widths of all glyphs.
+   local totalWidth = 0
+   for _, glyph in ipairs(shapedText) do
+      totalWidth = totalWidth + glyph.width
+   end
+
+   return totalWidth
+end
+
+
 -- Handles page-breaking and overflow logic for parallel frames.
 local parallelPagebreak = function()
    for _, thisPageFrames in ipairs(folioOrder) do
