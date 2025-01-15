@@ -155,14 +155,24 @@ local parallelPagebreak = function ()
    end
 end
 
-local addBalancingGlue = function (height)
-   allTypesetters(function (frame, typesetter)
+-- Add balancing glue to shorter frames to align their height with the target height.
+-- This ensures consistent alignment across frames by adding vertical glue to the output queue.
+local addBalancingGlue = function(height)
+   allTypesetters(function(frame, typesetter)
+      -- Calculate the height of new material in the current frame.
+      calculations[frame].heightOfNewMaterial = calculateFrameHeight(frame, typesetter)
+
+      -- Determine the amount of glue needed to match the target height.
       local glue = height - calculations[frame].heightOfNewMaterial
-      if glue.length:tonumber() > 0 then
-         SU.debug("parallel", "Adding", glue, "to", frame)
-         typesetter:pushVglue({ height = glue })
+
+      -- If glue is needed, add it to the frame's output queue.
+      if glue:tonumber() > 0 then
+         table.insert(typesetter.state.outputQueue, SILE.types.node.vglue({ height = glue }))
+         SU.debug(package._name, "Added balancing glue of", glue, "to the bottom of frame", frame)
       end
-      calculations[frame].mark = #typesetter.state.outputQueue
+
+      -- Marking is unnecessary here as the `\sync` command handles it.
+      -- calculations[frame].mark = #typesetter.state.outputQueue
    end)
 end
 
