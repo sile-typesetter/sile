@@ -18,15 +18,18 @@ local calculations = {}
 -- Specifies the order of frames for synchronizing and page-breaking logic.
 local folioOrder = {}
 
-local allTypesetters = function (callback)
-   local oldtypesetter = SILE.typesetter
-   for frame, typesetter in pairs(typesetterPool) do
-      SILE.typesetter = typesetter
-      callback(frame, typesetter)
-   end
-   SILE.typesetter = oldtypesetter
+-- Utility function to iterate through all typesetters in the pool and apply a callback function.
+local allTypesetters = function(callback)
+	local oldtypesetter = SILE.typesetter -- Save the currently active typesetter.
+	for frame, typesetter in pairs(typesetterPool) do
+		SILE.typesetter = typesetter -- Temporarily switch to the typesetter for the current frame.
+		callback(frame, typesetter) -- Apply the callback to the current frame and its typesetter.
+	end
+	SILE.typesetter = oldtypesetter -- Restore the original typesetter after iteration.
 end
 
+-- A null typesetter used as a placeholder. This typesetter doesn't output any content.
+-- Its purpose is to make the transtion between frames easier and trouble free.
 local nulTypesetter = pl.class(SILE.typesetters.base) -- we ignore this
 nulTypesetter.outputLinesToPage = function () end
 
