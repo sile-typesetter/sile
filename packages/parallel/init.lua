@@ -419,6 +419,34 @@ function package:registerCommands()
       end)
    end)
 
+   self:registerCommand("parallel_footnote", function(options, content)
+      local currentFrame = SILE.typesetter.frame.id
+      local targetFrame = currentFrame == "a" and "ftn_left" or "ftn_right"
+
+      -- Increment or retrieve the footnote counter for the target frame
+      local footnoteNumber
+      if not options.mark then
+         SILE.call("increment-counter", { id = targetFrame })
+         footnoteNumber = self.class.packages.counters:formatCounter(SILE.scratch.counters[targetFrame])
+      else
+         footnoteNumber = options.mark
+      end
+
+      -- Add the footnote marker to the text
+      SILE.call("footnoteNumber", {}, function()
+         SILE.typesetter:typeset(footnoteNumber)
+      end)
+
+      -- Add the footnote content to the frame's list
+      if footnotes[targetFrame] then
+         table.insert(footnotes[targetFrame], {
+            -- number = footnoteNumber,
+            marker = tostring(footnoteNumber) .. ".",
+            content = content,
+         })
+      end
+   end)
+
 end
 
 package.documentation = [[
