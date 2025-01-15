@@ -338,6 +338,25 @@ function package:registerCommands()
          addParskipToFrames(parskip)
       end
    end)
+
+      self:registerCommand("smaller", function(_, content)
+      SILE.settings:temporarily(function()
+         local currentSize = SILE.settings:get("font.size")
+         SILE.settings:set("font.size", currentSize * 0.75) -- Scale down to 75%
+         SILE.settings:set("font.weight", 800)
+         SILE.process(content)
+      end)
+   end)
+
+   self:registerCommand("footnoteNumber", function(options, content)
+      local height = options.height or "0.3em" -- Default height for superscripts
+      SILE.call("raise", { height = height }, function()
+         SILE.call("smaller", {}, function()
+            SILE.process(content)
+         end)
+      end)
+   end)
+
 end
 
 package.documentation = [[
