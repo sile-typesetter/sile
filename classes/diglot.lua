@@ -14,18 +14,18 @@ function class:_init (options)
       SILE.scratch.counters.folio = { value = 1, display = "arabic" }
    end)
 
-   self:declareFrame("a", {
-      left = "8.3%pw",
-      right = "48%pw",
-      top = "11.6%ph",
-      bottom = "80%ph",
-   })
-   self:declareFrame("b", {
-      left = "52%pw",
-      right = "100%pw-left(a)",
-      top = "top(a)",
-      bottom = "bottom(a)",
-   })
+	self:declareFrame("a", {
+		left = "2.5%pw",
+		right = "47.5%pw",
+		top = "3.5%ph",
+		bottom = "85%ph",
+	})
+	self:declareFrame("b", {
+		left = "52.5%pw",
+		right = "100%pw-left(a)",
+		top = "top(a)",
+		bottom = "bottom(a)",
+	})
    self:declareFrame("folio", {
       left = "left(a)",
       right = "right(b)",
