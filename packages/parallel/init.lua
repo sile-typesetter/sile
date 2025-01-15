@@ -138,6 +138,35 @@ local measureStringWidth = function(str)
    return totalWidth
 end
 
+-- Create a unique id for each footnote
+local function generateFootnoteId(frame, note)
+   return frame .. ":" .. note.marker
+end
+
+local function getFootnoteHeight(frame, note, typesetter)
+   local noteId = generateFootnoteId(frame, note)
+
+   -- Simulate typesetting to calculate height
+   local noteQueue = {}
+   typesetter:pushState()
+   -- Redirect the output queue to the noteQueue
+   typesetter.state.outputQueue = noteQueue
+   SILE.call("parallel_footnote:constructor", { marker = note.marker }, note.content)
+   typesetter:popState()
+
+   -- Measure the height of the simulated queue
+   local noteHeight = 0
+   for _, node in ipairs(noteQueue) do
+      noteHeight = noteHeight + node.height:absolute():tonumber() + node.depth:absolute():tonumber()
+   end
+
+   -- Cache the calculated height
+   footnoteHeightCache[noteId] = noteHeight
+   -- Return the calculated height and the simulated noteQueue for footnote content
+   -- the noteQueue will be used later to for spliting if needed
+   return noteHeight, noteQueue
+end
+
 -- Handles page-breaking and overflow logic for parallel frames.
 local parallelPagebreak = function()
    for _, thisPageFrames in ipairs(folioOrder) do
