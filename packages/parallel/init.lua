@@ -20,18 +20,18 @@ local folioOrder = {}
 
 -- Utility function to iterate through all typesetters in the pool and apply a callback function.
 local allTypesetters = function(callback)
-	local oldtypesetter = SILE.typesetter -- Save the currently active typesetter.
-	for frame, typesetter in pairs(typesetterPool) do
-		SILE.typesetter = typesetter -- Temporarily switch to the typesetter for the current frame.
-		callback(frame, typesetter) -- Apply the callback to the current frame and its typesetter.
-	end
-	SILE.typesetter = oldtypesetter -- Restore the original typesetter after iteration.
+   local oldtypesetter = SILE.typesetter -- Save the currently active typesetter.
+   for frame, typesetter in pairs(typesetterPool) do
+      SILE.typesetter = typesetter -- Temporarily switch to the typesetter for the current frame.
+      callback(frame, typesetter) -- Apply the callback to the current frame and its typesetter.
+   end
+   SILE.typesetter = oldtypesetter -- Restore the original typesetter after iteration.
 end
 
 -- A null typesetter used as a placeholder. This typesetter doesn't output any content.
 -- Its purpose is to make the transtion between frames easier and trouble free.
 local nulTypesetter = pl.class(SILE.typesetters.base) -- we ignore this
-nulTypesetter.outputLinesToPage = function () end
+nulTypesetter.outputLinesToPage = function() end
 
 -- Utility function to calculate the height of new material for a given frame.
 -- This function computes the cumulative height by adding the heights of lines
@@ -124,8 +124,7 @@ local balanceFramesWithDummyContent = function(offset)
    SU.debug(package._name, "Balanced frames to height: ", maxHeight)
 end
 
-
-local parallelPagebreak = function ()
+local parallelPagebreak = function()
    for i = 1, #folioOrder do
       local thisPageFrames = folioOrder[i]
       for j = 1, #thisPageFrames do
@@ -184,7 +183,7 @@ local addParskipToFrames = function(parskipHeight)
    end)
 end
 
-function package:_init (options)
+function package:_init(options)
    base._init(self, options)
    SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
    if type(options.frames) ~= "table" then
@@ -198,19 +197,19 @@ function package:_init (options)
    for frame, typesetter in pairs(options.frames) do
       typesetterPool[frame] = SILE.typesetters.base(SILE.getFrame(typesetter))
       typesetterPool[frame].id = typesetter
-      typesetterPool[frame].buildPage = function ()
+      typesetterPool[frame].buildPage = function()
          -- No thank you, I will do that.
       end
       -- Fixed leading here is obviously a bug, but n-way leading calculations
       -- get very complicated...
       -- typesetterPool[frame].leadingFor = function() return SILE.types.node.vglue(SILE.settings:get("document.lineskip")) end
       local fontcommand = frame .. ":font"
-      self:registerCommand(frame, function (_, _) -- \left ...
+      self:registerCommand(frame, function(_, _) -- \left ...
          SILE.typesetter = typesetterPool[frame]
          SILE.call(fontcommand)
       end)
       if not SILE.Commands[fontcommand] then
-         self:registerCommand(fontcommand, function (_, _) end) -- to be overridden
+         self:registerCommand(fontcommand, function(_, _) end) -- to be overridden
       end
    end
    if not options.folios then
@@ -223,24 +222,24 @@ function package:_init (options)
    else
       folioOrder = options.folios -- As usual we trust the user knows what they're doing
    end
-   self.class.newPage = function (self_)
-      allTypesetters(function (frame, _)
+   self.class.newPage = function(self_)
+      allTypesetters(function(frame, _)
          calculations[frame] = { mark = 0 }
       end)
       self.class._base.newPage(self_)
       SILE.call("sync")
    end
-   allTypesetters(function (frame, _)
+   allTypesetters(function(frame, _)
       calculations[frame] = { mark = 0 }
    end)
    local oldfinish = self.class.finish
-   self.class.finish = function (self_)
+   self.class.finish = function(self_)
       parallelPagebreak()
       oldfinish(self_)
    end
 end
 
-function package:registerCommands ()
+function package:registerCommands()
    -- shortcut for \parskip
    self:registerCommand("parskip", function(options, _)
       local height = options.height or "12pt plus 3pt minus 1pt"
@@ -248,48 +247,48 @@ function package:registerCommands ()
       SILE.typesetter:pushExplicitVglue(SILE.types.length(height))
    end)
 
-   self:registerCommand("sync", function (_, _)
+   -- Synchronize frame heights and handle page breaks.
+   self:registerCommand("sync", function(_, _)
       local anybreak = false
       local maxheight = SILE.types.length()
-      SU.debug("parallel", "Trying a sync")
-      allTypesetters(function (_, typesetter)
-         SU.debug("parallel", "Leaving hmode on", typesetter.id)
+
+      -- Check for potential page breaks.
+      allTypesetters(function(_, typesetter)
          typesetter:leaveHmode(true)
-         -- Now we have each typesetter's content boxed up onto the output stream
-         -- but page breaking has not been run. See if page breaking would cause a
-         -- break
          local lines = pl.tablex.copy(typesetter.state.outputQueue)
          if SILE.pagebuilder:findBestBreak({ vboxlist = lines, target = typesetter:getTargetLength() }) then
             anybreak = true
          end
       end)
 
+      -- Perform a page break if necessary.
       if anybreak then
          parallelPagebreak()
          return
       end
 
-      allTypesetters(function (frame, typesetter)
-         calculations[frame].heightOfNewMaterial = SILE.types.length()
-         for i = calculations[frame].mark + 1, #typesetter.state.outputQueue do
-            local thisHeight = typesetter.state.outputQueue[i].height + typesetter.state.outputQueue[i].depth
-            calculations[frame].heightOfNewMaterial = calculations[frame].heightOfNewMaterial + thisHeight
-         end
-         if maxheight < calculations[frame].heightOfNewMaterial then
+      -- Calculate the height of new material for balancing.
+      allTypesetters(function(frame, typesetter)
+         calculations[frame].heightOfNewMaterial = calculateFrameHeight(frame, typesetter)
+         if calculations[frame].heightOfNewMaterial > maxheight then
             maxheight = calculations[frame].heightOfNewMaterial
+            SU.debug(package._name, "Value of maxheight after balancing for frame ", frame, ": ", maxheight)
          end
-         SU.debug(
-            "parallel",
-            frame,
-            ": pre-sync content=",
-            calculations[frame].mark,
-            ", now",
-            #typesetter.state.outputQueue,
-            ", height of material:",
-            calculations[frame].heightOfNewMaterial
-         )
       end)
+
+      -- Add balancing glue to align frame heights.
       addBalancingGlue(maxheight)
+
+      -- Handle parskip (spacing between successive frames).
+      local parskip = SILE.settings:get("document.parskip")
+
+      if not parskip.length then
+         -- Insert default parskip value if not defined.
+         addParskipToFrames(SILE.types.length("12pt plus 3pt minus 1pt"))
+      else
+         -- Use user-defined parskip value.
+         addParskipToFrames(parskip)
+      end
    end)
 end
 
