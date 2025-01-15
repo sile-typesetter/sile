@@ -33,6 +33,35 @@ end
 local nulTypesetter = pl.class(SILE.typesetters.base) -- we ignore this
 nulTypesetter.outputLinesToPage = function () end
 
+-- Utility function to calculate the height of new material for a given frame.
+-- This function computes the cumulative height by adding the heights of lines
+-- in the `typesetter.state.outputQueue` starting from the marked position.
+local calculateFrameHeight = function(frame, typesetter)
+   -- Retrieve the cumulative height for the frame or initialize it if not set.
+   local height = calculations[frame].cumulativeHeight or SILE.types.length()
+
+   -- Iterate through the output queue from the marked position, summing line heights.
+   -- Each line's height is the sum of its height and depth.
+   for i = calculations[frame].mark + 1, #typesetter.state.outputQueue do
+      local lineHeight = typesetter.state.outputQueue[i].height + typesetter.state.outputQueue[i].depth
+      height = height + lineHeight
+   end
+
+   -- Return the updated cumulative height for the frame.
+   return height
+end
+
+-- Calculate the line height of a sample text.
+-- This function uses a sample text containing two characters:
+-- one with an ascender and one with a descender.
+-- The height calculation includes the glyph heights and the baseline skip setting.
+local calculateLineHeight = function(sampleText)
+   local glyphs = SILE.shaper:shapeToken(sampleText, SILE.font.loadDefaults({}))
+   local baselineSkip = SILE.settings:get("document.baselineskip").height
+   return glyphs[1].height + glyphs[2].depth + baselineSkip:tonumber()
+end
+
+
 local parallelPagebreak = function ()
    for i = 1, #folioOrder do
       local thisPageFrames = folioOrder[i]
