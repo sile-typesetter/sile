@@ -241,6 +241,13 @@ function package:_init (options)
 end
 
 function package:registerCommands ()
+   -- shortcut for \parskip
+   self:registerCommand("parskip", function(options, _)
+      local height = options.height or "12pt plus 3pt minus 1pt"
+      SILE.typesetter:leaveHmode()
+      SILE.typesetter:pushExplicitVglue(SILE.types.length(height))
+   end)
+
    self:registerCommand("sync", function (_, _)
       local anybreak = false
       local maxheight = SILE.types.length()
