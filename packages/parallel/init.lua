@@ -96,6 +96,35 @@ local createDummyContent = function(height, frame, offset)
    end)
 end
 
+-- Balance the heights of frames by adding dummy content to shorter frames.
+-- This ensures that all frames are aligned to the height of the tallest frame.
+local balanceFramesWithDummyContent = function(offset)
+   local frameHeights = {} -- Table to store the heights of each frame.
+   local maxHeight = SILE.types.length(0) -- Track the maximum frame height.
+
+   -- Step 1: Measure the heights of all frames and find the maximum height.
+   allTypesetters(function(frame, typesetter) -- This is a callback function.
+      local height = calculateFrameHeight(frame, typesetter)
+      frameHeights[frame] = height -- Store the height for the current frame.
+      if height > maxHeight then
+         maxHeight = height -- Update maxHeight if this frame is taller.
+      end
+   end)
+
+   -- Step 2: Add dummy content to balance the frames to the maximum height.
+   allTypesetters(function(frame, typesetter)
+      local heightDifference = maxHeight - frameHeights[frame]
+      if heightDifference:tonumber() > 0 then
+         SILE.typesetter = typesetter -- Switch to the current frame's typesetter.
+         createDummyContent(SILE.types.length(heightDifference), frame, offset or 0)
+      end
+   end)
+
+   -- Log the balancing results for debugging.
+   SU.debug(package._name, "Balanced frames to height: ", maxHeight)
+end
+
+
 local parallelPagebreak = function ()
    for i = 1, #folioOrder do
       local thisPageFrames = folioOrder[i]
