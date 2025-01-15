@@ -38,12 +38,12 @@ function class:_init (options)
 		top = "bottom(b)",
 		bottom = "bottom(b)+10%ph", -- Adjust as needed for footnote space
 	})
-   self:declareFrame("folio", {
-      left = "left(a)",
-      right = "right(b)",
-      top = "bottom(a)+3%ph",
-      bottom = "bottom(a)+8%ph",
-   })
+	self:declareFrame("folio", {
+		left = "left(a)",
+		right = "right(b)",
+		top = "bottom(c)+1.5%ph",
+		bottom = "bottom(c)+4.75%ph",
+	})
    self:loadPackage("parallel", {
       frames = {
          left = "a",
