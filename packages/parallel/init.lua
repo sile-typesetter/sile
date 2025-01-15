@@ -339,7 +339,7 @@ function package:registerCommands()
       end
    end)
 
-      self:registerCommand("smaller", function(_, content)
+   self:registerCommand("smaller", function(_, content)
       SILE.settings:temporarily(function()
          local currentSize = SILE.settings:get("font.size")
          SILE.settings:set("font.size", currentSize * 0.75) -- Scale down to 75%
@@ -356,6 +356,22 @@ function package:registerCommands()
          end)
       end)
    end)
+
+   -- Adapted from the `resilient.footnotes` package.
+   -- Defines `parallel_footnote:rule`, a helper command for setting a footnote rule.
+   self:registerCommand("parallel_footnote:rule", function(options, _)
+      local width = SU.cast("measurement", options.width or "20%fw") -- Default: 1/5 of the text block width.
+      local beforeskipamount = SU.cast("vglue", options.beforeskipamount or "1ex") -- Space before the rule.
+      local afterskipamount = SU.cast("vglue", options.afterskipamount or "1ex") -- Space after the rule.
+      local thickness = SU.cast("measurement", options.thickness or "0.5pt") -- Thickness of the rule.
+
+      SILE.call("noindent")
+      SILE.call("rebox", {}, function()
+         SILE.call("hrule", { width = width, height = thickness })
+      end)
+      SILE.typesetter:leaveHmode()
+      SILE.typesetter:pushExplicitVglue(afterskipamount)
+   end, "Helper command for setting a footnote rule.")
 
 end
 
