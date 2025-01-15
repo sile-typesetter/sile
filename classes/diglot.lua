@@ -26,6 +26,18 @@ function class:_init (options)
 		top = "top(a)",
 		bottom = "bottom(a)",
 	})
+	self:declareFrame("c", {
+		left = "left(a)",
+		right = "right(a)",
+		top = "bottom(a)",
+		bottom = "bottom(a)+10%ph", -- Adjust as needed for footnote space
+	})
+	self:declareFrame("d", {
+		left = "left(b)",
+		right = "right(b)",
+		top = "bottom(b)",
+		bottom = "bottom(b)+10%ph", -- Adjust as needed for footnote space
+	})
    self:declareFrame("folio", {
       left = "left(a)",
       right = "right(b)",
