@@ -138,7 +138,6 @@ local measureStringWidth = function(str)
    return totalWidth
 end
 
-
 -- Handles page-breaking and overflow logic for parallel frames.
 local parallelPagebreak = function()
    for _, thisPageFrames in ipairs(folioOrder) do
@@ -387,6 +386,38 @@ function package:registerCommands()
       SILE.typesetter:leaveHmode()
       SILE.typesetter:pushExplicitVglue(afterskipamount)
    end, "Helper command for setting a footnote rule.")
+
+   self:registerCommand("parallel_footnote:constructor", function(options, content)
+      local markerText = options.marker or "?" -- Default marker if none provided
+
+      SILE.settings:temporarily(function()
+         -- Set font footnotes, 80% of current font size
+         SILE.settings:set("font.size", SILE.settings:get("font.size") * 0.80)
+
+         -- Measure the marker width
+         local markerWidth = measureStringWidth(markerText)
+
+         -- Set hanging indentation
+         local hangIndent = SILE.types.length("14.4pt"):absolute()
+         SILE.settings:set("current.hangAfter", 1) -- Indent subsequent lines
+         SILE.settings:set("current.hangIndent", hangIndent)
+
+         -- Calculate the gap after the marker
+         local markerGap = hangIndent - markerWidth
+
+         -- Typeset the marker
+         SILE.typesetter:typeset(markerText)
+
+         -- Add spacing after the marker for alignment
+         SILE.call("kern", { width = markerGap })
+
+         -- Process the footnote content
+         SILE.process(content)
+
+         -- End the paragraph
+         SILE.call("par")
+      end)
+   end)
 
 end
 
