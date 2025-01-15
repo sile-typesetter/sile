@@ -124,34 +124,65 @@ local balanceFramesWithDummyContent = function(offset)
    SU.debug(package._name, "Balanced frames to height: ", maxHeight)
 end
 
+-- Handles page-breaking and overflow logic for parallel frames.
 local parallelPagebreak = function()
-   for i = 1, #folioOrder do
-      local thisPageFrames = folioOrder[i]
-      for j = 1, #thisPageFrames do
-         local frame = thisPageFrames[j]
-         local typesetter = typesetterPool[frame]
-         local thispage = {}
-         SU.debug("parallel", "Dumping lines for page on typesetter", typesetter.id)
-         if #typesetter.state.outputQueue > 0 and calculations[frame].mark == 0 then
-            -- More than one page worth of stuff here.
-            -- Just ship out one page and hope for the best.
-            SILE.typesetters.base.buildPage(typesetter)
-         else
-            for l = 1, calculations[frame].mark do
-               thispage[l] = table.remove(typesetter.state.outputQueue, 1)
-               SU.debug("parallel", thispage[l])
-            end
-            typesetter:outputLinesToPage(thispage)
-         end
-      end
-      SILE.documentState.documentClass:endPage()
-      for l = 1, #thisPageFrames do
-         local frame = thisPageFrames[l]
-         local typesetter = typesetterPool[frame]
+   for _, thisPageFrames in ipairs(folioOrder) do
+      local hasOverflow = false
+      local overflowContent = {}
+
+      -- Process each frame for overflow content
+      allTypesetters(function(frame, typesetter)
          typesetter:initFrame(typesetter.frame)
+         local thispage = {}
+         local linesToFit = typesetter.state.outputQueue
+         local targetLength = typesetter:getTargetLength():tonumber()
+         local currentHeight = 0
+
+         while
+            #linesToFit > 0
+            and currentHeight + (linesToFit[1].height:tonumber() + linesToFit[1].depth:tonumber()) <= targetLength
+         do
+            local line = table.remove(linesToFit, 1)
+            currentHeight = currentHeight + (line.height:tonumber() + line.depth:tonumber())
+            table.insert(thispage, line)
+         end
+
+         if #linesToFit > 0 then
+            hasOverflow = true
+            overflowContent[frame] = linesToFit
+            typesetter.state.outputQueue = {}
+         else
+            overflowContent[frame] = {}
+         end
+
+         typesetter:outputLinesToPage(thispage)
+      end)
+
+      -- Process footnotes before page break
+      -- typesetFootnotes()
+
+      -- End the current page
+      SILE.documentState.documentClass:endPage()
+
+      if hasOverflow then
+         -- Start a new page
+         SILE.documentState.documentClass:newPage()
+
+         -- Restore overflow content to the frames
+         for frame, overflowLines in pairs(overflowContent) do
+            local typesetter = typesetterPool[frame]
+            for _, line in ipairs(overflowLines) do
+               table.insert(typesetter.state.outputQueue, line)
+            end
+         end
+
+         -- Rebalance frames
+         balanceFramesWithDummyContent()
       end
-      SILE.documentState.documentClass:newPage()
    end
+
+   -- Ensure all the first pair of frames on the new page are synchronized
+   SILE.call("sync")
 end
 
 -- Add balancing glue to shorter frames to align their height with the target height.
