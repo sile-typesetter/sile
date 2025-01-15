@@ -250,6 +250,16 @@ function package:_init(options)
          self:registerCommand(fontcommand, function(_, _) end) -- to be overridden
       end
    end
+
+   -- Initialize typesetters for each footnote frame.
+   for frame, typesetter in pairs(options.ftn_frames) do
+      footnotePool[frame] = SILE.typesetters.base(SILE.getFrame(typesetter))
+      footnotePool[frame].id = typesetter
+
+      -- Do not disable auto page-building here, as it is required for typesetting
+      -- footnotes on the last page of the document.
+   end
+
    if not options.folios then
       folioOrder = { {} }
       -- Note output order doesn't matter for PDF, but for our test suite it is
