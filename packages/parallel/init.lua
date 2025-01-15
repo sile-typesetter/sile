@@ -167,6 +167,108 @@ local function getFootnoteHeight(frame, note, typesetter)
    return noteHeight, noteQueue
 end
 
+-- Typeset footnotes for each frame, handling overflow and splitting across pages if necessary.
+local typesetFootnotes = function()
+   for frame, notes in pairs(footnotes) do
+      if notes and #notes > 0 then
+         SU.debug(package._name, "Processing footnotes for frame: " .. frame)
+
+         local typesetter = footnotePool[frame]
+         typesetter:initFrame(typesetter.frame)
+         SILE.typesetter = typesetter
+
+         -- Add a rule above the footnotes.
+         SILE.call("parallel_footnote:rule")
+
+         local nextPageNotes = {}
+
+         SILE.settings:temporarily(function()
+            -- Prevent the first footnote from being stretched across the frame.
+            SILE.call("break")
+
+            local targetHeight = typesetter:getTargetLength():tonumber()
+            local currentHeight = 0
+            local baselineSkip = SILE.settings:get("document.baselineskip").height:tonumber() * 0.30
+
+            for i, note in ipairs(notes) do
+               -- Get the cached or calculated height and the simulated note queue.
+               local noteHeight, noteQueue = getFootnoteHeight(frame, note, typesetter)
+
+               -- Add baseline skip before all but the first note.
+               if i > 1 then
+                  noteHeight = noteHeight + baselineSkip
+               end
+
+               if currentHeight + noteHeight <= targetHeight then
+                  -- Note fits entirely in the current frame.
+                  if i > 1 then
+                     table.insert(typesetter.state.outputQueue, SILE.types.node.vglue(SILE.types.length(baselineSkip)))
+                  end
+
+                  currentHeight = currentHeight + noteHeight
+                  for _, node in ipairs(noteQueue) do
+                     table.insert(typesetter.state.outputQueue, node)
+                  end
+               else
+                  -- Note needs to be split across frames.
+                  local fittedQueue = {}
+                  local remainingQueue = {}
+                  local fittedHeight = 0
+
+                  for _, node in ipairs(noteQueue) do
+                     local nodeHeight = node.height:absolute():tonumber() + node.depth:absolute():tonumber()
+                     if fittedHeight + nodeHeight <= (targetHeight - currentHeight) then
+                        table.insert(fittedQueue, node)
+                        fittedHeight = fittedHeight + nodeHeight
+                     else
+                        table.insert(remainingQueue, node)
+                     end
+                  end
+
+                  -- Add the fitted part to the current frame.
+                  if #typesetter.state.outputQueue > 0 then
+                     table.insert(typesetter.state.outputQueue, SILE.types.node.vglue(SILE.types.length(baselineSkip)))
+                  end
+
+                  currentHeight = currentHeight + fittedHeight
+                  for _, node in ipairs(fittedQueue) do
+                     table.insert(typesetter.state.outputQueue, node)
+                  end
+
+                  -- Output the fitted part.
+                  typesetter:outputLinesToPage(typesetter.state.outputQueue)
+                  typesetter.state.outputQueue = {}
+
+                  -- Queue the remaining part for the next page.
+                  if #remainingQueue > 0 then
+                     table.insert(nextPageNotes, {
+                        marker = "", -- Suppress the marker for split notes.
+                        content = function()
+                           for _, node in ipairs(remainingQueue) do
+                              table.insert(SILE.typesetter.state.outputQueue, node)
+                           end
+                        end,
+                     })
+                  end
+               end
+            end
+
+            -- Output any remaining footnote content for the current frame.
+            if typesetter.state.outputQueue and #typesetter.state.outputQueue > 0 then
+               typesetter:outputLinesToPage(typesetter.state.outputQueue)
+            else
+               SU.warn("No content to output for frame: " .. frame)
+            end
+
+            -- Add remaining notes to the queue for the next page.
+            footnotes[frame] = nextPageNotes
+         end)
+      else
+         SU.debug(package._name, "No footnotes to process for frame: " .. frame)
+      end
+   end
+end
+
 -- Handles page-breaking and overflow logic for parallel frames.
 local parallelPagebreak = function()
    for _, thisPageFrames in ipairs(folioOrder) do
@@ -202,7 +304,7 @@ local parallelPagebreak = function()
       end)
 
       -- Process footnotes before page break
-      -- typesetFootnotes()
+      typesetFootnotes()
 
       -- End the current page
       SILE.documentState.documentClass:endPage()
@@ -475,7 +577,6 @@ function package:registerCommands()
          })
       end
    end)
-
 end
 
 package.documentation = [[
