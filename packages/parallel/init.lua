@@ -61,6 +61,40 @@ local calculateLineHeight = function(sampleText)
    return glyphs[1].height + glyphs[2].depth + baselineSkip:tonumber()
 end
 
+-- Generate dummy content to fill overflowed frames up to the specified height.
+local createDummyContent = function(height, frame, offset)
+   -- Retrieve the typesetter for the given frame.
+   local typesetter = typesetterPool[frame]
+
+   -- Determine the line height using a sample line or fallback to baseline and line skip settings.
+   -- local lineHeight = calculateLineHeight("hg")
+
+   -- If lineHeight cannot be calculated, use document's baselineSkip and lineSkip as fallback.
+   if not lineHeight then
+      local baselineSkip = SILE.settings:get("document.baselineskip").height or SILE.types.length({ length = 0 })
+      local lineSkip = SILE.settings:get("document.lineskip").height or SILE.types.length({ length = 0 })
+      lineHeight = baselineSkip:tonumber() + lineSkip:tonumber()
+   end
+
+   -- Calculate the number of lines required to fill the specified height.
+   local numLines = math.floor(height:tonumber() / lineHeight)
+
+   -- Ensure offset is valid; warn if it exceeds the number of lines.
+   offset = offset or 0
+   if offset >= numLines then
+      SU.warn("Offset is larger than the number of lines available; no dummy content will be generated.")
+      return
+   end
+
+   -- Fill the frame with dummy content using white-colored text to avoid visible output.
+   SILE.call("color", { color = "white" }, function()
+      typesetter:typeset("sile")
+      for i = 1, numLines - offset do
+         SILE.call("break")
+         typesetter:typeset("sile")
+      end
+   end)
+end
 
 local parallelPagebreak = function ()
    for i = 1, #folioOrder do
