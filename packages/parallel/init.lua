@@ -176,6 +176,14 @@ local addBalancingGlue = function(height)
    end)
 end
 
+-- Adds a flexible glue (parskip) to the bottom of each frame
+-- This is decoupled from addBalancingGlue calculations, serving a simple purpose.
+local addParskipToFrames = function(parskipHeight)
+   allTypesetters(function(_, typesetter)
+      table.insert(typesetter.state.outputQueue, SILE.types.node.vglue({ height = parskipHeight }))
+   end)
+end
+
 function package:_init (options)
    base._init(self, options)
    SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
