@@ -3,8 +3,19 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "parallel"
 
-local typesetterPool = {}
+-- Typesetter pool for managing typesetters for different frames (e.g., left and right frames).
+local typesetterPool, footnotePool = {}, {}
+
+-- Make sure you have ftn_left and ftn_right frames setup in your document class
+local footnotes = { ftn_left = {}, ftn_right = {} }
+
+-- Cache for footnote heights
+local footnoteHeightCache = {}
+
+-- Stores layout calculations for each frame, such as height, marking and overflow tracking.
 local calculations = {}
+
+-- Specifies the order of frames for synchronizing and page-breaking logic.
 local folioOrder = {}
 
 local allTypesetters = function (callback)
