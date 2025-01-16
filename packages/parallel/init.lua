@@ -3,6 +3,12 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "parallel"
 
+-- Helper function for logging
+local log = function(...)
+   local args = {...}
+   SU.debug(package._name, unpack(args))
+end
+
 -- Typesetter pool for managing typesetters for different frames (e.g., left and right frames).
 local typesetterPool, footnotePool = {}, {}
 
@@ -121,7 +127,7 @@ local balanceFramesWithDummyContent = function(offset)
    end)
 
    -- Log the balancing results for debugging.
-   SU.debug(package._name, "Balanced frames to height: ", maxHeight)
+   log("Balanced frames to height: ", maxHeight)
 end
 
 -- Measure the width of a string in the current font context, typically used for footnote markers.
@@ -354,7 +360,7 @@ local addBalancingGlue = function(height)
       -- If glue is needed, add it to the frame's output queue.
       if glue:tonumber() > 0 then
          table.insert(typesetter.state.outputQueue, SILE.types.node.vglue({ height = glue }))
-         SU.debug(package._name, "Added balancing glue of", glue, "to the bottom of frame", frame)
+         log("Added balancing glue of", glue, "to the bottom of frame", frame)
       end
 
       -- Marking is unnecessary here as the `\sync` command handles it.
@@ -476,7 +482,7 @@ function package:registerCommands()
          calculations[frame].heightOfNewMaterial = calculateFrameHeight(frame, typesetter)
          if calculations[frame].heightOfNewMaterial > maxheight then
             maxheight = calculations[frame].heightOfNewMaterial
-            SU.debug(package._name, "Value of maxheight after balancing for frame ", frame, ": ", maxheight)
+            log("Value of maxheight after balancing for frame ", frame, ": ", maxheight)
          end
       end)
 
