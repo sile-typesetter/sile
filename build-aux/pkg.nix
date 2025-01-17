@@ -57,6 +57,7 @@ stdenv.mkDerivation (finalAttrs: {
     autoreconfHook
     gitMinimal
     pkg-config
+    fontconfig # fc-match
     jq
     cargo
     rustc
@@ -122,6 +123,9 @@ stdenv.mkDerivation (finalAttrs: {
       gentium
     ];
   };
+
+  strictDeps = true;
+  env.LUA = "${finalAttrs.finalPackage.passthru.luaEnv}/bin/lua";
 
   enableParallelBuilding = true;
 
