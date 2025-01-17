@@ -79,19 +79,18 @@ stdenv.mkDerivation (finalAttrs: {
     sed -i -e 's/tarball-version/flake-version/' configure.ac
   '';
 
-  buildInputs =
-    [
-      finalAttrs.finalPackage.passthru.luaEnv
-      cargo-edit
-      harfbuzz
-      icu
-      fontconfig
-      libiconv
-      libxslt
-      stylua
-      taplo
-      typos
-    ];
+  buildInputs = [
+    finalAttrs.finalPackage.passthru.luaEnv
+    cargo-edit
+    harfbuzz
+    icu
+    fontconfig
+    libiconv
+    libxslt
+    stylua
+    taplo
+    typos
+  ];
 
   configureFlags =
     [
