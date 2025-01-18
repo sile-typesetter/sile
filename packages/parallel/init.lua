@@ -5,7 +5,7 @@ package._name = "parallel"
 
 -- Helper function for logging
 local log = function(...)
-   local args = {...}
+   local args = { ... }
    SU.debug(package._name, unpack(args))
 end
 
@@ -63,43 +63,49 @@ end
 -- The height calculation includes the glyph heights and the baseline skip setting.
 local calculateLineHeight = function(sampleText)
    local glyphs = SILE.shaper:shapeToken(sampleText, SILE.font.loadDefaults({}))
-   local baselineSkip = SILE.settings:get("document.baselineskip").height
-   return glyphs[1].height + glyphs[2].depth + baselineSkip:tonumber()
+   local lineSkip = SILE.settings:get("document.lineskip").height
+   return glyphs[1].height + glyphs[2].depth + lineSkip:tonumber()
 end
 
--- Generate dummy content to fill overflowed frames up to the specified height.
+-- Create dummy content to fill up the overflowed frames.
 local createDummyContent = function(height, frame, offset)
-   -- Retrieve the typesetter for the given frame.
+   -- Get the typesetter for the frame
    local typesetter = typesetterPool[frame]
 
-   -- Determine the line height using a sample line or fallback to baseline and line skip settings.
-   -- local lineHeight = calculateLineHeight("hg")
+   -- Calculate precise line height by typesetting a sample line
+   -- local lineHeight = calculateLineHeight("hp")
 
-   -- If lineHeight cannot be calculated, use document's baselineSkip and lineSkip as fallback.
+   -- log("Precise lineHeight after simulation = ", lineHeight)
+
+   -- If lineHeight could not be calculated, fall back to baselineSkip and lineSkip of the document
    if not lineHeight then
       local baselineSkip = SILE.settings:get("document.baselineskip").height or SILE.types.length({ length = 0 })
       local lineSkip = SILE.settings:get("document.lineskip").height or SILE.types.length({ length = 0 })
       lineHeight = baselineSkip:tonumber() + lineSkip:tonumber()
+      -- log("Precise lineHeight based on document.baselineskip = ", lineHeight)
    end
 
-   -- Calculate the number of lines required to fill the specified height.
-   local numLines = math.floor(height:tonumber() / lineHeight)
+   -- Calculate the number of lines needed
+   local requiredLines = height:tonumber() / lineHeight
+   local numLines = math.floor(requiredLines)
+   local remainingHeight = requiredLines - numLines
 
-   -- Ensure offset is valid; warn if it exceeds the number of lines.
+   -- Validate offset
    offset = offset or 0
-   if offset >= numLines then
+   if numLines <= offset then
       SU.warn("Offset is larger than the number of lines available; no dummy content will be generated.")
       return
    end
 
-   -- Fill the frame with dummy content using white-colored text to avoid visible output.
+   -- Add dummy content to fill the frame
    SILE.call("color", { color = "white" }, function()
-      typesetter:typeset("sile")
       for i = 1, numLines - offset do
-         SILE.call("break")
+         -- Add dummy content and a line break
          typesetter:typeset("sile")
+         SILE.call("break")
       end
    end)
+   typesetter:pushExplicitVglue(SILE.types.length(remainingHeight))
 end
 
 -- Balance the heights of frames by adding dummy content to shorter frames.
