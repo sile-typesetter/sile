@@ -357,7 +357,7 @@ local parallelPagebreak = function()
 end
 
 -- Initialization function for the package.
-function package:_init(options)
+function package:_init (options)
    base._init(self, options)
 
    -- Load necessary packages
