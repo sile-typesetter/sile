@@ -30,15 +30,20 @@ function FootnoteManager:add(frame, note)
 end
 
 -- Get footnotes for a specific frame
-function FootnoteManager:get(frame)
-   return self.frames[frame]
-end
+-- function FootnoteManager:get(frame)
+--    return self.frames[frame]
+-- end
 
 -- Iterate over footnotes for a specific frame
 function FootnoteManager:processNotes(frame, callback)
    for _, note in ipairs(self.frames[frame]) do
       callback(note)
    end
+end
+
+-- Clear footnotes for a specific frame
+function FootnoteManager:clear(frame)
+   self.frames[frame] = {}
 end
 
 -- Create an instance of the FootnoteManager
@@ -209,6 +214,8 @@ function FootnoteManager:processSingleNote(frame, note, context, typesetter)
       -- Note needs to be split
       self:handleOverflowingNote(noteQueue, context, typesetter)
    end
+   -- Reset noteQueue to release memory
+   noteQueue = nil
 end
 
 function FootnoteManager:handleOverflowingNote(noteQueue, context, typesetter)
@@ -293,6 +300,8 @@ function FootnoteManager:typesetFootnotes()
       else
          log("No footnotes to process for frame: " .. frame)
       end
+      -- Flush footnote frames
+      footnoteManager:clear(frame)
    end
 end
 
@@ -321,8 +330,8 @@ local parallelPagebreak = function()
 
          if #linesToFit > 0 then
             hasOverflow = true
-            -- overflowContent[frame] = linesToFit
-            overflowContent[frame] = pl.tablex.copy(linesToFit)
+            overflowContent[frame] = linesToFit
+            -- overflowContent[frame] = pl.tablex.copy(linesToFit)
             -- Reset output queue to avoid double processing
             typesetter.state.outputQueue = {}
          else
@@ -334,6 +343,9 @@ local parallelPagebreak = function()
 
       -- End the current page
       SILE.documentState.documentClass:endPage()
+
+      -- At this point, all markers for the page are committed. Now typeset footnotes.
+      footnoteManager:typesetFootnotes()
 
       if hasOverflow then
          -- Start a new page
@@ -399,7 +411,7 @@ function package:_init (options)
    for frame, typesetter in pairs(options.ftn_frames) do
       footnotePool[frame] = SILE.typesetters.base(SILE.getFrame(typesetter))
       footnotePool[frame].id = typesetter
-      -- You should not disable the auto page-building here, otherwise you can't typeset
+      -- NOTE: You should not disable the auto page-building here, otherwise you can't typeset
       -- any footnotes on the last page of your document.
    end
 
@@ -454,7 +466,7 @@ function package:registerCommands()
       SILE.typesetter:pushExplicitVglue(SILE.types.length(height):absolute())
    end)
 
-   self:registerCommand("sync", function(_, _)
+   registerSimpleCommand("sync", function(_, _)
       local anybreak = false
 
       -- Check for potential page breaks.
@@ -477,8 +489,9 @@ function package:registerCommands()
          return
       end
 
-      -- Typeset footnotes after ensuring all main text is processed
-      footnoteManager:typesetFootnotes()
+      -- Typeset footnotes after ensuring all main text is processed.
+      -- NOTE: Perhaps this should be done in the page builder?
+      -- footnoteManager:typesetFootnotes()
 
       -- Add balancing glue to align frame heights
       addBalancingGlue()
@@ -508,7 +521,7 @@ function package:registerCommands()
       end)
    end)
 
-   -- Stolen from `resilient.footnotes` package
+   -- Adapted from `resilient.footnotes` package
    registerSimpleCommand("parallel_footnote:rule", function(options, _)
       local width = SU.cast("measurement", options.width or "20%fw") -- "Usually 1/5 of the text block"
       local beforeskipamount = SU.cast("vglue", options.beforeskipamount or "1ex")
