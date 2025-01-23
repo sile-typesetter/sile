@@ -30,9 +30,9 @@ function FootnoteManager:add(frame, note)
 end
 
 -- Get footnotes for a specific frame
--- function FootnoteManager:get(frame)
---    return self.frames[frame]
--- end
+function FootnoteManager:get(frame)
+   return self.frames[frame]
+end
 
 -- Iterate over footnotes for a specific frame
 function FootnoteManager:processNotes(frame, callback)
@@ -300,8 +300,6 @@ function FootnoteManager:typesetFootnotes()
       else
          log("No footnotes to process for frame: " .. frame)
       end
-      -- Flush footnote frames
-      footnoteManager:clear(frame)
    end
 end
 
@@ -330,14 +328,14 @@ local parallelPagebreak = function()
 
          if #linesToFit > 0 then
             hasOverflow = true
-            overflowContent[frame] = linesToFit
-            -- overflowContent[frame] = pl.tablex.copy(linesToFit)
+            -- overflowContent[frame] = linesToFit
+            overflowContent[frame] = pl.tablex.copy(linesToFit)
             -- Reset output queue to avoid double processing
             typesetter.state.outputQueue = {}
          else
             overflowContent[frame] = {}
          end
-
+         -- Typeset this page
          typesetter:outputLinesToPage(thispage)
       end)
 
@@ -578,12 +576,13 @@ function package:registerCommands()
       local targetFrame = currentFrame == "a" and "ftn_left" or "ftn_right"
 
       -- Increment or retrieve the footnote counter for the target frame
-      local footnoteNumber
+      local footnoteNumber, marker
       if not options.mark then
          SILE.call("increment-counter", { id = targetFrame })
          footnoteNumber = self.class.packages.counters:formatCounter(SILE.scratch.counters[targetFrame])
+         marker = tostring(footnoteNumber) .. "."
       else
-         footnoteNumber = options.mark
+         marker = options.mark
       end
 
       -- Add the footnote marker to the text
@@ -593,7 +592,7 @@ function package:registerCommands()
 
       -- Add the footnote to the manager
       footnoteManager:add(targetFrame, {
-         marker = tostring(footnoteNumber) .. ".",
+         marker = marker,
          content = content,
       })
    end)
