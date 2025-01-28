@@ -945,6 +945,7 @@ function typesetter:outputLinesToPage (lines)
 end
 
 function typesetter:leaveHmode (independent)
+   if self:vmode() then return end
    if self.state.hmodeOnly then
       SU.error("Paragraphs are forbidden in restricted horizontal mode")
    end
