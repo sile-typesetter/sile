@@ -57,6 +57,7 @@ stdenv.mkDerivation (finalAttrs: {
     autoreconfHook
     gitMinimal
     pkg-config
+    fontconfig # fc-match
     jq
     cargo
     rustc
@@ -78,19 +79,18 @@ stdenv.mkDerivation (finalAttrs: {
     sed -i -e 's/tarball-version/flake-version/' configure.ac
   '';
 
-  buildInputs =
-    [
-      finalAttrs.finalPackage.passthru.luaEnv
-      cargo-edit
-      harfbuzz
-      icu
-      fontconfig
-      libiconv
-      libxslt
-      stylua
-      taplo
-      typos
-    ];
+  buildInputs = [
+    finalAttrs.finalPackage.passthru.luaEnv
+    cargo-edit
+    harfbuzz
+    icu
+    fontconfig
+    libiconv
+    libxslt
+    stylua
+    taplo
+    typos
+  ];
 
   configureFlags =
     [
@@ -122,6 +122,9 @@ stdenv.mkDerivation (finalAttrs: {
       gentium
     ];
   };
+
+  strictDeps = true;
+  env.LUA = "${finalAttrs.finalPackage.passthru.luaEnv}/bin/lua";
 
   enableParallelBuilding = true;
 
