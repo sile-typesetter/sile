@@ -57,14 +57,7 @@ local mathGrammar = function (_ENV)
       + lpeg.R("\240\244") * utf8cont * utf8cont * utf8cont
    -- Identifiers inside \mo and \mi tags
    local sileID = C(bits.identifier + P(1)) / 1
-   local mathMLID = (utf8code - S"\\{}%")^1 / function (...)
-         local ret = ""
-         local t = {...}
-         for _,b in ipairs(t) do
-         ret = ret .. b
-         end
-         return ret
-      end
+
    local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
    -- Simple amsmath-like \text command (no embedded math)
    local textgroup = P"{" * C((1-P"}")^1) * (P"}" + E("`}` expected"))
