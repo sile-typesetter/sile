@@ -421,29 +421,43 @@ end
 
 function CslEngine:_layout (options, content, entries)
    local output = {}
+   if self.mode == "citation" then
+      for _, entry in ipairs(entries) do
+         self:_prerender()
+         local elem = self:_render_children(content, entry)
+         elem = self:_postrender(elem)
+         if elem then
+            table.insert(output, elem)
+         end
+      end
+      -- The CSL 1.0.2 specification is not very clear on this point, but on
+      -- citations, affixes and formatting apply on the whole layout.
+      -- Affixes are arround the delimited list, e.g. "(Smith, 2000; Jones, 2001)"
+      -- Rendering is done after, so vertical-align, etc. apply to the whole list,
+      -- e.g. <textsuperscript>1,2</textsuperscript>
+      local cites = self:_render_delimiter(output, options.delimiter or "; ")
+      cites = self:_render_affixes(cites, options)
+      cites = self:_render_formatting(cites, options)
+      return cites
+   end
+   -- On bibliographies, affixes (usually just a period suffix) apply on each entry.
+   -- Formatting is not forbidden in the specification, and occurs in a few styles.
+   -- But it doesn't seem to be very useful (mostly font-variant="normal" and
+   -- vertical-align="baseline"). Anyhow, if set, it probably applies to the
+   -- entry including the affixes.
+   -- CSL 1.0.2 only mentions a delimiter for citations, so it's not used here,
+   -- quite logically as we force a paragraph break between entries.
    for _, entry in ipairs(entries) do
       self:_prerender()
       local elem = self:_render_children(content, entry)
-      -- affixes and formatting likely apply on elementary entries
-      -- (The CSL 1.0.2 specification is not very clear on this point.)
-      elem = self:_render_formatting(elem, options)
       elem = self:_render_affixes(elem, options)
+      elem = self:_render_formatting(elem, options)
       elem = self:_postrender(elem)
       if elem then
          table.insert(output, elem)
       end
    end
-   if options.delimiter then
-      return self:_render_delimiter(output, options.delimiter)
-   end
-   -- (Normally citations have a delimiter options, so we should only reach
-   -- this point for the bibliography)
-   local delim = self.mode == "citation" and "; " or "<par/>"
-   -- references all belong to a different paragraph
-   -- FIXME: should account for attributes on the toplevel bibliography element:
-   --   line-spacing
-   --   hanging-indent
-   return table.concat(output, delim)
+   return table.concat(output, "<par/>")
 end
 
 function CslEngine:_text (options, content, entry)
