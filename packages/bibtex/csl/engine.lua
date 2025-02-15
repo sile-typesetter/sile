@@ -421,49 +421,73 @@ end
 
 function CslEngine:_layout (options, content, entries)
    local output = {}
+   if self.mode == "citation" then
+      for _, entry in ipairs(entries) do
+         self:_prerender()
+         local elem = self:_render_children(content, entry)
+         elem = self:_postrender(elem)
+         if elem then
+            table.insert(output, elem)
+         end
+      end
+      -- The CSL 1.0.2 specification is not very clear on this point, but on
+      -- citations, affixes and formatting apply on the whole layout.
+      -- Affixes are arround the delimited list, e.g. "(Smith, 2000; Jones, 2001)"
+      -- Rendering is done after, so vertical-align, etc. apply to the whole list,
+      -- e.g. <textsuperscript>1,2</textsuperscript>
+      local cites = self:_render_delimiter(output, options.delimiter or "; ")
+      cites = self:_render_affixes(cites, options)
+      cites = self:_render_formatting(cites, options)
+      return cites
+   end
+   -- On bibliographies, affixes (usually just a period suffix) apply on each entry.
+   -- Formatting is not forbidden in the specification, and occurs in a few styles.
+   -- But it doesn't seem to be very useful (mostly font-variant="normal" and
+   -- vertical-align="baseline"). Anyhow, if set, it probably applies to the
+   -- entry including the affixes.
+   -- CSL 1.0.2 only mentions a delimiter for citations, so it's not used here,
+   -- quite logically as we force a paragraph break between entries.
    for _, entry in ipairs(entries) do
       self:_prerender()
       local elem = self:_render_children(content, entry)
-      -- affixes and formatting likely apply on elementary entries
-      -- (The CSL 1.0.2 specification is not very clear on this point.)
-      elem = self:_render_formatting(elem, options)
       elem = self:_render_affixes(elem, options)
+      elem = self:_render_formatting(elem, options)
       elem = self:_postrender(elem)
       if elem then
          table.insert(output, elem)
       end
    end
-   if options.delimiter then
-      return self:_render_delimiter(output, options.delimiter)
-   end
-   -- (Normally citations have a delimiter options, so we should only reach
-   -- this point for the bibliography)
-   local delim = self.mode == "citation" and "; " or "<par/>"
-   -- references all belong to a different paragraph
-   -- FIXME: should account for attributes on the toplevel bibliography element:
-   --   line-spacing
-   --   hanging-indent
-   return table.concat(output, delim)
+   return table.concat(output, "<par/>")
 end
 
 function CslEngine:_text (options, content, entry)
    local t
-   local link
+   local variable
    if options.macro then
       if self.macros[options.macro] then
+         -- This is not explicit in the CSL 1.0.2 specification, which mention conditional
+         -- rendering for groups only. However, macro should behave as it own group, and
+         -- be suppressed on the same conditions. This is used in a variety of styles, for
+         -- instance UFES-ABNT, UNEAL-ABNT or ABNT-IPEA have definitions like:
+         --    <macro name="translator">
+         --      <text value="Traducao "/>
+         --      <names variable="translator" delimiter=", ">(...) </names>
+         --    </macro>
+         self:_enterGroup()
          t = self:_render_children(self.macros[options.macro], entry)
+         t = self:_leaveGroup(t)
       else
          SU.error("CSL macro " .. options.macro .. " not found")
       end
    elseif options.term then
       t = self:_render_term(options.term, options.form, options.plural)
    elseif options.variable then
-      local variable = options.variable
+      variable = options.variable
       t = entry[variable]
       self:_addGroupVariable(variable, t)
       if variable == "locator" then
+         variable = t and t.label
          t = t and t.value
-         variable = entry.locator.label
       end
       if variable == "page" and t then
          -- Replace any dash in page ranges
@@ -476,26 +500,51 @@ function CslEngine:_text (options, content, entry)
       -- title). If the “short” form is selected but unavailable, the
       -- “long” form is rendered instead."
       -- But CSL-JSON etc. do not seem to have standard provision for it.
-
-      if t and (variable == "URL" or variable == "DOI" or variable == "PMID" or variable == "PMCID") then
-         link = variable
-      end
    elseif options.value then
       t = options.value
    else
       SU.error("CSL text without macro, term, variable or value")
    end
+   -- Some styles have strip-periods even on DOI, etc.
    t = self:_render_stripPeriods(t, options)
-   t = self:_render_textCase(t, options)
-   t = self:_render_formatting(t, options)
-   t = self:_render_quotes(t, options)
-   t = self:_render_affixes(t, options)
-   if link then
-      t = self:_render_link(t, link)
-   elseif t and options.variable then
-      t = self:_render_text_specials(t)
+   if t then
+      if variable and (variable == "DOI" or variable == "PMID" or variable == "PMCID") then
+         -- Some styles have a "http..." as prefix for DOIs, etc.
+         -- Other add raw text such as "DOI: "
+         -- Call that a totally ill-defined feature of CSL, with unclear semantics
+         -- and conflating affixes for styling/presentation and the link itself.
+         local isURLPrefix = options.prefix and options.prefix:find("^http")
+         if isURLPrefix then
+            -- Make the prefix part of the link, we'll want it part of an hyperlink
+            t = options.prefix .. t
+         end
+         t = self:_render_link(t, variable)
+         t = self:_render_textCase(t, options)
+         t = self:_render_formatting(t, options)
+         t = self:_render_quotes(t, options)
+         t = self:_render_affixes(t, {
+            prefix = not isURLPrefix and options.prefix or nil,
+            suffix = options.suffix,
+         })
+         -- (No "text specials" in DOIs, etc. by nature)
+      elseif variable == "URL" then
+         t = self:_render_link(t, variable)
+         t = self:_render_textCase(t, options)
+         t = self:_render_formatting(t, options)
+         t = self:_render_quotes(t, options)
+         t = self:_render_affixes(t, options)
+         -- (No "text specials" in URLs by nature)
+      else
+         t = self:_render_textCase(t, options)
+         t = self:_render_formatting(t, options)
+         t = self:_render_quotes(t, options)
+         t = self:_render_affixes(t, options)
+         if t and options.variable then
+            t = self:_render_text_specials(t)
+         end
+      end
+      t = self:_render_display(t, options)
    end
-   t = self:_render_display(t, options)
    return t
 end
 
@@ -697,6 +746,7 @@ function CslEngine:_number (options, content, entry)
    local value = entry[variable]
    self:_addGroupVariable(variable, value)
    if variable == "locator" then -- special case
+      variable = value and value.label
       value = value and value.value
    end
    if value then
