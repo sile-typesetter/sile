@@ -472,8 +472,8 @@ function CslEngine:_text (options, content, entry)
       t = entry[variable]
       self:_addGroupVariable(variable, t)
       if variable == "locator" then
+         variable = t and t.label
          t = t and t.value
-         variable = entry.locator.label
       end
       if variable == "page" and t then
          -- Replace any dash in page ranges
@@ -732,6 +732,7 @@ function CslEngine:_number (options, content, entry)
    local value = entry[variable]
    self:_addGroupVariable(variable, value)
    if variable == "locator" then -- special case
+      variable = value and value.label
       value = value and value.value
    end
    if value then
