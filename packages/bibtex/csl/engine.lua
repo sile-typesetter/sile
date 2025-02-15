@@ -448,7 +448,7 @@ end
 
 function CslEngine:_text (options, content, entry)
    local t
-   local link
+   local variable
    if options.macro then
       if self.macros[options.macro] then
          -- This is not explicit in the CSL 1.0.2 specification, which mention conditional
@@ -468,7 +468,7 @@ function CslEngine:_text (options, content, entry)
    elseif options.term then
       t = self:_render_term(options.term, options.form, options.plural)
    elseif options.variable then
-      local variable = options.variable
+      variable = options.variable
       t = entry[variable]
       self:_addGroupVariable(variable, t)
       if variable == "locator" then
@@ -486,26 +486,51 @@ function CslEngine:_text (options, content, entry)
       -- title). If the “short” form is selected but unavailable, the
       -- “long” form is rendered instead."
       -- But CSL-JSON etc. do not seem to have standard provision for it.
-
-      if t and (variable == "URL" or variable == "DOI" or variable == "PMID" or variable == "PMCID") then
-         link = variable
-      end
    elseif options.value then
       t = options.value
    else
       SU.error("CSL text without macro, term, variable or value")
    end
+   -- Some styles have strip-periods even on DOI, etc.
    t = self:_render_stripPeriods(t, options)
-   t = self:_render_textCase(t, options)
-   t = self:_render_formatting(t, options)
-   t = self:_render_quotes(t, options)
-   t = self:_render_affixes(t, options)
-   if link then
-      t = self:_render_link(t, link)
-   elseif t and options.variable then
-      t = self:_render_text_specials(t)
+   if t then
+      if variable and (variable == "DOI" or variable == "PMID" or variable == "PMCID") then
+         -- Some styles have a "http..." as prefix for DOIs, etc.
+         -- Other add raw text such as "DOI: "
+         -- Call that a totally ill-defined feature of CSL, with unclear semantics
+         -- and conflating affixes for styling/presentation and the link itself.
+         local isURLPrefix = options.prefix and options.prefix:find("^http")
+         if isURLPrefix then
+            -- Make the prefix part of the link, we'll want it part of an hyperlink
+            t = options.prefix .. t
+         end
+         t = self:_render_link(t, variable)
+         t = self:_render_textCase(t, options)
+         t = self:_render_formatting(t, options)
+         t = self:_render_quotes(t, options)
+         t = self:_render_affixes(t, {
+            prefix = not isURLPrefix and options.prefix or nil,
+            suffix = options.suffix,
+         })
+         -- (No "text specials" in DOIs, etc. by nature)
+      elseif variable == "URL" then
+         t = self:_render_link(t, variable)
+         t = self:_render_textCase(t, options)
+         t = self:_render_formatting(t, options)
+         t = self:_render_quotes(t, options)
+         t = self:_render_affixes(t, options)
+         -- (No "text specials" in URLs by nature)
+      else
+         t = self:_render_textCase(t, options)
+         t = self:_render_formatting(t, options)
+         t = self:_render_quotes(t, options)
+         t = self:_render_affixes(t, options)
+         if t and options.variable then
+            t = self:_render_text_specials(t)
+         end
+      end
+      t = self:_render_display(t, options)
    end
-   t = self:_render_display(t, options)
    return t
 end
 
