@@ -451,7 +451,17 @@ function CslEngine:_text (options, content, entry)
    local link
    if options.macro then
       if self.macros[options.macro] then
+         -- This is not explicit in the CSL 1.0.2 specification, which mention conditional
+         -- rendering for groups only. However, macro should behave as it own group, and
+         -- be suppressed on the same conditions. This is used in a variety of styles, for
+         -- instance UFES-ABNT, UNEAL-ABNT or ABNT-IPEA have definitions like:
+         --    <macro name="translator">
+         --      <text value="Traducao "/>
+         --      <names variable="translator" delimiter=", ">(...) </names>
+         --    </macro>
+         self:_enterGroup()
          t = self:_render_children(self.macros[options.macro], entry)
+         t = self:_leaveGroup(t)
       else
          SU.error("CSL macro " .. options.macro .. " not found")
       end
