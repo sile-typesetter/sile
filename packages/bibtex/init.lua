@@ -533,8 +533,6 @@ function package:registerCommands ()
    end)
 
    self:registerCommand("csl:cite", function (options, content)
-      -- TODO:
-      -- - multiple citation keys (but how to handle locators then?)
       local entry, citnum = self:getEntryForCite(options, content, false)
       if entry then
          local engine = self:getCslEngine()
@@ -547,6 +545,34 @@ function package:registerCommands ()
          SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
       end
    end, "Produce a single citation.")
+
+   self:registerCommand("cites", function (_, content)
+      if type(content) ~= "table" then
+         SU.error("Table content expected in \\cites")
+      end
+      local cites = {}
+      for i = 1, #content do
+         if type(content[i]) == "table" then
+            local c = content[i]
+            if c.command ~= "cite" then
+               SU.error("Only \\cite commands are allowed in \\cites")
+            end
+            local o = c.options
+            local entry, citnum = self:getEntryForCite(o, c, false)
+            if entry then
+               local locator = self:getLocator(o)
+               local csljson = bib2csl(entry, citnum)
+               csljson.locator = locator
+               cites[#cites + 1] = csljson
+            end
+         end
+      end
+      if #cites > 0 then
+         local engine = self:getCslEngine()
+         local cite = engine:cite(cites)
+         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+      end
+   end, "Produce a group of citations.")
 
    self:registerCommand("csl:reference", function (options, content)
       local entry, citnum = self:getEntryForCite(options, content, true)
@@ -669,6 +695,10 @@ Some frequent abbreviations are also supported (art, chap, col, fig…)
 
 To mark an entry as cited without actually producing a citation, use \autodoc:command{\nocite{<key>}}.
 This is useful when you want to include an entry in the bibliography without citing it in the text.
+
+To generate multiple citations grouped correctly, use \autodoc:command{\cites{\cite{<key1>}, \cite{<key2>}, …}}.
+This wrapper command only accepts \autodoc:command{\cite} elements following their standard syntax.
+Any other element triggers an error, and any text content is silently ignored.
 
 To produce a bibliography of cited references, use \autodoc:command{\printbibliography}.
 After printing the bibliography, the list of cited entries will be cleared. This allows you to start fresh for subsequent uses (e.g., in a different chapter).
