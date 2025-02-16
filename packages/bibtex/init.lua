@@ -398,6 +398,10 @@ function package:registerCommands ()
       parseBibtex(file, SILE.scratch.bibtex.bib)
    end)
 
+   self:registerCommand("nocite", function (options, content)
+      self:getEntryForCite(options, content, false)
+   end, "Mark an entry as cited without actually producing a citation.")
+
    -- LEGACY COMMANDS
 
    self:registerCommand("bibstyle", function (_, _)
@@ -420,7 +424,7 @@ function package:registerCommands ()
          local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
          SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
       end
-   end)
+   end, "Produce a single citation.")
 
    self:registerCommand("reference", function (options, content)
       local style = SILE.settings:get("bibtex.style")
@@ -442,7 +446,7 @@ function package:registerCommands ()
          end
          SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
       end
-   end)
+   end, "Produce a single bibliographic reference.")
 
    -- CSL IMPLEMENTATION COMMANDS
 
@@ -542,7 +546,7 @@ function package:registerCommands ()
 
          SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
       end
-   end)
+   end, "Produce a single citation.")
 
    self:registerCommand("csl:reference", function (options, content)
       local entry, citnum = self:getEntryForCite(options, content, true)
@@ -554,7 +558,7 @@ function package:registerCommands ()
 
          SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
       end
-   end)
+   end, "Produce a single bibliographic reference.")
 
    self:registerCommand("printbibliography", function (options, _)
       local bib
@@ -598,7 +602,7 @@ function package:registerCommands ()
       SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
 
       SILE.scratch.bibtex.cited = { keys = {}, citnums = {} }
-   end)
+   end, "Produce a bibliography of references.")
 end
 
 package.documentation = [[
@@ -662,6 +666,9 @@ If you don’t specify a style or locale, the author-date style and the \code{en
 To produce an inline citation, call \autodoc:command{\csl:cite{<key>}}, which will typeset something like “(Jones 1982)”.
 If you want to cite a particular page number, use \autodoc:command{\csl:cite[page=22]{<key>}}. Other “locator”  options are available (article, chapter, column, line, note, paragraph, section, volume, etc.) – see the CSL documentation for details.
 Some frequent abbreviations are also supported (art, chap, col, fig…)
+
+To mark an entry as cited without actually producing a citation, use \autodoc:command{\nocite{<key>}}.
+This is useful when you want to include an entry in the bibliography without citing it in the text.
 
 To produce a bibliography of cited references, use \autodoc:command{\printbibliography}.
 After printing the bibliography, the list of cited entries will be cleared. This allows you to start fresh for subsequent uses (e.g., in a different chapter).
