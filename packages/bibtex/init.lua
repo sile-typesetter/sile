@@ -333,6 +333,65 @@ function package.declareSettings (_)
    })
 end
 
+--- Retrieve the CSL engine, creating it if necessary.
+-- @treturn CslEngine CSL engine instance
+function package.getCslEngine (_)
+   if not SILE.scratch.bibtex.engine then
+      SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
+   end
+   return SILE.scratch.bibtex.engine
+end
+
+--- Retrieve an entry and mark it as cited if it is not already.
+-- The citation key is taken from the options, or from the content if not provided.
+-- @tparam table options Options
+-- @tparam table content Content
+-- @tparam boolean warn_uncited Warn if the entry is not cited yet
+-- @treturn table Bibliography entry
+function package.getEntryForCite (_, options, content, warn_uncited)
+   if not options.key then
+      options.key = SU.ast.contentToString(content)
+   end
+   local entry = resolveEntry(SILE.scratch.bibtex.bib, options.key)
+   if not entry then
+      return
+   end
+   -- Keep track of cited entries
+   local citnum = SILE.scratch.bibtex.cited.citnums[options.key]
+   if not citnum then
+      if warn_uncited then
+         SU.warn("Reference to a non-cited entry " .. options.key)
+      end
+      -- Make it cited
+      table.insert(SILE.scratch.bibtex.cited.keys, options.key)
+      citnum = #SILE.scratch.bibtex.cited.keys
+      SILE.scratch.bibtex.cited.citnums[options.key] = citnum
+   end
+   return entry, citnum
+end
+
+--- Retrieve a locator from the options.
+-- @tparam table options Options
+-- @treturn table Locator
+function package.getLocator (_, options)
+   local locator
+   for k, v in pairs(options) do
+      if k ~= "key" then
+         if not locators[k] then
+            SU.warn("Unknown option '" .. k .. "' in \\csl:cite")
+         else
+            if not locator then
+               local label = locators[k]
+               locator = { label = label, value = v }
+            else
+               SU.warn("Multiple locators in \\csl:cite, using the first one")
+            end
+         end
+      end
+   end
+   return locator
+end
+
 function package:registerCommands ()
    self:registerCommand("loadbibliography", function (options, _)
       local file = SU.required(options, "file", "loadbibliography")
@@ -355,21 +414,12 @@ function package:registerCommands ()
          self._deprecated_legacy_warning = true
          SU.warn("Legacy bibtex.style is deprecated, consider enabling the CSL implementation.")
       end
-      if not options.key then
-         options.key = SU.ast.contentToString(content)
+      local entry = self:getEntryForCite(options, content, false)
+      if entry  then
+         local bibstyle = require("packages.bibtex.styles." .. style)
+         local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
+         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
       end
-      local entry = resolveEntry(SILE.scratch.bibtex.bib, options.key)
-      if not entry then
-         return
-      end
-      -- Keep track of cited entries
-      table.insert(SILE.scratch.bibtex.cited.keys, options.key)
-      local citnum = #SILE.scratch.bibtex.cited.keys
-      SILE.scratch.bibtex.cited.citnums[options.key] = citnum
-
-      local bibstyle = require("packages.bibtex.styles." .. style)
-      local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
-      SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
    end)
 
    self:registerCommand("reference", function (options, content)
@@ -382,32 +432,19 @@ function package:registerCommands ()
          self._deprecated_legacy_warning = true
          SU.warn("Legacy bibtex.style is deprecated, consider enabling the CSL implementation.")
       end
-      if not options.key then
-         options.key = SU.ast.contentToString(content)
+      local entry = self:getEntryForCite(options, content, true)
+      if entry then
+         local bibstyle = require("packages.bibtex.styles." .. style)
+         local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
+         if cite == Bibliography.Errors.UNKNOWN_TYPE then
+            SU.warn("Unknown type @" .. err .. " in citation for reference " .. options.key)
+            return
+         end
+         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
       end
-      local entry = resolveEntry(SILE.scratch.bibtex.bib, options.key)
-      if not entry then
-         return
-      end
-
-      local citnum = SILE.scratch.bibtex.cited.citnums[options.key]
-      if not citnum then
-         SU.warn("Reference to a non-cited entry " .. options.key)
-         -- Make it cited
-         table.insert(SILE.scratch.bibtex.cited.keys, options.key)
-         citnum = #SILE.scratch.bibtex.cited.keys
-         SILE.scratch.bibtex.cited.citnums[options.key] = citnum
-      end
-      local bibstyle = require("packages.bibtex.styles." .. style)
-      local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
-      if cite == Bibliography.Errors.UNKNOWN_TYPE then
-         SU.warn("Unknown type @" .. err .. " in citation for reference " .. options.key)
-         return
-      end
-      SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
    end)
 
-   -- NEW CSL IMPLEMENTATION
+   -- CSL IMPLEMENTATION COMMANDS
 
    -- Hooks for CSL processing
 
@@ -494,78 +531,32 @@ function package:registerCommands ()
    self:registerCommand("csl:cite", function (options, content)
       -- TODO:
       -- - multiple citation keys (but how to handle locators then?)
-      local locator
-      for k, v in pairs(options) do
-         if k ~= "key" then
-            if not locators[k] then
-               SU.warn("Unknown option '" .. k .. "' in \\csl:cite")
-            else
-               if not locator then
-                  local label = locators[k]
-                  locator = { label = label, value = v }
-               else
-                  SU.warn("Multiple locators in \\csl:cite, using the first one")
-               end
-            end
-         end
-      end
-      if not SILE.scratch.bibtex.engine then
-         SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
-      end
-      local engine = SILE.scratch.bibtex.engine
-      if not options.key then
-         options.key = SU.ast.contentToString(content)
-      end
-      local entry = resolveEntry(SILE.scratch.bibtex.bib, options.key)
-      if not entry then
-         return
-      end
+      local entry, citnum = self:getEntryForCite(options, content, false)
+      if entry then
+         local engine = self:getCslEngine()
+         local locator = self:getLocator(options)
 
-      -- Keep track of cited entries
-      table.insert(SILE.scratch.bibtex.cited.keys, options.key)
-      local citnum = #SILE.scratch.bibtex.cited.keys
-      SILE.scratch.bibtex.cited.citnums[options.key] = citnum
+         local cslentry = bib2csl(entry, citnum)
+         cslentry.locator = locator
+         local cite = engine:cite(cslentry)
 
-      local csljson = bib2csl(entry, citnum)
-      csljson.locator = locator
-      local cite = engine:cite(csljson)
-
-      SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+      end
    end)
 
    self:registerCommand("csl:reference", function (options, content)
-      if not SILE.scratch.bibtex.engine then
-         SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
-      end
-      local engine = SILE.scratch.bibtex.engine
-      if not options.key then
-         options.key = SU.ast.contentToString(content)
-      end
-      local entry = resolveEntry(SILE.scratch.bibtex.bib, options.key)
-      if not entry then
-         return
-      end
+      local entry, citnum = self:getEntryForCite(options, content, true)
+      if entry then
+         local engine = self:getCslEngine()
 
-      local citnum = SILE.scratch.bibtex.cited.citnums[options.key]
-      if not citnum then
-         SU.warn("Reference to a non-cited entry " .. options.key)
-         -- Make it cited
-         table.insert(SILE.scratch.bibtex.cited.keys, options.key)
-         citnum = #SILE.scratch.bibtex.cited.keys
-         SILE.scratch.bibtex.cited.citnums[options.key] = citnum
-      end
-      local cslentry = bib2csl(entry, citnum)
-      local cite = engine:reference(cslentry)
+         local cslentry = bib2csl(entry, citnum)
+         local cite = engine:reference(cslentry)
 
-      SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+      end
    end)
 
    self:registerCommand("printbibliography", function (options, _)
-      if not SILE.scratch.bibtex.engine then
-         SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
-      end
-      local engine = SILE.scratch.bibtex.engine
-
       local bib
       if SU.boolean(options.cited, true) then
          bib = {}
@@ -600,7 +591,9 @@ function package:registerCommands ()
             end
          end
       end
+
       print("<bibliography: " .. #entries .. " entries>")
+      local engine = self:getCslEngine()
       local cite = engine:reference(entries)
       SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
 
