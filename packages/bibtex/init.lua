@@ -98,6 +98,14 @@ function package.declareSettings (_)
       default = "chicago",
       help = "BibTeX style",
    })
+
+   -- For CSL hanging-indent or second-field-align
+   SILE.settings:declare({
+      parameter = "bibliography.indent",
+      type = "measurement",
+      default = SILE.types.measurement("3em"),
+      help = "Left indentation for bibliography entries when the citation style requires it.",
+   })
 end
 
 --- Retrieve the CSL engine, creating it if necessary.
@@ -279,6 +287,18 @@ function package:registerCommands ()
       end)
    end)
 
+   self:registerCommand("bibBoxForIndent", function (_, content)
+      local hbox = SILE.typesetter:makeHbox(content)
+      local margin = SILE.types.length(SILE.settings:get("bibliography.indent"):absolute())
+      if hbox.width > margin then
+         SILE.typesetter:pushHbox(hbox)
+         SILE.typesetter:typeset(" ")
+      else
+         hbox.width = margin
+         SILE.typesetter:pushHbox(hbox)
+      end
+   end)
+
    -- Style and locale loading
 
    self:registerCommand("bibliographystyle", function (options, _)
@@ -390,9 +410,31 @@ function package:registerCommands ()
       end
 
       print("<bibliography: " .. #entries .. " entries>")
+      if not SILE.typesetter:vmode() then
+         SILE.call("par")
+      end
       local engine = self:getCslEngine()
       local cite = engine:reference(entries)
-      SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+      SILE.settings:temporarily(function ()
+         local hanging_indent = SU.boolean(engine.bibliography.options["hanging-indent"], false)
+         local must_align = engine.bibliography.options["second-field-align"]
+                  local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()):absolute()
+         if hanging_indent or must_align then
+            -- Respective to the fixed part of the current lskip, all lines are indented
+            -- but the first one.
+            local indent = SILE.settings:get("bibliography.indent"):absolute()
+            SILE.settings:set("document.lskip", lskip.width + indent)
+            SILE.settings:set("document.parindent", - indent)
+            SILE.settings:set("current.parindent", - indent)
+         else
+            -- Fixed part of the current lskip, and no paragraph indentation
+            SILE.settings:set("document.lskip", lskip.width)
+            SILE.settings:set("document.parindent", SILE.types.length())
+            SILE.settings:set("current.parindent", SILE.types.length())
+         end
+         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+         SILE.call("par")
+      end)
 
       SILE.scratch.bibtex.cited = { keys = {}, citnums = {} }
    end, "Produce a bibliography of references.")

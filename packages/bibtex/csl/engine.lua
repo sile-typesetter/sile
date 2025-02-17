@@ -449,7 +449,9 @@ function CslEngine:_layout (options, content, entries)
    -- quite logically as we force a paragraph break between entries.
    for _, entry in ipairs(entries) do
       self:_prerender()
-      local elem = self:_render_children(content, entry)
+      local elem = self:_render_children(content, entry, {
+         secondFieldAlign = self.inheritable.bibliography["second-field-align"] and true or false,
+      })
       elem = self:_render_affixes(elem, options)
       elem = self:_render_formatting(elem, options)
       elem = self:_postrender(elem)
@@ -1458,6 +1460,16 @@ function CslEngine:_render_children (ast, entry, context)
       else
          SU.error("CSL unexpected content") -- Should not happen
       end
+   end
+   if context.secondFieldAlign then
+      -- CSL 1.0.2 says that "subsequent lines of bibliographic entries are aligned
+      -- along the second field" with the first field either flushed "with the margin"
+      -- or "put in the margin".
+      -- This is a dubious wording, probably bad typography, with no amount of spacing
+      -- even described.
+      -- We choose to "box" the first field, and the default implementation will take
+      -- care of doing sound typography.
+      ret[1] = "<bibBoxForIndent>" .. ret[1] .. "</bibBoxForIndent>"
    end
    return #ret > 0 and self:_render_delimiter(ret, context.delimiter) or nil
 end
