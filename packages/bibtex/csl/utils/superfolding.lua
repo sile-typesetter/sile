@@ -140,7 +140,7 @@ local function superfolding (str)
       local replaced = luautf8.gsub(group, ".", function (char)
          return supersyms[char]
       end)
-      return "<textsuperscript>" .. replaced .. "</textsuperscript>"
+      return "<bibSuperScript>" .. replaced .. "</bibSuperScript>"
    end)
 end
 
