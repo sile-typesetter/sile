@@ -831,6 +831,28 @@ function CslEngine:_name_et_al (options)
    return t
 end
 
+local function initialize (options, entry)
+   if SU.boolean(options.initialize, true) and options['initialize-with'] then
+      -- FIXME TODO Quick and dirty:
+      -- Major styles abbreviate the given name with ". " as initialize-with
+      -- and don't set initialize-with-hyphen to false.
+      -- So here we just use the short name already derived by our BibTeX parser.
+      -- ... But this is not general, obviously.
+      return entry['given-short'] .. options['initialize-with']:gsub("%s*$", "")
+   end
+   return entry.given
+end
+
+function CslEngine:_format_a_name (options, name)
+   if not options then
+      return name
+   end
+   return self:_render_formatting(
+      self:_render_textCase(name, options),
+      options
+   )
+end
+
 function CslEngine:_a_name (options, content, entry)
    if entry.literal then -- pass through literal names
       return entry.literal
@@ -875,36 +897,71 @@ function CslEngine:_a_name (options, content, entry)
       return table.concat(name, " ")
    end
 
+   -- Name-parts for formatting:
+   -- If set to “given”, formatting and text-case attributes on cs:name-part affect
+   -- the “given” and “dropping-particle” name-parts.
+   -- FIXME TODO Affixes surround the “given” name-part, enclosing any demoted name
+   -- particles for inverted names.
+   -- If set to “family”, formatting and text-case attributes affect the “family” and
+   -- “non-dropping-particle” name-parts.
+   -- FIXME TODO Affixes surround the “family” name-part, enclosing any preceding name
+   -- particles, as well as the “suffix” name-part for non-inverted names.
+   -- N.B. Very few styles use affixes, hence the FIXME TODO, not implemented yet.
+   if not options["__name-parts"] then
+      -- First the options from the cs:name node
+      local formattingAndCaseOptions = {
+         ["text-case"] = options["text-case"],
+         ["font-style"] = options["font-style"],
+         ["font-variant"] = options["font-variant"],
+         ["font-weight"] = options["font-weight"],
+         ["text-decoration"] = options["text-decoration"],
+         ["vertical-align"] = options["vertical-align"],
+      }
+      local namePartOptions = {
+         given = formattingAndCaseOptions,
+         family = formattingAndCaseOptions,
+      }
+      for _, namep in ipairs(content) do
+         -- Override with the options for the cs:name-part explicit nodes, if any
+         if namep.command == "cs:name-part" then
+            namePartOptions[namep.options.name] = pl.tablex.merge(
+               namePartOptions[namep.options.name],
+               namep.options,
+               true
+            )
+         end
+      end
+      options["__name-parts"] = namePartOptions -- memoize
+   end
+   local namepartOptions = options["__name-parts"]
+
    local form = options.form
-   local nameAsSortOrder = options["name-as-sort-order"] or "first"
-
-   -- TODO FIXME: content can consists in name-part elements for formatting, text-case, affixes
-   -- Chigaco style does not seem to use them, so we keep it "simple" for now.
-
    if form == "short" then
       -- Order is: [NDP] Family, e.g. van Gogh
       if entry["non-dropping-particle"] then
          return table.concat({
-            entry["non-dropping-particle"],
-            entry.family,
+            self:_format_a_name(namepartOptions.family, entry["non-dropping-particle"]),
+            self:_format_a_name(namepartOptions.family, entry.family),
          }, " ")
       end
-      return entry.family
+      return self:_format_a_name(namepartOptions.family, entry.family)
    end
 
-   if nameAsSortOrder ~= "all" and not self.firstName then
+   local nameAsSortOrder = options["name-as-sort-order"]
+   local familyFirst = nameAsSortOrder == "all" or (nameAsSortOrder == "first" and self.firstName) or false
+   if not familyFirst then
       -- Order is: [Given] [DP] [NDP] Family [Suffix] e.g. Vincent van Gogh III
       local t = {}
       if entry.given then
-         table.insert(t, entry.given)
+         table.insert(t, self:_format_a_name(namepartOptions.given, initialize(options, entry)))
       end
       if entry["dropping-particle"] then
-         table.insert(t, entry["dropping-particle"])
+         table.insert(t, self:_format_a_name(namepartOptions.given, entry["dropping-particle"]))
       end
       if entry["non-dropping-particle"] then
-         table.insert(t, entry["non-dropping-particle"])
+         table.insert(t, self:_format_a_name(namepartOptions.family, entry["non-dropping-particle"]))
       end
-      table.insert(t, entry.family)
+      table.insert(t, self:_format_a_name(namepartOptions.family, entry.family))
       if entry.suffix then
          table.insert(t, entry.suffix)
       end
@@ -916,24 +973,24 @@ function CslEngine:_a_name (options, content, entry)
       -- Order is: Family, [Given] [DP] [NDP], [Suffix] e.g. Gogh, Vincent van, III
       local mid = {}
       if entry.given then
-         table.insert(mid, entry.given)
+         table.insert(mid, self:_format_a_name(namepartOptions.given, initialize(options, entry)))
       end
       if entry["dropping-particle"] then
-         table.insert(mid, entry["dropping-particle"])
+         table.insert(mid, self:_format_a_name(namepartOptions.given, entry["dropping-particle"]))
       end
       if entry["non-dropping-particle"] then
-         table.insert(mid, entry["non-dropping-particle"])
+         table.insert(mid, self:_format_a_name(namepartOptions.family, entry["non-dropping-particle"]))
       end
       local midname = table.concat(mid, " ")
       if #midname > 0 then
          return table.concat({
-            entry.family,
+            self:_format_a_name(namepartOptions.family, entry.family),
             midname,
             entry.suffix, -- may be nil
          }, sep)
       end
       return table.concat({
-         entry.family,
+         self:_format_a_name(namepartOptions.family, entry.family),
          entry.suffix, -- may be nil
       }, sep)
    end
@@ -941,16 +998,16 @@ function CslEngine:_a_name (options, content, entry)
    -- Order is: [NDP] Family, [Given] [DP], [Suffix] e.g. van Gogh, Vincent, III
    local beg = {}
    if entry["non-dropping-particle"] then
-      table.insert(beg, entry["non-dropping-particle"])
+      table.insert(beg, self:_format_a_name(namepartOptions.family, entry["non-dropping-particle"]))
    end
-   table.insert(beg, entry.family)
+   table.insert(beg, self:_format_a_name(namepartOptions.family, entry.family))
    local begname = table.concat(beg, " ")
    local mid = {}
    if entry.given then
-      table.insert(mid, entry.given)
+      table.insert(mid, self:_format_a_name(namepartOptions.given, initialize(options, entry)))
    end
    if entry["dropping-particle"] then
-      table.insert(mid, entry["dropping-particle"])
+      table.insert(mid, self:_format_a_name(namepartOptions.given, entry["dropping-particle"]))
    end
    local midname = table.concat(mid, " ")
    if #midname > 0 then
@@ -1068,7 +1125,11 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
                sep_delim = #l > 2 and name_delimiter or " "
             end
             local last = table.remove(l)
-            joined = table.concat(l, name_delimiter) .. sep_delim .. and_word .. " " .. last
+            if and_word then
+               joined = table.concat(l, name_delimiter) .. sep_delim .. and_word .. " " .. last
+            else
+               joined = table.concat(l, name_delimiter) .. sep_delim .. last
+            end
          end
          if label then
             joined = is_label_first and (label .. joined) or (joined .. label)
@@ -1120,8 +1181,13 @@ function CslEngine:_names (options, content, entry)
    name_node.options.form = name_node.options.form or inherited_opts["name-form"]
    local et_al_min = tonumber(name_node.options["et-al-min"]) or 4 -- No default in the spec, using Chicago's
    local et_al_use_first = tonumber(name_node.options["et-al-use-first"]) or 1
-   local and_opt = name_node.options["and"] or "text"
-   local and_word = and_opt == "symbol" and "&amp;" or self:_render_term("and") -- text by default
+   local and_opt = name_node.options["and"]
+   local and_word
+   if and_opt == "symbol"then
+      and_word = "&amp;"
+   elseif and_opt == "text" then
+      and_word = self:_render_term("and")
+   end
    local name_delimiter = name_node.options.delimiter or inherited_opts["names-delimiter"] or ", "
    -- local delimiter_precedes_et_al = name_node.options["delimiter-precedes-et-al"] -- FIXME NOT IMPLEMENTED
    local delimiter_precedes_last = name_node.options["delimiter-precedes-last"]
