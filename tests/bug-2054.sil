@@ -3,6 +3,7 @@
 \neverindent
 \language[main=en]
 \use[module=packages.bibtex]
+\set[parameter=bibtex.style, value=chicago]% LEGACY IMPLEMENTATION
 \loadbibliography[file=tests/bug-2054.bib]
 
 \reference{bar}
