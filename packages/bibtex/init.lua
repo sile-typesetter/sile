@@ -84,6 +84,7 @@ function package:_init ()
    if not self:loadOptPackage("textsubsuper") then
       self:loadPackage("raiselower")
       self:registerCommand("textsuperscript", function (_, content)
+         -- Fake more or less ad hoc superscripting
          SILE.call("raise", { height = "0.7ex" }, function ()
             SILE.call("font", { size = "1.5ex" }, content)
          end)
@@ -230,6 +231,16 @@ function package:registerCommands ()
    self:registerCommand("bibSmallCaps", function (_, content)
       -- To avoid attributes in the CSL-processed content
       SILE.call("font", { features = "+smcp" }, content)
+   end)
+
+   self:registerCommand("bibSuperScript", function (_, content)
+      -- Superscripted content from CSL may contain characters that are not
+      -- available in the font even with +sups.
+      -- E.g. ACS style uses superscripted numbers for references, but also
+      -- comma-separated lists of numbers, or ranges with an en-dash.
+      -- We want to be consistent between all these cases, so we always
+      -- use fake superscripts.
+      SILE.call("textsuperscript", { fake = true}, content)
    end)
 
    -- CSL 1.0.2 appendix VI

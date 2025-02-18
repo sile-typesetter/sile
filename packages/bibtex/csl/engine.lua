@@ -347,7 +347,7 @@ function CslEngine:_render_formatting (t, options)
       t = "<underline>" .. t .. "</underline>"
    end
    if options["vertical-align"] == "sup" then
-      t = "<textsuperscript>" .. t .. "</textsuperscript>"
+      t = "<bibSuperScript>" .. t .. "</bibSuperScript>"
    end
    if options["vertical-align"] == "sub" then
       t = "<textsubscript>" .. t .. "</textsubscript>"
@@ -434,7 +434,7 @@ function CslEngine:_layout (options, content, entries)
       -- citations, affixes and formatting apply on the whole layout.
       -- Affixes are arround the delimited list, e.g. "(Smith, 2000; Jones, 2001)"
       -- Rendering is done after, so vertical-align, etc. apply to the whole list,
-      -- e.g. <textsuperscript>1,2</textsuperscript>
+      -- e.g. <bibSuperScript>1, 2</bibSuperScript>
       local cites = self:_render_delimiter(output, options.delimiter or "; ")
       cites = self:_render_affixes(cites, options)
       cites = self:_render_formatting(cites, options)
