@@ -95,7 +95,7 @@ function package.declareSettings (_)
    SILE.settings:declare({
       parameter = "bibtex.style",
       type = "string",
-      default = "chicago",
+      default = "csl",
       help = "BibTeX style",
    })
 
@@ -153,13 +153,13 @@ function package.getLocator (_, options)
    for k, v in pairs(options) do
       if k ~= "key" then
          if not locators[k] then
-            SU.warn("Unknown option '" .. k .. "' in \\csl:cite")
+            SU.warn("Unknown option '" .. k .. "' in \\cite")
          else
             if not locator then
                local label = locators[k]
                locator = { label = label, value = v }
             else
-               SU.warn("Multiple locators in \\csl:cite, using the first one")
+               SU.warn("Multiple locators in \\cite, using the first one")
             end
          end
       end
@@ -457,32 +457,11 @@ You can load multiple files, and the entries will be merged into a single biblio
 
 \smallskip
 \noindent
-\em{Producing citations and references (legacy commands)}
-\novbreak
-
-\indent
-The “legacy” implementation is based on a custom rendering system.
-The plan is to eventually deprecate it in favor of the CSL implementation.
-
-To produce an inline citation, call \autodoc:command{\cite{<key>}}, which will typeset something like “Jones 1982”.
-If you want to cite a particular page number, use \autodoc:command{\cite[page=22]{<key>}}.
-
-To produce a bibliographic reference, use \autodoc:command{\reference{<key>}}.
-
-The \autodoc:setting[check=false]{bibtex.style} setting controls the style of the bibliography.
-It currently defaults to \code{chicago}, the only style supported out of the box.
-It can however be set to \code{csl} to enforce the use of the CSL implementation on the above commands.
-
-This implementation doesn’t currently produce full bibliography listings.
-(Actually, you can use the \autodoc:command{\printbibliography} introduced below, but then it always uses the CSL implementation for rendering the bibliography, differing from the output of the \autodoc:command{\reference} command.)
-
-\smallskip
-\noindent
 \em{Producing citations and references (CSL implementation)}
 \novbreak
 
 \indent
-While an experimental work-in-progress, the CSL (Citation Style Language) implementation is more powerful and flexible than the legacy commands.
+The CSL (Citation Style Language) implementation is more powerful and flexible than the former legacy solution available in earlier versions of this package (see below).
 
 You should first invoke \autodoc:command{\bibliographystyle[style=<style>, lang=<lang>]}, where \autodoc:parameter{style} is the name of the CSL style file (without the \code{.csl} extension), and \autodoc:parameter{lang} is the language code of the CSL locale to use (e.g., \code{en-US}).
 
@@ -498,14 +477,14 @@ The locale and styles files are searched in the \code{csl/locales} and \code{csl
 For convenience and testing, SILE bundles the \code{chicago-author-date} and \code{chicago-author-date-fr} styles, and the \code{en-US} and \code{fr-FR} locales.
 If you don’t specify a style or locale, the author-date style and the \code{en-US} locale will be used.
 
-To produce an inline citation, call \autodoc:command{\csl:cite{<key>}}, which will typeset something like “(Jones 1982)”.
-If you want to cite a particular page number, use \autodoc:command{\csl:cite[page=22]{<key>}}. Other “locator”  options are available (article, chapter, column, line, note, paragraph, section, volume, etc.) – see the CSL documentation for details.
+To produce an inline citation, call \autodoc:command{\cite{<key>}}, which will typeset something like “(Jones 1982)”.
+If you want to cite a particular page number, use \autodoc:command{\cite[page=22]{<key>}}. Other “locator”  options are available (article, chapter, column, line, note, paragraph, section, volume, etc.) – see the CSL documentation for details.
 Some frequent abbreviations are also supported (art, chap, col, fig…)
 
 To mark an entry as cited without actually producing a citation, use \autodoc:command{\nocite{<key>}}.
 This is useful when you want to include an entry in the bibliography without citing it in the text.
 
-To generate multiple citations grouped correctly, use \autodoc:command{\cites{\cite{<key1>}, \cite{<key2>}, …}}.
+To generate multiple citations grouped correctly, use \autodoc:command{\cites{\cite{<key1>} \cite{<key2>}, …}}.
 This wrapper command only accepts \autodoc:command{\cite} elements following their standard syntax.
 Any other element triggers an error, and any text content is silently ignored.
 
@@ -513,9 +492,30 @@ To produce a bibliography of cited references, use \autodoc:command{\printbiblio
 After printing the bibliography, the list of cited entries will be cleared. This allows you to start fresh for subsequent uses (e.g., in a different chapter).
 If you want to include all entries in the bibliography, not just those that have been cited, set the option \autodoc:parameter{cited} to false.
 
-To produce a bibliographic reference, use \autodoc:command{\csl:reference{<key>}}.
+To produce a bibliographic reference, use \autodoc:command{\reference{<key>}}.
 Note that this command is not intended for actual use, but for testing purposes.
 It may be removed in the future.
+
+\smallskip
+\noindent
+\em{Producing citations and references (legacy commands)}
+\novbreak
+
+\indent
+The “legacy” implementation is based on a custom rendering system.
+The plan is to eventually deprecate and remove it, as the CSL implementation covers more use cases and is more powerful.
+
+The \autodoc:setting[check=false]{bibtex.style} setting controls the style of the bibliography.
+It may be set, for instance, to \code{chicago}, the only style supported out of the box.
+(By default, it is set to \code{csl} to enforce the use of the CSL implementation.)
+
+To produce an inline citation, call \autodoc:command{\cite{<key>}}, which will typeset something like “Jones 1982”.
+If you want to cite a particular page number, use \autodoc:command{\cite[page=22]{<key>}}.
+
+To produce a bibliographic reference, use \autodoc:command{\reference{<key>}}.
+
+This implementation doesn’t currently produce full bibliography listings.
+(Actually, you can use the \autodoc:command{\printbibliography} introduced above, but then it always uses the CSL implementation for rendering the bibliography, differing from the output of the \autodoc:command{\reference} command.)
 
 \smallskip
 \noindent
