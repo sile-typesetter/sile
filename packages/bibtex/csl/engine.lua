@@ -1,6 +1,6 @@
 --- A rendering engine for CSL 1.0.2
 --
--- @copyright License: MIT (c) 2024 Omikhleia
+-- @copyright License: MIT (c) 2024, 2025 Omikhleia
 --
 -- Public API:
 --  - (constructor) CslEngine(style, locale) -> CslEngine
@@ -450,7 +450,7 @@ function CslEngine:_layout (options, content, entries)
    for _, entry in ipairs(entries) do
       self:_prerender()
       local elem = self:_render_children(content, entry, {
-         secondFieldAlign = self.inheritable.bibliography["second-field-align"] and true or false,
+         secondFieldAlign = self.inheritable.bibliography["second-field-align"] and true or false
       })
       elem = self:_render_affixes(elem, options)
       elem = self:_render_formatting(elem, options)
@@ -1279,27 +1279,30 @@ function CslEngine:_if (options, content, entry)
          end
       end
    end
-   if matching then
-      return self:_render_children(content, entry), true
-      -- FIXME:
-      -- The CSL specification says: "Delimiters from the nearest delimiters
-      -- from the nearest ancestor delimiting element are applied within the
-      -- output of cs:choose (i.e., the output of the matching cs:if,
-      -- cs:else-if, or cs:else; see delimiter).""
-      -- Ugh. This is rather obscure and not implemented yet (?)
-   end
-   return nil, false
+   -- We return the content if the condition is met
+   -- (Not the formatted content as in other methods)
+   return matching and content or nil
 end
 
-function CslEngine:_choose (options, content, entry)
+function CslEngine:_choose (options, content, entry, context)
+   -- The CSL specification says: "Delimiters from the nearest delimiters
+   -- from the nearest ancestor delimiting element are applied within the
+   -- output of cs:choose (i.e., the output of the matching cs:if,
+   -- cs:else-if, or cs:else; see delimiters)."
+   -- NOTE: I am not sure if the current context is always sufficient here.
+   local delimiter = context.delimiter
    for _, child in ipairs(content) do
       if child.command == "cs:if" or child.command == "cs:else-if" then
-         local t, match = self:_if(child.options, child, entry)
+         local match = self:_if(child.options, child, entry)
          if match then
-            return t
+            return self:_render_children(child, entry, {
+               delimiter = delimiter
+            })
          end
       elseif child.command == "cs:else" then
-         return self:_render_children(child, entry)
+         return self:_render_children(child, entry, {
+            delimiter = delimiter
+         })
       end
    end
 end
@@ -1436,10 +1439,11 @@ end
 
 -- PROCESSING
 
-function CslEngine:_render_node (node, entry)
+function CslEngine:_render_node (node, entry, context)
    local callback = node.command:gsub("cs:", "_")
+   context = context or {}
    if self[callback] then
-      return self[callback](self, node.options, node, entry)
+      return self[callback](self, node.options, node, entry, context)
    else
       SU.warn("Unknown CSL element " .. node.command .. " (" .. callback .. ")")
    end
@@ -1453,7 +1457,7 @@ function CslEngine:_render_children (ast, entry, context)
    context = context or {}
    for _, content in ipairs(ast) do
       if type(content) == "table" and content.command then
-         local r = self:_render_node(content, entry)
+         local r = self:_render_node(content, entry, context)
          if r then
             table.insert(ret, r)
          end
