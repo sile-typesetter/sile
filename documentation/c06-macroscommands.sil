@@ -115,25 +115,11 @@ Making things red is a \red{silly} way to emphasize text.
 \end{raw}
 
 \begin{autodoc:note}
-You can’t call \autodoc:command{\process} more than once within the same macro.
-
-In the definition of the \autodoc:command{\chapter} command, we want to (1) display the
-chapter name in a big bold font, and (2) use the chapter name as the left
-running header. If you try writing the \autodoc:command{\chapter} command as a macro,
-you will get stuck—once you’ve \autodoc:command{\process}ed the chapter name to display
-it in bold, you won’t be able to process it again to set the running header.
-
-So the \autodoc:command{\chapter} command cannot be written as a simple macro. The other
-way to implement your own commands is to write them in the Lua programming
-language, which is what happens for \autodoc:command{\chapter}. This is deliberate:
-the \autodoc:command{\define} command really is meant to be used just for simple
-things, because we believe that programming tasks should be done in a
-programming language. So don’t be afraid to write your own commands in Lua—it’s
-not too difficult, and if you’re creating any serious document format yourself
-(rather than processing a document using a class that someone else has written
-or adding minor formatting tweaks through customization hooks that classes
-give you) you should expect to write it in Lua, as you’re almost certainly
-going to need to do so. We will see how to do this in later chapters.
+The other way to implement your own commands is to write them in the Lua programming language, which is what happens for \autodoc:command{\chapter}.
+Don’t be afraid to write your own commands in Lua—it’s not too difficult, and if you’re creating any serious document format yourself
+	(rather than processing a document using a class that someone else has written or adding minor formatting tweaks through customization hooks that classes give you)
+	you should expect to write it in Lua, as you’re almost certainly going to need to do so.
+We will see how to do this in later chapters.
 \end{autodoc:note}
 
 \section{Nesting macros}
