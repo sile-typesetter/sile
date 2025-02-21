@@ -3,6 +3,7 @@
 \neverindent
 \nofolios
 \use[module=packages.bibtex]
+\set[parameter=bibtex.style, value=chicago]% LEGACY IMPLEMENTATION
 \language[main=en]
 \set[parameter=document.parskip, value=4pt]
 
