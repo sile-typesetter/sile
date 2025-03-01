@@ -46,9 +46,9 @@ function CslStyle:_preprocess (tree)
          end
          self.macros[name] = SU.ast.subContent(content)
       elseif content.command == "cs:locale" then
-         local lang = content.options and content.options["xml:lang"]
+         local lang = content.options and content.options["xml:lang"] or self.globalOptions["default-locale"]
          if not lang then
-            SU.error("CSL locale without xml:lang")
+            SU.error("CSL locale without xml:lang and no default locale")
          end
          if self.locales[lang] then
             SU.warn("CSL locale " .. lang .. " has multiple definitions, using the last one")
