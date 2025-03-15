@@ -6,7 +6,9 @@ package._name = "verbatim"
 function package:registerCommands ()
    self:registerCommand("verbatim:font", function (options, content)
       options.family = options.family or "Hack"
-      options.size = options.size or SILE.settings:get("font.size") - 3
+      if not options.size and not options.adjust then
+         options.adjust = "ex-height"
+      end
       SILE.call("font", options, content)
    end, "The font chosen for the verbatim environment")
 
