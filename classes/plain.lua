@@ -262,7 +262,9 @@ function class:registerCommands ()
       -- definition from the former, but it's of sub-quality...
       -- The ugly -3 size is a HACK of sorts.
       options.family = options.family or "Hack"
-      options.size = options.size or SILE.settings:get("font.size") - 3
+      if not options.size and not options.adjust then
+         options.adjust = "ex-height"
+      end
       SILE.call("font", options, content)
    end)
 
