@@ -34,7 +34,9 @@ local function adjustedFontSize(options)
    if not parsed then
       SU.error("Couldn't parse font adjust value " .. adjust)
    end
-   local baseOpts = pl.tablex.copy(options) -- shallow copy
+   -- Shallow copy: we don't want to modify the original AST as content may be reused
+   -- in other contexts (e.g. running headers) and may need to adapt to different font sizes.
+   local baseOpts = pl.tablex.copy(options)
    baseOpts.adjust = nil -- cancel for target font size calculation
    local currentMeasure = measureFontAdjustment(parsed.unit)
    local ratio = parsed.amount or 1
