@@ -1,6 +1,6 @@
 \begin[class=book]{document}
 \include[src=documentation/macros.sil]
-\define[command=silehp]{\url{http://www.sile-typesetter.org/}}
+\define[command=silehp]{\href{http://www.sile-typesetter.org/}}
 \define[command=sileversion]{\lua{SILE.typesetter:typeset(SILE.full_version)}}
 \set[parameter=document.baselineskip,value=3ex]
 % Quite drastic value below, but for a fast-changing technical document with snippets of code,

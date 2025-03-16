@@ -39,7 +39,7 @@ But there’s more out there!
 As mentioned earlier in this manual, a number of third-party contributed collections of modules can be installed via the LuaRocks package manager.
 
 \autodoc:note{
-A non-authoritative list of third-party modules may be consulted at \url{https://luarocks.org/m/sile}. To publish your own modules to LuaRocks, see the \code{package-template.sile} repository.
+A non-authoritative list of third-party modules may be consulted at \href{https://luarocks.org/m/sile}. To publish your own modules to LuaRocks, see the \code{package-template.sile} repository.
 }
 
 A SILE compatible LuaRock simply installs the relevant class, package, language, internationalization resources, or similar files in a \code{sile} directory.
