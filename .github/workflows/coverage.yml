@@ -31,7 +31,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-luajit-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+          key: luarocks-luajit-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in', 'Cargo.lock') }}
       - name: Setup ‘lua’
         uses: hishamhm/gh-actions-lua@master
         with:
