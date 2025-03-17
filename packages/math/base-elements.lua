@@ -214,6 +214,11 @@ function elements.mbox:_init ()
       size = SILE.settings:get("math.font.size"),
       style = SILE.settings:get("math.font.style"),
       weight = SILE.settings:get("math.font.weight"),
+      -- https://learn.microsoft.com/en-us/typography/opentype/spec/math#opentype-layout-tags-used-with-the-math-table
+      --   "Script tag to be used for features in math layout.
+      --   The only language system supported with this tag is the default language system."
+      -- Thus, needed for the ssty feature in superscript/subscript to work properly.
+      script = "math",
    }
    local filename = SILE.settings:get("math.font.filename")
    if filename and filename ~= "" then
