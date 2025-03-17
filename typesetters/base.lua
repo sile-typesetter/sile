@@ -1128,7 +1128,7 @@ end
 --- Any unclosed liner is reopened on the current line, so we clone and repeat it.
 -- An assumption is that the inserts are done after the current slice content,
 -- supposed to be just before meaningful (visible) content.
--- @tparam slice slice
+-- @tparam table slice Flat nodes from current line
 -- @treturn boolean Whether a liner was reopened
 function typesetter:_repeatEnterLiners (slice)
    local m = self.state.liners
@@ -1549,6 +1549,60 @@ function typesetter:liner (name, content, outputYourself)
       SILE.process(content)
       self:pushHorizontal(leave)
    end
+end
+
+--- Flatten a node list into just its string representation.
+-- @tparam table nodes Typeset nodes
+-- @treturn string Text reconstruction of the nodes
+local function _nodesToText (nodes)
+   -- A real interword space width depends on several settings (depending on variable
+   -- spaces being enabled or not, etc.), and the computation below takes that into
+   -- account.
+   local iwspc = SILE.shaper:measureSpace(SILE.font.loadDefaults({}))
+   local iwspcmin = (iwspc.length - iwspc.shrink):tonumber()
+
+   local string = ""
+   for i = 1, #nodes do
+      local node = nodes[i]
+      if node.is_nnode or node.is_unshaped then
+         string = string .. node:toText()
+      elseif node.is_glue or node.is_kern then
+         -- What we want to avoid is "small" glues or kerns to be expanded as full
+         -- spaces.
+         -- Comparing them to half of the smallest width of a possibly shrinkable
+         -- interword space is fairly fragile and empirical: the content could contain
+         -- font changes, so the comparison is wrong in the general case.
+         -- It's a simplistic approach. We cannot really be sure what a "space" meant
+         -- at the point where the kern or glue got absolutized.
+         if node.width:tonumber() > iwspcmin * 0.5 then
+            string = string .. " "
+         end
+      elseif not (node.is_zerohbox or node.is_migrating) then
+         -- Here, typically, the main case is an hbox.
+         -- Even if extracting its content could be possible in some regular cases
+         -- we cannot take a general decision, as it is a versatile object  and its
+         -- outputYourself() method could moreover have been redefined to do fancy
+         -- things. Better warn and skip.
+         SU.warn("Some content could not be converted to text: " .. node)
+      end
+   end
+   -- Trim leading and trailing spaces, and simplify internal spaces.
+   return pl.stringx.strip(string):gsub("%s%s+", " ")
+end
+
+--- Convert a SILE AST to a textual representation.
+-- This is similar to SU.ast.contentToString(), but it performs a full
+-- typesetting of the content, and then reconstructs the text from the
+-- typeset nodes.
+-- @tparam table content SILE AST to process
+-- @treturn string Textual representation of the content
+function typesetter:contentToText (content)
+   self:pushState()
+   self.state.hmodeOnly = true
+   SILE.process(content)
+   local text = _nodesToText(self.state.nodes)
+   self:popState()
+   return text
 end
 
 return typesetter
