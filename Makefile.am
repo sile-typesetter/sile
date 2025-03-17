@@ -364,7 +364,7 @@ BUSTEDFLAGS ?=
 regressions: $(TESTSRCS) $(ACTUALS)
 	$(LOCALFONTS) $(REGRESSIONSCRIPT) $(TESTSRCS)
 
-test: regressions busted
+check-local: regressions busted
 
 lint: luacheck luarocks-lint stylua
 

@@ -4,7 +4,7 @@
   "description": "The SILE Typesetter",
   "main": "sile",
   "scripts": {
-    "test": "make test",
+    "test": "make check",
     "lint": "make lint",
     "release": "commit-and-tag-version",
     "prepare": "husky"

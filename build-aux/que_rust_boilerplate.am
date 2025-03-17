@@ -66,7 +66,6 @@ RUST_DEVELOPER_TARGETS = cargo-test clippy rustfmt
 
 if DEVELOPER_MODE
 
-test: cargo-test
 lint: rustfmt clippy
 clean-local: clean-cargo
 check-local: cargo-test
