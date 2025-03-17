@@ -35,7 +35,6 @@ describe("The fontconfig manager", function ()
          assert.is_not.equal(family, face.family)
       end)
    end
-
 end)
 
 describe("The macfonts manager", function ()
