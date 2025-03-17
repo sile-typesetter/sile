@@ -2,8 +2,8 @@ task:
   name: Cirrus CI (FreeBSD)
   freebsd_instance:
     matrix:
-      - image_family: freebsd-14-0
-      - image_family: freebsd-13-3
+      - image_family: freebsd-14-2
+      - image_family: freebsd-13-5
   env:
     MAKEFLAGS: -j$(nproc) -Otarget
     CFLAGS: -I/usr/local/include -fPIC
