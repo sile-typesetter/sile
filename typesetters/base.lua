@@ -89,6 +89,13 @@ function typesetter.declareSettings (_)
    })
 
    SILE.settings:declare({
+      parameter = "typesetter.brokenpenalty",
+      type = "integer",
+      default = 100,
+      help = "Penalty to be applied to broken (hyphenated) lines",
+   })
+
+   SILE.settings:declare({
       parameter = "typesetter.orphanpenalty",
       type = "integer",
       default = 3000,
@@ -685,6 +692,8 @@ function typesetter:boxUpNodes ()
          pageBreakPenalty = SILE.settings:get("typesetter.widowpenalty")
       elseif #lines > 1 and index == (#lines - 1) then
          pageBreakPenalty = SILE.settings:get("typesetter.orphanpenalty")
+      elseif line.is_broken then
+         pageBreakPenalty = SILE.settings:get("typesetter.brokenpenalty")
       end
       vboxes[#vboxes + 1] = self:leadingFor(vbox, self.state.previousVbox)
       vboxes[#vboxes + 1] = vbox
@@ -1293,12 +1302,16 @@ function typesetter:breakpointsToLines (breakpoints)
             SU.debug("typesetter", "Skipping a line containing only discardable nodes")
             linestart = point.position + 1
          else
+            local is_broken = false
             if slice[#slice].is_discretionary then
                -- The line ends, with a discretionary:
                -- repeat it on the next line, so as to account for a potential postbreak.
                linestart = point.position
                -- And mark it as used as prebreak for now.
                slice[#slice]:markAsPrebreak()
+               -- We'll want a "brokenpenalty" eventually (if not an orphan or widow)
+               -- to discourage page breaking after this line.
+               is_broken = true
             else
                linestart = point.position + 1
             end
@@ -1320,7 +1333,7 @@ function typesetter:breakpointsToLines (breakpoints)
                slice = self:_reboxLiners(slice)
             end
 
-            local thisLine = { ratio = ratio, nodes = slice }
+            local thisLine = { ratio = ratio, nodes = slice, is_broken = is_broken }
             lines[#lines + 1] = thisLine
          end
       end
