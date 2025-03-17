@@ -79,6 +79,11 @@ The full list of attributes to the \autodoc:command{\font} command are:
     (\code{LTR-TTB} for left to right, top to bottom; \code{RTL-BTT} would set text right to left, bottom to top!)}
 \item{\autodoc:parameter{script}: The script family in use.
     (See Chapter 7, “Language,” for more on these past three settings.)}
+\item{\autodoc:parameter{adjust}: Adjust the font size to match the height of the given character.
+    This option is exclusive with \autodoc:parameter{size}.
+    This can be useful to normalize the size of text across different fonts.
+    Possible values are \code{ex-height} (normalizing lowercase letters) and \code{cap-height} (normalizing uppercase letters).
+    A number can be prefixed to the value as a multiplier (by default 1 is assumed).}
 \end{itemize}
 
 It’s quite fiddly to be always changing font specifications manually;
