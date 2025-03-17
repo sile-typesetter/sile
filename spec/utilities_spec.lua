@@ -144,16 +144,20 @@ describe("SILE.utilities", function ()
          -- The test assumes Arabic language is relying on ICU
 
          it("should format default numbers", function ()
-            assert.is.equal("١٩٨٤", SU.formatNumber(1984, { style = "default" }))
+            assert.is.equal("١٩٨٤", SU.formatNumber(1984, { style = "default", system = "arab" }))
+            assert.is.equal("۱۹۸۴", SU.formatNumber(1984, { style = "default", system = "arabext" }))
          end)
 
          it("should format decimal numbers", function ()
-            assert.is.equal("١٬٩٨٤", SU.formatNumber(1984, { style = "decimal" }))
+            assert.is.equal("١٬٩٨٤", SU.formatNumber(1984, { style = "decimal", system = "arab" }))
+            assert.is.equal("۱٬۹۸۴", SU.formatNumber(1984, { style = "decimal", system = "arabext" }))
          end)
 
          it("should format ordinal numbers", function ()
-            local expectation = icu73plus and "١٬٩٨٤" or "١٬٩٨٤."
-            assert.is.equal(expectation, SU.formatNumber(1984, { style = "ordinal" }))
+            local expectation1 = icu73plus and "١٬٩٨٤" or "١٬٩٨٤."
+            local expectation2 = icu73plus and "۱٬۹۸۴" or "۱٬۹۸۴."
+            assert.is.equal(expectation1, SU.formatNumber(1984, { style = "ordinal", system = "arab" }))
+            assert.is.equal(expectation2, SU.formatNumber(1984, { style = "ordinal", system = "arabext" }))
          end)
       end)
 

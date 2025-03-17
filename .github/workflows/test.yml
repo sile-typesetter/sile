@@ -38,7 +38,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+          key: luarocks-${{ matrix.luaVersion[0] }}-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in', 'Cargo.lock') }}
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
       - name: Install system dependencies

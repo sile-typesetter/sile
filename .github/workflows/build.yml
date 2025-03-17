@@ -35,7 +35,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in', 'Cargo.lock') }}
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
       - name: Install system dependencies
@@ -104,7 +104,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in', 'Cargo.lock') }}
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -159,7 +159,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in', 'Cargo.lock') }}
       - name: Install system dependencies
         run: |
           brew install \
@@ -212,7 +212,7 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v16
       - name: Cache Nix dependencies
-        uses: DeterminateSystems/flakehub-cache-action@v9
+        uses: DeterminateSystems/flakehub-cache-action@v1
       - name: Setup developer environment
         run: |
           nix develop --command ./bootstrap.sh
