@@ -67,8 +67,18 @@ function shaper:measureChar (char)
    local options = SILE.font.loadDefaults({})
    options.tracking = SILE.settings:get("shaper.tracking")
    local items = self:shapeToken(char, options)
-   if #items > 0 then
-      return { height = items[1].height, width = items[1].width, depth = items[1].depth }
+   if items and #items > 0 then
+      local measurements = {
+         width = 0,
+         height = 0,
+         depth = 0,
+      }
+      for _, item in ipairs(items) do
+         measurements.width = measurements.width + item.width
+         measurements.height = math.max(measurements.height, item.height)
+         measurements.depth = math.max(measurements.depth, item.depth)
+      end
+      return measurements, items[1].gid ~= 0
    else
       SU.error("Unable to measure character", char)
    end

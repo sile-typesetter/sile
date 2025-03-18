@@ -1630,7 +1630,10 @@ function elements.sqrt:shape ()
    -- Note: In TeX, the radical sign extends a lot below the baseline,
    -- and MathML Core also has a lot of layout text about it.
    -- Not only it doesn't look good, but it's not very clear vs. OpenType.
-   local radicalGlyph = SILE.shaper:measureChar("√")
+   local radicalGlyph, found = SILE.shaper:measureChar("√")
+   if not found then
+      SU.error("Math font does not contain a square root glyph")
+   end
    local ratio = (self.radicand.height:tonumber() + self.radicand.depth:tonumber())
       / (radicalGlyph.height + radicalGlyph.depth)
    local vertAdHocOffset = (ratio > 1 and math.log(ratio) or 0) * self.radicalVerticalGap
