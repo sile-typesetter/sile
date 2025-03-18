@@ -61,7 +61,7 @@ $(_RUST_OUT) $(CARGO_BIN): $(@PACKAGE_VAR@_SOURCES) $(nodist_@PACKAGE_VAR@_SOURC
 	$(CARGO_ENV) $(CARGO) build  --target $(CARGO_TARGET_TRIPLE) --quiet --message-format=json $(CARGO_FEATURE_ARGS) $(CARGO_RELEASE_ARGS) | \
 		$(JQ) -sr 'map(select(.reason == "build-script-executed")) | last | .out_dir' > $(_RUST_OUT)
 
-RUST_DEVELOPER_TARGETS = cargo-test clippy rustfmt
+RUST_DEVELOPER_TARGETS = cargo-test clippy rustfmt cargo-vendor
 .PHONY: $(RUST_DEVELOPER_TARGETS)
 
 if DEVELOPER_MODE
@@ -81,6 +81,9 @@ clean-cargo:
 
 cargo-test: $(PACKAGE_NAME)$(EXEEXT)
 	$(CARGO_ENV) $(CARGO) $(CARGO_VERBOSE) test $(CARGO_FEATURE_ARGS) --locked
+
+cargo-vendor:
+	$(CARGO_ENV) $(CARGO) vendor --locked
 
 else !DEVELOPER_MODE
 

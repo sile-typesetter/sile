@@ -199,6 +199,7 @@ AM_COND_IF([DEVELOPER_TOOLS], [
     AX_REQUIRE_PROG([tr])
     AX_REQUIRE_PROG([typos])
     AX_REQUIRE_PROG([xsltproc])
+    AX_REQUIRE_PROG([zstd])
 ])
 
 AX_PROG_LUA([5.1], [], [], [], [prefer])
