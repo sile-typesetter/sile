@@ -4,7 +4,6 @@ SILE.utilities.error = error
 SILE.utilities.warn = function () end
 
 describe("SILE.utilities", function ()
-
    describe("formatNumber", function ()
       local icu = require("justenoughicu")
       local icu73plus = tostring(icu.version()) >= "73.0"

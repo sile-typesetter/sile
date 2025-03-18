@@ -2,13 +2,11 @@ SILE = require("core.sile")
 SILE.init()
 
 describe("SILE.utilities", function ()
-
    it("should exist as SU", function ()
       assert.is.truthy(SU)
    end)
 
    describe("collatedSort", function ()
-
       describe("French", function ()
          SILE.call("language", { main = "fr" })
 
