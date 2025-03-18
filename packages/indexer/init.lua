@@ -21,10 +21,11 @@ end
 --- Group pages into ranges of consecutive pages.
 -- @tparam table pages A list of pages with pageno (counter) and link (internal string) fields
 -- @treturn table A list of ranges, each containing a list of pages
-local function _groupPageRanges(pages)
+local function _groupPageRanges (pages)
    local ret = {}
    for _, page in ipairs(pages) do
-      if #ret == 0
+      if
+         #ret == 0
          or ret[#ret][#ret[#ret]].pageno.display ~= page.pageno.display
          or ret[#ret][#ret[#ret]].pageno.value + 1 ~= page.pageno.value
       then
@@ -70,7 +71,7 @@ end
 -- @treturn string The simplified second page number
 local function _simplifyArabicInRange (p1, p2, format)
    if #p1 > 1 and #p1 == #p2 then
-      local ending = format == 'minimal' and 1 or 2
+      local ending = format == "minimal" and 1 or 2
       for i = 1, #p1 - ending do
          if p1:sub(i, i) ~= p2:sub(i, i) then
             return p2:sub(i, -1)
@@ -147,7 +148,7 @@ function package:_init (options)
       ["page-range-format"] = "expanded",
       ["page-range-delimiter"] = "–",
       ["page-delimiter"] = ", ",
-      filler = "dotfill"
+      filler = "dotfill",
    }, options, true)
    self:loadPackage("infonode")
    self:loadPackage("leaders")
@@ -169,30 +170,30 @@ function package:formatPageRanges (pages)
       else
          local p1 = self.class.packages.counters:formatCounter(range[1].pageno)
          local p2 = self.class.packages.counters:formatCounter(range[#range].pageno)
-         if self.config['page-range-format'] ~= 'expanded' and range[1].pageno.display == "arabic" then
-            p2 = _simplifyArabicInRange(p1, p2, self.config['page-range-format'])
+         if self.config["page-range-format"] ~= "expanded" and range[1].pageno.display == "arabic" then
+            p2 = _simplifyArabicInRange(p1, p2, self.config["page-range-format"])
          end
          table.insert(ranges, {
             _linkWrapper(range[1].link, p1),
-            self.config['page-range-delimiter'],
-            _linkWrapper(range[#range].link, p2)
+            self.config["page-range-delimiter"],
+            _linkWrapper(range[#range].link, p2),
          })
       end
    end
-   return _addDelimiter(ranges, self.config['page-delimiter'])
+   return _addDelimiter(ranges, self.config["page-delimiter"])
 end
 
 -- Format a list of pages.
 -- @tparam table pages A list of pages with pageno and link fields.
 -- @treturn table A list of formatted pages.
 function package:formatPages (pages)
-   if self.config['page-range-format'] ~= 'none' then
+   if self.config["page-range-format"] ~= "none" then
       return self:formatPageRanges(pages)
    end
    local ret = pl.tablex.map(function (page)
       return _linkWrapper(page.link, self.class.packages.counters:formatCounter(page.pageno))
    end, pages)
-   return _addDelimiter(ret, self.config['page-delimiter'])
+   return _addDelimiter(ret, self.config["page-delimiter"])
 end
 
 -- Output an index entry.
@@ -241,8 +242,8 @@ function package:registerCommands ()
          value = {
             index = options.index,
             label = options.label,
-            link = dest
-         }
+            link = dest,
+         },
       })
    end, "Add an entry to the index")
 

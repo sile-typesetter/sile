@@ -8,7 +8,9 @@ local bits = require("core.parserbits")
 local lpeg = require("lpeg")
 local Ct, Cg, P = lpeg.Ct, lpeg.Cg, lpeg.P
 local adjust_metric = P("ex-height") + P("cap-height")
+-- stylua: ignore start
 local adjustment = Ct(Cg(bits.number, "amount")^-1 * bits.ws * Cg(adjust_metric, "unit"))
+-- stylua: ignore end
 
 local function measureFontAdjustment (metric)
    if metric == "ex-height" then
@@ -28,7 +30,7 @@ local function measureFontAdjustment (metric)
    SU.error("Unknown font adjust metric " .. metric)
 end
 
-local function adjustedFontSize(options)
+local function adjustedFontSize (options)
    local adjust = options.adjust
    local parsed = adjustment:match(adjust)
    if not parsed then
