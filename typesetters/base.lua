@@ -56,6 +56,19 @@ end
 function typesetter:_post_init ()
    self:initFrame(self.frame)
    self:initState()
+   -- SU.dump{ lang, self.language, "ntoheu" }
+end
+
+typesetter._language_cache = {}
+
+function typesetter:switchLanguage(lang)
+   SU.dump{ lang, self.language, "ntoheu" }
+   return true
+   -- local current = self.language:getShortcode()
+   -- if current ~= lang then
+   --    self._language_cache[current] = self.language
+   --    self.language = self._language_cache[lang] or SILE.languages[lang](self)
+   -- end
 end
 
 --- Declare new setting types

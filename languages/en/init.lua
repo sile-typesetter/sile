@@ -1,5 +1,7 @@
-local hyphens = require("languages.en.hyphens")
-SILE.hyphenator.languages["en"] = hyphens
+local unicode = require("languages.unicode")
+
+local language = pl.class(unicode)
+language._name = "en"
 
 -- Internationalization stuff
 local en_string = function (num)
@@ -58,8 +60,11 @@ local en_string = function (num)
    return num == 0 and "zero" or vword:sub(1, -2)
 end
 
-SU.formatNumber.en = {
-   string = function (num, _)
+function language.formatNumber (_, form, num)
+   if form == "string" then
       return en_string(num)
-   end,
-}
+   end
+   SU.error("Number formatting not implemented for English")
+end
+
+return language
