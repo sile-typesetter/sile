@@ -4,7 +4,7 @@ SILE.input.backend = "debug"
 SILE.init()
 
 describe("Hyphenation module", function ()
-   local hyphenate = SILE.showHyphenationPoints
+   local hyphenate = SILE.language.showHyphenationPoints
 
    SILE.call("language", { main = "fr" })
 

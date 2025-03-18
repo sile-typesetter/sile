@@ -214,6 +214,27 @@ SU.utf8codes = function ()
    SU.deprecated("SU.utf8codes", "luautf8.codes", "0.11.0", "0.12.0")
 end
 
+SILE.languageSupport = {}
+setmetatable(SILE.languageSupport, {
+   __index = nolanguageloader,
+})
+
+local nolanguageloader = function (_, key)
+   SU.deprecated(
+      "SILE.languageSupport.<code>",
+      'require("languages.<code>")',
+      "0.15.11",
+      "0.16.0",
+      [[
+      ]]
+   )
+   if key == "loadLanguage" then
+      return function (language)
+         require(("languages.%s"):format(language))
+      end
+   end
+end
+
 -- luacheck: ignore updatePackage
 -- luacheck: ignore installPackage
 updatePackage = nopackagemanager

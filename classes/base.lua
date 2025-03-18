@@ -54,7 +54,8 @@ function class:_init (options)
    if self == options then
       options = {}
    end
-   SILE.languageSupport.loadLanguage("und") -- preload for unlocalized fallbacks
+   require("languages.unicode")
+   require("languages.und")
    self:_declareBaseOptions()
    self:declareOptions()
    self:registerRawHandlers()
