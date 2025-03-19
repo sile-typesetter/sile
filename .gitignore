@@ -66,6 +66,7 @@ compare-*
 
 # Vendor stuff
 node_modules
+vendor
 lua_modules
 lua_modules_dist
 package-lock.json
