@@ -9,10 +9,11 @@ include_files = {
 exclude_files = {
    "benchmark-*",
    "compare-*",
+   "lua-libraries",
+   "lua_modules",
    "sile-*",
    "target",
-   "lua_modules",
-   "lua-libraries",
+   "vendor",
    ".lua",
    ".luarocks",
    ".install",
