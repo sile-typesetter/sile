@@ -366,7 +366,7 @@ regressions: $(TESTSRCS) $(ACTUALS)
 
 check-local: regressions busted
 
-lint: luacheck luarocks-lint stylua
+lint: luacheck luarocks-lint stylua typos
 
 luarocks-lint: $(LUAMODSPEC)
 	$(LUAROCKS) lint $(LUAMODSPEC)
