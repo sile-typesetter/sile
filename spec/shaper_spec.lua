@@ -32,7 +32,7 @@ describe("SILE.shapers.base", function ()
          assert.is.truthy(measurements.width > SILE.shaper:measureChar("a").width)
       end)
 
-      -- TODO, we also need a test for composite characters, but I couldn't finde one in our test fonts
+      -- TODO, we also need a test for composite characters, but I couldn't find one in our test fonts
       -- it("should measure composite characters", function ()
       --    local measurements, found = SILE.shaper:measureChar("â")
       --    assert.is.truthy(found)

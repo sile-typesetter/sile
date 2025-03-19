@@ -21,7 +21,7 @@ describe("The fontconfig manager", function ()
       assert.is.equal(family, face.family)
    end)
 
-   -- Disable runing this test unless we have font_variantion support. The test itself does not need the feature, but we
+   -- Disable running this test unless we have font variation support. The test itself does not need the feature, but we
    -- have *fonts* in the test data set that do and fontconfig is not deterministic about which fallback we might get
    -- for an unknown font. In this case a font that needs variation support is being returned in some CI environments
    -- when we request this unknown one.

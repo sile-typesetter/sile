@@ -5,7 +5,7 @@
 -- Objectives: replace Unicode superscripted characters with their normal
 -- counterparts.
 --
--- Based on Datafile for Unicode Techical Report #30
+-- Based on Datafile for Unicode Technical Report #30
 -- http://unicode.org/reports/tr30/datafiles/SuperscriptFolding.txt
 -- Copyright (c) 1991-2004 Unicode, Inc.
 -- For terms of use, and documentation see http://www.unicode.org/reports/tr30/

@@ -588,10 +588,10 @@ function package:registerCommands ()
                   -- However, table order is not guaranteed in Lua so the output may be
                   -- inconsistent across runs with styles that use this number for sorting.
                   -- This may only happen for non-cited entries in the bibliography, and it
-                  -- would be a bad practive to use such a style to print the full bibliography,
+                  -- would be a bad practice to use such a style to print the full bibliography,
                   -- so I don't see a strong need to fix this at the expense of performance.
                   -- (and we can't really, some styles might have several sorting criteria
-                  -- leading to impredictable order anyway).
+                  -- leading to unpredictable order anyway).
                   ncites = ncites + 1
                   citnum = ncites
                end

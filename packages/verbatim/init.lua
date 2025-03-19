@@ -78,7 +78,7 @@ For example you could change it from XML like this:
 \end{raw}
 
 This handles spaces, newlines, tabs and other similar whitespace literally in a way that SILE would otherwise have handled specially.
-If additionally you want to ignore nested SILE content (e.g. SIL commands in SIL) then you need to use a raw enviroment instead:
+If additionally you want to ignore nested SILE content (e.g. SIL commands in SIL) then you need to use a raw environment instead:
 
 \begin[type=autodoc:codeblock]{raw}
 \begin[type=verbatim]{raw}

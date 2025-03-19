@@ -818,7 +818,7 @@ local function registerBraceLikeCommands (name, command, symbol)
       }
    end)
 end
--- Note: the following overriddes the default commands from xml-entities / unicode-math.
+-- Note: the following overrides the default commands from xml-entities / unicode-math.
 registerBraceLikeCommands("overbrace", "mover", 0x23DE) -- U+23DE TOP CURLY BRACKET
 registerBraceLikeCommands("underbrace", "munder", 0x23DF) -- U+23DF BOTTOM CURLY BRACKET
 registerBraceLikeCommands("overparen", "mover", 0x23DC) -- U+23DC TOP PARENTHESIS

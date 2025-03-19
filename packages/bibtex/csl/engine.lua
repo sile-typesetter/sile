@@ -432,7 +432,7 @@ function CslEngine:_layout (options, content, entries)
       end
       -- The CSL 1.0.2 specification is not very clear on this point, but on
       -- citations, affixes and formatting apply on the whole layout.
-      -- Affixes are arround the delimited list, e.g. "(Smith, 2000; Jones, 2001)"
+      -- Affixes are around the delimited list, e.g. "(Smith, 2000; Jones, 2001)"
       -- Rendering is done after, so vertical-align, etc. apply to the whole list,
       -- e.g. <textsuperscript>1,2</textsuperscript>
       local cites = self:_render_delimiter(output, options.delimiter or "; ")
@@ -840,7 +840,7 @@ function CslEngine:_a_name (options, content, entry)
    local demoteNonDroppingParticle = options["demote-non-dropping-particle"] or "never"
 
    if self.sorting then
-      -- Implicitely we are in long form, name-as-sort-order all, and no formatting.
+      -- Implicitly we are in long form, name-as-sort-order all, and no formatting.
       if demoteNonDroppingParticle == "never" then
          -- Order is: [NDP] Family [Given] [Suffix] e.g. van Gogh Vincent III
          local name = {}
@@ -1525,9 +1525,9 @@ function CslEngine:_process (entries, mode)
       -- (work1, work2) and a subsequent cite (work2, work1). The order of
       -- the bibliography should be (work1, work2), but the order of the cites
       -- should be (work1, work2) and (work2, work1) respectively.
-      -- It seeems to be the case: Some styles (ex. American Chemical Society)
+      -- It seems to be the case: Some styles (ex. American Chemical Society)
       -- have an explicit sort by 'citation-number' in the citations section,
-      -- which would be useless if that order was impplied.
+      -- which would be useless if that order was implied.
       if mode == "bibliography" then
          table.sort(entries, function (e1, e2)
             if not e1["citation-number"] or not e2["citation-number"] then

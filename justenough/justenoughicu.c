@@ -439,7 +439,7 @@ int je_icu_collation_create(lua_State *L) {
   // i.e. controls the ordering of upper and lower case letters.
   //   off = order upper and lower case letters in accordance to their tertiary weights
   //   upper = forces upper case letters to sort before lower case letters,
-  //   lower = does the oppposite.
+  //   lower = does the opposite.
   ucol_setAttribute(collator, UCOL_CASE_FIRST, caseFirst, &status);
   if (U_FAILURE(status)) {
     return luaL_error(L, "Failure to set case-first collation for locale '%s'", locale);
