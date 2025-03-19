@@ -482,7 +482,7 @@ function CslEngine:_text (options, content, entry)
          SU.error("CSL macro " .. options.macro .. " not found")
       end
    elseif options.term then
-      t = self:_render_term(options.term, options.form, options.plural)
+      t = self:_render_term(options.term, options.form, SU.boolean(options.plural, false))
    elseif options.variable then
       variable = options.variable
       t = entry[variable]
