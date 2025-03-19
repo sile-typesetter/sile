@@ -7,13 +7,6 @@
 --   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.variations;options.direction;options.filename }, ";")
 -- end
 
--- Function for testing shaping in the repl
--- luacheck: ignore makenodes
--- TODO, figure out a way to explicitly register things in the repl env
-makenodes = function (token, options)
-   return SILE.shaper:createNnodes(token, SILE.font.loadDefaults(options or {}))
-end
-
 local function shapespace (spacewidth)
    spacewidth = SU.cast("measurement", spacewidth)
    -- In some scripts with word-level kerning, glue can be negative.
@@ -30,6 +23,12 @@ shaper.type = "shaper"
 shaper._name = "base"
 
 function shaper._init ()
+   -- Function for testing shaping in the repl
+   -- TODO, figure out a way to explicitly register things in the repl env
+   _G["makenodes"] = function (token, options)
+      return SILE.shaper:createNnodes(token, SILE.font.loadDefaults(options or {}))
+   end
+
    SILE.settings:declare({
       parameter = "shaper.variablespaces",
       type = "boolean",
