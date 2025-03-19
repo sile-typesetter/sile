@@ -148,12 +148,14 @@ extend-ignore-identifiers-re = [
 ]
 
 [package.metadata.typos.default.extend-words]
+annote = "annote"     # CSL / Bibtex abbreviation
 beveled = "bevelled"  # mathML uses en-gb spelling
 bevelled = "bevelled" # mathML uses en-gb spelling
 centred = "centred"   # Unicode character description
 craters = "creators"
 lamda = "lamda"       # Unicode character description
 neet = "need"
+noet = "noet"         # VIM modeline
 
 [package.metadata.typos.files]
 ignore-hidden = false
@@ -167,6 +169,7 @@ extend-exclude = [
   "lua-libraries/*",
   "lua_modules/*",
   "node_modules/*",
+  "packages/bibtex/csl/locales/*.xml",
   "tests/*.expected",
   "vendor/*",
 ]
