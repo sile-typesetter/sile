@@ -7,17 +7,6 @@
 --   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.variations;options.direction;options.filename }, ";")
 -- end
 
-SILE.settings:declare({ parameter = "shaper.variablespaces", type = "boolean", default = true })
-SILE.settings:declare({ parameter = "shaper.spaceenlargementfactor", type = "number or integer", default = 1 })
-SILE.settings:declare({ parameter = "shaper.spacestretchfactor", type = "number or integer", default = 1 / 2 })
-SILE.settings:declare({ parameter = "shaper.spaceshrinkfactor", type = "number or integer", default = 1 / 3 })
-
-SILE.settings:declare({
-   parameter = "shaper.tracking",
-   type = "number or nil",
-   default = nil,
-})
-
 -- Function for testing shaping in the repl
 -- luacheck: ignore makenodes
 -- TODO, figure out a way to explicitly register things in the repl env
@@ -39,6 +28,34 @@ end
 local shaper = pl.class()
 shaper.type = "shaper"
 shaper._name = "base"
+
+function shaper._init ()
+   SILE.settings:declare({
+      parameter = "shaper.variablespaces",
+      type = "boolean",
+      default = true,
+   })
+   SILE.settings:declare({
+      parameter = "shaper.spaceenlargementfactor",
+      type = "number or integer",
+      default = 1,
+   })
+   SILE.settings:declare({
+      parameter = "shaper.spacestretchfactor",
+      type = "number or integer",
+      default = 1 / 2,
+   })
+   SILE.settings:declare({
+      parameter = "shaper.spaceshrinkfactor",
+      type = "number or integer",
+      default = 1 / 3,
+   })
+   SILE.settings:declare({
+      parameter = "shaper.tracking",
+      type = "number or nil",
+      default = nil,
+   })
+end
 
 -- Return the length of a space character
 -- with a particular set of font options,
