@@ -189,7 +189,7 @@ function CslEngine:_enterGroup ()
    self.groupState = { variables = {}, count = 0 }
 end
 
-function CslEngine:_leaveGroup (rendered)
+function CslEngine:_leaveGroup (rendered, macro)
    -- Groups implicitly act as a conditional: if all variables that are called
    -- are empty, the group is suppressed.
    -- But the group is kept if no variable is called.
@@ -207,11 +207,23 @@ function CslEngine:_leaveGroup (rendered)
       rendered = nil -- Suppress group
    end
    self.groupState = table.remove(self.groupQueue)
-   -- A nested non-empty group is treated as a non-empty variable for the
-   -- purposes of determining suppression of the outer group.
-   -- So add a pseudo-variable for the inner group into the outer group, to
-   -- track this.
-   if not suppressGroup then
+   if macro then
+      -- If a macro (pseudo-group) is suppressed, we need to track it as an
+      -- empty variable for the group it is in.
+      -- For instance, acta-philosophica has constructs like:
+      -- <group prefix=", ">
+      --   <text term="accessed" form="long" suffix=" "/>
+      --   <text macro="accessed"/>
+      -- </group>
+      -- Macro "accessed" refers to variable(s) and can be suppressed,
+      -- in which case the whole group needs to be suppressed too.
+      local groupCond = "_macro_" .. macro
+      self:_addGroupVariable(groupCond, not suppressGroup)
+   elseif not suppressGroup then
+      -- A nested non-empty group is treated as a non-empty variable for the
+      -- purposes of determining suppression of the outer group.
+      -- So add a pseudo-variable for the inner group into the outer group, to
+      -- track this.
       local groupCond = "_group_" .. self.groupState.count
       self:_addGroupVariable(groupCond, true)
    end
@@ -477,7 +489,9 @@ function CslEngine:_text (options, content, entry)
          --    </macro>
          self:_enterGroup()
          t = self:_render_children(self.macros[options.macro], entry)
-         t = self:_leaveGroup(t)
+         -- But suppressed macros using variables which are all empty must be tracked
+         -- as empty variables for the group they are in, hence the second argument.
+         t = self:_leaveGroup(t, options.macro)
       else
          SU.error("CSL macro " .. options.macro .. " not found")
       end
