@@ -244,24 +244,35 @@ local function suggest_luarocks (module)
    local guessed_module_name = module:gsub(".*%.", "") .. ".sile"
    return ([[
 
-    If the expected module is a 3rd party extension you may need to install it
-    using LuaRocks. The details of how to do this are highly dependent on
-    your system and preferred installation method, but as an example installing
-    a 3rd party SILE module to a project-local tree where might look like this:
+      If the expected module is a 3rd party extension you may need to install
+      it using LuaRocks. The details of how to do this are highly dependent on
+      your system and preferred installation method, but as an example
+      installing a 3rd party SILE module to a project-local tree where might
+      look like this:
 
         luarocks --lua-version %s --tree lua_modules install %s
 
-    This will install the LuaRocks to your project, then you need to tell your
-    shell to pass along that info about available LuaRocks paths to SILE. This
-    only needs to be done once in each shell.
+      This will install the LuaRock(s) to your project. Note this takes
+      advantage of the fact that SILE checks for modules in the path
+      'lua_modules' relative to the current input file by default. SILE also
+      automatically checks the default system Lua path by default, so using
+      `--global` will also work.
 
-        eval $(luarocks --lua-version %s --tree lua_modules path)
+      In the event you use a different path to the LuaRocks tree, you must also
+      set an environment variable to teach SILE about how to find the tree
+      *before* it runs. This can be aided by asking LuaRocks to come up with a
+      path and evaling the result in the shell before running SILE. This only
+      needs to be done once in each shell, (obviously substituting 'path' for
+      your actual path):
 
-    Thereafter running SILE again should work as expected:
+        eval $(luarocks --lua-version %s --tree path)
 
-       sile %s
+      Thereafter running SILE as normal in the same shell should work as
+      expected:
 
-    ]]):format(SILE.lua_version, guessed_module_name, SILE.lua_version, pl.stringx.join(" ", _G.arg or {}))
+        sile %s
+
+   ]]):format(SILE.lua_version, guessed_module_name, SILE.lua_version, pl.stringx.join(" ", _G.arg or {}))
 end
 
 --- Multi-purpose loader to load and initialize modules.
