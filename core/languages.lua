@@ -1,8 +1,9 @@
 --- SILE language class.
 -- @interfaces languages
 
-local loadkit = require("loadkit")
 local cldr = require("cldr")
+local loadkit = require("loadkit")
+local setenv = require("rusile").setenv
 
 loadkit.register("ftl", function (file)
    local contents = assert(file:read("*a"))
@@ -53,6 +54,19 @@ SILE.languageSupport = {
       fluent:set_locale(original_language)
    end,
 }
+
+SILE.settings:declare({
+   parameter = "document.language",
+   type = "string",
+   default = "en",
+   hook = function (language)
+      SILE.languageSupport.loadLanguage(language)
+      fluent:set_locale(language)
+      os.setlocale(language)
+      setenv("LANG", language)
+   end,
+   help = "Locale for localized language support",
+})
 
 SILE.registerCommand("language", function (options, content)
    local main = SU.required(options, "main", "language setting")
