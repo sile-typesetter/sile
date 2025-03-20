@@ -351,7 +351,7 @@ Additionally, you may install them to your user profile by adding `--local` when
 You may also install them to any other directory besides 'lua_modules' relative to your input files.
 In these cases you will also need instruct SILE to check for plugins in your preferred path since Lua (and hence SILE) does not do so by default.
 This can be done in either of two ways.
-You can set an environment variable by running `eval $(luarocks --lua-versio $(sile -q <<< SILE.lua_version) path --local)` (or the `--tree path` of your choice).
+You can set an environment variable by running `eval $(luarocks --lua-version $(sile -q <<< SILE.lua_version) path --local)` (or the `--tree path` of your choice).
 This can be done once per shell before running SILE or from your shell’s initialization script to make it permanent.
 For a simpler incantation that needs to be typed into the SILE command on each use, you can also specify a tree by passing a `--luarocks-tree path` argument to SILE itself.
 

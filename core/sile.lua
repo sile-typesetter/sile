@@ -150,6 +150,7 @@ SILE.input = {
    filenames = {},
    evaluates = {},
    evaluateAfters = {},
+   luarocksTrees = {},
    uses = {},
    options = {},
    preambles = {}, -- deprecated, undocumented
@@ -209,6 +210,9 @@ function SILE.init ()
       SU.deprecated("SILE.backend", "SILE.input.backend", "0.15.7", "0.17.0")
       SILE.input.backend = SILE.backend
    end
+   for _, tree in ipairs(SILE.input.luarocksTrees) do
+      _G["extendSilePathRocks"](tree)
+   end
    if not SILE.input.backend then
       SILE.input.backend = "libtexpdf"
    end
@@ -244,22 +248,43 @@ local function suggest_luarocks (module)
    local guessed_module_name = module:gsub(".*%.", "") .. ".sile"
    return ([[
 
-    If the expected module is a 3rd party extension you may need to install it
-    using LuaRocks. The details of how to do this are highly dependent on
-    your system and preferred installation method, but as an example installing
-    a 3rd party SILE module to a project-local tree where might look like this:
+      If the expected module is a 3rd party extension you may need to install
+      it using LuaRocks. The details of how to do this are highly dependent on
+      your system and preferred installation method, but as an example
+      installing a 3rd party SILE module to a project-local tree where might
+      look like this:
 
         luarocks --lua-version %s --tree lua_modules install %s
 
-    This will install the LuaRocks to your project, then you need to tell your
-    shell to pass along that info about available LuaRocks paths to SILE. This
-    only needs to be done once in each shell.
+      This will install the LuaRock(s) to your project. Note this takes
+      advantage of the fact that SILE checks for modules in the path
+      'lua_modules' relative to the current input file by default. SILE also
+      automatically checks the default system Lua path by default, so using
+      `--global` will also work.
 
-        eval $(luarocks --lua-version %s --tree lua_modules path)
+      In the event you use a different path to the LuaRocks tree, you must also
+      set an environment variable to teach SILE about how to find the tree
+      *before* it runs. This can be aided by asking LuaRocks to come up with a
+      path and evaling the result in the shell before running SILE. This only
+      needs to be done once in each shell, (obviously substituting 'path' for
+      your actual path):
 
-    Thereafter running SILE again should work as expected:
+        eval $(luarocks --lua-version %s --tree path)
 
-       sile %s
+      Thereafter running `sile` as normal in the same shell should work as
+      expected. This code can be used in your shell's initialization script
+      to avoid having to do it manually in each new shell. This is true for
+      user home directory installations using `--local` or any specific values
+      for `--tree` other than 'lua_modules'.
+
+      As an anternative to setting up environment variables when using a
+      non-default tree location, you can use the `--luarocks-tree` option to
+      add path(s) at runtime. This is simpler to type, but must be used on each
+      and every invocation. The value for tree should be the same as used when
+      installing the LuaRock(s), or an appropriate full path to the location
+      used by `--local` (generally "$HOME/.luarocks"):
+
+        sile --luarocks-tree path %s
 
     ]]):format(SILE.lua_version, guessed_module_name, SILE.lua_version, pl.stringx.join(" ", _G.arg or {}))
 end

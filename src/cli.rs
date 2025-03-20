@@ -68,6 +68,16 @@ pub struct Cli {
     #[clap(short, long, value_name = "FONTMANAGER")]
     pub fontmanager: Option<String>,
 
+    /// Add a path to the list of LuaRocks trees searched for modules.
+    ///
+    /// When installing 3rd party SILE modules via LuaRocks there are several possible installation locations.
+    /// They may be installed to the host system, the user's home directory, a project-local path, or any arbitrary location.
+    /// In the case of the system or a project-local path called exactly `lua_modules` they will be found automatically.
+    /// In the case of any other path, SILE needs to be told where to find them.
+    /// This can be done by exporting a LUA_PATH environment variable before running SILE, or by using this option.
+    #[clap(long, value_name = "LUAROCKS_TREE")]
+    pub luarocks_tree: Option<Vec<PathBuf>>,
+
     /// Generate a Makefile format list of dependencies and white them to a file.
     ///
     /// This tracks all the files (input files, Lua libraries, fonts, images, etc.) use during the

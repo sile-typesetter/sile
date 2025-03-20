@@ -388,29 +388,29 @@ With these ideas in mind, other CI systems should be easy to support as well.
 \section{Installing third-party packages}
 
 Third-party SILE packages can be installed using the \code{luarocks} package manager.
-Packages may be hosted anywhere, either on the default \href{https://luarocks.org} repository or (as in the example below) listed in a specific server manifest.
-For example, to install markdown.sile\footnote{\href{https://github.com/Omikhleia/markdown.sile}} (a plugin that provides a SILE inputter that reads and processes Markdown documents) one could run:
-
-\begin{terminal}
-$ luarocks install --server=https://luarocks.org/dev markdown.sile
-\end{terminal}
-
-By default, this will try to install the package to your system.
-This may not be desired (and usually requires root access), but there are two other ways to install plugins.
-First you make add \code{--tree ./} to install them in the current directory.
-In this case, assuming this is the same directory as your document, SILE will automatically find such plugins.
-Additionally you may install them to your user profile by adding \code{--local} when installing.
-In this case you will also need to modify your user environment to check for plugins in that path since Lua does not do so by default.
-This can be done by running \code{eval $(luarocks path)} before running SILE (or from your shell’s initialization script).
-
-\subsection{Finding Lua version in use for running SILE}
+Packages may be hosted anywhere, either on the default \href{https://luarocks.org} repository, on 3rd party repositories, or even private repositories.
+Note some servers support more than one manifest, so you may need a \code{--server} argument to pick the right one.
 
 Third party packages must be installed for the same version of Lua that SILE uses.
 On systems with more than one Lua version installed, \em{and} where SILE does not use the default one, you may need to specify the version manually.
-To determine which Lua version is used for the execution of SILE:
+In these examples, we'll ask SILE directory which version it is running.
+
+For example, to install markdown.sile\footnote{\href{https://github.com/Omikhleia/markdown.sile}} (a plugin that provides a SILE inputter that reads and processes Markdown documents) one could run:
 
 \begin{terminal}
-$ export LUA_VERSION=$(sile -e 'print(SILE.lua_version);os.exit()' 2> /dev/null)
-$ luarocks install --lua-version $LUA_VERSION ...
+$ luarocks --lua-version $(sile -q <<< SILE.lua_version) install markdown.sile
 \end{terminal}
+
+By default, this will try to install the package to your system (the \code{--global} option).
+This may not be desired (and usually requires root access), but there are two other ways to install plugins.
+First you make add \code{--tree lua_modules} to install them in a directory called \code{lua_modules} in the current directory.
+In this case (and assuming this is the same directory as your document) SILE will automatically find such plugins.
+
+Additionally you may install them to your user profile by adding \code{--local} when installing.
+You may also install them to any other directory besides 'lua_modules' relative to your input files.
+In these cases you will also need instruct SILE to check for plugins in your preferred path since Lua (and hence SILE) does not do so by default.
+This can be done in either of two ways.
+You can set an environment variable by running \code{eval $(luarocks --lua-version $(sile -q <<< SILE.lua_version) path --local)} (or the \code{--tree path} of your choice).
+This can be done once per shell before running SILE or from your shell’s initialization script to make it permanent.
+For a simpler incantation that needs to be typed into the SILE command on each use, you can also specify a tree by passing a \code{--luarocks-tree path} argument to SILE itself.
 \end{document}
