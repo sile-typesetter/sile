@@ -195,7 +195,7 @@ function package:registerCommands ()
          SU.warn("Legacy bibtex.style is deprecated, consider enabling the CSL implementation.")
       end
       local entry = self:getEntryForCite(options, content, false)
-      if entry  then
+      if entry then
          local bibstyle = require("packages.bibtex.styles." .. style)
          local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
          SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
@@ -240,7 +240,7 @@ function package:registerCommands ()
       -- comma-separated lists of numbers, or ranges with an en-dash.
       -- We want to be consistent between all these cases, so we always
       -- use fake superscripts.
-      SILE.call("textsuperscript", { fake = true}, content)
+      SILE.call("textsuperscript", { fake = true }, content)
    end)
 
    -- CSL 1.0.2 appendix VI
@@ -429,14 +429,14 @@ function package:registerCommands ()
       SILE.settings:temporarily(function ()
          local hanging_indent = SU.boolean(engine.bibliography.options["hanging-indent"], false)
          local must_align = engine.bibliography.options["second-field-align"]
-                  local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()):absolute()
+         local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()):absolute()
          if hanging_indent or must_align then
             -- Respective to the fixed part of the current lskip, all lines are indented
             -- but the first one.
             local indent = SILE.settings:get("bibliography.indent"):absolute()
             SILE.settings:set("document.lskip", lskip.width + indent)
-            SILE.settings:set("document.parindent", - indent)
-            SILE.settings:set("current.parindent", - indent)
+            SILE.settings:set("document.parindent", -indent)
+            SILE.settings:set("current.parindent", -indent)
          else
             -- Fixed part of the current lskip, and no paragraph indentation
             SILE.settings:set("document.lskip", lskip.width)

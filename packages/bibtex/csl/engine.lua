@@ -462,7 +462,7 @@ function CslEngine:_layout (options, content, entries)
    for _, entry in ipairs(entries) do
       self:_prerender()
       local elem = self:_render_children(content, entry, {
-         secondFieldAlign = self.inheritable.bibliography["second-field-align"] and true or false
+         secondFieldAlign = self.inheritable.bibliography["second-field-align"] and true or false,
       })
       elem = self:_render_affixes(elem, options)
       elem = self:_render_formatting(elem, options)
@@ -846,13 +846,13 @@ function CslEngine:_name_et_al (options)
 end
 
 local function initialize (options, entry)
-   if SU.boolean(options.initialize, true) and options['initialize-with'] then
+   if SU.boolean(options.initialize, true) and options["initialize-with"] then
       -- FIXME TODO Quick and dirty:
       -- Major styles abbreviate the given name with ". " as initialize-with
       -- and don't set initialize-with-hyphen to false.
       -- So here we just use the short name already derived by our BibTeX parser.
       -- ... But this is not general, obviously.
-      return entry['given-short'] .. options['initialize-with']:gsub("%s*$", "")
+      return entry["given-short"] .. options["initialize-with"]:gsub("%s*$", "")
    end
    return entry.given
 end
@@ -861,10 +861,7 @@ function CslEngine:_format_a_name (options, name)
    if not options then
       return name
    end
-   return self:_render_formatting(
-      self:_render_textCase(name, options),
-      options
-   )
+   return self:_render_formatting(self:_render_textCase(name, options), options)
 end
 
 function CslEngine:_a_name (options, content, entry)
@@ -938,11 +935,8 @@ function CslEngine:_a_name (options, content, entry)
       for _, namep in ipairs(content) do
          -- Override with the options for the cs:name-part explicit nodes, if any
          if namep.command == "cs:name-part" then
-            namePartOptions[namep.options.name] = pl.tablex.merge(
-               namePartOptions[namep.options.name],
-               namep.options,
-               true
-            )
+            namePartOptions[namep.options.name] =
+               pl.tablex.merge(namePartOptions[namep.options.name], namep.options, true)
          end
       end
       options["__name-parts"] = namePartOptions -- memoize
@@ -1197,7 +1191,7 @@ function CslEngine:_names (options, content, entry)
    local et_al_use_first = tonumber(name_node.options["et-al-use-first"]) or 1
    local and_opt = name_node.options["and"]
    local and_word
-   if and_opt == "symbol"then
+   if and_opt == "symbol" then
       and_word = "&amp;"
    elseif and_opt == "text" then
       and_word = self:_render_term("and")
@@ -1376,12 +1370,12 @@ function CslEngine:_choose (options, content, entry, context)
          local match = self:_if(child.options, child, entry)
          if match then
             return self:_render_children(child, entry, {
-               delimiter = delimiter
+               delimiter = delimiter,
             })
          end
       elseif child.command == "cs:else" then
          return self:_render_children(child, entry, {
-            delimiter = delimiter
+            delimiter = delimiter,
          })
       end
    end

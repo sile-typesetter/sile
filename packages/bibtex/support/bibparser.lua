@@ -77,7 +77,6 @@ end)
 -- stylua: ignore end
 ---@diagnostic enable: undefined-global, unused-local, lowercase-global
 
-
 local bibcompat = require("packages.bibtex.support.bibmaps")
 local crossrefmap, fieldmap = bibcompat.crossrefmap, bibcompat.fieldmap
 local months =
@@ -237,5 +236,5 @@ end
 
 return {
    parseBibtex = parseBibtex,
-   crossrefAndXDataResolve = crossrefAndXDataResolve
+   crossrefAndXDataResolve = crossrefAndXDataResolve,
 }
