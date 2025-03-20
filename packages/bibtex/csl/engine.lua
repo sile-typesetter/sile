@@ -1,6 +1,6 @@
 --- A rendering engine for CSL 1.0.2
 --
--- @copyright License: MIT (c) 2024 Omikhleia
+-- @copyright License: MIT (c) 2024, 2025 Omikhleia
 --
 -- Public API:
 --  - (constructor) CslEngine(style, locale) -> CslEngine
@@ -189,7 +189,7 @@ function CslEngine:_enterGroup ()
    self.groupState = { variables = {}, count = 0 }
 end
 
-function CslEngine:_leaveGroup (rendered)
+function CslEngine:_leaveGroup (rendered, macro)
    -- Groups implicitly act as a conditional: if all variables that are called
    -- are empty, the group is suppressed.
    -- But the group is kept if no variable is called.
@@ -207,11 +207,23 @@ function CslEngine:_leaveGroup (rendered)
       rendered = nil -- Suppress group
    end
    self.groupState = table.remove(self.groupQueue)
-   -- A nested non-empty group is treated as a non-empty variable for the
-   -- purposes of determining suppression of the outer group.
-   -- So add a pseudo-variable for the inner group into the outer group, to
-   -- track this.
-   if not suppressGroup then
+   if macro then
+      -- If a macro (pseudo-group) is suppressed, we need to track it as an
+      -- empty variable for the group it is in.
+      -- For instance, acta-philosophica has constructs like:
+      -- <group prefix=", ">
+      --   <text term="accessed" form="long" suffix=" "/>
+      --   <text macro="accessed"/>
+      -- </group>
+      -- Macro "accessed" refers to variable(s) and can be suppressed,
+      -- in which case the whole group needs to be suppressed too.
+      local groupCond = "_macro_" .. macro
+      self:_addGroupVariable(groupCond, not suppressGroup)
+   elseif not suppressGroup then
+      -- A nested non-empty group is treated as a non-empty variable for the
+      -- purposes of determining suppression of the outer group.
+      -- So add a pseudo-variable for the inner group into the outer group, to
+      -- track this.
       local groupCond = "_group_" .. self.groupState.count
       self:_addGroupVariable(groupCond, true)
    end
@@ -347,7 +359,7 @@ function CslEngine:_render_formatting (t, options)
       t = "<underline>" .. t .. "</underline>"
    end
    if options["vertical-align"] == "sup" then
-      t = "<textsuperscript>" .. t .. "</textsuperscript>"
+      t = "<bibSuperScript>" .. t .. "</bibSuperScript>"
    end
    if options["vertical-align"] == "sub" then
       t = "<textsubscript>" .. t .. "</textsubscript>"
@@ -434,7 +446,7 @@ function CslEngine:_layout (options, content, entries)
       -- citations, affixes and formatting apply on the whole layout.
       -- Affixes are around the delimited list, e.g. "(Smith, 2000; Jones, 2001)"
       -- Rendering is done after, so vertical-align, etc. apply to the whole list,
-      -- e.g. <textsuperscript>1,2</textsuperscript>
+      -- e.g. <bibSuperScript>1, 2</bibSuperScript>
       local cites = self:_render_delimiter(output, options.delimiter or "; ")
       cites = self:_render_affixes(cites, options)
       cites = self:_render_formatting(cites, options)
@@ -449,7 +461,9 @@ function CslEngine:_layout (options, content, entries)
    -- quite logically as we force a paragraph break between entries.
    for _, entry in ipairs(entries) do
       self:_prerender()
-      local elem = self:_render_children(content, entry)
+      local elem = self:_render_children(content, entry, {
+         secondFieldAlign = self.inheritable.bibliography["second-field-align"] and true or false
+      })
       elem = self:_render_affixes(elem, options)
       elem = self:_render_formatting(elem, options)
       elem = self:_postrender(elem)
@@ -475,12 +489,14 @@ function CslEngine:_text (options, content, entry)
          --    </macro>
          self:_enterGroup()
          t = self:_render_children(self.macros[options.macro], entry)
-         t = self:_leaveGroup(t)
+         -- But suppressed macros using variables which are all empty must be tracked
+         -- as empty variables for the group they are in, hence the second argument.
+         t = self:_leaveGroup(t, options.macro)
       else
          SU.error("CSL macro " .. options.macro .. " not found")
       end
    elseif options.term then
-      t = self:_render_term(options.term, options.form, options.plural)
+      t = self:_render_term(options.term, options.form, SU.boolean(options.plural, false))
    elseif options.variable then
       variable = options.variable
       t = entry[variable]
@@ -829,6 +845,28 @@ function CslEngine:_name_et_al (options)
    return t
 end
 
+local function initialize (options, entry)
+   if SU.boolean(options.initialize, true) and options['initialize-with'] then
+      -- FIXME TODO Quick and dirty:
+      -- Major styles abbreviate the given name with ". " as initialize-with
+      -- and don't set initialize-with-hyphen to false.
+      -- So here we just use the short name already derived by our BibTeX parser.
+      -- ... But this is not general, obviously.
+      return entry['given-short'] .. options['initialize-with']:gsub("%s*$", "")
+   end
+   return entry.given
+end
+
+function CslEngine:_format_a_name (options, name)
+   if not options then
+      return name
+   end
+   return self:_render_formatting(
+      self:_render_textCase(name, options),
+      options
+   )
+end
+
 function CslEngine:_a_name (options, content, entry)
    if entry.literal then -- pass through literal names
       return entry.literal
@@ -873,36 +911,71 @@ function CslEngine:_a_name (options, content, entry)
       return table.concat(name, " ")
    end
 
+   -- Name-parts for formatting:
+   -- If set to “given”, formatting and text-case attributes on cs:name-part affect
+   -- the “given” and “dropping-particle” name-parts.
+   -- FIXME TODO Affixes surround the “given” name-part, enclosing any demoted name
+   -- particles for inverted names.
+   -- If set to “family”, formatting and text-case attributes affect the “family” and
+   -- “non-dropping-particle” name-parts.
+   -- FIXME TODO Affixes surround the “family” name-part, enclosing any preceding name
+   -- particles, as well as the “suffix” name-part for non-inverted names.
+   -- N.B. Very few styles use affixes, hence the FIXME TODO, not implemented yet.
+   if not options["__name-parts"] then
+      -- First the options from the cs:name node
+      local formattingAndCaseOptions = {
+         ["text-case"] = options["text-case"],
+         ["font-style"] = options["font-style"],
+         ["font-variant"] = options["font-variant"],
+         ["font-weight"] = options["font-weight"],
+         ["text-decoration"] = options["text-decoration"],
+         ["vertical-align"] = options["vertical-align"],
+      }
+      local namePartOptions = {
+         given = formattingAndCaseOptions,
+         family = formattingAndCaseOptions,
+      }
+      for _, namep in ipairs(content) do
+         -- Override with the options for the cs:name-part explicit nodes, if any
+         if namep.command == "cs:name-part" then
+            namePartOptions[namep.options.name] = pl.tablex.merge(
+               namePartOptions[namep.options.name],
+               namep.options,
+               true
+            )
+         end
+      end
+      options["__name-parts"] = namePartOptions -- memoize
+   end
+   local namepartOptions = options["__name-parts"]
+
    local form = options.form
-   local nameAsSortOrder = options["name-as-sort-order"] or "first"
-
-   -- TODO FIXME: content can consists in name-part elements for formatting, text-case, affixes
-   -- Chigaco style does not seem to use them, so we keep it "simple" for now.
-
    if form == "short" then
       -- Order is: [NDP] Family, e.g. van Gogh
       if entry["non-dropping-particle"] then
          return table.concat({
-            entry["non-dropping-particle"],
-            entry.family,
+            self:_format_a_name(namepartOptions.family, entry["non-dropping-particle"]),
+            self:_format_a_name(namepartOptions.family, entry.family),
          }, " ")
       end
-      return entry.family
+      return self:_format_a_name(namepartOptions.family, entry.family)
    end
 
-   if nameAsSortOrder ~= "all" and not self.firstName then
+   local nameAsSortOrder = options["name-as-sort-order"]
+   local familyFirst = nameAsSortOrder == "all" or (nameAsSortOrder == "first" and self.firstName) or false
+   if not familyFirst then
       -- Order is: [Given] [DP] [NDP] Family [Suffix] e.g. Vincent van Gogh III
       local t = {}
       if entry.given then
-         table.insert(t, entry.given)
+         table.insert(t, self:_format_a_name(namepartOptions.given, initialize(options, entry)))
       end
       if entry["dropping-particle"] then
-         table.insert(t, entry["dropping-particle"])
+         table.insert(t, self:_format_a_name(namepartOptions.given, entry["dropping-particle"]))
       end
       if entry["non-dropping-particle"] then
-         table.insert(t, entry["non-dropping-particle"])
+         table.insert(t, self:_format_a_name(namepartOptions.family, entry["non-dropping-particle"]))
       end
-      table.insert(t, entry.family)
+      table.insert(t, self:_format_a_name(namepartOptions.family, entry.family))
       if entry.suffix then
          table.insert(t, entry.suffix)
       end
@@ -914,24 +987,24 @@ function CslEngine:_a_name (options, content, entry)
       -- Order is: Family, [Given] [DP] [NDP], [Suffix] e.g. Gogh, Vincent van, III
       local mid = {}
       if entry.given then
-         table.insert(mid, entry.given)
+         table.insert(mid, self:_format_a_name(namepartOptions.given, initialize(options, entry)))
       end
       if entry["dropping-particle"] then
-         table.insert(mid, entry["dropping-particle"])
+         table.insert(mid, self:_format_a_name(namepartOptions.given, entry["dropping-particle"]))
       end
       if entry["non-dropping-particle"] then
-         table.insert(mid, entry["non-dropping-particle"])
+         table.insert(mid, self:_format_a_name(namepartOptions.family, entry["non-dropping-particle"]))
       end
       local midname = table.concat(mid, " ")
       if #midname > 0 then
          return table.concat({
-            entry.family,
+            self:_format_a_name(namepartOptions.family, entry.family),
             midname,
             entry.suffix, -- may be nil
          }, sep)
       end
       return table.concat({
-         entry.family,
+         self:_format_a_name(namepartOptions.family, entry.family),
          entry.suffix, -- may be nil
       }, sep)
    end
@@ -939,16 +1012,16 @@ function CslEngine:_a_name (options, content, entry)
    -- Order is: [NDP] Family, [Given] [DP], [Suffix] e.g. van Gogh, Vincent, III
    local beg = {}
    if entry["non-dropping-particle"] then
-      table.insert(beg, entry["non-dropping-particle"])
+      table.insert(beg, self:_format_a_name(namepartOptions.family, entry["non-dropping-particle"]))
    end
-   table.insert(beg, entry.family)
+   table.insert(beg, self:_format_a_name(namepartOptions.family, entry.family))
    local begname = table.concat(beg, " ")
    local mid = {}
    if entry.given then
-      table.insert(mid, entry.given)
+      table.insert(mid, self:_format_a_name(namepartOptions.given, initialize(options, entry)))
    end
    if entry["dropping-particle"] then
-      table.insert(mid, entry["dropping-particle"])
+      table.insert(mid, self:_format_a_name(namepartOptions.given, entry["dropping-particle"]))
    end
    local midname = table.concat(mid, " ")
    if #midname > 0 then
@@ -1066,7 +1139,11 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
                sep_delim = #l > 2 and name_delimiter or " "
             end
             local last = table.remove(l)
-            joined = table.concat(l, name_delimiter) .. sep_delim .. and_word .. " " .. last
+            if and_word then
+               joined = table.concat(l, name_delimiter) .. sep_delim .. and_word .. " " .. last
+            else
+               joined = table.concat(l, name_delimiter) .. sep_delim .. last
+            end
          end
          if label then
             joined = is_label_first and (label .. joined) or (joined .. label)
@@ -1118,8 +1195,13 @@ function CslEngine:_names (options, content, entry)
    name_node.options.form = name_node.options.form or inherited_opts["name-form"]
    local et_al_min = tonumber(name_node.options["et-al-min"]) or 4 -- No default in the spec, using Chicago's
    local et_al_use_first = tonumber(name_node.options["et-al-use-first"]) or 1
-   local and_opt = name_node.options["and"] or "text"
-   local and_word = and_opt == "symbol" and "&amp;" or self:_render_term("and") -- text by default
+   local and_opt = name_node.options["and"]
+   local and_word
+   if and_opt == "symbol"then
+      and_word = "&amp;"
+   elseif and_opt == "text" then
+      and_word = self:_render_term("and")
+   end
    local name_delimiter = name_node.options.delimiter or inherited_opts["names-delimiter"] or ", "
    -- local delimiter_precedes_et_al = name_node.options["delimiter-precedes-et-al"] -- FIXME NOT IMPLEMENTED
    local delimiter_precedes_last = name_node.options["delimiter-precedes-last"]
@@ -1277,27 +1359,30 @@ function CslEngine:_if (options, content, entry)
          end
       end
    end
-   if matching then
-      return self:_render_children(content, entry), true
-      -- FIXME:
-      -- The CSL specification says: "Delimiters from the nearest delimiters
-      -- from the nearest ancestor delimiting element are applied within the
-      -- output of cs:choose (i.e., the output of the matching cs:if,
-      -- cs:else-if, or cs:else; see delimiter).""
-      -- Ugh. This is rather obscure and not implemented yet (?)
-   end
-   return nil, false
+   -- We return the content if the condition is met
+   -- (Not the formatted content as in other methods)
+   return matching and content or nil
 end
 
-function CslEngine:_choose (options, content, entry)
+function CslEngine:_choose (options, content, entry, context)
+   -- The CSL specification says: "Delimiters from the nearest delimiters
+   -- from the nearest ancestor delimiting element are applied within the
+   -- output of cs:choose (i.e., the output of the matching cs:if,
+   -- cs:else-if, or cs:else; see delimiters)."
+   -- NOTE: I am not sure if the current context is always sufficient here.
+   local delimiter = context.delimiter
    for _, child in ipairs(content) do
       if child.command == "cs:if" or child.command == "cs:else-if" then
-         local t, match = self:_if(child.options, child, entry)
+         local match = self:_if(child.options, child, entry)
          if match then
-            return t
+            return self:_render_children(child, entry, {
+               delimiter = delimiter
+            })
          end
       elseif child.command == "cs:else" then
-         return self:_render_children(child, entry)
+         return self:_render_children(child, entry, {
+            delimiter = delimiter
+         })
       end
    end
 end
@@ -1434,10 +1519,11 @@ end
 
 -- PROCESSING
 
-function CslEngine:_render_node (node, entry)
+function CslEngine:_render_node (node, entry, context)
    local callback = node.command:gsub("cs:", "_")
+   context = context or {}
    if self[callback] then
-      return self[callback](self, node.options, node, entry)
+      return self[callback](self, node.options, node, entry, context)
    else
       SU.warn("Unknown CSL element " .. node.command .. " (" .. callback .. ")")
    end
@@ -1451,13 +1537,23 @@ function CslEngine:_render_children (ast, entry, context)
    context = context or {}
    for _, content in ipairs(ast) do
       if type(content) == "table" and content.command then
-         local r = self:_render_node(content, entry)
+         local r = self:_render_node(content, entry, context)
          if r then
             table.insert(ret, r)
          end
       else
          SU.error("CSL unexpected content") -- Should not happen
       end
+   end
+   if context.secondFieldAlign then
+      -- CSL 1.0.2 says that "subsequent lines of bibliographic entries are aligned
+      -- along the second field" with the first field either flushed "with the margin"
+      -- or "put in the margin".
+      -- This is a dubious wording, probably bad typography, with no amount of spacing
+      -- even described.
+      -- We choose to "box" the first field, and the default implementation will take
+      -- care of doing sound typography.
+      ret[1] = "<bibBoxForIndent>" .. ret[1] .. "</bibBoxForIndent>"
    end
    return #ret > 0 and self:_render_delimiter(ret, context.delimiter) or nil
 end

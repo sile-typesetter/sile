@@ -1,5 +1,3 @@
-local setenv = require("rusile").setenv
-
 --- core settings instance
 --- @module SILE.settings
 
@@ -16,26 +14,6 @@ function settings:_init ()
    self.stateQueue = {}
    self.defaults = {}
    self.hooks = {}
-
-   self:declare({
-      parameter = "document.language",
-      type = "string",
-      default = "en",
-      hook = function (language)
-         if SILE.scratch.loaded_languages and not SILE.scratch.loaded_languages[language] then
-            SU.warn(([[
-               Setting document.language to '%s', but support for '%s' has not been loaded
-
-               Consider invoking \language[main=%s] which loads language support before
-               setting it or manually calling SILE.languageSupport.loadLanguage("%s").
-            ]]):format(language, language, language, language))
-         end
-         fluent:set_locale(language)
-         os.setlocale(language)
-         setenv("LANG", language)
-      end,
-      help = "Locale for localized language support",
-   })
 
    self:declare({
       parameter = "document.parindent",
