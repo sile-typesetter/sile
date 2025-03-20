@@ -45,6 +45,7 @@ fn main() -> Result<()> {
         args.evaluate,
         args.evaluate_after,
         args.fontmanager,
+        args.luarocks_tree,
         args.makedeps,
         args.output,
         args.option,

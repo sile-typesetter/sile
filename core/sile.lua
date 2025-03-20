@@ -150,6 +150,7 @@ SILE.input = {
    filenames = {},
    evaluates = {},
    evaluateAfters = {},
+   luarocksTrees = {},
    uses = {},
    options = {},
    preambles = {}, -- deprecated, undocumented
@@ -209,6 +210,9 @@ function SILE.init ()
       SU.deprecated("SILE.backend", "SILE.input.backend", "0.15.7", "0.17.0")
       SILE.input.backend = SILE.backend
    end
+   for _, tree in ipairs(SILE.input.luarocksTrees) do
+      _G["extendSilePathRocks"](tree)
+   end
    if not SILE.input.backend then
       SILE.input.backend = "libtexpdf"
    end
@@ -267,12 +271,22 @@ local function suggest_luarocks (module)
 
         eval $(luarocks --lua-version %s --tree path)
 
-      Thereafter running SILE as normal in the same shell should work as
-      expected:
+      Thereafter running `sile` as normal in the same shell should work as
+      expected. This code can be used in your shell's initialization script
+      to avoid having to do it manually in each new shell. This is true for
+      user home directory installations using `--local` or any specific values
+      for `--tree` other than 'lua_modules'.
 
-        sile %s
+      As an anternative to setting up environment variables when using a
+      non-default tree location, you can use the `--luarocks-tree` option to
+      add path(s) at runtime. This is simpler to type, but must be used on each
+      and every invocation. The value for tree should be the same as used when
+      installing the LuaRock(s), or an appropriate full path to the location
+      used by `--local` (generally "$HOME/.luarocks"):
 
-   ]]):format(SILE.lua_version, guessed_module_name, SILE.lua_version, pl.stringx.join(" ", _G.arg or {}))
+        sile --luarocks-tree path %s
+
+    ]]):format(SILE.lua_version, guessed_module_name, SILE.lua_version, pl.stringx.join(" ", _G.arg or {}))
 end
 
 --- Multi-purpose loader to load and initialize modules.
