@@ -72,6 +72,9 @@ function package:_init (options)
    end)
    self.class:registerHook("newpage", spreadHook)
    self.class:registerHook("newpage", switchPage)
+   if not SILE.scratch.headers then
+      SILE.scratch.headers = {}
+   end
 end
 
 function package:registerCommands ()
