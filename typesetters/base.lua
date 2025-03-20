@@ -48,13 +48,10 @@ function typesetter:_init (frame)
    self:declareSettings()
    self.hooks = {}
    self.breadcrumbs = SU.breadcrumbs()
-
    self.frame = nil
    self.stateQueue = {}
    self:initFrame(frame)
    self:initState()
-   -- In case people use stdlib prototype syntax off of the instantiated typesetter...
-   getmetatable(self).__call = self.init
    return self
 end
 
