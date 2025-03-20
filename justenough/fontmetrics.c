@@ -14,7 +14,6 @@ int fm_get_typographic_extents (lua_State *L) {
   double upem;
   double ascender;
   double descender;
-  double x_height;
 
   hb_font_t* hbFont = get_hb_font(L, 1);
   hb_font_extents_t metrics = {0,0,0};
@@ -26,9 +25,6 @@ int fm_get_typographic_extents (lua_State *L) {
   lua_newtable(L);
   lua_pushstring(L, "ascender");
   lua_pushnumber(L, ascender);
-  lua_settable(L, -3);
-  lua_pushstring(L, "x_height");
-  lua_pushnumber(L, x_height);
   lua_settable(L, -3);
   lua_pushstring(L, "descender");
   lua_pushnumber(L, descender);
