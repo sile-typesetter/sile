@@ -1,6 +1,5 @@
 --- font
 -- @module SILE.font
-local icu = require("justenoughicu")
 
 local lastshaper
 
@@ -93,13 +92,6 @@ SILE.registerCommand("font", function (options, content)
       SILE.settings:set("font.direction", options.direction)
    end
    if options.language then
-      if options.language ~= "und" and icu and icu.canonicalize_language then
-         local newlang = icu.canonicalize_language(options.language)
-         -- if newlang ~= options.language then
-         -- SU.warn("Language '"..options.language.."' not canonical, '"..newlang.."' will be used instead")
-         -- end
-         options.language = newlang
-      end
       SILE.languageSupport.loadLanguage(options.language)
       SILE.settings:set("document.language", options.language)
    end
