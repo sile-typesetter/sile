@@ -249,19 +249,21 @@ int je_icu_bidi_runs(lua_State *L) {
     UBiDiDirection dir = ubidi_getVisualRun(bidi, i, &start, &length);
     lua_newtable(L);
     // Convert back to UTF8...
-    int32_t l3 = 0;
-    char* possibleOutbuf = malloc(4*length);
-    if(!possibleOutbuf) {
+    // Each UTF-16 code unit can expand to at most 4 UTF-8 bytes
+    const int buflen = (length * 4) + 1;
+    char* utf8buf = malloc(buflen);
+    if(!utf8buf) {
       return luaL_error(L, "Couldn't malloc");
     }
-    u_strToUTF8(possibleOutbuf, 4 * length, &l3, input_as_uchar+start, length, &err);
+    int32_t utf8len;
+    u_strToUTF8(utf8buf, buflen, &utf8len, input_as_uchar+start, length, &err);
     if (!U_SUCCESS(err)) {
-      free(possibleOutbuf);
-      return luaL_error(L, "Bidi run too big? %s", u_errorName(err));
+      free(utf8buf);
+      return luaL_error(L, "UTF-8 conversion failed: %s", u_errorName(err));
     }
     lua_pushstring(L, "run");
-    lua_pushstring(L, possibleOutbuf);
-    free(possibleOutbuf);
+    lua_pushstring(L, utf8buf);
+    free(utf8buf);
     lua_settable(L, -3);
 
     lua_pushstring(L, "start");
