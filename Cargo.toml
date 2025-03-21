@@ -156,6 +156,7 @@ craters = "creators"
 lamda = "lamda"       # Unicode character description
 neet = "need"
 noet = "noet"         # VIM modeline
+supporte = "supporte" # CHANGELOG blooper
 
 [package.metadata.typos.files]
 ignore-hidden = false
