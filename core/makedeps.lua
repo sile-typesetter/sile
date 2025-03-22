@@ -31,7 +31,8 @@ local makeDeps = {
       if not depfile then
          return SU.error(err)
       end
-      depfile:write(SILE.outputter:getOutputFilename() .. ": " .. tostring(self._deps) .. "\n")
+      local target = ("%s %s: %s\n"):format(SILE.outputter:getOutputFilename(), self.filename, self._deps)
+      depfile:write(target)
       depfile:close()
    end,
 }
