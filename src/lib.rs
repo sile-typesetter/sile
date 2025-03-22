@@ -48,9 +48,13 @@ pub fn start_luavm() -> crate::Result<Lua> {
 }
 
 pub fn inject_paths(lua: Lua) -> crate::Result<Lua> {
+    // Note set_name() here can't be left blank or it will resolve to src/lib.rs, and it can't be
+    // something custom that doesn't resolve to an actual file because it will turn up in the
+    // makedepends list. We use the internal Lua VM's own =[C] syntax which will be relpaced with
+    // $0 so that the Rust binary becomes the listed dependency.
     #[cfg(feature = "static")]
     lua.load(r#"require("core.pathsetup")"#)
-        .set_name("relative pathsetup loader")
+        .set_name("=[C]")
         .exec()?;
     #[cfg(not(feature = "static"))]
     {
@@ -70,7 +74,7 @@ pub fn inject_paths(lua: Lua) -> crate::Result<Lua> {
                 dofile("./core/pathsetup.lua")
             end
         })
-        .set_name("hard coded pathsetup loader")
+        .set_name("=[C]")
         .exec()?;
     }
     Ok(lua)
