@@ -11,10 +11,13 @@ local function shapespace (spacewidth)
    spacewidth = SU.cast("measurement", spacewidth)
    -- In some scripts with word-level kerning, glue can be negative.
    -- Use absolute value to ensure stretch and shrink work as expected.
-   local absoluteSpaceWidth = math.abs(spacewidth:tonumber())
-   local length = spacewidth * SILE.settings:get("shaper.spaceenlargementfactor")
-   local stretch = absoluteSpaceWidth * SILE.settings:get("shaper.spacestretchfactor")
-   local shrink = absoluteSpaceWidth * SILE.settings:get("shaper.spaceshrinkfactor")
+   local abs_length = math.abs(spacewidth:tonumber())
+   local length, stretch, shrink = abs_length, 0, 0
+   if SILE.settings:get("shaper.variablespaces") then
+      length = spacewidth * SILE.settings:get("shaper.spaceenlargementfactor")
+      stretch = abs_length * SILE.settings:get("shaper.spacestretchfactor")
+      shrink = abs_length * SILE.settings:get("shaper.spaceshrinkfactor")
+   end
    return SILE.types.length(length, stretch, shrink)
 end
 
