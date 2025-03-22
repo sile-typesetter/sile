@@ -26,11 +26,19 @@ pub fn start_luavm() -> crate::Result<Lua> {
     }
     // For parity with the legacy Lua arg parser, allows inspection of CLI args at runtime in Lua.
     {
+        let rt = std::env::args()
+            .next()
+            .unwrap_or_else(|| "sile".to_string());
         let args: Vec<String> = std::env::args().skip(1).collect();
         let arg_table = lua.create_table()?;
         for (i, arg) in args.iter().enumerate() {
             arg_table.set(i + 1, arg.clone())?;
         }
+        // A bit non-orthodox, but the Lua side sets the VM chunk name to what moste CLIs expect $0
+        // to be, their own binary name. The Rust side of mlua is setting the chunk name to =[C],
+        // making error messages a bit cryptic. By setting a 0 index here we give the later Lua
+        // side a chance to replace the chunk name with it.
+        arg_table.set(0, rt)?;
         lua.globals().set("arg", arg_table)?;
     }
     lua = inject_paths(lua)?;
