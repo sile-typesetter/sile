@@ -12,6 +12,13 @@ end
 
 -- Default settings that have gone out of fashion
 package.default_settings = {
+   ["0.15.11"] = {
+      -- This was totally a *bug* fix not a pure defaults change, but since many projects ended up relying on the buggy
+      -- behavior to have any stretchness in their spaces at all, the "fix" breaks a lot of projects. Just enabling this
+      -- isn't a clean revert since if people were mixing and matching methods this wouldn't make everything the same,
+      -- but it's more likely to work than having this setting unexpectedly *actually* disabled.
+      ["shaper.variablespaces"] = true,
+   },
    ["0.15.10"] = {
       ["typesetter.brokenpenalty"] = 0,
    },
