@@ -232,7 +232,7 @@ function SILE.init ()
       SILE.shaper = SILE.shapers.harfbuzz()
       SILE.outputter = SILE.outputters.dummy()
    end
-   SILE.pagebuilder = SILE.pagebuilders.base()
+   SILE.pagebuilder = SILE.pagebuilders.default()
    io.stdout:setvbuf("no")
    if SU.debugging("profile") then
       ProFi = require("ProFi")
