@@ -22,7 +22,9 @@ local shaper = pl.class()
 shaper.type = "shaper"
 shaper._name = "base"
 
-function shaper._init ()
+function shaper:_init ()
+   SU._avoid_base_class_use(self)
+
    -- Function for testing shaping in the repl
    -- TODO, figure out a way to explicitly register things in the repl env
    _G["makenodes"] = function (token, options)

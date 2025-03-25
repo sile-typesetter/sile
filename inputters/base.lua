@@ -15,6 +15,7 @@ inputter._name = "base"
 inputter._docclass = nil
 
 function inputter:_init (options)
+   SU._avoid_base_class_use(self)
    self.options = options or {}
 end
 

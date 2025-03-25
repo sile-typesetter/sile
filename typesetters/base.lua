@@ -45,6 +45,7 @@ end
 --- Constructor
 -- @param frame A initial frame to attach the typesetter to.
 function typesetter:_init (frame)
+   SU._avoid_base_class_use(self)
    self:declareSettings()
    self.hooks = {}
    self.breadcrumbs = SU.breadcrumbs()

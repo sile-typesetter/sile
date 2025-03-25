@@ -6,6 +6,7 @@ outputter.type = "outputter"
 outputter._name = "base"
 
 function outputter:_init ()
+   SU._avoid_base_class_use(self)
    self.hooks = {}
 end
 
