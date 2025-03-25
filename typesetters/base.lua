@@ -52,7 +52,6 @@ function typesetter:_init (frame)
    self.stateQueue = {}
    self:initFrame(frame)
    self:initState()
-   return self
 end
 
 --- Declare new setting types

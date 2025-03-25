@@ -39,7 +39,6 @@ class.defaultFrameset = {
 function class:_init (options)
    book._init(self, options)
    tplain._t_common(self)
-   return self
 end
 
 class.declareOptions = tplain.declareOptions

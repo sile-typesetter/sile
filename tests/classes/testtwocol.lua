@@ -31,7 +31,6 @@ function testtwocol:_init (options)
       { left = "left(contentB)", right = "right(contentB)", height = "0", bottom = "83.3%ph" }
    )
    self:loadPackage("footnotes", { insertInto = "footnotes", stealFrom = { contentB = 1 } })
-   return self
 end
 
 return testtwocol

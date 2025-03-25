@@ -7,7 +7,6 @@ outputter._name = "base"
 
 function outputter:_init ()
    self.hooks = {}
-   return self
 end
 
 function outputter:registerHook (category, func)

@@ -349,7 +349,6 @@ function book:_init (options)
    })
   ...
   plain._init(self, options)
-  return self
 end
 \end{raw}
 
@@ -411,7 +410,6 @@ For example to load the \autodoc:package{infonode} package into our class, we co
 function bringhurst:_init(options)
   book._init(self, options)
   self:loadPackage("infonode")
-  return self
 end
 \end{raw}
 

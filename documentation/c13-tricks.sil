@@ -249,7 +249,6 @@ function discovery:_init ()
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
   self.innerTypesetter = self.typesetters.base(gutter)
   ...
-  return self
 end
 
 function discovery:newPage ()
