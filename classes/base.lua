@@ -66,7 +66,7 @@ function class:_init (options)
          self_.pageTemplate.firstContentFrame = self_.pageTemplate.frames[self_.firstContentFrame]
       end
       local frame = self_:initialFrame()
-      SILE.typesetter = SILE.typesetters.base(frame)
+      SILE.typesetter = SILE.typesetters.default(frame)
       SILE.typesetter:registerPageEndHook(function ()
          SU.debug("frames", function ()
             for _, v in pairs(SILE.frames) do

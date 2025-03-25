@@ -48,9 +48,12 @@ function typesetter:_init (frame)
    self:declareSettings()
    self.hooks = {}
    self.breadcrumbs = SU.breadcrumbs()
-   self.frame = nil
+   self.frame = frame
    self.stateQueue = {}
-   self:initFrame(frame)
+end
+
+function typesetter:_post_init ()
+   self:initFrame(self.frame)
    self:initState()
 end
 

@@ -39,8 +39,8 @@ Next we create two new typesetters, one for each column, and we tell each one ho
 
 \begin[type=autodoc:codeblock]{raw}
 function diglot:_init (options)
-  self.leftTypesetter = SILE.typesetters.base()
-  self.rightTypesetter = SILE.typesetters.base()
+  self.leftTypesetter = SILE.typesetters.default()
+  self.rightTypesetter = SILE.typesetters.default()
   self.rightTypesetter.other = self.leftTypesetter
   self.leftTypesetter.other = self.rightTypesetter
   return plain._init(self)
@@ -247,7 +247,7 @@ function discovery:_init ()
   base._init(self)
   local gutter = self:oddPage() and
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
-  self.innerTypesetter = self.typesetters.base(gutter)
+  self.innerTypesetter = self.typesetters.default(gutter)
   ...
 end
 
@@ -255,7 +255,7 @@ function discovery:newPage ()
   self.innerTypesetter:leaveHmode(1)
   local gutter = self:oddPage() and
                  SILE.getFrame("rGutter") or SILE.getFrame("lGutter")
-  self.innerTypesetter = SILE.typesetters.base(gutter)
+  self.innerTypesetter = SILE.typesetters.default(gutter)
   ...
   return base.newPage(self);
 end

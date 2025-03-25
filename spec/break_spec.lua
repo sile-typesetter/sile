@@ -2,7 +2,7 @@ SILE = require("core.sile")
 
 describe("SILE.linebreak", function ()
    SILE.documentState = { documentClass = { state = {} } }
-   SILE.typesetter = SILE.typesetters.base(SILE.newFrame({ id = "foo" }))
+   SILE.typesetter = SILE.typesetters.default(SILE.newFrame({ id = "foo" }))
 
    -- This is a list of boxes, with their dimensions, extracted from a specially hacked version of TeX.
    local hlist = {}

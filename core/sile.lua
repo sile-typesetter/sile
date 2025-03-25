@@ -585,7 +585,7 @@ function SILE.typesetNaturally (frame, func)
    if SILE.typesetter.frame then
       SILE.typesetter.frame:leave(SILE.typesetter)
    end
-   SILE.typesetter = SILE.typesetters.base(frame)
+   SILE.typesetter = SILE.typesetters.default(frame)
    SILE.settings:temporarily(func)
    SILE.typesetter:leaveHmode()
    SILE.typesetter:chuck()
