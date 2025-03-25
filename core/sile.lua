@@ -206,6 +206,10 @@ end
 --
 -- Does not move on to processing input document(s).
 function SILE.init ()
+   if SILE.input.makedeps then
+      SILE.makeDeps = require("core.makedeps")
+      SILE.makeDeps.filename = SILE.input.makedeps
+   end
    if SILE.backend then
       SU.deprecated("SILE.backend", "SILE.input.backend", "0.15.7", "0.17.0")
       SILE.input.backend = SILE.backend
@@ -554,7 +558,7 @@ function SILE.processFile (filename, format, options)
          _G.extendSilePath(SILE.masterDir)
          _G.extendSilePathRocks(SILE.masterDir .. "/lua_modules")
       end
-      filename = SILE.resolveFile(filename) or SU.error("Could not find file")
+      filename = SILE.resolveFile(filename) or SU.error("Could not find file '" .. filename .. "'")
       local mode = lfs.attributes(filename).mode
       if mode ~= "file" and mode ~= "named pipe" then
          SU.error(filename .. " isn't a file or named pipe, it's a " .. mode .. "!")
