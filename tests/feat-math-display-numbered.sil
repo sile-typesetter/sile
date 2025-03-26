@@ -4,6 +4,11 @@
 \use[module=packages.lorem]
 \use[module=packages.math]
 \font[size=11pt]
+% Side effect of #2145: the math font size now follow the current document
+% font size, so whould now be 11pt.
+% The previous behavior was an hard-coded 10 pt.
+% Restore it here, so the test passes unchanged.
+\set[parameter=math.font.size, value=10]
 % Test numbered display math for all options
 % and in all alignments
 
