@@ -57,6 +57,7 @@ function class:_init (options)
    SILE.languageSupport.loadLanguage("und") -- preload for unlocalized fallbacks
    self:declareOptions()
    self:registerRawHandlers()
+   self:_declareBaseSettings()
    self:declareSettings()
    self:registerCommands()
    self:setOptions(options)
@@ -173,7 +174,9 @@ function class:declareOptions ()
    end)
 end
 
-function class.declareSettings (_)
+function class.declareSettings (_) end
+
+function class._declareBaseSettings (_)
    SILE.settings:declare({
       parameter = "current.parindent",
       type = "glue or nil",

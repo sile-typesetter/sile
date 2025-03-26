@@ -2,13 +2,6 @@ local hb = require("justenoughharfbuzz")
 local icu = require("justenoughicu")
 local bitshim = require("bitshim")
 
-SILE.settings:declare({
-   parameter = "harfbuzz.subshapers",
-   type = "string or nil",
-   default = "",
-   help = "Comma-separated shaper list to pass to Harfbuzz",
-})
-
 local base = require("shapers.base")
 
 local smallTokenSize = 20 -- Small words will be cached
@@ -28,6 +21,15 @@ local usedfonts = {}
 
 local shaper = pl.class(base)
 shaper._name = "harfbuzz"
+
+function shaper.declareSettings (_)
+   SILE.settings:declare({
+      parameter = "harfbuzz.subshapers",
+      type = "string or nil",
+      default = "",
+      help = "Comma-separated shaper list to pass to Harfbuzz",
+   })
+end
 
 function shaper:shapeToken (text, options)
    local items
