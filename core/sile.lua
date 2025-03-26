@@ -144,28 +144,15 @@ SILE.input = {
    postambles = {}, -- deprecated, undocumented
 }
 
--- On demand loader, allows modules to be loaded into a specific scope but
--- only when/if accessed.
-local function core_loader (scope)
-   return setmetatable({}, {
-      __index = function (self, key)
-         -- local var = rawget(self, key)
-         local m = require(("%s.%s"):format(scope, key))
-         self[key] = m
-         return m
-      end,
-   })
-end
-
 -- Internal libraries that are idempotent and return classes that need instantiation
-SILE.inputters = core_loader("inputters")
-SILE.shapers = core_loader("shapers")
-SILE.outputters = core_loader("outputters")
-SILE.classes = core_loader("classes")
-SILE.packages = core_loader("packages")
-SILE.typesetters = core_loader("typesetters")
-SILE.pagebuilders = core_loader("pagebuilders")
-SILE.types = core_loader("types")
+SILE.inputters = SILE.utilities._module_loader("inputters")
+SILE.shapers = SILE.utilities._module_loader("shapers")
+SILE.outputters = SILE.utilities._module_loader("outputters")
+SILE.classes = SILE.utilities._module_loader("classes")
+SILE.packages = SILE.utilities._module_loader("packages")
+SILE.typesetters = SILE.utilities._module_loader("typesetters")
+SILE.pagebuilders = SILE.utilities._module_loader("pagebuilders")
+SILE.types = SILE.utilities._module_loader("types")
 
 -- Internal libraries that don't try to use anything on load, only provide something
 SILE.parserBits = require("core.parserbits")
