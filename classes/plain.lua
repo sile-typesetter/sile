@@ -41,7 +41,6 @@ function class:_init (options)
 end
 
 function class:declareOptions ()
-   base.declareOptions(self)
    self:declareOption("direction", function (_, value)
       if value then
          SILE.documentState.direction = value

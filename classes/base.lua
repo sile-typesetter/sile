@@ -55,6 +55,7 @@ function class:_init (options)
       options = {}
    end
    SILE.languageSupport.loadLanguage("und") -- preload for unlocalized fallbacks
+   self:_declareBaseOptions()
    self:declareOptions()
    self:registerRawHandlers()
    self:_declareBaseSettings()
@@ -112,7 +113,9 @@ function class:declareOption (option, setter)
    self.options[option] = setter
 end
 
-function class:declareOptions ()
+function class.declareOptions (_) end
+
+function class:_declareBaseOptions ()
    self:declareOption("class", function (_, name)
       if name then
          if self._legacy then
