@@ -236,7 +236,7 @@ function SILE.init ()
       SILE.shaper = SILE.shapers.harfbuzz()
       SILE.outputter = SILE.outputters.dummy()
    end
-   SILE.pagebuilder = SILE.pagebuilders.base()
+   SILE.pagebuilder = SILE.pagebuilders.default()
    io.stdout:setvbuf("no")
    if SU.debugging("profile") then
       ProFi = require("ProFi")
@@ -589,7 +589,7 @@ function SILE.typesetNaturally (frame, func)
    if SILE.typesetter.frame then
       SILE.typesetter.frame:leave(SILE.typesetter)
    end
-   SILE.typesetter = SILE.typesetters.base(frame)
+   SILE.typesetter = SILE.typesetters.default(frame)
    SILE.settings:temporarily(func)
    SILE.typesetter:leaveHmode()
    SILE.typesetter:chuck()

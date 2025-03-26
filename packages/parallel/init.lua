@@ -72,7 +72,7 @@ function package:_init (options)
       ]])
    end
    for frame, typesetter in pairs(options.frames) do
-      typesetterPool[frame] = SILE.typesetters.base(SILE.getFrame(typesetter))
+      typesetterPool[frame] = SILE.typesetters.default(SILE.getFrame(typesetter))
       typesetterPool[frame].id = typesetter
       typesetterPool[frame].buildPage = function ()
          -- No thank you, I will do that.

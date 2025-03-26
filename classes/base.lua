@@ -62,17 +62,11 @@ function class:_init (options)
    self:setOptions(options)
    self:declareFrames(self.defaultFrameset)
    self:registerPostinit(function (self_)
-      -- In the event no packages have called \language explicitly or otherwise triggerend the language loader, at this
-      -- point we'll have a language *setting* but not actually have loaded the language. We put it off as long as we
-      -- could in case the user changed the default document language and we didn't need to load the system default one,
-      -- but that time has come at gone at this point. Make sure we've loaded somethnig...
-      local lang = SILE.settings:get("document.language")
-      SILE.languageSupport.loadLanguage(lang)
       if type(self.firstContentFrame) == "string" then
          self_.pageTemplate.firstContentFrame = self_.pageTemplate.frames[self_.firstContentFrame]
       end
       local frame = self_:initialFrame()
-      SILE.typesetter = SILE.typesetters.base(frame)
+      SILE.typesetter = SILE.typesetters.default(frame)
       SILE.typesetter:registerPageEndHook(function ()
          SU.debug("frames", function ()
             for _, v in pairs(SILE.frames) do

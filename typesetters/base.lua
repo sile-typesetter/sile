@@ -45,17 +45,17 @@ end
 --- Constructor
 -- @param frame A initial frame to attach the typesetter to.
 function typesetter:_init (frame)
+   SU._avoid_base_class_use(self)
    self:declareSettings()
    self.hooks = {}
    self.breadcrumbs = SU.breadcrumbs()
-
-   self.frame = nil
+   self.frame = frame
    self.stateQueue = {}
-   self:initFrame(frame)
+end
+
+function typesetter:_post_init ()
+   self:initFrame(self.frame)
    self:initState()
-   -- In case people use stdlib prototype syntax off of the instantiated typesetter...
-   getmetatable(self).__call = self.init
-   return self
 end
 
 --- Declare new setting types
