@@ -73,8 +73,6 @@ function class.declareSettings (_)
 end
 
 function class:registerCommands ()
-   SILE.classes.base.registerCommands(self)
-
    self:registerCommand("noindent", function (_, content)
       if #SILE.typesetter.state.nodes ~= 0 then
          SU.warn([[

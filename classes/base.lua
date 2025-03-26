@@ -59,6 +59,7 @@ function class:_init (options)
    self:registerRawHandlers()
    self:_declareBaseSettings()
    self:declareSettings()
+   self:_registerBaseCommands()
    self:registerCommands()
    self:setOptions(options)
    self:declareFrames(self.defaultFrameset)
@@ -365,7 +366,10 @@ local function packOptions (options)
    return relevant
 end
 
-function class:registerCommands ()
+function class.registerCommands () end
+
+-- These need refactoring probably somewhere outside of the document class system
+function class:_registerBaseCommands ()
    local function replaceProcessBy (replacement, tree)
       if type(tree) ~= "table" then
          return tree
