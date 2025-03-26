@@ -7,6 +7,9 @@
 -- Placeholder for 3rd party Lua libraries SILE always provides as globals
 require("core.globals")
 
+-- Lua loader modifications to support more resource types and module layouts
+require("core.loaders")
+
 -- Reserve scope placeholder for profiler (developer tooling)
 local ProFi
 
