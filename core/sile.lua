@@ -67,7 +67,7 @@ SU = SILE.utilities -- regrettable global alias
 -- For warnings and shims scheduled for removal that are easier to keep track
 -- of when they are not spread across so many locations...
 -- Loaded early to make it easier to manage migrations in core code.
-require("core/deprecations")
+require("core.deprecations")
 
 -- On demand loader, allows modules to be loaded into a specific scope but
 -- only when/if accessed.
