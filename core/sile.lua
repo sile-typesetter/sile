@@ -7,9 +7,6 @@
 -- Placeholder for 3rd party Lua libraries SILE always provides as globals
 require("core.globals")
 
--- Lua loader modifications to support more resource types and module layouts
-require("core.loaders")
-
 -- Placeholder for SILE internals table
 SILE = {}
 
