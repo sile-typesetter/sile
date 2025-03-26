@@ -675,12 +675,12 @@ function SILE.registerCommand (name, func, help, pack, cheat)
    if not cheat then
       SU.deprecated(
          "SILE.registerCommand",
-         "class:registerCommand",
+         "class:registerCommand / package:registerCommand",
          "0.14.0",
          "0.16.0",
          [[
-            Commands are being scoped to the document classes they are loaded into rather
-            than being globals.
+            Commands are being scoped to the document classes or packages they are
+            loaded into rather than using a global registry.
          ]]
       )
    end
@@ -749,7 +749,7 @@ function SILE.finish ()
    end
 end
 
--- Internal libraries that return classes, but we only ever use one instantiation
+-- Internal libraries that return classes, but we have no subclasses an only ever use one instantiation of the base
 SILE.traceStack = require("core.tracestack")()
 SILE.settings = require("core.settings")()
 
