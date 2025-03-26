@@ -5,12 +5,21 @@ local language = pl.class()
 language.type = "language"
 language._name = "base"
 
-local cldr = require("cldr")
+local loadkit = require("loadkit")
 local setenv = require("rusile").setenv
 
 local nodeMaker = require("languages.base-nodemaker")
 
-function language:_init ()
+-- Allows loading FTL resources directly with require(). Guesses the locale based on SILE's default resource paths,
+-- otherwise if it can't guess it Loads assets directly into the *current* fluent bundle.
+local require_ftl = loadkit.make_loader("ftl", function (file)
+   local contents = assert(file:read("*a"))
+   file:close()
+   return assert(fluent:add_messages(contents))
+end)
+
+function language:_init (typesetter)
+   self.typesetter = typesetter
    self:_declareBaseSettings()
    self:declareSettings()
    self:_registerBaseCommands()
@@ -44,9 +53,9 @@ function language:loadMessages()
    -- This needs to be set so that we load localizations into the right bundle,
    -- but this breaks the sync enabled by the hook in the document.language
    -- setting, so we want to set it back when we're done.
-   local original_language = fluent:get_locale()
-   fluent:set_locale(language)
-   local gotftl, ftl = pcall(require, ftlresource)
+   local original_lang = fluent:get_locale()
+   fluent:set_locale(lang)
+   local gotftl, ftl = pcall(require_ftl, ftlresource)
    if not gotftl then
       SU.warn(
          ("Unable to load localized strings (e.g. table of contents header text) for %s: %s"):format(
