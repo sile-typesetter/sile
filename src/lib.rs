@@ -26,11 +26,19 @@ pub fn start_luavm() -> crate::Result<Lua> {
     }
     // For parity with the legacy Lua arg parser, allows inspection of CLI args at runtime in Lua.
     {
+        let rt = std::env::args()
+            .next()
+            .unwrap_or_else(|| "sile".to_string());
         let args: Vec<String> = std::env::args().skip(1).collect();
         let arg_table = lua.create_table()?;
         for (i, arg) in args.iter().enumerate() {
             arg_table.set(i + 1, arg.clone())?;
         }
+        // A bit non-orthodox, but the Lua side sets the VM chunk name to what moste CLIs expect $0
+        // to be, their own binary name. The Rust side of mlua is setting the chunk name to =[C],
+        // making error messages a bit cryptic. By setting a 0 index here we give the later Lua
+        // side a chance to replace the chunk name with it.
+        arg_table.set(0, rt)?;
         lua.globals().set("arg", arg_table)?;
     }
     lua = inject_paths(lua)?;
@@ -40,9 +48,13 @@ pub fn start_luavm() -> crate::Result<Lua> {
 }
 
 pub fn inject_paths(lua: Lua) -> crate::Result<Lua> {
+    // Note set_name() here can't be left blank or it will resolve to src/lib.rs, and it can't be
+    // something custom that doesn't resolve to an actual file because it will turn up in the
+    // makedepends list. We use the internal Lua VM's own =[C] syntax which will be relpaced with
+    // $0 so that the Rust binary becomes the listed dependency.
     #[cfg(feature = "static")]
     lua.load(r#"require("core.pathsetup")"#)
-        .set_name("relative pathsetup loader")
+        .set_name("=[C]")
         .exec()?;
     #[cfg(not(feature = "static"))]
     {
@@ -62,7 +74,7 @@ pub fn inject_paths(lua: Lua) -> crate::Result<Lua> {
                 dofile("./core/pathsetup.lua")
             end
         })
-        .set_name("hard coded pathsetup loader")
+        .set_name("=[C]")
         .exec()?;
     }
     Ok(lua)

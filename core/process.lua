@@ -113,7 +113,7 @@ local function processFile (filename, format, options)
          _G.extendSilePath(SILE.masterDir)
          _G.extendSilePathRocks(SILE.masterDir .. "/lua_modules")
       end
-      filename = SILE.resolveFile(filename) or SU.error("Could not find file")
+      filename = SILE.resolveFile(filename) or SU.error("Could not find file '" .. filename .. "'")
       local mode = lfs.attributes(filename).mode
       if mode ~= "file" and mode ~= "named pipe" then
          SU.error(filename .. " isn't a file or named pipe, it's a " .. mode .. "!")
