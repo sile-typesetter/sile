@@ -24,6 +24,15 @@ pub fn start_luavm() -> crate::Result<Lua> {
     {
         lua = embed::inject_embedded_loaders(lua)?;
     }
+    // For parity with the legacy Lua arg parser, allows inspection of CLI args at runtime in Lua.
+    {
+        let args: Vec<String> = std::env::args().skip(1).collect();
+        let arg_table = lua.create_table()?;
+        for (i, arg) in args.iter().enumerate() {
+            arg_table.set(i + 1, arg.clone())?;
+        }
+        lua.globals().set("arg", arg_table)?;
+    }
     lua = inject_paths(lua)?;
     lua = load_sile(lua)?;
     lua = inject_version(lua)?;
@@ -104,6 +113,7 @@ pub fn run(
     evaluates: Option<Vec<String>>,
     evaluate_afters: Option<Vec<String>>,
     fontmanager: Option<String>,
+    luarocks_tree: Option<Vec<PathBuf>>,
     makedeps: Option<PathBuf>,
     output: Option<PathBuf>,
     options: Option<Vec<String>>,
@@ -137,6 +147,9 @@ pub fn run(
     }
     if let Some(fontmanager) = fontmanager {
         sile_input.set("fontmanager", fontmanager)?;
+    }
+    if let Some(trees) = luarocks_tree {
+        sile_input.set("luarocksTrees", trees)?;
     }
     if let Some(class) = class {
         sile_input.set("class", class)?;

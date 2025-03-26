@@ -5,7 +5,7 @@ We’ll conclude our tour of SILE by looking at some tricky situations which req
 
 \section{Parallel text}
 
-The example \url{https://sile-typesetter.org/examples/parallel.sil} contains a rendering of Chapter 1 of Matthew’s Gospel in English and Greek.
+The example \href{https://sile-typesetter.org/examples/parallel.sil} contains a rendering of Chapter 1 of Matthew’s Gospel in English and Greek.
 It uses the \autodoc:class{diglot} class to align the two texts side-by-side.
 The latter provides the \autodoc:command[check=false]{\left} and \autodoc:command[check=false]{\right} commands to start entering text on the left column or the right column respectively, and the \autodoc:command[check=false]{\sync} command to ensure that the two columns are in sync with each other.
 It’s an instructive example of what can be done in a SILE class, so we will take it apart and see how it works.
@@ -338,7 +338,7 @@ So far we’ve been assuming that you would want to run SILE as a processor for 
 But what if you have a program which produces or manipulates data, and you would like to produce PDFs from within your application?
 In that case, it may be easier and provide more flexibility to use SILE as a library.
 
-At \url{https://sile-typesetter.org/examples/byhand.lua}, you will find an example of a Lua script which produces a PDF from SILE.
+At \href{https://sile-typesetter.org/examples/byhand.lua}, you will find an example of a Lua script which produces a PDF from SILE.
 It’s actually fairly simple to use SILE from within Lua—the difficult part is setting things up.
 Here’s how to do it.
 

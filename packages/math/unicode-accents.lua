@@ -1,6 +1,6 @@
 -- IMPORTANT:
 -- Normally, if we were to take MathML seriously, we would have to use the Unicode combining characters
--- for accents, unsing reverse mapping tables.
+-- for accents, using reverse mapping tables.
 -- So our current implementation here is not fully compliant, but the whole thing is a hornet's nest.
 
 -- Combining character check by Unicode block
@@ -40,7 +40,7 @@ local nonCombining = {
    [0x0305] = 0x203E, -- combining overline (above) > overline
    [0x0306] = 0x02D8, -- combining breve (above) > breve
    [0x0307] = 0x02D9, -- combining dot (above) > dot above
-   [0x0308] = 0x00A8, -- combining diaresis (above) > diaresis
+   [0x0308] = 0x00A8, -- combining diaeresis (above) > diaeresis
    [0x030A] = 0x02DA, -- combining ring above > ring above (ADDED)
    [0x030B] = 0x02DD, -- combining double acute accent (above) > double acute accent
    [0x030C] = 0x02C7, -- combining caron (above) > caron
@@ -51,7 +51,7 @@ local nonCombining = {
    [0x031F] = 0x002B, -- combingin plus sign (below) > plus sign
    [0x0320] = 0x002D, -- combining minus sign (below) > minus sign
    [0x0323] = 0x002E, -- combining dot (below) > full stop
-   [0x0324] = 0x00A8, -- combining diaresis (below) > diaresis
+   [0x0324] = 0x00A8, -- combining diaeresis (below) > diaeresis
    [0x0327] = 0x00B8, -- combining cedilla (below) > cedilla
    [0x0328] = 0x02DB, -- combining ogonek (below) > ogonek
    [0x032C] = 0x02C7, -- combining caron (below) > caron

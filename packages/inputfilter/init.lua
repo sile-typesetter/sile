@@ -42,7 +42,7 @@ It does this by allowing you to rewrite the abstract syntax tree representing th
 
 Loading \autodoc:package{inputfilter} into your class with \code{class:loadPackage("inputfilter")} provides you with two new Lua functions: \code{transformContent} and \code{createCommand}.
 \code{transformContent} takes a content tree and applies a transformation function to the text within it.
-See \url{https://sile-typesetter.org/examples/inputfilter.sil} for a simple example, and \url{https://sile-typesetter.org/examples/chordmode.sil} for a more complete one.
+See \href{https://sile-typesetter.org/examples/inputfilter.sil} for a simple example, and \href{https://sile-typesetter.org/examples/chordmode.sil} for a more complete one.
 \end{document}
 ]]
 

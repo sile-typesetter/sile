@@ -35,7 +35,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in', 'Cargo.lock') }}
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
       - name: Install system dependencies
@@ -50,6 +50,7 @@ jobs:
           ./configure \
             --enable-developer-mode \
             --without-developer-tools \
+            ZSTD=$(which zstd) \
             --disable-font-variations \
             --with-manual \
             ${{ matrix.configuration[1] }}
@@ -62,6 +63,10 @@ jobs:
       - name: Package
         run: |
           make dist
+      - name: Create vendored crates package
+        if: matrix.configuration[0] == 'static' && startsWith(github.ref, 'refs/tags/v')
+        run: |
+          make vendored-crates
       - name: Upload source dist artifact
         if: matrix.configuration[0] == 'dynamic' && !startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
@@ -88,6 +93,7 @@ jobs:
             sile-${{ env.VERSION }}.pdf
             sile-${{ env.VERSION }}.zip
             sile-${{ env.VERSION }}.tar.zst
+            sile-vendored-crates-${{ env.VERSION }}.tar.zst
             sile-${{ env.CARCH }}
             sile-${{ env.VERSION }}.sha256.txt
 
@@ -104,7 +110,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in', 'Cargo.lock') }}
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -159,7 +165,7 @@ jobs:
         with:
           path: |
             lua_modules
-          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in') }}
+          key: luarocks-${{ hashFiles('Makefile-luarocks', 'sile.rockspec.in', 'Cargo.lock') }}
       - name: Install system dependencies
         run: |
           brew install \
@@ -212,7 +218,7 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v16
       - name: Cache Nix dependencies
-        uses: DeterminateSystems/magic-nix-cache-action@v8
+        uses: DeterminateSystems/flakehub-cache-action@v1
       - name: Setup developer environment
         run: |
           nix develop --command ./bootstrap.sh

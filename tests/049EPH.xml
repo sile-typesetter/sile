@@ -12,7 +12,7 @@
 <xmltricks:ignore>style-toc1 style-toc2 style-toc3</xmltricks:ignore>
 <xmltricks:ignore>style-rem style-sts style-restore</xmltricks:ignore>
 <xmltricks:ignore>book</xmltricks:ignore>
-<script>
+<lua>
 SILE.registerCommand("chapter", function(options, content)
   SILE.call("bible:chapter-head",{},{options.number})
   SILE.call("save-chapter-number",{},{options.number})
@@ -26,8 +26,7 @@ SILE.registerCommand("note", function (options, content)
   local note = content[1] and content or {options.caller} -- USX keeps changing...
   SILE.call("footnote", options, note)
 end)
-
-</script>
+</lua>
 <define command="style-p"><process/><par/></define>
 <define command="style-mt"><skipeight/>
 <center><font size="20pt" weight="800"><process/></font></center>

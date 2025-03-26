@@ -4,9 +4,61 @@ local icu = require("justenoughicu")
 
 local lastshaper
 
+local bits = require("core.parserbits")
+local lpeg = require("lpeg")
+local Ct, Cg, P = lpeg.Ct, lpeg.Cg, lpeg.P
+local adjust_metric = P("ex-height") + P("cap-height")
+-- stylua: ignore start
+local adjustment = Ct(Cg(bits.number, "amount")^-1 * bits.ws * Cg(adjust_metric, "unit"))
+-- stylua: ignore end
+
+local function measureFontAdjustment (metric)
+   if metric == "ex-height" then
+      -- Uses the height of lowercase letters.
+      -- This is used to normalize lowercase letters across fonts.
+      -- The height of the lowercase letter "x" is used as the reference.
+      -- Another option would be to use the OS/2 font table sxHeight value when available.
+      return SILE.shaper:measureChar("x").height
+   end
+   if metric == "cap-height" then
+      -- Uses the the height of uppercase letters.
+      -- This is used to normalize uppercase letters across fonts.
+      -- The height of the uppercase letter "H" is used as the reference.
+      -- Another option would be to use the OS/2 font table sCapHeight value when available.
+      return SILE.shaper:measureChar("H").height
+   end
+   SU.error("Unknown font adjust metric " .. metric)
+end
+
+local function adjustedFontSize (options)
+   local adjust = options.adjust
+   local parsed = adjustment:match(adjust)
+   if not parsed then
+      SU.error("Couldn't parse font adjust value " .. adjust)
+   end
+   -- Shallow copy: we don't want to modify the original AST as content may be reused
+   -- in other contexts (e.g. running headers) and may need to adapt to different font sizes.
+   local baseOpts = pl.tablex.copy(options)
+   baseOpts.adjust = nil -- cancel for target font size calculation
+   local currentMeasure = measureFontAdjustment(parsed.unit)
+   local ratio = parsed.amount or 1
+   local newMeasure
+   -- Apply the target font size to measure the new font
+   SILE.call("font", baseOpts, function ()
+      newMeasure = measureFontAdjustment(parsed.unit)
+   end)
+   return SILE.settings:get("font.size") * ratio * (currentMeasure / newMeasure)
+end
+
 SILE.registerCommand("font", function (options, content)
    if SU.ast.hasContent(content) then
       SILE.settings:pushState()
+   end
+   if options.adjust then
+      if options.size then
+         SU.error("Can't specify both 'size' and 'adjust' in a \\font command")
+      end
+      SILE.settings:set("font.size", adjustedFontSize(options))
    end
    if options.filename then
       SILE.settings:set("font.filename", options.filename)
@@ -67,7 +119,7 @@ SILE.registerCommand("font", function (options, content)
    -- We must *actually* load the font here, because by the time we're inside
    -- SILE.shaper.shapeToken, it's too late to respond appropriately to things
    -- that the post-load hook might want to do.
-   SILE.font.cache(SILE.font.loadDefaults({}), SILE.shaper.getFace)
+   SILE.font.cache(SILE.font.loadDefaults(options), SILE.shaper.getFace)
 
    if SU.ast.hasContent(content) then
       SILE.process(content)

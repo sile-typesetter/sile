@@ -6,7 +6,9 @@ package._name = "verbatim"
 function package:registerCommands ()
    self:registerCommand("verbatim:font", function (options, content)
       options.family = options.family or "Hack"
-      options.size = options.size or SILE.settings:get("font.size") - 3
+      if not options.size and not options.adjust then
+         options.adjust = "ex-height"
+      end
       SILE.call("font", options, content)
    end, "The font chosen for the verbatim environment")
 
@@ -76,7 +78,7 @@ For example you could change it from XML like this:
 \end{raw}
 
 This handles spaces, newlines, tabs and other similar whitespace literally in a way that SILE would otherwise have handled specially.
-If additionally you want to ignore nested SILE content (e.g. SIL commands in SIL) then you need to use a raw enviroment instead:
+If additionally you want to ignore nested SILE content (e.g. SIL commands in SIL) then you need to use a raw environment instead:
 
 \begin[type=autodoc:codeblock]{raw}
 \begin[type=verbatim]{raw}

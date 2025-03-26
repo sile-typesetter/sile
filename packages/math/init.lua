@@ -145,8 +145,8 @@ If required, you can set the font style and weight via \autodoc:setting{math.fon
 The font size can be set via \autodoc:setting{math.font.size}.
 The \autodoc:setting{math.font.script.feature} setting can be used to specify OpenType features for the math font, which are applied to the smaller script styles.
 It defaults to \code{ssty} (script style alternates), notably to ensure that some symbols such as the prime, double prime, etc. are displayed correctly.
-The default setting applies to Libertinus Math and well-designed math fonts, but some fonts may require different features.
-(The STIX Two Math font has a stylitic set \code{ss04} from primes only, but also supports, according to its documentation, \code{ssty}, which provides other optical adjustments.)
+The default setting applies to Libertinus Math, STIX Two Math, TeX Gyre Termes Math, and all well-designed math fonts, but some fonts may require different features.
+(The STIX Two Math font has a stylitic set \code{ss04} from primes only, but also supports \code{ssty} with additional optical adjustments.)
 
 \paragraph{MathML}
 The first way to typeset math formulas is to enter them in the MathML format.

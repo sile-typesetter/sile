@@ -16,7 +16,7 @@ Alternatively, Docker containers are available for use on any compatible system.
 \subsection{macOS}
 
 For macOS users, the recommended method for installing SILE is through the Homebrew package manager.
-Once Homebrew is up and running (see \url{http://brew.sh}), you can install SILE effortlessly by running:
+Once Homebrew is up and running (see \href{http://brew.sh}), you can install SILE effortlessly by running:
 
 \terminal{$ brew install sile}
 
@@ -34,11 +34,11 @@ Arch Linux (and derivatives such as Manjaro, Parabola, and others) have prebuilt
 \terminal{$ pacman -S sile}
 
 A VCS package is also available as \code{sile-git} to build from the latest Git commit.
-This may be built and installed like any other AUR\footnote{\url{https://wiki.archlinux.org/title/Arch_User_Repository}} package.
+This may be built and installed like any other AUR\footnote{\href{https://wiki.archlinux.org/title/Arch_User_Repository}} package.
 
 \subsection{Fedora}
 
-A COPR repository\footnote{\url{https://copr.fedorainfracloud.org/coprs/jonny/SILE/}} is available for Fedora users with packages of SILE and all the necessary dependencies including fonts.
+A COPR repository\footnote{\href{https://copr.fedorainfracloud.org/coprs/jonny/SILE/}} is available for Fedora users with packages of SILE and all the necessary dependencies including fonts.
 Fedora 36 and Fedora 37 are supported.
 There is work in progress to get the packages added to the official Fedora repository.
 
@@ -55,7 +55,7 @@ OpenSUSE has official packages ready to install the usual way:
 
 \subsection{Ubuntu}
 
-A PPA\footnote{\url{https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile}} is available for Ubuntu users with packages of SILE and all the necessary dependencies.
+A PPA\footnote{\href{https://launchpad.net/~sile-typesetter/+archive/ubuntu/sile}} is available for Ubuntu users with packages of SILE and all the necessary dependencies.
 We introduced support starting with Bionic (18.04) and maintain packages for all Ubuntu release series since for as long as they are supported by Canonical.
 
 \begin{terminal}
@@ -87,7 +87,7 @@ $ sile <arguments>
 $ nix run nixpkgs/nixpkgs-unstable#sile -- <arguments>
 \end{terminal}
 
-The SILE source repository is also a valid Nix Flake\footnote{\url{https://wiki.nixos.org/wiki/Flakes#Installing_flakes}} which means you can run any specific version or the latest unreleased development code directly:
+The SILE source repository is also a valid Nix Flake\footnote{\href{https://wiki.nixos.org/wiki/Flakes#Installing_flakes}} which means you can run any specific version or the latest unreleased development code directly:
 
 \begin{terminal}
 $ nix run github:sile-typesetter/sile/v0.15.0 -- <arguments>
@@ -269,7 +269,7 @@ If anyone wants to help in this department, we’d be happy to facilitate contri
 
 According to the rumors, SILE may be built on Windows using CMake and Visual Studio.
 Additionally some Windows executables are supposed to be generated using Azure for every commit.
-You may download these executables by selecting the latest build from \url{https://simoncozens-github.visualstudio.com/sile/_build} and downloading the “sile” artifact from the Artifacts drop down.
+You may download these executables by selecting the latest build from \href{https://simoncozens-github.visualstudio.com/sile/_build} and downloading the “sile” artifact from the Artifacts drop down.
 
 \section{Selecting a text editor}
 
@@ -282,11 +282,11 @@ You can get started with even the most basic text editors built into your deskto
 However more advanced text editors (sometimes categorized as \em{code editors}) can offer a lot of features that make the editing process more robust.
 Editors are typically either graphical (GUI) or terminal (TUI) oriented and range from relatively simple to extremely complex integrated development environments (IDE).
 Examples of popular cross-platform GUI oriented editors include VS Code, Sublime Text, and Atom\footnote{Still relatively popular, but was discontinued in late 2022.}.
-Examples of popular terminal based editors include VIM\footnote{VIM & NeoVIM users can benefit from syntax highlighting and other features via the \code{vim-sile} plugin at \url{https://github.com/sile-typesetter/vim-sile}.}, Emacs, and GNU Nano.
+Examples of popular terminal based editors include VIM\footnote{VIM & NeoVIM users can benefit from syntax highlighting and other features via the \code{vim-sile} plugin at \href{https://github.com/sile-typesetter/vim-sile}.}, Emacs, and GNU Nano.
 Depending on your operating system there may be platform-specific editors to consider such as Notepad++ on Windows or TextMate on macOS.
 Many more niche options abound: Lapce, Lite XL, Micro, Geany, BBEdit, UltraEdit, Eclipse, JetBrains IDE(s), Netbrains, Bluefish, CudaText, Leafpad, etc.
 
-For comparisons of editors see \url{https://alternativeto.net/category/developer-tools/code-editor/} and select your platform.
+For comparisons of editors see \href{https://alternativeto.net/category/developer-tools/code-editor/} and select your platform.
 
 \section{Running SILE}
 
@@ -325,7 +325,7 @@ You can use \code{--output -} to write the output directly to the system IO stre
 
 \subsection{Let’s do something cool}
 
-In \url{https://sile-typesetter.org/examples/docbook.xml}, you will find a typical DocBook 5.0 article.
+In \href{https://sile-typesetter.org/examples/docbook.xml}, you will find a typical DocBook 5.0 article.
 Normally turning DocBook to print involves a complicated dance of XSLT processors, format object processors, and/or strange LaTeX packages.
 But SILE can read XML files directly, and comes with a \autodoc:class{docbook} class, which tells SILE how to render (admittedly, a subset of) the DocBook tags onto a page.
 
@@ -388,29 +388,29 @@ With these ideas in mind, other CI systems should be easy to support as well.
 \section{Installing third-party packages}
 
 Third-party SILE packages can be installed using the \code{luarocks} package manager.
-Packages may be hosted anywhere, either on the default \url{https://luarocks.org} repository or (as in the example below) listed in a specific server manifest.
-For example, to install markdown.sile\footnote{\url{https://github.com/Omikhleia/markdown.sile}} (a plugin that provides a SILE inputter that reads and processes Markdown documents) one could run:
-
-\begin{terminal}
-$ luarocks install --server=https://luarocks.org/dev markdown.sile
-\end{terminal}
-
-By default, this will try to install the package to your system.
-This may not be desired (and usually requires root access), but there are two other ways to install plugins.
-First you make add \code{--tree ./} to install them in the current directory.
-In this case, assuming this is the same directory as your document, SILE will automatically find such plugins.
-Additionally you may install them to your user profile by adding \code{--local} when installing.
-In this case you will also need to modify your user environment to check for plugins in that path since Lua does not do so by default.
-This can be done by running \code{eval $(luarocks path)} before running SILE (or from your shell’s initialization script).
-
-\subsection{Finding Lua version in use for running SILE}
+Packages may be hosted anywhere, either on the default \href{https://luarocks.org} repository, on 3rd party repositories, or even private repositories.
+Note some servers support more than one manifest, so you may need a \code{--server} argument to pick the right one.
 
 Third party packages must be installed for the same version of Lua that SILE uses.
 On systems with more than one Lua version installed, \em{and} where SILE does not use the default one, you may need to specify the version manually.
-To determine which Lua version is used for the execution of SILE:
+In these examples, we'll ask SILE directory which version it is running.
+
+For example, to install markdown.sile\footnote{\href{https://github.com/Omikhleia/markdown.sile}} (a plugin that provides a SILE inputter that reads and processes Markdown documents) one could run:
 
 \begin{terminal}
-$ export LUA_VERSION=$(sile -e 'print(SILE.lua_version);os.exit()' 2> /dev/null)
-$ luarocks install --lua-version $LUA_VERSION ...
+$ luarocks --lua-version $(sile -q <<< SILE.lua_version) install markdown.sile
 \end{terminal}
+
+By default, this will try to install the package to your system (the \code{--global} option).
+This may not be desired (and usually requires root access), but there are two other ways to install plugins.
+First you make add \code{--tree lua_modules} to install them in a directory called \code{lua_modules} in the current directory.
+In this case (and assuming this is the same directory as your document) SILE will automatically find such plugins.
+
+Additionally you may install them to your user profile by adding \code{--local} when installing.
+You may also install them to any other directory besides 'lua_modules' relative to your input files.
+In these cases you will also need instruct SILE to check for plugins in your preferred path since Lua (and hence SILE) does not do so by default.
+This can be done in either of two ways.
+You can set an environment variable by running \code{eval $(luarocks --lua-version $(sile -q <<< SILE.lua_version) path --local)} (or the \code{--tree path} of your choice).
+This can be done once per shell before running SILE or from your shell’s initialization script to make it permanent.
+For a simpler incantation that needs to be typed into the SILE command on each use, you can also specify a tree by passing a \code{--luarocks-tree path} argument to SILE itself.
 \end{document}

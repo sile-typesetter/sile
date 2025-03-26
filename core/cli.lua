@@ -23,6 +23,11 @@ cli.parseArguments = function ()
    cliargs:option("-E, --evaluate-after=VALUE", "Evaluate Lua expression after processing input", {})
    cliargs:option("-f, --fontmanager=VALUE", "Specify which font manager to use")
    cliargs:option("-I, --include=FILE", "Deprecated, see --use, --preamble, --postamble, or multiple input files", {})
+   cliargs:option(
+      "    --luarocks-tree=LUAROCKS_TREE",
+      "Add a path to the list of LuaRocks trees searched for modules",
+      {}
+   )
    cliargs:option("-m, --makedeps=FILE", "Generate a Makefile format list of dependencies and white them to a file")
    cliargs:option("-o, --output=FILE", "Explicitly set output file name")
    cliargs:option("-O, --options=PARAMETER=VALUE[,PARAMETER=VALUE]", "Set or override document class options", {})
@@ -91,6 +96,9 @@ cli.parseArguments = function ()
    end
    if opts.fontmanager then
       SILE.input.fontmanager = opts.fontmanager
+   end
+   for _, tree in ipairs(opts["luarocks-tree"]) do
+      table.insert(SILE.input.luarocksTrees, tree)
    end
    if opts.makedeps then
       SILE.makeDeps = require("core.makedeps")

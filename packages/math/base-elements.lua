@@ -214,6 +214,11 @@ function elements.mbox:_init ()
       size = SILE.settings:get("math.font.size"),
       style = SILE.settings:get("math.font.style"),
       weight = SILE.settings:get("math.font.weight"),
+      -- https://learn.microsoft.com/en-us/typography/opentype/spec/math#opentype-layout-tags-used-with-the-math-table
+      --   "Script tag to be used for features in math layout.
+      --   The only language system supported with this tag is the default language system."
+      -- Thus, needed for the ssty feature in superscript/subscript to work properly.
+      script = "math",
    }
    local filename = SILE.settings:get("math.font.filename")
    if filename and filename ~= "" then
@@ -1625,7 +1630,10 @@ function elements.sqrt:shape ()
    -- Note: In TeX, the radical sign extends a lot below the baseline,
    -- and MathML Core also has a lot of layout text about it.
    -- Not only it doesn't look good, but it's not very clear vs. OpenType.
-   local radicalGlyph = SILE.shaper:measureChar("√")
+   local radicalGlyph, found = SILE.shaper:measureChar("√")
+   if not found then
+      SU.error("Math font does not contain a square root glyph")
+   end
    local ratio = (self.radicand.height:tonumber() + self.radicand.depth:tonumber())
       / (radicalGlyph.height + radicalGlyph.depth)
    local vertAdHocOffset = (ratio > 1 and math.log(ratio) or 0) * self.radicalVerticalGap

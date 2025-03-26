@@ -12,6 +12,9 @@ end
 
 -- Default settings that have gone out of fashion
 package.default_settings = {
+   ["0.15.10"] = {
+      ["typesetter.brokenpenalty"] = 0,
+   },
    ["0.15.0"] = {
       ["shaper.spaceenlargementfactor"] = 1.2,
       ["document.parindent"] = "20pt",

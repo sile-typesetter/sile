@@ -57,14 +57,7 @@ local mathGrammar = function (_ENV)
       + lpeg.R("\240\244") * utf8cont * utf8cont * utf8cont
    -- Identifiers inside \mo and \mi tags
    local sileID = C(bits.identifier + P(1)) / 1
-   local mathMLID = (utf8code - S"\\{}%")^1 / function (...)
-         local ret = ""
-         local t = {...}
-         for _,b in ipairs(t) do
-         ret = ret .. b
-         end
-         return ret
-      end
+
    local group = P"{" * V"mathlist" * (P"}" + E("`}` expected"))
    -- Simple amsmath-like \text command (no embedded math)
    local textgroup = P"{" * C((1-P"}")^1) * (P"}" + E("`}` expected"))
@@ -825,7 +818,7 @@ local function registerBraceLikeCommands (name, command, symbol)
       }
    end)
 end
--- Note: the following overriddes the default commands from xml-entities / unicode-math.
+-- Note: the following overrides the default commands from xml-entities / unicode-math.
 registerBraceLikeCommands("overbrace", "mover", 0x23DE) -- U+23DE TOP CURLY BRACKET
 registerBraceLikeCommands("underbrace", "munder", 0x23DF) -- U+23DF BOTTOM CURLY BRACKET
 registerBraceLikeCommands("overparen", "mover", 0x23DC) -- U+23DC TOP PARENTHESIS

@@ -7,24 +7,6 @@
 --   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.variations;options.direction;options.filename }, ";")
 -- end
 
-SILE.settings:declare({ parameter = "shaper.variablespaces", type = "boolean", default = true })
-SILE.settings:declare({ parameter = "shaper.spaceenlargementfactor", type = "number or integer", default = 1 })
-SILE.settings:declare({ parameter = "shaper.spacestretchfactor", type = "number or integer", default = 1 / 2 })
-SILE.settings:declare({ parameter = "shaper.spaceshrinkfactor", type = "number or integer", default = 1 / 3 })
-
-SILE.settings:declare({
-   parameter = "shaper.tracking",
-   type = "number or nil",
-   default = nil,
-})
-
--- Function for testing shaping in the repl
--- luacheck: ignore makenodes
--- TODO, figure out a way to explicitly register things in the repl env
-makenodes = function (token, options)
-   return SILE.shaper:createNnodes(token, SILE.font.loadDefaults(options or {}))
-end
-
 local function shapespace (spacewidth)
    spacewidth = SU.cast("measurement", spacewidth)
    -- In some scripts with word-level kerning, glue can be negative.
@@ -39,6 +21,40 @@ end
 local shaper = pl.class()
 shaper.type = "shaper"
 shaper._name = "base"
+
+function shaper._init ()
+   -- Function for testing shaping in the repl
+   -- TODO, figure out a way to explicitly register things in the repl env
+   _G["makenodes"] = function (token, options)
+      return SILE.shaper:createNnodes(token, SILE.font.loadDefaults(options or {}))
+   end
+
+   SILE.settings:declare({
+      parameter = "shaper.variablespaces",
+      type = "boolean",
+      default = true,
+   })
+   SILE.settings:declare({
+      parameter = "shaper.spaceenlargementfactor",
+      type = "number or integer",
+      default = 1,
+   })
+   SILE.settings:declare({
+      parameter = "shaper.spacestretchfactor",
+      type = "number or integer",
+      default = 1 / 2,
+   })
+   SILE.settings:declare({
+      parameter = "shaper.spaceshrinkfactor",
+      type = "number or integer",
+      default = 1 / 3,
+   })
+   SILE.settings:declare({
+      parameter = "shaper.tracking",
+      type = "number or nil",
+      default = nil,
+   })
+end
 
 -- Return the length of a space character
 -- with a particular set of font options,
@@ -67,8 +83,18 @@ function shaper:measureChar (char)
    local options = SILE.font.loadDefaults({})
    options.tracking = SILE.settings:get("shaper.tracking")
    local items = self:shapeToken(char, options)
-   if #items > 0 then
-      return { height = items[1].height, width = items[1].width, depth = items[1].depth }
+   if items and #items > 0 then
+      local measurements = {
+         width = 0,
+         height = 0,
+         depth = 0,
+      }
+      for _, item in ipairs(items) do
+         measurements.width = measurements.width + item.width
+         measurements.height = math.max(measurements.height, item.height)
+         measurements.depth = math.max(measurements.depth, item.depth)
+      end
+      return measurements, items[1].gid ~= 0
    else
       SU.error("Unable to measure character", char)
    end

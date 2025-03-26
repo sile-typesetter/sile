@@ -21,14 +21,20 @@ describe("The fontconfig manager", function ()
       assert.is.equal(family, face.family)
    end)
 
-   it("should fallback when it can't find", function ()
-      local family = "Yesteryear Imagination"
-      local face
-      assert.has_no.errors(function ()
-         face = SILE.shaper.getFace({ family = family })
+   -- Disable running this test unless we have font variation support. The test itself does not need the feature, but we
+   -- have *fonts* in the test data set that do and fontconfig is not deterministic about which fallback we might get
+   -- for an unknown font. In this case a font that needs variation support is being returned in some CI environments
+   -- when we request this unknown one.
+   if SILE.features.font_variations then
+      it("should fallback when it can't find a face", function ()
+         local family = "Yesteryear Imagination"
+         local face
+         assert.has_no.errors(function ()
+            face = SILE.shaper.getFace({ family = family })
+         end)
+         assert.is_not.equal(family, face.family)
       end)
-      assert.is_not.equal(family, face.family)
-   end)
+   end
 end)
 
 describe("The macfonts manager", function ()

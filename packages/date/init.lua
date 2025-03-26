@@ -32,7 +32,7 @@ package.documentation = [[
 The \autodoc:package{date} package provides the \autodoc:command{\date} command, which simply outputs a date using the system’s date function.
 It defaults to the current date and time, but can be used to format any other input time as well using the \autodoc:parameter{time} parameter.
 You can customize the format by passing the \autodoc:parameter{format} parameter, following the formatting codes in the Lua manual
-(\url{https://www.lua.org/pil/22.1.html}).
+(\href{https://www.lua.org/pil/22.1.html}).
 \end{document}
 ]]
 
