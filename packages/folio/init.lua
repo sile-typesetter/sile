@@ -72,10 +72,6 @@ function package:registerCommands ()
       SILE.scratch.counters.folio.off = 2
    end)
 
-   self:registerCommand("nofoliosthispage", function (_, _)
-      SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
-   end, "Deprecated")
-
    self:registerCommand("foliostyle", function (_, content)
       SILE.call("center", {}, content)
    end)

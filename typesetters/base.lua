@@ -28,20 +28,6 @@ local _margins = pl.class({
    end,
 })
 
-local warned = false
-
-function typesetter:init (frame)
-   SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", warned and "" or [[
-      The typesetter instance inheritance system for instances has been refactored
-      using a different object model. Your instance was created and initialized
-      using the object copy syntax from the stdlib model. It has been shimmed for
-      you using the new Penlight model, but this may lead to unexpected behavior.
-      Please update your code to use the new Penlight based inheritance model.
-   ]])
-   warned = true
-   self:_init(frame)
-end
-
 --- Constructor
 -- @param frame A initial frame to attach the typesetter to.
 function typesetter:_init (frame)
@@ -707,10 +693,6 @@ function typesetter:boxUpNodes ()
       end
    end
    return vboxes
-end
-
-function typesetter.pageTarget (_)
-   SU.deprecated("SILE.typesetter:pageTarget", "SILE.typesetter:getTargetLength", "0.13.0", "0.14.0")
 end
 
 function typesetter:getTargetLength ()

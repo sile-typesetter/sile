@@ -696,45 +696,4 @@ function nodetypes.migrating:__tostring ()
    return "<M: " .. tostring(self.material) .. ">"
 end
 
-local _deprecated_nodefactory = {
-   newHbox = true,
-   newNnode = true,
-   newUnshaped = true,
-   newDisc = true,
-   disc = true,
-   newAlternative = true,
-   newGlue = true,
-   newKern = true,
-   newVglue = true,
-   newVKern = true,
-   newPenalty = true,
-   newDiscretionary = true,
-   newVbox = true,
-   newMigrating = true,
-   zeroGlue = true,
-   hfillGlue = true,
-   vfillGlue = true,
-   hssGlue = true,
-   vssGlue = true,
-   zeroHbox = true,
-   zeroVglue = true,
-}
-
-setmetatable(nodetypes, {
-   __index = function (_, prop)
-      if _deprecated_nodefactory[prop] then
-         SU.deprecated(
-            "SILE.types.node." .. prop,
-            "SILE.types.node." .. prop:match("n?e?w?(.*)"):lower(),
-            "0.10.0",
-            "0.14.0"
-         )
-      elseif type(prop) == "number" then -- luacheck: ignore 542
-      -- Likely an attempt to iterate, inspect, or dump the table, sort of safe to ignore
-      else
-         SU.error("Attempt to access non-existent SILE.types.node." .. prop)
-      end
-   end,
-})
-
 return nodetypes

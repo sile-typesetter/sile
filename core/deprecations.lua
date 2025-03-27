@@ -1,28 +1,3 @@
-local nostd = function ()
-   SU.deprecated(
-      "std.object",
-      "pl.class",
-      "0.13.0",
-      "0.14.0",
-      [[
-         Lua stdlib (std.*) is no longer provided by SILE. You may use
-
-           local std = require("std")
-
-         in your project directly if needed. Note you may need to install the Lua rock
-         as well since it no longer ships as a dependency.
-      ]]
-   )
-end
--- luacheck: push ignore std
----@diagnostic disable: lowercase-global
-std = setmetatable({}, {
-   __call = nostd,
-   __index = nostd,
-})
--- luacheck: pop
----@diagnostic enable: lowercase-global
-
 local fluent_once = false
 local fluentglobal = function ()
    if fluent_once then
@@ -48,37 +23,8 @@ SILE.fluent = setmetatable({}, {
    __index = fluentglobal,
 })
 
-local nobaseclass = function ()
-   SU.deprecated(
-      "SILE.baseclass",
-      "SILE.classes.base",
-      "0.13.0",
-      "0.14.0",
-      [[
-         The inheritance system for SILE classes has been refactored using a different
-         object model.
-      ]]
-   )
-end
-SILE.baseClass = setmetatable({}, {
-   __call = nobaseclass,
-   __index = nobaseclass,
-})
-
 SILE.defaultTypesetter = function ()
    SU.deprecated("SILE.defaultTypesetter", "SILE.typesetters.base", "0.14.6", "0.15.0")
-end
-
-SILE.toPoints = function (_, _)
-   SU.deprecated("SILE.toPoints", "SILE.types.measurement():tonumber", "0.10.0", "0.13.1")
-end
-
-SILE.toMeasurement = function (_, _)
-   SU.deprecated("SILE.toMeasurement", "SILE.types.measurement", "0.10.0", "0.13.1")
-end
-
-SILE.toAbsoluteMeasurement = function (_, _)
-   SU.deprecated("SILE.toAbsoluteMeasurement", "SILE.types.measurement():absolute", "0.10.0", "0.13.1")
 end
 
 SILE.readFile = function (filename)
@@ -205,14 +151,6 @@ SILE.PackageManager = {}
 setmetatable(SILE.PackageManager, {
    __index = nopackagemanager,
 })
-
-SU.utf8char = function ()
-   SU.deprecated("SU.utf8char", "luautf8.char", "0.11.0", "0.12.0")
-end
-
-SU.utf8codes = function ()
-   SU.deprecated("SU.utf8codes", "luautf8.codes", "0.11.0", "0.12.0")
-end
 
 -- luacheck: ignore updatePackage
 -- luacheck: ignore installPackage

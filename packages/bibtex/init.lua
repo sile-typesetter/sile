@@ -180,10 +180,6 @@ function package:registerCommands ()
 
    -- LEGACY COMMANDS
 
-   self:registerCommand("bibstyle", function (_, _)
-      SU.deprecated("\\bibstyle", "\\set[parameter=bibtex.style]", "0.13.2", "0.14.0")
-   end)
-
    self:registerCommand("cite", function (options, content)
       local style = SILE.settings:get("bibtex.style")
       if style == "csl" then

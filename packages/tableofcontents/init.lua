@@ -141,10 +141,6 @@ function package:registerCommands ()
       })
    end)
 
-   self:registerCommand("tableofcontents:title", function (_, _)
-      SU.deprecated("\\tableofcontents:title", "\\fluent{tableofcontents-title}", "0.13.0", "0.14.0")
-   end, "Deprecated")
-
    self:registerCommand("tableofcontents:notocmessage", function (_, _)
       SILE.call("tableofcontents:headerfont", {}, function ()
          SILE.call("fluent", {}, { "tableofcontents-not-generated" })
