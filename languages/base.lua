@@ -9,6 +9,8 @@ local cldr = require("cldr")
 local loadkit = require("loadkit")
 local setenv = require("rusile").setenv
 
+local nodeMaker = require("languages.base-nodemaker")
+
 -- Allows loading FTL resources directly with require(). Guesses the locale based on SILE's default resource paths,
 -- otherwise if it can't guess it Loads assets directly into the *current* fluent bundle.
 local require_ftl = loadkit.make_loader("ftl", function (file)
@@ -25,6 +27,11 @@ function language:_init ()
    self:loadHyphenationData()
    self:loadMessages()
    self:activate()
+   self.nodeMaker = nodeMaker(self._name)
+end
+
+function language:_post_init ()
+   SU.error("whose nodeMaker is it anyway?")
 end
 
 function language:activate()
@@ -76,7 +83,6 @@ end
 function language:loadHyphenationData ()
    local code = self:getShortcode()
    local data = require(("languages.%s.hyphens"):format(code))
-   ----------------
 end
 
 function language:_declareBaseSettings ()
@@ -368,97 +374,5 @@ function language:hyphenateNode (node)
    end
    return { node }
 end
-
-SILE.nodeMakers.base = pl.class({
-
-   _init = function (self, options)
-      self.contents = {}
-      self.options = options
-      self.token = ""
-      self.lastnode = false
-      self.lasttype = false
-   end,
-
-   makeToken = function (self)
-      if #self.contents > 0 then
-         coroutine.yield(SILE.shaper:formNnode(self.contents, self.token, self.options))
-         SU.debug("tokenizer", "Token:", self.token)
-         self.contents = {}
-         self.token = ""
-         self.lastnode = "nnode"
-      end
-   end,
-
-   addToken = function (self, char, item)
-      self.token = self.token .. char
-      table.insert(self.contents, item)
-   end,
-
-   makeGlue = function (self, item)
-      if SILE.settings:get("typesetter.obeyspaces") or self.lastnode ~= "glue" then
-         SU.debug("tokenizer", "Space node")
-         coroutine.yield(SILE.shaper:makeSpaceNode(self.options, item))
-      end
-      self.lastnode = "glue"
-      self.lasttype = "sp"
-   end,
-
-   makePenalty = function (self, p)
-      if self.lastnode ~= "penalty" and self.lastnode ~= "glue" then
-         coroutine.yield(SILE.types.node.penalty({ penalty = p or 0 }))
-      end
-      self.lastnode = "penalty"
-   end,
-
-   makeNonBreakingSpace = function (self)
-      -- Unicode Line Breaking Algorithm (UAX 14) specifies that U+00A0
-      -- (NO-BREAK SPACE) is expanded or compressed like a normal space.
-      coroutine.yield(SILE.types.node.kern(SILE.shaper:measureSpace(self.options)))
-      self.lastnode = "glue"
-      self.lasttype = "sp"
-   end,
-
-   iterator = function (_, _)
-      SU.error("Abstract function nodemaker:iterator called", true)
-   end,
-
-   charData = function (_, char)
-      local cp = SU.codepoint(char)
-      if not chardata[cp] then
-         return {}
-      end
-      return chardata[cp]
-   end,
-
-   isActiveNonBreakingSpace = function (self, char)
-      return self:isNonBreakingSpace(char) and not SILE.settings:get("languages.fixedNbsp")
-   end,
-
-   isBreaking = function (self, char)
-      return self.breakingTypes[self:charData(char).linebreak]
-   end,
-
-   isNonBreakingSpace = function (self, char)
-      local c = self:charData(char)
-      return c.contextname and c.contextname == "nobreakspace"
-   end,
-
-   isPunctuation = function (self, char)
-      return self.puctuationTypes[self:charData(char).category]
-   end,
-
-   isSpace = function (self, char)
-      return self.spaceTypes[self:charData(char).linebreak]
-   end,
-
-   isQuote = function (self, char)
-      return self.quoteTypes[self:charData(char).linebreak]
-   end,
-
-   isWord = function (self, char)
-      return self.wordTypes[self:charData(char).linebreak]
-   end,
-})
-
 
 return language
