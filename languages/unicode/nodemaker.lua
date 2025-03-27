@@ -6,18 +6,20 @@ local chardata = require("char-def")
 local nodeMaker = pl.class(base)
 nodeMaker._name = "unicode"
 
+function nodeMaker:_init (name, options)
+   base._init(self, name, options)
+   self.breakingTypes = { ba = true, zw = true }
+   self.puctuationTypes = { po = true }
+   self.quoteTypes = {} -- quote linebreak category is ambiguous depending on the language
+   self.spaceTypes = { sp = true }
+   self.wordTypes = { cm = true }
+end
 
-SILE.nodeMakers.unicode.breakingTypes = { ba = true, zw = true }
-SILE.nodeMakers.unicode.puctuationTypes = { po = true }
-SILE.nodeMakers.unicode.quoteTypes = {} -- quote linebreak category is ambiguous depending on the language
-SILE.nodeMakers.unicode.spaceTypes = { sp = true }
-SILE.nodeMakers.unicode.wordTypes = { cm = true }
-
-function SILE.nodeMakers.unicode.isICUBreakHere (_, chunks, item)
+function nodeMaker.isICUBreakHere (_, chunks, item)
    return chunks[1] and (item.index >= chunks[1].index)
 end
 
-function SILE.nodeMakers.unicode:handleICUBreak (chunks, item)
+function nodeMaker:handleICUBreak (chunks, item)
    -- The ICU library has told us there is a breakpoint at
    -- this index. We need to...
    local bp = chunks[1]
@@ -37,7 +39,7 @@ function SILE.nodeMakers.unicode:handleICUBreak (chunks, item)
    return chunks
 end
 
-function SILE.nodeMakers.unicode:handleWordBreak (item)
+function nodeMaker:handleWordBreak (item)
    self:makeToken()
    if self:isSpace(item.text) then
       -- Spacing word break
@@ -51,7 +53,7 @@ function SILE.nodeMakers.unicode:handleWordBreak (item)
    end
 end
 
-function SILE.nodeMakers.unicode:_handleWordBreakRepeatHyphen (item)
+function nodeMaker:_handleWordBreakRepeatHyphen (item)
    -- According to some language rules, when a break occurs at an explicit hyphen,
    -- the hyphen gets repeated at the beginning of the new line
    if item.text == "-" then
@@ -64,11 +66,11 @@ function SILE.nodeMakers.unicode:_handleWordBreakRepeatHyphen (item)
          self.lastnode = "discretionary"
       end
    else
-      SILE.nodeMakers.unicode.handleWordBreak(self, item)
+      handleWordBreak(self, item)
    end
 end
 
-function SILE.nodeMakers.unicode:handleLineBreak (item, subtype)
+function nodeMaker:handleLineBreak (item, subtype)
    -- Because we are in charge of paragraphing, we
    -- will override space-type line breaks, and treat
    -- them just as ordinary word spaces.
@@ -86,17 +88,17 @@ function SILE.nodeMakers.unicode:handleLineBreak (item, subtype)
    self.lasttype = chardata[cp] and chardata[cp].linebreak
 end
 
-function SILE.nodeMakers.unicode:_handleLineBreakRepeatHyphen (item, subtype)
+function nodeMaker:_handleLineBreakRepeatHyphen (item, subtype)
    if self.lastnode == "discretionary" then
       -- Initial word boundary after a discretionary:
       -- Bypass it and just deal with the token.
       self:dealWith(item)
    else
-      SILE.nodeMakers.unicode.handleLineBreak(self, item, subtype)
+      handleLineBreak(self, item, subtype)
    end
 end
 
-function SILE.nodeMakers.unicode:iterator (items)
+function nodeMaker:iterator (items)
    local fulltext = ""
    for i = 1, #items do
       fulltext = fulltext .. items[i].text
@@ -118,4 +120,5 @@ function SILE.nodeMakers.unicode:iterator (items)
       self:makeToken()
    end)
 end
+
 return nodeMaker

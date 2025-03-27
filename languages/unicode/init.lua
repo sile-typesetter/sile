@@ -4,7 +4,7 @@ local language = pl.class(base)
 language._name = "unicode"
 
 function language:_post_init ()
-   SU.error("got unicode nodemaker")
+   -- SU.error("got unicode lang post init")
 end
 
 return language

@@ -1,4 +1,4 @@
-nodeMaker = pl.class()
+local nodeMaker = pl.class()
 nodeMaker._name = "base"
 
 function nodeMaker:_init (name, options)
@@ -91,5 +91,3 @@ function nodeMaker:isWord (char)
 end
 
 return nodeMaker
-
-

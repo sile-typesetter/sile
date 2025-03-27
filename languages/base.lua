@@ -91,7 +91,7 @@ function language:_declareBaseSettings ()
       type = "string",
       default = "en",
       hook = function (language)
-         if SILE.language:getShortcode() ~= language then
+         if not SILE.language or SILE.language:getShortcode() ~= language then
             SILE.language = SILE.languages[language]()
          end
       end,
