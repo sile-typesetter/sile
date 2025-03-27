@@ -150,7 +150,7 @@ SILE.packages = SILE.utilities._module_loader("packages")
 SILE.typesetters = SILE.utilities._module_loader("typesetters")
 SILE.pagebuilders = SILE.utilities._module_loader("pagebuilders")
 SILE.types = SILE.utilities._module_loader("types")
-SILE.langugaes = SILE.utilities._module_loader("langugaes")
+SILE.languages = SILE.utilities._module_loader("languages")
 
 -- Internal libraries that don't try to use anything on load, only provide something
 SILE.parserBits = require("core.parserbits")
