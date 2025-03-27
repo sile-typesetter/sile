@@ -82,7 +82,7 @@ function nodeMaker:isSpace (char)
    return self.spaceTypes[self:charData(char).linebreak]
 end
 
-function language.nodeMaker:isQuote (char)
+function nodeMaker:isQuote (char)
    return self.quoteTypes[self:charData(char).linebreak]
 end
 
