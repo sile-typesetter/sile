@@ -4,7 +4,7 @@ local language = pl.class(unicode)
 language._name = "en"
 
 local hyphens = require("languages.en.hyphens")
-SILE.hyphenator.languages["en"] = hyphens
+-- SILE.hyphenator.languages["en"] = hyphens
 
 -- Internationalization stuff
 local en_string = function (num)
