@@ -1,13 +1,6 @@
 --- SILE inputter class.
 -- @interfaces inputters
 
-local _deprecated = [[
-   You appear to be using a document class '%s' programmed for SILE <= v0.12.5.
-   This system was refactored in v0.13.0 and the shims trying to make it
-   work temporarily without refactoring your classes have been removed
-   in v0.14.0. Please see v0.13.0 release notes for help.
-]]
-
 local inputter = pl.class()
 inputter.type = "inputter"
 inputter._name = "base"

@@ -671,7 +671,6 @@ end
 -- @see SILE.classes:registerCommand
 -- @see SILE.packages:registerCommand
 function SILE.registerCommand (name, func, help, pack, cheat)
-   local class = SILE.documentState.documentClass
    if not cheat then
       SU.deprecated(
          "SILE.registerCommand",
@@ -684,11 +683,9 @@ function SILE.registerCommand (name, func, help, pack, cheat)
          ]]
       )
    end
-   -- Shimming until we have all scope cheating removed from core
-   if not cheat or not class or class.type ~= "class" then
-      return SILE.classes.base.registerCommand(nil, name, func, help, pack)
-   end
-   return class:registerCommand(name, func, help, pack)
+   local registerCommand = SILE.documentState.documentClass and SILE.documentState.documentClass.registerCommand
+      or SILE.classes.base.registerCommand
+   return registerCommand(nil, name, func, help, pack)
 end
 
 --- Wrap an existing command with new default options.
@@ -713,11 +710,6 @@ function SILE.registerUnit (unit, spec)
       SILE.types.unit[unit] = nil
    end
    SILE.types.unit[unit] = spec
-end
-
-function SILE.paperSizeParser (size)
-   SU.deprecated("SILE.paperSizeParser", "SILE.papersize", "0.15.0", "0.16.0")
-   return SILE.papersize(size)
 end
 
 --- Finalize document processing

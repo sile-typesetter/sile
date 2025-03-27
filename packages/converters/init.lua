@@ -103,9 +103,8 @@ function package:registerCommands ()
       self:register(options.from, options.to, options.command)
    end)
 
-   self:registerCommand("converters:check", function (options, _)
+   self:registerCommand("converters:check", function (_, _)
       SU.deprecated("\\converters:check", nil, "0.14.10", "0.16.0")
-      self:checkConverters(options.source)
    end)
 end
 

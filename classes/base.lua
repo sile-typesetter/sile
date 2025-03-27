@@ -240,7 +240,7 @@ function class:reloadPackage (packname, options)
    return self:loadPackage(packname, options, true)
 end
 
-function class:initPackage (pack, options)
+function class.initPackage ()
    SU.deprecated(
       "class:initPackage(options)",
       "package(options)",
@@ -253,23 +253,6 @@ function class:initPackage (pack, options)
          setup.
       ]]
    )
-   if type(pack) == "table" then
-      if pack.exports then
-         pl.tablex.update(self, pack.exports)
-      end
-      if type(pack.declareSettings) == "function" then
-         pack.declareSettings(self)
-      end
-      if type(pack.registerRawHandlers) == "function" then
-         pack.registerRawHandlers(self)
-      end
-      if type(pack.registerCommands) == "function" then
-         pack.registerCommands(self)
-      end
-      if type(pack.init) == "function" then
-         self:registerPostinit(pack.init, options)
-      end
-   end
 end
 
 --- Register a callback function to be executed after the class initialization has completed.
@@ -447,7 +430,6 @@ function class:registerCommands ()
    end, "Within a macro definition, processes the contents of the macro body.")
 
    self:registerCommand("script", function (options, content)
-      local packopts = packOptions(options)
       local function _deprecated (original, suggested)
          SU.deprecated(
             "\\script",
@@ -474,7 +456,6 @@ function class:registerCommands ()
       end
       if SU.ast.hasContent(content) then
          _deprecated("\\script{...}", "\\lua{...}")
-         return SILE.processString(content[1], options.format or "lua", nil, packopts)
       elseif options.src then
          local module = options.src:gsub("%/", ".")
          local original = (("\\script[src=%s]"):format(options.src))
@@ -483,10 +464,8 @@ function class:registerCommands ()
             module
          )
          _deprecated(original, suggested)
-         return result
       else
          SU.error("\\script function requires inline content or a src file path")
-         return SILE.processString(content[1], options.format or "lua", nil, packopts)
       end
    end, "Runs lua code. The code may be supplied either inline or using src=...")
 

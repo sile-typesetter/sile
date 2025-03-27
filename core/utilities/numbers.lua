@@ -155,31 +155,6 @@ setmetatable(formatNumber, {
                separation of concerns.
             ]]
          )
-         if not case then
-            if options:match("^%l") then
-               case = "lower"
-            elseif options:match("^.%l") then
-               case = "title"
-            else
-               case = "upper"
-            end
-         end
-         if options:lower() == "nth" then
-            SU.deprecated("Format 'nth' in SU.formatNumber", "'ordinal' in SU.formatNumber", "0.14.6", "0.16.0")
-            options = { style = "ordinal" }
-         elseif options:lower() == "string" then
-            options = { style = "string" }
-         elseif options:lower() == "ordinal" and SILE.settings:get("document.language") == "tr" then
-            SU.deprecated(
-               "Format 'ordinal' in Turkish in SU.formatNumber",
-               "'ordinal-string' in SU.formatNumber",
-               "0.14.6",
-               "0.16.0"
-            )
-            options = { style = "ordinal-string" }
-         else
-            options = { system = options }
-         end
       end
       -- END COMPATIBILITY SHIM
 

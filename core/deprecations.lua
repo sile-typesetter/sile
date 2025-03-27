@@ -27,9 +27,8 @@ SILE.defaultTypesetter = function ()
    SU.deprecated("SILE.defaultTypesetter", "SILE.typesetters.base", "0.14.6", "0.15.0")
 end
 
-SILE.readFile = function (filename)
+SILE.readFile = function ()
    SU.deprecated("SILE.readFile", "SILE.processFile", "0.14.0", "0.16.0")
-   return SILE.processFile(filename)
 end
 
 local usetypes = function (type)
@@ -47,7 +46,6 @@ local usetypes = function (type)
          Please substitute 'SILE.%s()' with 'SILE.types.%s()'.
       ]]):format(type, type)
    )
-   return SILE.types[type]
 end
 
 SILE.color = setmetatable({}, {
@@ -92,7 +90,6 @@ local usetypes2 = function (old, new, type)
          Please substitute 'SILE.%s.%s()' with 'SILE.types.%s.%s()'.
       ]]):format(old, type, new, type)
    )
-   return SILE.types[new][type]
 end
 
 SILE.nodefactory = setmetatable({}, {
@@ -107,7 +104,7 @@ SILE.units = setmetatable({}, {
    end,
 })
 
-SILE.colorparser = function (input)
+SILE.colorparser = function ()
    SU.deprecated(
       "SILE.colorparser",
       "SILE.types.color",
@@ -115,10 +112,9 @@ SILE.colorparser = function (input)
       "0.16.0",
       [[Color results are now color objects, not just tables with relevant values.]]
    )
-   return SILE.types.color(input)
 end
 
-function SILE.doTexlike (doc)
+function SILE.doTexlike ()
    SU.deprecated(
       "SILE.doTexlike",
       "SILE.processString",
@@ -126,7 +122,6 @@ function SILE.doTexlike (doc)
       "0.16.0",
       [[Add format argument "sil" to skip content detection and assume SIL input.]]
    )
-   return SILE.processString(doc, "sil")
 end
 
 local nopackagemanager = function ()
@@ -151,6 +146,10 @@ SILE.PackageManager = {}
 setmetatable(SILE.PackageManager, {
    __index = nopackagemanager,
 })
+
+function SILE.paperSizeParser ()
+   SU.deprecated("SILE.paperSizeParser", "SILE.papersize", "0.15.0", "0.16.0")
+end
 
 -- luacheck: ignore updatePackage
 -- luacheck: ignore installPackage

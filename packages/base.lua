@@ -104,15 +104,9 @@ local _deprecate_exports_table = [[
   them in the document class's list of loaded packages rather than the
   legacy solution of calling them from an exports table.]]
 
-function package:deprecatedExport (name, func, noclass, notable)
+function package:deprecatedExport (name, _, noclass, notable)
    if not noclass then
-      self.class[name] = function (...)
-         -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
-         local inputs = { ... }
-         -- local inputs = table.unpack({...}, 1, select("#", ...))
-         if type(inputs[1]) ~= "table" or inputs[1].type ~= "class" then
-            table.insert(inputs, 1, self.class)
-         end
+      self.class[name] = function ()
          SU.deprecated(
             ("class.%s"):format(name),
             ("class.packages.%s:%s"):format(self._name, name),
@@ -120,16 +114,11 @@ function package:deprecatedExport (name, func, noclass, notable)
             "0.16.0",
             _deprecate_class_funcs
          )
-         return func(pl.utils.unpack(inputs, 1, select("#", ...) + 1))
       end
    end
 
    if not notable then
-      self.exports[name] = function (...)
-         local inputs = { ... }
-         if type(inputs[1]) ~= "table" or inputs[1].type ~= "package" then
-            table.insert(inputs, 1, self)
-         end
+      self.exports[name] = function ()
          SU.deprecated(
             ("require('packages.%s').exports.%s"):format(self._name, name),
             ("class.packages.%s:%s"):format(self._name, name),
@@ -137,7 +126,6 @@ function package:deprecatedExport (name, func, noclass, notable)
             "0.16.0",
             _deprecate_exports_table
          )
-         return func(pl.utils.unpack(inputs, 1, select("#", ...) + 1))
       end
    end
 end
