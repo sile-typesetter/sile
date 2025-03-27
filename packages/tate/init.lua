@@ -106,10 +106,7 @@ function package:registerCommands ()
          return SILE.process(content)
       end
       -- SILE.typesetter:pushGlue({
-      --   width = SILE.types.length.new({length = SILE.toPoints("0.5zw"),
-      --                            stretch = SILE.toPoints("0.25zw"),
-      --                             shrink = SILE.toPoints("0.25zw")
-      --                           })
+      --   width = SILE.types.length("0.5zw", "0.25zw", "0.25zw"):absolute() })
       -- })
       SILE.settings:temporarily(function ()
          SILE.settings:set("document.language", "und")
@@ -122,10 +119,7 @@ function package:registerCommands ()
          end)
       end)
       -- SILE.typesetter:pushGlue({
-      --   width = SILE.types.length.new({length = SILE.toPoints("0.5zw"),
-      --                            stretch = SILE.toPoints("0.25zw"),
-      --                             shrink = SILE.toPoints("0.25zw")
-      --                           })
+      --   width = SILE.types.length("0.5zw", "0.25zw", "0.25zw"):absolute() })
       -- })
    end)
 end
