@@ -1,10 +1,11 @@
 local chardata = require("char-def")
 
 local nodeMaker = pl.class()
+nodeMaker.type = "nodemaker"
 nodeMaker._name = "base"
 
-function nodeMaker:_init (name, options)
-   self._name = name
+function nodeMaker:_init (language, options)
+   self._name = language._name
    self.contents = {}
    self.options = options
    self.token = ""

@@ -6,13 +6,69 @@ local chardata = require("char-def")
 local nodeMaker = pl.class(base)
 nodeMaker._name = "unicode"
 
-function nodeMaker:_init (name, options)
-   base._init(self, name, options)
+function nodeMaker:_init (language, options)
+   base._init(self, language, options)
    self.breakingTypes = { ba = true, zw = true }
    self.puctuationTypes = { po = true }
    self.quoteTypes = {} -- quote linebreak category is ambiguous depending on the language
    self.spaceTypes = { sp = true }
    self.wordTypes = { cm = true }
+end
+
+function nodeMaker:dealWith (item)
+   local char = item.text
+   local cp = SU.codepoint(char)
+   local thistype = chardata[cp] and chardata[cp].linebreak
+   if self:isSpace(item.text) then
+      self:makeToken()
+      self:makeGlue(item)
+   elseif self:isActiveNonBreakingSpace(item.text) then
+      self:makeToken()
+      self:makeNonBreakingSpace()
+   elseif self:isBreaking(item.text) then
+      self:addToken(char, item)
+      self:makeToken()
+      self:makePenalty(0)
+   elseif self:isQuote(item.text) then
+      self:addToken(char, item)
+      self:makeToken()
+   elseif self.lasttype and (thistype and thistype ~= self.lasttype and not self:isWord(thistype)) then
+      self:addToken(char, item)
+   else
+      self:letterspace()
+      self:addToken(char, item)
+   end
+   self.lasttype = thistype
+end
+
+function nodeMaker:handleInitialGlue (items)
+   local i = 1
+   while i <= #items do
+      local item = items[i]
+      if self:isSpace(item.text) then
+         self:makeGlue(item)
+      else
+         break
+      end
+      i = i + 1
+   end
+   return i, items
+end
+
+function nodeMaker:letterspace ()
+   if not SILE.settings:get("document.letterspaceglue") then
+      return
+   end
+   if self.token then
+      self:makeToken()
+   end
+   if self.lastnode and self.lastnode ~= "glue" then
+      local w = SILE.settings:get("document.letterspaceglue").width
+      SU.debug("tokenizer", "Letter space glue:", w)
+      coroutine.yield(SILE.types.node.kern({ width = w }))
+      self.lastnode = "glue"
+      self.lasttype = "sp"
+   end
 end
 
 function nodeMaker.isICUBreakHere (_, chunks, item)

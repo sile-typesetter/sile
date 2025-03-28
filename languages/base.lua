@@ -19,6 +19,8 @@ local require_ftl = loadkit.make_loader("ftl", function (file)
    return assert(fluent:add_messages(contents))
 end)
 
+-- language.nodeMaker = nodeMaker()
+
 function language:_init ()
    self:_declareBaseSettings()
    self:declareSettings()
@@ -27,11 +29,12 @@ function language:_init ()
    self:loadHyphenationData()
    self:loadMessages()
    self:activate()
-   self.nodeMaker = nodeMaker(self._name)
 end
 
-function language._post_init (_)
-   SU.error("whose nodeMaker is it anyway?")
+function language:_post_init ()
+   if not self.nodeMaker then
+      self.nodeMaker = nodeMaker(self._name)
+   end
 end
 
 function language:activate()
