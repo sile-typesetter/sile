@@ -46,7 +46,6 @@ local function init ()
       SILE.outputter = SILE.outputters.dummy()
    end
    SILE.pagebuilder = SILE.pagebuilders.default()
-   SILE.language = SILE.languages.en()
    io.stdout:setvbuf("no")
    if SU.debugging("profile") then
       ProFi = require("ProFi")

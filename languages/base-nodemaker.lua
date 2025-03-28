@@ -1,3 +1,5 @@
+local chardata = require("char-def")
+
 local nodeMaker = pl.class()
 nodeMaker._name = "base"
 

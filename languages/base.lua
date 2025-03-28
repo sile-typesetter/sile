@@ -30,7 +30,7 @@ function language:_init ()
    self.nodeMaker = nodeMaker(self._name)
 end
 
-function language:_post_init ()
+function language._post_init (_)
    SU.error("whose nodeMaker is it anyway?")
 end
 
@@ -45,7 +45,7 @@ function language:getShortcode()
    return self._name
 end
 
-function language:loadMessages()
+function language.loadMessages(_)
    language = language or SILE.settings:get("document.language")
    language = cldr.locales[language] and language or "und"
    local langresource = string.format("languages.%s", language)
@@ -82,17 +82,17 @@ end
 
 function language:loadHyphenationData ()
    local code = self:getShortcode()
-   local data = require(("languages.%s.hyphens"):format(code))
+   local _ = require(("languages.%s.hyphens"):format(code))
 end
 
-function language:_declareBaseSettings ()
+function language._declareBaseSettings (_)
    SILE.settings:declare({
       parameter = "document.language",
       type = "string",
       default = "en",
-      hook = function (language)
-         if not SILE.language or SILE.language:getShortcode() ~= language then
-            SILE.language = SILE.languages[language]()
+      hook = function (lang)
+         if not SILE.language or SILE.language:getShortcode() ~= lang then
+            SILE.language = SILE.languages[lang]()
          end
       end,
       help = "Locale for localized language support",
@@ -165,12 +165,12 @@ function language:_registerBaseCommands ()
    end, nil, nil, true)
 
    self:registerCommand("hyphenator:add-exceptions", function (options, content)
-      local language = options.lang or SILE.settings:get("document.language") or "und"
-      SILE.languageSupport.loadLanguage(language)
-      initHyphenator(language)
+      local lang = options.lang or SILE.settings:get("document.language") or "und"
+      SILE.languageSupport.loadLanguage(lang)
+      initHyphenator(lang)
       for token in SU.gtoke(content[1]) do
          if token.string then
-            registerException(SILE._hyphenators[language], token.string)
+            registerException(SILE._hyphenators[lang], token.string)
          end
       end
    end, nil, nil, true)
