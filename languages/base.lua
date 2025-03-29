@@ -84,11 +84,6 @@ function language.loadMessages(_)
    fluent:set_locale(original_language)
 end
 
-function language:loadHyphenationData ()
-   local code = self:getShortcode()
-   local _ = require(("languages.%s.hyphens"):format(code))
-end
-
 function language._declareBaseSettings (_)
    SILE.settings:declare({
       parameter = "document.language",
