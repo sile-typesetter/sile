@@ -25,6 +25,7 @@ function language:_init ()
    self:loadMessages()
    self:setupNodeMaker()
    self:setupHyphenator()
+   self:activate()
 end
 
 function language:setupNodeMaker ()
