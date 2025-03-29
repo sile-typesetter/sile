@@ -7,6 +7,14 @@ hyphenator._name = "base"
 function hyphenator:_init (language)
    self.language = language
    self:registerCommands()
+   self:loadPatterns()
+end
+
+function language:loadPatterns ()
+   local code = self.language:getShortcode()
+   local hyphens = require(("languages.%s.hyphens"):format(code))
+   self.patterns = hyphens.patterns
+   self.exceptions = hyphens.exceptions
 end
 
 function hyphenator:registerCommands ()
