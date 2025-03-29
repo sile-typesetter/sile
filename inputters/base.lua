@@ -12,14 +12,12 @@ local inputter = pl.class()
 inputter.type = "inputter"
 inputter._name = "base"
 
-inputter._docclass = nil
-
 function inputter:_init (options)
    SU._avoid_base_class_use(self)
    self.options = options or {}
 end
 
-function inputter:classInit (options)
+function inputter.classInit (_, options)
    options = pl.tablex.merge(options, SILE.input.options, true)
    local constructor, class
    if SILE.scratch.class_from_uses then
@@ -28,7 +26,7 @@ function inputter:classInit (options)
    end
    class = SILE.input.class or class or options.class or "plain"
    options.class = nil -- don't pass already consumed class option to constructor
-   constructor = self._docclass or constructor or SILE.require(class, "classes", true)
+   constructor = constructor or SILE.require(class, "classes", true)
    if constructor.id then
       SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", string.format(_deprecated, constructor.id))
    end
