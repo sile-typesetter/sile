@@ -3,10 +3,10 @@ local base = require("languages.base-nodemaker")
 local icu = require("justenoughicu")
 local chardata = require("char-def")
 
-local nodeMaker = pl.class(base)
-nodeMaker._name = "unicode"
+local nodemaker = pl.class(base)
+nodemaker._name = "unicode"
 
-function nodeMaker:_init (language, options)
+function nodemaker:_init (language, options)
    base._init(self, language, options)
    self.breakingTypes = { ba = true, zw = true }
    self.puctuationTypes = { po = true }
@@ -15,7 +15,7 @@ function nodeMaker:_init (language, options)
    self.wordTypes = { cm = true }
 end
 
-function nodeMaker:dealWith (item)
+function nodemaker:dealWith (item)
    local char = item.text
    local cp = SU.codepoint(char)
    local thistype = chardata[cp] and chardata[cp].linebreak
@@ -41,7 +41,7 @@ function nodeMaker:dealWith (item)
    self.lasttype = thistype
 end
 
-function nodeMaker:handleInitialGlue (items)
+function nodemaker:handleInitialGlue (items)
    local i = 1
    while i <= #items do
       local item = items[i]
@@ -55,7 +55,7 @@ function nodeMaker:handleInitialGlue (items)
    return i, items
 end
 
-function nodeMaker:letterspace ()
+function nodemaker:letterspace ()
    if not SILE.settings:get("document.letterspaceglue") then
       return
    end
@@ -71,11 +71,11 @@ function nodeMaker:letterspace ()
    end
 end
 
-function nodeMaker.isICUBreakHere (_, chunks, item)
+function nodemaker.isICUBreakHere (_, chunks, item)
    return chunks[1] and (item.index >= chunks[1].index)
 end
 
-function nodeMaker:handleICUBreak (chunks, item)
+function nodemaker:handleICUBreak (chunks, item)
    -- The ICU library has told us there is a breakpoint at
    -- this index. We need to...
    local bp = chunks[1]
@@ -95,7 +95,7 @@ function nodeMaker:handleICUBreak (chunks, item)
    return chunks
 end
 
-function nodeMaker:handleWordBreak (item)
+function nodemaker:handleWordBreak (item)
    self:makeToken()
    if self:isSpace(item.text) then
       -- Spacing word break
@@ -122,7 +122,7 @@ function nodeMaker:_handleWordBreakRepeatHyphen (item)
          self.lastnode = "discretionary"
       end
    else
-      handleWordBreak(self, item)
+      self:handleWordBreak(item)
    end
 end
 
@@ -144,17 +144,7 @@ function nodeMaker:handleLineBreak (item, subtype)
    self.lasttype = chardata[cp] and chardata[cp].linebreak
 end
 
-function nodeMaker:_handleLineBreakRepeatHyphen (item, subtype)
-   if self.lastnode == "discretionary" then
-      -- Initial word boundary after a discretionary:
-      -- Bypass it and just deal with the token.
-      self:dealWith(item)
-   else
-      handleLineBreak(self, item, subtype)
-   end
-end
-
-function nodeMaker:iterator (items)
+function nodemaker:iterator (items)
    local fulltext = ""
    for i = 1, #items do
       fulltext = fulltext .. items[i].text
@@ -177,4 +167,4 @@ function nodeMaker:iterator (items)
    end)
 end
 
-return nodeMaker
+return nodemaker
