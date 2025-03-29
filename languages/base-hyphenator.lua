@@ -4,7 +4,8 @@ local hyphenator = pl.class()
 hyphenator.type = "hyphenator"
 hyphenator._name = "base"
 
-function hyphenator:_init ()
+function hyphenator:_init (language)
+   self.language = language
    self:registerCommands()
 end
 
