@@ -122,7 +122,7 @@ function nodeMaker:_handleWordBreakRepeatHyphen (item)
          self.lastnode = "discretionary"
       end
    else
-      handleWordBreak(self, item)
+      self:handleWordBreak(item)
    end
 end
 
@@ -150,7 +150,7 @@ function nodeMaker:_handleLineBreakRepeatHyphen (item, subtype)
       -- Bypass it and just deal with the token.
       self:dealWith(item)
    else
-      handleLineBreak(self, item, subtype)
+      self:handleLineBreak(item, subtype)
    end
 end
 
