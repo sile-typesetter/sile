@@ -1,3 +1,5 @@
+-- Note: based on Knuth-Liang algorith, formerly known in the SILE code base as liang-hyphenator
+
 local hyphenator = pl.class()
 hyphenator.type = "hyphenator"
 hyphenator._name = "base"
