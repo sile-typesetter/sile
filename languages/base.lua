@@ -28,6 +28,7 @@ function language:_init ()
    self:activate()
 end
 
+-- TODO: reconsider 'setup' and 'nodeMaker'
 function language:setupNodeMaker ()
    self.nodeMaker = require("languages.base-nodemaker")
 end
