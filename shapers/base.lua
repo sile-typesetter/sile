@@ -27,13 +27,18 @@ shaper._name = "base"
 
 function shaper:_init ()
    SU._avoid_base_class_use(self)
-
    -- Function for testing shaping in the repl
    -- TODO, figure out a way to explicitly register things in the repl env
    _G["makenodes"] = function (token, options)
       return SILE.shaper:createNnodes(token, SILE.font.loadDefaults(options or {}))
    end
+   self:_declareBaseSettings()
+   self:declareSettings()
+end
 
+function shaper.declareSettings (_) end
+
+function shaper._declareBaseSettings (_)
    SILE.settings:declare({
       parameter = "shaper.variablespaces",
       type = "boolean",
@@ -129,11 +134,13 @@ function shaper:createNnodes (token, options)
    if #items < 1 then
       return {}
    end
-   local lang = options.language
-   SILE.languageSupport.loadLanguage(lang)
-   local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
+   local language = SILE.typesetter.language
+   if language._name ~= options.language then
+      SU.error("Node shaper language does not match current typesetter")
+   end
    local nodes = {}
-   for node in nodeMaker(options):iterator(items, token) do
+   local nodemaker = language:nodeMaker(options)
+   for node in nodemaker:iterator(items, token) do
       table.insert(nodes, node)
    end
    return nodes

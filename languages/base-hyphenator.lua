@@ -1,3 +1,48 @@
+-- Note: based on Knuth-Liang algorith, formerly known in the SILE code base as liang-hyphenator
+
+local hyphenator = pl.class()
+hyphenator.type = "hyphenator"
+hyphenator._name = "base"
+
+function hyphenator:_init (language)
+   self.language = language
+   self:registerCommands()
+   self:loadPatterns()
+end
+
+function language:loadPatterns ()
+   local code = self.language:getShortcode()
+   local hyphens = require(("languages.%s.hyphens"):format(code))
+   self.patterns = hyphens.patterns
+   self.exceptions = hyphens.exceptions
+end
+
+function hyphenator:registerCommands ()
+   self:registerCommand("hyphenator:add-exceptions", function (options, content)
+      local lang = options.lang or SILE.settings:get("document.language") or "und"
+      SILE.languageSupport.loadLanguage(lang)
+      initHyphenator(lang)
+      for token in SU.gtoke(content[1]) do
+         if token.string then
+            registerException(SILE._hyphenators[lang], token.string)
+         end
+      end
+   end, nil, nil, true)
+end
+
+function hyphenator.registerCommand (_, name, func, help, pack)
+   SILE.Commands[name] = func
+   if not pack then
+      local where = debug.getinfo(2).source
+      pack = where:match("(%w+).lua")
+   end
+   --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
+   SILE.Help[name] = {
+      description = help,
+      where = pack,
+   }
+end
+
 local function addPattern (hyphenator, pattern)
    local trie = hyphenator.trie
    local bits = SU.splitUtf8(pattern)
@@ -110,10 +155,6 @@ SILE._hyphenate = function (self, text)
    return pieces
 end
 
-SILE.hyphenator = {}
-SILE.hyphenator.languages = {}
-SILE._hyphenators = {}
-
 local function defaultHyphenateSegments (node, segments, _)
    local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options)
    return SILE.types.node.discretionary({ prebreak = hyphen }), segments
@@ -129,7 +170,26 @@ local initHyphenator = function (lang)
    end
 end
 
-local hyphenateNode = function (node)
+function language:showHyphenationPoints (word, language)
+   language = language or "en"
+   initHyphenator(language)
+   return SU.concat(SILE._hyphenate(SILE._hyphenators[language], word), SILE.settings:get("font.hyphenchar"))
+end
+
+function language:hyphenate (nodelist)
+   local newlist = {}
+   for _, node in ipairs(nodelist) do
+      local newnodes = self:hyphenateNode(node)
+      if newnodes then
+         for _, n in ipairs(newnodes) do
+            table.insert(newlist, n)
+         end
+      end
+   end
+   return newlist
+end
+
+function language:hyphenateNode (node)
    if not node.language then
       return { node }
    end
@@ -170,32 +230,4 @@ local hyphenateNode = function (node)
    return { node }
 end
 
-SILE.showHyphenationPoints = function (word, language)
-   language = language or "en"
-   initHyphenator(language)
-   return SU.concat(SILE._hyphenate(SILE._hyphenators[language], word), SILE.settings:get("font.hyphenchar"))
-end
-
-SILE.hyphenate = function (nodelist)
-   local newlist = {}
-   for _, node in ipairs(nodelist) do
-      local newnodes = hyphenateNode(node)
-      if newnodes then
-         for _, n in ipairs(newnodes) do
-            table.insert(newlist, n)
-         end
-      end
-   end
-   return newlist
-end
-
-SILE.registerCommand("hyphenator:add-exceptions", function (options, content)
-   local language = options.lang or SILE.settings:get("document.language") or "und"
-   SILE.languageSupport.loadLanguage(language)
-   initHyphenator(language)
-   for token in SU.gtoke(content[1]) do
-      if token.string then
-         registerException(SILE._hyphenators[language], token.string)
-      end
-   end
-end, nil, nil, true)
+return hyphenator

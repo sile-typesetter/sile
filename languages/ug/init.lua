@@ -1,19 +1,26 @@
 -- Thanks to Tom Milo of Decotype for challenging me to implement
 -- Uyghur support, providing the methodology and basic algorithms,
 -- and preventing me from leaving the Granshan 2015 conference until
--- I had most of this working.
+-- I had most of this working. — Simon Cozens
+
+local base = require("languages.bas"e)
 
 -- Uyghur is Turkish, right?
-SILE.languageSupport.loadLanguage("tr")
+local tr = require("languages.tr")
 
 local chardata = require("char-def")
 
-SILE.settings:declare({
-   parameter = "languages.ug.hyphenoffset",
-   help = "Space added between text and hyphen",
-   type = "glue or nil",
-   default = SILE.types.node.glue("1pt"),
-})
+local language = pl.class(tr)
+language._name = "ug"
+
+function language:declareSettings ()
+   SILE.settings:declare({
+      parameter = "languages.ug.hyphenoffset",
+      help = "Space added between text and hyphen",
+      type = "glue or nil",
+      default = SILE.types.node.glue("1pt"),
+   })
+end
 
 local transliteration = {
    -- I'm going to pretend that normalization isn't a problem
@@ -112,12 +119,12 @@ end
 
 -- function debugUyghur(word)
 --   SILE.languageSupport.loadLanguage("ug")
---   print(SILE.showHyphenationPoints(word,"ug"))
+--   print(self:showHyphenationPoints(word,"ug"))
 --   local items = SILE._hyphenate(SILE._hyphenators["ug"],word)
 --   print(reorderHyphenations(items,true))
 -- end
 
-SILE.hyphenator.languages.ug = function (n)
+function language:hyphenateNode (n)
    local latin = arabicToLatin(n.text)
    SU.debug("uyghur", "Original:", n.text, "->", latin, "->")
    local state = n.options

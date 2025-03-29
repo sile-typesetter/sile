@@ -21,7 +21,6 @@ function package:registerCommands ()
          sy = box_height / height
          sx = sy
       end
-
       SILE.typesetter:pushHbox({
          width = box_width / sx,
          height = box_height / sy,

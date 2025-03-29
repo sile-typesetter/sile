@@ -59,7 +59,6 @@ function package:registerCommands ()
       -- Restore the settings to the top of the queue, which should be the document #986
       SILE.settings:toplevelState()
       SILE.typesetter:initFrame(frame)
-
       -- Reset settings the document may have but should not be applied to footnotes
       -- See also same resets in folio package
       for _, v in ipairs({
@@ -70,7 +69,6 @@ function package:registerCommands ()
       }) do
          SILE.settings:set(v, SILE.settings.defaults[v])
       end
-
       -- Apply the font before boxing, so relative baselineskip applies #1027
       local material
       SILE.call("footnote:font", {}, function ()

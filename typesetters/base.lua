@@ -56,6 +56,7 @@ end
 function typesetter:_post_init ()
    self:initFrame(self.frame)
    self:initState()
+   self.language = SILE.languages.en()
 end
 
 --- Declare new setting types
@@ -66,7 +67,6 @@ function typesetter.declareSettings (_)
    -- On the other hand, it's fairly acceptable to have them made global:
    -- Any derived typesetter, whatever its implementation, should likely provide
    -- some logic for them (= widows, orphans, spacing, etc.)
-
    SILE.settings:declare({
       parameter = "typesetter.widowpenalty",
       type = "integer",

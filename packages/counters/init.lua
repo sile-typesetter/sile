@@ -76,7 +76,6 @@ end
 function package:registerCommands ()
    self:registerCommand("increment-counter", function (options, _)
       local id = SU.required(options, "id", "increment-counter")
-
       local counter = self.class:getCounter(id)
       if options["set-to"] then
          SU.deprecated("\\increment-counter[set-to=...]", "\\set-counter[value=...]", "0.14.4", "0.16.0")
@@ -94,7 +93,6 @@ function package:registerCommands ()
       "set-counter",
       function (options, _)
          local id = SU.required(options, "id", "set-counter")
-
          local counter = self.class:getCounter(id)
          if options.value then
             counter.value = SU.cast("integer", options.value)
@@ -108,7 +106,6 @@ function package:registerCommands ()
 
    self:registerCommand("show-counter", function (options, _)
       local id = SU.required(options, "id", "show-counter")
-
       local counter = self.class:getCounter(id)
       if options.display then
          SU.deprecated("\\show-counter[display=...]", "\\set-counter[display=...]", "0.14.4", "0.16.0")
@@ -119,7 +116,6 @@ function package:registerCommands ()
 
    self:registerCommand("increment-multilevel-counter", function (options, _)
       local id = SU.required(options, "id", "increment-multilevel-counter")
-
       local counter = self.class:getMultilevelCounter(id)
       local currentLevel = #counter.value
       local level = SU.cast("integer", options.level or currentLevel)
@@ -157,7 +153,6 @@ function package:registerCommands ()
       function (options, _)
          local level = SU.cast("integer", SU.required(options, "level", "set-multilevel-counter"))
          local id = SU.required(options, "id", "set-multilevel-counter")
-
          local counter = self.class:getMultilevelCounter(id)
          local currentLevel = #counter.value
          if options.value then
@@ -200,7 +195,6 @@ function package:registerCommands ()
 
    self:registerCommand("show-multilevel-counter", function (options, _)
       local id = SU.required(options, "id", "show-multilevel-counter")
-
       local counter = self.class:getMultilevelCounter(id)
       if options.display then
          SU.deprecated(
@@ -211,7 +205,6 @@ function package:registerCommands ()
          )
          counter.display[#counter.value] = options.display
       end
-
       SILE.typesetter:typeset(self:formatMultilevelCounter(counter, options))
    end, "Outputs the value of the multilevel counter <id>.")
 end
