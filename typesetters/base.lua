@@ -66,7 +66,6 @@ function typesetter.declareSettings (_)
    -- On the other hand, it's fairly acceptable to have them made global:
    -- Any derived typesetter, whatever its implementation, should likely provide
    -- some logic for them (= widows, orphans, spacing, etc.)
-
    SILE.settings:declare({
       parameter = "typesetter.widowpenalty",
       type = "integer",

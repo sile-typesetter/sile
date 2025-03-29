@@ -2,14 +2,7 @@
 -- @interfaces languages
 
 local cldr = require("cldr")
-local loadkit = require("loadkit")
 local setenv = require("rusile").setenv
-
-loadkit.register("ftl", function (file)
-   local contents = assert(file:read("*a"))
-   file:close()
-   return assert(fluent:add_messages(contents))
-end)
 
 SILE.scratch.loaded_languages = {}
 

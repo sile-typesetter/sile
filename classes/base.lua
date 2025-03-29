@@ -55,9 +55,12 @@ function class:_init (options)
       options = {}
    end
    SILE.languageSupport.loadLanguage("und") -- preload for unlocalized fallbacks
+   self:_declareBaseOptions()
    self:declareOptions()
    self:registerRawHandlers()
+   self:_declareBaseSettings()
    self:declareSettings()
+   self:_registerBaseCommands()
    self:registerCommands()
    self:setOptions(options)
    self:declareFrames(self.defaultFrameset)
@@ -110,7 +113,9 @@ function class:declareOption (option, setter)
    self.options[option] = setter
 end
 
-function class:declareOptions ()
+function class.declareOptions (_) end
+
+function class:_declareBaseOptions ()
    self:declareOption("class", function (_, name)
       if name then
          if self._legacy then
@@ -173,7 +178,9 @@ function class:declareOptions ()
    end)
 end
 
-function class.declareSettings (_)
+function class.declareSettings (_) end
+
+function class._declareBaseSettings (_)
    SILE.settings:declare({
       parameter = "current.parindent",
       type = "glue or nil",
@@ -362,7 +369,10 @@ local function packOptions (options)
    return relevant
 end
 
-function class:registerCommands ()
+function class.registerCommands () end
+
+-- These need refactoring probably somewhere outside of the document class system
+function class:_registerBaseCommands ()
    local function replaceProcessBy (replacement, tree)
       if type(tree) ~= "table" then
          return tree

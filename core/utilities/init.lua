@@ -867,4 +867,17 @@ function utilities._avoid_base_class_use (obj)
    end
 end
 
+-- On demand loader, allows modules to be loaded into a specific scope but
+-- only when/if accessed.
+function utilities._module_loader (scope)
+   return setmetatable({}, {
+      __index = function (self, key)
+         -- local var = rawget(self, key)
+         local m = require(("%s.%s"):format(scope, key))
+         self[key] = m
+         return m
+      end,
+   })
+end
+
 return utilities

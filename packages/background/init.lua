@@ -43,7 +43,6 @@ function package:registerCommands ()
          background.bg = nil
          return
       end
-
       local allpages = SU.boolean(options.allpages, true)
       background.allpages = allpages
       local color = options.color and SILE.types.color(options.color)
