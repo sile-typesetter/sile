@@ -48,6 +48,7 @@ function language:getShortcode()
    return self._name
 end
 
+-- TODO: not about hyphenation rules per warning....
 function language.loadMessages(_)
    language = language or SILE.settings:get("document.language")
    language = cldr.locales[language] and language or "und"
