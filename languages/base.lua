@@ -23,7 +23,6 @@ function language:_init ()
    self:_registerBaseCommands()
    self:registerCommands()
    self:loadMessages()
-   self:activate()
    self:setupNodeMaker()
    self:setupHyphenator()
 end
