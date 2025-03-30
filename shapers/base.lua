@@ -134,10 +134,8 @@ function shaper:createNnodes (token, options)
    if #items < 1 then
       return {}
    end
-   local language = SILE.typesetter.language
-   if language._name ~= options.language then
-      SU.error("Node shaper language does not match current typesetter")
-   end
+   -- TODO this shouldn't need a private interface to a different module type
+   local language = SILE.typesetter:_cacheLanguage(options.language)
    local nodes = {}
    local nodemaker = language:nodemaker(options)
    for node in nodemaker:iterator(items, token) do
