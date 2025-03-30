@@ -105,11 +105,6 @@ SILE.registerCommand("font", function (options, content)
    end
    if options.script then
       SILE.settings:set("font.script", options.script)
-   elseif SILE.settings:get("document.language") then
-      local lang = SILE.languageSupport.languages[SILE.settings:get("document.language")]
-      if lang and lang.defaultScript then
-         SILE.settings:set("font.script", lang.defaultScript)
-      end
    end
    if options.hyphenchar then
       -- must be in the form of, for example, "-" or "U+2010" or "0x2010" (Unicode hex codepoint)
