@@ -3,11 +3,12 @@ local base = require("languages.base")
 local language = pl.class(base)
 language._name = "unicode"
 
-local nodeMaker = require("languages.unicode-nodemaker")
+function language:_init (typesetter)
+   base._init(self, typesetter)
+end
 
-function language:_init ()
-   base._init(self)
-   self.nodeMaker = nodeMaker
+function language:setupNodeMaker ()
+   self.nodemaker = require("languages.unicode-nodemaker")
 end
 
 return language

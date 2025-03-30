@@ -4,7 +4,14 @@ local nodemaker = pl.class()
 nodemaker.type = "nodemaker"
 nodemaker._name = "base"
 
-function nodeMaker:_init (language, options)
+-- To be set on instanciation per language specifications
+nodemaker.breakingTypes = {}
+nodemaker.puctuationTypes = {}
+nodemaker.quoteTypes = {}
+nodemaker.spaceTypes = {}
+nodemaker.wordTypes = {}
+
+function nodemaker:_init (language, options)
    self._name = language._name
    self.contents = {}
    self.options = options
