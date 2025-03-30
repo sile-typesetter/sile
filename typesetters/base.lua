@@ -46,6 +46,8 @@ end
 -- @param frame A initial frame to attach the typesetter to.
 function typesetter:_init (frame)
    SU._avoid_base_class_use(self)
+   -- TODO: make class first arg of typesetter init, ditch globals hack
+   self.class = SILE.documentState.documentClass
    self:declareSettings()
    self.hooks = {}
    self.breadcrumbs = SU.breadcrumbs()
@@ -56,19 +58,29 @@ end
 function typesetter:_post_init ()
    self:initFrame(self.frame)
    self:initState()
-   -- SU.dump{ lang, self.language, "ntoheu" }
+   self.language = SILE.languages.en(self)
+   -- Since it is the default and will get created as an instance before the callback triggers for the first *change*,
+   -- we need to force the first load here.
+   self:switchLanguage("en", true)
 end
 
 typesetter._language_cache = {}
 
-function typesetter:switchLanguage(lang)
-   SU.dump{ lang, self.language, "ntoheu" }
-   return true
-   -- local current = self.language:getShortcode()
-   -- if current ~= lang then
-   --    self._language_cache[current] = self.language
-   --    self.language = self._language_cache[lang] or SILE.languages[lang](self)
-   -- end
+function typesetter:_cacheLanguage (lang)
+   if not self._language_cache[lang] then
+      self._language_cache[lang] = SILE.languages[lang](self)
+      SU.debug("typesetter", "Caching language in typesetter", lang)
+   end
+   return self._language_cache[lang]
+end
+
+function typesetter:switchLanguage (lang, force)
+   local current = self.language:_getLegacyCode()
+   if force or current ~= lang then
+      self.language = self:_cacheLanguage(lang)
+      self.language:activate()
+      SU.debug("typesetter", "Switching active language from", current, "to", self.language._name)
+   end
 end
 
 --- Declare new setting types
