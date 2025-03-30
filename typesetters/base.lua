@@ -388,12 +388,12 @@ function typesetter:initline ()
    end -- https://github.com/sile-typesetter/sile/issues/1718
    if #self.state.nodes == 0 then
       table.insert(self.state.nodes, SILE.types.node.zerohbox())
-      SILE.documentState.documentClass.newPar(self)
+      self.class.newPar(self)
    end
 end
 
 function typesetter:endline ()
-   SILE.documentState.documentClass.endPar(self)
+   self.class.endPar(self)
    self:leaveHmode()
    if SILE.settings:get("current.hangIndent") then
       SILE.settings:set("current.hangIndent", nil)
@@ -894,8 +894,8 @@ function typesetter:initNextFrame ()
       end
    else
       self:runHooks("pageend")
-      SILE.documentState.documentClass:endPage()
-      self:initFrame(SILE.documentState.documentClass:newPage())
+      self.class:endPage()
+      self:initFrame(self.class:newPage())
    end
 
    if not SU.feq(oldframe:getLineWidth(), self.frame:getLineWidth()) then
