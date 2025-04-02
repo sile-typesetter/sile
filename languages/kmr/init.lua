@@ -1,2 +1,6 @@
-local hyphens = require("languages.kmr.hyphens-tex")
-SILE.hyphenator.languages["kmr"] = hyphens
+local unicode = require("languages.unicode")
+
+local language = pl.class(unicode)
+language._name = "kmr"
+
+return language

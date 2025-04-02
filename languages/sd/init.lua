@@ -1,2 +1,6 @@
-local hyphens = require("languages.sd.hyphens")
-SILE.hyphenator.languages["sd"] = hyphens
+local unicode = require("languages.unicode")
+
+local language = pl.class(unicode)
+language._name = "sd"
+
+return language
