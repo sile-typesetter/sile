@@ -1,2 +1,6 @@
-local hyphens = require("languages.ga.hyphens-tex")
-SILE.hyphenator.languages["ga"] = hyphens
+local unicode = require("languages.unicode")
+
+local language = pl.class(unicode)
+language._name = "ga"
+
+return language

@@ -8,7 +8,4 @@ function language.declareSettings (_)
    SILE.settings:set("font.script", "Knda")
 end
 
--- local hyphens = require("languages.kn.hyphens-tex")
--- SILE.hyphenator.languages["kn"] = hyphens
-
 return language
