@@ -1,2 +1,6 @@
-local hyphens = require("languages.sr-cyrl.hyphens-tex")
-SILE.hyphenator.languages["sr"] = hyphens
+local unicode = require("languages.unicode")
+
+local language = pl.class(unicode)
+language._name = "sr"
+
+return language

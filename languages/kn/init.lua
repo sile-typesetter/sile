@@ -19,7 +19,4 @@ function language.declareSettings (_)
    end)
 end
 
--- local hyphens = require("languages.kn.hyphens-tex")
--- SILE.hyphenator.languages["kn"] = hyphens
-
 return language

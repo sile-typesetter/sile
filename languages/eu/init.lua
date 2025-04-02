@@ -1,2 +1,6 @@
-local hyphens = require("languages.eu.hyphens-tex")
-SILE.hyphenator.languages["eu"] = hyphens
+local unicode = require("languages.unicode")
+
+local language = pl.class(unicode)
+language._name = "eu"
+
+return language
