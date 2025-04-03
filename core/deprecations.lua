@@ -229,18 +229,9 @@ setmetatable(SILE.languageSupport, {
 })
 
 local nonodemakers = function (_, key)
-   SU.deprecated(
-      "SILE.nodeMakers.<code>",
-      'require("SILE.language.?")', --TODO
-      "0.15.11",
-      "0.17.0",
-      [[
-      ]]
-   )
-   if key == "loadLanguage" then
-      return function (language)
-         require(("languages.%s"):format(language))
-      end
+   return function ()
+      SU.deprecated("SILE.nodeMakers.<code>", ('SILE.typesetter:_cacheLanguage("%s").nodeMaker'):format(key), "0.15.11", "0.17.0")
+      return SILE.typesetter:_cacheLanguage(key).nodeMaker
    end
 end
 
