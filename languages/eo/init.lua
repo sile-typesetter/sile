@@ -1,7 +1,10 @@
 -- Verkita originale por Fredrick BRENNAN (copypaste@kittens.ph) 2022-jare
 -- Original file by Fredrick R. Brennan (copypaste@kittens.ph) in 2022
 
-local hyphenator = require("languages.eo.hyphens")
+local unicode = require("languages.unicode")
+
+local language = pl.class(unicode)
+language._name = "eo"
 
 local function eo_ordinal (n, _)
    if n == nil then
@@ -77,31 +80,32 @@ local eo_string = function (num, _)
    return num == 0 and "nul" or vword
 end
 
-return {
-   init = function ()
-      SILE.hyphenator.languages.eo = hyphenator
+function language.declareSettings (_)
+   SILE.settings:declare({
+      parameter = "languages.eo.ordinal.raisedsuffix",
+      type = "boolean",
+      default = false,
+      help = "Whether to use “ª” or “a” as Esperanto ordinal suffix",
+   })
+   SILE.settings:declare({
+      parameter = "languages.eo.ordinal.hyphenbefore",
+      type = "boolean",
+      default = false,
+      help = "Whether to put a hyphen (-) before Esperanto ordinal suffix",
+   })
+end
 
-      SU.formatNumber.eo = {
-         string = eo_string,
-         ordinal = eo_ordinal,
-      }
+function language:registerCommands ()
+   self:registerCommand("book:chapter:post:eo", function ()
+      SILE.typesetter:typeset(eo_ordinal())
+      SILE.call("medskip", {})
+   end, nil, nil, true)
+end
 
-      SILE.settings:declare({
-         parameter = "languages.eo.ordinal.raisedsuffix",
-         type = "boolean",
-         default = false,
-         help = "Whether to use “ª” or “a” as Esperanto ordinal suffix",
-      })
-      SILE.settings:declare({
-         parameter = "languages.eo.ordinal.hyphenbefore",
-         type = "boolean",
-         default = false,
-         help = "Whether to put a hyphen (-) before Esperanto ordinal suffix",
-      })
-
-      SILE.registerCommand("book:chapter:post:eo", function ()
-         SILE.typesetter:typeset(eo_ordinal())
-         SILE.call("medskip", {})
-      end, nil, nil, true)
-   end,
+-- TODO refactor
+SU.formatNumber.eo = {
+   string = eo_string,
+   ordinal = eo_ordinal,
 }
+
+return language

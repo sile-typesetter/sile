@@ -82,7 +82,6 @@ SILE.Help = {}
 -- @table debugFlags
 SILE.debugFlags = {}
 
-SILE.nodeMakers = {}
 SILE.tokenizers = {}
 SILE.status = {}
 
