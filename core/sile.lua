@@ -82,7 +82,6 @@ SILE.Help = {}
 -- @table debugFlags
 SILE.debugFlags = {}
 
-SILE.tokenizers = {}
 SILE.status = {}
 
 --- The wild-west of stash stuff.

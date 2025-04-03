@@ -240,6 +240,10 @@ setmetatable(SILE.nodeMakers, {
    __index = nonodemakers,
 })
 
+SILE.tokenizers = {}
+setmetatable(SILE.tokenizers, {
+   __index = nonodemakers,
+})
 
 -- luacheck: ignore updatePackage
 -- luacheck: ignore installPackage
