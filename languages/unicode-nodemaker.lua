@@ -109,23 +109,6 @@ function nodeMaker:handleWordBreak (item)
    end
 end
 
-function nodeMaker:_handleWordBreakRepeatHyphen (item)
-   -- According to some language rules, when a break occurs at an explicit hyphen,
-   -- the hyphen gets repeated at the beginning of the new line
-   if item.text == "-" then
-      self:addToken(item.text, item)
-      self:makeToken()
-      if self.lastnode ~= "discretionary" then
-         coroutine.yield(SILE.types.node.discretionary({
-            postbreak = SILE.shaper:createNnodes("-", self.options),
-         }))
-         self.lastnode = "discretionary"
-      end
-   else
-      self:handleWordBreak(item)
-   end
-end
-
 function nodeMaker:handleLineBreak (item, subtype)
    -- Because we are in charge of paragraphing, we
    -- will override space-type line breaks, and treat
@@ -142,16 +125,6 @@ function nodeMaker:handleLineBreak (item, subtype)
    self:addToken(char, item)
    local cp = SU.codepoint(char)
    self.lasttype = chardata[cp] and chardata[cp].linebreak
-end
-
-function nodeMaker:_handleLineBreakRepeatHyphen (item, subtype)
-   if self.lastnode == "discretionary" then
-      -- Initial word boundary after a discretionary:
-      -- Bypass it and just deal with the token.
-      self:dealWith(item)
-   else
-      self:handleLineBreak(item, subtype)
-   end
 end
 
 function nodeMaker:iterator (items)
