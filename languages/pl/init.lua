@@ -1,8 +1,10 @@
-SILE.nodeMakers.pl = pl.class(SILE.nodeMakers.unicode)
+local unicode = require("languages.unicode")
 
--- According to Polish rules, when a break occurs at an explicit hyphen, the hyphen gets repeated on the next line...
-SILE.nodeMakers.pl.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRepeatHyphen
-SILE.nodeMakers.pl.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
+local language = pl.class(unicode)
+language._name = "pl"
 
-local hyphens = require("languages.pl.hyphens-tex")
-SILE.hyphenator.languages["pl"] = hyphens
+function language:setupNodeMaker ()
+   self.nodemaker = require("languages.repeat-hyphen-nodemaker")
+end
+
+return language

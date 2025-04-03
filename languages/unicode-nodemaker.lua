@@ -109,24 +109,7 @@ function nodemaker:handleWordBreak (item)
    end
 end
 
-function nodeMaker:_handleWordBreakRepeatHyphen (item)
-   -- According to some language rules, when a break occurs at an explicit hyphen,
-   -- the hyphen gets repeated at the beginning of the new line
-   if item.text == "-" then
-      self:addToken(item.text, item)
-      self:makeToken()
-      if self.lastnode ~= "discretionary" then
-         coroutine.yield(SILE.types.node.discretionary({
-            postbreak = SILE.shaper:createNnodes("-", self.options),
-         }))
-         self.lastnode = "discretionary"
-      end
-   else
-      self:handleWordBreak(item)
-   end
-end
-
-function nodeMaker:handleLineBreak (item, subtype)
+function nodemaker:handleLineBreak (item, subtype)
    -- Because we are in charge of paragraphing, we
    -- will override space-type line breaks, and treat
    -- them just as ordinary word spaces.

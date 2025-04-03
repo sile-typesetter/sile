@@ -1,6 +1,6 @@
-local base = require("languages.base")
+local unicode = require("languages.unicode")
 
-local language = pl.class(base)
+local language = pl.class(unicode)
 language._name = "und"
 
 return language

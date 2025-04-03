@@ -1,8 +1,10 @@
-SILE.nodeMakers.hr = pl.class(SILE.nodeMakers.unicode)
+local unicode = require("languages.unicode")
 
--- According to Croatian rules, when a break occurs at an explicit hyphen, the hyphen gets repeated on the next line...
-SILE.nodeMakers.hr.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRepeatHyphen
-SILE.nodeMakers.hr.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
+local language = pl.class(unicode)
+language._name = "hr"
 
-local hyphens = require("languages.hr.hyphens-tex")
-SILE.hyphenator.languages["hr"] = hyphens
+function language:setupNodeMaker ()
+   self.nodemaker = require("languages.repeat-hyphen-nodemaker")
+end
+
+return language
