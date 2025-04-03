@@ -119,7 +119,7 @@ SILE.registerCommand("font", function (options, content)
    if SU.ast.hasContent(content) then
       SILE.process(content)
       SILE.settings:popState()
-      if SILE.shaper._name == "harfbuzzWithColor" and lastshaper then
+      if SILE.shaper._name == "harfbuzz-color" and lastshaper then
          SU.debug("color-fonts", "Switching from color fonts shaper back to previous shaper")
          SILE.typesetter:leaveHmode(true)
          lastshaper, SILE.shaper = nil, lastshaper
@@ -228,10 +228,10 @@ local font = {
       local font = ot.parseFont(face)
       if font.cpal then
          SILE.require("packages.color-fonts")
-         if SILE.shaper._name ~= "harfbuzzWithColor" then
+         if SILE.shaper._name ~= "harfbuzz-color" then
             SU.debug("color-fonts", "Switching to color font Shaper")
             SILE.typesetter:leaveHmode(true)
-            lastshaper, SILE.shaper = SILE.shaper, SILE.shapers.harfbuzzWithColor()
+            lastshaper, SILE.shaper = SILE.shaper, SILE.shapers["harfbuzz-color"]()
          end
       end
    end,
