@@ -2,14 +2,20 @@
 \use[module=packages.retrograde,target=v0.14.17]
 \nofolios
 \language[main=tr]
-\lua{SILE.typesetter:typeset(SILE.showHyphenationPoints("rab'bin", "tr"))}
+\begin{lua}
+function typeset_hyphens (word, lang)
+   local hyphenator = SILE.typesetter.language.hyphenator
+   SILE.typesetter:typeset(hyphenator:showHyphenationPoints(word, lang))
+end
+\end{lua}
+\lua{typeset_hyphens("rab'bin", "tr")}
 
 \hyphenator:add-exceptions{rab’-bin rab'-bin}
 
-\lua{SILE.typesetter:typeset(SILE.showHyphenationPoints("rab'bin", "tr"))}
+\lua{typeset_hyphens("rab'bin", "tr")}
 
-\lua{SILE.typesetter:typeset(SILE.showHyphenationPoints("rab’bin", "tr"))}
+\lua{typeset_hyphens("rab’bin", "tr")}
 
-\lua{SILE.typesetter:typeset(SILE.showHyphenationPoints("volksemosie", "af"))}
+\lua{typeset_hyphens("volksemosie", "af")}
 
 \end{document}
