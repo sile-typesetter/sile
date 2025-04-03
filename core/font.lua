@@ -100,7 +100,6 @@ SILE.registerCommand("font", function (options, content)
          -- end
          options.language = newlang
       end
-      SILE.languageSupport.loadLanguage(options.language)
       SILE.settings:set("document.language", options.language)
    end
    if options.script then

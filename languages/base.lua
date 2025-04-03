@@ -98,7 +98,6 @@ function language.registerCommands (_) end
 function language:_registerBaseCommands ()
    self:registerCommand("language", function (options, content)
       local main = SU.required(options, "main", "language setting")
-      SILE.languageSupport.loadLanguage(main)
       if content[1] then
          SILE.settings:temporarily(function ()
             SILE.settings:set("document.language", main)
