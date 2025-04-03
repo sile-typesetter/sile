@@ -35,13 +35,12 @@ function hyphenator:loadPatterns ()
 end
 
 function hyphenator:registerCommands ()
-   -- TODO rewire this so it can add exceptions to languages other than this instance
-   self:registerCommand("hyphenator:add-exceptions", function (_options, content)
-      -- local lang = options.lang or SILE.settings:get("document.language") or "und"
-      -- initHyphenator(lang)
+   self:registerCommand("hyphenator:add-exceptions", function (options, content)
+      local lang = options.lang or SILE.settings:get("document.language")
+      local language = SILE.typesetter:_cacheLanguage(lang)
       for token in SU.gtoke(content[1]) do
          if token.string then
-            self:registerException(token.string)
+            language.hyphenator:registerException(token.string)
          end
       end
    end, nil, nil, true)
@@ -159,14 +158,11 @@ function hyphenator.hyphenateSegments (_, node, segments, _)
    return SILE.types.node.discretionary({ prebreak = hyphen }), segments
 end
 
-
-function hyphenator:showHyphenationPoints (word, _language)
-   -- language = language or "en"
-   -- initHyphenator(language)
-   -- TODO rewire with language cacher
-   return SU.concat(self:_segment(word), SILE.settings:get("font.hyphenchar"))
+function hyphenator.showHyphenationPoints (_, word, lang)
+   lang = lang or SILE.settings:get("document.language")
+   local language = SILE.typesetter:_cacheLanguage(lang)
+   return SU.concat(language.hyphenator:_segment(word), SILE.settings:get("font.hyphenchar"))
 end
-
 
 function hyphenator:hyphenate (nodelist)
    local newlist = {}
