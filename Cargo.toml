@@ -144,6 +144,7 @@ extend-ignore-identifiers-re = [
   "pointint",
   "DEPENDEES",
   "EPdf",
+  "ePdf*",
   "FileAttachement",
 ]
 
