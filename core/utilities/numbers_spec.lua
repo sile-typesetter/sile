@@ -3,6 +3,9 @@ SILE.init()
 SILE.utilities.error = error
 SILE.utilities.warn = function () end
 
+-- Work around not having an active class in this test but needing language modules
+SILE.typesetter = SILE.typesetters.default()
+
 describe("SILE.utilities", function ()
    describe("formatNumber", function ()
       local icu = require("justenoughicu")
