@@ -184,11 +184,6 @@ function hyphenator:hyphenateNode (node)
    if not node.language or not node.is_nnode or not node.text then
       return node
    end
-   -- -- TODO figure out what languages used this override and rewire
-   -- if (type(SILE.hyphenator.languages[node.language]) == "function") then
-   --    return SILE.hyphenator.languages[node.language](node)
-   -- end
-   -- SU.debug("hyphenation", "Attempting on", tostring(node))
    local segments = self:_segment(node.text)
    local hyphen
    if #segments > 1 then
