@@ -49,6 +49,10 @@ local function loadPatterns (hyphenator, language)
       print("No patterns for language " .. language)
       return
    end
+   -- Some hyphenators (Uygur) have a callback instead of the normal pattern list
+   if type(languageset) == "function" then
+      return
+   end
    for _, pattern in ipairs(languageset.patterns) do
       addPattern(hyphenator, pattern)
    end
@@ -124,6 +128,10 @@ local initHyphenator = function (lang)
       SILE._hyphenators[lang] = { minWord = 5, leftmin = 2, rightmin = 2, trie = {}, exceptions = {} }
       loadPatterns(SILE._hyphenators[lang], lang)
    end
+   -- Short circuit this function so Uyghur can override it
+   if type(SILE.hyphenator.languages[lang]) == "function" then
+      return
+   end
    if SILE.hyphenator.languages[lang] and not SILE.hyphenator.languages[lang].hyphenateSegments then
       SILE.hyphenator.languages[lang].hyphenateSegments = defaultHyphenateSegments
    end
@@ -136,6 +144,7 @@ local hyphenateNode = function (node)
    if not node.is_nnode or not node.text then
       return { node }
    end
+   -- Short circuit this function so Uyghur can override it
    if node.language and (type(SILE.hyphenator.languages[node.language]) == "function") then
       return SILE.hyphenator.languages[node.language](node)
    end
