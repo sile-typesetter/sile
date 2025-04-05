@@ -245,6 +245,17 @@ setmetatable(SILE.tokenizers, {
    __index = nonodemakers,
 })
 
+SILE.showHyphenationPoints = function (...)
+   SU.deprecated(
+      "SILE.showHyphenationPoints",
+      "SILE.typesetter.language.hyphenator:showHyphenationPoints",
+      "0.15.11",
+      "0.17.0"
+   )
+   local language = SILE.typesetter.language
+   return language.hyphenator:showHyphenationPoints(...)
+end
+
 -- luacheck: ignore updatePackage
 -- luacheck: ignore installPackage
 updatePackage = nopackagemanager
