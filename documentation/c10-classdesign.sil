@@ -261,8 +261,7 @@ The latter acts as a setter or getter, so a minimal code will usually look as fo
 
 \begin[type=autodoc:codeblock]{raw}
 function class:declareOptions ()
-  base.declareOptions(self) -- Note: support parent class options
-
+  plain.declareOptions(self) -- extend instead of replace parent class options
   self:declareOption("myoption", function (_, value)
     if value then
       self.myoption = value
@@ -279,7 +278,7 @@ In that case, do not forget invoking the superclass method, so that its own opti
 \begin[type=autodoc:codeblock]{raw}
 function class:setOptions (options)
   options.myoption = options.myoption or "default"
-  base.setOptions(self, options) -- Note: set parent options
+  plain.setOptions(self, options) -- Note: set parent options
 end
 \end{raw}
 
