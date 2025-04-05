@@ -128,11 +128,11 @@ function language.hyphenateNode (_, n)
    local state = n.options
    -- Make "Turkish" nodes
    local newoptions = pl.tablex.deepcopy(n.options)
-   newoptions.language = "lt"
-   if not SILE._hyphenators.lt then
+   newoptions.language = "tr"
+   if not SILE._hyphenators.tr then
       SILE.hyphenate(SILE.shaper:createNnodes(latin, newoptions))
    end
-   local items = SILE._hyphenate(SILE._hyphenators["lt"], latin)
+   local items = SILE._hyphenate(SILE._hyphenators["tr"], latin)
    if #items == 1 then
       SU.debug("uyghur", latin, "No hyphenation points")
       return { n }
