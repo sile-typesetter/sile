@@ -226,7 +226,6 @@ local font = {
       local ot = require("core.opentype-parser")
       local font = ot.parseFont(face)
       if font.cpal then
-         SILE.require("packages.color-fonts")
          if SILE.shaper._name ~= "harfbuzz-color" then
             SU.debug("color-fonts", "Switching to color font Shaper")
             SILE.typesetter:leaveHmode(true)
