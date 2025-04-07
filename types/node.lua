@@ -4,8 +4,6 @@
 --
 -- @module SILE.types.node
 
-local nodetypes = {}
-
 -- This infinity needs to be smaller than an actual infinity but bigger than the infinite stretch
 -- added by the typesetter. See https://github.com/sile-typesetter/sile/issues/227
 local infinity = SILE.types.measurement(1e13)
@@ -96,7 +94,7 @@ end
 --
 -- @treturn box A new box with the same properties as the original, but with absolute dimensions.
 function box:absolute ()
-   local clone = nodetypes[self.type](self:_tospec())
+   local clone = self._class(self:_tospec())
    for dim in pairs(_dims) do
       clone[dim] = self[dim]:absolute()
    end
@@ -1022,25 +1020,27 @@ local _deprecated_nodefactory = {
 
 -- EXPORTS WRAP-UP
 
-nodetypes.box = box
-nodetypes.hbox = hbox
-nodetypes.zerohbox = zerohbox
-nodetypes.nnode = nnode
-nodetypes.unshaped = unshaped
-nodetypes.discretionary = discretionary
-nodetypes.alternative = alternative
-nodetypes.glue = glue
-nodetypes.hfillglue = hfillglue
-nodetypes.hssglue = hssglue
-nodetypes.kern = kern
-nodetypes.vglue = vglue
-nodetypes.vfillglue = vfillglue
-nodetypes.vssglue = vssglue
-nodetypes.zerovglue = zerovglue
-nodetypes.vkern = vkern
-nodetypes.penalty = penalty
-nodetypes.vbox = vbox
-nodetypes.migrating = migrating
+local nodetypes = {
+   box = box,
+   hbox = hbox,
+   zerohbox = zerohbox,
+   nnode = nnode,
+   unshaped = unshaped,
+   discretionary = discretionary,
+   alternative = alternative,
+   glue = glue,
+   hfillglue = hfillglue,
+   hssglue = hssglue,
+   kern = kern,
+   vglue = vglue,
+   vfillglue = vfillglue,
+   vssglue = vssglue,
+   zerovglue = zerovglue,
+   vkern = vkern,
+   penalty = penalty,
+   vbox = vbox,
+   migrating = migrating,
+}
 
 setmetatable(nodetypes, {
    __index = function (_, prop)
