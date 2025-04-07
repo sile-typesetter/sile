@@ -1,5 +1,8 @@
---- SILE node type.
--- @types node
+--- This module defines the standard node classes used in SILE.
+-- Some packages or other modules may define their own node classes for specific purposes,
+-- but this does not have to be covered here.
+--
+-- @module SILE.types.node
 
 local nodetypes = {}
 
@@ -19,19 +22,28 @@ end
 
 local _dims = pl.Set({ "width", "height", "depth" })
 
-nodetypes.box = pl.class()
-nodetypes.box.type = "special"
+--- Base abstract box class used by the other box types.
+--
+-- Other node classes derive from it, adding or overriding properties and methods.
+-- It should not be used directly.
+--
+-- @type box
 
-nodetypes.box.height = nil
-nodetypes.box.depth = nil
-nodetypes.box.width = nil
-nodetypes.box.misfit = false
-nodetypes.box.explicit = false
-nodetypes.box.discardable = false
-nodetypes.box.value = nil
-nodetypes.box._default_length = "width"
+local box = pl.class()
+box.type = "special"
 
-function nodetypes.box:_init (spec)
+box.height = nil
+box.depth = nil
+box.width = nil
+box.misfit = false
+box.explicit = false
+box.discardable = false
+box.value = nil
+box._default_length = "width"
+
+--- Constructor
+-- @tparam table spec A table with the properties of the box.
+function box:_init (spec)
    if
       type(spec) == "string"
       or type(spec) == "number"
@@ -63,23 +75,27 @@ function nodetypes.box:_init (spec)
 end
 
 -- De-init instances by shallow copying properties and removing meta table
-function nodetypes.box:_tospec ()
+function box:_tospec ()
    return pl.tablex.copy(self)
 end
 
-function nodetypes.box:tostring ()
+function box:tostring ()
    return self:__tostring()
 end
 
-function nodetypes.box:__tostring ()
+function box:__tostring ()
    return self.type
 end
 
-function nodetypes.box.__concat (a, b)
+function box.__concat (a, b)
    return tostring(a) .. tostring(b)
 end
 
-function nodetypes.box:absolute ()
+--- Create an absolute version of the box.
+-- All Dimensions are based absolute (i.e. in points)
+--
+-- @treturn box A new box with the same properties as the original, but with absolute dimensions.
+function box:absolute ()
    local clone = nodetypes[self.type](self:_tospec())
    for dim in pairs(_dims) do
       clone[dim] = self[dim]:absolute()
@@ -90,105 +106,64 @@ function nodetypes.box:absolute ()
    return clone
 end
 
-function nodetypes.box:lineContribution ()
-   -- Regardless of the orientations, "width" is always in the
-   -- writingDirection, and "height" is always in the "pageDirection"
+--- Returns either the width or the height of the box.
+-- Regardless of the orientations, "width" is always in the writingDirection,
+-- and "height" is always in the "pageDirection"
+--
+-- @treturn SILE.types.length  The width or height of the box, depending on the orientation.
+function box:lineContribution ()
    return self.misfit and self.height or self.width
 end
 
-function nodetypes.box:outputYourself ()
+--- Output routine for a box.
+-- This is an abstract method that must be overridden by subclasses.
+--
+function box:outputYourself (_, _)
    SU.error(self.type .. " with no output routine")
 end
 
-function nodetypes.box:toText ()
+--- Returns a text description of the box for debugging purposes.
+-- @treturn string A string representation of the box.
+function box:toText ()
    return self.type
 end
 
-function nodetypes.box:isBox ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "hbox"
-      or self.type == "zerohbox"
-      or self.type == "alternative"
-      or self.type == "nnode"
-      or self.type == "vbox"
+--- A hbox is a box node used in horizontal mode.
+--
+-- Derived from `box`.
+--
+-- Properties is_hbox and is_box are true.
+--
+-- @type hbox
+
+local hbox = pl.class(box)
+hbox.type = "hbox"
+
+--- Constructor
+--
+-- @tparam table spec A table with the properties of the hbox.
+function hbox:_init (spec)
+   box._init(self, spec)
 end
 
-function nodetypes.box:isNnode ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "nnode"
-end
-
-function nodetypes.box:isGlue ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "glue"
-end
-
-function nodetypes.box:isVglue ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "vglue"
-end
-
-function nodetypes.box:isZero ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "zerohbox" or self.type == "zerovglue"
-end
-
-function nodetypes.box:isUnshaped ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "unshaped"
-end
-
-function nodetypes.box:isAlternative ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "alternative"
-end
-
-function nodetypes.box:isVbox ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "vbox"
-end
-
-function nodetypes.box:isInsertion ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "insertion"
-end
-
-function nodetypes.box:isMigrating ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.migrating
-end
-
-function nodetypes.box:isPenalty ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "penalty"
-end
-
-function nodetypes.box:isDiscretionary ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "discretionary"
-end
-
-function nodetypes.box:isKern ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "kern"
-end
-
-nodetypes.hbox = pl.class(nodetypes.box)
-nodetypes.hbox.type = "hbox"
-
-function nodetypes.hbox:_init (spec)
-   nodetypes.box._init(self, spec)
-end
-
-function nodetypes.hbox:__tostring ()
+function hbox:__tostring ()
    return "H<" .. tostring(self.width) .. ">^" .. tostring(self.height) .. "-" .. tostring(self.depth) .. "v"
 end
 
-function nodetypes.hbox:scaledWidth (line)
+--- Returns the width of the hbox, scaled by the line ratio.
+-- This is used to determine the width of the hbox when it is output.
+--
+-- @tparam table line The line properties (notably ratio)
+-- @treturn SILE.types.length The scaled width of the hbox.
+function hbox:scaledWidth (line)
    return SU.rationWidth(self:lineContribution(), self.width, line.ratio)
 end
 
-function nodetypes.hbox:outputYourself (typesetter, line)
+--- ôutput routine for a hbox.
+--
+-- @tparam SILE.typesetters.base typesetter The typesetter object (only used for the frame).
+-- @tparam table line Line properties (notably ratio)
+function hbox:outputYourself (typesetter, line)
    local outputWidth = self:scaledWidth(line)
    if not self.value.glyphString then
       return
@@ -204,17 +179,34 @@ function nodetypes.hbox:outputYourself (typesetter, line)
    end
 end
 
-nodetypes.zerohbox = pl.class(nodetypes.hbox)
-nodetypes.zerohbox.type = "zerohbox"
-nodetypes.zerohbox.value = { glyph = 0 }
+--- A zerohbox is a special-kind of hbox with zero width, height and depth.
+--
+-- Derived from `hbox`.
+--
+-- Properties is_zerohbox (and convenience is_zero) and is_box are true.
+-- Note that is_hbox is NOT true: zerohbox are used in a specific context
+--
+-- @type zerohbox
+local zerohbox = pl.class(hbox)
+zerohbox.type = "zerohbox"
+zerohbox.value = { glyph = 0 }
 
-nodetypes.nnode = pl.class(nodetypes.hbox)
-nodetypes.nnode.type = "nnode"
-nodetypes.nnode.language = ""
-nodetypes.nnode.pal = nil
-nodetypes.nnode.nodes = {}
+--- A nnode is a node representing text content.
+--
+-- Derived from `hbox`.
+--
+-- Properties is_nnode and is_box are true.
+--
+-- @type nnode
+local nnode = pl.class(hbox)
+nnode.type = "nnode"
+nnode.language = ""
+nnode.pal = nil
+nnode.nodes = {}
 
-function nodetypes.nnode:_init (spec)
+--- Constructor
+-- @tparam table spec A table with the properties of the nnode.
+function nnode:_init (spec)
    self:super(spec)
    if 0 == self.depth:tonumber() then
       self.depth = _maxnode(self.nodes, "depth")
@@ -229,7 +221,7 @@ function nodetypes.nnode:_init (spec)
    end
 end
 
-function nodetypes.nnode:__tostring ()
+function nnode:__tostring ()
    return "N<"
       .. tostring(self.width)
       .. ">^"
@@ -241,11 +233,18 @@ function nodetypes.nnode:__tostring ()
       .. ")"
 end
 
-function nodetypes.nnode:absolute ()
+--- Create an absolute version of the box.
+-- This overrides the base class method as nnode content is assumed to in points already.
+--
+-- @treturn box The box itself.
+function nnode:absolute ()
    return self
 end
 
-function nodetypes.nnode:outputYourself (typesetter, line)
+--- Output routine for a nnode.
+-- @tparam SILE.typesetters.base typesetter The typesetter object (only used for the frame).
+-- @tparam table line Line properties (notably ratio)
+function nnode:outputYourself (typesetter, line)
    -- See typesetter:computeLineRatio() which implements the currently rather messy
    -- and probably slightly dubious 'hyphenated' logic.
    -- Example: consider the word "out-put".
@@ -271,30 +270,54 @@ function nodetypes.nnode:outputYourself (typesetter, line)
    end
 end
 
-function nodetypes.nnode:toText ()
+--- Returns the text content of the nnode.
+-- Contrary to the parent class, this is the actual text content of the node,
+-- not a text representation of the node.
+--
+-- @treturn string The text content of the nnode.
+function nnode:toText ()
    return self.text
 end
 
-nodetypes.unshaped = pl.class(nodetypes.nnode)
-nodetypes.unshaped.type = "unshaped"
+--- An unshaped node is a text node that has not been shaped yet.
+--
+-- Derived from `nnode`.
+--
+-- Properties is_unshaped is true.
+-- Note that is_nnode is NOT true, as an unshaped node is not a representable node yet.
+--
+-- @type unshaped
 
-function nodetypes.unshaped:_init (spec)
+local unshaped = pl.class(nnode)
+unshaped.type = "unshaped"
+
+--- Constructor
+--
+-- @tparam table spec A table with the properties of the unshaped node.
+
+function unshaped:_init (spec)
    self:super(spec)
    self.width = nil
 end
 
-function nodetypes.unshaped:__tostring ()
+function unshaped:__tostring ()
    return "U(" .. self:toText() .. ")"
 end
 
-getmetatable(nodetypes.unshaped).__index = function (_, _)
+getmetatable(unshaped).__index = function (_, _)
    -- if k == "width" then SU.error("Can't get width of unshaped node", true) end
    -- TODO: No idea why porting to proper Penlight classes this ^^^^^^ started
    -- killing everything. Perhaps because this function started working and would
    -- actually need to return rawget(self, k) or something?
 end
 
-function nodetypes.unshaped:shape ()
+--- Shapes the text of the unshaped node.
+-- This is done by calling the current shaper with the text and options of the node.
+-- The result is a list of nnodes inheriting the parent of the unshaped node.
+-- The notion of parent is used by the hyphenation logic and discretionaries.
+--
+-- @treturn table A list of nnodes representing the shaped text.
+function unshaped:shape ()
    local node = SILE.shaper:createNnodes(self.text, self.options)
    for i = 1, #node do
       node[i].parent = self.parent
@@ -302,19 +325,33 @@ function nodetypes.unshaped:shape ()
    return node
 end
 
-function nodetypes.unshaped.outputYourself (_)
+--- Output routine for an unshaped node.
+-- Unshaped nodes are not supposed to make it to the output, so this method raises an error.
+--
+function unshaped.outputYourself (_, _, _)
    SU.error("An unshaped node made it to output", true)
 end
 
-nodetypes.discretionary = pl.class(nodetypes.hbox)
+--- A discretionary node is a node that can be broken at a certain point.
+-- It has optional replacement, prebreak and postbreak nodes, which must be `nnode` nodes.
+--
+-- Derived from `hbox`.
+--
+-- Properties is_discretionary is true.
+--
+-- @type discretionary
+-- @usage
+-- SILE.types.node.discretionary({ replacement = ..., prebreak =  ..., postbreak = ...})
 
-nodetypes.discretionary.type = "discretionary"
-nodetypes.discretionary.prebreak = {}
-nodetypes.discretionary.postbreak = {}
-nodetypes.discretionary.replacement = {}
-nodetypes.discretionary.used = false
+local discretionary = pl.class(hbox)
 
-function nodetypes.discretionary:__tostring ()
+discretionary.type = "discretionary"
+discretionary.prebreak = {}
+discretionary.postbreak = {}
+discretionary.replacement = {}
+discretionary.used = false
+
+function discretionary:__tostring ()
    return "D("
       .. SU.concat(self.prebreak, "")
       .. "|"
@@ -324,11 +361,18 @@ function nodetypes.discretionary:__tostring ()
       .. ")"
 end
 
-function nodetypes.discretionary:toText ()
+--- Returns a text representation of the discretionary node.
+-- This is used for debugging purposes, returning '-' for a used discretionary and '_' otherwise.
+--
+-- @treturn string A string representation of the discretionary node ('-' or '_').
+function discretionary:toText ()
    return self.used and "-" or "_"
 end
 
-function nodetypes.discretionary:markAsPrebreak ()
+--- Mark the discretionary node as used in prebreak context.
+-- This is used to indicate that the discretionary node is used (i.e. the parent is hyphenated)
+-- and the prebreak nodes should be output (typically at the end of a broken line).
+function discretionary:markAsPrebreak ()
    self.used = true
    if self.parent then
       self.parent.hyphenated = true
@@ -336,7 +380,15 @@ function nodetypes.discretionary:markAsPrebreak ()
    self.is_prebreak = true
 end
 
-function nodetypes.discretionary:cloneAsPostbreak ()
+--- Clone the discretionary node for postbreak use.
+-- This is used to create a new discretionary node that is used in postbreak context.
+-- The discretionary must previously have been marked as used.
+--
+-- When breaking compound words, some languages expect the hyphen (prebreak) to be
+-- repeated in the postbreak context, typically at the beginning of the next line.
+--
+-- @treturn SILE.types.node.discretionary A new discretionary node with the same properties as the original, but marked for use in postbreak context.
+function discretionary:cloneAsPostbreak ()
    if not self.used then
       SU.error("Cannot clone a non-used discretionary (previously marked as prebreak)")
    end
@@ -350,7 +402,12 @@ function nodetypes.discretionary:cloneAsPostbreak ()
    })
 end
 
-function nodetypes.discretionary:outputYourself (typesetter, line)
+--- Output routine for a discretionary node.
+-- Depending on how the node was marked, it will output either the prebreak, postbreak or replacement nodes.
+--
+-- @tparam SILE.typesetters.base typesetter The typesetter object (only used for the frame).
+-- @tparam table line Line properties (notably ratio)
+function discretionary:outputYourself (typesetter, line)
    -- See typesetter:computeLineRatio() which implements the currently rather
    -- messy hyphenated checks.
    -- Example: consider the word "out-put-ter".
@@ -388,7 +445,10 @@ function nodetypes.discretionary:outputYourself (typesetter, line)
    end
 end
 
-function nodetypes.discretionary:prebreakWidth ()
+--- Returns the width of the prebreak nodes.
+--
+-- @treturn SILE.types.length The total width of the prebreak nodes.
+function discretionary:prebreakWidth ()
    if self.prebw then
       return self.prebw
    end
@@ -399,7 +459,10 @@ function nodetypes.discretionary:prebreakWidth ()
    return self.prebw
 end
 
-function nodetypes.discretionary:postbreakWidth ()
+--- Returns the width of the postbreak nodes.
+--
+-- @treturn SILE.types.length The total width of the postbreak nodes.
+function discretionary:postbreakWidth ()
    if self.postbw then
       return self.postbw
    end
@@ -410,7 +473,10 @@ function nodetypes.discretionary:postbreakWidth ()
    return self.postbw
 end
 
-function nodetypes.discretionary:replacementWidth ()
+--- Returns the width of the replacement nodes.
+--
+-- @treturn SILE.types.length The total width of the replacement nodes.
+function discretionary:replacementWidth ()
    if self.replacew then
       return self.replacew
    end
@@ -421,7 +487,10 @@ function nodetypes.discretionary:replacementWidth ()
    return self.replacew
 end
 
-function nodetypes.discretionary:prebreakHeight ()
+--- Returns the height of the prebreak nodes.
+--
+-- @treturn SILE.types.length The total height of the prebreak nodes.
+function discretionary:prebreakHeight ()
    if self.prebh then
       return self.prebh
    end
@@ -429,7 +498,10 @@ function nodetypes.discretionary:prebreakHeight ()
    return self.prebh
 end
 
-function nodetypes.discretionary:postbreakHeight ()
+--- Returns the height of the postbreak nodes.
+--
+-- @treturn SILE.types.length The total height of the postbreak nodes.
+function discretionary:postbreakHeight ()
    if self.postbh then
       return self.postbh
    end
@@ -437,7 +509,10 @@ function nodetypes.discretionary:postbreakHeight ()
    return self.postbh
 end
 
-function nodetypes.discretionary:replacementHeight ()
+--- Returns the height of the replacement nodes.
+--
+-- @treturn SILE.types.length The total height of the replacement nodes.
+function discretionary:replacementHeight ()
    if self.replaceh then
       return self.replaceh
    end
@@ -445,7 +520,10 @@ function nodetypes.discretionary:replacementHeight ()
    return self.replaceh
 end
 
-function nodetypes.discretionary:replacementDepth ()
+--- Returns the depth of the prebreak nodes.
+--
+-- @treturn SILE.types.length The total depth of the prebreak nodes.
+function discretionary:replacementDepth ()
    if self.replaced then
       return self.replaced
    end
@@ -453,24 +531,34 @@ function nodetypes.discretionary:replacementDepth ()
    return self.replaced
 end
 
-nodetypes.alternative = pl.class(nodetypes.hbox)
+--- An alternative node is a node that can be replaced by one of its options.
+-- Not for general use:
+-- This solution is known to be broken, but it is not clear how to fix it.
+--
+-- Derived from `hbox`.
+--
+-- Properties is_alternative and is_box are true.
+--
+-- @type alternative
 
-nodetypes.alternative.type = "alternative"
-nodetypes.alternative.options = {}
-nodetypes.alternative.selected = nil
+local alternative = pl.class(hbox)
 
-function nodetypes.alternative:__tostring ()
+alternative.type = "alternative"
+alternative.options = {}
+alternative.selected = nil
+
+function alternative:__tostring ()
    return "A(" .. SU.concat(self.options, " / ") .. ")"
 end
 
-function nodetypes.alternative:minWidth ()
+function alternative:minWidth ()
    local minW = function (a, b)
       return SU.min(a.width, b.width)
    end
    return pl.tablex.reduce(minW, self.options)
 end
 
-function nodetypes.alternative:deltas ()
+function alternative:deltas ()
    local minWidth = self:minWidth()
    local rv = {}
    for i = 1, #self.options do
@@ -479,157 +567,277 @@ function nodetypes.alternative:deltas ()
    return rv
 end
 
-function nodetypes.alternative:outputYourself (typesetter, line)
+function alternative:outputYourself (typesetter, line)
    if self.selected then
       self.options[self.selected]:outputYourself(typesetter, line)
    end
 end
 
-nodetypes.glue = pl.class(nodetypes.box)
-nodetypes.glue.type = "glue"
-nodetypes.glue.discardable = true
+--- A glue node is a node that can stretch or shrink to fill horizontal space.
+--
+-- Derived from `box`.
+--
+-- Properties is_glue is true
+--
+-- @type glue
 
-function nodetypes.glue:__tostring ()
+local glue = pl.class(box)
+glue.type = "glue"
+glue.discardable = true
+
+function glue:__tostring ()
    return (self.explicit and "E:" or "") .. "G<" .. tostring(self.width) .. ">"
 end
 
-function nodetypes.glue.toText (_)
+function glue.toText (_)
    return " "
 end
 
-function nodetypes.glue:outputYourself (typesetter, line)
+--- Output routine for a glue node.
+--
+-- @tparam SILE.typesetters.base typesetter The typesetter object (only used for the frame).
+-- @tparam table line Line properties (notably ratio)
+function glue:outputYourself (typesetter, line)
    local outputWidth = SU.rationWidth(self.width:absolute(), self.width:absolute(), line.ratio)
    typesetter.frame:advanceWritingDirection(outputWidth)
 end
 
--- A hfillglue is just a glue with infinite stretch.
--- (Convenience so callers do not have to know what infinity is.)
-nodetypes.hfillglue = pl.class(nodetypes.glue)
-function nodetypes.hfillglue:_init (spec)
+--- A hfillglue is just a standard glue with infinite stretch.
+-- (Convenience subclass so callers do not have to know what infinity is.)
+--
+-- Derived from `glue`.
+--
+-- @type hfillglue
+
+local hfillglue = pl.class(glue)
+
+--- Constructor
+--
+-- @tparam table spec A table with the properties of the glue.
+function hfillglue:_init (spec)
    self:super(spec)
    self.width = SILE.types.length(self.width.length, infinity, self.width.shrink)
 end
 
--- A hssglue is just a glue with infinite stretch and shrink.
--- (Convenience so callers do not have to know what infinity is.)
-nodetypes.hssglue = pl.class(nodetypes.glue)
-function nodetypes.hssglue:_init (spec)
+--- A hssglue is just a standard glue with infinite stretch and shrink.
+-- (Convenience subclass so callers do not have to know what infinity is.)
+--
+-- Derived from `glue`.
+--
+-- @type hssglue
+
+local hssglue = pl.class(glue)
+
+--- Constructor
+--
+-- @tparam table spec A table with the properties of the glue.
+function hssglue:_init (spec)
    self:super(spec)
    self.width = SILE.types.length(self.width.length, infinity, infinity)
 end
 
-nodetypes.kern = pl.class(nodetypes.glue)
-nodetypes.kern.type = "kern" -- Perhaps some smell here, see comment on vkern
-nodetypes.kern.discardable = false
+--- A kern node is a node that can stretch or shrink to fill horizontal space,
+-- It represents a non-breakable space (for the purpose of line breaking).
+--
+-- Derived from `glue`.
+--
+-- Property is_kern is true.
+--
+-- @type kern
+local kern = pl.class(glue)
+kern.type = "kern" -- Perhaps some smell here, see comment on vkern
+kern.discardable = false
 
-function nodetypes.kern:__tostring ()
+function kern:__tostring ()
    return "K<" .. tostring(self.width) .. ">"
 end
 
-nodetypes.vglue = pl.class(nodetypes.box)
-nodetypes.vglue.type = "vglue"
-nodetypes.vglue.discardable = true
-nodetypes.vglue._default_length = "height"
-nodetypes.vglue.adjustment = nil
+--- A vglue node is a node that can stretch or shrink to fill vertical space.
+--
+-- Derived from `box`.
+--
+-- Property is_vglue is true.
+--
+-- @type vglue
 
-function nodetypes.vglue:_init (spec)
+local vglue = pl.class(box)
+vglue.type = "vglue"
+vglue.discardable = true
+vglue._default_length = "height"
+vglue.adjustment = nil
+
+--- Constructor
+--
+-- @tparam table spec A table with the properties of the vglue.
+function vglue:_init (spec)
    self.adjustment = SILE.types.measurement()
    self:super(spec)
 end
 
-function nodetypes.vglue:__tostring ()
+function vglue:__tostring ()
    return (self.explicit and "E:" or "") .. "VG<" .. tostring(self.height) .. ">"
 end
 
-function nodetypes.vglue:adjustGlue (adjustment)
+--- Adjust the vglue by a certain amount.
+--
+-- @tparam SILE.types.length adjustment The amount to adjust the vglue by.
+function vglue:adjustGlue (adjustment)
    self.adjustment = adjustment
 end
 
-function nodetypes.vglue:outputYourself (typesetter, line)
+--- Output routine for a vglue.
+--
+-- @tparam SILE.typesetters.base typesetter The typesetter object (only used for the frame).
+-- @tparam table line Line properties (notably height and depth)
+function vglue:outputYourself (typesetter, line)
    typesetter.frame:advancePageDirection(line.height:absolute() + line.depth:absolute() + self.adjustment)
 end
 
-function nodetypes.vglue:unbox ()
+function vglue:unbox ()
    return { self }
 end
 
--- A vfillglue is just a vglue with infinite stretch.
--- (Convenience so callers do not have to know what infinity is.)
-nodetypes.vfillglue = pl.class(nodetypes.vglue)
-function nodetypes.vfillglue:_init (spec)
+--- A vfillglue is just a standard vglue with infinite stretch.
+-- (Convenience subclass so callers do not have to know what infinity is.)
+--
+-- Derived from `vglue`.
+-- @type vfillglue
+
+local vfillglue = pl.class(vglue)
+
+function vfillglue:_init (spec)
    self:super(spec)
    self.height = SILE.types.length(self.width.length, infinity, self.width.shrink)
 end
 
--- A vssglue is just a vglue with infinite stretch and shrink.
--- (Convenience so callers do not have to know what infinity is.)
-nodetypes.vssglue = pl.class(nodetypes.vglue)
-function nodetypes.vssglue:_init (spec)
+--- A vssglue is a just standard vglue with infinite stretch and shrink.
+-- (Convenience subclass so callers do not have to know what infinity is.)
+--
+-- Derived from `vglue`
+--
+-- @type vssglue
+local vssglue = pl.class(vglue)
+function vssglue:_init (spec)
    self:super(spec)
    self.height = SILE.types.length(self.width.length, infinity, infinity)
 end
 
-nodetypes.zerovglue = pl.class(nodetypes.vglue)
+--- A zerovglue is a standard vglue with zero height and depth.
+-- (Convenience subclass)
+--
+-- Derived from `vglue`.
+--
+-- @type zerovglue
 
-nodetypes.vkern = pl.class(nodetypes.vglue)
+local zerovglue = pl.class(vglue)
+
+--- A vkern node is a node that can stretch or shrink to fill vertical space,
+-- It represents a non-breakable space (for the purpose of page breaking).
+--
+-- Derived from `vglue`.
+--
+-- @type vkern
+local vkern = pl.class(vglue)
 -- FIXME TODO
 -- Here we cannot do:
---   nodetypes.vkern.type = "vkern"
+--   vkern.type = "vkern"
 -- It cannot be typed as "vkern" as the pagebuilder doesn't check is_vkern.
 -- So it's just a vglue currrenty, marked as not discardable...
--- But on the other hand, nodetypes.kern is typed "kern" and is not a glue...
+-- But on the other hand, kern is typed "kern" and is not a glue...
 -- Frankly, the discardable/explicit flags and the types are too
 -- entangled and point towards a more general design issue.
 -- N.B. this vkern node is only used in the linespacing package so far.
-nodetypes.vkern.discardable = false
+vkern.discardable = false
 
-function nodetypes.vkern:__tostring ()
+function vkern:__tostring ()
    return "VK<" .. tostring(self.height) .. ">"
 end
 
-nodetypes.penalty = pl.class(nodetypes.box)
-nodetypes.penalty.type = "penalty"
-nodetypes.penalty.discardable = true
-nodetypes.penalty.penalty = 0
+--- A penalty node has a value which is used by the line breaking algorithm (in horizontal mode)
+-- or the page breaking algorithm (in vertical mode), to determine where to break.
+-- The value is expected to be a number between -10000 and 10000.
+-- The higher the value, the less desirable it is to break at that point.
+-- The extreme values (-10000 and 10000) are used to indicate that the break is forbidden or mandatory,
+-- i.e. in certain way represent an infinite penalty.
+--
+-- Derived from `box`.
+--
+-- Property is_penalty is true.
+--
+-- @type penalty
 
-function nodetypes.penalty:_init (spec)
+local penalty = pl.class(box)
+penalty.type = "penalty"
+penalty.discardable = true
+penalty.penalty = 0
+
+--- Constructor
+-- @tparam table spec A table with the properties of the penalty.
+function penalty:_init (spec)
    self:super(spec)
    if type(spec) ~= "table" then
       self.penalty = SU.cast("number", spec)
    end
 end
 
-function nodetypes.penalty:__tostring ()
+function penalty:__tostring ()
    return "P(" .. tostring(self.penalty) .. ")"
 end
 
-function nodetypes.penalty.outputYourself (_) end
+--- Output routine for a penalty.
+-- If found in the output, penalties have no representation, so this method does nothing.
+-- (Overriding it on some penalties may be useful for debugging purposes.)
+--
+function penalty.outputYourself (_, _, _) end
 
-function nodetypes.penalty.toText (_)
+--- Returns a text representation of the penalty node.
+-- This is used for debugging purposes, returning '(!)' for a penalty.
+--
+-- @treturn string A string representation of the penalty node ('(!)').
+function penalty.toText (_)
    return "(!)"
 end
 
-function nodetypes.penalty:unbox ()
+--- Unbox a penalty.
+-- This method exists consistency with vbox-derived classes, for a penalty used in vertical mode.
+--
+-- @treturn table A table with the penalty node.
+function penalty:unbox ()
    return { self }
 end
 
-nodetypes.vbox = pl.class(nodetypes.box)
-nodetypes.vbox.type = "vbox"
-nodetypes.vbox.nodes = {}
-nodetypes.vbox._default_length = "height"
+--- A vbox is a box node used in vertical mode.
+--
+-- Derived from `box`.
+--
+-- Properties is_vbox and is_box are true.
+--
+-- @type vbox
 
-function nodetypes.vbox:_init (spec)
+local vbox = pl.class(box)
+vbox.type = "vbox"
+vbox.nodes = {}
+vbox._default_length = "height"
+
+--- Constructor
+--
+-- @tparam table spec A table with the properties of the vbox.
+function vbox:_init (spec)
    self.nodes = {}
    self:super(spec)
    self.depth = _maxnode(self.nodes, "depth")
    self.height = _maxnode(self.nodes, "height")
 end
 
-function nodetypes.vbox:__tostring ()
+function vbox:__tostring ()
    return "VB<" .. tostring(self.height) .. "|" .. self:toText() .. "v" .. tostring(self.depth) .. ")"
 end
 
-function nodetypes.vbox:toText ()
+--- Returns a text representation of the vbox.
+-- This is used for debugging purposes, returning a string representation of the vbox and its content.
+--
+-- @treturn string A string representation of the vbox.
+function vbox:toText ()
    return "VB["
       .. SU.concat(
          SU.map(function (node)
@@ -640,7 +848,11 @@ function nodetypes.vbox:toText ()
       .. "]"
 end
 
-function nodetypes.vbox:outputYourself (typesetter, line)
+--- Output routine for a vbox.
+--
+-- @tparam SILE.typesetters.base typesetter The typesetter object (only used for the frame).
+-- @tparam table line Line properties (notably ratio)
+function vbox:outputYourself (typesetter, line)
    typesetter.frame:advancePageDirection(self.height)
    local initial = true
    for _, node in ipairs(self.nodes) do
@@ -653,7 +865,10 @@ function nodetypes.vbox:outputYourself (typesetter, line)
    typesetter.frame:newLine()
 end
 
-function nodetypes.vbox:unbox ()
+--- Unbox a vbox.
+--
+-- @treturn table A table with the nodes inside the vbox.
+function vbox:unbox ()
    for i = 1, #self.nodes do
       if self.nodes[i].is_vbox or self.nodes[i].is_vglue then
          return self.nodes
@@ -662,14 +877,16 @@ function nodetypes.vbox:unbox ()
    return { self }
 end
 
-function nodetypes.vbox:append (box)
-   local nodes = box
-   if not box then
+--- Added a box or several to the current vbox.
+-- The box height is the height is the total height of the content, minus the depth of the last box.
+-- The depth of the vbox is the depth of the last box.
+--
+-- @tparam box|table box A box or a list of boxes to add to the vbox.
+function vbox:append (node)
+   if not node then
       SU.error("nil box given", true)
    end
-   if nodes.type then
-      nodes = box:unbox()
-   end
+   local nodes = node.type and node:unbox() or node
    self.height = self.height:absolute()
    self.height:___add(self.depth)
    local lastdepth = SILE.types.length()
@@ -686,14 +903,97 @@ function nodetypes.vbox:append (box)
    self.depth = lastdepth
 end
 
-nodetypes.migrating = pl.class(nodetypes.hbox)
-nodetypes.migrating.type = "migrating"
-nodetypes.migrating.material = {}
-nodetypes.migrating.value = {}
-nodetypes.migrating.nodes = {}
+--- A migrating node is a node that can be moved from one frame to another.
+-- Typically, footnotes are migrating nodes.
+--
+-- Derived from `hbox`.
+--
+-- Properties ìs_migrating, is_hbox and is_box are true.
+--
+-- @type migrating
+-- @usage
+-- SILE.types.node.migrating({ material =  ... })
+--
 
-function nodetypes.migrating:__tostring ()
+local migrating = pl.class(hbox)
+migrating.type = "migrating"
+migrating.material = {}
+migrating.value = {}
+migrating.nodes = {}
+
+function migrating:__tostring ()
    return "<M: " .. tostring(self.material) .. ">"
+end
+
+-- DEPRECATED FUNCTIONS
+
+function box:isBox ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.type == "hbox"
+      or self.type == "zerohbox"
+      or self.type == "alternative"
+      or self.type == "nnode"
+      or self.type == "vbox"
+end
+
+function box:isNnode ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.type == "nnode"
+end
+
+function box:isGlue ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.type == "glue"
+end
+
+function box:isVglue ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.type == "vglue"
+end
+
+function box:isZero ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.type == "zerohbox" or self.type == "zerovglue"
+end
+
+function box:isUnshaped ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.type == "unshaped"
+end
+
+function box:isAlternative ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.type == "alternative"
+end
+
+function box:isVbox ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.type == "vbox"
+end
+
+function box:isInsertion ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.type == "insertion"
+end
+
+function box:isMigrating ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.migrating
+end
+
+function box:isPenalty ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.type == "penalty"
+end
+
+function box:isDiscretionary ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.type == "discretionary"
+end
+
+function box:isKern ()
+   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
+   return self.type == "kern"
 end
 
 local _deprecated_nodefactory = {
@@ -719,6 +1019,28 @@ local _deprecated_nodefactory = {
    zeroHbox = true,
    zeroVglue = true,
 }
+
+-- EXPORTS WRAP-UP
+
+nodetypes.box = box
+nodetypes.hbox = hbox
+nodetypes.zerohbox = zerohbox
+nodetypes.nnode = nnode
+nodetypes.unshaped = unshaped
+nodetypes.discretionary = discretionary
+nodetypes.alternative = alternative
+nodetypes.glue = glue
+nodetypes.hfillglue = hfillglue
+nodetypes.hssglue = hssglue
+nodetypes.kern = kern
+nodetypes.vglue = vglue
+nodetypes.vfillglue = vfillglue
+nodetypes.vssglue = vssglue
+nodetypes.zerovglue = zerovglue
+nodetypes.vkern = vkern
+nodetypes.penalty = penalty
+nodetypes.vbox = vbox
+nodetypes.migrating = migrating
 
 setmetatable(nodetypes, {
    __index = function (_, prop)
