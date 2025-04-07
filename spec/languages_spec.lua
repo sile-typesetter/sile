@@ -13,7 +13,7 @@ describe("Language module", function ()
       SILE.call("language", { main = "no" })
 
       it("should hyphenate", function ()
-         assert.is.equal("Nor-we-gian", hyphenate("Norwegian", "no"))
+         assert.is.equal("Nor-we-gi-an", hyphenate("Norwegian", "no"))
          assert.is.equal("atten-de", hyphenate("attende", "no"))
       end)
 
@@ -26,7 +26,7 @@ describe("Language module", function ()
          SILE.call("language", { main = "nb" })
 
          it("should hyphenate", function ()
-            assert.is.equal("Nor-we-gian", hyphenate("Norwegian", "nb"))
+            assert.is.equal("Nor-we-gi-an", hyphenate("Norwegian", "nb"))
             assert.is.equal("atten-de", hyphenate("attende", "nb"))
          end)
 
@@ -40,7 +40,7 @@ describe("Language module", function ()
          SILE.call("language", { main = "nn" })
 
          it("should hyphenate", function ()
-            assert.is.equal("Nor-we-gian", hyphenate("Norwegian", "nn"))
+            assert.is.equal("Nor-we-gi-an", hyphenate("Norwegian", "nn"))
             assert.is.equal("att-en-de", hyphenate("attende", "nn"))
          end)
 
