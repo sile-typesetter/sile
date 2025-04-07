@@ -925,74 +925,23 @@ end
 
 -- DEPRECATED FUNCTIONS
 
-function box:isBox ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "hbox"
-      or self.type == "zerohbox"
-      or self.type == "alternative"
-      or self.type == "nnode"
-      or self.type == "vbox"
+local function _deprecated_isX ()
+   SU.deprecated("node:isX()", "is_X", "0.10.0", "0.16.0")
 end
 
-function box:isNnode ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "nnode"
-end
-
-function box:isGlue ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "glue"
-end
-
-function box:isVglue ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "vglue"
-end
-
-function box:isZero ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "zerohbox" or self.type == "zerovglue"
-end
-
-function box:isUnshaped ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "unshaped"
-end
-
-function box:isAlternative ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "alternative"
-end
-
-function box:isVbox ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "vbox"
-end
-
-function box:isInsertion ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "insertion"
-end
-
-function box:isMigrating ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.migrating
-end
-
-function box:isPenalty ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "penalty"
-end
-
-function box:isDiscretionary ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "discretionary"
-end
-
-function box:isKern ()
-   SU.warn("Deprecated function, please use boolean is_<type> property to check types", true)
-   return self.type == "kern"
-end
+box.isBox = _deprecated_isX
+box.isNnode = _deprecated_isX
+box.isGlue = _deprecated_isX
+box.isVglue = _deprecated_isX
+box.isZero = _deprecated_isX
+box.isUnshaped = _deprecated_isX
+box.isAlternative = _deprecated_isX
+box.isVbox = _deprecated_isX
+box.isInsertion = _deprecated_isX
+box.isMigrating = _deprecated_isX
+box.isPenalty = _deprecated_isX
+box.isDiscretionary = _deprecated_isX
+box.isKern = _deprecated_isX
 
 local _deprecated_nodefactory = {
    newHbox = true,
