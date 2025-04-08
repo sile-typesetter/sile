@@ -7,7 +7,7 @@ function pagebuilder:_init ()
    base._init(self)
 end
 
-function pagebuilder.findBestBreak (_, options)
+function pagebuilder:findBestBreak (options)
    local vboxlist = SU.required(options, "vboxlist", "in findBestBreak")
    local target = SU.required(options, "target", "in findBestBreak")
    local i = 0

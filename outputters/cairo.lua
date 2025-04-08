@@ -34,26 +34,26 @@ function outputter:_init ()
    sgs = cr.show_glyph_string
 end
 
-function outputter.newPage (_)
+function outputter:newPage ()
    cr:show_page()
 end
 
-function outputter.getCursor (_)
+function outputter:getCursor ()
    return cursorX, cursorY
 end
 
-function outputter.setCursor (_, x, y, relative)
+function outputter:setCursor (x, y, relative)
    local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
    cursorX = offset.x + x
    cursorY = offset.y - y
    move(cr, cursorX, cursorY)
 end
 
-function outputter.setColor (_, color)
+function outputter:setColor (color)
    cr:set_source_rgb(color.r, color.g, color.b)
 end
 
-function outputter.drawHbox (_, value, _)
+function outputter:drawHbox (value, _)
    if not value then
       return
    end
@@ -64,12 +64,12 @@ function outputter.drawHbox (_, value, _)
    end
 end
 
-function outputter.setFont (_, options)
+function outputter:setFont (options)
    cr:select_font_face(options.font, options.style:lower() == "italic" and 1 or 0, options.weight > 100 and 0 or 1)
    cr:set_font_size(options.size)
 end
 
-function outputter.drawImage (_, src, x, y, width, height)
+function outputter:drawImage (src, x, y, width, height)
    local image = cairolgi.ImageSurface.create_from_png(src)
    if not image then
       SU.error("Could not load image " .. src)
@@ -100,7 +100,7 @@ function outputter.drawImage (_, src, x, y, width, height)
    cr:restore()
 end
 
-function outputter.getImageSize (_, src)
+function outputter:getImageSize (src)
    local box_width, box_height, err = imagesize.imgsize(src)
    if not box_width then
       SU.error(err .. " loading image")
@@ -108,12 +108,12 @@ function outputter.getImageSize (_, src)
    return box_width, box_height
 end
 
-function outputter.drawRule (_, x, y, width, depth)
+function outputter:drawRule (x, y, width, depth)
    cr:rectangle(x, y, width, depth)
    cr:fill()
 end
 
-function outputter.debugFrame (_, frame)
+function outputter:debugFrame (frame)
    cr:set_source_rgb(0.8, 0, 0)
    cr:set_line_width(0.5)
    cr:rectangle(frame:left(), frame:top(), frame:width(), frame:height())
@@ -137,7 +137,7 @@ function outputter:debugHbox (hbox, scaledWidth)
 end
 
 -- untested
-function outputter.drawRaw (_, literal)
+function outputter:drawRaw (literal)
    cr:show_text(literal)
 end
 

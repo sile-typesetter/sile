@@ -84,7 +84,7 @@ function inputter.appropriate (round, filename, doc)
    end
 end
 
-function inputter.parse (_, doc)
+function inputter:parse (doc)
    local tree, err = parse(doc)
    if not tree then
       SU.error(err)

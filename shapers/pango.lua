@@ -96,7 +96,7 @@ function shaper:shapeToken (text, options)
    return rv, twidth
 end
 
-function shaper.addShapedGlyphToNnodeValue (_, nnodevalue, shapedglyph)
+function shaper:addShapedGlyphToNnodeValue (nnodevalue, shapedglyph)
    nnodevalue.pgs = shapedglyph.pgs
    nnodevalue.font = shapedglyph.font
 end

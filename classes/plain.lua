@@ -60,7 +60,7 @@ function class:setOptions (options)
    base.setOptions(self, options)
 end
 
-function class.declareSettings (_)
+function class:declareSettings ()
    for k, v in pairs(skips) do
       SILE.settings:declare({
          parameter = "plain." .. k .. "skipamount",

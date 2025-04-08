@@ -106,7 +106,7 @@ function package:_init ()
    end)
 end
 
-function package.declareSettings (_)
+function package:declareSettings ()
    SILE.settings:declare({
       parameter = "linespacing.method",
       default = "tex",
