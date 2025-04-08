@@ -58,6 +58,23 @@ local function loadPatterns (hyphenator, language)
    for _, exception in ipairs(languageset.exceptions) do
       registerException(hyphenator, exception)
    end
+   local hyphenmins = languageset.hyphenmins
+   -- TODO: We ought to have a way to set these according to users' preferences
+   -- For now, we just set them to the conventional values based on the pattern files, or TeX defaults
+   -- Yet, if available, we use the typesetting convention.
+   -- For the record, the generation miniam are the real minima below which the pattern file is not
+   -- applicable. (So even users' preferences should not go below these values.)
+   if hyphenmins then
+      if hyphenmins.typesetting then
+         hyphenator.leftmin = hyphenmins.typesetting.left or 2
+         hyphenator.rightmin = hyphenmins.typesetting.right or 2
+         SU.debug("hyphenator", "Setting hyphenation minima for typesetting:", hyphenator.leftmin, hyphenator.rightmin)
+      elseif hyphenmins.generation then
+         hyphenator.leftmin = hyphenmins.generation.left or 2
+         hyphenator.rightmin = hyphenmins.generation.right or 2
+         SU.debug("hyphenator", "Setting hyphenation minima from generation:", hyphenator.leftmin, hyphenator.rightmin)
+      end
+   end
 end
 
 SILE._hyphenate = function (self, text)
@@ -96,7 +113,7 @@ SILE._hyphenate = function (self, text)
       for i = 1, self.leftmin do
          points[i] = 0
       end
-      for i = #points - self.rightmin, #points do
+      for i = #points - self.rightmin + 1, #points do
          points[i] = 0
       end
    end
@@ -121,7 +138,13 @@ end
 
 local initHyphenator = function (lang)
    if not SILE._hyphenators[lang] then
-      SILE._hyphenators[lang] = { minWord = 5, leftmin = 2, rightmin = 2, trie = {}, exceptions = {} }
+      SILE._hyphenators[lang] = {
+         minWord = 5, -- Smallest word length below which hyphenation is not applied
+         leftmin = 2, -- Minimum number of characters to the left of the hyphen (TeX default)
+         rightmin = 2, -- Minimum number of characters to the right of the hyphen (TeX default)
+         trie = {}, -- Trie resulting from the patterns
+         exceptions = {}, -- Hyphenation exceptions
+      }
       loadPatterns(SILE._hyphenators[lang], lang)
    end
    if SILE.hyphenator.languages[lang] and not SILE.hyphenator.languages[lang].hyphenateSegments then

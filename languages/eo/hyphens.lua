@@ -1,6 +1,12 @@
 -- Verkita originale por Fredrick BRENNAN (copypaste@kittens.ph) 2022-jare
 -- Original file by Fredrick R. Brennan (copypaste@kittens.ph) in 2022
 return {
+   hyphenmins = {
+      -- Usual typesetting convention from TeX
+      -- TeX use a different set of patterns, but we can assume that the hyphenation minima
+      -- for typesetting should be the same.
+      typesetting = { left = 2, right = 2 },
+   },
    patterns = {
       -- La fonto de la ŝablonoj ĉisubaj estas Sergio Pokrovskij (@pok49)'s GitHub-projekto «vortdivido».
       -- (The source of the patterns below is Sergio Pokrovskij (@pok49)'s «vortdivido» project on GitHub.)
