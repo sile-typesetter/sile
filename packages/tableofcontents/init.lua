@@ -19,7 +19,7 @@ function package:moveTocNodes ()
    end
 end
 
-function package.writeToc (_)
+function package:writeToc ()
    local tocdata = pl.pretty.write(SILE.scratch.tableofcontents)
    local tocfile, err = io.open(pl.path.splitext(SILE.input.filenames[1]) .. ".toc", "w")
    if not tocfile then
@@ -33,7 +33,7 @@ function package.writeToc (_)
    end
 end
 
-function package.readToc (_)
+function package:readToc ()
    if SILE.scratch._tableofcontents and #SILE.scratch._tableofcontents > 0 then
       -- already loaded
       return SILE.scratch._tableofcontents

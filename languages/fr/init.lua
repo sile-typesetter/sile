@@ -104,7 +104,7 @@ SILE.nodeMakers.fr.quoteTypes = { qu = true } -- split tokens at apostrophes &c.
 
 -- methods defined in this class
 
-function SILE.nodeMakers.fr.isIn (_, set, text)
+function SILE.nodeMakers.fr:isIn (set, text)
    for _, v in ipairs(set) do
       if v == text then
          return true

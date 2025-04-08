@@ -192,7 +192,7 @@ local bidiBoxupNodes = function (typesetter)
    return vboxlist
 end
 
-function package.reorder (_, n, typesetter)
+function package:reorder (n, typesetter)
    local nl = n.nodes
    -- local newNl = {}
    -- local matrix = {}

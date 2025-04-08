@@ -50,9 +50,9 @@ function package:_post_init ()
    self._initialized = true
 end
 
-function package.declareSettings (_) end
+function package:declareSettings () end
 
-function package.registerRawHandlers (_) end
+function package:registerRawHandlers () end
 
 function package:loadPackage (packname, options, reload)
    return self.class:loadPackage(packname, options, reload)
@@ -62,7 +62,7 @@ function package:reloadPackage (packname, options)
    return self.class:reloadPackage(packname, options)
 end
 
-function package.registerCommands (_) end
+function package:registerCommands () end
 
 -- This gives us a hook to match commands with the packages that registered
 -- them as opposed to core commands or class-provided commands

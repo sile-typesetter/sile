@@ -302,7 +302,7 @@ function nodetypes.unshaped:shape ()
    return node
 end
 
-function nodetypes.unshaped.outputYourself (_)
+function nodetypes.unshaped:outputYourself ()
    SU.error("An unshaped node made it to output", true)
 end
 
@@ -493,7 +493,7 @@ function nodetypes.glue:__tostring ()
    return (self.explicit and "E:" or "") .. "G<" .. tostring(self.width) .. ">"
 end
 
-function nodetypes.glue.toText (_)
+function nodetypes.glue:toText ()
    return " "
 end
 
@@ -603,9 +603,9 @@ function nodetypes.penalty:__tostring ()
    return "P(" .. tostring(self.penalty) .. ")"
 end
 
-function nodetypes.penalty.outputYourself (_) end
+function nodetypes.penalty:outputYourself () end
 
-function nodetypes.penalty.toText (_)
+function nodetypes.penalty:toText ()
    return "(!)"
 end
 

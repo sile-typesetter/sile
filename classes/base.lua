@@ -113,7 +113,7 @@ function class:declareOption (option, setter)
    self.options[option] = setter
 end
 
-function class.declareOptions (_) end
+function class:declareOptions () end
 
 function class:_declareBaseOptions ()
    self:declareOption("class", function (_, name)
@@ -178,9 +178,9 @@ function class:_declareBaseOptions ()
    end)
 end
 
-function class.declareSettings (_) end
+function class:declareSettings () end
 
-function class._declareBaseSettings (_)
+function class:_declareBaseSettings ()
    SILE.settings:declare({
       parameter = "current.parindent",
       type = "glue or nil",
@@ -333,7 +333,7 @@ end
 -- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
 -- messages. Usually auto-detected.
 -- @see SILE.packages:registerCommand
-function class.registerCommand (_, name, func, help, pack)
+function class:registerCommand (name, func, help, pack)
    SILE.Commands[name] = func
    if not pack then
       local where = debug.getinfo(2).source
@@ -346,7 +346,7 @@ function class.registerCommand (_, name, func, help, pack)
    }
 end
 
-function class.registerRawHandler (_, format, callback)
+function class:registerRawHandler (format, callback)
    SILE.rawHandlers[format] = callback
 end
 

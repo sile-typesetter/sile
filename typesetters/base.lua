@@ -59,7 +59,7 @@ function typesetter:_post_init ()
 end
 
 --- Declare new setting types
-function typesetter.declareSettings (_)
+function typesetter:declareSettings ()
    -- Settings common to any typesetter instance.
    -- These shouldn't be re-declared and overwritten/reset in the typesetter
    -- constructor (see issue https://github.com/sile-typesetter/sile/issues/1708).
@@ -192,7 +192,7 @@ function typesetter.getMargins ()
    return _margins(SILE.settings:get("document.lskip"), SILE.settings:get("document.rskip"))
 end
 
-function typesetter.setMargins (_, margins)
+function typesetter:setMargins (margins)
    SILE.settings:set("document.lskip", margins.lskip)
    SILE.settings:set("document.rskip", margins.rskip)
 end
@@ -575,7 +575,7 @@ local function isItalicLike (nnode)
    return font.post.italicAngle ~= 0
 end
 
-function typesetter.shapeAllNodes (_, nodelist, inplace)
+function typesetter:shapeAllNodes (nodelist, inplace)
    inplace = SU.boolean(inplace, true) -- Compatibility with earlier versions
    local newNodelist = {}
    local prec
@@ -708,7 +708,7 @@ function typesetter:boxUpNodes ()
    return vboxes
 end
 
-function typesetter.pageTarget (_)
+function typesetter:pageTarget ()
    SU.deprecated("SILE.typesetter:pageTarget", "SILE.typesetter:getTargetLength", "0.13.0", "0.14.0")
 end
 
@@ -1015,7 +1015,7 @@ function typesetter:inhibitLeading ()
    self.state.previousVbox = nil
 end
 
-function typesetter.leadingFor (_, vbox, previous)
+function typesetter:leadingFor (vbox, previous)
    -- Insert leading
    SU.debug("typesetter", "   Considering leading between two lines:")
    SU.debug("typesetter", "   1)", previous)
@@ -1146,7 +1146,7 @@ end
 -- Migrating content, however, must be kept outside the hboxes at top slice level.
 -- @tparam table slice Flat nodes from current line
 -- @treturn table New reboxed slice
-function typesetter._reboxLiners (_, slice)
+function typesetter:_reboxLiners (slice)
    local outSlice = {}
    local migratingList = {}
    local lboxStack = {}
@@ -1345,7 +1345,7 @@ function typesetter:breakpointsToLines (breakpoints)
    return lines
 end
 
-function typesetter.computeLineRatio (_, breakwidth, slice)
+function typesetter:computeLineRatio (breakwidth, slice)
    local naturalTotals = SILE.types.length()
 
    -- From the line end, account for the margin but skip any trailing

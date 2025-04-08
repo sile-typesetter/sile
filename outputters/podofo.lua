@@ -32,7 +32,7 @@ function outputter:_init (_)
    painter:SetPage(page)
 end
 
-function outputter.newPage (_)
+function outputter:newPage ()
    painter:FinishPage()
    page = document:CreatePage(pagesize)
    painter:SetPage(page)
@@ -45,17 +45,17 @@ function outputter:finish ()
    document:Write(fname == "-" and "/dev/stdout" or fname)
 end
 
-function outputter.getCursor (_)
+function outputter:getCursor ()
    return cursorX, cursorY
 end
 
-function outputter.setCursor (_, x, y, relative)
+function outputter:setCursor (x, y, relative)
    local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
    cursorX = offset.x + x
    cursorY = offset.y + SILE.documentState.paperSize[2] - y
 end
 
-function outputter.setColor (_, color)
+function outputter:setColor (color)
    painter:SetColor(color.r, color.g, color.b)
 end
 
@@ -69,7 +69,7 @@ function outputter:drawHbox (value, _)
    end
 end
 
-function outputter.setFont (_, options)
+function outputter:setFont (options)
    if SILE.font._key(options) == lastkey then
       return
    end
@@ -87,7 +87,7 @@ function outputter.setFont (_, options)
    SILE.fontCache[lastkey] = nil
 end
 
-function outputter.getImageSize (_, src)
+function outputter:getImageSize (src)
    local box_width, box_height, err = imagesize.imgsize(src)
    if not box_width then
       SU.error(err .. " loading image")
@@ -95,7 +95,7 @@ function outputter.getImageSize (_, src)
    return box_width, box_height
 end
 
-function outputter.drawRule (_, x, y, width, depth)
+function outputter:drawRule (x, y, width, depth)
    painter:Rectangle(x, SILE.documentState.paperSize[2] - y, width, depth)
    painter:Close()
    painter:Fill()

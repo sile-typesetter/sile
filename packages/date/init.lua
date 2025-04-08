@@ -8,7 +8,7 @@ local localeify = function (lang)
    return lang .. "_" .. string.upper(lang) .. ".utf-8"
 end
 
-function package.date (_, options)
+function package:date (options)
    options.format = options.format or "%c"
    options.time = options.time or os.time()
    options.locale = options.locale or localeify(SILE.settings:get("document.language"))
