@@ -21,21 +21,44 @@ local outputter = pl.class(base)
 outputter._name = "cairo"
 outputter.extension = "pdf"
 
+local started = false
+local surface
+
 function outputter:_init ()
    base._init(self)
+end
+
+function outputter:_ensureInit ()
    local fname = self:getOutputFilename()
-   local surface = cairo.PdfSurface.create(
-      fname == "-" and "/dev/stdout" or fname,
-      SILE.documentState.paperSize[1],
-      SILE.documentState.paperSize[2]
-   )
-   cr = cairo.Context.create(surface)
-   move = cr.move_to
-   sgs = cr.show_glyph_string
+   if not started then
+      surface = cairo.PdfSurface.create(
+         fname == "-" and "/dev/stdout" or fname,
+         SILE.documentState.paperSize[1],
+         SILE.documentState.paperSize[2]
+      )
+      cr = cairo.Context.create(surface)
+      move = cr.move_to
+      sgs = cr.show_glyph_string
+   end
 end
 
 function outputter:newPage ()
+   self:_ensureInit()
    cr:show_page()
+end
+
+function outputter:abort ()
+   if started then
+      surface:finish()
+   end
+end
+
+function outputter:finish()
+   -- allows generation of empty PDFs
+   self:_ensureInit()
+   self:runHooks("prefinish")
+   cr:show_page()
+   surface:finish()
 end
 
 function outputter:getCursor ()
@@ -43,6 +66,7 @@ function outputter:getCursor ()
 end
 
 function outputter:setCursor (x, y, relative)
+   self:_ensureInit()
    local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
    cursorX = offset.x + x
    cursorY = offset.y - y
@@ -50,10 +74,12 @@ function outputter:setCursor (x, y, relative)
 end
 
 function outputter:setColor (color)
+   self:_ensureInit()
    cr:set_source_rgb(color.r, color.g, color.b)
 end
 
 function outputter:drawHbox (value, _)
+   self:_ensureInit()
    if not value then
       return
    end
@@ -65,11 +91,13 @@ function outputter:drawHbox (value, _)
 end
 
 function outputter:setFont (options)
+   self:_ensureInit()
    cr:select_font_face(options.font, options.style:lower() == "italic" and 1 or 0, options.weight > 100 and 0 or 1)
    cr:set_font_size(options.size)
 end
 
 function outputter:drawImage (src, x, y, width, height)
+   self:_ensureInit()
    local image = cairo.ImageSurface.create_from_png(src)
    if not image then
       SU.error("Could not load image " .. src)
@@ -109,11 +137,13 @@ function outputter:getImageSize (src)
 end
 
 function outputter:drawRule (x, y, width, depth)
+   self:_ensureInit()
    cr:rectangle(x, y, width, depth)
    cr:fill()
 end
 
 function outputter:debugFrame (frame)
+   self:_ensureInit()
    cr:set_source_rgb(0.8, 0, 0)
    cr:set_line_width(0.5)
    cr:rectangle(frame:left(), frame:top(), frame:width(), frame:height())
@@ -124,6 +154,7 @@ function outputter:debugFrame (frame)
 end
 
 function outputter:debugHbox (hbox, scaledWidth)
+   self:_ensureInit()
    cr:set_source_rgb(0.9, 0.9, 0.9)
    cr:set_line_width(0.5)
    local x, y = self:getCursor()
@@ -138,6 +169,7 @@ end
 
 -- untested
 function outputter:drawRaw (literal)
+   self:_ensureInit()
    cr:show_text(literal)
 end
 
