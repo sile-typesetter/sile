@@ -14,6 +14,9 @@ describe("SILE.shapers.base", function ()
    end)
 
    describe("measureChar", function ()
+      -- Work around not having an active class in this test but needing language modules
+      SILE.typesetter = SILE.typesetters.default()
+
       SILE.settings:set("font.family", "Libertinus Serif", true)
 
       it("should measure simple characters", function ()

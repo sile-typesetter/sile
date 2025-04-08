@@ -860,4 +860,36 @@ function utilities.stripContentPos (content)
    return SU.ast.stripContentPos(content)
 end
 
+function utilities._avoid_base_class_use (obj)
+   if type(obj) == "table" and obj._name and obj._name ~= "base" then
+      local type_group = "SILE." .. obj.type .. "s"
+      SU.deprecated(type_group .. ".base", type_group .. ".default", "0.15.11", "0.16.0")
+   end
+end
+
+-- On demand loader, allows modules to be loaded into a specific scope but
+-- only when/if accessed.
+function utilities._module_loader (scope)
+   return setmetatable({}, {
+      __index = function (self, key)
+         local spec = ("%s.%s"):format(scope, key)
+         local status, module = pcall(require, spec)
+         if not status then
+            if scope == "languages" then
+               SU.warn(("Unable to load support for language '%s', handling with generic unicode module."):format(key))
+               local unicode = require("languages.unicode")
+               local language = pl.class(unicode)
+               language._name = key
+               self[key] = language
+               return language
+            else
+               SU.error(("Unable to load core module %s"):format(spec))
+            end
+         end
+         self[key] = module
+         return module
+      end,
+   })
+end
+
 return utilities

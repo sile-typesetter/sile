@@ -41,7 +41,6 @@ function class:_init (options)
 end
 
 function class:declareOptions ()
-   base.declareOptions(self)
    self:declareOption("direction", function (_, value)
       if value then
          SILE.documentState.direction = value
@@ -61,8 +60,7 @@ function class:setOptions (options)
    base.setOptions(self, options)
 end
 
-function class:declareSettings ()
-   base.declareSettings(self)
+function class.declareSettings (_)
    for k, v in pairs(skips) do
       SILE.settings:declare({
          parameter = "plain." .. k .. "skipamount",
@@ -74,8 +72,6 @@ function class:declareSettings ()
 end
 
 function class:registerCommands ()
-   SILE.classes.base.registerCommands(self)
-
    self:registerCommand("noindent", function (_, content)
       if #SILE.typesetter.state.nodes ~= 0 then
          SU.warn([[

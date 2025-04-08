@@ -214,6 +214,48 @@ SU.utf8codes = function ()
    SU.deprecated("SU.utf8codes", "luautf8.codes", "0.11.0", "0.12.0")
 end
 
+local nolanguageloader = function (_, key)
+   if key == "loadLanguage" then
+      return function (language)
+         SU.deprecated("SILE.languageSupport.<code>", ('require("languages.%s")'):format(language), "0.15.11", "0.17.0")
+         return SILE.languages[language]
+      end
+   end
+end
+
+SILE.languageSupport = {}
+setmetatable(SILE.languageSupport, {
+   __index = nolanguageloader,
+})
+
+local nonodemakers = function (_, key)
+   return function ()
+      SU.deprecated("SILE.nodeMakers.<code>", ('SILE.typesetter:_cacheLanguage("%s").nodeMaker'):format(key), "0.15.11", "0.17.0")
+      return SILE.typesetter:_cacheLanguage(key).nodeMaker
+   end
+end
+
+SILE.nodeMakers = {}
+setmetatable(SILE.nodeMakers, {
+   __index = nonodemakers,
+})
+
+SILE.tokenizers = {}
+setmetatable(SILE.tokenizers, {
+   __index = nonodemakers,
+})
+
+SILE.showHyphenationPoints = function (...)
+   SU.deprecated(
+      "SILE.showHyphenationPoints",
+      "SILE.typesetter.language.hyphenator:showHyphenationPoints",
+      "0.15.11",
+      "0.17.0"
+   )
+   local language = SILE.typesetter.language
+   return language.hyphenator:showHyphenationPoints(...)
+end
+
 -- luacheck: ignore updatePackage
 -- luacheck: ignore installPackage
 updatePackage = nopackagemanager

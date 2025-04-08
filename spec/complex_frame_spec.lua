@@ -26,7 +26,6 @@ tClass.firstContentFrame = "a"
 
 function tClass:_init ()
    base._init(self)
-   return self
 end
 
 SILE.documentState.documentClass = tClass()

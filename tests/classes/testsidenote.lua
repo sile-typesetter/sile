@@ -29,7 +29,6 @@ function testsidenote:_init (options)
       insertInto = { frame = "sidenotes", ratio = 0 },
       stealFrom = {},
    })
-   return self
 end
 
 return testsidenote

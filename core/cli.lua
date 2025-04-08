@@ -101,8 +101,7 @@ cli.parseArguments = function ()
       table.insert(SILE.input.luarocksTrees, tree)
    end
    if opts.makedeps then
-      SILE.makeDeps = require("core.makedeps")
-      SILE.makeDeps.filename = opts.makedeps
+      SILE.input.makedeps = opts.makedeps
    end
    if opts.output then
       if opts.output == "STDIO" then

@@ -45,17 +45,42 @@ end
 --- Constructor
 -- @param frame A initial frame to attach the typesetter to.
 function typesetter:_init (frame)
+   SU._avoid_base_class_use(self)
+   -- TODO: make class first arg of typesetter init, ditch globals hack
+   self.class = SILE.documentState.documentClass
    self:declareSettings()
    self.hooks = {}
    self.breadcrumbs = SU.breadcrumbs()
-
-   self.frame = nil
+   self.frame = frame
    self.stateQueue = {}
-   self:initFrame(frame)
+end
+
+function typesetter:_post_init ()
+   self:initFrame(self.frame)
    self:initState()
-   -- In case people use stdlib prototype syntax off of the instantiated typesetter...
-   getmetatable(self).__call = self.init
-   return self
+   self.language = SILE.languages.en(self)
+   -- Since it is the default and will get created as an instance before the callback triggers for the first *change*,
+   -- we need to force the first load here.
+   self:switchLanguage("en", true)
+end
+
+typesetter._language_cache = {}
+
+function typesetter:_cacheLanguage (lang)
+   if not self._language_cache[lang] then
+      self._language_cache[lang] = SILE.languages[lang](self)
+      SU.debug("typesetter", "Caching language in typesetter", lang)
+   end
+   return self._language_cache[lang]
+end
+
+function typesetter:switchLanguage (lang, force)
+   local current = self.language:_getLegacyCode()
+   if force or current ~= lang then
+      self.language = self:_cacheLanguage(lang)
+      self.language:activate()
+      SU.debug("typesetter", "Switching active language from", current, "to", self.language._name)
+   end
 end
 
 --- Declare new setting types
@@ -66,7 +91,6 @@ function typesetter.declareSettings (_)
    -- On the other hand, it's fairly acceptable to have them made global:
    -- Any derived typesetter, whatever its implementation, should likely provide
    -- some logic for them (= widows, orphans, spacing, etc.)
-
    SILE.settings:declare({
       parameter = "typesetter.widowpenalty",
       type = "integer",
@@ -364,12 +388,12 @@ function typesetter:initline ()
    end -- https://github.com/sile-typesetter/sile/issues/1718
    if #self.state.nodes == 0 then
       table.insert(self.state.nodes, SILE.types.node.zerohbox())
-      SILE.documentState.documentClass.newPar(self)
+      self.class.newPar(self)
    end
 end
 
 function typesetter:endline ()
-   SILE.documentState.documentClass.endPar(self)
+   self.class.endPar(self)
    self:leaveHmode()
    if SILE.settings:get("current.hangIndent") then
       SILE.settings:set("current.hangIndent", nil)
@@ -870,8 +894,8 @@ function typesetter:initNextFrame ()
       end
    else
       self:runHooks("pageend")
-      SILE.documentState.documentClass:endPage()
-      self:initFrame(SILE.documentState.documentClass:newPage())
+      self.class:endPage()
+      self:initFrame(self.class:newPage())
    end
 
    if not SU.feq(oldframe:getLineWidth(), self.frame:getLineWidth()) then

@@ -2,6 +2,10 @@ local makeDeps = {
    _deps = {},
 
    add = function (self, filename)
+      -- The Rust CLI sets the main chunk name as =[C], but we also pass ourselves the actual binary name for use here.
+      if filename == "=[C]" and _G.arg[0] then
+         filename = _G.arg[0]
+      end
       SU.debug("makedeps", "Adding:", filename)
       local resolvedFile, msg = package.searchpath(filename:gsub("^@?%./", ""), "?;" .. package.path, "/")
       if not resolvedFile then
@@ -31,7 +35,8 @@ local makeDeps = {
       if not depfile then
          return SU.error(err)
       end
-      depfile:write(SILE.outputter:getOutputFilename() .. ": " .. tostring(self._deps) .. "\n")
+      local target = ("%s %s: %s\n"):format(SILE.outputter:getOutputFilename(), self.filename, self._deps)
+      depfile:write(target)
       depfile:close()
    end,
 }

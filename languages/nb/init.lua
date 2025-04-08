@@ -1,12 +1,6 @@
-local no = require("languages.no")._no
+local unicode = require("languages.unicode")
 
-local no_patterns, no_exceptions = no()
+local language = pl.class(unicode)
+language._name = "nb"
 
-return {
-   init = function ()
-      SILE.hyphenator.languages.nb = {
-         patterns = no_patterns,
-         exceptions = no_exceptions,
-      }
-   end,
-}
+return language

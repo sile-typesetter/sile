@@ -1,2 +1,6 @@
-local hyphens = require("languages.el-monoton.hyphens-tex")
-SILE.hyphenator.languages["el-monoton"] = hyphens
+local unicode = require("languages.unicode")
+
+local language = pl.class(unicode)
+language._name = "el-monoton"
+
+return language

@@ -22,6 +22,7 @@ local rawhandlerRegistrations = {}
 local commandRegistrations = {}
 
 function package:_init (_, reload)
+   SU._avoid_base_class_use(self)
    self.class = SILE.scratch.half_initialized_class or SILE.documentState.documentClass
    if not self.class then
       SU.error("Attempted to initialize package before class, should have been queued in the preamble", true)

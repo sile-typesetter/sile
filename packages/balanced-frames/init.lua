@@ -69,7 +69,7 @@ local function buildPage (typesetter, independent)
    end
    typesetter.state.lastPenalty = 0
    local oldPageBuilder = SILE.pagebuilder
-   SILE.pagebuilder = SILE.pagebuilders.base()
+   SILE.pagebuilder = SILE.pagebuilders.default()
    while typesetter.frame and typesetter.frame.balanced do
       unbalanced_buildPage(typesetter, true)
       if typesetter.frame.next and SILE.getFrame(typesetter.frame.next).balanced == true then

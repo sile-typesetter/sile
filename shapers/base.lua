@@ -11,10 +11,13 @@ local function shapespace (spacewidth)
    spacewidth = SU.cast("measurement", spacewidth)
    -- In some scripts with word-level kerning, glue can be negative.
    -- Use absolute value to ensure stretch and shrink work as expected.
-   local absoluteSpaceWidth = math.abs(spacewidth:tonumber())
-   local length = spacewidth * SILE.settings:get("shaper.spaceenlargementfactor")
-   local stretch = absoluteSpaceWidth * SILE.settings:get("shaper.spacestretchfactor")
-   local shrink = absoluteSpaceWidth * SILE.settings:get("shaper.spaceshrinkfactor")
+   local abs_length = math.abs(spacewidth:tonumber())
+   local length, stretch, shrink = abs_length, 0, 0
+   if SILE.settings:get("shaper.variablespaces") then
+      length = spacewidth * SILE.settings:get("shaper.spaceenlargementfactor")
+      stretch = abs_length * SILE.settings:get("shaper.spacestretchfactor")
+      shrink = abs_length * SILE.settings:get("shaper.spaceshrinkfactor")
+   end
    return SILE.types.length(length, stretch, shrink)
 end
 
@@ -22,13 +25,20 @@ local shaper = pl.class()
 shaper.type = "shaper"
 shaper._name = "base"
 
-function shaper._init ()
+function shaper:_init ()
+   SU._avoid_base_class_use(self)
    -- Function for testing shaping in the repl
    -- TODO, figure out a way to explicitly register things in the repl env
    _G["makenodes"] = function (token, options)
       return SILE.shaper:createNnodes(token, SILE.font.loadDefaults(options or {}))
    end
+   self:_declareBaseSettings()
+   self:declareSettings()
+end
 
+function shaper.declareSettings (_) end
+
+function shaper._declareBaseSettings (_)
    SILE.settings:declare({
       parameter = "shaper.variablespaces",
       type = "boolean",
@@ -124,11 +134,11 @@ function shaper:createNnodes (token, options)
    if #items < 1 then
       return {}
    end
-   local lang = options.language
-   SILE.languageSupport.loadLanguage(lang)
-   local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
+   -- TODO this shouldn't need a private interface to a different module type
+   local language = SILE.typesetter:_cacheLanguage(options.language)
    local nodes = {}
-   for node in nodeMaker(options):iterator(items, token) do
+   local nodemaker = language:nodeMaker(options)
+   for node in nodemaker:iterator(items, token) do
       table.insert(nodes, node)
    end
    return nodes

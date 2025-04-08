@@ -13,6 +13,7 @@ packages/pandoc*	@alerque
 packages/hanmenkyoshi*	@sile-typesetter/lang-cjk
 packages/ruby*	@sile-typesetter/lang-cjk
 packages/tate*	@sile-typesetter/lang-cjk
+typesetters/*tate*	@sile-typesetter/lang-cjk
 
 # Distro Packaging
 *.nix	@alerque @doronbehar

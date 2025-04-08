@@ -170,7 +170,6 @@ function color:_init (input)
    for k, v in pairs(c) do
       self[k] = v
    end
-   return self
 end
 
 function color:__tostring ()
