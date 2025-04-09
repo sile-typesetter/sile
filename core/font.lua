@@ -221,14 +221,21 @@ local font = {
 
    finish = function ()
       for key, font in pairs(SILE.fontCache) do
-         if font.tempfilename ~= font.filename then
-            SU.debug("fonts", "Removing temporary file of", key, ":", font.tempfilename)
-            os.remove(font.tempfilename)
+         -- Don't do anything for Pango fonts
+         if type(font) ~= "userdata" and type(font.insert) ~= "function" then
+            if font.tempfilename ~= font.filename then
+               SU.debug("fonts", "Removing temporary file of", key, ":", font.tempfilename)
+               os.remove(font.tempfilename)
+            end
          end
       end
    end,
 
    postLoadHook = function (face)
+      -- Don't do anything for Pango fonts (here face could be a Pango Attribute Lists)
+      if type(face) == "userdata" and type(face.insert) == "function" then
+         return
+      end
       local ot = require("core.opentype-parser")
       local font = ot.parseFont(face)
       if font.cpal then
