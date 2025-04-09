@@ -4,7 +4,7 @@ local base = require("outputters.base")
 -- example of how to create alternative output backends, in comparison
 -- with the libtexpdf and debug backends.
 local lgi = require("lgi")
-local cairolgi = lgi.cairo
+local cairo = lgi.cairo
 -- local pango = lgi.Pango
 -- local fm = lgi.PangoCairo.FontMap.get_default()
 -- local pango_context = lgi.Pango.FontMap.create_context(fm)
@@ -24,12 +24,12 @@ outputter.extension = "pdf"
 function outputter:_init ()
    base._init(self)
    local fname = self:getOutputFilename()
-   local surface = cairolgi.PdfSurface.create(
+   local surface = cairo.PdfSurface.create(
       fname == "-" and "/dev/stdout" or fname,
       SILE.documentState.paperSize[1],
       SILE.documentState.paperSize[2]
    )
-   cr = cairolgi.Context.create(surface)
+   cr = cairo.Context.create(surface)
    move = cr.move_to
    sgs = cr.show_glyph_string
 end
@@ -70,7 +70,7 @@ function outputter:setFont (options)
 end
 
 function outputter:drawImage (src, x, y, width, height)
-   local image = cairolgi.ImageSurface.create_from_png(src)
+   local image = cairo.ImageSurface.create_from_png(src)
    if not image then
       SU.error("Could not load image " .. src)
    end
@@ -90,9 +90,9 @@ function outputter:drawImage (src, x, y, width, height)
       if height > 0 then
          sy = src_height / height
       end
-      matrix = cairolgi.Matrix.create_scale(sx or sy, sy or sx)
+      matrix = cairo.Matrix.create_scale(sx or sy, sy or sx)
    else
-      matrix = cairolgi.Matrix.create_identity()
+      matrix = cairo.Matrix.create_identity()
    end
    matrix:translate(-x, -y)
    p:set_matrix(matrix)
