@@ -112,7 +112,7 @@ function package:registerCommands ()
          SILE.settings:set("font.direction", "LTR")
          SILE.call("rotate", { angle = -90 }, function ()
             local hbox = SILE.call("hbox", {}, content)
-            hbox.misfit = true
+            hbox.orthogonal = true
             hbox.oldOutputYourself = hbox.outputYourself
             hbox.outputYourself = outputTateChuYoko
          end)

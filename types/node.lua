@@ -33,7 +33,7 @@ box.type = "special"
 box.height = nil
 box.depth = nil
 box.width = nil
-box.misfit = false
+box.orthogonal = false
 box.explicit = false
 box.discardable = false
 box.value = nil
@@ -110,7 +110,7 @@ end
 --
 -- @treturn SILE.types.length  The width or height of the box, depending on the orientation.
 function box:lineContribution ()
-   return self.misfit and self.height or self.width
+   return self.orthogonal and self.height or self.width
 end
 
 --- Output routine for a box.
