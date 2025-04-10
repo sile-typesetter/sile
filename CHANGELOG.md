@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.15.12](https://github.com/sile-typesetter/sile/compare/v0.15.11...v0.15.12) (2025-04-10)
+
+
+### Bug Fixes
+
+* **utilities:** Correct reversed deprecation warning condition ([a97c679](https://github.com/sile-typesetter/sile/commit/a97c6795426f12066ef8fbeb489fd936fe8b6daa)), closes [#2265](https://github.com/sile-typesetter/sile/issues/2265)
+
 ## [0.15.11](https://github.com/sile-typesetter/sile/compare/v0.15.10...v0.15.11) (2025-04-10)
 
 
