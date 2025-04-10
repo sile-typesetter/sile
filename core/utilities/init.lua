@@ -861,18 +861,16 @@ function utilities.stripContentPos (content)
 end
 
 function utilities._avoid_base_class_use (obj)
-   if type(obj) == "table" and obj._name and obj._name ~= "base" then
+   if type(obj) == "table" and obj._name and obj._name == "base" then
       local type_group = "SILE." .. obj.type .. "s"
       SU.deprecated(type_group .. ".base", type_group .. ".default", "0.15.11", "0.16.0")
    end
 end
 
--- On demand loader, allows modules to be loaded into a specific scope but
--- only when/if accessed.
+-- On demand loader, allows modules to be loaded into a specific scope only if/when accessed
 function utilities._module_loader (scope)
    return setmetatable({}, {
       __index = function (self, key)
-         -- local var = rawget(self, key)
          local m = require(("%s.%s"):format(scope, key))
          self[key] = m
          return m
