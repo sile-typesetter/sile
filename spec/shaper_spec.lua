@@ -2,7 +2,7 @@ SILE = require("core.sile")
 SILE.input.backend = "debug"
 SILE.init()
 
-describe("SILE.shapers.base", function ()
+describe("SILE.shapers.default", function ()
    it("should always have positive stretch and shrink", function ()
       SILE.settings:set("shaper.variablespaces", true)
       SILE.settings:set("shaper.spacestretchfactor", 2)
