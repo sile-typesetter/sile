@@ -92,7 +92,7 @@ function package:_init ()
    end
 end
 
-function package.declareSettings (_)
+function package:declareSettings ()
    SILE.settings:declare({
       parameter = "bibtex.style",
       type = "string",
@@ -111,7 +111,7 @@ end
 
 --- Retrieve the CSL engine, creating it if necessary.
 -- @treturn CslEngine CSL engine instance
-function package.getCslEngine (_)
+function package:getCslEngine ()
    if not SILE.scratch.bibtex.engine then
       SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
    end
@@ -124,7 +124,7 @@ end
 -- @tparam table content Content
 -- @tparam boolean warn_uncited Warn if the entry is not cited yet
 -- @treturn table Bibliography entry
-function package.getEntryForCite (_, options, content, warn_uncited)
+function package:getEntryForCite (options, content, warn_uncited)
    if not options.key then
       options.key = SU.ast.contentToString(content)
    end
@@ -149,7 +149,7 @@ end
 --- Retrieve a locator from the options.
 -- @tparam table options Options
 -- @treturn table Locator
-function package.getLocator (_, options)
+function package:getLocator (options)
    local locator
    for k, v in pairs(options) do
       if k ~= "key" then

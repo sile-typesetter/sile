@@ -164,7 +164,7 @@ function SILE.nodeMakers.unicode:letterspace ()
    end
 end
 
-function SILE.nodeMakers.unicode.isICUBreakHere (_, chunks, item)
+function SILE.nodeMakers.unicode:isICUBreakHere (chunks, item)
    return chunks[1] and (item.index >= chunks[1].index)
 end
 

@@ -55,24 +55,21 @@ function class:_init (options)
       options = {}
    end
    SILE.languageSupport.loadLanguage("und") -- preload for unlocalized fallbacks
+   self:_declareBaseOptions()
    self:declareOptions()
    self:registerRawHandlers()
+   self:_declareBaseSettings()
    self:declareSettings()
+   self:_registerBaseCommands()
    self:registerCommands()
    self:setOptions(options)
    self:declareFrames(self.defaultFrameset)
    self:registerPostinit(function (self_)
-      -- In the event no packages have called \language explicitly or otherwise triggerend the language loader, at this
-      -- point we'll have a language *setting* but not actually have loaded the language. We put it off as long as we
-      -- could in case the user changed the default document language and we didn't need to load the system default one,
-      -- but that time has come at gone at this point. Make sure we've loaded somethnig...
-      local lang = SILE.settings:get("document.language")
-      SILE.languageSupport.loadLanguage(lang)
       if type(self.firstContentFrame) == "string" then
          self_.pageTemplate.firstContentFrame = self_.pageTemplate.frames[self_.firstContentFrame]
       end
       local frame = self_:initialFrame()
-      SILE.typesetter = SILE.typesetters.base(frame)
+      SILE.typesetter = SILE.typesetters.default(frame)
       SILE.typesetter:registerPageEndHook(function ()
          SU.debug("frames", function ()
             for _, v in pairs(SILE.frames) do
@@ -116,7 +113,9 @@ function class:declareOption (option, setter)
    self.options[option] = setter
 end
 
-function class:declareOptions ()
+function class:declareOptions () end
+
+function class:_declareBaseOptions ()
    self:declareOption("class", function (_, name)
       if name then
          if self._legacy then
@@ -179,7 +178,9 @@ function class:declareOptions ()
    end)
 end
 
-function class.declareSettings (_)
+function class:declareSettings () end
+
+function class:_declareBaseSettings ()
    SILE.settings:declare({
       parameter = "current.parindent",
       type = "glue or nil",
@@ -315,7 +316,7 @@ end
 -- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
 -- messages. Usually auto-detected.
 -- @see SILE.packages:registerCommand
-function class.registerCommand (_, name, func, help, pack)
+function class:registerCommand (name, func, help, pack)
    SILE.Commands[name] = func
    if not pack then
       local where = debug.getinfo(2).source
@@ -328,7 +329,7 @@ function class.registerCommand (_, name, func, help, pack)
    }
 end
 
-function class.registerRawHandler (_, format, callback)
+function class:registerRawHandler (format, callback)
    SILE.rawHandlers[format] = callback
 end
 
@@ -351,7 +352,10 @@ local function packOptions (options)
    return relevant
 end
 
-function class:registerCommands ()
+function class.registerCommands () end
+
+-- These need refactoring probably somewhere outside of the document class system
+function class:_registerBaseCommands ()
    local function replaceProcessBy (replacement, tree)
       if type(tree) ~= "table" then
          return tree

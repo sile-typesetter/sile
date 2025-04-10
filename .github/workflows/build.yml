@@ -181,7 +181,7 @@ jobs:
             rust \
             unzip \
             zlib
-          brew link icu4c@76 --force
+          brew link icu4c@77 --force
           brew link zlib --force
           brew link expat --force
           brew install --cask font-gentium-plus

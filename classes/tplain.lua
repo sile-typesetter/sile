@@ -16,8 +16,8 @@ class.defaultFrameset.content = {
    linecount = 30,
 }
 
--- The classes tplain and tbook inherit from plain and book respectively but also
--- have this bit in common; this makes it accessible
+-- This class tplain and tbook class inherit from plain and book respectively but also have this bit in common; this
+-- makes it accessible for tbook to call it from this class without triggering tplain:_init used by this class.
 function class:_t_common ()
    self:loadPackage("font-fallback")
    self:loadPackage("hanmenkyoshi")
@@ -32,7 +32,7 @@ end
 
 function class:_init (options)
    plain._init(self, options)
-   class._t_common(self)
+   self._t_common(self)
 end
 
 function class:declareOptions ()

@@ -24,14 +24,13 @@ function package:_init ()
    self:loadPackage("pdf")
 end
 
-function package.declareSettings (_)
+function package:declareSettings ()
    SILE.settings:declare({
       parameter = "url.linebreak.primaryPenalty",
       type = "integer",
       default = 100,
       help = "Penalty for breaking lines in URLs at preferred breakpoints",
    })
-
    SILE.settings:declare({
       parameter = "url.linebreak.secondaryPenalty",
       type = "integer",

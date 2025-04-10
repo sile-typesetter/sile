@@ -19,7 +19,7 @@ function package:_init ()
    self:loadPackage("counters")
 end
 
-function package.declareSettings (_)
+function package:declareSettings ()
    SILE.settings:declare({
       parameter = "math.font.family",
       type = "string",

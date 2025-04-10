@@ -170,7 +170,6 @@ function color:_init (input)
    for k, v in pairs(c) do
       self[k] = v
    end
-   return self
 end
 
 function color:__tostring ()
@@ -183,7 +182,7 @@ function color:__tostring ()
    return ("C<%s>"):format(pl.pretty.write(p, ""):gsub('[{}"]', ""))
 end
 
-function color.parse (_, input)
+function color:parse (input)
    local r, g, b, c, m, y, k, l
    if not input or type(input) ~= "string" then
       SU.error("Not a color specification string (" .. tostring(input) .. ")")

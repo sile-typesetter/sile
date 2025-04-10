@@ -61,16 +61,12 @@ function package:registerCommands ()
       local prevDirection = oldT.frame.direction
       self:loadPackage("rotate")
       SILE.settings:temporarily(function ()
-         local latinTypesetter = pl.class(SILE.typesetters.base)
          local dummyFrame = pl.class(SILE.framePrototype)
          dummyFrame.init = function (f)
             f.state = {}
          end
-         latinTypesetter.initFrame = function (typesetter, frame)
-            typesetter.frame = frame
-         end
          local frame = dummyFrame({}, true)
-         SILE.typesetter = latinTypesetter(frame)
+         SILE.typesetter = SILE.typesetters["latin-in-tate"](frame)
          SILE.settings:set("document.language", "und")
          SILE.settings:set("font.direction", "LTR")
          SILE.process(content)

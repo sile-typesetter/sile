@@ -12,7 +12,7 @@ RUN pacman --needed --noconfirm -Syuq
 RUN pacman --needed --noconfirm -Sq $RUNTIME_DEPS $BUILD_DEPS
 
 # Remove autotools, building the source distributions should not require them
-RUN pacman --noconfirm -Rn autoconf automake libtool base-devel hwloc onetbb clang mold
+RUN pacman --noconfirm -Rn autoconf automake libblake3 libtool base-devel hwloc onetbb clang mold
 
 # Setup LuaRocks for use with LuaJIT roughly matching SILE's internal VM
 RUN luarocks config lua_version 5.1 && \

@@ -6,8 +6,8 @@ outputter.type = "outputter"
 outputter._name = "base"
 
 function outputter:_init ()
+   SU._avoid_base_class_use(self)
    self.hooks = {}
-   return self
 end
 
 function outputter:registerHook (category, func)
@@ -27,7 +27,7 @@ function outputter:runHooks (category, data)
    return data
 end
 
-function outputter.newPage () end
+function outputter:newPage () end
 
 function outputter:abort ()
    return self:finish() -- unless otherwise defined
@@ -37,43 +37,43 @@ function outputter:finish ()
    self:runHooks("prefinish")
 end
 
-function outputter.getCursor () end
+function outputter:getCursor () end
 
-function outputter.setCursor (_, _, _, _) end
+function outputter:setCursor (_, _, _) end
 
-function outputter.setColor () end
+function outputter:setColor () end
 
-function outputter.pushColor () end
+function outputter:pushColor () end
 
-function outputter.popColor () end
+function outputter:popColor () end
 
-function outputter.drawHbox (_, _, _) end
+function outputter:drawHbox (_, _) end
 
-function outputter.setFont (_, _) end
+function outputter:setFont (_) end
 
-function outputter.drawImage (_, _, _, _, _, _) end
+function outputter:drawImage (_, _, _, _, _) end
 
-function outputter.getImageSize (_, _) end
+function outputter:getImageSize (_) end
 
-function outputter.drawSVG () end
+function outputter:drawSVG () end
 
-function outputter.drawRule (_, _, _, _, _) end
+function outputter:drawRule (_, _, _, _) end
 
-function outputter.debugFrame (_, _, _) end
+function outputter:debugFrame (_, _) end
 
-function outputter.debugHbox (_, _, _) end
+function outputter:debugHbox (_, _) end
 
-function outputter.setLinkAnchor (_, _, _) end -- Unstable API
+function outputter:setLinkAnchor (_, _) end -- Unstable API
 
-function outputter.beginLink (_, _, _) end -- Unstable API
+function outputter:beginLink (_, _) end -- Unstable API
 
-function outputter.endLink (_, _, _, _, _, _, _) end -- Unstable API
+function outputter:endLink (_, _, _, _, _, _) end -- Unstable API
 
-function outputter.setMetadata (_, _, _) end
+function outputter:setMetadata (_, _) end
 
-function outputter.setBookmark (_, _, _) end
+function outputter:setBookmark (_, _) end
 
-function outputter.drawRaw (_) end
+function outputter:drawRaw () end
 
 function outputter:getOutputFilename ()
    local fname

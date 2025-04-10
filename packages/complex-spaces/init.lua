@@ -3,6 +3,16 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "complex-spaces"
 
+local makeSpaceNode = function (self, options, item)
+   if SILE.settings:get("shaper.complexspaces") then
+      local myoptions = pl.tablex.deepcopy(options)
+      myoptions.language = "x-spaces-are-nodes"
+      local nnodes = self:createNnodes(" ", myoptions)
+      return SILE.types.node.discretionary({ replacement = nnodes })
+   end
+   return self:noncomplex_SpaceNode(options, item)
+end
+
 function package:_init ()
    base._init(self)
    if not SILE.languageSupport.languages["x-spaces-are-nodes"] then
@@ -16,19 +26,11 @@ function package:_init ()
    end
    if SILE.shaper and not SILE.shaper.noncomplex_SpaceNode then
       SILE.shaper.noncomplex_SpaceNode = SILE.shaper.makeSpaceNode
-      SILE.shaper.makeSpaceNode = function (_, options, item)
-         if SILE.settings:get("shaper.complexspaces") then
-            local myoptions = pl.tablex.deepcopy(options)
-            myoptions.language = "x-spaces-are-nodes"
-            local nnodes = SILE.shaper:createNnodes(" ", myoptions)
-            return SILE.types.node.discretionary({ replacement = nnodes })
-         end
-         return SILE.shaper.noncomplex_SpaceNode(_, options, item)
-      end
+      SILE.shaper.makeSpaceNode = makeSpaceNode
    end
 end
 
-function package.declareSettings (_)
+function package:declareSettings ()
    SILE.settings:declare({
       parameter = "shaper.complexspaces",
       default = true,

@@ -31,28 +31,27 @@ local _margins = pl.class({
 --- Constructor
 -- @param frame A initial frame to attach the typesetter to.
 function typesetter:_init (frame)
+   SU._avoid_base_class_use(self)
    self:declareSettings()
    self.hooks = {}
    self.breadcrumbs = SU.breadcrumbs()
-
-   self.frame = nil
+   self.frame = frame
    self.stateQueue = {}
-   self:initFrame(frame)
+end
+
+function typesetter:_post_init ()
+   self:initFrame(self.frame)
    self:initState()
-   -- In case people use stdlib prototype syntax off of the instantiated typesetter...
-   getmetatable(self).__call = self.init
-   return self
 end
 
 --- Declare new setting types
-function typesetter.declareSettings (_)
+function typesetter:declareSettings ()
    -- Settings common to any typesetter instance.
    -- These shouldn't be re-declared and overwritten/reset in the typesetter
    -- constructor (see issue https://github.com/sile-typesetter/sile/issues/1708).
    -- On the other hand, it's fairly acceptable to have them made global:
    -- Any derived typesetter, whatever its implementation, should likely provide
    -- some logic for them (= widows, orphans, spacing, etc.)
-
    SILE.settings:declare({
       parameter = "typesetter.widowpenalty",
       type = "integer",
@@ -179,7 +178,7 @@ function typesetter.getMargins ()
    return _margins(SILE.settings:get("document.lskip"), SILE.settings:get("document.rskip"))
 end
 
-function typesetter.setMargins (_, margins)
+function typesetter:setMargins (margins)
    SILE.settings:set("document.lskip", margins.lskip)
    SILE.settings:set("document.rskip", margins.rskip)
 end
@@ -562,7 +561,7 @@ local function isItalicLike (nnode)
    return font.post.italicAngle ~= 0
 end
 
-function typesetter.shapeAllNodes (_, nodelist, inplace)
+function typesetter:shapeAllNodes (nodelist, inplace)
    inplace = SU.boolean(inplace, true) -- Compatibility with earlier versions
    local newNodelist = {}
    local prec
@@ -998,7 +997,7 @@ function typesetter:inhibitLeading ()
    self.state.previousVbox = nil
 end
 
-function typesetter.leadingFor (_, vbox, previous)
+function typesetter:leadingFor (vbox, previous)
    -- Insert leading
    SU.debug("typesetter", "   Considering leading between two lines:")
    SU.debug("typesetter", "   1)", previous)
@@ -1129,7 +1128,7 @@ end
 -- Migrating content, however, must be kept outside the hboxes at top slice level.
 -- @tparam table slice Flat nodes from current line
 -- @treturn table New reboxed slice
-function typesetter._reboxLiners (_, slice)
+function typesetter:_reboxLiners (slice)
    local outSlice = {}
    local migratingList = {}
    local lboxStack = {}
@@ -1328,7 +1327,7 @@ function typesetter:breakpointsToLines (breakpoints)
    return lines
 end
 
-function typesetter.computeLineRatio (_, breakwidth, slice)
+function typesetter:computeLineRatio (breakwidth, slice)
    local naturalTotals = SILE.types.length()
 
    -- From the line end, account for the margin but skip any trailing

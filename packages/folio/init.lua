@@ -3,7 +3,7 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "folio"
 
-function package.incrementFolio (_)
+function package:incrementFolio ()
    SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
 end
 

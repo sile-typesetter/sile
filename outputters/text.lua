@@ -48,7 +48,7 @@ function outputter:finish ()
    started = false
 end
 
-function outputter.getCursor (_)
+function outputter:getCursor ()
    return cursorX, cursorY
 end
 

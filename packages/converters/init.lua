@@ -52,7 +52,7 @@ local function extendCommand (name, func)
    end
 end
 
-function package.register (_, sourceExt, targetExt, command)
+function package:register (sourceExt, targetExt, command)
    table.insert(SILE.scratch.converters, {
       sourceExt = sourceExt,
       targetExt = targetExt,
@@ -60,7 +60,7 @@ function package.register (_, sourceExt, targetExt, command)
    })
 end
 
-function package.checkConverters (_, source)
+function package:checkConverters (source)
    local resolvedSrc = SILE.resolveFile(source) or SU.error("Couldn't find file " .. source)
    for _, converter in ipairs(SILE.scratch.converters) do
       local extLen = string.len(converter.sourceExt)

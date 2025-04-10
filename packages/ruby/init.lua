@@ -47,7 +47,7 @@ function package:_init ()
    SILE.languageSupport.loadLanguage("ja")
 end
 
-function package.declareSettings (_)
+function package:declareSettings ()
    SILE.settings:declare({
       parameter = "ruby.height",
       type = "measurement",
