@@ -315,7 +315,7 @@ function CslEngine:_punctuation_extra (t)
 end
 
 function CslEngine:_render_stripPeriods (t, options)
-   if t and options["strip-periods"] and t:sub(-1) == "." then
+   if t and SU.boolean(options["strip-periods"], false) and t:sub(-1) == "." then
       t = t:sub(1, -2)
    end
    return t
@@ -437,7 +437,6 @@ function CslEngine:_layout (options, content, entries)
       for _, entry in ipairs(entries) do
          self:_prerender()
          local elem = self:_render_children(content, entry)
-         elem = self:_postrender(elem)
          if elem then
             table.insert(output, elem)
          end
@@ -445,11 +444,14 @@ function CslEngine:_layout (options, content, entries)
       -- The CSL 1.0.2 specification is not very clear on this point, but on
       -- citations, affixes and formatting apply on the whole layout.
       -- Affixes are around the delimited list, e.g. "(Smith, 2000; Jones, 2001)"
-      -- Rendering is done after, so vertical-align, etc. apply to the whole list,
+      -- Formatting is done after, so vertical-align, etc. apply to the whole list,
       -- e.g. <bibSuperScript>1, 2</bibSuperScript>
       local cites = self:_render_delimiter(output, options.delimiter or "; ")
       cites = self:_render_affixes(cites, options)
       cites = self:_render_formatting(cites, options)
+      -- Post-render at the very end, so punctuation-in-quotes, etc. apply to the
+      -- content.
+      cites = self:_postrender(cites)
       return cites
    end
    -- On bibliographies, affixes (usually just a period suffix) apply on each entry.
@@ -1278,6 +1280,32 @@ function CslEngine:_group (options, content, entry)
    return t
 end
 
+function CslEngine:_position_test (condition, position)
+   if condition == "first" then
+      return position == "first"
+   end
+   if condition == "near-note" then
+      -- near-note not implemented yet
+      -- There are around 9 styles only in the CSL repository needing it, so it's not a real priority.
+      -- With SILE, this would require some support from the footnote package.
+      -- Note that we can't support the "first-reference-note-number" variable for a similar reason.
+      -- The latter is used in approx. 60 styles in the CSL repository.
+      -- There are losts of assumptions there, such as the note counter not being reset, etc.
+      SU.warn("CSL position 'near-note' not implemented yet")
+      return false
+   end
+   if condition == "subsequent" then
+      return position == "subsequent" or position == "ibid" or position == "ibid-with-locator"
+   end
+   if condition == "ibid" then
+      return position == "ibid" or position == "ibid-with-locator"
+   end
+   if condition == "ibid-with-locator" then
+      return position == "ibid-with-locator"
+   end
+   return false
+end
+
 function CslEngine:_if (options, content, entry)
    local match = options.match or "all"
    local conds = {}
@@ -1326,8 +1354,14 @@ function CslEngine:_if (options, content, entry)
          table.insert(conds, cond)
       end
    end
-   -- FIXME NOT IMPLEMENTED other conditions: "position", "disambiguate"
-   for _, v in ipairs({ "position", "disambiguate" }) do
+   if options.position then
+      for _, pos in ipairs(pl.stringx.split(options.position, " ")) do
+         local cond = self:_position_test(pos, entry.position)
+         table.insert(conds, cond)
+      end
+   end
+   -- FIXME NOT IMPLEMENTED other conditions: "disambiguate"
+   for _, v in ipairs({ "disambiguate" }) do
       if options[v] then
          SU.warn("CSL if condition '" .. v .. "' not implemented yet")
          table.insert(conds, false)
@@ -1569,15 +1603,20 @@ function CslEngine:_postrender (text)
       -- move commas and periods before closing quotes
       text = luautf8.gsub(text, "([" .. rdquote .. rsquote .. "]+)%s*([.,])", "%2%1")
    end
-   -- HACK: fix some double punctuation issues.
+   -- HACK: remove spaces before punctuation
+   -- This and other hacks below tries to fix issues in CSL styles
    -- Maybe some more robust way to handle affixes and delimiters would be better?
-   text = luautf8.gsub(text, "%.%.", ".")
+   -- ABNT, ISO 690, and IEEE for instance look better with this.
+   -- FIX%E But this might be to aggressive, esp. it may affect in URL links with such patterns...
+   text = luautf8.gsub(text, "%s+([%.,])", "%1")
    -- Typography: Prefer to have commas and periods inside italics.
    -- (Better looking if italic automated corrections are applied.)
-   text = luautf8.gsub(text, "(</em>)([%.,])", "%2%1")
-   -- HACK: remove extraneous periods after exclamation and question marks.
+   text = luautf8.gsub(text, "(</em>)([%.,]+)", "%2%1")
+   -- HACK: fix some double punctuation issues
+   text = luautf8.gsub(text, "%.%.", ".")
+   -- HACK: remove extraneous periods after exclamation and question marks, period or ellipsis
    -- (Follows the preceding rule to also account for moved periods.)
-   text = luautf8.gsub(text, "([…!?])%.", "%1")
+   text = luautf8.gsub(text, "([…!?]%.)%.", "%1")
    if not piquote then
       -- HACK: remove extraneous periods after quotes.
       -- Opinionated, e.g. for French at least, some typographers wouldn't
