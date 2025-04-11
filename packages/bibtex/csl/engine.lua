@@ -1278,6 +1278,32 @@ function CslEngine:_group (options, content, entry)
    return t
 end
 
+function CslEngine:_position_test (condition, position)
+   if condition == "first" then
+      return position == "first"
+   end
+   if condition == "near-note" then
+      -- near-note not implemented yet
+      -- There are around 9 styles only in the CSL repository needing it, so it's not a real priority.
+      -- With SILE, this would would require some support from the footnote package.
+      -- Note that we can't support the "first-reference-note-number" variable for a similar reason.
+      -- The latter is used in approx. 60 styles in the CSL repository.
+      -- There are losts of assumptions there, such as the note counter not being reset, etc.
+      SU.warn("CSL position 'near-note' not implemented yet")
+      return false
+   end
+   if condition == "subsequent" then
+      return position == "subsequent" or position == "ibid" or position == "ibid-with-locator"
+   end
+   if condition == "ibid" then
+      return position == "ibid" or position == "ibid-with-locator"
+   end
+   if condition == "ibid-with-locator" then
+      return position == "ibid-with-locator"
+   end
+   return false
+end
+
 function CslEngine:_if (options, content, entry)
    local match = options.match or "all"
    local conds = {}
@@ -1326,8 +1352,14 @@ function CslEngine:_if (options, content, entry)
          table.insert(conds, cond)
       end
    end
-   -- FIXME NOT IMPLEMENTED other conditions: "position", "disambiguate"
-   for _, v in ipairs({ "position", "disambiguate" }) do
+   if options.position then
+      for _, pos in ipairs(pl.stringx.split(options.position, " ")) do
+         local cond = self:_position_test(pos, entry.position)
+         table.insert(conds, cond)
+      end
+   end
+   -- FIXME NOT IMPLEMENTED other conditions: "disambiguate"
+   for _, v in ipairs({ "disambiguate" }) do
       if options[v] then
          SU.warn("CSL if condition '" .. v .. "' not implemented yet")
          table.insert(conds, false)
