@@ -315,7 +315,7 @@ function CslEngine:_punctuation_extra (t)
 end
 
 function CslEngine:_render_stripPeriods (t, options)
-   if t and options["strip-periods"] and t:sub(-1) == "." then
+   if t and SU.boolean(options["strip-periods"], false) and t:sub(-1) == "." then
       t = t:sub(1, -2)
    end
    return t
