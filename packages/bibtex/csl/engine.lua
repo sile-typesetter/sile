@@ -1569,15 +1569,20 @@ function CslEngine:_postrender (text)
       -- move commas and periods before closing quotes
       text = luautf8.gsub(text, "([" .. rdquote .. rsquote .. "]+)%s*([.,])", "%2%1")
    end
-   -- HACK: fix some double punctuation issues.
+   -- HACK: remove spaces before punctuation
+   -- This and other hacks below tries to fix issues in CSL styles
    -- Maybe some more robust way to handle affixes and delimiters would be better?
-   text = luautf8.gsub(text, "%.%.", ".")
+   -- ABNT, ISO 690, and IEEE for instance look better with this.
+   -- FIX%E But this might be to aggressive, esp. it may affect in URL links with such patterns...
+   text = luautf8.gsub(text, "%s+([%.,])", "%1")
    -- Typography: Prefer to have commas and periods inside italics.
    -- (Better looking if italic automated corrections are applied.)
-   text = luautf8.gsub(text, "(</em>)([%.,])", "%2%1")
-   -- HACK: remove extraneous periods after exclamation and question marks.
+   text = luautf8.gsub(text, "(</em>)([%.,]+)", "%2%1")
+   -- HACK: fix some double punctuation issues
+   text = luautf8.gsub(text, "%.%.", ".")
+   -- HACK: remove extraneous periods after exclamation and question marks, period or ellipsis
    -- (Follows the preceding rule to also account for moved periods.)
-   text = luautf8.gsub(text, "([…!?])%.", "%1")
+   text = luautf8.gsub(text, "([…!?]%.)%.", "%1")
    if not piquote then
       -- HACK: remove extraneous periods after quotes.
       -- Opinionated, e.g. for French at least, some typographers wouldn't
