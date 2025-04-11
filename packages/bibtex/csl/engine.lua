@@ -437,7 +437,6 @@ function CslEngine:_layout (options, content, entries)
       for _, entry in ipairs(entries) do
          self:_prerender()
          local elem = self:_render_children(content, entry)
-         elem = self:_postrender(elem)
          if elem then
             table.insert(output, elem)
          end
@@ -445,11 +444,14 @@ function CslEngine:_layout (options, content, entries)
       -- The CSL 1.0.2 specification is not very clear on this point, but on
       -- citations, affixes and formatting apply on the whole layout.
       -- Affixes are around the delimited list, e.g. "(Smith, 2000; Jones, 2001)"
-      -- Rendering is done after, so vertical-align, etc. apply to the whole list,
+      -- Formatting is done after, so vertical-align, etc. apply to the whole list,
       -- e.g. <bibSuperScript>1, 2</bibSuperScript>
       local cites = self:_render_delimiter(output, options.delimiter or "; ")
       cites = self:_render_affixes(cites, options)
       cites = self:_render_formatting(cites, options)
+      -- Post-render at the very end, so punctuation-in-quotes, etc. apply to the
+      -- content.
+      cites = self:_postrender(cites)
       return cites
    end
    -- On bibliographies, affixes (usually just a period suffix) apply on each entry.
@@ -1285,7 +1287,7 @@ function CslEngine:_position_test (condition, position)
    if condition == "near-note" then
       -- near-note not implemented yet
       -- There are around 9 styles only in the CSL repository needing it, so it's not a real priority.
-      -- With SILE, this would would require some support from the footnote package.
+      -- With SILE, this would require some support from the footnote package.
       -- Note that we can't support the "first-reference-note-number" variable for a similar reason.
       -- The latter is used in approx. 60 styles in the CSL repository.
       -- There are losts of assumptions there, such as the note counter not being reset, etc.
