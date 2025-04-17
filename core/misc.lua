@@ -54,9 +54,8 @@ local function registerCommand (name, func, help, pack, cheat)
          ]]
       )
    end
-   local registerCommand = SILE.documentState.documentClass and SILE.documentState.documentClass.registerCommand
-      or SILE.classes.base.registerCommand
-   return registerCommand(nil, name, func, help, pack)
+   local regfunc = class and class.registerCommand or SILE.classes.base.registerCommand
+   return regfunc(nil, name, func, help, pack)
 end
 
 local function setCommandDefaults (command, options)
