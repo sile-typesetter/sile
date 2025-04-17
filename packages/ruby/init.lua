@@ -46,7 +46,7 @@ function package:_init ()
    SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
 end
 
-function package.declareSettings (_)
+function package:declareSettings ()
    SILE.settings:declare({
       parameter = "ruby.height",
       type = "measurement",

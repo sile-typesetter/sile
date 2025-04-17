@@ -167,7 +167,7 @@ function package:doItem (options, content)
    maybeAddListSpacing(false, false, counter)
 end
 
-function package.doNestedList (_, listType, options, content)
+function package:doNestedList (listType, options, content)
    -- depth
    local depth = SILE.settings:get("lists.current." .. listType .. ".depth") + 1
 
@@ -240,7 +240,7 @@ function package:_init ()
    self:loadPackage("counters")
 end
 
-function package.declareSettings (_)
+function package:declareSettings ()
    SILE.settings:declare({
       parameter = "lists.current.enumerate.depth",
       type = "integer",

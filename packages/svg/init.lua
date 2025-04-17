@@ -66,10 +66,6 @@ function package:registerCommands ()
       _drawSVG(svgdata, width, height, density)
    end)
 
-   self:registerCommand("include-svg-file", function (_, _)
-      SU.deprecated("\\include-svg-file", "\\svg", "0.10.10", "0.11.0")
-   end, "Deprecated")
-
    self:registerCommand("svg-glyph", function (_, content)
       local fontoptions = SILE.font.loadDefaults({})
       local items = SILE.shaper:shapeToken(content[1], fontoptions)

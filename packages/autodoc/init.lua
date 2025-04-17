@@ -126,7 +126,7 @@ function package:_init (options)
    end
 end
 
-function package.declareSettings (_)
+function package:declareSettings ()
    SILE.settings:declare({
       parameter = "autodoc.highlighting",
       default = false,

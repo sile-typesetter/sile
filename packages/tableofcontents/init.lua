@@ -19,7 +19,7 @@ function package:moveTocNodes ()
    end
 end
 
-function package.writeToc (_)
+function package:writeToc ()
    local tocdata = pl.pretty.write(SILE.scratch.tableofcontents)
    local tocfile, err = io.open(pl.path.splitext(SILE.input.filenames[1]) .. ".toc", "w")
    if not tocfile then
@@ -33,7 +33,7 @@ function package.writeToc (_)
    end
 end
 
-function package.readToc (_)
+function package:readToc ()
    if SILE.scratch._tableofcontents and #SILE.scratch._tableofcontents > 0 then
       -- already loaded
       return SILE.scratch._tableofcontents
@@ -72,8 +72,6 @@ function package:_init ()
    self:loadPackage("leaders")
    self.class:registerHook("endpage", self.moveTocNodes)
    self.class:registerHook("finish", self.writeToc)
-   self:deprecatedExport("writeToc", self.writeToc)
-   self:deprecatedExport("moveTocNodes", self.moveTocNodes)
 end
 
 function package:registerCommands ()
@@ -142,10 +140,6 @@ function package:registerCommands ()
          },
       })
    end)
-
-   self:registerCommand("tableofcontents:title", function (_, _)
-      SU.deprecated("\\tableofcontents:title", "\\fluent{tableofcontents-title}", "0.13.0", "0.14.0")
-   end, "Deprecated")
 
    self:registerCommand("tableofcontents:notocmessage", function (_, _)
       SILE.call("tableofcontents:headerfont", {}, function ()

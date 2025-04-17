@@ -9,7 +9,7 @@ function package:_init ()
    self:loadPackage("raiselower")
 end
 
-function package.declareSettings (_)
+function package:declareSettings ()
    SILE.settings:declare({
       parameter = "dropcaps.bsratio",
       type = "number or nil",

@@ -78,7 +78,9 @@ function measurement:_init (amount, unit)
    elseif type(tonumber(amount)) == "number" then
       self.amount = tonumber(amount)
    elseif type(amount) == "string" then
-      local parsed = SILE.parserBits.measurement:match(amount)
+      local input = pl.stringx.strip(amount)
+      local measurement_only_parser = SILE.parserBits.measurement * -1
+      local parsed = measurement_only_parser:match(input)
       if not parsed then
          SU.error("Could not parse measurement '" .. amount .. "'")
       end

@@ -227,15 +227,15 @@ function elements.mbox:_init ()
    self.font = SILE.font.loadDefaults(font)
 end
 
-function elements.mbox.styleChildren (_)
+function elements.mbox:styleChildren ()
    SU.error("styleChildren is a virtual function that need to be overridden by its child classes")
 end
 
-function elements.mbox.shape (_, _, _)
+function elements.mbox:shape (_, _)
    SU.error("shape is a virtual function that need to be overridden by its child classes")
 end
 
-function elements.mbox.output (_, _, _, _)
+function elements.mbox:output (_, _, _)
    SU.error("output is a virtual function that need to be overridden by its child classes")
 end
 
@@ -549,7 +549,7 @@ function elements.stackbox:outputYourself (typesetter, line)
    typesetter.frame:advanceWritingDirection(scaleWidth(self.width, line))
 end
 
-function elements.stackbox.output (_, _, _, _) end
+function elements.stackbox:output (_, _, _) end
 
 elements.phantom = pl.class(elements.stackbox) -- inherit from stackbox
 elements.phantom._type = "Phantom"
@@ -718,7 +718,7 @@ function elements.subscript:shape ()
    )
 end
 
-function elements.subscript.output (_, _, _, _) end
+function elements.subscript:output (_, _, _) end
 
 elements.underOver = pl.class(elements.subscript)
 elements.underOver._type = "UnderOver"
@@ -980,7 +980,7 @@ function elements.underOver:calculateItalicsCorrection ()
    return 0
 end
 
-function elements.underOver.output (_, _, _, _) end
+function elements.underOver:output (_, _, _) end
 
 -- terminal is the base class for leaf node
 elements.terminal = pl.class(elements.mbox)
@@ -990,9 +990,9 @@ function elements.terminal:_init ()
    elements.mbox._init(self)
 end
 
-function elements.terminal.styleChildren (_) end
+function elements.terminal:styleChildren () end
 
-function elements.terminal.shape (_) end
+function elements.terminal:shape () end
 
 elements.space = pl.class(elements.terminal)
 elements.space._type = "Space"
@@ -1043,7 +1043,7 @@ function elements.space:shape ()
    self.depth = self.depth:absolute() * self:getScaleDown()
 end
 
-function elements.space.output (_) end
+function elements.space:output (_, _, _) end
 
 -- text node. For any actual text output
 elements.text = pl.class(elements.terminal)
@@ -1173,7 +1173,7 @@ function elements.text:shape ()
    end
 end
 
-function elements.text.findClosestVariant (_, variants, requiredAdvance, currentAdvance)
+function elements.text:findClosestVariant (variants, requiredAdvance, currentAdvance)
    local closest
    local closestI
    local m = requiredAdvance - currentAdvance
@@ -1437,9 +1437,9 @@ function elements.mtr:styleChildren ()
    end
 end
 
-function elements.mtr.shape (_) end -- done by parent table
+function elements.mtr:shape () end -- done by parent table
 
-function elements.mtr.output (_) end
+function elements.mtr:output () end
 
 elements.table = pl.class(elements.mbox)
 elements.table._type = "table" -- TODO why case difference?
@@ -1566,7 +1566,7 @@ function elements.table:shape ()
    end
 end
 
-function elements.table.output (_) end
+function elements.table:output () end
 
 local function getRadicandMode (mode)
    -- Not too sure if we should do something special/
@@ -1760,7 +1760,7 @@ function elements.padded:shape ()
    self.impadded.relY = voffset and SILE.types.length(voffset):negate() or SILE.types.length()
 end
 
-function elements.padded.output (_, _, _, _) end
+function elements.padded:output (_, _, _) end
 
 -- Bevelled fractions are not part of MathML Core, and MathML4 does not
 -- exactly specify how to compute the layout.

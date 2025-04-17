@@ -112,7 +112,7 @@ function class:declareOption (option, setter)
    self.options[option] = setter
 end
 
-function class.declareOptions (_) end
+function class:declareOptions () end
 
 function class:_declareBaseOptions ()
    self:declareOption("class", function (_, name)
@@ -177,9 +177,9 @@ function class:_declareBaseOptions ()
    end)
 end
 
-function class.declareSettings (_) end
+function class:declareSettings () end
 
-function class._declareBaseSettings (_)
+function class:_declareBaseSettings ()
    SILE.settings:declare({
       parameter = "current.parindent",
       type = "glue or nil",
@@ -240,7 +240,7 @@ function class:reloadPackage (packname, options)
    return self:loadPackage(packname, options, true)
 end
 
-function class:initPackage (pack, options)
+function class.initPackage ()
    SU.deprecated(
       "class:initPackage(options)",
       "package(options)",
@@ -253,23 +253,6 @@ function class:initPackage (pack, options)
          setup.
       ]]
    )
-   if type(pack) == "table" then
-      if pack.exports then
-         pl.tablex.update(self, pack.exports)
-      end
-      if type(pack.declareSettings) == "function" then
-         pack.declareSettings(self)
-      end
-      if type(pack.registerRawHandlers) == "function" then
-         pack.registerRawHandlers(self)
-      end
-      if type(pack.registerCommands) == "function" then
-         pack.registerCommands(self)
-      end
-      if type(pack.init) == "function" then
-         self:registerPostinit(pack.init, options)
-      end
-   end
 end
 
 --- Register a callback function to be executed after the class initialization has completed.
@@ -332,7 +315,7 @@ end
 -- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
 -- messages. Usually auto-detected.
 -- @see SILE.packages:registerCommand
-function class.registerCommand (_, name, func, help, pack)
+function class:registerCommand (name, func, help, pack)
    SILE.Commands[name] = func
    if not pack then
       local where = debug.getinfo(2).source
@@ -345,7 +328,7 @@ function class.registerCommand (_, name, func, help, pack)
    }
 end
 
-function class.registerRawHandler (_, format, callback)
+function class:registerRawHandler (format, callback)
    SILE.rawHandlers[format] = callback
 end
 
@@ -450,7 +433,6 @@ function class:_registerBaseCommands ()
    end, "Within a macro definition, processes the contents of the macro body.")
 
    self:registerCommand("script", function (options, content)
-      local packopts = packOptions(options)
       local function _deprecated (original, suggested)
          SU.deprecated(
             "\\script",
@@ -477,7 +459,6 @@ function class:_registerBaseCommands ()
       end
       if SU.ast.hasContent(content) then
          _deprecated("\\script{...}", "\\lua{...}")
-         return SILE.processString(content[1], options.format or "lua", nil, packopts)
       elseif options.src then
          local module = options.src:gsub("%/", ".")
          local original = (("\\script[src=%s]"):format(options.src))
@@ -486,10 +467,8 @@ function class:_registerBaseCommands ()
             module
          )
          _deprecated(original, suggested)
-         return result
       else
          SU.error("\\script function requires inline content or a src file path")
-         return SILE.processString(content[1], options.format or "lua", nil, packopts)
       end
    end, "Runs lua code. The code may be supplied either inline or using src=...")
 

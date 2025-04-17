@@ -3,7 +3,7 @@ local base = require("typesetters.firstfit")
 local typesetter = pl.class(base)
 typesetter._name = "tate"
 
-function typesetter.leadingFor (_, v)
+function typesetter:leadingFor (v)
    v.height = SILE.types.length("1zw"):absolute()
    local bls = SILE.settings:get("document.baselineskip")
    local d = bls.height:absolute() - v.height

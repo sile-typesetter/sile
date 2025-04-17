@@ -65,7 +65,7 @@ function outputter:newPage ()
 end
 
 -- pdf structure package needs a tie in here
-function outputter._endHook (_) end
+function outputter:_endHook () end
 
 function outputter.abort ()
    if started then
@@ -86,11 +86,11 @@ function outputter:finish ()
    lastkey = false
 end
 
-function outputter.getCursor (_)
+function outputter.getCursor ()
    return cursorX, cursorY
 end
 
-function outputter.setCursor (_, x, y, relative)
+function outputter:setCursor (x, y, relative)
    x = SU.cast("number", x)
    y = SU.cast("number", y)
    local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
@@ -328,7 +328,7 @@ function outputter:enterFrameRotate (xa, xb, y, theta) -- Unstable API see rotat
    pdf.setmatrix(1, 0, 0, 1, -cx0, -cy)
 end
 
-function outputter.leaveFrameRotate (_)
+function outputter:leaveFrameRotate ()
    pdf:grestore()
 end
 
@@ -376,7 +376,7 @@ function outputter:startLink (_, _) -- destination, options as argument
    pdf.begin_annotation()
 end
 
-function outputter.endLink (_, dest, opts, x0, y0, x1, y1)
+function outputter:endLink (dest, opts, x0, y0, x1, y1)
    local bordercolor = borderColor(opts.bordercolor)
    local borderwidth = SU.cast("integer", opts.borderwidth)
    local borderstyle = borderStyle(opts.borderstyle, borderwidth)

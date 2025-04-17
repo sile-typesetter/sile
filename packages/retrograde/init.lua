@@ -109,7 +109,7 @@ function package:recede (target)
    self:recede_commands(target)
 end
 
-function package._prep (_, target, type)
+function package:_prep (target, type)
    target = semver(target and target or SILE.version)
    SU.debug("retrograde", ("Targeting changes to %s since the release of SILE v%s."):format(type, target))
    local terminal = function (version)

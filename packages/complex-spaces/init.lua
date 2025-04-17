@@ -7,10 +7,10 @@ local function xsan_makeGlue (node, item)
    node:makeToken()
 end
 
-local function xsan_makeSpaceNode (shaper, options, item)
+local function xsan_makeSpaceNode (shaper, options, _)
       orig_makeGlue = SILE.typesetters.language.nodemaker.makeGlue
       SILE.typesetters.language.nodemaker.makeGlue = xsan_makeGlue
-      local nnodes = SILE.shaper:createNnodes(" ", myoptions)
+      local nnodes = shaper:createNnodes(" ", options)
       local node = SILE.types.node.discretionary({ replacement = nnodes })
       SILE.typesetters.language.nodemaker.makeGlue = orig_makeGlue
       return node

@@ -22,7 +22,7 @@ local usedfonts = {}
 local shaper = pl.class(base)
 shaper._name = "harfbuzz"
 
-function shaper.declareSettings (_)
+function shaper:declareSettings ()
    SILE.settings:declare({
       parameter = "harfbuzz.subshapers",
       type = "string or nil",
@@ -136,7 +136,7 @@ function shaper.getFace (opts)
    return face
 end
 
-function shaper.preAddNodes (_, items, nnodeValue) -- Check for complex nodes
+function shaper:preAddNodes (items, nnodeValue) -- Check for complex nodes
    for i = 1, #items do
       if items[i].y_offset or items[i].x_offset or items[i].width ~= items[i].glyphAdvance then
          nnodeValue.complex = true
@@ -145,7 +145,7 @@ function shaper.preAddNodes (_, items, nnodeValue) -- Check for complex nodes
    end
 end
 
-function shaper.addShapedGlyphToNnodeValue (_, nnodevalue, shapedglyph)
+function shaper:addShapedGlyphToNnodeValue (nnodevalue, shapedglyph)
    -- Note: previously we stored the shaped items only for "complex" nodes
    -- (nodevalue.complete). We now always do it, so as to have them at hand for
    -- italic correction.
@@ -164,7 +164,7 @@ function shaper.addShapedGlyphToNnodeValue (_, nnodevalue, shapedglyph)
    table.insert(nnodevalue.glyphNames, shapedglyph.name)
 end
 
-function shaper.debugVersions (_)
+function shaper:debugVersions ()
    local ot = require("core.opentype-parser")
    print("Harfbuzz version: " .. hb.version())
    print("Shapers enabled: " .. table.concat({ hb.shapers() }, ", "))
@@ -188,7 +188,7 @@ function shaper.debugVersions (_)
    end
 end
 
-function shaper.checkHBProblems (_, text, face)
+function shaper:checkHBProblems (text, face)
    if hb.version_lessthan(1, 0, 4) and #text < 1 then
       return true
    end

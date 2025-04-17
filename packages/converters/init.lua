@@ -52,7 +52,7 @@ local function extendCommand (name, func)
    end
 end
 
-function package.register (_, sourceExt, targetExt, command)
+function package:register (sourceExt, targetExt, command)
    table.insert(SILE.scratch.converters, {
       sourceExt = sourceExt,
       targetExt = targetExt,
@@ -60,7 +60,7 @@ function package.register (_, sourceExt, targetExt, command)
    })
 end
 
-function package.checkConverters (_, source)
+function package:checkConverters (source)
    local resolvedSrc = SILE.resolveFile(source) or SU.error("Couldn't find file " .. source)
    for _, converter in ipairs(SILE.scratch.converters) do
       local extLen = string.len(converter.sourceExt)
@@ -96,8 +96,6 @@ function package:_init ()
          SU.error("Conversion failure for image '" .. source .. '"')
       end
    end)
-   self:deprecatedExport("register", self.register)
-   self:deprecatedExport("checkConverters", self.checkConverters)
 end
 
 function package:registerCommands ()
@@ -105,9 +103,8 @@ function package:registerCommands ()
       self:register(options.from, options.to, options.command)
    end)
 
-   self:registerCommand("converters:check", function (options, _)
+   self:registerCommand("converters:check", function (_, _)
       SU.deprecated("\\converters:check", nil, "0.14.10", "0.16.0")
-      self:checkConverters(options.source)
    end)
 end
 

@@ -54,11 +54,9 @@ local function registerCommand (name, func, help, pack, cheat)
          ]]
       )
    end
-   -- Shimming until we have all scope cheating removed from core
-   if not cheat or not class or class.type ~= "class" then
-      return SILE.classes.base.registerCommand(nil, name, func, help, pack)
-   end
-   return class:registerCommand(name, func, help, pack)
+   local registerCommand = SILE.documentState.documentClass and SILE.documentState.documentClass.registerCommand
+      or SILE.classes.base.registerCommand
+   return registerCommand(nil, name, func, help, pack)
 end
 
 local function setCommandDefaults (command, options)

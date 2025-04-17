@@ -50,9 +50,6 @@ end
 function package:_init ()
    base._init(self)
    self:loadPackage("inputfilter")
-   self:deprecatedExport("uppercase", self.uppercase)
-   self:deprecatedExport("lowercase", self.lowercase)
-   self:deprecatedExport("titlecase", self.titlecase)
 end
 
 function package:registerCommands ()

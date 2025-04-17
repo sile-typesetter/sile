@@ -29,7 +29,7 @@ local mirrorMaster = function (_, existing, new)
    end
 end
 
-function package.oddPage (_)
+function package:oddPage ()
    return _odd
 end
 

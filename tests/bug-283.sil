@@ -5,7 +5,7 @@
 % bunch of subsequent stuff I couldn't make it fail again. Apparently not only
 % the initial fix but also other subsequent algorithm and processing order
 % changes have added safety rails. It's possible even newer ICU libraries are
-% involved in the layers of fixes. Hence I'm simplying the test on the
+% involved in the layers of fixes. Hence I'm simplifying the test on the
 % assumption that the having apostrophe locations before, at, and after
 % a desired break point *would* trigger this bug if we ever were to resurface
 % it but that isn't confirmed. If in doubt revert this test to v0.14.14.

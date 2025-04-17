@@ -30,20 +30,18 @@ local function init ()
       SILE.input.backend = "libtexpdf"
    end
    if SILE.input.backend == "libtexpdf" then
-      SILE.shaper = SILE.shapers.harfbuzz()
       SILE.outputter = SILE.outputters.libtexpdf()
    elseif SILE.input.backend == "cairo" then
-      SILE.shaper = SILE.shapers.pango()
       SILE.outputter = SILE.outputters.cairo()
    elseif SILE.input.backend == "debug" then
-      SILE.shaper = SILE.shapers.harfbuzz()
       SILE.outputter = SILE.outputters.debug()
    elseif SILE.input.backend == "text" then
-      SILE.shaper = SILE.shapers.harfbuzz()
       SILE.outputter = SILE.outputters.text()
    elseif SILE.input.backend == "dummy" then
-      SILE.shaper = SILE.shapers.harfbuzz()
       SILE.outputter = SILE.outputters.dummy()
+   end
+   if not SILE.shaper then
+      SILE.shaper = SILE.shapers.default()
    end
    SILE.pagebuilder = SILE.pagebuilders.default()
    io.stdout:setvbuf("no")

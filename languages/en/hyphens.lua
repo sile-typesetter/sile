@@ -1,4 +1,7 @@
 return {
+   hyphenmins = {
+      typesetting = { left = 2, right = 3 },
+   },
    patterns = {
       ".ach4",
       ".ad4der",

@@ -12,7 +12,7 @@
 % not working using ex values; working using point values
 \set[parameter=document.lineskip,value=2em]
 % \set[parameter=document.lineskip,value=24pt]
-\lorem[words=50,counter=true]\par
+\lorem[words=70]\par
 \end{font}
 \end{document}
 

@@ -60,7 +60,7 @@ function class:setOptions (options)
    base.setOptions(self, options)
 end
 
-function class.declareSettings (_)
+function class:declareSettings ()
    for k, v in pairs(skips) do
       SILE.settings:declare({
          parameter = "plain." .. k .. "skipamount",
@@ -370,7 +370,7 @@ function class:registerCommands ()
       SILE.call("smallskip")
    end, "A blockquote environment")
 
-   self:registerCommand("quote", function (_, content)
+   self:registerCommand("quote", function (_, _)
       SU.deprecated(
          "\\quote",
          "\\pullquote or \\blockquote",
@@ -385,22 +385,9 @@ function class:registerCommands ()
             SILE v0.16.0.
          ]]
       )
-      SILE.call("smallskip")
-      SILE.call("par")
-      local margin = SILE.types.measurement(2.5, "em")
-      SILE.settings:set("document.lskip", margin)
-      SILE.settings:set("document.lskip", margin)
-      SILE.call("font", { size = SILE.types.measurement(0.8, "em") }, function ()
-         SILE.call("noindent")
-         SILE.process(content)
-      end)
-      SILE.call("par")
-      SILE.settings:set("document.lskip", nil)
-      SILE.settings:set("document.rskip", nil)
-      SILE.call("smallskip")
    end)
 
-   self:registerCommand("listitem", function (_, content)
+   self:registerCommand("listitem", function (_, _)
       SU.deprecated(
          "\\listitem",
          "\\item",
@@ -413,10 +400,6 @@ function class:registerCommands ()
             project.
          ]]
       )
-      SILE.call("medskip")
-      SILE.typesetter:typeset("• ")
-      SILE.process(content)
-      SILE.call("medskip")
    end)
 
    self:registerCommand("sloppy", function (_, _)

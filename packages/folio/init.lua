@@ -3,7 +3,7 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "folio"
 
-function package.incrementFolio (_)
+function package:incrementFolio ()
    SILE.scratch.counters.folio.value = SILE.scratch.counters.folio.value + 1
 end
 
@@ -71,10 +71,6 @@ function package:registerCommands ()
    self:registerCommand("nofoliothispage", function (_, _)
       SILE.scratch.counters.folio.off = 2
    end)
-
-   self:registerCommand("nofoliosthispage", function (_, _)
-      SU.deprecated("nofoliosthispage", "nofoliothispage", "0.12.1", "0.14.0")
-   end, "Deprecated")
 
    self:registerCommand("foliostyle", function (_, content)
       SILE.call("center", {}, content)

@@ -4,7 +4,7 @@ local base = require("outputters.base")
 -- example of how to create alternative output backends, in comparison
 -- with the libtexpdf and debug backends.
 local lgi = require("lgi")
-local cairolgi = lgi.cairo
+local cairo = lgi.cairo
 -- local pango = lgi.Pango
 -- local fm = lgi.PangoCairo.FontMap.get_default()
 -- local pango_context = lgi.Pango.FontMap.create_context(fm)
@@ -21,39 +21,65 @@ local outputter = pl.class(base)
 outputter._name = "cairo"
 outputter.extension = "pdf"
 
+local started = false
+local surface
+
 function outputter:_init ()
    base._init(self)
-   local fname = self:getOutputFilename()
-   local surface = cairolgi.PdfSurface.create(
-      fname == "-" and "/dev/stdout" or fname,
-      SILE.documentState.paperSize[1],
-      SILE.documentState.paperSize[2]
-   )
-   cr = cairolgi.Context.create(surface)
-   move = cr.move_to
-   sgs = cr.show_glyph_string
 end
 
-function outputter.newPage (_)
+function outputter:_ensureInit ()
+   local fname = self:getOutputFilename()
+   if not started then
+      surface = cairo.PdfSurface.create(
+         fname == "-" and "/dev/stdout" or fname,
+         SILE.documentState.paperSize[1],
+         SILE.documentState.paperSize[2]
+      )
+      cr = cairo.Context.create(surface)
+      move = cr.move_to
+      sgs = cr.show_glyph_string
+   end
+end
+
+function outputter:newPage ()
+   self:_ensureInit()
    cr:show_page()
 end
 
-function outputter.getCursor (_)
+function outputter:abort ()
+   if started then
+      surface:finish()
+   end
+end
+
+function outputter:finish()
+   -- allows generation of empty PDFs
+   self:_ensureInit()
+   self:runHooks("prefinish")
+   cr:show_page()
+   surface:finish()
+end
+
+function outputter:getCursor ()
    return cursorX, cursorY
 end
 
-function outputter.setCursor (_, x, y, relative)
+function outputter:setCursor (x, y, relative)
+   self:_ensureInit()
    local offset = relative and { x = cursorX, y = cursorY } or { x = 0, y = 0 }
    cursorX = offset.x + x
    cursorY = offset.y - y
    move(cr, cursorX, cursorY)
 end
 
-function outputter.setColor (_, color)
+function outputter:setColor (color)
+   self:_ensureInit()
    cr:set_source_rgb(color.r, color.g, color.b)
 end
 
-function outputter.drawHbox (_, value, _)
+function outputter:drawHbox (value, _)
+   self:_ensureInit()
    if not value then
       return
    end
@@ -64,13 +90,15 @@ function outputter.drawHbox (_, value, _)
    end
 end
 
-function outputter.setFont (_, options)
+function outputter:setFont (options)
+   self:_ensureInit()
    cr:select_font_face(options.font, options.style:lower() == "italic" and 1 or 0, options.weight > 100 and 0 or 1)
    cr:set_font_size(options.size)
 end
 
-function outputter.drawImage (_, src, x, y, width, height)
-   local image = cairolgi.ImageSurface.create_from_png(src)
+function outputter:drawImage (src, x, y, width, height)
+   self:_ensureInit()
+   local image = cairo.ImageSurface.create_from_png(src)
    if not image then
       SU.error("Could not load image " .. src)
    end
@@ -90,9 +118,9 @@ function outputter.drawImage (_, src, x, y, width, height)
       if height > 0 then
          sy = src_height / height
       end
-      matrix = cairolgi.Matrix.create_scale(sx or sy, sy or sx)
+      matrix = cairo.Matrix.create_scale(sx or sy, sy or sx)
    else
-      matrix = cairolgi.Matrix.create_identity()
+      matrix = cairo.Matrix.create_identity()
    end
    matrix:translate(-x, -y)
    p:set_matrix(matrix)
@@ -100,7 +128,7 @@ function outputter.drawImage (_, src, x, y, width, height)
    cr:restore()
 end
 
-function outputter.getImageSize (_, src)
+function outputter:getImageSize (src)
    local box_width, box_height, err = imagesize.imgsize(src)
    if not box_width then
       SU.error(err .. " loading image")
@@ -108,12 +136,14 @@ function outputter.getImageSize (_, src)
    return box_width, box_height
 end
 
-function outputter.drawRule (_, x, y, width, depth)
+function outputter:drawRule (x, y, width, depth)
+   self:_ensureInit()
    cr:rectangle(x, y, width, depth)
    cr:fill()
 end
 
-function outputter.debugFrame (_, frame)
+function outputter:debugFrame (frame)
+   self:_ensureInit()
    cr:set_source_rgb(0.8, 0, 0)
    cr:set_line_width(0.5)
    cr:rectangle(frame:left(), frame:top(), frame:width(), frame:height())
@@ -124,6 +154,7 @@ function outputter.debugFrame (_, frame)
 end
 
 function outputter:debugHbox (hbox, scaledWidth)
+   self:_ensureInit()
    cr:set_source_rgb(0.9, 0.9, 0.9)
    cr:set_line_width(0.5)
    local x, y = self:getCursor()
@@ -137,7 +168,8 @@ function outputter:debugHbox (hbox, scaledWidth)
 end
 
 -- untested
-function outputter.drawRaw (_, literal)
+function outputter:drawRaw (literal)
+   self:_ensureInit()
    cr:show_text(literal)
 end
 

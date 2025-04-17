@@ -9,7 +9,7 @@ function language:setupNodeMaker ()
    self.nodemaker = require("languages.fr.nodemaker")
 end
 
-function language.declareSettings (_)
+function language:declareSettings ()
    local function computeSpaces ()
       -- Computes:
       --  -  regular inter-word space,

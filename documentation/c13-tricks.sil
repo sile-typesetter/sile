@@ -460,7 +460,7 @@ At any point during the evaluation of Lua commands, you can call \code{SILE.repl
 Two alternative backends are also useful for debugging.
 Both use the same shaping engine as the default \code{libtexpdf} backend, but instead of actually generating a PDF they only output some textual information about what’s going on.
 The \code{debug} backend (activated by calling \code{sile -b debug <input>})
-will generate a log file with a \code{.debug} extension detailing each string and it’s exact output loction.
+will generate a log file with a \code{.debug} extension detailing each string and it’s exact output location.
 A simpler \code{text} backend (\code{sile -b text <input>}) will output a \code{.txt} file with just the text strings with rough approximations of line breaks.
 Either may be sent to STDOUT instead of files using \code{-o /dev/stdout}.
 

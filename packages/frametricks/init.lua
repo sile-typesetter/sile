@@ -98,7 +98,7 @@ local mergeColumns = function ()
    SILE.typesetter:initNextFrame()
 end
 
-function package.breakFrameVertical (_, after)
+function package:breakFrameVertical (after)
    local cFrame = SILE.typesetter.frame
    local totalHeight
    if after then

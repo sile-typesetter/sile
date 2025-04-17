@@ -31,6 +31,7 @@ globals = {
 }
 max_line_length = false
 ignore = {
+   "212/self", -- allow unused argument self so abstract functions can look the same as finished ones
    "581", -- operator order warning doesn't account for custom table metamethods
 }
 -- vim: ft=lua

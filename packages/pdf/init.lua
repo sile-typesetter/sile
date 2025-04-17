@@ -73,11 +73,7 @@ function package:registerCommands ()
 
    self:registerCommand("pdf:metadata", function (options, _)
       local key = SU.required(options, "key", "pdf:metadata")
-      if options.val ~= nil then
-         SU.deprecated("\\pdf:metadata[…, val=…]", "\\pdf:metadata[…, value=…]", "0.12.0", "0.13.0")
-      end
       local value = SU.required(options, "value", "pdf:metadata")
-
       SILE.outputter:setMetadata(key, value)
    end)
 end

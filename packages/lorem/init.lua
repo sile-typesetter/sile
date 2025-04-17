@@ -87,11 +87,6 @@ function package:registerCommands ()
       local text = string.rep(lorem, times) .. lorem:sub(1, pos)
       if counter then
          SU.deprecated("\\lorem with counter", nil, "0.14.10", "0.16.0")
-         local c = 0
-         text = string.gsub(text, "(%s+)", function (_)
-            c = c + 1
-            return " " .. c .. " "
-         end)
       end
       SILE.settings:temporarily(function ()
          SILE.settings:set("document.language", "la")

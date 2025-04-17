@@ -29,7 +29,6 @@ local function outputMarks ()
             -- Deprecation shim:
             -- If user redefined this command, still use it with a warning...
             SU.deprecated("crop:header", "cropmarks:header", "0.15.0", "0.16.0")
-            SILE.call("crop:header")
          else
             SILE.call("cropmarks:header")
          end

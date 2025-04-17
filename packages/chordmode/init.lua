@@ -9,7 +9,7 @@ function package:_init ()
    self:loadPackage("inputfilter")
 end
 
-function package.declareSettings (_)
+function package:declareSettings ()
    SILE.settings:declare({
       parameter = "chordmode.offset",
       type = "length",

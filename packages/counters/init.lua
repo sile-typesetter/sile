@@ -41,7 +41,7 @@ local function getMultilevelCounter (_, id)
    return counter
 end
 
-function package.formatCounter (_, counter)
+function package:formatCounter (counter)
    return SU.formatNumber(counter.value, { system = counter.display })
 end
 
@@ -69,8 +69,6 @@ function package:_init ()
    end
    self:export("getCounter", getCounter)
    self:export("getMultilevelCounter", getMultilevelCounter)
-   self:deprecatedExport("formatCounter", self.formatCounter)
-   self:deprecatedExport("formatMultilevelCounter", self.formatMultilevelCounter)
 end
 
 function package:registerCommands ()
@@ -79,8 +77,6 @@ function package:registerCommands ()
       local counter = self.class:getCounter(id)
       if options["set-to"] then
          SU.deprecated("\\increment-counter[set-to=...]", "\\set-counter[value=...]", "0.14.4", "0.16.0")
-         -- An increment command that does a set is plain weird...
-         counter.value = SU.cast("integer", options["set-to"])
       else
          counter.value = counter.value + 1
       end
@@ -109,7 +105,6 @@ function package:registerCommands ()
       local counter = self.class:getCounter(id)
       if options.display then
          SU.deprecated("\\show-counter[display=...]", "\\set-counter[display=...]", "0.14.4", "0.16.0")
-         counter.display = options.display
       end
       SILE.typesetter:typeset(self:formatCounter(counter))
    end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.")
@@ -203,7 +198,6 @@ function package:registerCommands ()
             "0.14.4",
             "0.16.0"
          )
-         counter.display[#counter.value] = options.display
       end
       SILE.typesetter:typeset(self:formatMultilevelCounter(counter, options))
    end, "Outputs the value of the multilevel counter <id>.")

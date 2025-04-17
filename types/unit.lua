@@ -15,7 +15,9 @@ setmetatable(unittypes, {
       local def = SU.required(spec, "definition", "registering unit " .. unit)
       local relative = SU.boolean(spec.relative, false)
       if type(def) == "string" then
-         local parsed = bits.measurement:match(def)
+         local input = pl.stringx.strip(def)
+         local measurement_only_parser = bits.measurement * -1
+         local parsed = measurement_only_parser:match(input)
          if not parsed then
             SU.error("Could not parse unit definition '" .. def .. "'")
          end

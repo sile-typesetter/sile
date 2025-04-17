@@ -128,7 +128,7 @@ function SILE.types.node.insertion:__tostring ()
    return "I<" .. self.nodes[1] .. "...>"
 end
 
-function SILE.types.node.insertion.outputYourself (_) end
+function SILE.types.node.insertion:outputYourself () end
 
 -- And some utility methods to make the insertion processing code
 -- easier to read.
@@ -254,7 +254,7 @@ function package:_init ()
 
    --[[ Actually shrink the frame. --]]
 
-   SILE.insertions.commitShrinkage = function (_, classname)
+   function SILE.insertions.commitShrinkage (_, classname)
       local opts = SILE.scratch.insertions.classes[classname]
       local reduceList = opts["stealFrom"]
       local stealPosition = opts["steal-position"] or "bottom"
@@ -474,7 +474,7 @@ function package:_init ()
    self:export("insert", insert)
 end
 
-function package.declareSettings (_)
+function package:declareSettings ()
    SILE.settings:declare({
       parameter = "insertion.penalty",
       type = "integer",

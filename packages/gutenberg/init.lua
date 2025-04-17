@@ -4,10 +4,6 @@ local package = pl.class(base)
 package._name = "gutenberg"
 
 function package:registerCommands ()
-   self:registerCommand("alt", function (_, _)
-      SU.deprecated("\\alt", "\\alternative", "0.10.0", "0.14.0")
-   end, "Deprecated")
-
    self:registerCommand("alternative", function (_, content)
       local alts = {}
       for _, fragment in ipairs(content) do

@@ -1,4 +1,10 @@
 return {
+   hyphenmins = {
+      -- Usual typesetting convention from TeX
+      -- TeX use a different set of patterns, but we can assume that the hyphenation minima
+      -- for typesetting should be the same.
+      typesetting = { left = 2, right = 3 },
+   },
    patterns = {
       "2a1",
       "2â1",
