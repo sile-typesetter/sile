@@ -49,7 +49,9 @@ function length:_init (spec, stretch, shrink)
       if type(amount) == "number" then
          self:_init(amount)
       else
-         local parsed = SILE.parserBits.length:match(spec)
+         local input = pl.stringx.strip(spec)
+         local length_only_parser = SILE.parserBits.length * -1
+         local parsed = length_only_parser:match(input)
          if not parsed then
             SU.error("Could not parse length '" .. spec .. "'")
          end

@@ -18,7 +18,7 @@ describe("Language module", function ()
       local hyphenator = SILE.typesetter.language.hyphenator
 
       it("should hyphenate", function ()
-         assert.is.equal("Nor-we-gian", hyphenator:showHyphenationPoints("Norwegian", "no"))
+         assert.is.equal("Nor-we-gi-an", hyphenator:showHyphenationPoints("Norwegian", "no"))
          assert.is.equal("atten-de", hyphenator:showHyphenationPoints("attende", "no"))
       end)
 
@@ -31,7 +31,7 @@ describe("Language module", function ()
          SILE.call("language", { main = "nb" })
 
          it("should hyphenate", function ()
-            assert.is.equal("Nor-we-gian", hyphenator:showHyphenationPoints("Norwegian", "nb"))
+            assert.is.equal("Nor-we-gi-an", hyphenator:showHyphenationPoints("Norwegian", "nb"))
             assert.is.equal("atten-de", hyphenator:showHyphenationPoints("attende", "nb"))
          end)
 
@@ -45,7 +45,7 @@ describe("Language module", function ()
          SILE.call("language", { main = "nn" })
 
          it("should hyphenate", function ()
-            assert.is.equal("Nor-we-gian", hyphenator:showHyphenationPoints("Norwegian", "nn"))
+            assert.is.equal("Nor-we-gi-an", hyphenator:showHyphenationPoints("Norwegian", "nn"))
             assert.is.equal("att-en-de", hyphenator:showHyphenationPoints("attende", "nn"))
          end)
 

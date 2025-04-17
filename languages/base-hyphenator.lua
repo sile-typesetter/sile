@@ -7,11 +7,11 @@ hyphenator._name = "base"
 function hyphenator:_init (language)
    self._name = language._name
    self.language = language
-   self.minWord = 5
-   self.leftmin = 2
-   self.rightmin = 2
-   self.trie = {}
-   self.exceptions = {}
+   self.minWord = 5 -- Smallest word length below which hyphenation is not applied
+   self.leftmin = 2 -- Minimum number of characters to the left of the hyphen (TeX default)
+   self.rightmin = 2 -- Minimum number of characters to the right of the hyphen (TeX default)
+   self.trie = {} -- Trie resulting from the patterns
+   self.exceptions = {} -- Hyphenation exceptions
    self:registerCommands()
    self:loadPatterns()
 end
@@ -30,6 +30,23 @@ function hyphenator:loadPatterns ()
       end
       for _, exception in ipairs(hyphens.exceptions or {}) do
          self:registerException(exception)
+      end
+   end
+   local hyphenmins = hyphens.hyphenmins
+   -- TODO: We ought to have a way to set these according to users' preferences
+   -- For now, we just set them to the conventional values based on the pattern files, or TeX defaults
+   -- Yet, if available, we use the typesetting convention.
+   -- For the record, the generation miniam are the real minima below which the pattern file is not
+   -- applicable. (So even users' preferences should not go below these values.)
+   if hyphenmins then
+      if hyphenmins.typesetting then
+         self.leftmin = hyphenmins.typesetting.left or 2
+         self.rightmin = hyphenmins.typesetting.right or 2
+         SU.debug("hyphenator", "Setting hyphenation minima for typesetting:", self.leftmin, self.rightmin)
+      elseif hyphenmins.generation then
+         self.leftmin = hyphenmins.generation.left or 2
+         self.rightmin = hyphenmins.generation.right or 2
+         SU.debug("hyphenator", "Setting hyphenation minima from generation:", self.leftmin, self.rightmin)
       end
    end
 end
@@ -139,7 +156,7 @@ function hyphenator:_segment (text)
       for i = 1, self.leftmin do
          points[i] = 0
       end
-      for i = #points - self.rightmin, #points do
+      for i = #points - self.rightmin + 1, #points do
          points[i] = 0
       end
    end

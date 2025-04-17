@@ -174,19 +174,19 @@ function shaper:createNnodes (token, options)
    return nodes
 end
 
-function shaper.clearFallbacks (_)
+function shaper:clearFallbacks ()
    activeFallbacks = {}
 end
 
-function shaper.addFallback (_, options)
+function shaper:addFallback (options)
    table.insert(activeFallbacks, options)
 end
 
-function shaper.removeFallback (_)
+function shaper:removeFallback ()
    table.remove(activeFallbacks)
 end
 
-function shaper.dumpFallbacks (_)
+function shaper:dumpFallbacks ()
    return activeFallbacks
 end
 

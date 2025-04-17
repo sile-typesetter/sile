@@ -1,13 +1,6 @@
 --- SILE inputter class.
 -- @interfaces inputters
 
-local _deprecated = [[
-   You appear to be using a document class '%s' programmed for SILE <= v0.12.5.
-   This system was refactored in v0.13.0 and the shims trying to make it
-   work temporarily without refactoring your classes have been removed
-   in v0.14.0. Please see v0.13.0 release notes for help.
-]]
-
 local inputter = pl.class()
 inputter.type = "inputter"
 inputter._name = "base"
@@ -17,7 +10,7 @@ function inputter:_init (options)
    self.options = options or {}
 end
 
-function inputter.classInit (_, options)
+function inputter:classInit (options)
    options = pl.tablex.merge(options, SILE.input.options, true)
    local constructor, class
    if SILE.scratch.class_from_uses then
@@ -26,10 +19,7 @@ function inputter.classInit (_, options)
    end
    class = SILE.input.class or class or options.class or "plain"
    options.class = nil -- don't pass already consumed class option to constructor
-   constructor = constructor or SILE.require(class, "classes", true)
-   if constructor.id then
-      SU.deprecated("std.object", "pl.class", "0.13.0", "0.14.0", string.format(_deprecated, constructor.id))
-   end
+   constructor = self._docclass or constructor or SILE.require(class, "classes", true)
    -- Note SILE.documentState.documentClass is set by the instance's own :_post_init()
    constructor(options)
 end
@@ -56,7 +46,7 @@ function inputter:process (doc)
    return SILE.process(tree)
 end
 
-function inputter.findInTree (_, tree, command)
+function inputter:findInTree (tree, command)
    SU.deprecated("SILE.inputter:findInTree", "SU.ast.findInTree", "0.15.0", "0.17.0")
    return SU.ast.findInTree(tree, command)
 end
@@ -85,11 +75,11 @@ local function process_ambles (ambles)
    end
 end
 
-function inputter.preamble (_)
+function inputter:preamble ()
    process_ambles(SILE.input.preambles)
 end
 
-function inputter.postamble (_)
+function inputter:postamble ()
    process_ambles(SILE.input.postambles)
 end
 

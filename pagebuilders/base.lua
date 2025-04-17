@@ -12,7 +12,7 @@ function pagebuilder:_init ()
    self.deplorable = 100000
 end
 
-function pagebuilder.collateVboxes (_, vboxlist)
+function pagebuilder:collateVboxes (vboxlist)
    local output = SILE.types.node.vbox()
    output:append(vboxlist)
    return output

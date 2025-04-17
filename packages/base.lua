@@ -50,9 +50,9 @@ function package:_post_init ()
    self._initialized = true
 end
 
-function package.declareSettings (_) end
+function package:declareSettings () end
 
-function package.registerRawHandlers (_) end
+function package:registerRawHandlers () end
 
 function package:loadPackage (packname, options, reload)
    return self.class:loadPackage(packname, options, reload)
@@ -62,7 +62,7 @@ function package:reloadPackage (packname, options)
    return self.class:reloadPackage(packname, options)
 end
 
-function package.registerCommands (_) end
+function package:registerCommands () end
 
 -- This gives us a hook to match commands with the packages that registered
 -- them as opposed to core commands or class-provided commands
@@ -96,26 +96,18 @@ end
 -- to package modules...
 
 local _deprecate_class_funcs = [[
-   Please explicitly use functions provided by packages by referencing them in
-   the document class's list of loaded packages rather than the legacy solution
-   that added non-method functions to the class.
-]]
+  Please explicitly use functions provided by packages by referencing
+  them in the document class's list of loaded packages rather than the
+  legacy solution that added non-method functions to the class.]]
 
 local _deprecate_exports_table = [[
-   Please explicitly use functions provided by packages by referencing them in
-   the document class's list of loaded packages rather than the legacy solution
-   of calling them from an exports table.
-]]
+  Please explicitly use functions provided by packages by referencing
+  them in the document class's list of loaded packages rather than the
+  legacy solution of calling them from an exports table.]]
 
-function package:deprecatedExport (name, func, noclass, notable)
+function package:deprecatedExport (name, _, noclass, notable)
    if not noclass then
-      self.class[name] = function (...)
-         -- http://lua-users.org/wiki/VarargTheSecondClassCitizen
-         local inputs = { ... }
-         -- local inputs = table.unpack({...}, 1, select("#", ...))
-         if type(inputs[1]) ~= "table" or inputs[1].type ~= "class" then
-            table.insert(inputs, 1, self.class)
-         end
+      self.class[name] = function ()
          SU.deprecated(
             ("class.%s"):format(name),
             ("class.packages.%s:%s"):format(self._name, name),
@@ -123,16 +115,11 @@ function package:deprecatedExport (name, func, noclass, notable)
             "0.16.0",
             _deprecate_class_funcs
          )
-         return func(pl.utils.unpack(inputs, 1, select("#", ...) + 1))
       end
    end
 
    if not notable then
-      self.exports[name] = function (...)
-         local inputs = { ... }
-         if type(inputs[1]) ~= "table" or inputs[1].type ~= "package" then
-            table.insert(inputs, 1, self)
-         end
+      self.exports[name] = function ()
          SU.deprecated(
             ("require('packages.%s').exports.%s"):format(self._name, name),
             ("class.packages.%s:%s"):format(self._name, name),
@@ -140,7 +127,6 @@ function package:deprecatedExport (name, func, noclass, notable)
             "0.16.0",
             _deprecate_exports_table
          )
-         return func(pl.utils.unpack(inputs, 1, select("#", ...) + 1))
       end
    end
 end

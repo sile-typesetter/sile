@@ -134,7 +134,7 @@ function lineBreak:parShapeCache (n)
    return cache[1], cache[2], cache[3]
 end
 
-function lineBreak.parShapeCacheClear (_)
+function lineBreak:parShapeCacheClear ()
    pl.tablex.clear(parShapeCache)
 end
 
@@ -580,7 +580,7 @@ function lineBreak:createNewActiveNodes (breakType) -- 862
    end
 end
 
-function lineBreak.dumpBreakNode (_, node)
+function lineBreak:dumpBreakNode (node)
    if not SU.debugging("break") then
       return
    end
