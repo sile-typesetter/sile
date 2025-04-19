@@ -135,14 +135,12 @@ local tr_nums = function (num, ordinal)
    return table.concat(words, " ")
 end
 
--- TODO refactor number formatter from utilities
-SU.formatNumber.tr = {
-   string = function (num, _)
-      return tr_nums(num, false)
-   end,
-   ["ordinal-string"] = function (num, _)
-      return tr_nums(num, true)
-   end,
-}
+function language:numberToString(num)
+   return tr_nums(num, false)
+end
+
+function language:numberToOrdinalString(num)
+   return tr_nums(num, true)
+end
 
 return language
