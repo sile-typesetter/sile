@@ -35,26 +35,18 @@ describe("SILE.utilities", function ()
 
       describe("Esperanto", function ()
          SILE.call("language", { main = "eo" })
-         -- The test assumes Espeeranto has its own language-specific hooks, bypassing ICU.
 
          it("should format strings", function ()
-            -- Directly checking the language-specific hooks
-            assert.is.equal("miliono", SU.formatNumber.eo.string(1000000))
-            assert.is.equal("miliono kaj unu", SU.formatNumber.eo.string(1000001))
-            assert.is.equal("tri milionoj kaj tri", SU.formatNumber.eo.string(3000003))
+            assert.is.equal("miliono", SU.formatNumber(1000000, { style = "string" }))
+            assert.is.equal("miliono kaj unu", SU.formatNumber(1000001, { style = "string" }))
+            assert.is.equal("tri milionoj kaj tri", SU.formatNumber(3000003, { style = "string" }))
             assert.is.equal(
                "tri miliardoj kaj tri cent tri dek tri milionoj kaj tri cent mil tri dek",
-               SU.formatNumber.eo.string(3333300030)
+               SU.formatNumber(3333300030, { style = "string" })
             )
-            -- Called via basic SILE.formatNumber() when the language is set.
-            assert.is.equal("miliono kaj unu", SU.formatNumber(1000001, { style = "string" }))
          end)
 
          it("should format ordinal numbers", function ()
-            -- Directly checking the language-specific hooks
-            assert.is.equal("1a", SU.formatNumber.eo.ordinal(1))
-            assert.is.equal("99a", SU.formatNumber.eo.ordinal(99))
-            -- Called via basic SILE.formatNumber() when the language is set.
             assert.is.equal("1a", SU.formatNumber(1, { style = "ordinal" }))
             assert.is.equal("99a", SU.formatNumber(99, { style = "ordinal" }))
          end)
