@@ -100,16 +100,10 @@ SILE.registerCommand("font", function (options, content)
          -- end
          options.language = newlang
       end
-      SILE.languageSupport.loadLanguage(options.language)
       SILE.settings:set("document.language", options.language)
    end
    if options.script then
       SILE.settings:set("font.script", options.script)
-   elseif SILE.settings:get("document.language") then
-      local lang = SILE.languageSupport.languages[SILE.settings:get("document.language")]
-      if lang and lang.defaultScript then
-         SILE.settings:set("font.script", lang.defaultScript)
-      end
    end
    if options.hyphenchar then
       -- must be in the form of, for example, "-" or "U+2010" or "0x2010" (Unicode hex codepoint)
@@ -124,7 +118,7 @@ SILE.registerCommand("font", function (options, content)
    if SU.ast.hasContent(content) then
       SILE.process(content)
       SILE.settings:popState()
-      if SILE.shaper._name == "harfbuzzWithColor" and lastshaper then
+      if SILE.shaper._name == "harfbuzz-color" and lastshaper then
          SU.debug("color-fonts", "Switching from color fonts shaper back to previous shaper")
          SILE.typesetter:leaveHmode(true)
          lastshaper, SILE.shaper = nil, lastshaper
@@ -239,11 +233,10 @@ local font = {
       local ot = require("core.opentype-parser")
       local font = ot.parseFont(face)
       if font.cpal then
-         SILE.require("packages.color-fonts")
-         if SILE.shaper._name ~= "harfbuzzWithColor" then
+         if SILE.shaper._name ~= "harfbuzz-color" then
             SU.debug("color-fonts", "Switching to color font Shaper")
             SILE.typesetter:leaveHmode(true)
-            lastshaper, SILE.shaper = SILE.shaper, SILE.shapers.harfbuzzWithColor()
+            lastshaper, SILE.shaper = SILE.shaper, SILE.shapers["harfbuzz-color"]()
          end
       end
    end,

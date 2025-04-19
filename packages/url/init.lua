@@ -131,7 +131,6 @@ function package:registerCommands ()
          local worsePenalty = primaryPenalty + secondaryPenalty
 
          if options.language then
-            SILE.languageSupport.loadLanguage(options.language)
             if options.language == "fr" then
                -- Trick the engine by declaring a "fake"" language that doesn't apply
                -- the typographic rules for punctuations

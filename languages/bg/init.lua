@@ -1,2 +1,6 @@
-local hyphens = require("languages.bg.hyphens-tex")
-SILE.hyphenator.languages["bg"] = hyphens
+local unicode = require("languages.unicode")
+
+local language = pl.class(unicode)
+language._name = "bg"
+
+return language

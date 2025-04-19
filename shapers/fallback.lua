@@ -148,9 +148,8 @@ function shaper:createNnodes (token, options)
    if #items < 1 then
       return {}
    end
-   local lang = options.language
-   SILE.languageSupport.loadLanguage(lang)
-   local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
+   -- TODO this shouldn't need a private interface to a different module type
+   local language = SILE.typesetter:_cacheLanguage(options.language)
    local run = { [1] = { slice = {}, fontOptions = items[1].fontOptions, chunk = "" } }
    for i = 1, #items do
       if items[i].fontOptions ~= run[#run].fontOptions then
@@ -165,8 +164,9 @@ function shaper:createNnodes (token, options)
    local nodes = {}
    for i = 1, #run do
       options = run[i].fontOptions
+      local nodemaker = language:nodemaker(options)
       SU.debug("font-fallback", "Shaping", run[i].chunk, "in", options.family)
-      for node in nodeMaker(options):iterator(run[i].slice, run[i].chunk) do
+      for node in nodemaker:iterator(run[i].slice, run[i].chunk) do
          nodes[#nodes + 1] = node
       end
    end

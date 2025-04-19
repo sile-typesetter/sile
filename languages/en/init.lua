@@ -1,8 +1,20 @@
-local hyphens = require("languages.en.hyphens")
-SILE.hyphenator.languages["en"] = hyphens
+local unicode = require("languages.unicode")
 
--- Internationalization stuff
-local en_string = function (num)
+local language = pl.class(unicode)
+language._name = "en"
+
+local function digits (number)
+   local i, ret = -1
+   return function ()
+      i, ret = i + 1, number % 10
+      if number > 0 then
+         number = math.floor(number / 10)
+         return i, ret
+      end
+   end
+end
+
+function language:numberToString (number)
    local words = { "one ", "two ", "three ", "four ", "five ", "six ", "seven ", "eight ", "nine " }
    local levels = {
       "thousand ",
@@ -20,17 +32,6 @@ local en_string = function (num)
    local twords =
       { "eleven ", "twelve ", "thirteen ", "fourteen ", "fifteen ", "sixteen ", "seventeen ", "eighteen ", "nineteen " }
 
-   local function digits (n)
-      local i, ret = -1
-      return function ()
-         i, ret = i + 1, n % 10
-         if n > 0 then
-            n = math.floor(n / 10)
-            return i, ret
-         end
-      end
-   end
-
    local level = false
    local function getname (pos, dig) --stateful, but effective.
       level = level or pos % 3 == 0
@@ -46,7 +47,7 @@ local en_string = function (num)
 
    local vword = ""
 
-   for i, v in digits(num) do
+   for i, v in digits(number) do
       vword = getname(i, v) .. vword
    end
 
@@ -55,11 +56,7 @@ local en_string = function (num)
       vword = vword:gsub("ten " .. v, twords[i])
    end
 
-   return num == 0 and "zero" or vword:sub(1, -2)
+   return number == 0 and "zero" or vword:sub(1, -2)
 end
 
-SU.formatNumber.en = {
-   string = function (num, _)
-      return en_string(num)
-   end,
-}
+return language

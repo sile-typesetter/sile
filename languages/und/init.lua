@@ -1,1 +1,6 @@
-SILE.hyphenator.languages.und = { patterns = {}, exceptions = {} }
+local unicode = require("languages.unicode")
+
+local language = pl.class(unicode)
+language._name = "und"
+
+return language

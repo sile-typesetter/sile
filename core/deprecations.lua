@@ -151,6 +151,53 @@ function SILE.paperSizeParser ()
    SU.deprecated("SILE.paperSizeParser", "SILE.papersize", "0.15.0", "0.16.0")
 end
 
+local nolanguageloader = function (_, key)
+   if key == "loadLanguage" then
+      return function (language)
+         SU.deprecated("SILE.languageSupport.<code>", ('require("languages.%s")'):format(language), "0.16.0", "0.17.0")
+         return SILE.languages[language]
+      end
+   end
+end
+
+SILE.languageSupport = {}
+setmetatable(SILE.languageSupport, {
+   __index = nolanguageloader,
+})
+
+local nonodemakers = function (_, key)
+   return function ()
+      SU.deprecated(
+         "SILE.nodeMakers.<code>",
+         ('SILE.typesetter:_cacheLanguage("%s").nodemaker'):format(key),
+         "0.16.0",
+         "0.17.0"
+      )
+      return SILE.typesetter:_cacheLanguage(key).nodemaker
+   end
+end
+
+SILE.nodeMakers = {}
+setmetatable(SILE.nodeMakers, {
+   __index = nonodemakers,
+})
+
+SILE.tokenizers = {}
+setmetatable(SILE.tokenizers, {
+   __index = nonodemakers,
+})
+
+SILE.showHyphenationPoints = function (...)
+   SU.deprecated(
+      "SILE.showHyphenationPoints",
+      "SILE.typesetter.language.hyphenator:showHyphenationPoints",
+      "0.16.0",
+      "0.17.0"
+   )
+   local language = SILE.typesetter.language
+   return language.hyphenator:showHyphenationPoints(...)
+end
+
 -- luacheck: ignore updatePackage
 -- luacheck: ignore installPackage
 updatePackage = nopackagemanager

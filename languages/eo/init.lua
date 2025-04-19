@@ -1,25 +1,50 @@
 -- Verkita originale por Fredrick BRENNAN (copypaste@kittens.ph) 2022-jare
 -- Original file by Fredrick R. Brennan (copypaste@kittens.ph) in 2022
 
-local hyphenator = require("languages.eo.hyphens")
+local unicode = require("languages.unicode")
 
-local function eo_ordinal (n, _)
-   if n == nil then
-      n = ""
+local language = pl.class(unicode)
+language._name = "eo"
+
+function language.declareSettings (_)
+   SILE.settings:declare({
+      parameter = "languages.eo.ordinal.raisedsuffix",
+      type = "boolean",
+      default = false,
+      help = "Whether to use “ª” or “a” as Esperanto ordinal suffix",
+   })
+   SILE.settings:declare({
+      parameter = "languages.eo.ordinal.hyphenbefore",
+      type = "boolean",
+      default = false,
+      help = "Whether to put a hyphen (-) before Esperanto ordinal suffix",
+   })
+end
+
+function language:registerCommands ()
+   self:registerCommand("book:chapter:post:eo", function ()
+      SILE.typesetter:typeset(self:eo_ordinal())
+      SILE.call("medskip", {})
+   end, nil, nil, true)
+end
+
+function langugae:eo_ordinal (number)
+   if number == nil then
+      number = ""
    end
    local a, h
    h = SILE.settings:get("languages.eo.ordinal.hyphenbefore") and "-" or ""
    a = h .. (SILE.settings:get("languages.eo.ordinal.raisedsuffix") and "ª" or "a")
-   return n .. a
+   return number .. a
 end
 
 -- Copied from en.lua
-local function digits (n)
+local function digits (number)
    local i, ret = -1
    return function ()
-      i, ret = i + 1, n % 10
-      if n > 0 then
-         n = math.floor(n / 10)
+      i, ret = i + 1, number % 10
+      if number > 0 then
+         number = math.floor(number / 10)
          return i, ret
       end
    end
@@ -27,7 +52,7 @@ end
 
 -- Rezultas la vorton de la postulata nombra parametro
 -- Returns the Esperanto name of the required number argument
-local eo_string = function (num, _)
+function language:numberToString (number)
    -- typos: ignore start
    local words = { "unu", "du", "tri", "kvar", "kvin", "ses", "sep", "ok", "naŭ", [0] = "" }
    local levels = { "mil", "miliono", "miliardo", [0] = "" }
@@ -67,41 +92,15 @@ local eo_string = function (num, _)
 
    local vword = ""
 
-   for i, v in digits(num) do
+   for i, v in digits(number) do
       vword = getname(i, v) .. vword
    end
 
    vword = vword:gsub(" kaj $", "")
-   vword = vword:match("^%s*(.*%S)") or ""
+   vword = pl.stringx.strip(vword)
 
-   return num == 0 and "nul" or vword
+   return number == 0 and "nul" or vword
 end
 
-return {
-   init = function ()
-      SILE.hyphenator.languages.eo = hyphenator
 
-      SU.formatNumber.eo = {
-         string = eo_string,
-         ordinal = eo_ordinal,
-      }
-
-      SILE.settings:declare({
-         parameter = "languages.eo.ordinal.raisedsuffix",
-         type = "boolean",
-         default = false,
-         help = "Whether to use “ª” or “a” as Esperanto ordinal suffix",
-      })
-      SILE.settings:declare({
-         parameter = "languages.eo.ordinal.hyphenbefore",
-         type = "boolean",
-         default = false,
-         help = "Whether to put a hyphen (-) before Esperanto ordinal suffix",
-      })
-
-      SILE.registerCommand("book:chapter:post:eo", function ()
-         SILE.typesetter:typeset(eo_ordinal())
-         SILE.call("medskip", {})
-      end, nil, nil, true)
-   end,
-}
+return language

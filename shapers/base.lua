@@ -134,11 +134,11 @@ function shaper:createNnodes (token, options)
    if #items < 1 then
       return {}
    end
-   local lang = options.language
-   SILE.languageSupport.loadLanguage(lang)
-   local nodeMaker = SILE.nodeMakers[lang] or SILE.nodeMakers.unicode
+   -- TODO this shouldn't need a private interface to a different module type
+   local language = SILE.typesetter:_cacheLanguage(options.language)
    local nodes = {}
-   for node in nodeMaker(options):iterator(items, token) do
+   local nodemaker = language:nodemaker(options)
+   for node in nodemaker:iterator(items, token) do
       table.insert(nodes, node)
    end
    return nodes

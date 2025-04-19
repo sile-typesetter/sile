@@ -44,7 +44,6 @@ function package:_init ()
    -- Japanese language support defines units which are useful here
    self:loadPackage("font-fallback")
    SILE.call("font:add-fallback", { family = "Noto Sans CJK JP" })
-   SILE.languageSupport.loadLanguage("ja")
 end
 
 function package:declareSettings ()

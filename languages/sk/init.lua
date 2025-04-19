@@ -1,8 +1,10 @@
-SILE.nodeMakers.sk = pl.class(SILE.nodeMakers.unicode)
+local unicode = require("languages.unicode")
 
--- According to Slovak rules, when a break occurs at an explicit hyphen, the hyphen gets repeated on the next line...
-SILE.nodeMakers.sk.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRepeatHyphen
-SILE.nodeMakers.sk.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
+local language = pl.class(unicode)
+language._name = "sk"
 
-local hyphens = require("languages.sk.hyphens-tex")
-SILE.hyphenator.languages["sk"] = hyphens
+function language:setupNodeMaker ()
+   self.nodemaker = require("languages.repeat-hyphen-nodemaker")
+end
+
+return language

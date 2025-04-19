@@ -1,40 +1,39 @@
 local base = require("packages.base")
 
+local orig_makeGlue, orig_makeSpaceNode
+
+local function xsan_makeGlue (node, item)
+   node:addToken(" ", item)
+   node:makeToken()
+end
+
+local function xsan_makeSpaceNode (shaper, options, _)
+      orig_makeGlue = SILE.typesetters.language.nodemaker.makeGlue
+      SILE.typesetters.language.nodemaker.makeGlue = xsan_makeGlue
+      local nnodes = shaper:createNnodes(" ", options)
+      local node = SILE.types.node.discretionary({ replacement = nnodes })
+      SILE.typesetters.language.nodemaker.makeGlue = orig_makeGlue
+      return node
+end
+
+local function toggle_complexspace_modifications (enable)
+   if enable then
+      orig_makeSpaceNode = SILE.shaper.makeSpaceNode
+      SILE.shaper.makeSpaceNode = xsan_makeSpaceNode
+   else
+      SILE.shaper.makeSpaceNode = orig_makeSpaceNode
+   end
+end
+
 local package = pl.class(base)
 package._name = "complex-spaces"
-
-local makeSpaceNode = function (self, options, item)
-   if SILE.settings:get("shaper.complexspaces") then
-      local myoptions = pl.tablex.deepcopy(options)
-      myoptions.language = "x-spaces-are-nodes"
-      local nnodes = self:createNnodes(" ", myoptions)
-      return SILE.types.node.discretionary({ replacement = nnodes })
-   end
-   return self:noncomplex_SpaceNode(options, item)
-end
-
-function package:_init ()
-   base._init(self)
-   if not SILE.languageSupport.languages["x-spaces-are-nodes"] then
-      local xsan = pl.class(SILE.nodeMakers.unicode)
-      function xsan.makeGlue (node, item)
-         node:addToken(" ", item)
-         node:makeToken()
-      end
-      SILE.nodeMakers["x-spaces-are-nodes"] = xsan
-      SILE.languageSupport.languages["x-spaces-are-nodes"] = true
-   end
-   if SILE.shaper and not SILE.shaper.noncomplex_SpaceNode then
-      SILE.shaper.noncomplex_SpaceNode = SILE.shaper.makeSpaceNode
-      SILE.shaper.makeSpaceNode = makeSpaceNode
-   end
-end
 
 function package:declareSettings ()
    SILE.settings:declare({
       parameter = "shaper.complexspaces",
       default = true,
       type = "boolean",
+      hook = toggle_complexspace_modifications,
       help = "Whether the font's space glyph should be emitted, rather than a glue",
    })
 end
