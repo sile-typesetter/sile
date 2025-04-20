@@ -40,9 +40,8 @@ local function call (command, options, content)
    return result
 end
 
-local function registerCommand (name, func, help, pack, cheat)
-   local class = SILE.documentState.documentClass
-   if not cheat then
+local function registerCommand (parent, name, func, help, pack)
+   if not parent then
       SU.deprecated(
          "SILE.registerCommand",
          "class:registerCommand / package:registerCommand",
@@ -54,8 +53,16 @@ local function registerCommand (name, func, help, pack, cheat)
          ]]
       )
    end
-   local regfunc = class and class.registerCommand or SILE.classes.base.registerCommand
-   return regfunc(nil, name, func, help, pack)
+   SILE.Commands[name] = func
+   if not pack then
+      local where = debug.getinfo(2).source
+      pack = where:match("(%w+).lua")
+   end
+   --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
+   SILE.Help[name] = {
+      description = help,
+      where = pack,
+   }
 end
 
 local function setCommandDefaults (command, options)

@@ -245,7 +245,9 @@ SILE.call = require("core.misc").call
 -- messages. Usually auto-detected.
 -- @see SILE.classes:registerCommand
 -- @see SILE.packages:registerCommand
-SILE.registerCommand = require("core.misc").registerCommand
+SILE.registerCommand = function (name, func, help, pack)
+   return require("core.misc").registerCommand(SILE, name, func, help, pack)
+end
 
 --- Wrap an existing command with new default options.
 -- Modifies an already registered SILE command with a new table of options to be used as default values any time it is

@@ -63,18 +63,17 @@ function hyphenator:registerCommands ()
    end, nil, nil, true)
 end
 
--- TODO This is duplicated from many module types, should probably be made a utility
-function hyphenator.registerCommand (_, name, func, help, pack)
-   SILE.Commands[name] = func
-   if not pack then
-      local where = debug.getinfo(2).source
-      pack = where:match("(%w+).lua")
-   end
-   --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
-   SILE.Help[name] = {
-      description = help,
-      where = pack,
-   }
+--- Register a function as a SILE command.
+-- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
+-- nodes identified with the command name.
+--
+-- @tparam string name Name of cammand to register.
+-- @tparam function func Callback function to use as command handler.
+-- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
+-- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
+-- messages. Usually auto-detected.
+function hyphenator:registerCommand (name, func, help, pack)
+   return require("core.misc").registerCommand(self, name, func, help, pack)
 end
 
 function hyphenator:addPattern (pattern)
