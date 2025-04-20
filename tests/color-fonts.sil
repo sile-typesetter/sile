@@ -1,6 +1,6 @@
 % KNOWNBAD https://github.com/sile-typesetter/sile/issues/1261
+% KNOWNBAD https://github.com/sile-typesetter/sile/issues/2232
 \begin[class=book,papersize=129mm x 198mm]{document}
-\use[module=packages.color-fonts]
 \bidi-on
 \font[filename=tests/TestCLR-Regular.ttf]
 a☺a

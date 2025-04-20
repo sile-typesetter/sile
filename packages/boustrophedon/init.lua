@@ -3,22 +3,6 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "boustrophedon"
 
-function package:_init (options)
-   base._init(self, options)
-   SILE.hyphenator.languages.grc = { patterns = {} }
-   SILE.nodeMakers.grc = pl.class(SILE.nodeMakers.unicode)
-   function SILE.nodeMakers.grc.iterator (node, items)
-      return coroutine.wrap(function ()
-         for i = 1, #items do
-            node:addToken(items[i].text, items[i])
-            node:makeToken()
-            node:makePenalty()
-            coroutine.yield(SILE.types.node.glue("0pt plus 2pt"))
-         end
-      end)
-   end
-end
-
 local function hackVboxDir (v, dir)
    local output = v.outputYourself
    v.outputYourself = function (self, typesetter, line)

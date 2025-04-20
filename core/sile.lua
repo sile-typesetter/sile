@@ -7,9 +7,6 @@
 -- Placeholder for 3rd party Lua libraries SILE always provides as globals
 require("core.globals")
 
--- Lua loader modifications to support more resource types and module layouts
-require("core.loaders")
-
 -- Placeholder for SILE internals table
 SILE = {}
 
@@ -85,8 +82,6 @@ SILE.Help = {}
 -- @table debugFlags
 SILE.debugFlags = {}
 
-SILE.nodeMakers = {}
-SILE.tokenizers = {}
 SILE.status = {}
 
 --- The wild-west of stash stuff.
@@ -153,6 +148,7 @@ SILE.packages = SILE.utilities._module_loader("packages")
 SILE.typesetters = SILE.utilities._module_loader("typesetters")
 SILE.pagebuilders = SILE.utilities._module_loader("pagebuilders")
 SILE.types = SILE.utilities._module_loader("types")
+SILE.languages = SILE.utilities._module_loader("languages")
 
 -- Internal libraries that don't try to use anything on load, only provide something
 SILE.parserBits = require("core.parserbits")
@@ -279,8 +275,6 @@ SILE.traceStack = require("core.tracestack")()
 SILE.settings = require("core.settings")()
 
 -- Internal libraries that run core SILE functions on load
-require("core.hyphenator-liang")
-require("core.languages")
 SILE.linebreak = require("core.break")
 require("core.frame")
 SILE.font = require("core.font")

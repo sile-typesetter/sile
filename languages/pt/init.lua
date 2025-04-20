@@ -1,8 +1,10 @@
-SILE.nodeMakers.pt = pl.class(SILE.nodeMakers.unicode)
+local unicode = require("languages.unicode")
 
--- According to Portuguese rules, when a break occurs at an explicit hyphen, the hyphen gets repeated on the next line...
-SILE.nodeMakers.pt.handleWordBreak = SILE.nodeMakers.unicode._handleWordBreakRepeatHyphen
-SILE.nodeMakers.pt.handlelineBreak = SILE.nodeMakers.unicode._handlelineBreakRepeatHyphen
+local language = pl.class(unicode)
+language._name = "pt"
 
-local hyphens = require("languages.pt.hyphens-tex")
-SILE.hyphenator.languages["pt"] = hyphens
+function language:setupNodeMaker ()
+   self.nodemaker = require("languages.repeat-hyphen-nodemaker")
+end
+
+return language

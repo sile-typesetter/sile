@@ -1,2 +1,6 @@
-local hyphens = require("languages.sq.hyphens-tex")
-SILE.hyphenator.languages["sq"] = hyphens
+local unicode = require("languages.unicode")
+
+local language = pl.class(unicode)
+language._name = "sq"
+
+return language

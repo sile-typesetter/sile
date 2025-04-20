@@ -1,4 +1,9 @@
 SILE = require("core.sile")
+SILE.input.backend = "debug"
+SILE.init()
+
+-- Work around not having an active class in this test but needing language modules
+SILE.typesetter = SILE.typesetters.default()
 
 describe("Language module", function ()
    it("should set env locale", function ()
@@ -8,13 +13,13 @@ describe("Language module", function ()
    end)
 
    describe("Norwegian", function ()
-      local hyphenate = SILE.showHyphenationPoints
-
       SILE.call("language", { main = "no" })
 
+      local hyphenator = SILE.typesetter.language.hyphenator
+
       it("should hyphenate", function ()
-         assert.is.equal("Nor-we-gi-an", hyphenate("Norwegian", "no"))
-         assert.is.equal("atten-de", hyphenate("attende", "no"))
+         assert.is.equal("Nor-we-gi-an", hyphenator:showHyphenationPoints("Norwegian", "no"))
+         assert.is.equal("atten-de", hyphenator:showHyphenationPoints("attende", "no"))
       end)
 
       it("should have localizations", function ()
@@ -26,8 +31,8 @@ describe("Language module", function ()
          SILE.call("language", { main = "nb" })
 
          it("should hyphenate", function ()
-            assert.is.equal("Nor-we-gi-an", hyphenate("Norwegian", "nb"))
-            assert.is.equal("atten-de", hyphenate("attende", "nb"))
+            assert.is.equal("Nor-we-gi-an", hyphenator:showHyphenationPoints("Norwegian", "nb"))
+            assert.is.equal("atten-de", hyphenator:showHyphenationPoints("attende", "nb"))
          end)
 
          it("should have localizations", function ()
@@ -40,8 +45,8 @@ describe("Language module", function ()
          SILE.call("language", { main = "nn" })
 
          it("should hyphenate", function ()
-            assert.is.equal("Nor-we-gi-an", hyphenate("Norwegian", "nn"))
-            assert.is.equal("att-en-de", hyphenate("attende", "nn"))
+            assert.is.equal("Nor-we-gi-an", hyphenator:showHyphenationPoints("Norwegian", "nn"))
+            assert.is.equal("att-en-de", hyphenator:showHyphenationPoints("attende", "nn"))
          end)
 
          it("should have localizations", function ()

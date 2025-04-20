@@ -1,3 +1,10 @@
+local unicode = require("languages.unicode")
+
+local language = pl.class(unicode)
+language._name = "my"
+
+-- TODO tokenizer never used or tested!
+
 -- typos: ignore start
 local function charclass (u)
    if (u >= 0x1000 and u <= 0x102A) or u == 0x104E or u == 0x25CC or u == 0x2d then
@@ -113,7 +120,7 @@ local penaltyFor = function (ca, cb)
 end
 -- typos: ignore end
 
-SILE.tokenizers.my = function (string)
+function language._tokenizer (_, string)
    return coroutine.wrap(function ()
       local lastclass = ""
       local collection = ""
@@ -136,3 +143,5 @@ SILE.tokenizers.my = function (string)
       coroutine.yield({ string = collection })
    end)
 end
+
+return language

@@ -9,8 +9,10 @@ class._name = "jplain"
 
 function class:_init (options)
    tplain._init(self, options)
-   SILE.settings:set("document.language", "ja", true)
    SILE.settings:set("font.family", "Noto Sans CJK JP", true)
+   self:registerPostinit(function (_)
+      SILE.settings:set("document.language", "ja", true)
+   end)
 end
 
 return class

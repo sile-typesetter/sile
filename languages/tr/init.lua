@@ -1,40 +1,28 @@
--- Different years of TDK and various publisher style guides differ on this point.
--- Current official guidance suggests dropping the hyphenation mark if the break
--- occurs at an apostrophe (kesme işareti). Some older guidance and some publishers
--- suggest dropping the apostrophe instead.
-SILE.settings:declare({
-   parameter = "languages.tr.replaceApostropheAtHyphenation",
-   type = "boolean",
-   default = false,
-   help = "If enabled, substitute the apostophe for a hyphen at break points, otherwise keep the apostrophe and hide the hyphen.",
-})
+local unicode = require("languages.unicode")
 
--- Quotes may be part of a word in Turkish
-SILE.nodeMakers.tr = pl.class(SILE.nodeMakers.unicode)
-SILE.nodeMakers.tr.wordTypes = { cm = true, qu = true }
+local language = pl.class(unicode)
+language._name = "tr"
 
-local hyphens = require("languages.tr.hyphens")
-SILE.hyphenator.languages["tr"] = hyphens
-
-SILE.hyphenator.languages["tr"].hyphenateSegments = function (node, segments, j)
-   local hyphenChar, replacement
-   local maybeNextApostrophe = #segments > j and luautf8.match(segments[j + 1], "^['’]")
-   if maybeNextApostrophe then
-      segments[j + 1] = luautf8.gsub(segments[j + 1], "^['’]", "")
-      if SILE.settings:get("languages.tr.replaceApostropheAtHyphenation") then
-         hyphenChar = SILE.settings:get("font.hyphenchar")
-      else
-         hyphenChar = maybeNextApostrophe
-         replacement = SILE.shaper:createNnodes(maybeNextApostrophe, node.options)
-      end
-   else
-      hyphenChar = SILE.settings:get("font.hyphenchar")
-   end
-   local hyphen = SILE.shaper:createNnodes(hyphenChar, node.options)
-   return SILE.types.node.discretionary({ replacement = replacement, prebreak = hyphen }), segments
+function language:setupNodeMaker ()
+   self.nodemaker = require("languages.tr.nodemaker")
 end
 
--- Internationalization stuff
+function language:setupHyphenator ()
+   self.hyphenator = require("languages.tr.hyphenator")(self)
+end
+
+function language.declareSettings (_)
+   -- Different years of TDK and various publisher style guides differ on this point.
+   -- Current official guidance suggests dropping the hyphenation mark if the break
+   -- occurs at an apostrophe (kesme işareti). Some older guidance and some publishers
+   -- suggest dropping the apostrophe instead.
+   SILE.settings:declare({
+      parameter = "languages.tr.replaceApostropheAtHyphenation",
+      type = "boolean",
+      default = false,
+      help = "If enabled, substitute the apostophe for a hyphen at break points, otherwise keep the apostrophe and hide the hyphen.",
+   })
+end
 
 -- local sum_tens = function (val, loc, digits)
 --   local ten = string.sub(digits, loc+1, loc+1)
@@ -147,11 +135,12 @@ local tr_nums = function (num, ordinal)
    return table.concat(words, " ")
 end
 
-SU.formatNumber.tr = {
-   string = function (num, _)
-      return tr_nums(num, false)
-   end,
-   ["ordinal-string"] = function (num, _)
-      return tr_nums(num, true)
-   end,
-}
+function language:numberToString(num)
+   return tr_nums(num, false)
+end
+
+function language:numberToOrdinalString(num)
+   return tr_nums(num, true)
+end
+
+return language

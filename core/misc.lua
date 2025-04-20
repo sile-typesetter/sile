@@ -17,6 +17,12 @@ local function typesetNaturally (frame, func)
 end
 
 local function call (command, options, content)
+   -- We used to set a global default typesetter all the time, now the class handling firing one up for itself. This
+   -- leaves library usage (outside of our CLI) and some of our unit tests a bit out in the cold.
+   if not SILE.typesetter then
+      SU.deprecated("SILE.init()", "SILE.init(); SILE.typesetter = SILE.typesetters.default()", "0.16.0", "0.17.0")
+      SILE.typesetter = SILE.typesetters.default()
+   end
    options = options or {}
    content = content or {}
    if SILE.traceback and type(content) == "table" and not content.lno then
@@ -48,9 +54,8 @@ local function registerCommand (name, func, help, pack, cheat)
          ]]
       )
    end
-   local registerCommand = SILE.documentState.documentClass and SILE.documentState.documentClass.registerCommand
-      or SILE.classes.base.registerCommand
-   return registerCommand(nil, name, func, help, pack)
+   local regfunc = class and class.registerCommand or SILE.classes.base.registerCommand
+   return regfunc(nil, name, func, help, pack)
 end
 
 local function setCommandDefaults (command, options)

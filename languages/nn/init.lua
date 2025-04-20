@@ -1,23 +1,14 @@
-local no = require("languages.no")._no
+local unicode = require("languages.unicode")
 
-local no_patterns, no_exceptions = no()
+local language = pl.class(unicode)
+language._name = "nn"
 
-local nn_patterens = pl.tablex.copy(no_patterns)
+function language:setupHyphenator ()
+   self.hyphenator = require("languages.base-hyphenator")(self)
+   -- We're cheating and only have full hyphenation rules for 'no' (which the languages.nn.hyphens module will return)
+   -- but 'nn' actually has some additional exceptions.
+   self.hyphenator:registerException("att-en-de")
+   self.hyphenator:registerException("bet-re")
+end
 
-local nn_exceptions = pl.tablex.copy(no_exceptions)
-
--- typos: ignore start
-pl.tablex.insertvalues(nn_exceptions, {
-   "att-en-de",
-   "bet-re",
-})
--- typos: ignore end
-
-return {
-   init = function ()
-      SILE.hyphenator.languages.nn = {
-         patterns = nn_patterens,
-         exceptions = nn_exceptions,
-      }
-   end,
-}
+return language
