@@ -55,7 +55,7 @@ function outputter:abort ()
 end
 
 function outputter:finish ()
-   if SILE.status.unsupported then
+   if SILE._status.unsupported then
       self:_writeline("UNSUPPORTED")
    end
    self:_writeline("End page")

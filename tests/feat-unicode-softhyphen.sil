@@ -5,7 +5,7 @@
   -- soft hyphens. Our test expectations are wired for 74, but our IC has 70.
   local icu = require("justenoughicu")
   local icu70minus = tostring(icu.version()) <= "70.0"
-  if icu70minus then SILE.status.unsupported = true end
+  if icu70minus then SILE._status.unsupported = true end
 \end{lua}
 \nofolios
 \neverindent

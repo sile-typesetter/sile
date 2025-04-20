@@ -82,7 +82,8 @@ SILE.Help = {}
 -- @table debugFlags
 SILE.debugFlags = {}
 
-SILE.status = {}
+-- Internal flags used to support integration tests, etc.
+SILE._status = {}
 
 --- The wild-west of stash stuff.
 -- No rules, just right (or usually wrong). Everything in here *should* be somewhere else, but lots of early SILE code

@@ -193,7 +193,7 @@ function shaper:checkHBProblems (text, face)
       return true
    end
    if hb.version_lessthan(2, 3, 0) and hb.get_table(face, "CFF "):len() > 0 and not substwarnings["CFF "] then
-      SILE.status.unsupported = true
+      SILE._status.unsupported = true
       SU.warn([[
          Vertical spacing of CFF fonts may be subtly inconsistent between systems
 

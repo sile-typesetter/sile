@@ -11,7 +11,7 @@
   -- unsupported on other versions.
   local icu = require("justenoughicu")
   local icu74plus = tostring(icu.version()) >= "74.0"
-  if icu74plus then SILE.status.unsupported = true end
+  if icu74plus then SILE._status.unsupported = true end
 \end{lua}
 \nofolios
 \font[family=Amiri Quran,size=20pt]
