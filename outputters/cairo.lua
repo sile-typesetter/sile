@@ -53,7 +53,7 @@ function outputter:abort ()
    end
 end
 
-function outputter:finish()
+function outputter:finish ()
    -- allows generation of empty PDFs
    self:_ensureInit()
    self:runHooks("prefinish")

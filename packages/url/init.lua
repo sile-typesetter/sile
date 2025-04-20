@@ -19,7 +19,6 @@ local breakPattern = "[" .. escapeRegExpMinimal(preferBreakBefore .. preferBreak
 
 function package:_init ()
    base._init(self)
-   self:loadPackage("verbatim")
    self:loadPackage("inputfilter")
    self:loadPackage("pdf")
 end

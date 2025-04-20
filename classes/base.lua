@@ -117,10 +117,8 @@ function class:declareOptions () end
 function class:_declareBaseOptions ()
    self:declareOption("class", function (_, name)
       if name then
-         if self._legacy then
-            self._name = name
-         elseif name ~= self._name then
-            SU.error("Cannot change class name after instantiation, derive a new class instead")
+         if name ~= self._name then
+            SU.error("Cannot change class after document instantiation")
          end
       end
       return self._name

@@ -71,7 +71,17 @@ end
 
 function package:_init ()
    base._init(self)
-   SILE.scratch.bibtex = { bib = {}, cited = { keys = {}, citnums = {} } }
+   -- Formerly we used a SILE.scratch variable, but these expose too much of the internals to the outer world.
+   -- So we now use a private member instead.
+   self._data = {
+      bib = {},
+      cited = {
+         keys = {}, -- Cited keys in the order they are cited (ordered set)
+         refs = {}, -- Table of cited keys with their first citation number, last locator and last position (table)
+         lastkey = nil, -- Last entry key used in a citation, to track ibid/ibid-with-locator (string)
+      },
+   }
+
    -- For DOI, PMID, PMCID and URL support.
    self:loadPackage("url")
    -- For underline styling support
@@ -112,44 +122,102 @@ end
 --- Retrieve the CSL engine, creating it if necessary.
 -- @treturn CslEngine CSL engine instance
 function package:getCslEngine ()
-   if not SILE.scratch.bibtex.engine then
+   if not self._engine then
       SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
    end
-   return SILE.scratch.bibtex.engine
+   return self._engine
 end
 
 --- Retrieve an entry and mark it as cited if it is not already.
--- The citation key is taken from the options, or from the content if not provided.
--- @tparam table options Options
--- @tparam table content Content
+-- @tparam string key Citation key
 -- @tparam boolean warn_uncited Warn if the entry is not cited yet
 -- @treturn table Bibliography entry
-function package:getEntryForCite (options, content, warn_uncited)
-   if not options.key then
-      options.key = SU.ast.contentToString(content)
-   end
-   local entry = resolveEntry(SILE.scratch.bibtex.bib, options.key)
+-- @treturn number Citation number
+-- @treturn string|nil Locator value
+function package:_getEntryForCite (key, warn_uncited)
+   local entry = resolveEntry(self._data.bib, key)
    if not entry then
       return
    end
    -- Keep track of cited entries
-   local citnum = SILE.scratch.bibtex.cited.citnums[options.key]
-   if not citnum then
+   local cited = self._data.cited.refs[key]
+   if not cited then
       if warn_uncited then
-         SU.warn("Reference to a non-cited entry " .. options.key)
+         SU.warn("Reference to a non-cited entry " .. key)
       end
       -- Make it cited
-      table.insert(SILE.scratch.bibtex.cited.keys, options.key)
-      citnum = #SILE.scratch.bibtex.cited.keys
-      SILE.scratch.bibtex.cited.citnums[options.key] = citnum
+      table.insert(self._data.cited.keys, key)
+      local citnum = #self._data.cited.keys
+      cited = { citnum = citnum }
+      self._data.cited.refs[key] = cited
    end
-   return entry, citnum
+   return entry, cited.citnum
+end
+
+--- Track the position of a citation acconrding to the CSL rules.
+-- @tparam string key Citation key
+-- @tparam table locator Locator (label and value)
+-- @tparam boolean is_single Single or multiple citation
+-- @treturn string Position of the citation (first, subsequent, ibid, ibid-with-locator)
+function package:_getCitePosition (key, locator, is_single)
+   local cited = self._data.cited.refs[key]
+   if not cited then
+      -- This method is assumed to be invoked only for cited entries
+      -- (i.e. after a call to getEntryForCite).
+      SU.error("Entry " .. key .. " not cited yet, cannot track position")
+   end
+   local pos
+   if not cited.position then
+      pos = "first"
+   else
+      -- CSL 1.0.2 for "ibid" and "ibid-with-locator":
+      --    a. the current cite immediately follows on another cite, within the same citation,
+      --       that references the same item
+      --  or
+      --    b. the current cite is the first cite in the citation, and the previous citation consists
+      --       of a single cite referencing the same item.
+      if self._data.cited.lastkey ~= key or not cited.single then
+         pos = "subsequent"
+      elseif cited.locator then
+         -- CSL 1.0.2 rule when preceding cite does have a locator:
+         --    If the current cite has the same locator, the position of the current cite is “ibid”.
+         --    If the locator differs the position is “ibid-with-locator”.
+         --    If the current cite lacks a locator its only position is “subsequent”."
+         if locator then
+            local same = cited.locator.label == locator.label and cited.locator.value == locator.value
+            pos = same and "ibid" or "ibid-with-locator"
+         else
+            pos = "subsequent"
+         end
+      else
+         -- CSL 1.0.2 rule when preceding cite does not have a locator:
+         --    If the current cite has a locator, the position of the current cite is “ibid-with-locator”.
+         --    Otherwise the position is “ibid”."
+         pos = locator and "ibid-with-locator" or "ibid"
+      end
+   end
+   cited.position = pos
+   cited.locator = locator
+   cited.single = is_single
+   self._data.cited.lastkey = key
+   return pos
+end
+
+--- Get the citation key from the options or content (of a command).
+-- @tparam table options Options
+-- @tparam table content Content
+-- @treturn string Citation key
+function package._getCitationKey (_, options, content)
+   if options.key then
+      return options.key
+   end
+   return SU.ast.contentToString(content)
 end
 
 --- Retrieve a locator from the options.
 -- @tparam table options Options
 -- @treturn table Locator
-function package:getLocator (options)
+function package:_getLocator (options)
    local locator
    for k, v in pairs(options) do
       if k ~= "key" then
@@ -171,11 +239,13 @@ end
 function package:registerCommands ()
    self:registerCommand("loadbibliography", function (options, _)
       local file = SU.required(options, "file", "loadbibliography")
-      parseBibtex(file, SILE.scratch.bibtex.bib)
+      parseBibtex(file, self._data.bib)
    end)
 
    self:registerCommand("nocite", function (options, content)
-      self:getEntryForCite(options, content, false)
+      local key = self:_getCitationKey(options, content)
+      -- Just mark the entry as cited.
+      self:_getEntryForCite(key, false) -- no warning if not yet cited
    end, "Mark an entry as cited without actually producing a citation.")
 
    -- LEGACY COMMANDS
@@ -190,10 +260,12 @@ function package:registerCommands ()
          self._deprecated_legacy_warning = true
          SU.warn("Legacy bibtex.style is deprecated, consider enabling the CSL implementation.")
       end
-      local entry = self:getEntryForCite(options, content, false)
+      -- Ensure the key is set in the options as this was the legacy behavior
+      options.key = self:_getCitationKey(options, content)
+      local entry = self:_getEntryForCite(options.key, false) -- no warning if not yet cited
       if entry then
          local bibstyle = require("packages.bibtex.styles." .. style)
-         local cite = Bibliography.produceCitation(options, SILE.scratch.bibtex.bib, bibstyle)
+         local cite = Bibliography.produceCitation(options, self._data.bib, bibstyle)
          SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
       end
    end, "Produce a single citation.")
@@ -208,10 +280,12 @@ function package:registerCommands ()
          self._deprecated_legacy_warning = true
          SU.warn("Legacy bibtex.style is deprecated, consider enabling the CSL implementation.")
       end
-      local entry = self:getEntryForCite(options, content, true)
+      -- Ensure the key is set in the options as this was the legacy behavior
+      options.key = self:_getCitationKey(options, content)
+      local entry = self:_getEntryForCite(options.key, true) -- warn if uncited
       if entry then
          local bibstyle = require("packages.bibtex.styles." .. style)
-         local cite, err = Bibliography.produceReference(options, SILE.scratch.bibtex.bib, bibstyle)
+         local cite, err = Bibliography.produceReference(options, self._data.bib, bibstyle)
          if cite == Bibliography.Errors.UNKNOWN_TYPE then
             SU.warn("Unknown type @" .. err .. " in citation for reference " .. options.key)
             return
@@ -319,7 +393,7 @@ function package:registerCommands ()
       end
       local lang = SU.required(options, "lang", "bibliographystyle")
       local locale = loadCslLocale(lang)
-      SILE.scratch.bibtex.engine = CslEngine(style, locale, {
+      self._engine = CslEngine(style, locale, {
          localizedPunctuation = SU.boolean(options.localizedPunctuation, false),
          italicExtension = SU.boolean(options.italicExtension, true),
          mathExtension = SU.boolean(options.mathExtension, true),
@@ -327,13 +401,16 @@ function package:registerCommands ()
    end)
 
    self:registerCommand("csl:cite", function (options, content)
-      local entry, citnum = self:getEntryForCite(options, content, false)
+      local key = self:_getCitationKey(options, content)
+      local entry, citnum = self:_getEntryForCite(key, false) -- no warning if not yet cited
       if entry then
          local engine = self:getCslEngine()
-         local locator = self:getLocator(options)
+         local locator = self:_getLocator(options)
+         local pos = self:_getCitePosition(key, locator, true) -- locator, single cite
 
          local cslentry = bib2csl(entry, citnum)
          cslentry.locator = locator
+         cslentry.position = pos
          local cite = engine:cite(cslentry)
 
          SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
@@ -344,21 +421,35 @@ function package:registerCommands ()
       if type(content) ~= "table" then
          SU.error("Table content expected in \\cites")
       end
-      local cites = {}
-      for i = 1, #content do
-         if type(content[i]) == "table" then
-            local c = content[i]
-            if c.command ~= "cite" then
+      -- We need no count cites to properly handle ibid/ibid-with-locator, as these depend
+      -- on the previous citation being a single cite.
+      local children = {}
+      local nb = 0
+      for _, child in ipairs(content) do
+         if type(child) == "table" then
+            if child.command ~= "cite" then
                SU.error("Only \\cite commands are allowed in \\cites")
             end
-            local o = c.options
-            local entry, citnum = self:getEntryForCite(o, c, false)
-            if entry then
-               local locator = self:getLocator(o)
-               local csljson = bib2csl(entry, citnum)
-               csljson.locator = locator
-               cites[#cites + 1] = csljson
-            end
+            nb = nb + 1
+            table.insert(children, child)
+         end
+         -- Silently ignore other content (normally only blank lines)
+      end
+      local is_single = nb == 1
+      -- Now we can collect the citations
+      local cites = {}
+      for _, c in ipairs(children) do
+         local o = c.options
+         local key = self:_getCitationKey(o, c)
+         local entry, citnum = self:_getEntryForCite(key, false) -- no warning if not yet cited
+         if entry then
+            local locator = self:_getLocator(o)
+            local pos = self:_getCitePosition(key, locator, is_single) -- no locator, single or multiple citation
+
+            local cslentry = bib2csl(entry, citnum)
+            cslentry.locator = locator
+            cslentry.position = pos
+            cites[#cites + 1] = cslentry
          end
       end
       if #cites > 0 then
@@ -369,7 +460,8 @@ function package:registerCommands ()
    end, "Produce a group of citations.")
 
    self:registerCommand("csl:reference", function (options, content)
-      local entry, citnum = self:getEntryForCite(options, content, true)
+      local key = self:_getCitationKey(options, content)
+      local entry, citnum = self:_getEntryForCite(key, nil, true) -- no locator, warn if not yet cited
       if entry then
          local engine = self:getCslEngine()
 
@@ -384,21 +476,22 @@ function package:registerCommands ()
       local bib
       if SU.boolean(options.cited, true) then
          bib = {}
-         for _, key in ipairs(SILE.scratch.bibtex.cited.keys) do
-            bib[key] = SILE.scratch.bibtex.bib[key]
+         for _, key in ipairs(self._data.cited.keys) do
+            bib[key] = self._data.bib[key]
          end
       else
-         bib = SILE.scratch.bibtex.bib
+         bib = self._data.bib
       end
 
       local entries = {}
-      local ncites = #SILE.scratch.bibtex.cited.keys
+      local ncites = #self._data.cited.keys
       for key, entry in pairs(bib) do
          if entry.type ~= "xdata" then
             crossrefAndXDataResolve(bib, entry)
             if entry then
-               local citnum = SILE.scratch.bibtex.cited.citnums[key]
-               if not citnum then
+               local citnum
+               local prevcite = self._data.cited.refs[key]
+               if not prevcite then
                   -- This is just to make happy CSL styles that require a citation number
                   -- However, table order is not guaranteed in Lua so the output may be
                   -- inconsistent across runs with styles that use this number for sorting.
@@ -409,19 +502,24 @@ function package:registerCommands ()
                   -- leading to unpredictable order anyway).
                   ncites = ncites + 1
                   citnum = ncites
+               else
+                  citnum = prevcite.citnum
                end
                local cslentry = bib2csl(entry, citnum)
                table.insert(entries, cslentry)
             end
          end
       end
+      -- Reset the list of cited entries after having build the entries
+      self._data.cited = { keys = {}, refs = {}, lastkey = nil }
+
+      local engine = self:getCslEngine()
+      local cite = engine:reference(entries)
 
       print("<bibliography: " .. #entries .. " entries>")
       if not SILE.typesetter:vmode() then
          SILE.call("par")
       end
-      local engine = self:getCslEngine()
-      local cite = engine:reference(entries)
       SILE.settings:temporarily(function ()
          local hanging_indent = SU.boolean(engine.bibliography.options["hanging-indent"], false)
          local must_align = engine.bibliography.options["second-field-align"]
@@ -442,8 +540,6 @@ function package:registerCommands ()
          SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
          SILE.call("par")
       end)
-
-      SILE.scratch.bibtex.cited = { keys = {}, citnums = {} }
    end, "Produce a bibliography of references.")
 end
 

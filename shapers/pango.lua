@@ -48,9 +48,7 @@ function shaper.getFace (options)
       end -- I don't know why 0.75
       if options.style then
          pal:insert(
-            pango.Attribute.style_new(
-               options.style:lower() == "italic" and pango.Style.ITALIC or pango.Style.NORMAL
-            )
+            pango.Attribute.style_new(options.style:lower() == "italic" and pango.Style.ITALIC or pango.Style.NORMAL)
          )
       end
       if options.variant then
