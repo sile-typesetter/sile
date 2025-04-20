@@ -135,11 +135,11 @@ local tr_nums = function (num, ordinal)
    return table.concat(words, " ")
 end
 
-function language:numberToString(num)
+function language:numberToString (num)
    return tr_nums(num, false)
 end
 
-function language:numberToOrdinalString(num)
+function language:numberToOrdinalString (num)
    return tr_nums(num, true)
 end
 

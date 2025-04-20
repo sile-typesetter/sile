@@ -65,7 +65,7 @@ setmetatable(formatNumber, {
       end
       _deprecate()
       return SILE.typesetter.language:formatNumber(num, options, case)
-   end
+   end,
 })
 
 return formatNumber
