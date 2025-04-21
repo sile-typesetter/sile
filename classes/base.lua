@@ -310,8 +310,8 @@ end
 -- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
 -- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
 -- messages. Usually auto-detected.
-function class:registerCommand (name, func, help, pack)
-   return require("core.misc").registerCommand(self, name, func, help, pack)
+function class:registerCommand (name, func, help, pack, defaults)
+   SILE.commands:register(self, name, func, help, pack, defaults)
 end
 
 function class:registerRawHandler (format, callback)

@@ -106,7 +106,7 @@ function language:_registerBaseCommands ()
       else
          SILE.settings:set("document.language", main)
       end
-   end, nil, nil, true)
+   end, "Set the typesetters current language")
 
    self:registerCommand("fluent", function (options, content)
       local key = content[1]
@@ -133,7 +133,7 @@ function language:_registerBaseCommands ()
       end
       fluent:set_locale(original_locale)
       SILE.processString(("<sile>%s</sile>"):format(message), "xml")
-   end, nil, nil, true)
+   end, "Localize a given message id")
 
    self:registerCommand("ftl", function (options, content)
       local original_locale = fluent:get_locale()
@@ -147,7 +147,7 @@ function language:_registerBaseCommands ()
          fluent:add_messages(input, locale)
       end
       fluent:set_locale(original_locale)
-   end, nil, nil, true)
+   end, "Load messages from a Fluent FTL file into the given locale")
 end
 
 --- Register a function as a SILE command.
@@ -159,8 +159,8 @@ end
 -- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
 -- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
 -- messages. Usually auto-detected.
-function language:registerCommand (name, func, help, pack)
-   return require("core.misc").registerCommand(self, name, func, help, pack)
+function language:registerCommand (name, func, help, pack, defaults)
+   SILE.commands:register(self, name, func, help, pack, defaults)
 end
 
 return language

@@ -50,7 +50,7 @@ local function adjustedFontSize (options)
    return SILE.settings:get("font.size") * ratio * (currentMeasure / newMeasure)
 end
 
-SILE.registerCommand("font", function (options, content)
+SILE.commands:register(SILE, "font", function (options, content)
    if SU.ast.hasContent(content) then
       SILE.settings:pushState()
    end
@@ -124,7 +124,7 @@ SILE.registerCommand("font", function (options, content)
          lastshaper, SILE.shaper = nil, lastshaper
       end
    end
-end, "Set current font family, size, weight, style, variant, script, direction and language", nil, true)
+end, "Set current font family, size, weight, style, variant, script, direction and language")
 
 SILE.settings:declare({ parameter = "font.family", type = "string or nil", default = "Gentium Plus" })
 SILE.settings:declare({ parameter = "font.size", type = "number or integer", default = 10 })

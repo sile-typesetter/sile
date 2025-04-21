@@ -16,63 +16,14 @@ local function typesetNaturally (frame, func)
    end
 end
 
-local function call (command, options, content)
+local function call (name, options, content)
    -- We used to set a global default typesetter all the time, now the class handling firing one up for itself. This
    -- leaves library usage (outside of our CLI) and some of our unit tests a bit out in the cold.
    if not SILE.typesetter then
       SU.deprecated("SILE.init()", "SILE.init(); SILE.typesetter = SILE.typesetters.default()", "0.16.0", "0.17.0")
       SILE.typesetter = SILE.typesetters.default()
    end
-   options = options or {}
-   content = content or {}
-   if SILE.traceback and type(content) == "table" and not content.lno then
-      -- This call is from code (no content.lno) and we want to spend the time
-      -- to determine everything we need about the caller
-      local caller = debug.getinfo(2, "Sl")
-      content.file, content.lno = caller.short_src, caller.currentline
-   end
-   local pId = SILE.traceStack:pushCommand(command, content, options)
-   if not SILE.Commands[command] then
-      SU.error("Unknown command " .. command)
-   end
-   local result = SILE.Commands[command](options, content)
-   SILE.traceStack:pop(pId)
-   return result
-end
-
-local function registerCommand (parent, name, func, help, pack)
-   if not parent then
-      SU.deprecated(
-         "SILE.registerCommand",
-         "class:registerCommand / package:registerCommand",
-         "0.14.0",
-         "0.16.0",
-         [[
-            Commands are being scoped to the document classes or packages they are
-            loaded into rather than using a global registry.
-         ]]
-      )
-   end
-   SILE.Commands[name] = func
-   if not pack then
-      local where = debug.getinfo(2).source
-      pack = where:match("(%w+).lua")
-   end
-   --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
-   SILE.Help[name] = {
-      description = help,
-      where = pack,
-   }
-end
-
-local function setCommandDefaults (command, options)
-   local oldCommand = SILE.Commands[command]
-   SILE.Commands[command] = function (defaults, content)
-      for k, v in pairs(options) do
-         defaults[k] = defaults[k] or v
-      end
-      return oldCommand(defaults, content)
-   end
+   return SILE.commands:call(name, options, content)
 end
 
 -- TODO: Move to new table entry handler in types.unit
@@ -92,8 +43,6 @@ end
 return {
    typesetNaturally = typesetNaturally,
    call = call,
-   registerCommand = registerCommand,
-   setCommandDefaults = setCommandDefaults,
    registerUnit = registerUnit,
    paperSizeParser = paperSizeParser,
 }
