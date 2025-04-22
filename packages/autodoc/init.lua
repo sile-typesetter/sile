@@ -20,7 +20,7 @@ local theme = {
 
 local colorWrapper = function (ctype, content)
    local color = SILE.scratch.autodoc.theme[ctype]
-   if color and SILE.settings:get("autodoc.highlighting") and SILE.Commands["color"] then
+   if color and SILE.settings:get("autodoc.highlighting") and SILE.commands:exists("color") then
       SILE.call("color", { color = color }, content)
    else
       SILE.process(content)
@@ -68,8 +68,7 @@ local function typesetAST (options, content)
             SILE.typesetter:typeset(ast)
          end
       elseif ast.command then
-         local cmd = SILE.Commands[ast.command]
-         if not cmd and SU.boolean(options.check, true) then
+         if not SILE.commands:exists(ast.command) and SU.boolean(options.check, true) then
             SU.error("Unexpected command '" .. ast.command .. "'")
          end
          SILE.typesetter:typeset("\\")
@@ -325,7 +324,7 @@ function package:registerCommands ()
       end
       -- Conditional existence check
       if SU.boolean(options.check, true) then
-         if not SILE.Commands[name] then
+         if not SILE.commands:exists(name) then
             SU.error("Unknown command " .. name)
          end
       end

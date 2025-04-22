@@ -13,8 +13,8 @@ local function process (ast)
          SILE.typesetter:typeset(content)
       elseif type(content) == "function" then
          content()
-      elseif SILE.Commands[content.command] then
-         SILE.call(content.command, content.options, content)
+      elseif SILE.commands:exists(content.command) then
+         SILE.commands:call(content.command, content.options, content)
       elseif not content.command and not content.id then
          local pId = SILE.traceStack:pushContent(content, "content")
          SILE.process(content)

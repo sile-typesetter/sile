@@ -188,7 +188,7 @@ function otFeatures:unloadOptions (options)
    self:loadOptions(options, true)
 end
 
-local fontfn = SILE.Commands.font
+local fontfn = SILE.commands:get("font")
 
 function package:registerCommands ()
    self:registerCommand("add-font-feature", function (options, _)

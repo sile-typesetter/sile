@@ -25,7 +25,7 @@ local function outputMarks ()
       SILE.settings:temporarily(function ()
          SILE.call("noindent")
          SILE.call("font", { size = "6pt" })
-         if SILE.Commands["crop:header"] then
+         if SILE.commands:exists("crop:header") then
             -- Deprecation shim:
             -- If user redefined this command, still use it with a warning...
             SU.deprecated("crop:header", "cropmarks:header", "0.15.0", "0.16.0")

@@ -160,7 +160,7 @@ function class:registerCommands ()
       end)
       local lang = SILE.settings:get("document.language")
       local postcmd = "book:chapter:post"
-      if SILE.Commands[postcmd .. ":" .. lang] then
+      if SILE.commands:exists(postcmd .. ":" .. lang) then
          postcmd = postcmd .. ":" .. lang
       end
       SILE.call("nofoliothispage")
@@ -194,7 +194,7 @@ function class:registerCommands ()
          }, content)
          local lang = SILE.settings:get("document.language")
          local postcmd = "book:section:post"
-         if SILE.Commands[postcmd .. ":" .. lang] then
+         if SILE.commands:exists(postcmd .. ":" .. lang) then
             postcmd = postcmd .. ":" .. lang
          end
          SILE.call(postcmd)
@@ -237,7 +237,7 @@ function class:registerCommands ()
          }, content)
          local lang = SILE.settings:get("document.language")
          local postcmd = "book:subsection:post"
-         if SILE.Commands[postcmd .. ":" .. lang] then
+         if SILE.commands:exists(postcmd .. ":" .. lang) then
             postcmd = postcmd .. ":" .. lang
          end
          SILE.call(postcmd)

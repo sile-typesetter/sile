@@ -42,7 +42,7 @@ end
 -- @tparam string page The page number
 -- @treturn table The content AST, possibly wrapped in a link
 local function _linkWrapper (dest, page)
-   if dest and SILE.Commands["pdf:link"] then
+   if dest and SILE.commands:exists("pdf:link") then
       return SU.ast.createCommand("pdf:link", { dest = dest }, page)
    end
    return page
@@ -232,7 +232,7 @@ function package:registerCommands ()
          options.index = "main"
       end
       local dest
-      if SILE.Commands["pdf:destination"] then
+      if SILE.commands:exists("pdf:destination") then
          dest = "dest" .. tostring(SILE.scratch.pdf_destination_counter)
          SILE.call("pdf:destination", { name = dest })
          SILE.scratch.pdf_destination_counter = SILE.scratch.pdf_destination_counter + 1
