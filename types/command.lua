@@ -5,6 +5,9 @@ local command = pl.class()
 command.type = "command"
 
 function command:_init (parent, name, func, help, pack, defaults)
+   if parent == SILE then
+      parent = { type = "SILE", _name = "instance" }
+   end
    self.parent = parent
    self.name = name
    self.func = func

@@ -76,7 +76,7 @@ function language:loadMessages ()
    fluent:set_locale(original_lang)
 end
 
-function language._declareBaseSettings (_)
+function language:_declareBaseSettings ()
    SILE.settings:declare({
       parameter = "document.language",
       type = "string",
@@ -91,11 +91,16 @@ function language._declareBaseSettings (_)
    })
 end
 
-function language.declareSettings (_) end
+function language:declareSettings () end
 
-function language.registerCommands (_) end
+function language:registerCommands () end
+
+local _registered_base_commands = false
 
 function language:_registerBaseCommands ()
+   if _registered_base_commands then return end
+   _registered_base_commands = true
+
    self:registerCommand("language", function (options, content)
       local main = SU.required(options, "main", "language setting")
       if content[1] then

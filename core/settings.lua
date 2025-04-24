@@ -7,6 +7,8 @@ end
 
 --- @type settings
 local settings = pl.class()
+settings.type = "settings"
+settings._name = "prototype"
 
 function settings:_init ()
    self.state = {}

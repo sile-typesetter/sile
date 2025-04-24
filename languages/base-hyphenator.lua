@@ -12,6 +12,7 @@ function hyphenator:_init (language)
    self.rightmin = 2 -- Minimum number of characters to the right of the hyphen (TeX default)
    self.trie = {} -- Trie resulting from the patterns
    self.exceptions = {} -- Hyphenation exceptions
+   self:_registerBaseCommands()
    self:registerCommands()
    self:loadPatterns()
 end
@@ -51,7 +52,11 @@ function hyphenator:loadPatterns ()
    end
 end
 
-function hyphenator:registerCommands ()
+local _registered_base_commands = false
+
+function hyphenator:_registerBaseCommands ()
+   if _registered_base_commands then return end
+   _registered_base_commands = true
    self:registerCommand("hyphenator:add-exceptions", function (options, content)
       local lang = options.lang or SILE.settings:get("document.language")
       local language = SILE.typesetter:_cacheLanguage(lang)
@@ -60,8 +65,10 @@ function hyphenator:registerCommands ()
             language.hyphenator:registerException(token.string)
          end
       end
-   end, nil, nil, true)
+   end, "Add patterns to the languages hyphenation rules")
 end
+
+function hyphenator:registerCommands () end
 
 --- Register a function as a SILE command.
 -- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
