@@ -1,156 +1,216 @@
+----------------------------------------------------------------
+--  parallel – multi–frame / diglot typesetting for SILE
+----------------------------------------------------------------
+--
+--  This file can simply be dropped into ⟨project⟩/packages
+--  or placed in a $SILE_HOME search path.  The only external
+--  requirement is plain (pl) which ships with SILE.
+--
+----------------------------------------------------------------
 local base = require("packages.base")
-
 local package = pl.class(base)
 package._name = "parallel"
 
--- Helper function for logging
+----------------------------------------------------------------
+--  Debug / trace helper
+----------------------------------------------------------------
+local DEBUG = true -- ⇐ flip to false in production
 local log = function(...)
-   local args = {...}
-   SU.debug(package._name, unpack(args))
+   if DEBUG then
+      SU.debug(package._name, ...)
+   end
 end
 
--- Typesetter pool for managing typesetters for different frames (e.g., left and right frames).
+----------------------------------------------------------------
+--  Two pools of typesetters: main‑text frames & footnote frames
+----------------------------------------------------------------
 local typesetterPool, footnotePool = {}, {}
 
--- Make sure you have ftn_left and ftn_right frames setup in your document class
-local footnotes = { ftn_left = {}, ftn_right = {} }
+----------------------------------------------------------------
+--  Misc. shared state tables
+----------------------------------------------------------------
+local calculations = {} -- running height / mark bookkeeping
+local folioOrder = {} -- frame order on the physical page
 
--- Cache for footnote heights
-local footnoteHeightCache = {}
+----------------------------------------------------------------
+--  A no‑op typesetter (used once during class initialisation)
+----------------------------------------------------------------
+local NullTypesetter = pl.class(SILE.typesetters.default)
+NullTypesetter.outputLinesToPage = function() end
 
--- Stores layout calculations for each frame, such as height, marking and overflow tracking.
-local calculations = {}
+----------------------------------------------------------------
+--  Footnote manager (all footnote logic is encapsulated here)
+----------------------------------------------------------------
+local FootnoteManager = {}
+FootnoteManager.__index = FootnoteManager
 
--- Specifies the order of frames for synchronizing and page-breaking logic.
-local folioOrder = {}
-
--- Utility function to iterate through all typesetters in the pool and apply a callback function.
-local allTypesetters = function(callback)
-   local oldtypesetter = SILE.typesetter -- Save the currently active typesetter.
-   for frame, typesetter in pairs(typesetterPool) do
-      SILE.typesetter = typesetter -- Temporarily switch to the typesetter for the current frame.
-      callback(frame, typesetter) -- Apply the callback to the current frame and its typesetter.
-   end
-   SILE.typesetter = oldtypesetter -- Restore the original typesetter after iteration.
+function FootnoteManager:new()
+   return setmetatable({
+      frames = { ftn_left = {}, ftn_right = {} },
+      footnoteHeightCache = {},
+   }, self)
 end
 
--- A null typesetter used as a placeholder. This typesetter doesn't output any content.
--- Its purpose is to make the transtion between frames easier and trouble free.
-local nulTypesetter = pl.class(SILE.typesetters.base) -- we ignore this
-nulTypesetter.outputLinesToPage = function() end
-
--- Utility function to calculate the height of new material for a given frame.
--- This function computes the cumulative height by adding the heights of lines
--- in the `typesetter.state.outputQueue` starting from the marked position.
-local calculateFrameHeight = function(frame, typesetter)
-   -- Retrieve the cumulative height for the frame or initialize it if not set.
-   local height = calculations[frame].cumulativeHeight or SILE.types.length()
-
-   -- Iterate through the output queue from the marked position, summing line heights.
-   -- Each line's height is the sum of its height and depth.
-   for i = calculations[frame].mark + 1, #typesetter.state.outputQueue do
-      local lineHeight = typesetter.state.outputQueue[i].height + typesetter.state.outputQueue[i].depth
-      height = height + lineHeight
-   end
-
-   -- Return the updated cumulative height for the frame.
-   return height
+function FootnoteManager:add(frame, note)
+   table.insert(self.frames[frame], note)
 end
 
--- Calculate the line height of a sample text.
--- This function uses a sample text containing two characters:
--- one with an ascender and one with a descender.
--- The height calculation includes the glyph heights and the baseline skip setting.
-local calculateLineHeight = function(sampleText)
-   local glyphs = SILE.shaper:shapeToken(sampleText, SILE.font.loadDefaults({}))
-   local baselineSkip = SILE.settings:get("document.baselineskip").height
-   return glyphs[1].height + glyphs[2].depth + baselineSkip:tonumber()
+function FootnoteManager:get(frame)
+   return self.frames[frame]
+end
+function FootnoteManager:clear(frame)
+   self.frames[frame] = {}
+end
+function FootnoteManager:processNotes(frame, fn)
+   for _, n in ipairs(self.frames[frame]) do
+      fn(n)
+   end
+end
+function FootnoteManager:generateId(frame, note)
+   return frame .. ":" .. note.marker
 end
 
--- Generate dummy content to fill overflowed frames up to the specified height.
-local createDummyContent = function(height, frame, offset)
-   -- Retrieve the typesetter for the given frame.
-   local typesetter = typesetterPool[frame]
-
-   -- Determine the line height using a sample line or fallback to baseline and line skip settings.
-   -- local lineHeight = calculateLineHeight("hg")
-
-   -- If lineHeight cannot be calculated, use document's baselineSkip and lineSkip as fallback.
-   if not lineHeight then
-      local baselineSkip = SILE.settings:get("document.baselineskip").height or SILE.types.length({ length = 0 })
-      local lineSkip = SILE.settings:get("document.lineskip").height or SILE.types.length({ length = 0 })
-      lineHeight = baselineSkip:tonumber() + lineSkip:tonumber()
+--  Measure the height of one footnote (with caching)
+function FootnoteManager:height(frame, note, ts)
+   local id = self:generateId(frame, note)
+   if self.footnoteHeightCache[id] then
+      return self.footnoteHeightCache[id], nil
    end
 
-   -- Calculate the number of lines required to fill the specified height.
-   local numLines = math.floor(height:tonumber() / lineHeight)
+   local q = {}
+   ts:pushState()
+   ts.state.outputQueue = q
+   SILE.call("parallel_footnote:constructor", { marker = note.marker }, note.content)
+   ts:popState()
 
-   -- Ensure offset is valid; warn if it exceeds the number of lines.
-   offset = offset or 0
-   if offset >= numLines then
-      SU.warn("Offset is larger than the number of lines available; no dummy content will be generated.")
-      return
+   local h = 0
+   for _, node in ipairs(q) do
+      h = h + node.height:absolute():tonumber() + node.depth:absolute():tonumber()
    end
+   self.footnoteHeightCache[id] = h
+   return h, q
+end
 
-   -- Fill the frame with dummy content using white-colored text to avoid visible output.
-   SILE.call("color", { color = "white" }, function()
-      typesetter:typeset("sile")
-      for i = 1, numLines - offset do
+----------------------------------------------------------------
+--  Utility helpers (frame‑height accounting, phantom glue, …)
+----------------------------------------------------------------
+-- Utility function: Iterate over typesetters in a pool and apply a callback function.
+local function iterateTypesetters(pool, callback)
+   local old = SILE.typesetter
+   for frame, ts in pairs(pool) do
+      SILE.typesetter = ts
+      callback(frame, ts)
+   end
+   SILE.typesetter = old
+end
+
+-- Utility function: Calculate the height of new material for a given frame.
+local function calculateFrameHeight(frame, ts)
+   local h = calculations[frame].cumulativeHeight or SILE.types.length()
+   -- typesetter.state.outputQueue now holds actual content reflecting the real layout of lines.
+   -- Therefore, we can calculate the height of new material by adding the height of each line
+   -- in the queue.
+   for i = calculations[frame].mark + 1, #ts.state.outputQueue do
+      local ln = ts.state.outputQueue[i]
+      h = h + ln.height + ln.depth
+   end
+   return h
+end
+
+local function addPhantomHeight(h)
+   SILE.call("rebox", { height = h, phantom = true })
+end
+
+local phantomText = function(typesetter, color, text, numLines)
+   SILE.call("color", { color = color }, function()
+      for _ = 1, numLines do
+         typesetter:typeset(text) -- Simulate actual content
          SILE.call("break")
-         typesetter:typeset("sile")
       end
+   end)
+end
+
+--  Fill a short frame with “dummy” lines so that it visually aligns
+local createDummyContent = function(height, frame, dummyText)
+   local typesetter = typesetterPool[frame]
+   local lineHeight = SILE.settings:get("document.baselineskip").height:tonumber()
+      + SILE.settings:get("document.lineskip").height:tonumber()
+
+   local fitLines = math.floor(height:tonumber() / lineHeight)
+   local remainingHeight = height:tonumber() % lineHeight
+
+   if not dummyText then
+      -- Add phantom boxes for each line
+      for _ = 1, fitLines do
+         addPhantomHeight(lineHeight)
+      end
+   else
+      -- If dummyText is true, add phantom text for each line
+      phantomText(typesetter, "red", "dummyText", fitLines)
+   end
+
+end
+
+-- Utility function: Manage the heights of frames.
+local manageFrameHeights = function(frames, callback)
+   local frameHeights = {}
+   local maxHeight = SILE.types.length()
+
+   -- Calculate the height of new material for each frame
+   iterateTypesetters(frames, function(frame, typesetter)
+      local height = calculateFrameHeight(frame, typesetter)
+      frameHeights[frame] = height
+      if height > maxHeight then
+         maxHeight = height
+      end
+   end)
+
+   -- Apply the callback function to each frame
+   iterateTypesetters(frames, function(frame, typesetter)
+      callback(frame, frameHeights[frame], maxHeight - frameHeights[frame])
    end)
 end
 
 -- Balance the heights of frames by adding dummy content to shorter frames.
 -- This ensures that all frames are aligned to the height of the tallest frame.
-local balanceFramesWithDummyContent = function(offset)
-   local frameHeights = {} -- Table to store the heights of each frame.
-   local maxHeight = SILE.types.length(0) -- Track the maximum frame height.
-
-   -- Step 1: Measure the heights of all frames and find the maximum height.
-   allTypesetters(function(frame, typesetter) -- This is a callback function.
-      local height = calculateFrameHeight(frame, typesetter)
-      frameHeights[frame] = height -- Store the height for the current frame.
-      if height > maxHeight then
-         maxHeight = height -- Update maxHeight if this frame is taller.
+local balanceFramesWithPhantomBox = function()
+   manageFrameHeights(typesetterPool, function(frame, currentHeight, heightDiff)
+      if heightDiff:tonumber() > 0 then
+         -- addPhantomHeight(heightDiff)
+         -- This seems to work better than adding dummy content. I don't know why.
+         createDummyContent(heightDiff, frame, false)
+         log("Added phantom height of", heightDiff, "to frame", frame)
       end
    end)
-
-   -- Step 2: Add dummy content to balance the frames to the maximum height.
-   allTypesetters(function(frame, typesetter)
-      local heightDifference = maxHeight - frameHeights[frame]
-      if heightDifference:tonumber() > 0 then
-         SILE.typesetter = typesetter -- Switch to the current frame's typesetter.
-         createDummyContent(SILE.types.length(heightDifference), frame, offset or 0)
-      end
-   end)
-
-   -- Log the balancing results for debugging.
-   log("Balanced frames to height: ", maxHeight)
 end
 
--- Measure the width of a string in the current font context, typically used for footnote markers.
-local measureStringWidth = function(str)
-   -- Shape the string using the current font settings.
-   local shapedText = SILE.shaper:shapeToken(str, SILE.font.loadDefaults({}))
+-- Balances the height of content across frames by adding glue to the shorter frame.
+local addBalancingGlue = function()
+   manageFrameHeights(typesetterPool, function(frame, currentHeight, heightDiff)
+      if heightDiff:tonumber() > 0 then
+         -- Add vkern (vertical glue) to balance the frame height
+         local typesetter = typesetterPool[frame]
+         table.insert(typesetter.state.outputQueue, SILE.types.node.vkern({ height = heightDiff }))
+         log("Added balancing glue of", heightDiff, "to bottom of frame", frame)
+      end
+   end)
+end
 
-   -- Calculate the total width by summing the widths of all glyphs.
-   local totalWidth = 0
-   for _, glyph in ipairs(shapedText) do
-      totalWidth = totalWidth + glyph.width
-   end
-
-   return totalWidth
+-- Adds a flexible glue (parskip) to the bottom of each frame
+-- This is decoupled from addBalancingGlue calculations, serving a simple purpose.
+local addParskipToFrames = function(parskipHeight)
+   iterateTypesetters(typesetterPool, function(_, typesetter)
+      table.insert(typesetter.state.outputQueue, SILE.types.node.vglue({ height = parskipHeight }))
+   end)
 end
 
 -- Create a unique id for each footnote
-local function generateFootnoteId(frame, note)
+function FootnoteManager:generateFootnoteId(frame, note)
    return frame .. ":" .. note.marker
 end
 
-local function getFootnoteHeight(frame, note, typesetter)
-   local noteId = generateFootnoteId(frame, note)
+function FootnoteManager:getFootnoteHeight(frame, note, typesetter)
+   local noteId = self:generateFootnoteId(frame, note)
 
    -- Simulate typesetting to calculate height
    local noteQueue = {}
@@ -167,118 +227,133 @@ local function getFootnoteHeight(frame, note, typesetter)
    end
 
    -- Cache the calculated height
-   footnoteHeightCache[noteId] = noteHeight
+   self.footnoteHeightCache[noteId] = noteHeight
+
    -- Return the calculated height and the simulated noteQueue for footnote content
    -- the noteQueue will be used later to for spliting if needed
-   return noteHeight, noteQueue
+   return self.footnoteHeightCache[noteId], noteQueue
 end
 
 -- Typeset footnotes for each frame, handling overflow and splitting across pages if necessary.
-local typesetFootnotes = function()
-   for frame, notes in pairs(footnotes) do
+function FootnoteManager:preprocessFrame(frame, typesetter)
+   typesetter:initFrame(typesetter.frame)
+   SILE.typesetter = typesetter
+
+   -- Add a rule above the footnotes
+   SILE.call("parallel_footnote:rule")
+
+   return {
+      targetHeight = typesetter:getTargetLength():tonumber(),
+      currentHeight = 0,
+      baselineSkip = SILE.settings:get("document.baselineskip").height:tonumber() * 0.40,
+      nextPageNotes = {},
+   }
+end
+
+function FootnoteManager:processSingleNote(frame, note, context, typesetter)
+   local noteHeight, noteQueue = self:getFootnoteHeight(frame, note, typesetter)
+
+   -- Adjust for baseline skip
+   if context.currentIndex > 1 then
+      noteHeight = noteHeight + context.baselineSkip
+   end
+
+   if context.currentHeight + noteHeight <= context.targetHeight then
+      -- Note fits entirely
+      if context.currentIndex > 1 then
+         table.insert(typesetter.state.outputQueue, SILE.types.node.vglue(SILE.types.length(context.baselineSkip)))
+      end
+
+      context.currentHeight = context.currentHeight + noteHeight
+      for _, node in ipairs(noteQueue) do
+         table.insert(typesetter.state.outputQueue, node)
+      end
+   else
+      -- Note needs to be split
+      self:handleOverflowingNote(noteQueue, context, typesetter)
+   end
+   -- Reset noteQueue to release memory
+   noteQueue = nil
+end
+
+function FootnoteManager:handleOverflowingNote(noteQueue, context, typesetter)
+   local fittedQueue, remainingQueue = {}, {}
+   local fittedHeight = 0
+
+   for _, node in ipairs(noteQueue) do
+      local nodeHeight = node.height:absolute():tonumber() + node.depth:absolute():tonumber()
+      if fittedHeight + nodeHeight <= (context.targetHeight - context.currentHeight) then
+         table.insert(fittedQueue, node)
+         fittedHeight = fittedHeight + nodeHeight
+      else
+         table.insert(remainingQueue, node)
+      end
+   end
+
+   -- Add fitted part to the current frame
+   if #typesetter.state.outputQueue > 0 then
+      table.insert(typesetter.state.outputQueue, SILE.types.node.vglue(SILE.types.length(context.baselineSkip)))
+   end
+
+   context.currentHeight = context.currentHeight + fittedHeight
+   for _, node in ipairs(fittedQueue) do
+      table.insert(typesetter.state.outputQueue, node)
+   end
+
+   -- Typeset the fitted part
+   typesetter:outputLinesToPage(typesetter.state.outputQueue)
+
+   -- Reset output queue
+   typesetter.state.outputQueue = {}
+
+   -- Add remaining notes to the next page
+   if #remainingQueue > 0 then
+      local contentFunc = function()
+         for _, node in ipairs(remainingQueue) do
+            table.insert(SILE.typesetter.state.outputQueue, node)
+         end
+      end
+      table.insert(context.nextPageNotes, {
+         marker = "", -- Suppress marker for overflowed notes
+         content = contentFunc,
+      })
+   end
+end
+
+function FootnoteManager:finalizeFrame(frame, context, typesetter)
+   -- Output any remaining content
+   if typesetter.state.outputQueue and #typesetter.state.outputQueue > 0 then
+      typesetter:outputLinesToPage(typesetter.state.outputQueue)
+   else
+      SU.warn("No content to output for frame: " .. frame)
+   end
+
+   -- Add remaining notes to the next page
+   self.frames[frame] = context.nextPageNotes
+
+   -- Reset output queue
+   typesetter.state.outputQueue = {}
+end
+
+function FootnoteManager:typesetFootnotes()
+   for frame, notes in pairs(self.frames) do
       if notes and #notes > 0 then
          log("Processing footnotes for frame: " .. frame)
 
          local typesetter = footnotePool[frame]
-         typesetter:initFrame(typesetter.frame)
-         SILE.typesetter = typesetter
-
-         -- Add a rule above the footnotes
-         SILE.call("parallel_footnote:rule")
-
-         local nextPageNotes = {}
+         local context = self:preprocessFrame(frame, typesetter)
 
          SILE.settings:temporarily(function()
-            SILE.call("break") -- To prevent the firt footnote being streched across the frame
+            SILE.call("break") -- Prevent the first footnote from being stretched across the frame
 
-            local targetHeight = typesetter:getTargetLength():tonumber()
-            local currentHeight = 0
-            local baselineSkip = SILE.settings:get("document.baselineskip").height:tonumber() * 0.30
+            -- Use `processNotes` to iterate through notes and process them
+            self:processNotes(frame, function(note)
+               context.currentIndex = context.currentIndex or 0
+               context.currentIndex = context.currentIndex + 1
+               self:processSingleNote(frame, note, context, typesetter)
+            end)
 
-            for i, note in ipairs(notes) do
-               -- Get the cached or calculated height and simulated noteQueue
-               local noteHeight, noteQueue = getFootnoteHeight(frame, note, typesetter)
-
-               -- Adjust for baseline skip
-               if i > 1 then
-                  noteHeight = noteHeight + baselineSkip
-               end
-
-               if currentHeight + noteHeight <= targetHeight then
-                  -- Add baseline skip before adding the note (except the first note)
-                  if i > 1 then
-                     table.insert(typesetter.state.outputQueue, SILE.types.node.vglue(SILE.types.length(baselineSkip)))
-                  end
-
-                  -- Note fits entirely
-                  currentHeight = currentHeight + noteHeight
-                  for _, node in ipairs(noteQueue) do
-                     table.insert(typesetter.state.outputQueue, node)
-                  end
-               else
-                  -- Note needs to be split
-                  local fittedQueue = {}
-                  local remainingQueue = {}
-                  local fittedHeight = 0
-
-                  for _, node in ipairs(noteQueue) do
-                     local nodeHeight = node.height:absolute():tonumber() + node.depth:absolute():tonumber()
-                     if fittedHeight + nodeHeight <= (targetHeight - currentHeight) then
-                        table.insert(fittedQueue, node)
-                        fittedHeight = fittedHeight + nodeHeight
-                     else
-                        -- Whatever does not fit is sent to the remaining queue
-                        table.insert(remainingQueue, node)
-                     end
-                  end
-
-                  -- Flush noteQueue from the memory for optimization
-                  noteQueue = nil
-
-                  -- Add fitted part to the current frame
-                  if #typesetter.state.outputQueue > 0 then
-                     table.insert(typesetter.state.outputQueue, SILE.types.node.vglue(SILE.types.length(baselineSkip)))
-                  end
-
-                  currentHeight = currentHeight + fittedHeight
-                  for _, node in ipairs(fittedQueue) do
-                     table.insert(typesetter.state.outputQueue, node)
-                  end
-
-                  -- Typeset the fitted part to the current frame
-                  typesetter:outputLinesToPage(typesetter.state.outputQueue)
-
-                  -- Reset output queue and move on
-                  typesetter.state.outputQueue = {}
-
-                  -- Create a new "split" note and add notes to the next page
-                  if #remainingQueue > 0 then
-                     local contentFunc = function()
-                        for _, node in ipairs(remainingQueue) do
-                           table.insert(SILE.typesetter.state.outputQueue, node)
-                        end
-                     end
-                     table.insert(nextPageNotes, {
-                        -- Suppress the footnote marker for the overflowed note
-                        marker = "",
-                        content = contentFunc,
-                     })
-                  end
-               end
-            end
-
-            -- Output any remaining content
-            if typesetter.state.outputQueue and #typesetter.state.outputQueue > 0 then
-               typesetter:outputLinesToPage(typesetter.state.outputQueue)
-            else
-               SU.warn("No content to output for frame: " .. frame)
-            end
-
-            -- Add remaining notes to the next page
-            footnotes[frame] = nextPageNotes
-
-            -- Reset output queue after typesetting the remaining footnote content
-            typesetter.state.outputQueue = {}
+            self:finalizeFrame(frame, context, typesetter)
          end)
       else
          log("No footnotes to process for frame: " .. frame)
@@ -286,14 +361,18 @@ local typesetFootnotes = function()
    end
 end
 
--- Handles page-breaking and overflow logic for parallel frames.
+----------------------------------------------------------------
+--  Page builder for parallel frames
+----------------------------------------------------------------
+local footnoteManager = FootnoteManager:new()
+
 local parallelPagebreak = function()
    for _, thisPageFrames in ipairs(folioOrder) do
       local hasOverflow = false
       local overflowContent = {}
 
       -- Process each frame for overflow content
-      allTypesetters(function(frame, typesetter)
+      iterateTypesetters(typesetterPool, function(frame, typesetter)
          typesetter:initFrame(typesetter.frame)
          local thispage = {}
          local linesToFit = typesetter.state.outputQueue
@@ -311,20 +390,22 @@ local parallelPagebreak = function()
 
          if #linesToFit > 0 then
             hasOverflow = true
-            overflowContent[frame] = linesToFit
+            -- overflowContent[frame] = linesToFit
+            overflowContent[frame] = pl.tablex.copy(linesToFit)
+            -- Reset output queue to avoid double processing
             typesetter.state.outputQueue = {}
          else
             overflowContent[frame] = {}
          end
-
+         -- Typeset this page
          typesetter:outputLinesToPage(thispage)
       end)
 
-      -- Process footnotes before page break
-      typesetFootnotes()
-
       -- End the current page
       SILE.documentState.documentClass:endPage()
+
+      -- At this point, all markers for the page are committed. Now typeset footnotes.
+      footnoteManager:typesetFootnotes()
 
       if hasOverflow then
          -- Start a new page
@@ -339,7 +420,7 @@ local parallelPagebreak = function()
          end
 
          -- Rebalance frames
-         balanceFramesWithDummyContent()
+         balanceFramesWithPhantomBox()
       end
    end
 
@@ -347,36 +428,35 @@ local parallelPagebreak = function()
    SILE.call("sync")
 end
 
--- Add balancing glue to shorter frames to align their height with the target height.
--- This ensures consistent alignment across frames by adding vertical glue to the output queue.
-local addBalancingGlue = function(height)
-   allTypesetters(function(frame, typesetter)
-      -- Calculate the height of new material in the current frame.
-      calculations[frame].heightOfNewMaterial = calculateFrameHeight(frame, typesetter)
+----------------------------------------------------------------
+--  Font fallback (utility + public command)
+----------------------------------------------------------------
+local fallbackFonts = {
+   "Noto Sans CJK JP",
+   "Noto Sans Symbols2",
+   "Symbola",
+}
 
-      -- Determine the amount of glue needed to match the target height.
-      local glue = height - calculations[frame].heightOfNewMaterial
-
-      -- If glue is needed, add it to the frame's output queue.
-      if glue:tonumber() > 0 then
-         table.insert(typesetter.state.outputQueue, SILE.types.node.vglue({ height = glue }))
-         log("Added balancing glue of", glue, "to the bottom of frame", frame)
+local function fontFallback(primary, char)
+   -- 1. preferred font?
+   if SILE.fonts.getGlyph(primary, char) then
+      return primary
+   end
+   -- 2. cascade through fallbacks
+   for _, fb in ipairs(fallbackFonts) do
+      if SILE.fonts.getGlyph(fb, char) then
+         return fb
       end
-
-      -- Marking is unnecessary here as the `\sync` command handles it.
-      -- calculations[frame].mark = #typesetter.state.outputQueue
-   end)
+   end
+   -- 3. give up, but warn once per session
+   SU.warn("No glyph for U+" .. string.format("%04X", SU.codepoint(char)) .. " in fallback chain")
+   return primary
 end
 
--- Adds a flexible glue (parskip) to the bottom of each frame
--- This is decoupled from addBalancingGlue calculations, serving a simple purpose.
-local addParskipToFrames = function(parskipHeight)
-   allTypesetters(function(_, typesetter)
-      table.insert(typesetter.state.outputQueue, SILE.types.node.vglue({ height = parskipHeight }))
-   end)
-end
-
-function package:_init (options)
+----------------------------------------------------------------
+--  Package initialisation
+----------------------------------------------------------------
+function package:_init(options)
    base._init(self, options)
 
    -- Load necessary packages
@@ -384,64 +464,75 @@ function package:_init (options)
    self:loadPackage("rules") -- for footnote:rule
    self:loadPackage("counters") -- for footnote counting
    self:loadPackage("raiselower") -- for footnote superscript mark
+   -- Load the `resilient.footnotes` package for the footenot:mark style.
+   -- self:loadPackage("resilient.footnotes")
 
-   SILE.typesetter = nulTypesetter(SILE.getFrame("page"))
-   if type(options.frames) ~= "table" then
-      SU.error([[
-         Package parallel must be initialized with a set of appropriately named frames
+   -- temporary no-op typesetter so class creation doesn't raise error
+   SILE.typesetter = NullTypesetter(SILE.getFrame("page"))
 
-         This package is usually intended to be loaded from some supporting class or
-         from another package, responsible for correct initialization.
-      ]])
+   -- Ensure the `frames` option is provided.
+   if type(options.frames) ~= "table" or type(options.ftn_frames) ~= "table" then
+      SU.error("Package 'parallel' must be initialised with a set of appropriately named frames")
    end
+
+   -- Set up typesetters for each main frame.
    for frame, typesetter in pairs(options.frames) do
-      typesetterPool[frame] = SILE.typesetters.base(SILE.getFrame(typesetter))
+      typesetterPool[frame] = SILE.typesetters.default(SILE.getFrame(typesetter))
       typesetterPool[frame].id = typesetter
-      typesetterPool[frame].buildPage = function()
-         -- No thank you, I will do that.
-      end
-      -- Fixed leading here is obviously a bug, but n-way leading calculations
-      -- get very complicated...
-      -- typesetterPool[frame].leadingFor = function() return SILE.types.node.vglue(SILE.settings:get("document.lineskip")) end
+      typesetterPool[frame].buildPage = function() end -- Disable auto page-building
+
+      -- Register commands (e.g., \left, \right) for directing content to frames.
       local fontcommand = frame .. ":font"
-      self:registerCommand(frame, function(_, _) -- \left ...
+      self:registerCommand(frame, function(_, _)
          SILE.typesetter = typesetterPool[frame]
          SILE.call(fontcommand)
       end)
+
+      -- Define default font commands for frames if not already defined.
       if not SILE.Commands[fontcommand] then
-         self:registerCommand(fontcommand, function(_, _) end) -- to be overridden
+         self:registerCommand(fontcommand, function(_, _) end)
       end
    end
 
-   -- Initialize typesetters for each footnote frame.
+   -- Set up typesetters for each footnote frame.
    for frame, typesetter in pairs(options.ftn_frames) do
-      footnotePool[frame] = SILE.typesetters.base(SILE.getFrame(typesetter))
+      footnotePool[frame] = SILE.typesetters.default(SILE.getFrame(typesetter))
       footnotePool[frame].id = typesetter
-
-      -- Do not disable auto page-building here, as it is required for typesetting
-      -- footnotes on the last page of the document.
+      -- NOTE: You should not disable the auto page-building here, otherwise you can't typeset
+      -- any footnotes on the last page of your document.
    end
 
-   if not options.folios then
+   ---------------- folio order ----------------
+   -- Configure the order of frames for the folio (page layout).
+   if options.folios then
+      folioOrder = options.folios
+   else
       folioOrder = { {} }
-      -- Note output order doesn't matter for PDF, but for our test suite it is
-      -- essential that the output order is deterministic, hence this sort()
       for frame, _ in pl.tablex.sort(options.frames) do
          table.insert(folioOrder[1], frame)
       end
-   else
-      folioOrder = options.folios -- As usual we trust the user knows what they're doing
    end
+
+   -- Customize the `newPage` method to synchronize frames.
+   -- Ensure that each new page starts clean but balanced
    self.class.newPage = function(self_)
-      allTypesetters(function(frame, _)
-         calculations[frame] = { mark = 0 }
-      end)
       self.class._base.newPage(self_)
+
+      -- Reset calculations
+      iterateTypesetters(typesetterPool, function(frame, _)
+         calculations[frame] = { mark = 0, cumulativeHeight = SILE.types.length(0) }
+      end)
+
+      -- Align and balance frames
       SILE.call("sync")
    end
-   allTypesetters(function(frame, _)
+
+   -- Initialize calculations for each frame.
+   iterateTypesetters(typesetterPool, function(frame, _)
       calculations[frame] = { mark = 0 }
    end)
+
+   -- Override the `finish` method to handle parallel page-breaking.
    local oldfinish = self.class.finish
    self.class.finish = function(self_)
       parallelPagebreak()
@@ -449,23 +540,32 @@ function package:_init (options)
    end
 end
 
+-- Registers commands for the package.
 function package:registerCommands()
-   -- shortcut for \parskip
-   self:registerCommand("parskip", function(options, _)
-      local height = options.height or "12pt plus 3pt minus 1pt"
+   -- Helper function for registering simple commands
+   local registerSimpleCommand = function(name, func)
+      self:registerCommand(name, func)
+   end
+
+   -- Register the parskip command
+   registerSimpleCommand("parskip", function(options, _)
+      local height = options.height or "1em"
       SILE.typesetter:leaveHmode()
-      SILE.typesetter:pushExplicitVglue(SILE.types.length(height))
+      SILE.typesetter:pushExplicitVglue(SILE.types.length(height):absolute())
    end)
 
-   -- Synchronize frame heights and handle page breaks.
-   self:registerCommand("sync", function(_, _)
+   registerSimpleCommand("sync", function(_, _)
       local anybreak = false
-      local maxheight = SILE.types.length()
 
       -- Check for potential page breaks.
-      allTypesetters(function(_, typesetter)
+      iterateTypesetters(typesetterPool, function(_, typesetter)
+         -- Flush pending markers
          typesetter:leaveHmode(true)
+
+         -- Copy the current output queue for the page builder
          local lines = pl.tablex.copy(typesetter.state.outputQueue)
+
+         -- Invoke the page builder
          if SILE.pagebuilder:findBestBreak({ vboxlist = lines, target = typesetter:getTargetLength() }) then
             anybreak = true
          end
@@ -477,107 +577,102 @@ function package:registerCommands()
          return
       end
 
-      -- Calculate the height of new material for balancing.
-      allTypesetters(function(frame, typesetter)
-         calculations[frame].heightOfNewMaterial = calculateFrameHeight(frame, typesetter)
-         if calculations[frame].heightOfNewMaterial > maxheight then
-            maxheight = calculations[frame].heightOfNewMaterial
-            log("Value of maxheight after balancing for frame ", frame, ": ", maxheight)
-         end
-      end)
+      -- Typeset footnotes after ensuring all main text is processed.
+      -- NOTE: Perhaps this should be done in the page builder?
+      -- footnoteManager:typesetFootnotes()
 
-      -- Add balancing glue to align frame heights.
-      addBalancingGlue(maxheight)
+      -- Add balancing glue to align frame heights
+      addBalancingGlue()
 
-      -- Handle parskip (spacing between successive frames).
+      -- Retrieve the parskip setting
       local parskip = SILE.settings:get("document.parskip")
 
-      if not parskip.length then
-         -- Insert default parskip value if not defined.
-         addParskipToFrames(SILE.types.length("12pt plus 3pt minus 1pt"))
+      -- Add parskip to frames based on the setting
+      if not parskip or parskip.height:tonumber() == 0 then
+         -- Insert flexible glue if parskip is nil or zero
+         addParskipToFrames(SILE.types.length("1em"):absolute())
       else
-         -- Use user-defined parskip value.
+         -- Use the user-defined parskip value
          addParskipToFrames(parskip)
       end
    end)
 
-   self:registerCommand("smaller", function(_, content)
-      SILE.settings:temporarily(function()
-         local currentSize = SILE.settings:get("font.size")
-         SILE.settings:set("font.size", currentSize * 0.75) -- Scale down to 75%
-         SILE.settings:set("font.weight", 800)
-         SILE.process(content)
-      end)
-   end)
-
-   self:registerCommand("footnoteNumber", function(options, content)
+   registerSimpleCommand("footnoteNumber", function(options, content)
       local height = options.height or "0.3em" -- Default height for superscripts
-      SILE.call("raise", { height = height }, function()
-         SILE.call("smaller", {}, function()
-            SILE.process(content)
+      SILE.settings:temporarily(function()
+         SILE.call("raise", { height = height }, function()
+            SILE.call("font", { size = "0.75em" }, function()
+               SILE.settings:set("font.weight", 600)
+               SILE.process(content)
+            end)
          end)
       end)
    end)
 
-   -- Adapted from the `resilient.footnotes` package.
-   -- Defines `parallel_footnote:rule`, a helper command for setting a footnote rule.
-   self:registerCommand("parallel_footnote:rule", function(options, _)
-      local width = SU.cast("measurement", options.width or "20%fw") -- Default: 1/5 of the text block width.
-      local beforeskipamount = SU.cast("vglue", options.beforeskipamount or "1ex") -- Space before the rule.
-      local afterskipamount = SU.cast("vglue", options.afterskipamount or "1ex") -- Space after the rule.
-      local thickness = SU.cast("measurement", options.thickness or "0.5pt") -- Thickness of the rule.
-
+   -- Adapted from `resilient.footnotes` package
+   registerSimpleCommand("parallel_footnote:rule", function(options, _)
+      local width = SU.cast("measurement", options.width or "20%fw") -- "Usually 1/5 of the text block"
+      local beforeskipamount = SU.cast("vglue", options.beforeskipamount or "1ex")
+      local afterskipamount = SU.cast("vglue", options.afterskipamount or "1ex")
+      local thickness = SU.cast("measurement", options.thickness or "0.5pt")
       SILE.call("noindent")
+      -- SILE.typesetter:pushExplicitVglue(beforeskipamount)
       SILE.call("rebox", {}, function()
          SILE.call("hrule", { width = width, height = thickness })
       end)
       SILE.typesetter:leaveHmode()
       SILE.typesetter:pushExplicitVglue(afterskipamount)
-   end, "Helper command for setting a footnote rule.")
+   end, "Small helper command to set a footnote rule.")
 
-   self:registerCommand("parallel_footnote:constructor", function(options, content)
+   registerSimpleCommand("parallel_footnote:constructor", function(options, content)
       local markerText = options.marker or "?" -- Default marker if none provided
+      local initialHangIndent = SILE.types.length("1.25em"):absolute() -- Initial hanging indent
 
       SILE.settings:temporarily(function()
-         -- Set font footnotes, 80% of current font size
-         SILE.settings:set("font.size", SILE.settings:get("font.size") * 0.80)
+         -- Set font for footnotes, 80% of current font size
+         SILE.call("font", { size = "0.8em" }, function()
+            -- Create a marker box and measure its width
+            local markerBox = SILE.typesetter:makeHbox({ markerText })
+            local markerWidth = markerBox.width:tonumber() -- Convert to number
 
-         -- Measure the marker width
-         local markerWidth = measureStringWidth(markerText)
+            -- Start with the initial hangIndent as the base value
+            local hangIndent = initialHangIndent:tonumber()
 
-         -- Set hanging indentation
-         local hangIndent = SILE.types.length("14.4pt"):absolute()
-         SILE.settings:set("current.hangAfter", 1) -- Indent subsequent lines
-         SILE.settings:set("current.hangIndent", hangIndent)
+            -- Calculate the gap after the marker
+            local markerGap = SU.max(0.25 * hangIndent, hangIndent - markerWidth)
 
-         -- Calculate the gap after the marker
-         local markerGap = hangIndent - markerWidth
+            -- Adjust hangIndent if the markerGap is greater than expected
+            if markerGap > hangIndent - markerWidth then
+               hangIndent = markerWidth + markerGap
+            end
 
-         -- Typeset the marker
-         SILE.typesetter:typeset(markerText)
+            -- Apply the updated values to the settings
+            SILE.settings:set("document.lskip", SILE.types.length(hangIndent))
+            SILE.settings:set("document.parindent", SILE.types.length(-hangIndent))
 
-         -- Add spacing after the marker for alignment
-         SILE.call("kern", { width = markerGap })
+            -- Push the marker box and adjust the alignment gap
+            SILE.typesetter:pushHbox(markerBox)
+            SILE.call("kern", { width = markerGap })
 
-         -- Process the footnote content
-         SILE.process(content)
-
-         -- End the paragraph
-         SILE.call("par")
+            -- Process the footnote content
+            SILE.process(content)
+            SILE.call("par") -- End the paragraph
+         end)
       end)
    end)
 
-   self:registerCommand("parallel_footnote", function(options, content)
+   registerSimpleCommand("parallel_footnote", function(options, content)
       local currentFrame = SILE.typesetter.frame.id
       local targetFrame = currentFrame == "a" and "ftn_left" or "ftn_right"
 
       -- Increment or retrieve the footnote counter for the target frame
-      local footnoteNumber
+      local footnoteNumber, marker
       if not options.mark then
          SILE.call("increment-counter", { id = targetFrame })
          footnoteNumber = self.class.packages.counters:formatCounter(SILE.scratch.counters[targetFrame])
+         marker = tostring(footnoteNumber) .. "."
       else
-         footnoteNumber = options.mark
+         marker = options.mark
       end
 
       -- Add the footnote marker to the text
@@ -585,13 +680,33 @@ function package:registerCommands()
          SILE.typesetter:typeset(footnoteNumber)
       end)
 
-      -- Add the footnote content to the frame's list
-      if footnotes[targetFrame] then
-         table.insert(footnotes[targetFrame], {
-            -- number = footnoteNumber,
-            marker = tostring(footnoteNumber) .. ".",
-            content = content,
-         })
+      -- Add the footnote to the manager
+      footnoteManager:add(targetFrame, {
+         marker = marker,
+         content = content,
+      })
+   end)
+
+   registerSimpleCommand("abstract", function(options, content)
+      SILE.settings:temporarily(function()
+         SILE.call("font", { size = "0.8em", style = "italic" }, function()
+            SILE.settings:set("document.lskip", SILE.types.length("0.75em"))
+            SILE.settings:set("document.rskip", SILE.types.length("0.75em"))
+            SILE.process(content) -- Process the content passed to the abstract command
+            SILE.call("par") -- Without this command the settings for lskip and rskip don't have any effect
+         end)
+      end)
+   end)
+
+   -- inline fallback font (user convenience)
+   self:registerCommand("parallel:font-fallback", function(_, c)
+      local ts = SILE.typesetter
+      local out = {}
+      for _, ch in ipairs(c) do
+         local glyphFont = fontFallback(ts.state.font.family, ch.text)
+         SILE.call("font", { family = glyphFont }, function()
+            SILE.typesetter:typeset(ch.text)
+         end)
       end
    end)
 end
@@ -602,18 +717,18 @@ The \autodoc:package{parallel} package provides a mechanism for typesetting digl
 
 The package defines the \autodoc:command{\sync} command, which adds vertical spacing to the bottom of each frame to ensure that the \em{next} set of text is horizontally aligned. It also supports independent footnote flows and counters for each frame. Footnotes can be typeset using \autodoc:command{\parallel_footnote}, with styles adopted from the \code{resilient.footnotes} package. Note that \code{document.parskip} is not supported due to manual manipulation of \code{typesetter.state.outputQueue}. Therefore, to start a new paragraph within a frame, users must manually use the \autodoc:command{\parskip} command.
 
-This package is under development and not yet fully mature. Testing has shown that it works best with a font size of 12pt from the \strong{Gentium Plus} family while \code{document.parskip} and \code{document.baselineskip} are set to 0pt. Custom settings for \code{document.parskip}, \code{document.baselineskip}, or using different font sizes between frames may disrupt frame alignment, making precise alignment challenging.
+This package is under development and not yet fully mature. Testing indicates that it performs best with a font size of 12pt from the \strong{Gentium Plus} family and with \code{document.parskip} either unset or set to 0pt. Customizing \code{document.parskip}, \code{document.baselineskip}, or using different font families and sizes between frames can disrupt alignment, making precise frame alignment challenging.
 
-Frame alignment in parallel typesetting is particularly tricky because it involves multiple interdependent variables and processes that must be carefully synchronized to produce visually cohesive results. Each frame may contain varying amounts of content, leading to differences in height between frames. The height of each frame depends on its content, including typeset text, insertions (e.g., footnotes), and vertical glue. Manual adjustments (e.g., custom \code{baselineSkip}, \code{parSkip}, or font sizes) are often required, further complicating alignment.
+Frame alignment in parallel typesetting is particularly tricky because it involves multiple interdependent variables and processes that must be carefully synchronized to produce visually cohesive results. Each frame may contain varying amounts of content, leading to differences in height between frames. The height of each frame depends on its content, including typeset text, insertions (e.g., footnotes), and vertical glue. Manual adjustments (e.g., custom \code{baselineskip}, \code{parskip}, or font sizes) are often required, further complicating alignment.
 
-SILE’s default page builder operates on a single vertical stream, while parallel typesetting demands handling multiple streams (frames) independently while maintaining their horizontal alignment. This requires custom page-breaking and alignment logic to synchronize the streams. Manually tracking and adjusting frame heights by applying stretchy glue is essential for achieving proper alignment.
+SILE’s default page builder operates on a single vertical stream, whereas parallel typesetting demands handling multiple streams (frames) independently while maintaining their horizontal alignment. This requires custom page-breaking and alignment logic to synchronize the streams. Manually tracking and adjusting frame heights by applying stretchy glue is essential for achieving proper alignment.
 
 Insertions like footnotes add further complexity, as they occupy independent frames and their content flows dynamically. Ensuring these dynamic insertions do not disrupt frame alignment is challenging. When footnotes overflow, splitting them across pages can result in misalignment or compressed content if not carefully managed.
 
-Using different font sizes or baselines for frames (e.g., for bilingual text) requires fine-tuning \code{baselineSkip}, \code{lineSkip}, or \code{parskip} settings to maintain alignment. Frames may also have varying widths or layout constraints, making it difficult to directly compare their heights.
+Using different font sizes or baselines for frames (e.g., for bilingual text) requires fine-tuning \code{baselineskip}, \code{lineskip}, or \code{parskip} settings to maintain alignment. Frames may also have varying widths or layout constraints, making it difficult to directly compare their heights.
 
 Dynamic content, such as varying paragraph lengths, images, or tables, can lead to unpredictable behavior in each frame. Frequent recalibration is necessary to address these issues. Managing overflow content for the main frames and their footnote counterparts without disrupting alignment adds yet another layer of complexity.
-To align frames reasonably, dummy content or vertical glue is often added to the shorter frame. However, such calculations must be precise to avoid visual artifacts caused by estimation errors. Even minor inaccuracies in frame height or glue calculations can result in misalignment.
+To align frames effectively, dummy content, vertical glue, or phantom boxes are often added to the shorter frame. However, these adjustments require precise calculations to avoid visual artifacts caused by estimation errors. Even small inaccuracies in frame height or glue measurements can lead to noticeable misalignment.
 
 SILE is primarily designed for single-frame typesetting, with limited native support for parallel or multi-frame layouts. Consequently, most parallel typesetting functionality must be implemented manually, requiring a deep understanding of SILE’s internals. Achieving proper frame alignment often involves trial and error, such as adding dummy text or phantom boxes to fine-tune the layout.
 
@@ -621,7 +736,7 @@ Synchronizing frames across pages involves recalculating frame heights when a ne
 
 Parallel typesetting demands pixel-perfect precision to avoid noticeable misalignment. Achieving such precision often sacrifices flexibility when handling variable content. Users may need to create separate document classes tailored to specific documents.
 
-For examples and further details, see \url{https://sile-typesetter.org/examples/parallel.sil} and the source code of \code{classes/diglot.lua}.
+For examples and further details, see \url{https://sile-typesetter.org/examples/parallel.sil} and the source code of \code{classes/diglot.lua} or \url{https://github.com/no-vici/parallel_typesetting}.
 \end{document}
 ]]
 
