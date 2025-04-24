@@ -76,7 +76,7 @@ function language:loadMessages ()
    fluent:set_locale(original_lang)
 end
 
-function language._declareBaseSettings (_)
+function language:_declareBaseSettings ()
    SILE.settings:declare({
       parameter = "document.language",
       type = "string",
@@ -91,11 +91,16 @@ function language._declareBaseSettings (_)
    })
 end
 
-function language.declareSettings (_) end
+function language:declareSettings () end
 
-function language.registerCommands (_) end
+function language:registerCommands () end
+
+local _registered_base_commands = false
 
 function language:_registerBaseCommands ()
+   if _registered_base_commands then return end
+   _registered_base_commands = true
+
    self:registerCommand("language", function (options, content)
       local main = SU.required(options, "main", "language setting")
       if content[1] then
@@ -106,7 +111,7 @@ function language:_registerBaseCommands ()
       else
          SILE.settings:set("document.language", main)
       end
-   end, nil, nil, true)
+   end, "Set the typesetters current language")
 
    self:registerCommand("fluent", function (options, content)
       local key = content[1]
@@ -133,7 +138,7 @@ function language:_registerBaseCommands ()
       end
       fluent:set_locale(original_locale)
       SILE.processString(("<sile>%s</sile>"):format(message), "xml")
-   end, nil, nil, true)
+   end, "Localize a given message id")
 
    self:registerCommand("ftl", function (options, content)
       local original_locale = fluent:get_locale()
@@ -147,20 +152,20 @@ function language:_registerBaseCommands ()
          fluent:add_messages(input, locale)
       end
       fluent:set_locale(original_locale)
-   end, nil, nil, true)
+   end, "Load messages from a Fluent FTL file into the given locale")
 end
 
-function language.registerCommand (_, name, func, help, pack)
-   SILE.Commands[name] = func
-   if not pack then
-      local where = debug.getinfo(2).source
-      pack = where:match("(%w+).lua")
-   end
-   --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
-   SILE.Help[name] = {
-      description = help,
-      where = pack,
-   }
+--- Register a function as a SILE command.
+-- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
+-- nodes identified with the command name.
+--
+-- @tparam string name Name of cammand to register.
+-- @tparam function func Callback function to use as command handler.
+-- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
+-- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
+-- messages. Usually auto-detected.
+function language:registerCommand (name, func, help, pack, defaults)
+   SILE.commands:register(self, name, func, help, pack, defaults)
 end
 
 return language

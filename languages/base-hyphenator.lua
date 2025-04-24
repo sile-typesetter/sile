@@ -12,6 +12,7 @@ function hyphenator:_init (language)
    self.rightmin = 2 -- Minimum number of characters to the right of the hyphen (TeX default)
    self.trie = {} -- Trie resulting from the patterns
    self.exceptions = {} -- Hyphenation exceptions
+   self:_registerBaseCommands()
    self:registerCommands()
    self:loadPatterns()
 end
@@ -51,7 +52,11 @@ function hyphenator:loadPatterns ()
    end
 end
 
-function hyphenator:registerCommands ()
+local _registered_base_commands = false
+
+function hyphenator:_registerBaseCommands ()
+   if _registered_base_commands then return end
+   _registered_base_commands = true
    self:registerCommand("hyphenator:add-exceptions", function (options, content)
       local lang = options.lang or SILE.settings:get("document.language")
       local language = SILE.typesetter:_cacheLanguage(lang)
@@ -60,21 +65,22 @@ function hyphenator:registerCommands ()
             language.hyphenator:registerException(token.string)
          end
       end
-   end, nil, nil, true)
+   end, "Add patterns to the languages hyphenation rules")
 end
 
--- TODO This is duplicated from many module types, should probably be made a utility
-function hyphenator.registerCommand (_, name, func, help, pack)
-   SILE.Commands[name] = func
-   if not pack then
-      local where = debug.getinfo(2).source
-      pack = where:match("(%w+).lua")
-   end
-   --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
-   SILE.Help[name] = {
-      description = help,
-      where = pack,
-   }
+function hyphenator:registerCommands () end
+
+--- Register a function as a SILE command.
+-- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
+-- nodes identified with the command name.
+--
+-- @tparam string name Name of cammand to register.
+-- @tparam function func Callback function to use as command handler.
+-- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
+-- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
+-- messages. Usually auto-detected.
+function hyphenator:registerCommand (name, func, help, pack, defaults)
+   SILE.commands:register(self, name, func, help, pack, defaults)
 end
 
 function hyphenator:addPattern (pattern)

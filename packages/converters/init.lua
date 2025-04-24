@@ -39,19 +39,6 @@ local applyConverter = function (source, converter)
    end
 end
 
--- TODO Make this a standard utility function
-local function extendCommand (name, func)
-   -- Wrap an existing command
-   local original = SILE.Commands[name]
-   if original then
-      SILE.Commands[name] = function (options, content)
-         func(options, content, original)
-      end
-   else
-      SU.debug("converters", "Can not extend command", name)
-   end
-end
-
 function package:register (sourceExt, targetExt, command)
    table.insert(SILE.scratch.converters, {
       sourceExt = sourceExt,
@@ -76,7 +63,7 @@ function package:_init ()
    if not SILE.scratch.converters then
       SILE.scratch.converters = {}
    end
-   extendCommand("include", function (options, content, original)
+   SILE.commands:pushWrapper("include", function (options, content, original)
       local source = SU.required(options, "src", "include (converters)")
       local result = self:checkConverters(source)
       if result then
@@ -86,7 +73,7 @@ function package:_init ()
          SU.error("Conversion failure for include '" .. source .. '"')
       end
    end)
-   extendCommand("img", function (options, content, original)
+   SILE.commands:pushWrapper("img", function (options, content, original)
       local source = SU.required(options, "src", "img (converters)")
       local result = self:checkConverters(source)
       if result then

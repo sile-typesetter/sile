@@ -7,6 +7,8 @@ end
 
 --- @type settings
 local settings = pl.class()
+settings.type = "settings"
+settings._name = "prototype"
 
 function settings:_init ()
    self.state = {}
@@ -71,7 +73,8 @@ function settings:_init ()
       help = "The character measured to determine the length of a zenkaku width (全角幅)",
    })
 
-   SILE.registerCommand(
+   SILE.commands:register(
+      self,
       "set",
       function (options, content)
          local makedefault = SU.boolean(options.makedefault, false)
@@ -95,9 +98,7 @@ function settings:_init ()
             self:set(parameter, value, makedefault, reset)
          end
       end,
-      "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)",
-      nil,
-      true
+      "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)"
    )
 end
 

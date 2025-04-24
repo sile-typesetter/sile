@@ -85,8 +85,8 @@ function package:_init (options)
          SILE.typesetter = typesetterPool[frame]
          SILE.call(fontcommand)
       end)
-      if not SILE.Commands[fontcommand] then
-         self:registerCommand(fontcommand, function (_, _) end) -- to be overridden
+      if not SILE.commands:exists(fontcommand) then
+         self:registerCommand(fontcommand, function () end) -- to be overridden
       end
    end
    if not options.folios then

@@ -305,25 +305,13 @@ end
 -- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
 -- nodes identified with the command name.
 --
--- Note that this should only be used to register commands supplied directly by a document class. A similar method is
--- available for packages, `packages:registerCommand`.
 -- @tparam string name Name of cammand to register.
 -- @tparam function func Callback function to use as command handler.
 -- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
 -- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
 -- messages. Usually auto-detected.
--- @see SILE.packages:registerCommand
-function class:registerCommand (name, func, help, pack)
-   SILE.Commands[name] = func
-   if not pack then
-      local where = debug.getinfo(2).source
-      pack = where:match("(%w+).lua")
-   end
-   --if not help and not pack:match(".sil") then SU.error("Could not define command '"..name.."' (in package "..pack..") - no help text" ) end
-   SILE.Help[name] = {
-      description = help,
-      where = pack,
-   }
+function class:registerCommand (name, func, help, pack, defaults)
+   SILE.commands:register(self, name, func, help, pack, defaults)
 end
 
 function class:registerRawHandler (format, callback)
@@ -351,8 +339,13 @@ end
 
 function class.registerCommands () end
 
+local _registered_base_commands = false
+
 -- These need refactoring probably somewhere outside of the document class system
 function class:_registerBaseCommands ()
+   if _registered_base_commands then return end
+   _registered_base_commands = true
+
    local function replaceProcessBy (replacement, tree)
       if type(tree) ~= "table" then
          return tree

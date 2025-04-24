@@ -198,6 +198,75 @@ SILE.showHyphenationPoints = function (...)
    return language.hyphenator:showHyphenationPoints(...)
 end
 
+local function nocommands ()
+   SU.deprecated(
+      "SILE.Commands",
+      "SILE.commands",
+      "0.16.0",
+      "0.17.0",
+      [[
+         Direct access to the Commands table has been deprecataed. Please use the command registry instead. There is
+         temporarily) a global `SILE.commands` available, but most command registry functions are available through the
+         module interface. Classes and packages and such can register their own functions using the local interfaces.
+      ]]
+   )
+end
+
+SILE.Commands = {}
+setmetatable(SILE.Commands, {
+   __index = function (_, name)
+      nocommands()
+      -- Return the bare function for legacy use since a table type would be unexpected
+      return SILE.commands:get(name).func
+   end,
+   __newindex = function (_, name, func, help, pack)
+      nocommands()
+      return SILE.commands:register(SILE, name, func, help, pack, _)
+   end,
+})
+
+SILE.registerCommand = function (name, func, help, pack)
+   nocommands()
+   return SILE.commands:register(SILE, name, func, help, pack)
+end
+
+local function nohelp ()
+   SU.deprecated(
+      "SILE.Commands",
+      "SILE.commands",
+      "0.16.0",
+      "0.17.0",
+      [[
+         Direct access to the Help table has been deprecataed. Please use the
+      ]]
+   )
+end
+
+SILE.Help = {}
+setmetatable(SILE.Help, {
+   __index = function (_, name)
+      nohelp()
+      local command = SILE.commands:get(name)
+      return {
+         description = command.help,
+      }
+   end,
+   __newindex = function (_, name, spec)
+      local command = SILE.commands:get(name)
+      command.help = spec.description
+   end,
+})
+
+SILE.setCommandDefaults = function (command, options)
+   SU.deprecated(
+      "SILE.setCommandDefaults",
+      "SILE.commands.setDefaults",
+      "0.16.0",
+      "0.17.0"
+   )
+   return SILE.commands:setDefaults(command, options)
+end
+
 -- luacheck: ignore updatePackage
 -- luacheck: ignore installPackage
 updatePackage = nopackagemanager

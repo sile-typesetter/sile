@@ -69,14 +69,6 @@ require("core.deprecations")
 --- Data tables
 --- @section data
 
---- Stash of all Lua functions used to power typesetter commands.
--- @table Commands
-SILE.Commands = {}
-
---- Short usage messages corresponding to typesetter commands.
--- @table Help
-SILE.Help = {}
-
 --- List of currently enabled debug flags.
 -- E.g. `{ typesetter = true, frames, true }`.
 -- @table debugFlags
@@ -232,28 +224,6 @@ SILE.resolveFile = require("core.require").resolveFile
 -- @tparam[opt] nil|table content Any valid AST node to be processed by the command.
 SILE.call = require("core.misc").call
 
---- (Deprecated) Register a function as a SILE command.
--- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
--- nodes identified with the command name.
---
--- Note that alternative versions of this action are available as methods on document classes and packages. Those
--- interfaces should be preferred to this global one.
--- @tparam string name Name of cammand to register.
--- @tparam function func Callback function to use as command handler.
--- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
--- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
--- messages. Usually auto-detected.
--- @see SILE.classes:registerCommand
--- @see SILE.packages:registerCommand
-SILE.registerCommand = require("core.misc").registerCommand
-
---- Wrap an existing command with new default options.
--- Modifies an already registered SILE command with a new table of options to be used as default values any time it is
--- called. Calling options still take precedence.
--- @tparam string command Name of command to overwrite.
--- @tparam table options Options to set as updated defaults.
-SILE.setCommandDefaults = require("core.misc").setCommandDefaults
-
 -- TODO: Move to new table entry handler in types.unit
 SILE.registerUnit = require("core.misc").registerUnit
 
@@ -272,6 +242,7 @@ SILE.paperSizeParser = require("core.misc").paperSizeParser
 SILE.finish = require("core.init").finish
 
 -- Internal libraries that return classes, but we have no subclasses an only ever use one instantiation of the base
+SILE.commands = require("core.commands")()
 SILE.traceStack = require("core.tracestack")()
 SILE.settings = require("core.settings")()
 

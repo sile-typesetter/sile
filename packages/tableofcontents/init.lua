@@ -50,7 +50,7 @@ function package:readToc ()
 end
 
 local function _linkWrapper (dest, func)
-   if dest and SILE.Commands["pdf:link"] then
+   if dest and SILE.commands:exists("pdf:link") then
       return function ()
          SILE.call("pdf:link", { dest = dest }, func)
       end
@@ -122,7 +122,7 @@ function package:registerCommands ()
 
    self:registerCommand("tocentry", function (options, content)
       local dest
-      if SILE.Commands["pdf:destination"] then
+      if SILE.commands:exists"pdf:destination" then
          dest = "dest" .. tostring(SILE.scratch.pdf_destination_counter)
          SILE.call("pdf:destination", { name = dest })
          -- Reconstruct a textual representation of the content tree

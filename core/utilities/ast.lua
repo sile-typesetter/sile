@@ -29,7 +29,7 @@ function ast.debug (tree, level)
                return out .. "[" .. content .. "]"
             end)
          elseif type(content) == "table" then
-            if SILE.Commands[content.command] then
+            if SILE.commands:exists(content.command) then
                SU.debug("ast", function ()
                   return out .. "\\" .. content.command .. " " .. pl.pretty.write(content.options, "")
                end)
