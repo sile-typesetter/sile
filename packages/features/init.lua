@@ -188,8 +188,6 @@ function otFeatures:unloadOptions (options)
    self:loadOptions(options, true)
 end
 
-local fontfn = SILE.commands:get("font")
-
 function package:registerCommands ()
    self:registerCommand("add-font-feature", function (options, _)
       local otfeatures = otFeatures()
@@ -203,7 +201,7 @@ function package:registerCommands ()
       SILE.settings:set("font.features", tostring(otfeatures))
    end)
 
-   self:registerCommand("font", function (options, content)
+   SILE.commands:pushWrapper(self, "font", function (options, content, original)
       local otfeatures = otFeatures()
       -- It is guaranteed that future releases of SILE will not implement non-OT \font
       -- features with capital letters.
@@ -217,8 +215,8 @@ function package:registerCommands ()
       end
       SU.debug("features", "Font features parsed as:", otfeatures)
       options.features = (options.features and options.features .. ";" or "") .. tostring(otfeatures)
-      return fontfn(options, content)
-   end, tostring(SILE.Help.font) .. " (overridden)")
+      return original(options, content)
+   end)
 end
 
 package.documentation = [[
