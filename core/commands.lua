@@ -27,7 +27,7 @@ function commands:_push (name, command)
       self.registry[name] = {}
    end
    table.insert(self.registry[name], command)
-   return command
+   return command, #self.registry[name]
 end
 
 function commands:pop (name, count)
@@ -58,8 +58,9 @@ function commands:get(name, count)
       SU.error(("No function '%s' exists"):format(name))
    end
    local stack = self.registry[name]
-   count = (tonumber(count) or 1) - 1
-   return stack[#stack - count]
+   count = tonumber(count) or 1
+   local index = #stack - count + 1
+   return stack[index], index
 end
 
 function commands:call(name, options, content)
