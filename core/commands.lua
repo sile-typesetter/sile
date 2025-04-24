@@ -71,6 +71,14 @@ function commands:setDefaults (name, options)
    self:get(name):setDefaults(options)
 end
 
+function commands:pushWrapper (parent, name, func, defaults)
+   local original = self:get(name)
+   local command = SILE.types.command(parent, name, function (options, content)
+      return func(options, content, original)
+   end, original.help, original.pack, defaults)
+   return self:_push(name, command)
+end
+
 function commands:dump ()
    local flag = SILE.debugFlags.commands
    SILE.debugFlags.commands = true
