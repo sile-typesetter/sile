@@ -4,11 +4,11 @@
 local command = pl.class()
 command.type = "command"
 
-function command:_init (parent, name, func, help, pack, defaults)
-   if parent == SILE then
-      parent = { type = "SILE", _name = "instance" }
+function command:_init (scope, name, func, help, pack, defaults)
+   if scope == SILE then
+      scope = { type = "SILE", _name = "instance" }
    end
-   self.parent = parent
+   self.scope = scope
    self.name = name
    self.func = func
    self.help = help
@@ -35,7 +35,9 @@ function command:__call (options, content)
          options[k] = v
       end
    end
-   local result = self.func(options, content)
+   local func = self.func
+   pl.compat.setfenv(func, SILE.commands:env(self.scope))
+   local result = func(options, content)
    SILE.traceStack:pop(pId)
    return result
 end
