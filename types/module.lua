@@ -26,6 +26,9 @@ local function script_path ()
    return base
 end
 
+-- TODO: Wrap this so settings are scoped in a stack like commands
+module.settings = SILE.settings
+
 function module:_init (options)
    if not self.type then
       SU.error("Attempted it initialize module with no type")
