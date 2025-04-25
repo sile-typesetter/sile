@@ -77,7 +77,7 @@ function commands:pushWrapper (scope, name, func, defaults)
    local original = self:get(name)
    local command = SILE.types.command(scope, name, function (options, content)
       return func(options, content, original)
-   end, original.help, original.pack, defaults)
+   end, original._help, original.pack, defaults)
    return self:_push(name, command)
 end
 
@@ -96,7 +96,7 @@ function commands:dump ()
          cmd.scope.type,
          cmd.scope._name,
          "with help =",
-         cmd.help
+         cmd._help
       )
    end
    SILE.debugFlags.commands = flag

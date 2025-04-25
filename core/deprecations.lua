@@ -237,7 +237,7 @@ local function nohelp ()
       "0.16.0",
       "0.17.0",
       [[
-         Direct access to the Help table has been deprecataed. Please use the
+         Direct access to the SILE.Help table has been deprecataed. Please use the command API instead.
       ]]
    )
 end
@@ -248,12 +248,12 @@ setmetatable(SILE.Help, {
       nohelp()
       local command = SILE.commands:get(name)
       return {
-         description = command.help,
+         description = command._help,
       }
    end,
    __newindex = function (_, name, spec)
       local command = SILE.commands:get(name)
-      command.help = spec.description
+      command._help = spec.description
    end,
 })
 

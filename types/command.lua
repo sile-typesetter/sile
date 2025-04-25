@@ -11,7 +11,7 @@ function command:_init (scope, name, func, help, pack, defaults)
    self.scope = scope
    self.name = name
    self.func = func
-   self.help = help
+   self._help = help
    if not pack then
       local where = debug.getinfo(2).source
       pack = where:match("(%w+).lua")
@@ -44,6 +44,10 @@ end
 
 function command:__tostring ()
    return self.name
+end
+
+function command:help ()
+   return self._help
 end
 
 function command:setDefaults (options)
