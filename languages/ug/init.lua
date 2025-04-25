@@ -4,7 +4,7 @@ local language = pl.class(tr)
 language._name = "ug"
 
 function language:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "languages.ug.hyphenoffset",
       help = "Space added between text and hyphen",
       type = "glue or nil",

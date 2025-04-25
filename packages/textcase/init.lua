@@ -15,7 +15,7 @@ function package:uppercase (input, extraArgs)
    if not extraArgs.options then
       extraArgs.options = {}
    end
-   local lang = extraArgs.options.language or SILE.settings:get("document.language")
+   local lang = extraArgs.options.language or self.settings:get("document.language")
    return icu.case(input, lang, "upper")
 end
 
@@ -29,7 +29,7 @@ function package:lowercase (input, extraArgs)
    if not extraArgs.options then
       extraArgs.options = {}
    end
-   local lang = extraArgs.options.language or SILE.settings:get("document.language")
+   local lang = extraArgs.options.language or self.settings:get("document.language")
    return icu.case(input, lang, "lower")
 end
 
@@ -43,7 +43,7 @@ function package:titlecase (input, extraArgs)
    if not extraArgs.options then
       extraArgs.options = {}
    end
-   local lang = extraArgs.options.language or SILE.settings:get("document.language")
+   local lang = extraArgs.options.language or self.settings:get("document.language")
    return icu.case(input, lang, "title")
 end
 

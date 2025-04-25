@@ -22,7 +22,7 @@ local function outputMarks (self)
    SILE.outputter:drawRule(page:right(), page:bottom() + offset, 0.5, cropsz)
 
    local hbox, hlist = SILE.typesetter:makeHbox(function ()
-      SILE.settings:temporarily(function ()
+      self.settings:temporarily(function ()
          SILE.call("noindent")
          SILE.call("font", { size = "6pt" })
          if SILE.commands:exists("crop:header") then

@@ -46,8 +46,8 @@ function class:_init (options)
       },
    })
 
-   SILE.settings:set("linebreak.tolerance", 5000)
-   SILE.settings:set("document.parindent", SILE.types.node.glue())
+   self.settings:set("linebreak.tolerance", 5000)
+   self.settings:set("document.parindent", SILE.types.node.glue())
 end
 
 return class

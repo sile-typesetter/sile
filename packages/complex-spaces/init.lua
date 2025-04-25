@@ -29,7 +29,7 @@ local package = pl.class(base)
 package._name = "complex-spaces"
 
 function package:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "shaper.complexspaces",
       default = true,
       type = "boolean",

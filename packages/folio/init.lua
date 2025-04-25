@@ -23,9 +23,9 @@ function package:outputFolio (frame)
       local folioFrame = SILE.getFrame(frame)
       if folioFrame then
          SILE.typesetNaturally(folioFrame, function ()
-            SILE.settings:pushState()
+            self.settings:pushState()
             -- Restore the settings to the top of the queue, which should be the document #986
-            SILE.settings:toplevelState()
+            self.settings:toplevelState()
 
             -- Reset settings the document may have but should not be applied to footnotes
             -- See also same resets in footnote package
@@ -35,12 +35,12 @@ function package:outputFolio (frame)
                "linebreak.hangAfter",
                "linebreak.hangIndent",
             }) do
-               SILE.settings:set(v, SILE.settings.defaults[v])
+               self.settings:set(v, self.settings.defaults[v])
             end
 
             SILE.call("foliostyle", {}, { folio })
             SILE.typesetter:leaveHmode()
-            SILE.settings:popState()
+            self.settings:popState()
          end)
       end
    end

@@ -143,7 +143,7 @@ function shaper:shapeToken (text, options)
 end
 
 function shaper:createNnodes (token, options)
-   options.tracking = SILE.settings:get("shaper.tracking")
+   options.tracking = self.settings:get("shaper.tracking")
    local items, _ = self:shapeToken(token, options)
    if #items < 1 then
       return {}

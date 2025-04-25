@@ -8,7 +8,7 @@ function language:setupNodeMaker ()
 end
 
 function language:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "languages.am.justification",
       type = "string",
       default = "left",

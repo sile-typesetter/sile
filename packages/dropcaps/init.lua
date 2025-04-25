@@ -10,7 +10,7 @@ function package:_init ()
 end
 
 function package:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "dropcaps.bsratio",
       type = "number or nil",
       default = nil, -- nil means "use computed value based on font metrics"
@@ -51,8 +51,8 @@ function package:_getToleranceDepth ()
    -- The user can override the computation and set the dropcaps.bsratio setting manually.
    -- (LaTeX would likely approximate it using a \strut = with a depth ratio of 0.3bs)
    local bsratio
-   if SILE.settings:get("dropcaps.bsratio") then
-      bsratio = SILE.settings:get("dropcaps.bsratio")
+   if self.settings:get("dropcaps.bsratio") then
+      bsratio = self.settings:get("dropcaps.bsratio")
       SU.debug("dropcaps", "Using user-defined descender baseline ratio", bsratio)
    else
       bsratio = computeBaselineRatio()
@@ -110,7 +110,7 @@ function package:registerCommands ()
 
       -- Now we need to figure out how to scale the dropcap font to get an initial of targetHeight.
       -- From that we can also figure out the width it will be at that height.
-      local curSize = SILE.types.measurement(SILE.settings:get("font.size")):tonumber()
+      local curSize = SILE.types.measurement(self.settings:get("font.size")):tonumber()
       local curWidth = tmpHbox.width:tonumber()
       options.size = size and size:tonumber() or (targetHeight / curHeight * curSize)
       local targetWidth = curWidth / curSize * options.size
@@ -144,8 +144,8 @@ function package:registerCommands ()
 
       -- Setup up the necessary indents for the final paragraph content
       local joinOffset = join and standoff:tonumber() or 0
-      SILE.settings:set("current.hangAfter", -lines)
-      SILE.settings:set("current.hangIndent", targetWidth + joinOffset)
+      self.settings:set("current.hangAfter", -lines)
+      self.settings:set("current.hangIndent", targetWidth + joinOffset)
       SILE.call("noindent")
       SU.debug("dropcaps", "joinOffset", joinOffset)
 

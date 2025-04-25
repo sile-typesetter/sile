@@ -56,14 +56,14 @@ function nodemaker:handleInitialGlue (items)
 end
 
 function nodemaker:letterspace ()
-   if not SILE.settings:get("document.letterspaceglue") then
+   if not self.language.settings:get("document.letterspaceglue") then
       return
    end
    if self.token then
       self:makeToken()
    end
    if self.lastnode and self.lastnode ~= "glue" then
-      local w = SILE.settings:get("document.letterspaceglue").width
+      local w = self.language.settings:get("document.letterspaceglue").width
       SU.debug("tokenizer", "Letter space glue:", w)
       coroutine.yield(SILE.types.node.kern({ width = w }))
       self.lastnode = "glue"

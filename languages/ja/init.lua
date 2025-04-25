@@ -11,9 +11,9 @@ function language:setupNodeMaker ()
 end
 
 function language:registerCommands ()
-   SILE.registerCommand("book:chapter:post:ja", function (_, _)
+   self:registerCommand("book:chapter:post:ja", function (_, _)
       SILE.call("medskip")
-   end, nil, nil, true)
+   end)
 end
 
 return language

@@ -201,11 +201,11 @@ end
 -- @tparam table entry The index entry as a SILE AST.
 -- @tparam table pages The formatted pages as a SILE AST.
 function package:outputIndexEntry (options, entry, pages)
-   SILE.settings:temporarily(function ()
+   self.settings:temporarily(function ()
       if self.config.filler ~= "comma" then
-         SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+         self.settings:set("typesetter.parfillskip", SILE.types.node.glue())
       end
-      SILE.settings:set("current.parindent", SILE.types.node.glue())
+      self.settings:set("current.parindent", SILE.types.node.glue())
       SILE.call("index:entry:style", options, entry)
       if self.config.filler == "dotfill" then
          SILE.call("dotfill")

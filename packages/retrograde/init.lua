@@ -134,7 +134,7 @@ function package:recede_defaults (target)
             "retrograde",
             ("Resetting '%s' to '%s' as it was prior to v%s."):format(parameter, tostring(value), version)
          )
-         SILE.settings:set(parameter, value, true)
+         self.settings:set(parameter, value, true)
       end
    end
 end
@@ -197,7 +197,7 @@ function package:registerCommands ()
 
    self:registerCommand("recede-defaults", function (options, content)
       if content then
-         SILE.settings:temporarily(function ()
+         self.settings:temporarily(function ()
             self:recede_defaults(options.target)
             SILE.process(content)
          end)
@@ -208,7 +208,7 @@ function package:registerCommands ()
 
    self:registerCommand("recede-classes", function (options, content)
       if content then
-         SILE.settings:temporarily(function ()
+         self.settings:temporarily(function ()
             local reverter = self:recede_classes(options.target)
             SILE.process(content)
             reverter()

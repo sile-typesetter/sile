@@ -103,7 +103,7 @@ function package:_init ()
 end
 
 function package:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "bibtex.style",
       type = "string",
       default = "csl",
@@ -111,7 +111,7 @@ function package:declareSettings ()
    })
 
    -- For CSL hanging-indent or second-field-align
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "bibliography.indent",
       type = "measurement",
       default = SILE.types.measurement("3em"),
@@ -251,7 +251,7 @@ function package:registerCommands ()
    -- LEGACY COMMANDS
 
    self:registerCommand("cite", function (options, content)
-      local style = SILE.settings:get("bibtex.style")
+      local style = self.settings:get("bibtex.style")
       if style == "csl" then
          SILE.call("csl:cite", options, content)
          return -- done via CSL
@@ -271,7 +271,7 @@ function package:registerCommands ()
    end, "Produce a single citation.")
 
    self:registerCommand("reference", function (options, content)
-      local style = SILE.settings:get("bibtex.style")
+      local style = self.settings:get("bibtex.style")
       if style == "csl" then
          SILE.call("csl:reference", options, content)
          return -- done via CSL
@@ -370,7 +370,7 @@ function package:registerCommands ()
 
    self:registerCommand("bibBoxForIndent", function (_, content)
       local hbox = SILE.typesetter:makeHbox(content)
-      local margin = SILE.types.length(SILE.settings:get("bibliography.indent"):absolute())
+      local margin = SILE.types.length(self.settings:get("bibliography.indent"):absolute())
       if hbox.width > margin then
          SILE.typesetter:pushHbox(hbox)
          SILE.typesetter:typeset(" ")
@@ -520,22 +520,22 @@ function package:registerCommands ()
       if not SILE.typesetter:vmode() then
          SILE.call("par")
       end
-      SILE.settings:temporarily(function ()
+      self.settings:temporarily(function ()
          local hanging_indent = SU.boolean(engine.bibliography.options["hanging-indent"], false)
          local must_align = engine.bibliography.options["second-field-align"]
-         local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()):absolute()
+         local lskip = (self.settings:get("document.lskip") or SILE.types.node.glue()):absolute()
          if hanging_indent or must_align then
             -- Respective to the fixed part of the current lskip, all lines are indented
             -- but the first one.
-            local indent = SILE.settings:get("bibliography.indent"):absolute()
-            SILE.settings:set("document.lskip", lskip.width + indent)
-            SILE.settings:set("document.parindent", -indent)
-            SILE.settings:set("current.parindent", -indent)
+            local indent = self.settings:get("bibliography.indent"):absolute()
+            self.settings:set("document.lskip", lskip.width + indent)
+            self.settings:set("document.parindent", -indent)
+            self.settings:set("current.parindent", -indent)
          else
             -- Fixed part of the current lskip, and no paragraph indentation
-            SILE.settings:set("document.lskip", lskip.width)
-            SILE.settings:set("document.parindent", SILE.types.length())
-            SILE.settings:set("current.parindent", SILE.types.length())
+            self.settings:set("document.lskip", lskip.width)
+            self.settings:set("document.parindent", SILE.types.length())
+            self.settings:set("current.parindent", SILE.types.length())
          end
          SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
          SILE.call("par")

@@ -13,7 +13,7 @@ local numberTreeIndex = 0
 function package:_stNode (notetype)
    return {
       notetype = notetype,
-      lang = SILE.settings:get("document.language"),
+      lang = self.settings:get("document.language"),
       kids = {},
       parent = stPointer,
    }
@@ -102,7 +102,7 @@ function package:registerCommands ()
       local notetype = SU.required(options, "type", "pdf structure")
       local node = self:_stNode(notetype)
       addChild(node)
-      node.lang = SILE.settings:get("document.language")
+      node.lang = self.settings:get("document.language")
       if type(SILE.outputter._ensureInit) == "function" then
          SILE.outputter:_ensureInit()
       end

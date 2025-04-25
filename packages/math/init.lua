@@ -13,51 +13,51 @@ function package:_init ()
    SILE.registerUnit("mu", {
       relative = true,
       definition = function (value)
-         return value * SILE.settings:get("math.font.size") / 18
+         return value * self.settings:get("math.font.size") / 18
       end,
    })
    self:loadPackage("counters")
 end
 
 function package:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "math.font.family",
       type = "string",
       default = "Libertinus Math",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "math.font.style",
       type = "string",
       default = "Regular",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "math.font.weight",
       type = "integer",
       default = 400,
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "math.font.script.feature",
       type = "string or nil",
       default = "ssty",
       help = "OpenType feature for the math script-style alternates (esp. primes), theoretically ssty",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "math.font.filename",
       type = "string",
       default = "",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "math.font.size",
       type = "integer",
       default = 10,
    })
    -- Whether to show debug boxes around mboxes
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "math.debug.boxes",
       type = "boolean",
       default = false,
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "math.displayskip",
       type = "VGlue",
       default = SILE.types.node.vglue("2ex plus 1pt"),
@@ -65,13 +65,13 @@ function package:declareSettings ()
 
    -- Penalties for breaking before and after a display math formula
    -- See TeX's \predisplaypenalty and \postdisplaypenalty
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "math.predisplaypenalty",
       type = "integer",
       default = 10000, -- strict no break by default as in (La)TeX
       help = "Penalty for breaking before a display math formula",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "math.postdisplaypenalty",
       type = "integer",
       -- (La)TeX's default is 0 (a normal line break penalty allowing a break

@@ -23,7 +23,7 @@ local shaper = pl.class(base)
 shaper._name = "harfbuzz"
 
 function shaper:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "harfbuzz.subshapers",
       type = "string or nil",
       default = "",
@@ -60,7 +60,7 @@ function shaper:shapeToken (text, options)
          options.language,
          face.pointsize,
          options.features,
-         SILE.settings:get("harfbuzz.subshapers") or ""
+         self.settings:get("harfbuzz.subshapers") or ""
       ),
    }
    for i = 1, #items do

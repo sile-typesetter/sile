@@ -36,7 +36,7 @@ function package:_checkIfSpacerNeeded (reading)
       return
    end
    -- OK, we need a spacer!
-   SILE.typesetter:pushGlue(SILE.settings:get("ruby.latinspacer"))
+   SILE.typesetter:pushGlue(self.settings:get("ruby.latinspacer"))
 end
 
 function package:_init ()
@@ -47,21 +47,21 @@ function package:_init ()
 end
 
 function package:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "ruby.height",
       type = "measurement",
       default = SILE.types.measurement("1zw"),
       help = "Vertical offset between the ruby and the main text",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "ruby.latinspacer",
       type = "glue",
       default = SILE.types.node.glue("0.25em"),
       help = "Glue added between consecutive Latin ruby",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "ruby.opentype",
       type = "boolean",
       default = true,
@@ -71,7 +71,7 @@ end
 
 function package:registerCommands ()
    self:registerCommand("ruby:font", function (_, _)
-      if SILE.settings:get("ruby.opentype") then
+      if self.settings:get("ruby.opentype") then
          SILE.call("font", { size = "0.6zw", features = "+ruby" })
       else
          SILE.call("font", { size = "0.6zw", weight = 700 })
@@ -85,7 +85,7 @@ function package:registerCommands ()
       self:_checkIfSpacerNeeded(reading)
 
       local rubybox = SILE.call("hbox", {}, function ()
-         SILE.settings:temporarily(function ()
+         self.settings:temporarily(function ()
             SILE.call("noindent")
             SILE.call("ruby:font")
             SILE.typesetter:typeset(reading)
@@ -95,7 +95,7 @@ function package:registerCommands ()
          local ox = typesetter.frame.state.cursorX
          local oy = typesetter.frame.state.cursorY
          typesetter.frame:advanceWritingDirection(rubybox.width)
-         typesetter.frame:advancePageDirection(-SILE.settings:get("ruby.height"))
+         typesetter.frame:advancePageDirection(-self.settings:get("ruby.height"))
          SILE.outputter:setCursor(typesetter.frame.state.cursorX, typesetter.frame.state.cursorY)
          for i = 1, #box.value do
             local node = box.value[i]

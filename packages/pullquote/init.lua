@@ -4,10 +4,10 @@ local package = pl.class(base)
 package._name = "pullquote"
 
 function package:_typesetMark (open, setback, scale, color, mark)
-   SILE.settings:temporarily(function ()
+   self.settings:temporarily(function ()
       SILE.call("pullquote:mark-font")
       SILE.call("raise", { height = -(open and (scale + 1) or scale) .. "ex" }, function ()
-         SILE.settings:set("font.size", SILE.settings:get("font.size") * scale)
+         self.settings:set("font.size", self.settings:get("font.size") * scale)
          SILE.call("color", { color = color }, function ()
             if open then
                SILE.typesetter:pushGlue({ width = -setback })
@@ -35,11 +35,11 @@ function package:registerCommands ()
    self:registerCommand("pullquote:font", function (_, _) end, "The font chosen for the pullquote environment")
 
    self:registerCommand("pullquote:author-font", function (_, _)
-      SILE.settings:set("font.style", "italic")
+      self.settings:set("font.style", "italic")
    end, "The font style with which to typeset the author attribution.")
 
    self:registerCommand("pullquote:mark-font", function (_, _)
-      SILE.settings:set("font.family", "Libertinus Serif")
+      self.settings:set("font.family", "Libertinus Serif")
    end, "The font from which to pull the quotation marks.")
 
    self:registerCommand(
@@ -49,18 +49,18 @@ function package:registerCommands ()
          local author = options.author or nil
          local scale = options.scale or 3
          local color = options.color or "#999999"
-         SILE.settings:temporarily(function ()
+         self.settings:temporarily(function ()
             SILE.call("pullquote:font")
             local setback = SU.cast("length", options.setback or "2em"):absolute()
-            SILE.settings:set("document.rskip", SILE.types.node.glue(setback))
-            SILE.settings:set("document.lskip", SILE.types.node.glue(setback))
+            self.settings:set("document.rskip", SILE.types.node.glue(setback))
+            self.settings:set("document.lskip", SILE.types.node.glue(setback))
             SILE.call("noindent")
             self:_typesetMark(true, setback, scale, color, "“")
             SILE.call("indent")
             SILE.process(content)
             self:_typesetMark(false, setback, scale, color, "”")
             if author then
-               SILE.settings:temporarily(function ()
+               self.settings:temporarily(function ()
                   SILE.typesetter:leaveHmode()
                   SILE.call("pullquote:author-font")
                   SILE.call("raggedleft", {}, function ()

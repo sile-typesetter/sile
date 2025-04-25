@@ -214,7 +214,7 @@ local function insert (class, classname, vbox)
       SU.error("Uninitialized insertion class " .. classname)
    end
    SILE.typesetter:pushMigratingMaterial({
-      SILE.types.node.penalty(SILE.settings:get("insertion.penalty")),
+      SILE.types.node.penalty(class.settings:get("insertion.penalty")),
    })
    SILE.typesetter:pushMigratingMaterial({
       SILE.types.node.insertion({
@@ -475,7 +475,7 @@ function package:_init ()
 end
 
 function package:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "insertion.penalty",
       type = "integer",
       default = -3000,

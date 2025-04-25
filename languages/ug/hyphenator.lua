@@ -146,10 +146,10 @@ function hyphenator:hyphenateNode (n)
    state.language = "ug"
    items[1] = latinToArabic(items[1])
    items[2] = latinToArabic(items[2])
-   local hyphen = SILE.settings:get("font.hyphenchar")
+   local hyphen = self.settings:get("font.hyphenchar")
    local prebreak = SILE.shaper:createNnodes(items[1] .. (lastjoinable(items[1]) and zwj or ""), state)
-   if SILE.settings:get("languages.ug.hyphenoffset") then
-      local w = SILE.settings:get("languages.ug.hyphenoffset").width
+   if self.settings:get("languages.ug.hyphenoffset") then
+      local w = self.settings:get("languages.ug.hyphenoffset").width
       prebreak[#prebreak + 1] = SILE.types.node.kern({ width = w })
    end
    local hnodes = SILE.shaper:createNnodes(hyphen, state)

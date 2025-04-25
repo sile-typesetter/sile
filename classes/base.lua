@@ -170,13 +170,13 @@ function class:_declareSettings ()
       default = nil,
       help = "Glue at start of paragraph",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "current.hangIndent",
       type = "measurement or nil",
       default = nil,
       help = "Size of hanging indent",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "current.hangAfter",
       type = "integer or nil",
       default = nil,
@@ -289,9 +289,9 @@ end
 
 function class:_registerRawHandlers ()
    self:registerRawHandler("text", function (_, content)
-      SILE.settings:temporarily(function ()
-         SILE.settings:set("typesetter.parseppattern", "\n")
-         SILE.settings:set("typesetter.obeyspaces", true)
+      self.settings:temporarily(function ()
+         self.settings:set("typesetter.parseppattern", "\n")
+         self.settings:set("typesetter.obeyspaces", true)
          SILE.typesetter:typeset(content[1])
       end)
    end)
@@ -625,7 +625,7 @@ function class:newPar (typesetter)
       SU.deprecated("class.newPar", "class:newPar", "0.16.0", "0.17.0")
       return class:newPar(self)
    end
-   local parindent = SILE.settings:get("current.parindent") or SILE.settings:get("document.parindent")
+   local parindent = self.settings:get("current.parindent") or self.settings:get("document.parindent")
    -- See https://github.com/sile-typesetter/sile/issues/1361
    -- The parindent *cannot* be pushed non-absolutized, as it may be evaluated
    -- outside the (possibly temporary) setting scope where it was used for line
@@ -638,13 +638,13 @@ function class:newPar (typesetter)
    -- new frame context. However, defining a parindent in such a unit is quite
    -- unlikely. And anyway pushback() has plenty of other issues.
    typesetter:pushGlue(parindent:absolute())
-   local hangIndent = SILE.settings:get("current.hangIndent")
+   local hangIndent = self.settings:get("current.hangIndent")
    if hangIndent then
-      SILE.settings:set("linebreak.hangIndent", hangIndent)
+      self.settings:set("linebreak.hangIndent", hangIndent)
    end
-   local hangAfter = SILE.settings:get("current.hangAfter")
+   local hangAfter = self.settings:get("current.hangAfter")
    if hangAfter then
-      SILE.settings:set("linebreak.hangAfter", hangAfter)
+      self.settings:set("linebreak.hangAfter", hangAfter)
    end
 end
 
@@ -662,9 +662,9 @@ function class:endPar (typesetter)
    if typesetter:vmode() and (last_is_vglue or last_is_vpenalty) then
       return
    end
-   SILE.settings:set("current.parindent", nil)
+   self.settings:set("current.parindent", nil)
    typesetter:leaveHmode()
-   typesetter:pushVglue(SILE.settings:get("document.parskip"))
+   typesetter:pushVglue(self.settings:get("document.parskip"))
 end
 
 function class:newPage ()

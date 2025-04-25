@@ -79,7 +79,7 @@ function package:_init (options)
       end
       -- Fixed leading here is obviously a bug, but n-way leading calculations
       -- get very complicated...
-      -- typesetterPool[frame].leadingFor = function() return SILE.types.node.vglue(SILE.settings:get("document.lineskip")) end
+      -- typesetterPool[frame].leadingFor = function() return SILE.types.node.vglue(self.settings:get("document.lineskip")) end
       local fontcommand = frame .. ":font"
       self:registerCommand(frame, function (_, _) -- \left ...
          SILE.typesetter = typesetterPool[frame]

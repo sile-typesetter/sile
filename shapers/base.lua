@@ -21,27 +21,27 @@ function shaper:_init ()
 end
 
 function shaper:_declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "shaper.variablespaces",
       type = "boolean",
       default = true,
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "shaper.spaceenlargementfactor",
       type = "number or integer",
       default = 1,
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "shaper.spacestretchfactor",
       type = "number or integer",
       default = 1 / 2,
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "shaper.spaceshrinkfactor",
       type = "number or integer",
       default = 1 / 3,
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "shaper.tracking",
       type = "number or nil",
       default = nil,
@@ -54,10 +54,10 @@ function shaper:_shapespace (spacewidth)
    -- Use absolute value to ensure stretch and shrink work as expected.
    local abs_length = math.abs(spacewidth:tonumber())
    local length, stretch, shrink = abs_length, 0, 0
-   if SILE.settings:get("shaper.variablespaces") then
-      length = spacewidth * SILE.settings:get("shaper.spaceenlargementfactor")
-      stretch = abs_length * SILE.settings:get("shaper.spacestretchfactor")
-      shrink = abs_length * SILE.settings:get("shaper.spaceshrinkfactor")
+   if self.settings:get("shaper.variablespaces") then
+      length = spacewidth * self.settings:get("shaper.spaceenlargementfactor")
+      stretch = abs_length * self.settings:get("shaper.spacestretchfactor")
+      shrink = abs_length * self.settings:get("shaper.spaceshrinkfactor")
    end
    return SILE.types.length(length, stretch, shrink)
 end
@@ -67,12 +67,12 @@ end
 -- giving preference to document.spaceskip
 -- Caching this has no significant speedup
 function shaper:measureSpace (options)
-   local ss = SILE.settings:get("document.spaceskip")
+   local ss = self.settings:get("document.spaceskip")
    if ss then
-      SILE.settings:temporarily(function ()
-         SILE.settings:set("font.size", options.size)
-         SILE.settings:set("font.family", options.family)
-         SILE.settings:set("font.filename", options.filename)
+      self.settings:temporarily(function ()
+         self.settings:set("font.size", options.size)
+         self.settings:set("font.family", options.family)
+         self.settings:set("font.filename", options.filename)
          ss = ss:absolute()
       end)
       return ss
@@ -87,7 +87,7 @@ end
 
 function shaper:measureChar (char)
    local options = SILE.font.loadDefaults({})
-   options.tracking = SILE.settings:get("shaper.tracking")
+   options.tracking = self.settings:get("shaper.tracking")
    local items = self:shapeToken(char, options)
    if items and #items > 0 then
       local measurements = {
@@ -132,7 +132,7 @@ end
 function shaper:preAddNodes (_, _) end
 
 function shaper:createNnodes (token, options)
-   options.tracking = SILE.settings:get("shaper.tracking")
+   options.tracking = self.settings:get("shaper.tracking")
    local items, _ = self:shapeToken(token, options)
    if #items < 1 then
       return {}
@@ -204,9 +204,9 @@ function shaper:formNnode (contents, token, options)
 end
 
 function shaper:makeSpaceNode (options, item)
-local width
-if SILE.settings:get("shaper.variablespaces") then
-   width = self:_shapespace(item.width)
+   local width
+   if self.settings:get("shaper.variablespaces") then
+      width = self:_shapespace(item.width)
    else
       width = SILE.shaper:measureSpace(options)
    end

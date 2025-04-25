@@ -26,7 +26,7 @@ end
 
 function language:_post_init ()
    module._post_init(self)
-   SILE.settings:registerHook("document.language", function (lang)
+   self.settings:registerHook("document.language", function (lang)
       self.typesetter:switchLanguage(lang)
    end)
 end
@@ -75,13 +75,13 @@ function language:loadMessages ()
 end
 
 function language:_declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "document.language",
       type = "string",
       default = "en",
       help = "Locale for localized language support",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "languages.fixedNbsp",
       type = "boolean",
       default = false,
@@ -93,18 +93,18 @@ function language:_registerCommands ()
    self:registerCommand("language", function (options, content)
       local main = SU.required(options, "main", "language setting")
       if content[1] then
-         SILE.settings:temporarily(function ()
-            SILE.settings:set("document.language", main)
+         self.settings:temporarily(function ()
+            self.settings:set("document.language", main)
             SILE.process(content)
          end)
       else
-         SILE.settings:set("document.language", main)
+         self.settings:set("document.language", main)
       end
    end, "Set the typesetters current language")
 
    self:registerCommand("fluent", function (options, content)
       local key = content[1]
-      local locale = options.locale or SILE.settings:get("document.language")
+      local locale = options.locale or self.settings:get("document.language")
       local original_locale = fluent:get_locale()
       fluent:set_locale(locale)
       SU.debug("fluent", "Looking for", key, "in", locale)
@@ -131,7 +131,7 @@ function language:_registerCommands ()
 
    self:registerCommand("ftl", function (options, content)
       local original_locale = fluent:get_locale()
-      local locale = options.locale or SILE.settings:get("document.language")
+      local locale = options.locale or self.settings:get("document.language")
       SU.debug("fluent", "Loading message(s) into locale", locale)
       fluent:set_locale(locale)
       if options.src then

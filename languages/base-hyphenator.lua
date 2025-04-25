@@ -59,7 +59,7 @@ function hyphenator:_registerCommands ()
    end
    _registered_base_commands = true
    self:registerCommand("hyphenator:add-exceptions", function (options, content)
-      local lang = options.lang or SILE.settings:get("document.language")
+      local lang = options.lang or self.settings:get("document.language")
       local language = SILE.typesetter:_cacheLanguage(lang)
       for token in SU.gtoke(content[1]) do
          if token.string then
@@ -178,14 +178,14 @@ function hyphenator:_segment (text)
 end
 
 function hyphenator:hyphenateSegments (node, segments, _)
-   local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options)
+   local hyphen = SILE.shaper:createNnodes(self.settings:get("font.hyphenchar"), node.options)
    return SILE.types.node.discretionary({ prebreak = hyphen }), segments
 end
 
 function hyphenator:showHyphenationPoints (word, lang)
-   lang = lang or SILE.settings:get("document.language")
+   lang = lang or self.settings:get("document.language")
    local language = SILE.typesetter:_cacheLanguage(lang)
-   return SU.concat(language.hyphenator:_segment(word), SILE.settings:get("font.hyphenchar"))
+   return SU.concat(language.hyphenator:_segment(word), self.settings:get("font.hyphenchar"))
 end
 
 function hyphenator:hyphenate (nodelist)

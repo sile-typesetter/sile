@@ -24,13 +24,13 @@ function package:_init ()
 end
 
 function package:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "url.linebreak.primaryPenalty",
       type = "integer",
       default = 100,
       help = "Penalty for breaking lines in URLs at preferred breakpoints",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "url.linebreak.secondaryPenalty",
       type = "integer",
       default = 200,
@@ -124,9 +124,9 @@ function package:registerCommands ()
    end
 
    self:registerCommand("url", function (options, content)
-      SILE.settings:temporarily(function ()
-         local primaryPenalty = SILE.settings:get("url.linebreak.primaryPenalty")
-         local secondaryPenalty = SILE.settings:get("url.linebreak.secondaryPenalty")
+      self.settings:temporarily(function ()
+         local primaryPenalty = self.settings:get("url.linebreak.primaryPenalty")
+         local secondaryPenalty = self.settings:get("url.linebreak.secondaryPenalty")
          local worsePenalty = primaryPenalty + secondaryPenalty
 
          if options.language then
@@ -137,12 +137,12 @@ function package:registerCommands ()
                -- Not needed (the engine already defaults to SILE.nodeMakers.unicode if
                -- the language is not found):
                -- SILE.nodeMakers._fr_noSpacingRules = SILE.nodeMakers.unicode
-               SILE.settings:set("document.language", "_fr_noSpacingRules")
+               self.settings:set("document.language", "_fr_noSpacingRules")
             else
-               SILE.settings:set("document.language", options.language)
+               self.settings:set("document.language", options.language)
             end
          else
-            SILE.settings:set("document.language", "und")
+            self.settings:set("document.language", "und")
          end
 
          local result = self.class.packages.inputfilter:transformContent(content, urlFilter, {

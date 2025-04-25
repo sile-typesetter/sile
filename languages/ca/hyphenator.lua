@@ -8,7 +8,7 @@ function hyphenator:hyphenateSegments (node, segments, j)
    -- Catalan typists may use a punt volat or precomposed characters.
    -- The shaper might behave differently depending on the font, so we need to
    -- be consistent here with the typist's choice.
-   local hyphenChar = SILE.settings:get("font.hyphenchar")
+   local hyphenChar = self.settings:get("font.hyphenchar")
    local replacement, hyphen
    if luautf8.find(segments[j], "ŀ$") then -- U+0140
       segments[j] = luautf8.sub(segments[j], 1, -2)
