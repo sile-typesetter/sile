@@ -2,6 +2,15 @@ local commands = pl.class()
 
 commands.registry = {}
 
+local function list_current_globals ()
+   local globals = {}
+   for k, _ in pairs(_G) do
+      globals[k] = true
+   end
+   return globals
+end
+local reserved_globals = list_current_globals()
+
 function commands:register (scope, name, func, help, pack, defaults)
    if type(scope) ~= "table" then
       SU.deprecated(
@@ -109,10 +118,15 @@ function commands:env (scope)
    end
    setmetatable(global_or_command_from_registry, {
       __index = function (_, key)
-         if SILE.scratch.docvars[key] then
+         if key == "self" then
+            return scope[key]
+         elseif SILE.scratch.docvars[key] then
             return SILE.scratch.docvars[key]
+         elseif reserved_globals[key] then
+            return _G[key]
          elseif self:exists(key) then
             return self:get(key)
+         -- TODO: Consider making this less aggressive with an explicit exports system
          elseif scope and scope[key] then
             if type(scope[key]) == "function" then
                return function (...)
