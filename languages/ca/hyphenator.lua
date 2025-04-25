@@ -3,7 +3,7 @@ local base = require("languages.base-hyphenator")
 local hyphenator = pl.class(base)
 hyphenator._name = "ca"
 
-function hyphenator.hyphenateSegments (_, node, segments, j)
+function hyphenator:hyphenateSegments (node, segments, j)
    -- punt volat (middle dot) cancels when hyphenated
    -- Catalan typists may use a punt volat or precomposed characters.
    -- The shaper might behave differently depending on the font, so we need to

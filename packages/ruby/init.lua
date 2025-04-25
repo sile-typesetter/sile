@@ -10,7 +10,7 @@ local isLatin = function (char)
       or (char >= 0x2C60 and char <= 0x2c7F)
 end
 
-local checkIfSpacerNeeded = function (reading)
+function package:_checkIfSpacerNeeded (reading)
    -- First, did we have a ruby node at all?
    if not SILE.scratch.lastRubyBox then
       return
@@ -82,7 +82,7 @@ function package:registerCommands ()
       local reading = SU.required(options, "reading", "\\ruby")
       SILE.typesetter:setpar("")
 
-      checkIfSpacerNeeded(reading)
+      self:_checkIfSpacerNeeded(reading)
 
       local rubybox = SILE.call("hbox", {}, function ()
          SILE.settings:temporarily(function ()

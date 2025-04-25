@@ -183,7 +183,7 @@ function outputter:setFont (options)
    if lastkey and key == lastkey then
       return _font
    end
-   local font = SILE.font.cache(options, SILE.shaper.getFace)
+   local font = SILE.font.cache(options, SILE.shaper:_getFaceCallback())
    if options.direction == "TTB" then
       font.layout_dir = 1
    end

@@ -67,14 +67,14 @@ end
 
 local lastListSpacing
 
-local function getNestedDepth ()
+function package:_getNestedDepth ()
    local itemize_level = SILE.settings:get("lists.current.itemize.depth")
    local enumerate_level = SILE.settings:get("lists.current.enumerate.depth")
    return itemize_level + enumerate_level
 end
 
 -- Push some list separation space provided we don't already have some
-local function pushListSpacing ()
+function package:_pushListSpacing ()
    if #SILE.typesetter.state.outputQueue ~= lastListSpacing then
       SILE.typesetter:pushVglue(SILE.settings:get("lists.parskip"))
       lastListSpacing = #SILE.typesetter.state.outputQueue
@@ -92,19 +92,19 @@ local function popListSpacing ()
    end
 end
 
-local function maybeAddListSpacing (islist, entering, counter)
+function package:_maybeAddListSpacing (islist, entering, counter)
    -- Observed nesting depth for lists is zero based and hence N-1 vs. items in those lists
-   local depth = getNestedDepth() + (islist and 1 or 0)
+   local depth = self:_getNestedDepth() + (islist and 1 or 0)
    local isitem = not islist
    local leaving = not entering
    SILE.typesetter:leaveHmode()
    -- All list items except the first one in the outermost list get leading space
    if entering and isitem and (counter ~= 1 or depth >= 2) then
-      pushListSpacing()
+      self:_pushListSpacing()
    end
    -- All lists get trailing space (to cover nesting)
    if leaving and islist then
-      pushListSpacing()
+      self:_pushListSpacing()
       if depth == 1 then
          popListSpacing()
       end
@@ -116,7 +116,7 @@ function package:doItem (options, content)
    local counter = content._lists_.counter
    local indent = content._lists_.indent
 
-   maybeAddListSpacing(false, true, counter)
+   self:_maybeAddListSpacing(false, true, counter)
 
    local mark = SILE.typesetter:makeHbox(function ()
       if enumStyle.display then
@@ -164,7 +164,7 @@ function package:doItem (options, content)
    -- In the event the list ends but paragraph continues we don't want a paragraph
    -- indent applied just because we yielded to the typesetter in vmode.
    SILE.settings:set("current.parindent", SILE.types.node.glue())
-   maybeAddListSpacing(false, false, counter)
+   self:_maybeAddListSpacing(false, false, counter)
 end
 
 function package:doNestedList (listType, options, content)
@@ -193,7 +193,7 @@ function package:doNestedList (listType, options, content)
       or SILE.types.measurement("0pt")
    local listIndent = SILE.settings:get("lists." .. listType .. ".leftmargin"):absolute()
 
-   maybeAddListSpacing(true, true, nil)
+   self:_maybeAddListSpacing(true, true, nil)
    SILE.settings:temporarily(function ()
       SILE.settings:set("lists.current." .. listType .. ".depth", depth)
       SILE.settings:set("current.parindent", SILE.types.node.glue())
@@ -232,7 +232,7 @@ function package:doNestedList (listType, options, content)
          end
       end
    end)
-   maybeAddListSpacing(true, false, nil)
+   self:_maybeAddListSpacing(true, false, nil)
 end
 
 function package:_init ()

@@ -199,7 +199,11 @@ function typesetter:initFrame (frame)
    end
 end
 
-function typesetter.getMargins ()
+function typesetter:getMargins ()
+   if not self then
+      SU.deprecated("typesetter.getMargins()", "typesetter:getMargins()", "0.16.0", "0.17.0")
+      return typesetter:getMargins()
+   end
    return _margins(SILE.settings:get("document.lskip"), SILE.settings:get("document.rskip"))
 end
 
@@ -535,7 +539,7 @@ end
 -- @tparam table precShape The last shaped item (italic).
 -- @tparam table curShape The first shaped item (non-italic).
 -- @tparam number|nil punctSpaceWidth The width of a punctuation kern between the two items, if any.
-local function fromItalicCorrection (precShape, curShape, punctSpaceWidth)
+function typesetter:_fromItalicCorrection (precShape, curShape, punctSpaceWidth)
    local xOffset
    if not curShape or not precShape then
       xOffset = 0
@@ -553,12 +557,12 @@ local function fromItalicCorrection (precShape, curShape, punctSpaceWidth)
 end
 
 --- Compute the italic correction when switching from non-italic to italic.
--- Same assumptions as fromItalicCorrection(), but on the starting side of the glyph.
+-- Same assumptions as typesetter:_fromItalicCorrection(), but on the starting side of the glyph.
 --
 -- @tparam table precShape The last shaped item (non-italic).
 -- @tparam table curShape The first shaped item (italic).
 -- @tparam number|nil punctSpaceWidth The width of a punctuation kern between the two items, if any.
-local function toItalicCorrection (precShape, curShape, punctSpaceWidth)
+function typesetter:_toItalicCorrection (precShape, curShape, punctSpaceWidth)
    local xOffset
    if not curShape or not precShape then
       xOffset = 0
@@ -581,7 +585,7 @@ local function isItalicLike (nnode)
    -- But it's probably more robust to use the italic angle, so that
    -- thin italic, oblique or slanted fonts etc. may work too.
    local ot = require("core.opentype-parser")
-   local face = SILE.font.cache(nnode.options, SILE.shaper.getFace)
+   local face = SILE.font.cache(nnode.options, SILE.shaper:_getFaceCallback())
    local font = ot.parseFont(face)
    return font.post.italicAngle ~= 0
 end
@@ -603,12 +607,12 @@ function typesetter:shapeAllNodes (nodelist, inplace)
                local precShape, precHasGlue = getLastShape(precShapedNodes)
                local curShape, curHasGlue, curPunctSpaceWidth = getFirstShape(shapedNodes)
                isGlue = precHasGlue or curHasGlue
-               itCorrOffset = fromItalicCorrection(precShape, curShape, curPunctSpaceWidth)
+               itCorrOffset = self:_fromItalicCorrection(precShape, curShape, curPunctSpaceWidth)
             elseif not isItalicLike(prec) and isItalicLike(current) then
                local precShape, precHasGlue, precPunctSpaceWidth = getLastShape(precShapedNodes)
                local curShape, curHasGlue = getFirstShape(shapedNodes)
                isGlue = precHasGlue or curHasGlue
-               itCorrOffset = toItalicCorrection(precShape, curShape, precPunctSpaceWidth)
+               itCorrOffset = self:_toItalicCorrection(precShape, curShape, precPunctSpaceWidth)
             end
             if itCorrOffset and itCorrOffset ~= 0 then
                -- If one of the node contains a glue (e.g. "a \em{proof} is..."),

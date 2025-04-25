@@ -207,7 +207,7 @@ end
 -- @tparam table options Options
 -- @tparam table content Content
 -- @treturn string Citation key
-function package._getCitationKey (_, options, content)
+function package:_getCitationKey (options, content)
    if options.key then
       return options.key
    end

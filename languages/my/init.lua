@@ -120,7 +120,7 @@ local penaltyFor = function (ca, cb)
 end
 -- typos: ignore end
 
-function language._tokenizer (_, string)
+function language:_tokenizer (string)
    return coroutine.wrap(function ()
       local lastclass = ""
       local collection = ""

@@ -113,7 +113,7 @@ end
 --   print(reorderHyphenations(items,true))
 -- end
 
-function hyphenator.hyphenateNode (_, n)
+function hyphenator:hyphenateNode (n)
    local latin = arabicToLatin(n.text)
    SU.debug("uyghur", "Original:", n.text, "->", latin, "->")
    local state = n.options

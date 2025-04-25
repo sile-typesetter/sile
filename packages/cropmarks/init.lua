@@ -5,7 +5,7 @@ package._name = "cropmarks"
 
 local outcounter = 1
 
-local function outputMarks ()
+local function outputMarks (self)
    local page = SILE.getFrame("page")
    -- Length of crop mark bars
    local cropsz = 20
@@ -65,7 +65,9 @@ function package:registerCommands ()
    end)
 
    self:registerCommand("cropmarks:setup", function (_, _)
-      self.class:registerHook("endpage", outputMarks)
+      self.class:registerHook("endpage", function ()
+         return outputMarks(self)
+      end)
    end)
 
    self:registerCommand("crop:setup", function (_, _)

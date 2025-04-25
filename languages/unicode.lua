@@ -13,7 +13,7 @@ end
 
 local icu = require("justenoughicu")
 
-function language._numberingMethod (input)
+function language:_numberingMethod (input)
    return ("numberTo%s"):format(icu.case(input, "und", "title"))
 end
 
@@ -120,10 +120,10 @@ function language:formatNumber (num, options, case)
    local lang = system and system == "roman" and "la" or self._name
    local style = options.style
    local result
-   if style and type(getmetatable(self)[self._numberingMethod(style)]) == "function" then
-      result = self[self._numberingMethod(style)](self, num, options)
-   elseif system and type(self[self._numberingMethod(system)]) == "function" then
-      result = self[self._numberingMethod(system)](self, num, options)
+   if style and type(getmetatable(self)[self:_numberingMethod(style)]) == "function" then
+      result = self[self:_numberingMethod(style)](self, num, options)
+   elseif system and type(self[self:_numberingMethod(system)]) == "function" then
+      result = self[self:_numberingMethod(system)](self, num, options)
    else
       result = icuFormat(num, lang, options)
    end

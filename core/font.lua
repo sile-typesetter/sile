@@ -113,7 +113,7 @@ SILE.commands:register(SILE, "font", function (options, content)
    -- We must *actually* load the font here, because by the time we're inside
    -- SILE.shaper.shapeToken, it's too late to respond appropriately to things
    -- that the post-load hook might want to do.
-   SILE.font.cache(SILE.font.loadDefaults(options), SILE.shaper.getFace)
+   SILE.font.cache(SILE.font.loadDefaults(options), SILE.shaper:_getFaceCallback())
 
    if SU.ast.hasContent(content) then
       SILE.process(content)
@@ -201,6 +201,7 @@ local font = {
       return options
    end,
 
+   -- TODO: See _getFaceCallback workaround in shaper, work on a better interaction
    cache = function (options, callback)
       local key = _key(options)
       if not SILE.fontCache[key] then

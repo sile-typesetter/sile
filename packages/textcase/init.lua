@@ -7,7 +7,7 @@ local icu = require("justenoughicu")
 
 function package:uppercase (input, extraArgs)
    if type(self) ~= "table" or (self.type ~= "class" and self.type ~= "package") then
-      input, extraArgs = self, input
+      self, input, extraArgs = package, self, input
    end
    if not extraArgs then
       extraArgs = {}
@@ -21,7 +21,7 @@ end
 
 function package:lowercase (input, extraArgs)
    if type(self) ~= "table" or (self.type ~= "class" and self.type ~= "package") then
-      input, extraArgs = self, input
+      self, input, extraArgs = package, self, input
    end
    if not extraArgs then
       extraArgs = {}
@@ -35,7 +35,7 @@ end
 
 function package:titlecase (input, extraArgs)
    if type(self) ~= "table" or (self.type ~= "class" and self.type ~= "package") then
-      input, extraArgs = self, input
+      self, input, extraArgs = package, self, input
    end
    if not extraArgs then
       extraArgs = {}

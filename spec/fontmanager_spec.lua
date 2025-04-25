@@ -17,7 +17,7 @@ describe("The fontconfig manager", function ()
 
    it("should load a font", function ()
       local family = "Libertinus Serif"
-      local face = SILE.shaper.getFace({ family = family })
+      local face = SILE.shaper:getFace({ family = family })
       assert.is.equal(family, face.family)
    end)
 
@@ -30,7 +30,7 @@ describe("The fontconfig manager", function ()
          local family = "Yesteryear Imagination"
          local face
          assert.has_no.errors(function ()
-            face = SILE.shaper.getFace({ family = family })
+            face = SILE.shaper:getFace({ family = family })
          end)
          assert.is_not.equal(family, face.family)
       end)
@@ -44,7 +44,7 @@ describe("The macfonts manager", function ()
 
    it("should load a font", function ()
       local family = "Libertinus Serif"
-      local face = SILE.shaper.getFace({ family = family })
+      local face = SILE.shaper:getFace({ family = family })
       assert.is.equal(family, face.family)
    end)
 
@@ -52,7 +52,7 @@ describe("The macfonts manager", function ()
       local family = "Yesteryear Imagination"
       local face
       assert.has_no.errors(function ()
-         face = SILE.shaper.getFace({ family = family })
+         face = SILE.shaper:getFace({ family = family })
       end)
       assert.is_not.equal(family, face.family)
    end)

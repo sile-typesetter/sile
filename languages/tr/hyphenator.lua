@@ -3,7 +3,7 @@ local base = require("languages.base-hyphenator")
 local hyphenator = pl.class(base)
 hyphenator._name = "tr"
 
-function hyphenator.hyphenateSegments (_, node, segments, j)
+function hyphenator:hyphenateSegments (node, segments, j)
    local hyphenChar, replacement
    local maybeNextApostrophe = #segments > j and luautf8.match(segments[j + 1], "^['’]")
    if maybeNextApostrophe then

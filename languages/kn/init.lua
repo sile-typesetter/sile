@@ -3,7 +3,7 @@ local unicode = require("languages.unicode")
 local language = pl.class(unicode)
 language._name = "kn"
 
-function language.declareSettings (_)
+function language:declareSettings ()
    -- TODO when our settings are properly scoped to their modules and we can push/pop states, switch this around to use
    -- the setting state interface so that it can undo multiple layers of settings
    local prev_script

@@ -7,7 +7,7 @@ function language:setupNodeMaker ()
    self.nodemaker = require("languages.am.nodemaker")
 end
 
-function language.declareSettings (_)
+function language:declareSettings ()
    SILE.settings:declare({
       parameter = "languages.am.justification",
       type = "string",

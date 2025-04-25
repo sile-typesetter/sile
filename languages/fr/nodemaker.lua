@@ -31,7 +31,7 @@ function nodemaker:_init (language, options)
    self.quoteTypes = { qu = true } -- split tokens at apostrophes etc.
 end
 
-local function getSpaceGlue (options, parameter)
+function nodemaker:_getSpaceGlue (options, parameter)
    local sg
    if SILE.settings:get("languages.fr.debugspace") then
       sg = SILE.types.node.kern("5spc")
@@ -90,7 +90,7 @@ end
 function nodemaker:makeUnbreakableSpace (parameter)
    self:makeToken()
    self.lastnode = "glue"
-   coroutine.yield(getSpaceGlue(self.options, parameter))
+   coroutine.yield(self:_getSpaceGlue(self.options, parameter))
 end
 
 function nodemaker:handleSpaceBefore (item)

@@ -15,7 +15,7 @@ end
 
 describe("The OpenType loader/parser", function ()
    local ot = require("core.opentype-parser")
-   local face = SILE.shaper.getFace({ family = "Libertinus Serif" })
+   local face = SILE.shaper:getFace({ family = "Libertinus Serif" })
    local font = ot.parseFont(face)
 
    it("should convert Microsoft-platform name strings to UTF8", function ()

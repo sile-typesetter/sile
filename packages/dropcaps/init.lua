@@ -32,7 +32,7 @@ local computeBaselineRatio = function ()
    local fontoptions = SILE.font.loadDefaults({})
    local bsratio = bsratiocache[SILE.font._key(fontoptions)]
    if not bsratio then
-      local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+      local face = SILE.font.cache(fontoptions, SILE.shaper:_getFaceCallback())
       local m = metrics.get_typographic_extents(face)
       bsratio = m.descender / (m.ascender + m.descender)
       bsratiocache[SILE.font._key(fontoptions)] = bsratio
@@ -40,7 +40,7 @@ local computeBaselineRatio = function ()
    return bsratio
 end
 
-local function getToleranceDepth ()
+function package:_getToleranceDepth ()
    -- In non-strict mode, we allow using more lines to fit the dropcap.
    -- However we cannot just check if the "extra depth" of the dropcap is above 0.
    -- First, our depth adjustment is but a best attempt.
@@ -128,7 +128,7 @@ function package:registerCommands ()
          -- Some fonts have descenders on letters such as Q, J, etc.
          -- In that case we may need extra lines to the dropcap.
          local extraDepth = hbox.depth:tonumber() - compensationHeight
-         local toleranceDepth = getToleranceDepth()
+         local toleranceDepth = self:_getToleranceDepth()
          if extraDepth > toleranceDepth then
             SU.debug("dropcaps", "Extra depth", extraDepth, "> tolerance", toleranceDepth)
             local extraLines = math.ceil((extraDepth - toleranceDepth) / SILE.types.measurement("1bs"):tonumber())

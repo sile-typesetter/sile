@@ -6,7 +6,7 @@ local unicode = require("languages.unicode")
 local language = pl.class(unicode)
 language._name = "eo"
 
-function language.declareSettings (_)
+function language:declareSettings ()
    SILE.settings:declare({
       parameter = "languages.eo.ordinal.raisedsuffix",
       type = "boolean",

@@ -7,7 +7,7 @@ local metrics = require("fontmetrics")
 
 local metricscache = {}
 
-local getLineMetrics = function (l)
+local getLineMetrics = function (self, l)
    local linemetrics = { ascender = 0, descender = 0, lineheight = SILE.types.length() }
    if not l or not l.nodes then
       return linemetrics
@@ -17,7 +17,7 @@ local getLineMetrics = function (l)
       if node.is_nnode then
          local m = metricscache[SILE.font._key(node.options)]
          if not m then
-            local face = SILE.font.cache(node.options, SILE.shaper.getFace)
+            local face = SILE.font.cache(node.options, SILE.shaper:_getFaceCallback())
             m = metrics.get_typographic_extents(face)
             m.ascender = m.ascender * node.options.size
             m.descender = m.descender * node.options.size
@@ -41,7 +41,7 @@ local getLineMetrics = function (l)
    return linemetrics
 end
 
-local linespacingLeading = function (_, vbox, previous)
+local linespacingLeading = function (self, vbox, previous)
    local method = SILE.settings:get("linespacing.method")
 
    local firstline = SILE.settings:get("linespacing.minimumfirstlineposition"):absolute()
@@ -75,8 +75,8 @@ local linespacingLeading = function (_, vbox, previous)
       SU.error("'" .. method .. "' line spacing method requires font metrics module, which is not available")
    end
 
-   local thismetrics = getLineMetrics(vbox)
-   local prevmetrics = getLineMetrics(previous)
+   local thismetrics = getLineMetrics(self, vbox)
+   local prevmetrics = getLineMetrics(self, previous)
    if method == "fit-font" then
       -- Distance to next baseline is max(descender) of fonts on previous +
       -- max(ascender) of fonts on next

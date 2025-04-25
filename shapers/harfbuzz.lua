@@ -39,7 +39,7 @@ function shaper:shapeToken (text, options)
          return items
       end
    end
-   local face = SILE.font.cache(options, self.getFace)
+   local face = SILE.font.cache(options, self:_getFaceCallback())
    if self:checkHBProblems(text, face) then
       return {}
    end
@@ -89,8 +89,11 @@ local _pretty_varitions = function (face)
    return text
 end
 
--- TODO: normalize this method to accept self as first arg
-function shaper.getFace (opts)
+function shaper:getFace (opts)
+   if not opts then
+      SU.deprecated("shaper.getFace()", "shaper:getFace()", "0.16.0", "0.17.0")
+      return shaper:getFace(self)
+   end
    local face = SILE.fontManager:face(opts)
    SU.debug("fonts", "Resolved font family", opts.family, "->", face and face.filename)
    if not face or not face.filename then

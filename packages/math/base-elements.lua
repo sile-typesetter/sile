@@ -40,7 +40,7 @@ local function retrieveMathTable (font)
    local key = SILE.font._key(font)
    if not mathCache[key] then
       SU.debug("math", "Loading math font", key)
-      local face = SILE.font.cache(font, SILE.shaper.getFace)
+      local face = SILE.font.cache(font, SILE.shaper:_getFaceCallback())
       if not face then
          SU.error("Could not find requested font " .. font .. " or any suitable substitutes")
       end
@@ -1100,7 +1100,7 @@ function elements.text:shape ()
          self.font.features = ("+%s=2"):format(scriptFeature)
       end
    end
-   local face = SILE.font.cache(self.font, SILE.shaper.getFace)
+   local face = SILE.font.cache(self.font, SILE.shaper:_getFaceCallback())
    local mathMetrics = self:getMathMetrics()
    local glyphs = SILE.shaper:shapeToken(self.text, self.font)
    -- Use bigger variants for big operators in display style
@@ -1190,7 +1190,7 @@ function elements.text:findClosestVariant (variants, requiredAdvance, currentAdv
 end
 
 function elements.text:_reshapeGlyph (glyph, closestVariant, sz)
-   local face = SILE.font.cache(self.font, SILE.shaper.getFace)
+   local face = SILE.font.cache(self.font, SILE.shaper:_getFaceCallback())
    local dimen = hb.get_glyph_dimensions(face, sz, closestVariant.variantGlyph)
    glyph.gid = closestVariant.variantGlyph
    glyph.width, glyph.height, glyph.depth, glyph.glyphAdvance =

@@ -8,7 +8,7 @@ function shaper:shapeToken (str, options)
    if not options.family then
       return {}
    end
-   local face = SILE.font.cache(options, SILE.shaper.getFace)
+   local face = SILE.font.cache(options, SILE.shaper:_getFaceCallback())
    local font = ot.parseFont(face)
    local items = harfbuzz.shapeToken(self, str, options)
    if font.colr and font.cpal then

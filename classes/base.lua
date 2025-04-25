@@ -660,8 +660,11 @@ function class:declareFrames (specs)
    end
 end
 
--- WARNING: not called as class method
-function class.newPar (typesetter)
+function class:newPar (typesetter)
+   if not typesetter then
+      SU.deprecated("class.newPar", "class:newPar", "0.16.0", "0.17.0")
+      return class:newPar(self)
+   end
    local parindent = SILE.settings:get("current.parindent") or SILE.settings:get("document.parindent")
    -- See https://github.com/sile-typesetter/sile/issues/1361
    -- The parindent *cannot* be pushed non-absolutized, as it may be evaluated
@@ -685,8 +688,11 @@ function class.newPar (typesetter)
    end
 end
 
--- WARNING: not called as class method
-function class.endPar (typesetter)
+function class:endPar (typesetter)
+   if not typesetter then
+      SU.deprecated("class.endPar", "class:endPar", "0.16.0", "0.17.0")
+      return class:endPar(self)
+   end
    -- If we're already explicitly out of hmode don't do anything special in the way of skips or indents. Assume the user
    -- has handled that how they want, e.g. with a skip.
    local queue = typesetter.state.outputQueue

@@ -9,7 +9,7 @@ function package:registerCommands ()
    self:registerCommand("repertoire", function (_, _)
       local ot = require("core.opentype-parser")
       local fontoptions = SILE.font.loadDefaults({})
-      local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+      local face = SILE.font.cache(fontoptions, SILE.shaper:_getFaceCallback())
       local font = ot.parseFont(face)
       local maxg = font.maxp.numGlyphs
       for i = 1, maxg - 1 do

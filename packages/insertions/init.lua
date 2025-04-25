@@ -192,7 +192,7 @@ local nextInterInsertionSkip = function (class)
    end
 end
 
-local debugInsertion = function (ins, insbox, topBox, target, targetFrame, totalHeight)
+function package:_debugInsertion (ins, insbox, topBox, target, targetFrame, totalHeight)
    local insertionsHeight = ins.contentHeight:absolute()
       + topBox.height:absolute()
       + topBox.depth:absolute()
@@ -208,7 +208,7 @@ local debugInsertion = function (ins, insbox, topBox, target, targetFrame, total
 end
 
 -- This just puts the insertion vbox into the typesetter's queues.
-local insert = function (_, classname, vbox)
+local function insert (class, classname, vbox)
    local insertion = SILE.scratch.insertions.classes[classname]
    if not insertion then
       SU.error("Uninitialized insertion class " .. classname)
@@ -335,7 +335,7 @@ function package:_init ()
       initShrinkage(SILE.typesetter.frame)
 
       if SU.debugging("insertions") then
-         debugInsertion(ins, insbox, topBox, target, targetFrame, totalHeight)
+         self:_debugInsertion(ins, insbox, topBox, target, targetFrame, totalHeight)
       end
 
       local effectOnThisFrame = options.stealFrom[SILE.typesetter.frame.id]

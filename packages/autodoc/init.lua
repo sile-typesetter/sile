@@ -18,7 +18,7 @@ local theme = {
    codeblock = "#303040", -- dark grey with a hint of blue
 }
 
-local colorWrapper = function (ctype, content)
+function package:_colorWrapper (ctype, content)
    local color = SILE.scratch.autodoc.theme[ctype]
    if color and SILE.settings:get("autodoc.highlighting") and SILE.commands:exists("color") then
       SILE.call("color", { color = color }, content)
@@ -181,13 +181,13 @@ function package:registerCommands ()
 
    self:registerCommand("autodoc:package:style", function (_, content)
       SILE.call("font", { weight = 700 }, function ()
-         colorWrapper("package", content)
+         self:_colorWrapper("package", content)
       end)
    end)
 
    self:registerCommand("autodoc:class:style", function (_, content)
       SILE.call("font", { weight = 700 }, function ()
-         colorWrapper("class", content)
+         self:_colorWrapper("class", content)
       end)
    end)
 
@@ -200,14 +200,14 @@ function package:registerCommands ()
          SILE.call("code", {}, content)
       elseif options.type == "setting" then
          SILE.call("code", {}, function ()
-            colorWrapper(options.type, content)
+            self:_colorWrapper(options.type, content)
          end)
       elseif options.type == "environment" then
          SILE.call("code", {}, function ()
-            colorWrapper("command", content)
+            self:_colorWrapper("command", content)
          end)
       else
-         colorWrapper(options.type, content)
+         self:_colorWrapper(options.type, content)
       end
    end)
 
@@ -386,7 +386,7 @@ function package:registerCommands ()
          SILE.call("language", { main = "und" })
          -- Rather than absolutizing 4 different values, just do it once and cache it
          local pushline = function (offset)
-            colorWrapper("note", function ()
+            self:_colorWrapper("note", function ()
                SILE.call("raise", { height = offset }, function ()
                   SILE.call("hrule", { thickness = "0.5pt", width = "100%lw" })
                end)
@@ -400,7 +400,7 @@ function package:registerCommands ()
          SILE.settings:set("document.parskip", SILE.types.node.vglue())
          SILE.settings:set("document.spaceskip", SILE.types.length("1spc"))
          SILE.settings:set("shaper.variablespaces", false)
-         colorWrapper("codeblock", function ()
+         self:_colorWrapper("codeblock", function ()
             pushline("0.2ex")
             SILE.call("novbreak")
             SILE.process(content)
@@ -429,7 +429,7 @@ function package:registerCommands ()
          SILE.settings:set("document.lskip", leftindent)
          SILE.settings:set("document.rskip", leftindent)
          SILE.settings:set("current.parindent", SILE.types.node.glue())
-         colorWrapper("note", function ()
+         self:_colorWrapper("note", function ()
             SILE.call("hrule", { width = linethickness, height = linethickness, depth = linedimen })
             SILE.call("hrule", { width = 3 * linedimen, height = linethickness })
             SILE.call("hfill")

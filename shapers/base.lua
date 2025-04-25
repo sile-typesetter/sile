@@ -7,20 +7,6 @@
 --   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.variations;options.direction;options.filename }, ";")
 -- end
 
-local function shapespace (spacewidth)
-   spacewidth = SU.cast("measurement", spacewidth)
-   -- In some scripts with word-level kerning, glue can be negative.
-   -- Use absolute value to ensure stretch and shrink work as expected.
-   local abs_length = math.abs(spacewidth:tonumber())
-   local length, stretch, shrink = abs_length, 0, 0
-   if SILE.settings:get("shaper.variablespaces") then
-      length = spacewidth * SILE.settings:get("shaper.spaceenlargementfactor")
-      stretch = abs_length * SILE.settings:get("shaper.spacestretchfactor")
-      shrink = abs_length * SILE.settings:get("shaper.spaceshrinkfactor")
-   end
-   return SILE.types.length(length, stretch, shrink)
-end
-
 local shaper = pl.class()
 shaper.type = "shaper"
 shaper._name = "base"
@@ -66,6 +52,20 @@ function shaper:_declareBaseSettings ()
    })
 end
 
+function shaper:_shapespace (spacewidth)
+   spacewidth = SU.cast("measurement", spacewidth)
+   -- In some scripts with word-level kerning, glue can be negative.
+   -- Use absolute value to ensure stretch and shrink work as expected.
+   local abs_length = math.abs(spacewidth:tonumber())
+   local length, stretch, shrink = abs_length, 0, 0
+   if SILE.settings:get("shaper.variablespaces") then
+      length = spacewidth * SILE.settings:get("shaper.spaceenlargementfactor")
+      stretch = abs_length * SILE.settings:get("shaper.spacestretchfactor")
+      shrink = abs_length * SILE.settings:get("shaper.spaceshrinkfactor")
+   end
+   return SILE.types.length(length, stretch, shrink)
+end
+
 -- Return the length of a space character
 -- with a particular set of font options,
 -- giving preference to document.spaceskip
@@ -86,7 +86,7 @@ function shaper:measureSpace (options)
       SU.warn("Could not measure the width of a space")
       return SILE.types.length()
    end
-   return shapespace(width and width.length or items[1].width)
+   return self:_shapespace(width and width.length or items[1].width)
 end
 
 function shaper:measureChar (char)
@@ -120,6 +120,13 @@ end
 -- object (ie a PAL for Pango, font number for libtexpdf, ...)
 function shaper:getFace ()
    SU.error("Abstract function getFace called", true)
+end
+
+-- TODO: Refactor so this isn't needed when the font module is refactored
+function shaper:_getFaceCallback ()
+   return function (options)
+      return self:getFace(options)
+   end
 end
 
 function shaper:addShapedGlyphToNnodeValue (_, _)
@@ -201,9 +208,9 @@ function shaper:formNnode (contents, token, options)
 end
 
 function shaper:makeSpaceNode (options, item)
-   local width
-   if SILE.settings:get("shaper.variablespaces") then
-      width = shapespace(item.width)
+local width
+if SILE.settings:get("shaper.variablespaces") then
+   width = self:_shapespace(item.width)
    else
       width = SILE.shaper:measureSpace(options)
    end
