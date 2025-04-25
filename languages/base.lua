@@ -1,9 +1,9 @@
 --- SILE language class.
 -- @interfaces languages
 
-local language = pl.class()
+local module = require("types.module")
+local language = pl.class(module)
 language.type = "language"
-language._name = "base"
 
 local loadkit = require("loadkit")
 local setenv = require("rusile").setenv
@@ -18,16 +18,14 @@ end)
 
 function language:_init (typesetter)
    self.typesetter = typesetter
-   self:_declareBaseSettings()
-   self:declareSettings()
-   self:_registerBaseCommands()
-   self:registerCommands()
+   module._init(self)
    self:loadMessages()
    self:setupNodeMaker()
    self:setupHyphenator()
 end
 
 function language:_post_init ()
+   module._post_init(self)
    SILE.settings:registerHook("document.language", function (lang)
       self.typesetter:switchLanguage(lang)
    end)
@@ -76,7 +74,7 @@ function language:loadMessages ()
    fluent:set_locale(original_lang)
 end
 
-function language:_declareBaseSettings ()
+function language:_declareSettings ()
    SILE.settings:declare({
       parameter = "document.language",
       type = "string",
@@ -91,18 +89,7 @@ function language:_declareBaseSettings ()
    })
 end
 
-function language:declareSettings () end
-
-function language:registerCommands () end
-
-local _registered_base_commands = false
-
-function language:_registerBaseCommands ()
-   if _registered_base_commands then
-      return
-   end
-   _registered_base_commands = true
-
+function language:_registerCommands ()
    self:registerCommand("language", function (options, content)
       local main = SU.required(options, "main", "language setting")
       if content[1] then
@@ -155,19 +142,6 @@ function language:_registerBaseCommands ()
       end
       fluent:set_locale(original_locale)
    end, "Load messages from a Fluent FTL file into the given locale")
-end
-
---- Register a function as a SILE command.
--- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
--- nodes identified with the command name.
---
--- @tparam string name Name of cammand to register.
--- @tparam function func Callback function to use as command handler.
--- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
--- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
--- messages. Usually auto-detected.
-function language:registerCommand (name, func, help, pack, defaults)
-   SILE.commands:register(self, name, func, help, pack, defaults)
 end
 
 return language

@@ -2,10 +2,9 @@
 -- @interfaces typesetters
 
 --- @type typesetter
-local typesetter = pl.class()
-
+local module = require("types.module")
+local typesetter = pl.class(module)
 typesetter.type = "typesetter"
-typesetter._name = "base"
 
 -- This is the default typesetter. You are, of course, welcome to create your own.
 local awful_bad = 1073741823
@@ -31,10 +30,9 @@ local _margins = pl.class({
 --- Constructor
 -- @param frame A initial frame to attach the typesetter to.
 function typesetter:_init (frame)
-   SU._avoid_base_class_use(self)
    -- TODO: make class first arg of typesetter init, ditch globals hack
    self.class = SILE.documentState.documentClass
-   self:declareSettings()
+   module._init(self)
    self.hooks = {}
    self.breadcrumbs = SU.breadcrumbs()
    self.frame = frame
@@ -42,6 +40,7 @@ function typesetter:_init (frame)
 end
 
 function typesetter:_post_init ()
+   module._post_init(self)
    self:initFrame(self.frame)
    self:initState()
    self.language = SILE.languages.en(self)
@@ -70,7 +69,7 @@ function typesetter:switchLanguage (lang, force)
 end
 
 --- Declare new setting types
-function typesetter:declareSettings ()
+function typesetter:_declareSettings ()
    -- Settings common to any typesetter instance.
    -- These shouldn't be re-declared and overwritten/reset in the typesetter
    -- constructor (see issue https://github.com/sile-typesetter/sile/issues/1708).

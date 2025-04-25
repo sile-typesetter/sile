@@ -1,58 +1,23 @@
 --- SILE package class.
 -- @interfaces packages
 
-local package = pl.class()
-package.type = "package"
-package._name = "base"
+local module = require("types.module")
 
-package._initialized = false
+local package = pl.class(module)
+package.type = "package"
+
 package.class = nil
 
 -- For shimming packages that used to have legacy exports
 package.exports = {}
 
-local function script_path ()
-   local src = debug.getinfo(3, "S").source:sub(2)
-   local base = src:match("(.*[/\\])")
-   return base
-end
-
-local settingDeclarations = {}
-local rawhandlerRegistrations = {}
-local commandRegistrations = {}
-
-function package:_init (_, reload)
-   SU._avoid_base_class_use(self)
+function package:_init (_options)
    self.class = SILE.scratch.half_initialized_class or SILE.documentState.documentClass
+   module._init(self)
    if not self.class then
       SU.error("Attempted to initialize package before class, should have been queued in the preamble", true)
    end
-   self.basedir = script_path()
-   -- Note string.format(%p) would be nicer than tostring() but only LuaJIT and Lua 5.4 support it
-   local settingsDeclarator = tostring(self.declareSettings)
-   if reload or not settingDeclarations[settingsDeclarator] then
-      settingDeclarations[settingsDeclarator] = true
-      self:declareSettings()
-   end
-   local rawhandlerRegistrator = tostring(self.registerRawHandlers)
-   if reload or not rawhandlerRegistrations[rawhandlerRegistrator] then
-      rawhandlerRegistrations[rawhandlerRegistrator] = true
-      self:registerRawHandlers()
-   end
-   local commandRegistrator = tostring(self.registerCommands)
-   if reload or not commandRegistrations[commandRegistrator] then
-      commandRegistrations[commandRegistrator] = true
-      self:registerCommands()
-   end
 end
-
-function package:_post_init ()
-   self._initialized = true
-end
-
-function package:declareSettings () end
-
-function package:registerRawHandlers () end
 
 function package:loadPackage (packname, options, reload)
    return self.class:loadPackage(packname, options, reload)
@@ -60,25 +25,6 @@ end
 
 function package:reloadPackage (packname, options)
    return self.class:reloadPackage(packname, options)
-end
-
-function package:registerCommands () end
-
---- Register a function as a SILE command.
--- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
--- nodes identified with the command name.
---
--- @tparam string name Name of cammand to register.
--- @tparam function func Callback function to use as command handler.
--- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
--- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
--- messages. Usually auto-detected.
-function package:registerCommand (name, func, help, pack, defaults)
-   SILE.commands:register(self, name, func, help, pack, defaults)
-end
-
-function package:registerRawHandler (format, callback)
-   self.class:registerRawHandler(format, callback)
 end
 
 -- Using this rather than doing the work directly will give us a way to

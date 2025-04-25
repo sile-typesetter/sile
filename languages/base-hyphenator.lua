@@ -1,8 +1,8 @@
 -- Note: based on Knuth-Liang algorithm, formerly known in the SILE code base as liang-hyphenator
 
-local hyphenator = pl.class()
+local module = require("types.module")
+local hyphenator = pl.class(module)
 hyphenator.type = "hyphenator"
-hyphenator._name = "base"
 
 function hyphenator:_init (language)
    self._name = language._name
@@ -12,8 +12,7 @@ function hyphenator:_init (language)
    self.rightmin = 2 -- Minimum number of characters to the right of the hyphen (TeX default)
    self.trie = {} -- Trie resulting from the patterns
    self.exceptions = {} -- Hyphenation exceptions
-   self:_registerBaseCommands()
-   self:registerCommands()
+   module._init(self)
    self:loadPatterns()
 end
 
@@ -54,7 +53,7 @@ end
 
 local _registered_base_commands = false
 
-function hyphenator:_registerBaseCommands ()
+function hyphenator:_registerCommands ()
    if _registered_base_commands then
       return
    end

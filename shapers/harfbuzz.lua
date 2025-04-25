@@ -89,22 +89,22 @@ local _pretty_varitions = function (face)
    return text
 end
 
-function shaper:getFace (opts)
-   if not opts then
+function shaper:getFace (options)
+   if not options then
       SU.deprecated("shaper.getFace()", "shaper:getFace()", "0.16.0", "0.17.0")
       return shaper:getFace(self)
    end
-   local face = SILE.fontManager:face(opts)
-   SU.debug("fonts", "Resolved font family", opts.family, "->", face and face.filename)
+   local face = SILE.fontManager:face(options)
+   SU.debug("fonts", "Resolved font family", options.family, "->", face and face.filename)
    if not face or not face.filename then
-      SU.error("Couldn't find face '" .. opts.family .. "'")
+      SU.error("Couldn't find face '" .. options.family .. "'")
    end
    if SILE.makeDeps then
       SILE.makeDeps:add(face.filename)
    end
-   face.variations = opts.variations or ""
-   face.pointsize = ("%g"):format(SILE.types.measurement(opts.size):tonumber())
-   face.weight = ("%d"):format(opts.weight or 0)
+   face.variations = options.variations or ""
+   face.pointsize = ("%g"):format(SILE.types.measurement(options.size):tonumber())
+   face.weight = ("%d"):format(options.weight or 0)
 
    -- Try instantiating the font, hb.instantiate() will return nil if it is not
    -- a variable font or if instantiation failed.

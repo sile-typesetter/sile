@@ -1,30 +1,26 @@
 --- SILE shaper class.
 -- @interfaces shapers
 
+local module = require("types.module")
+local shaper = pl.class(module)
+shaper.type = "shaper"
+
 -- local smallTokenSize = 20 -- Small words will be cached
 -- local shapeCache = {}
 -- local _key = function (options)
 --   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.variations;options.direction;options.filename }, ";")
 -- end
 
-local shaper = pl.class()
-shaper.type = "shaper"
-shaper._name = "base"
-
 function shaper:_init ()
-   SU._avoid_base_class_use(self)
    -- Function for testing shaping in the repl
    -- TODO, figure out a way to explicitly register things in the repl env
    _G["makenodes"] = function (token, options)
       return SILE.shaper:createNnodes(token, SILE.font.loadDefaults(options or {}))
    end
-   self:_declareBaseSettings()
-   self:declareSettings()
+   module._init(self)
 end
 
-function shaper:declareSettings () end
-
-function shaper:_declareBaseSettings ()
+function shaper:_declareSettings ()
    SILE.settings:declare({
       parameter = "shaper.variablespaces",
       type = "boolean",
