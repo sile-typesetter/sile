@@ -104,9 +104,14 @@ end
 
 function commands:env (scope)
    local global_or_command_from_registry = {}
+   if not SILE.scratch.docvars then
+      SILE.scratch.docvars = {}
+   end
    setmetatable(global_or_command_from_registry, {
       __index = function (_, key)
-         if self:exists(key) then
+         if SILE.scratch.docvars[key] then
+            return SILE.scratch.docvars[key]
+         elseif self:exists(key) then
             return self:get(key)
          elseif scope and scope[key] then
             if type(scope[key]) == "function" then
@@ -120,6 +125,9 @@ function commands:env (scope)
          else
             return _G[key]
          end
+      end,
+      __newindex = function (_, key, val)
+         SILE.scratch.docvars[key] = val
       end,
    })
    return global_or_command_from_registry
