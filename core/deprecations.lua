@@ -258,12 +258,7 @@ setmetatable(SILE.Help, {
 })
 
 SILE.setCommandDefaults = function (command, options)
-   SU.deprecated(
-      "SILE.setCommandDefaults",
-      "SILE.commands.setDefaults",
-      "0.16.0",
-      "0.17.0"
-   )
+   SU.deprecated("SILE.setCommandDefaults", "SILE.commands.setDefaults", "0.16.0", "0.17.0")
    return SILE.commands:setDefaults(command, options)
 end
 

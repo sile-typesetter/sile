@@ -98,7 +98,9 @@ function language:registerCommands () end
 local _registered_base_commands = false
 
 function language:_registerBaseCommands ()
-   if _registered_base_commands then return end
+   if _registered_base_commands then
+      return
+   end
    _registered_base_commands = true
 
    self:registerCommand("language", function (options, content)

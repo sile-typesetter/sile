@@ -343,7 +343,9 @@ local _registered_base_commands = false
 
 -- These need refactoring probably somewhere outside of the document class system
 function class:_registerBaseCommands ()
-   if _registered_base_commands then return end
+   if _registered_base_commands then
+      return
+   end
    _registered_base_commands = true
 
    local function replaceProcessBy (replacement, tree)

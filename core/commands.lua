@@ -2,7 +2,7 @@ local commands = pl.class()
 
 commands.registry = {}
 
-function commands:register(parent, name, func, help, pack, defaults)
+function commands:register (parent, name, func, help, pack, defaults)
    if type(parent) ~= "table" then
       SU.deprecated(
          "SILE.registerCommand",
@@ -37,7 +37,9 @@ function commands:pop (name, count)
    local stack = self.registry[name]
    local command
    count = tonumber(count) or 1
-   SU.debug("commands", function () return ("Popping %d registrations of command '%s'"):format(count, name) end)
+   SU.debug("commands", function ()
+      return ("Popping %d registrations of command '%s'"):format(count, name)
+   end)
    if count <= #stack then
       for _ = 1, count do
          command = table.remove(stack)
@@ -48,12 +50,12 @@ function commands:pop (name, count)
    end
 end
 
-function commands:exists(name)
+function commands:exists (name)
    local stack = self.registry[name]
    return stack and #stack > 0 and SILE.types.command:class_of(stack[#stack])
 end
 
-function commands:get(name, count)
+function commands:get (name, count)
    if not self:exists(name) then
       SU.error(("No function '%s' exists"):format(name))
    end
@@ -63,7 +65,7 @@ function commands:get(name, count)
    return stack[index], index
 end
 
-function commands:call(name, options, content)
+function commands:call (name, options, content)
    return self:get(name)(options, content)
 end
 
@@ -84,7 +86,18 @@ function commands:dump ()
    SILE.debugFlags.commands = true
    for name, stack in pairs(self.registry) do
       local cmd = self:get(name)
-      SU.debug("commands", name, "registered", #stack, "times", "most recently by", cmd.parent.type, cmd.parent._name, "with help =", cmd.help)
+      SU.debug(
+         "commands",
+         name,
+         "registered",
+         #stack,
+         "times",
+         "most recently by",
+         cmd.parent.type,
+         cmd.parent._name,
+         "with help =",
+         cmd.help
+      )
    end
    SILE.debugFlags.commands = flag
 end

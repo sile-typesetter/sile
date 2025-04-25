@@ -73,33 +73,28 @@ function settings:_init ()
       help = "The character measured to determine the length of a zenkaku width (全角幅)",
    })
 
-   SILE.commands:register(
-      self,
-      "set",
-      function (options, content)
-         local makedefault = SU.boolean(options.makedefault, false)
-         local reset = SU.boolean(options.reset, false)
-         local value = options.value
-         if content and (type(content) == "function" or content[1]) then
-            if makedefault then
-               SU.warn(
-                  "Are you sure meant to set default settings *and* pass content to ostensibly apply them to temporarily?"
-               )
-            end
-            self:temporarily(function ()
-               if options.parameter then
-                  local parameter = SU.required(options, "parameter", "\\set command")
-                  self:set(parameter, value, makedefault, reset)
-               end
-               SILE.process(content)
-            end)
-         else
-            local parameter = SU.required(options, "parameter", "\\set command")
-            self:set(parameter, value, makedefault, reset)
+   SILE.commands:register(self, "set", function (options, content)
+      local makedefault = SU.boolean(options.makedefault, false)
+      local reset = SU.boolean(options.reset, false)
+      local value = options.value
+      if content and (type(content) == "function" or content[1]) then
+         if makedefault then
+            SU.warn(
+               "Are you sure meant to set default settings *and* pass content to ostensibly apply them to temporarily?"
+            )
          end
-      end,
-      "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)"
-   )
+         self:temporarily(function ()
+            if options.parameter then
+               local parameter = SU.required(options, "parameter", "\\set command")
+               self:set(parameter, value, makedefault, reset)
+            end
+            SILE.process(content)
+         end)
+      else
+         local parameter = SU.required(options, "parameter", "\\set command")
+         self:set(parameter, value, makedefault, reset)
+      end
+   end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")
 end
 
 --- Stash the current values of all settings in a stack to be returned to later

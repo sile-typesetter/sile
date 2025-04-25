@@ -122,7 +122,7 @@ function package:registerCommands ()
 
    self:registerCommand("tocentry", function (options, content)
       local dest
-      if SILE.commands:exists"pdf:destination" then
+      if SILE.commands:exists("pdf:destination") then
          dest = "dest" .. tostring(SILE.scratch.pdf_destination_counter)
          SILE.call("pdf:destination", { name = dest })
          -- Reconstruct a textual representation of the content tree

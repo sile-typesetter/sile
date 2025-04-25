@@ -55,7 +55,9 @@ end
 local _registered_base_commands = false
 
 function hyphenator:_registerBaseCommands ()
-   if _registered_base_commands then return end
+   if _registered_base_commands then
+      return
+   end
    _registered_base_commands = true
    self:registerCommand("hyphenator:add-exceptions", function (options, content)
       local lang = options.lang or SILE.settings:get("document.language")
