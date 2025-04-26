@@ -6,7 +6,7 @@ package._name = "rules"
 local function getUnderlineParameters ()
    local ot = require("core.opentype-parser")
    local fontoptions = SILE.font.loadDefaults({})
-   local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+   local face = SILE.font.cache(fontoptions, SILE.shaper:_getFaceCallback())
    local font = ot.parseFont(face)
    local upem = font.head.unitsPerEm
    local underlinePosition = font.post.underlinePosition / upem * fontoptions.size
@@ -17,7 +17,7 @@ end
 local function getStrikethroughParameters ()
    local ot = require("core.opentype-parser")
    local fontoptions = SILE.font.loadDefaults({})
-   local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+   local face = SILE.font.cache(fontoptions, SILE.shaper:_getFaceCallback())
    local font = ot.parseFont(face)
    local upem = font.head.unitsPerEm
    local yStrikeoutPosition = font.os2.yStrikeoutPosition / upem * fontoptions.size

@@ -1,8 +1,8 @@
 -- Note: based on Knuth-Liang algorithm, formerly known in the SILE code base as liang-hyphenator
 
-local hyphenator = pl.class()
+local module = require("types.module")
+local hyphenator = pl.class(module)
 hyphenator.type = "hyphenator"
-hyphenator._name = "base"
 
 function hyphenator:_init (language)
    self._name = language._name
@@ -12,8 +12,7 @@ function hyphenator:_init (language)
    self.rightmin = 2 -- Minimum number of characters to the right of the hyphen (TeX default)
    self.trie = {} -- Trie resulting from the patterns
    self.exceptions = {} -- Hyphenation exceptions
-   self:_registerBaseCommands()
-   self:registerCommands()
+   module._init(self)
    self:loadPatterns()
 end
 
@@ -54,13 +53,13 @@ end
 
 local _registered_base_commands = false
 
-function hyphenator:_registerBaseCommands ()
+function hyphenator:_registerCommands ()
    if _registered_base_commands then
       return
    end
    _registered_base_commands = true
    self:registerCommand("hyphenator:add-exceptions", function (options, content)
-      local lang = options.lang or SILE.settings:get("document.language")
+      local lang = options.lang or self.settings:get("document.language")
       local language = SILE.typesetter:_cacheLanguage(lang)
       for token in SU.gtoke(content[1]) do
          if token.string then
@@ -178,15 +177,15 @@ function hyphenator:_segment (text)
    return pieces
 end
 
-function hyphenator.hyphenateSegments (_, node, segments, _)
-   local hyphen = SILE.shaper:createNnodes(SILE.settings:get("font.hyphenchar"), node.options)
+function hyphenator:hyphenateSegments (node, segments, _)
+   local hyphen = SILE.shaper:createNnodes(self.settings:get("font.hyphenchar"), node.options)
    return SILE.types.node.discretionary({ prebreak = hyphen }), segments
 end
 
-function hyphenator.showHyphenationPoints (_, word, lang)
-   lang = lang or SILE.settings:get("document.language")
+function hyphenator:showHyphenationPoints (word, lang)
+   lang = lang or self.settings:get("document.language")
    local language = SILE.typesetter:_cacheLanguage(lang)
-   return SU.concat(language.hyphenator:_segment(word), SILE.settings:get("font.hyphenchar"))
+   return SU.concat(language.hyphenator:_segment(word), self.settings:get("font.hyphenchar"))
 end
 
 function hyphenator:hyphenate (nodelist)

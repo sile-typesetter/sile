@@ -60,15 +60,15 @@ function package:registerCommands ()
       local oldT = SILE.typesetter
       local prevDirection = oldT.frame.direction
       self:loadPackage("rotate")
-      SILE.settings:temporarily(function ()
+      self.settings:temporarily(function ()
          local dummyFrame = pl.class(SILE.framePrototype)
          dummyFrame.init = function (f)
             f.state = {}
          end
          local frame = dummyFrame({}, true)
          SILE.typesetter = SILE.typesetters["latin-in-tate"](frame)
-         SILE.settings:set("document.language", "und")
-         SILE.settings:set("font.direction", "LTR")
+         self.settings:set("document.language", "und")
+         self.settings:set("font.direction", "LTR")
          SILE.process(content)
          nodes = SILE.typesetter.state.nodes
          SILE.typesetter:shapeAllNodes(nodes)
@@ -104,9 +104,9 @@ function package:registerCommands ()
       -- SILE.typesetter:pushGlue({
       --   width = SILE.types.length("0.5zw", "0.25zw", "0.25zw"):absolute() })
       -- })
-      SILE.settings:temporarily(function ()
-         SILE.settings:set("document.language", "und")
-         SILE.settings:set("font.direction", "LTR")
+      self.settings:temporarily(function ()
+         self.settings:set("document.language", "und")
+         self.settings:set("font.direction", "LTR")
          SILE.call("rotate", { angle = -90 }, function ()
             local hbox = SILE.call("hbox", {}, content)
             hbox.misfit = true

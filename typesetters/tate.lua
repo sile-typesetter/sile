@@ -5,7 +5,7 @@ typesetter._name = "tate"
 
 function typesetter:leadingFor (v)
    v.height = SILE.types.length("1zw"):absolute()
-   local bls = SILE.settings:get("document.baselineskip")
+   local bls = self.settings:get("document.baselineskip")
    local d = bls.height:absolute() - v.height
    local len = SILE.types.length(d.length, bls.height.stretch, bls.height.shrink)
    return SILE.types.node.vglue({ height = len })

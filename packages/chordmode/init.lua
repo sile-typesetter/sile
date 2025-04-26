@@ -10,7 +10,7 @@ function package:_init ()
 end
 
 function package:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "chordmode.offset",
       type = "length",
       default = SILE.types.length("2ex"),
@@ -26,7 +26,7 @@ function package:registerCommands ()
       local origWidth = chordBox.width
       chordBox.width = SILE.types.length()
 
-      SILE.call("raise", { height = SILE.settings:get("chordmode.offset") }, function ()
+      SILE.call("raise", { height = self.settings:get("chordmode.offset") }, function ()
          SILE.typesetter:pushHbox(chordBox)
       end)
 
@@ -34,7 +34,7 @@ function package:registerCommands ()
       if lyricBox.width < origWidth then
          lyricBox.width = origWidth + SILE.types.length("0.5em"):absolute()
       end
-      local chordLineHeight = chordBox.height + SILE.settings:get("chordmode.offset"):absolute()
+      local chordLineHeight = chordBox.height + self.settings:get("chordmode.offset"):absolute()
       if chordLineHeight > lyricBox.height then
          lyricBox.height = chordLineHeight
       end

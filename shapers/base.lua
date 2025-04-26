@@ -1,69 +1,65 @@
 --- SILE shaper class.
 -- @interfaces shapers
 
+local module = require("types.module")
+local shaper = pl.class(module)
+shaper.type = "shaper"
+
 -- local smallTokenSize = 20 -- Small words will be cached
 -- local shapeCache = {}
 -- local _key = function (options)
 --   return table.concat({ options.family;options.language;options.script;options.size;("%d"):format(options.weight);options.style;options.variant;options.features;options.variations;options.direction;options.filename }, ";")
 -- end
 
-local function shapespace (spacewidth)
-   spacewidth = SU.cast("measurement", spacewidth)
-   -- In some scripts with word-level kerning, glue can be negative.
-   -- Use absolute value to ensure stretch and shrink work as expected.
-   local abs_length = math.abs(spacewidth:tonumber())
-   local length, stretch, shrink = abs_length, 0, 0
-   if SILE.settings:get("shaper.variablespaces") then
-      length = spacewidth * SILE.settings:get("shaper.spaceenlargementfactor")
-      stretch = abs_length * SILE.settings:get("shaper.spacestretchfactor")
-      shrink = abs_length * SILE.settings:get("shaper.spaceshrinkfactor")
-   end
-   return SILE.types.length(length, stretch, shrink)
-end
-
-local shaper = pl.class()
-shaper.type = "shaper"
-shaper._name = "base"
-
 function shaper:_init ()
-   SU._avoid_base_class_use(self)
    -- Function for testing shaping in the repl
    -- TODO, figure out a way to explicitly register things in the repl env
    _G["makenodes"] = function (token, options)
       return SILE.shaper:createNnodes(token, SILE.font.loadDefaults(options or {}))
    end
-   self:_declareBaseSettings()
-   self:declareSettings()
+   module._init(self)
 end
 
-function shaper:declareSettings () end
-
-function shaper:_declareBaseSettings ()
-   SILE.settings:declare({
+function shaper:_declareSettings ()
+   self.settings:declare({
       parameter = "shaper.variablespaces",
       type = "boolean",
       default = true,
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "shaper.spaceenlargementfactor",
       type = "number or integer",
       default = 1,
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "shaper.spacestretchfactor",
       type = "number or integer",
       default = 1 / 2,
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "shaper.spaceshrinkfactor",
       type = "number or integer",
       default = 1 / 3,
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "shaper.tracking",
       type = "number or nil",
       default = nil,
    })
+end
+
+function shaper:_shapespace (spacewidth)
+   spacewidth = SU.cast("measurement", spacewidth)
+   -- In some scripts with word-level kerning, glue can be negative.
+   -- Use absolute value to ensure stretch and shrink work as expected.
+   local abs_length = math.abs(spacewidth:tonumber())
+   local length, stretch, shrink = abs_length, 0, 0
+   if self.settings:get("shaper.variablespaces") then
+      length = spacewidth * self.settings:get("shaper.spaceenlargementfactor")
+      stretch = abs_length * self.settings:get("shaper.spacestretchfactor")
+      shrink = abs_length * self.settings:get("shaper.spaceshrinkfactor")
+   end
+   return SILE.types.length(length, stretch, shrink)
 end
 
 -- Return the length of a space character
@@ -71,12 +67,12 @@ end
 -- giving preference to document.spaceskip
 -- Caching this has no significant speedup
 function shaper:measureSpace (options)
-   local ss = SILE.settings:get("document.spaceskip")
+   local ss = self.settings:get("document.spaceskip")
    if ss then
-      SILE.settings:temporarily(function ()
-         SILE.settings:set("font.size", options.size)
-         SILE.settings:set("font.family", options.family)
-         SILE.settings:set("font.filename", options.filename)
+      self.settings:temporarily(function ()
+         self.settings:set("font.size", options.size)
+         self.settings:set("font.family", options.family)
+         self.settings:set("font.filename", options.filename)
          ss = ss:absolute()
       end)
       return ss
@@ -86,12 +82,12 @@ function shaper:measureSpace (options)
       SU.warn("Could not measure the width of a space")
       return SILE.types.length()
    end
-   return shapespace(width and width.length or items[1].width)
+   return self:_shapespace(width and width.length or items[1].width)
 end
 
 function shaper:measureChar (char)
    local options = SILE.font.loadDefaults({})
-   options.tracking = SILE.settings:get("shaper.tracking")
+   options.tracking = self.settings:get("shaper.tracking")
    local items = self:shapeToken(char, options)
    if items and #items > 0 then
       local measurements = {
@@ -122,6 +118,13 @@ function shaper:getFace ()
    SU.error("Abstract function getFace called", true)
 end
 
+-- TODO: Refactor so this isn't needed when the font module is refactored
+function shaper:_getFaceCallback ()
+   return function (options)
+      return self:getFace(options)
+   end
+end
+
 function shaper:addShapedGlyphToNnodeValue (_, _)
    SU.error("Abstract function addShapedGlyphToNnodeValue called", true)
 end
@@ -129,7 +132,7 @@ end
 function shaper:preAddNodes (_, _) end
 
 function shaper:createNnodes (token, options)
-   options.tracking = SILE.settings:get("shaper.tracking")
+   options.tracking = self.settings:get("shaper.tracking")
    local items, _ = self:shapeToken(token, options)
    if #items < 1 then
       return {}
@@ -202,8 +205,8 @@ end
 
 function shaper:makeSpaceNode (options, item)
    local width
-   if SILE.settings:get("shaper.variablespaces") then
-      width = shapespace(item.width)
+   if self.settings:get("shaper.variablespaces") then
+      width = self:_shapespace(item.width)
    else
       width = SILE.shaper:measureSpace(options)
    end

@@ -58,21 +58,21 @@ function class:endPage ()
    if not SILE.scratch.headers.skipthispage then
       if self:oddPage() and SILE.scratch.headers.right then
          SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
-            SILE.settings:toplevelState()
-            SILE.settings:set("current.parindent", SILE.types.node.glue())
-            SILE.settings:set("document.lskip", SILE.types.node.glue())
-            SILE.settings:set("document.rskip", SILE.types.node.glue())
-            -- SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+            self.settings:toplevelState()
+            self.settings:set("current.parindent", SILE.types.node.glue())
+            self.settings:set("document.lskip", SILE.types.node.glue())
+            self.settings:set("document.rskip", SILE.types.node.glue())
+            -- self.settings:set("typesetter.parfillskip", SILE.types.node.glue())
             SILE.process(SILE.scratch.headers.right)
             SILE.call("par")
          end)
       elseif not self:oddPage() and SILE.scratch.headers.left then
          SILE.typesetNaturally(SILE.getFrame("runningHead"), function ()
-            SILE.settings:toplevelState()
-            SILE.settings:set("current.parindent", SILE.types.node.glue())
-            SILE.settings:set("document.lskip", SILE.types.node.glue())
-            SILE.settings:set("document.rskip", SILE.types.node.glue())
-            -- SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+            self.settings:toplevelState()
+            self.settings:set("current.parindent", SILE.types.node.glue())
+            self.settings:set("document.lskip", SILE.types.node.glue())
+            self.settings:set("document.rskip", SILE.types.node.glue())
+            -- self.settings:set("typesetter.parfillskip", SILE.types.node.glue())
             SILE.process(SILE.scratch.headers.left)
             SILE.call("par")
          end)
@@ -91,14 +91,14 @@ function class:registerCommands ()
    plain.registerCommands(self)
 
    self:registerCommand("left-running-head", function (_, content)
-      local closure = SILE.settings:wrap()
+      local closure = self.settings:wrap()
       SILE.scratch.headers.left = function ()
          closure(content)
       end
    end, "Text to appear on the top of the left page")
 
    self:registerCommand("right-running-head", function (_, content)
-      local closure = SILE.settings:wrap()
+      local closure = self.settings:wrap()
       SILE.scratch.headers.right = function ()
          closure(content)
       end
@@ -158,7 +158,7 @@ function class:registerCommands ()
             msg = "book-chapter-title",
          }, content)
       end)
-      local lang = SILE.settings:get("document.language")
+      local lang = self.settings:get("document.language")
       local postcmd = "book:chapter:post"
       if SILE.commands:exists(postcmd .. ":" .. lang) then
          postcmd = postcmd .. ":" .. lang
@@ -167,7 +167,7 @@ function class:registerCommands ()
       SILE.call(postcmd)
       SILE.call("book:chapterfont", {}, content)
       SILE.call("left-running-head", {}, function ()
-         SILE.settings:temporarily(function ()
+         self.settings:temporarily(function ()
             SILE.call("book:left-running-head-font", {}, content)
          end)
       end)
@@ -192,7 +192,7 @@ function class:registerCommands ()
             toc = options.toc,
             level = 2,
          }, content)
-         local lang = SILE.settings:get("document.language")
+         local lang = self.settings:get("document.language")
          local postcmd = "book:section:post"
          if SILE.commands:exists(postcmd .. ":" .. lang) then
             postcmd = postcmd .. ":" .. lang
@@ -204,7 +204,7 @@ function class:registerCommands ()
          SILE.call("right-running-head", {}, function ()
             SILE.call("book:right-running-head-font", {}, function ()
                SILE.call("raggedleft", {}, function ()
-                  SILE.settings:temporarily(function ()
+                  self.settings:temporarily(function ()
                      if SU.boolean(options.numbering, true) then
                         SILE.call("show-multilevel-counter", { id = "sectioning", level = 2 })
                         SILE.typesetter:typeset(" ")
@@ -235,7 +235,7 @@ function class:registerCommands ()
             toc = options.toc,
             level = 3,
          }, content)
-         local lang = SILE.settings:get("document.language")
+         local lang = self.settings:get("document.language")
          local postcmd = "book:subsection:post"
          if SILE.commands:exists(postcmd .. ":" .. lang) then
             postcmd = postcmd .. ":" .. lang

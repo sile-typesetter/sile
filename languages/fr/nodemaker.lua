@@ -31,21 +31,21 @@ function nodemaker:_init (language, options)
    self.quoteTypes = { qu = true } -- split tokens at apostrophes etc.
 end
 
-local function getSpaceGlue (options, parameter)
+function nodemaker:_getSpaceGlue (options, parameter)
    local sg
-   if SILE.settings:get("languages.fr.debugspace") then
+   if self.language.settings:get("languages.fr.debugspace") then
       sg = SILE.types.node.kern("5spc")
    else
-      sg = SILE.settings:get(parameter)
+      sg = self.language.settings:get(parameter)
    end
    -- Return the absolute (kern) length of the specified spacing parameter
    -- with a particular set of font options.
    -- As for SILE.shapers.base.measureSpace(), which has the same type of
    -- logic, caching this doesn't seem to have any significant speedup.
-   SILE.settings:temporarily(function ()
-      SILE.settings:set("font.size", options.size)
-      SILE.settings:set("font.family", options.family)
-      SILE.settings:set("font.filename", options.filename)
+   self.language.settings:temporarily(function ()
+      self.language.settings:set("font.size", options.size)
+      self.language.settings:set("font.family", options.family)
+      self.language.settings:set("font.filename", options.filename)
       sg = sg:absolute()
    end)
    -- Track a subtype on that kern:
@@ -90,7 +90,7 @@ end
 function nodemaker:makeUnbreakableSpace (parameter)
    self:makeToken()
    self.lastnode = "glue"
-   coroutine.yield(getSpaceGlue(self.options, parameter))
+   coroutine.yield(self:_getSpaceGlue(self.options, parameter))
 end
 
 function nodemaker:handleSpaceBefore (item)

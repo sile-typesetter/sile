@@ -6,14 +6,14 @@ local unicode = require("languages.unicode")
 local language = pl.class(unicode)
 language._name = "eo"
 
-function language.declareSettings (_)
-   SILE.settings:declare({
+function language:declareSettings ()
+   self.settings:declare({
       parameter = "languages.eo.ordinal.raisedsuffix",
       type = "boolean",
       default = false,
       help = "Whether to use “ª” or “a” as Esperanto ordinal suffix",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "languages.eo.ordinal.hyphenbefore",
       type = "boolean",
       default = false,
@@ -33,8 +33,8 @@ function language:numberToOrdinal (num)
       num = ""
    end
    local a, h
-   h = SILE.settings:get("languages.eo.ordinal.hyphenbefore") and "-" or ""
-   a = h .. (SILE.settings:get("languages.eo.ordinal.raisedsuffix") and "ª" or "a")
+   h = self.settings:get("languages.eo.ordinal.hyphenbefore") and "-" or ""
+   a = h .. (self.settings:get("languages.eo.ordinal.raisedsuffix") and "ª" or "a")
    return num .. a
 end
 

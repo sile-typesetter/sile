@@ -67,16 +67,16 @@ end
 
 local lastListSpacing
 
-local function getNestedDepth ()
-   local itemize_level = SILE.settings:get("lists.current.itemize.depth")
-   local enumerate_level = SILE.settings:get("lists.current.enumerate.depth")
+function package:_getNestedDepth ()
+   local itemize_level = self.settings:get("lists.current.itemize.depth")
+   local enumerate_level = self.settings:get("lists.current.enumerate.depth")
    return itemize_level + enumerate_level
 end
 
 -- Push some list separation space provided we don't already have some
-local function pushListSpacing ()
+function package:_pushListSpacing ()
    if #SILE.typesetter.state.outputQueue ~= lastListSpacing then
-      SILE.typesetter:pushVglue(SILE.settings:get("lists.parskip"))
+      SILE.typesetter:pushVglue(self.settings:get("lists.parskip"))
       lastListSpacing = #SILE.typesetter.state.outputQueue
    end
 end
@@ -92,19 +92,19 @@ local function popListSpacing ()
    end
 end
 
-local function maybeAddListSpacing (islist, entering, counter)
+function package:_maybeAddListSpacing (islist, entering, counter)
    -- Observed nesting depth for lists is zero based and hence N-1 vs. items in those lists
-   local depth = getNestedDepth() + (islist and 1 or 0)
+   local depth = self:_getNestedDepth() + (islist and 1 or 0)
    local isitem = not islist
    local leaving = not entering
    SILE.typesetter:leaveHmode()
    -- All list items except the first one in the outermost list get leading space
    if entering and isitem and (counter ~= 1 or depth >= 2) then
-      pushListSpacing()
+      self:_pushListSpacing()
    end
    -- All lists get trailing space (to cover nesting)
    if leaving and islist then
-      pushListSpacing()
+      self:_pushListSpacing()
       if depth == 1 then
          popListSpacing()
       end
@@ -116,7 +116,7 @@ function package:doItem (options, content)
    local counter = content._lists_.counter
    local indent = content._lists_.indent
 
-   maybeAddListSpacing(false, true, counter)
+   self:_maybeAddListSpacing(false, true, counter)
 
    local mark = SILE.typesetter:makeHbox(function ()
       if enumStyle.display then
@@ -144,7 +144,7 @@ function package:doItem (options, content)
       --  ii. Text
       -- iii. Text.
       -- Other Office software do not do that...
-      local labelIndent = SILE.settings:get("lists.enumerate.labelindent"):absolute()
+      local labelIndent = self.settings:get("lists.enumerate.labelindent"):absolute()
       stepback = indent - labelIndent
    else
       -- Center bullets in the indentation space
@@ -163,13 +163,13 @@ function package:doItem (options, content)
 
    -- In the event the list ends but paragraph continues we don't want a paragraph
    -- indent applied just because we yielded to the typesetter in vmode.
-   SILE.settings:set("current.parindent", SILE.types.node.glue())
-   maybeAddListSpacing(false, false, counter)
+   self.settings:set("current.parindent", SILE.types.node.glue())
+   self:_maybeAddListSpacing(false, false, counter)
 end
 
 function package:doNestedList (listType, options, content)
    -- depth
-   local depth = SILE.settings:get("lists.current." .. listType .. ".depth") + 1
+   local depth = self.settings:get("lists.current." .. listType .. ".depth") + 1
 
    -- styling
    local enumStyle = styles[listType][(depth - 1) % 6 + 1]
@@ -189,17 +189,17 @@ function package:doNestedList (listType, options, content)
    end
 
    -- indent
-   local baseIndent = (depth == 1) and SILE.settings:get("document.parindent").width:absolute()
+   local baseIndent = (depth == 1) and self.settings:get("document.parindent").width:absolute()
       or SILE.types.measurement("0pt")
-   local listIndent = SILE.settings:get("lists." .. listType .. ".leftmargin"):absolute()
+   local listIndent = self.settings:get("lists." .. listType .. ".leftmargin"):absolute()
 
-   maybeAddListSpacing(true, true, nil)
-   SILE.settings:temporarily(function ()
-      SILE.settings:set("lists.current." .. listType .. ".depth", depth)
-      SILE.settings:set("current.parindent", SILE.types.node.glue())
-      SILE.settings:set("document.parindent", SILE.types.node.glue())
-      local lskip = SILE.settings:get("document.lskip") or SILE.types.node.glue()
-      SILE.settings:set("document.lskip", SILE.types.node.glue(lskip.width + (baseIndent + listIndent)))
+   self:_maybeAddListSpacing(true, true, nil)
+   self.settings:temporarily(function ()
+      self.settings:set("lists.current." .. listType .. ".depth", depth)
+      self.settings:set("current.parindent", SILE.types.node.glue())
+      self.settings:set("document.parindent", SILE.types.node.glue())
+      local lskip = self.settings:get("document.lskip") or SILE.types.node.glue()
+      self.settings:set("document.lskip", SILE.types.node.glue(lskip.width + (baseIndent + listIndent)))
 
       local counter = options.start and (SU.cast("integer", options.start) - 1) or 0
       for i = 1, #content do
@@ -232,7 +232,7 @@ function package:doNestedList (listType, options, content)
          end
       end
    end)
-   maybeAddListSpacing(true, false, nil)
+   self:_maybeAddListSpacing(true, false, nil)
 end
 
 function package:_init ()
@@ -241,42 +241,42 @@ function package:_init ()
 end
 
 function package:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "lists.current.enumerate.depth",
       type = "integer",
       default = 0,
       help = "Current enumerate depth (nesting) - internal",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "lists.current.itemize.depth",
       type = "integer",
       default = 0,
       help = "Current itemize depth (nesting) - internal",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "lists.enumerate.leftmargin",
       type = "measurement",
       default = SILE.types.measurement("2em"),
       help = "Left margin (indentation) for enumerations",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "lists.enumerate.labelindent",
       type = "measurement",
       default = SILE.types.measurement("0.5em"),
       help = "Label indentation for enumerations",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "lists.itemize.leftmargin",
       type = "measurement",
       default = SILE.types.measurement("1.5em"),
       help = "Left margin (indentation) for bullet lists (itemize)",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "lists.parskip",
       type = "vglue",
       default = SILE.types.node.vglue("0pt plus 1pt"),

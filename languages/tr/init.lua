@@ -11,12 +11,12 @@ function language:setupHyphenator ()
    self.hyphenator = require("languages.tr.hyphenator")(self)
 end
 
-function language.declareSettings (_)
+function language:declareSettings ()
    -- Different years of TDK and various publisher style guides differ on this point.
    -- Current official guidance suggests dropping the hyphenation mark if the break
    -- occurs at an apostrophe (kesme işareti). Some older guidance and some publishers
    -- suggest dropping the apostrophe instead.
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "languages.tr.replaceApostropheAtHyphenation",
       type = "boolean",
       default = false,

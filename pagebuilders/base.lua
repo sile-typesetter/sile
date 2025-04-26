@@ -1,11 +1,12 @@
 --- SILE pagebuilder class.
 -- @interfaces pagebuilders
 
-local pagebuilder = pl.class()
+local module = require("types.module")
+local pagebuilder = pl.class(module)
 pagebuilder.type = "pagebuilder"
-pagebuilder._name = "base"
 
 function pagebuilder:_init ()
+   module._init(self)
    self.awful_bad = 1073741823
    self.inf_bad = 10000
    self.eject_penalty = -self.inf_bad

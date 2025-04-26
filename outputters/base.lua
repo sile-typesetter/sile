@@ -1,12 +1,12 @@
 --- SILE outputter class.
 -- @interfaces outputters
 
-local outputter = pl.class()
+local module = require("types.module")
+local outputter = pl.class(module)
 outputter.type = "outputter"
-outputter._name = "base"
 
 function outputter:_init ()
-   SU._avoid_base_class_use(self)
+   module._init(self)
    self.hooks = {}
 end
 

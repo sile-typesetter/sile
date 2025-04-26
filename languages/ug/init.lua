@@ -3,8 +3,8 @@ local tr = require("languages.tr")
 local language = pl.class(tr)
 language._name = "ug"
 
-function language.declareSettings (_)
-   SILE.settings:declare({
+function language:declareSettings ()
+   self.settings:declare({
       parameter = "languages.ug.hyphenoffset",
       help = "Space added between text and hyphen",
       type = "glue or nil",

@@ -10,10 +10,10 @@ local actualtext = {}
 local structureNumberTree
 local numberTreeIndex = 0
 
-local function stNode (notetype)
+function package:_stNode (notetype)
    return {
       notetype = notetype,
-      lang = SILE.settings:get("document.language"),
+      lang = self.settings:get("document.language"),
       kids = {},
       parent = stPointer,
    }
@@ -78,7 +78,7 @@ function package:_init ()
       actualtext[#actualtext] = tostring(actualtext[#actualtext]) .. text
       _typeset(node, text)
    end
-   local stRoot = stNode("Document")
+   local stRoot = self:_stNode("Document")
    stPointer = stRoot
    self:loadPackage("pdf")
    SILE.outputter:registerHook("prefinish", function ()
@@ -100,9 +100,9 @@ end
 function package:registerCommands ()
    self:registerCommand("pdf:structure", function (options, content)
       local notetype = SU.required(options, "type", "pdf structure")
-      local node = stNode(notetype)
+      local node = self:_stNode(notetype)
       addChild(node)
-      node.lang = SILE.settings:get("document.language")
+      node.lang = self.settings:get("document.language")
       if type(SILE.outputter._ensureInit) == "function" then
          SILE.outputter:_ensureInit()
       end

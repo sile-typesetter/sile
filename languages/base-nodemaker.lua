@@ -12,6 +12,7 @@ nodemaker.spaceTypes = {}
 nodemaker.wordTypes = {}
 
 function nodemaker:_init (language, options)
+   self.language = language
    self._name = language._name
    self.contents = {}
    self.options = options
@@ -36,7 +37,7 @@ function nodemaker:addToken (char, item)
 end
 
 function nodemaker:makeGlue (item)
-   if SILE.settings:get("typesetter.obeyspaces") or self.lastnode ~= "glue" then
+   if self.language.settings:get("typesetter.obeyspaces") or self.lastnode ~= "glue" then
       SU.debug("tokenizer", "Space node")
       coroutine.yield(SILE.shaper:makeSpaceNode(self.options, item))
    end
@@ -72,7 +73,7 @@ function nodemaker.charData (_, char)
 end
 
 function nodemaker:isActiveNonBreakingSpace (char)
-   return self:isNonBreakingSpace(char) and not SILE.settings:get("languages.fixedNbsp")
+   return self:isNonBreakingSpace(char) and not self.language.settings:get("languages.fixedNbsp")
 end
 
 function nodemaker:isBreaking (char)

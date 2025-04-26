@@ -88,8 +88,8 @@ function package:registerCommands ()
       if counter then
          SU.deprecated("\\lorem with counter", nil, "0.14.10", "0.16.0")
       end
-      SILE.settings:temporarily(function ()
-         SILE.settings:set("document.language", "la")
+      self.settings:temporarily(function ()
+         self.settings:set("document.language", "la")
          SILE.typesetter:typeset(text)
       end)
    end)

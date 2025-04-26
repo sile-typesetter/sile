@@ -3,7 +3,7 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "color-fonts"
 
-function package._init (_)
+function package:_init ()
    SU.deprecated(
       "\\use[module=color-fonts]",
       nil,

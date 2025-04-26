@@ -1,13 +1,13 @@
 --- SILE inputter class.
 -- @interfaces inputters
 
-local inputter = pl.class()
+local module = require("types.module")
+local inputter = pl.class(module)
 inputter.type = "inputter"
-inputter._name = "base"
 
 function inputter:_init (options)
-   SU._avoid_base_class_use(self)
    self.options = options or {}
+   module._init(self)
 end
 
 function inputter:classInit (options)

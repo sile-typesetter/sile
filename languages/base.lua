@@ -1,9 +1,9 @@
 --- SILE language class.
 -- @interfaces languages
 
-local language = pl.class()
+local module = require("types.module")
+local language = pl.class(module)
 language.type = "language"
-language._name = "base"
 
 local loadkit = require("loadkit")
 local setenv = require("rusile").setenv
@@ -18,17 +18,15 @@ end)
 
 function language:_init (typesetter)
    self.typesetter = typesetter
-   self:_declareBaseSettings()
-   self:declareSettings()
-   self:_registerBaseCommands()
-   self:registerCommands()
+   module._init(self)
    self:loadMessages()
    self:setupNodeMaker()
    self:setupHyphenator()
 end
 
 function language:_post_init ()
-   SILE.settings:registerHook("document.language", function (lang)
+   module._post_init(self)
+   self.settings:registerHook("document.language", function (lang)
       self.typesetter:switchLanguage(lang)
    end)
 end
@@ -76,14 +74,14 @@ function language:loadMessages ()
    fluent:set_locale(original_lang)
 end
 
-function language:_declareBaseSettings ()
-   SILE.settings:declare({
+function language:_declareSettings ()
+   self.settings:declare({
       parameter = "document.language",
       type = "string",
       default = "en",
       help = "Locale for localized language support",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "languages.fixedNbsp",
       type = "boolean",
       default = false,
@@ -91,33 +89,22 @@ function language:_declareBaseSettings ()
    })
 end
 
-function language:declareSettings () end
-
-function language:registerCommands () end
-
-local _registered_base_commands = false
-
-function language:_registerBaseCommands ()
-   if _registered_base_commands then
-      return
-   end
-   _registered_base_commands = true
-
+function language:_registerCommands ()
    self:registerCommand("language", function (options, content)
       local main = SU.required(options, "main", "language setting")
       if content[1] then
-         SILE.settings:temporarily(function ()
-            SILE.settings:set("document.language", main)
+         self.settings:temporarily(function ()
+            self.settings:set("document.language", main)
             SILE.process(content)
          end)
       else
-         SILE.settings:set("document.language", main)
+         self.settings:set("document.language", main)
       end
    end, "Set the typesetters current language")
 
    self:registerCommand("fluent", function (options, content)
       local key = content[1]
-      local locale = options.locale or SILE.settings:get("document.language")
+      local locale = options.locale or self.settings:get("document.language")
       local original_locale = fluent:get_locale()
       fluent:set_locale(locale)
       SU.debug("fluent", "Looking for", key, "in", locale)
@@ -144,7 +131,7 @@ function language:_registerBaseCommands ()
 
    self:registerCommand("ftl", function (options, content)
       local original_locale = fluent:get_locale()
-      local locale = options.locale or SILE.settings:get("document.language")
+      local locale = options.locale or self.settings:get("document.language")
       SU.debug("fluent", "Loading message(s) into locale", locale)
       fluent:set_locale(locale)
       if options.src then
@@ -155,19 +142,6 @@ function language:_registerBaseCommands ()
       end
       fluent:set_locale(original_locale)
    end, "Load messages from a Fluent FTL file into the given locale")
-end
-
---- Register a function as a SILE command.
--- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
--- nodes identified with the command name.
---
--- @tparam string name Name of cammand to register.
--- @tparam function func Callback function to use as command handler.
--- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
--- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
--- messages. Usually auto-detected.
-function language:registerCommand (name, func, help, pack, defaults)
-   SILE.commands:register(self, name, func, help, pack, defaults)
 end
 
 return language

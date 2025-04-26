@@ -2,10 +2,9 @@
 -- @interfaces typesetters
 
 --- @type typesetter
-local typesetter = pl.class()
-
+local module = require("types.module")
+local typesetter = pl.class(module)
 typesetter.type = "typesetter"
-typesetter._name = "base"
 
 -- This is the default typesetter. You are, of course, welcome to create your own.
 local awful_bad = 1073741823
@@ -31,10 +30,9 @@ local _margins = pl.class({
 --- Constructor
 -- @param frame A initial frame to attach the typesetter to.
 function typesetter:_init (frame)
-   SU._avoid_base_class_use(self)
    -- TODO: make class first arg of typesetter init, ditch globals hack
    self.class = SILE.documentState.documentClass
-   self:declareSettings()
+   module._init(self)
    self.hooks = {}
    self.breadcrumbs = SU.breadcrumbs()
    self.frame = frame
@@ -42,6 +40,7 @@ function typesetter:_init (frame)
 end
 
 function typesetter:_post_init ()
+   module._post_init(self)
    self:initFrame(self.frame)
    self:initState()
    self.language = SILE.languages.en(self)
@@ -70,112 +69,112 @@ function typesetter:switchLanguage (lang, force)
 end
 
 --- Declare new setting types
-function typesetter:declareSettings ()
+function typesetter:_declareSettings ()
    -- Settings common to any typesetter instance.
    -- These shouldn't be re-declared and overwritten/reset in the typesetter
    -- constructor (see issue https://github.com/sile-typesetter/sile/issues/1708).
    -- On the other hand, it's fairly acceptable to have them made global:
    -- Any derived typesetter, whatever its implementation, should likely provide
    -- some logic for them (= widows, orphans, spacing, etc.)
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.widowpenalty",
       type = "integer",
       default = 3000,
       help = "Penalty to be applied to widow lines (at the start of a paragraph)",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.parseppattern",
       type = "string or integer",
       default = "\r?\n[\r\n]+",
       help = "Lua pattern used to separate paragraphs",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.obeyspaces",
       type = "boolean or nil",
       default = nil,
       help = "Whether to ignore paragraph initial spaces",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.brokenpenalty",
       type = "integer",
       default = 100,
       help = "Penalty to be applied to broken (hyphenated) lines",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.orphanpenalty",
       type = "integer",
       default = 3000,
       help = "Penalty to be applied to orphan lines (at the end of a paragraph)",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.parfillskip",
       type = "glue",
       default = SILE.types.node.glue("0pt plus 10000pt"),
       help = "Glue added at the end of a paragraph",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "document.letterspaceglue",
       type = "glue or nil",
       default = nil,
       help = "Glue added between tokens",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.underfulltolerance",
       type = "length or nil",
       default = SILE.types.length("1em"),
       help = "Amount a page can be underfull without warning",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.overfulltolerance",
       type = "length or nil",
       default = SILE.types.length("5pt"),
       help = "Amount a page can be overfull without warning",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.breakwidth",
       type = "measurement or nil",
       default = nil,
       help = "Width to break lines at",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.italicCorrection",
       type = "boolean",
       default = false,
       help = "Whether italic correction is activated or not",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.italicCorrection.punctuation",
       type = "boolean",
       default = true,
       help = "Whether italic correction is compensated on special punctuation spaces (e.g. in French)",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.softHyphen",
       type = "boolean",
       default = true,
       help = "When true, soft hyphens are rendered as discretionary breaks, otherwise they are ignored",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.softHyphenWarning",
       type = "boolean",
       default = false,
       help = "When true, a warning is issued when a soft hyphen is encountered",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "typesetter.fixedSpacingAfterInitialEmdash",
       type = "boolean",
       default = true,
@@ -199,13 +198,17 @@ function typesetter:initFrame (frame)
    end
 end
 
-function typesetter.getMargins ()
-   return _margins(SILE.settings:get("document.lskip"), SILE.settings:get("document.rskip"))
+function typesetter:getMargins ()
+   if not self then
+      SU.deprecated("typesetter.getMargins()", "typesetter:getMargins()", "0.16.0", "0.17.0")
+      return typesetter:getMargins()
+   end
+   return _margins(self.settings:get("document.lskip"), self.settings:get("document.rskip"))
 end
 
 function typesetter:setMargins (margins)
-   SILE.settings:set("document.lskip", margins.lskip)
-   SILE.settings:set("document.rskip", margins.rskip)
+   self.settings:set("document.lskip", margins.lskip)
+   self.settings:set("document.rskip", margins.rskip)
 end
 
 function typesetter:pushState ()
@@ -319,7 +322,7 @@ function typesetter:typeset (text)
       return
    end
    local pId = SILE.traceStack:pushText(text)
-   local parsepattern = SILE.settings:get("typesetter.parseppattern")
+   local parsepattern = self.settings:get("typesetter.parseppattern")
    -- NOTE: Big assumption on how to guess were are in "obeylines" mode.
    -- See https://github.com/sile-typesetter/sile/issues/2128
    local obeylines = parsepattern == "\n"
@@ -338,15 +341,15 @@ function typesetter:typeset (text)
          self:endline()
       else
          seenParaContent = true
-         if SILE.settings:get("typesetter.softHyphen") then
+         if self.settings:get("typesetter.softHyphen") then
             local warnedshy = false
             for token2 in SU.gtoke(token.string, luautf8.char(0x00AD)) do
                if token2.separator then -- soft hyphen support
                   local discretionary = SILE.types.node.discretionary({})
-                  local hbox = SILE.typesetter:makeHbox({ SILE.settings:get("font.hyphenchar") })
+                  local hbox = SILE.typesetter:makeHbox({ self.settings:get("font.hyphenchar") })
                   discretionary.prebreak = { hbox }
                   table.insert(SILE.typesetter.state.nodes, discretionary)
-                  if not warnedshy and SILE.settings:get("typesetter.softHyphenWarning") then
+                  if not warnedshy and self.settings:get("typesetter.softHyphenWarning") then
                      SU.warn("Soft hyphen encountered and replaced with discretionary")
                   end
                   warnedshy = true
@@ -356,7 +359,7 @@ function typesetter:typeset (text)
             end
          else
             if
-               SILE.settings:get("typesetter.softHyphenWarning") and luautf8.match(token.string, luautf8.char(0x00AD))
+               self.settings:get("typesetter.softHyphenWarning") and luautf8.match(token.string, luautf8.char(0x00AD))
             then
                SU.warn("Soft hyphen encountered and ignored")
             end
@@ -381,13 +384,13 @@ end
 function typesetter:endline ()
    self.class.endPar(self)
    self:leaveHmode()
-   if SILE.settings:get("current.hangIndent") then
-      SILE.settings:set("current.hangIndent", nil)
-      SILE.settings:set("linebreak.hangIndent", nil)
+   if self.settings:get("current.hangIndent") then
+      self.settings:set("current.hangIndent", nil)
+      self.settings:set("linebreak.hangIndent", nil)
    end
-   if SILE.settings:get("current.hangAfter") then
-      SILE.settings:set("current.hangAfter", nil)
-      SILE.settings:set("linebreak.hangAfter", nil)
+   if self.settings:get("current.hangAfter") then
+      self.settings:set("current.hangAfter", nil)
+      self.settings:set("linebreak.hangAfter", nil)
    end
 end
 
@@ -422,14 +425,14 @@ end
 function typesetter:setpar (text)
    text = text:gsub("\r?\n", " "):gsub("\t", " ")
    if #self.state.nodes == 0 then
-      if not SILE.settings:get("typesetter.obeyspaces") then
+      if not self.settings:get("typesetter.obeyspaces") then
          text = text:gsub("^%s+", "")
       end
       self:initline()
 
       if
-         SILE.settings:get("typesetter.fixedSpacingAfterInitialEmdash")
-         and not SILE.settings:get("typesetter.obeyspaces")
+         self.settings:get("typesetter.fixedSpacingAfterInitialEmdash")
+         and not self.settings:get("typesetter.obeyspaces")
       then
          local speakerChange = false
          local dialogue = luautf8.gsub(text, speakerChangePattern, function ()
@@ -535,7 +538,7 @@ end
 -- @tparam table precShape The last shaped item (italic).
 -- @tparam table curShape The first shaped item (non-italic).
 -- @tparam number|nil punctSpaceWidth The width of a punctuation kern between the two items, if any.
-local function fromItalicCorrection (precShape, curShape, punctSpaceWidth)
+function typesetter:_fromItalicCorrection (precShape, curShape, punctSpaceWidth)
    local xOffset
    if not curShape or not precShape then
       xOffset = 0
@@ -545,7 +548,7 @@ local function fromItalicCorrection (precShape, curShape, punctSpaceWidth)
       local d = precShape.glyphWidth + precShape.x_bearing
       local delta = d > precShape.width and d - precShape.width or 0
       xOffset = precShape.height <= curShape.height and delta or delta * curShape.height / precShape.height
-      if punctSpaceWidth and SILE.settings:get("typesetter.italicCorrection.punctuation") then
+      if punctSpaceWidth and self.settings:get("typesetter.italicCorrection.punctuation") then
          xOffset = xOffset - punctSpaceWidth > 0 and (xOffset - punctSpaceWidth) or 0
       end
    end
@@ -553,12 +556,12 @@ local function fromItalicCorrection (precShape, curShape, punctSpaceWidth)
 end
 
 --- Compute the italic correction when switching from non-italic to italic.
--- Same assumptions as fromItalicCorrection(), but on the starting side of the glyph.
+-- Same assumptions as typesetter:_fromItalicCorrection(), but on the starting side of the glyph.
 --
 -- @tparam table precShape The last shaped item (non-italic).
 -- @tparam table curShape The first shaped item (italic).
 -- @tparam number|nil punctSpaceWidth The width of a punctuation kern between the two items, if any.
-local function toItalicCorrection (precShape, curShape, punctSpaceWidth)
+function typesetter:_toItalicCorrection (precShape, curShape, punctSpaceWidth)
    local xOffset
    if not curShape or not precShape then
       xOffset = 0
@@ -568,7 +571,7 @@ local function toItalicCorrection (precShape, curShape, punctSpaceWidth)
       local d = curShape.x_bearing
       local delta = d < 0 and -d or 0
       xOffset = precShape.depth >= curShape.depth and delta or delta * precShape.depth / curShape.depth
-      if punctSpaceWidth and SILE.settings:get("typesetter.italicCorrection.punctuation") then
+      if punctSpaceWidth and self.settings:get("typesetter.italicCorrection.punctuation") then
          xOffset = punctSpaceWidth - xOffset > 0 and xOffset or 0
       end
    end
@@ -581,7 +584,7 @@ local function isItalicLike (nnode)
    -- But it's probably more robust to use the italic angle, so that
    -- thin italic, oblique or slanted fonts etc. may work too.
    local ot = require("core.opentype-parser")
-   local face = SILE.font.cache(nnode.options, SILE.shaper.getFace)
+   local face = SILE.font.cache(nnode.options, SILE.shaper:_getFaceCallback())
    local font = ot.parseFont(face)
    return font.post.italicAngle ~= 0
 end
@@ -591,7 +594,7 @@ function typesetter:shapeAllNodes (nodelist, inplace)
    local newNodelist = {}
    local prec
    local precShapedNodes
-   local isItalicCorrectionEnabled = SILE.settings:get("typesetter.italicCorrection")
+   local isItalicCorrectionEnabled = self.settings:get("typesetter.italicCorrection")
    for _, current in ipairs(nodelist) do
       if current.is_unshaped then
          local shapedNodes = current:shape()
@@ -603,12 +606,12 @@ function typesetter:shapeAllNodes (nodelist, inplace)
                local precShape, precHasGlue = getLastShape(precShapedNodes)
                local curShape, curHasGlue, curPunctSpaceWidth = getFirstShape(shapedNodes)
                isGlue = precHasGlue or curHasGlue
-               itCorrOffset = fromItalicCorrection(precShape, curShape, curPunctSpaceWidth)
+               itCorrOffset = self:_fromItalicCorrection(precShape, curShape, curPunctSpaceWidth)
             elseif not isItalicLike(prec) and isItalicLike(current) then
                local precShape, precHasGlue, precPunctSpaceWidth = getLastShape(precShapedNodes)
                local curShape, curHasGlue = getFirstShape(shapedNodes)
                isGlue = precHasGlue or curHasGlue
-               itCorrOffset = toItalicCorrection(precShape, curShape, precPunctSpaceWidth)
+               itCorrOffset = self:_toItalicCorrection(precShape, curShape, precPunctSpaceWidth)
             end
             if itCorrOffset and itCorrOffset ~= 0 then
                -- If one of the node contains a glue (e.g. "a \em{proof} is..."),
@@ -671,14 +674,14 @@ function typesetter:boxUpNodes ()
       return {}
    end
    self:shapeAllNodes(nodelist)
-   local parfillskip = SILE.settings:get("typesetter.parfillskip")
+   local parfillskip = self.settings:get("typesetter.parfillskip")
    parfillskip.discardable = false
    self:pushGlue(parfillskip)
    self:pushPenalty(-inf_bad)
    SU.debug("typesetter", function ()
       return "Boxed up " .. (#nodelist > 500 and #nodelist .. " nodes" or SU.ast.contentToString(nodelist))
    end)
-   local breakWidth = SILE.settings:get("typesetter.breakwidth") or self.frame:getLineWidth()
+   local breakWidth = self.settings:get("typesetter.breakwidth") or self.frame:getLineWidth()
    local lines = self:breakIntoLines(nodelist, breakWidth)
    local vboxes = {}
    for index = 1, #lines do
@@ -699,11 +702,11 @@ function typesetter:boxUpNodes ()
       local vbox = SILE.types.node.vbox({ nodes = nodes, ratio = line.ratio })
       local pageBreakPenalty = 0
       if #lines > 1 and index == 1 then
-         pageBreakPenalty = SILE.settings:get("typesetter.widowpenalty")
+         pageBreakPenalty = self.settings:get("typesetter.widowpenalty")
       elseif #lines > 1 and index == (#lines - 1) then
-         pageBreakPenalty = SILE.settings:get("typesetter.orphanpenalty")
+         pageBreakPenalty = self.settings:get("typesetter.orphanpenalty")
       elseif line.is_broken then
-         pageBreakPenalty = SILE.settings:get("typesetter.brokenpenalty")
+         pageBreakPenalty = self.settings:get("typesetter.brokenpenalty")
       end
       vboxes[#vboxes + 1] = self:leadingFor(vbox, self.state.previousVbox)
       vboxes[#vboxes + 1] = vbox
@@ -815,7 +818,7 @@ function typesetter:setVerticalGlue (pageNodeList, target)
    if adjustment:tonumber() > 0 then
       if adjustment > gTotal.stretch then
          if
-            (adjustment - gTotal.stretch):tonumber() > SILE.settings:get("typesetter.underfulltolerance"):tonumber()
+            (adjustment - gTotal.stretch):tonumber() > self.settings:get("typesetter.underfulltolerance"):tonumber()
          then
             SU.warn(
                "Underfull frame "
@@ -838,7 +841,7 @@ function typesetter:setVerticalGlue (pageNodeList, target)
    elseif adjustment:tonumber() < 0 then
       adjustment = 0 - adjustment
       if adjustment > gTotal.shrink then
-         if (adjustment - gTotal.shrink):tonumber() > SILE.settings:get("typesetter.overfulltolerance"):tonumber() then
+         if (adjustment - gTotal.shrink):tonumber() > self.settings:get("typesetter.overfulltolerance"):tonumber() then
             SU.warn(
                "Overfull frame "
                   .. self.frame.id
@@ -1032,12 +1035,12 @@ function typesetter:leadingFor (vbox, previous)
    end
    local prevDepth = previous.depth
    SU.debug("typesetter", "   Depth of previous line was", prevDepth)
-   local bls = SILE.settings:get("document.baselineskip")
+   local bls = self.settings:get("document.baselineskip")
    local depth = bls.height:absolute() - vbox.height:absolute() - prevDepth:absolute()
    SU.debug("typesetter", "   Leading height =", bls.height, "-", vbox.height, "-", prevDepth, "=", depth)
 
    -- the lineskip setting is a vglue, but we need a version absolutized at this point, see #526
-   local lead = SILE.settings:get("document.lineskip").height:absolute()
+   local lead = self.settings:get("document.lineskip").height:absolute()
    if depth > lead then
       return SILE.types.node.vglue(SILE.types.length(depth.length, bls.height.stretch, bls.height.shrink))
    else

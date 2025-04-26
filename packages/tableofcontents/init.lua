@@ -100,8 +100,8 @@ function package:registerCommands ()
    end)
 
    self:registerCommand("tableofcontents:item", function (options, content)
-      SILE.settings:temporarily(function ()
-         SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+      self.settings:temporarily(function ()
+         self.settings:set("typesetter.parfillskip", SILE.types.node.glue())
          SILE.call(
             "tableofcontents:level" .. options.level .. "item",
             {},

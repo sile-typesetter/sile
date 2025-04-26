@@ -18,9 +18,9 @@ function language:declareSettings ()
       --     on Thierry Bouche's recommendations,
       --  These should be usual for France and Canada. The Swiss may prefer a thin
       --  space for guillemets, that's why we are having settings hereafter.
-      local enlargement = SILE.settings:get("shaper.spaceenlargementfactor")
-      local stretch = SILE.settings:get("shaper.spacestretchfactor")
-      local shrink = SILE.settings:get("shaper.spaceshrinkfactor")
+      local enlargement = self.settings:get("shaper.spaceenlargementfactor")
+      local stretch = self.settings:get("shaper.spacestretchfactor")
+      local shrink = self.settings:get("shaper.spaceshrinkfactor")
       return {
          colonspace = SILE.types.length(enlargement .. "spc plus " .. stretch .. "spc minus " .. shrink .. "spc"),
          thinspace = SILE.types.length((0.5 * enlargement) .. "spc"),
@@ -34,28 +34,28 @@ function language:declareSettings ()
    local spaces = computeSpaces()
    -- NOTE: We are only doing it at load time. We don't expect the shaper settings to be often
    -- changed arbitrarily _after_ having selected a language...
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "languages.fr.colonspace",
       type = "kern",
       default = SILE.types.node.kern(spaces.colonspace),
       help = "The amount of space before a colon, theoretically a non-breakable, shrinkable, stretchable inter-word space",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "languages.fr.thinspace",
       type = "kern",
       default = SILE.types.node.kern(spaces.thinspace),
       help = "The amount of space before high punctuations, theoretically a fixed, non-breakable space, around half the inter-word space",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "languages.fr.guillspace",
       type = "kern",
       default = SILE.types.node.kern(spaces.guillspace),
       help = "The amount of space applying to guillemets, theoretically smaller than a non-breakable inter-word space, with reduced stretchability",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "languages.fr.debugspace",
       type = "boolean",
       default = false,

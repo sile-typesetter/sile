@@ -7,7 +7,7 @@ local metrics = require("fontmetrics")
 
 local metricscache = {}
 
-local getLineMetrics = function (l)
+local getLineMetrics = function (self, l)
    local linemetrics = { ascender = 0, descender = 0, lineheight = SILE.types.length() }
    if not l or not l.nodes then
       return linemetrics
@@ -17,15 +17,15 @@ local getLineMetrics = function (l)
       if node.is_nnode then
          local m = metricscache[SILE.font._key(node.options)]
          if not m then
-            local face = SILE.font.cache(node.options, SILE.shaper.getFace)
+            local face = SILE.font.cache(node.options, SILE.shaper:_getFaceCallback())
             m = metrics.get_typographic_extents(face)
             m.ascender = m.ascender * node.options.size
             m.descender = m.descender * node.options.size
             metricscache[SILE.font._key(node.options)] = m
          end
-         SILE.settings:temporarily(function ()
+         self.settings:temporarily(function ()
             SILE.call("font", node.options, {})
-            m.lineheight = SU.cast("length", SILE.settings:get("linespacing.css.line-height")):absolute()
+            m.lineheight = SU.cast("length", self.settings:get("linespacing.css.line-height")):absolute()
          end)
          if m.ascender > linemetrics.ascender then
             linemetrics.ascender = m.ascender
@@ -41,10 +41,10 @@ local getLineMetrics = function (l)
    return linemetrics
 end
 
-local linespacingLeading = function (_, vbox, previous)
-   local method = SILE.settings:get("linespacing.method")
+local linespacingLeading = function (self, vbox, previous)
+   local method = self.settings:get("linespacing.method")
 
-   local firstline = SILE.settings:get("linespacing.minimumfirstlineposition"):absolute()
+   local firstline = self.settings:get("linespacing.minimumfirstlineposition"):absolute()
    if not previous then
       if firstline.length:tonumber() > 0 then
          local toAdd = SILE.types.length(firstline.length - vbox.height)
@@ -59,13 +59,13 @@ local linespacingLeading = function (_, vbox, previous)
    end
 
    if method == "fit-glyph" then
-      local extra = SILE.settings:get("linespacing.fit-glyph.extra-space"):absolute()
+      local extra = self.settings:get("linespacing.fit-glyph.extra-space"):absolute()
       local toAdd = SILE.types.length(extra)
       return SILE.types.node.vglue(toAdd)
    end
 
    if method == "fixed" then
-      local btob = SILE.settings:get("linespacing.fixed.baselinedistance"):absolute()
+      local btob = self.settings:get("linespacing.fixed.baselinedistance"):absolute()
       local toAdd = SILE.types.length(btob.length - (vbox.height + previous.depth), btob.stretch, btob.shrink)
       return SILE.types.node.vglue(toAdd)
    end
@@ -75,12 +75,12 @@ local linespacingLeading = function (_, vbox, previous)
       SU.error("'" .. method .. "' line spacing method requires font metrics module, which is not available")
    end
 
-   local thismetrics = getLineMetrics(vbox)
-   local prevmetrics = getLineMetrics(previous)
+   local thismetrics = getLineMetrics(self, vbox)
+   local prevmetrics = getLineMetrics(self, previous)
    if method == "fit-font" then
       -- Distance to next baseline is max(descender) of fonts on previous +
       -- max(ascender) of fonts on next
-      local extra = SILE.settings:get("linespacing.fit-font.extra-space"):absolute()
+      local extra = self.settings:get("linespacing.fit-font.extra-space"):absolute()
       local btob = prevmetrics.descender + thismetrics.ascender + extra
       local toAdd = btob - (vbox.height + (previous and previous.depth or 0))
       return SILE.types.node.vglue(toAdd)
@@ -107,39 +107,39 @@ function package:_init ()
 end
 
 function package:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "linespacing.method",
       default = "tex",
       type = "string",
       help = "How to set the line spacing (tex, fixed, fit-font, fit-glyph, css)",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "linespacing.fixed.baselinedistance",
       default = SILE.types.length("1.2em"),
       type = "length",
       help = "Distance from baseline to baseline in the case of fixed line spacing",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "linespacing.minimumfirstlineposition",
       default = SILE.types.length(0),
       type = "length",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "linespacing.fit-glyph.extra-space",
       default = SILE.types.length(0),
       type = "length",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "linespacing.fit-font.extra-space",
       default = SILE.types.length(0),
       type = "length",
    })
 
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "linespacing.css.line-height",
       default = SILE.types.length("1.2em"),
       type = "length",

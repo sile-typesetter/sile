@@ -23,8 +23,11 @@ end
 local shaper = pl.class(base)
 shaper._name = "pango"
 
--- TODO: refactor so method accepts self
-function shaper.getFace (options)
+function shaper:getFace (options)
+   if not options then
+      SU.deprecated("shaper.getFace()", "shaper:getFace()", "0.16.0", "0.17.0")
+      return shaper:getFace(self)
+   end
    local pal
    if options.pal then
       return options.pal
@@ -67,7 +70,7 @@ function shaper.getFace (options)
 end
 
 function shaper:shapeToken (text, options)
-   local pal = SILE.font.cache(options, self.getFace)
+   local pal = SILE.font.cache(options, self:_getFaceCallback())
    local rv = {}
    local items = pango.itemize(pango_context, text, 0, string.len(text), pal, nil)
    local twidth = SILE.types.length()

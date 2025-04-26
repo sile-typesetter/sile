@@ -231,7 +231,7 @@ function package:registerCommands ()
       SILE.typesetNaturally(SILE.typesetter.frame.previous, function ()
          table.insert(SILE.typesetter.state.nodes, hbox)
       end)
-      -- SILE.settings:set("document.baselineskip", SILE.types.length("1ex") - SILE.settings:get("document.baselineskip").height)
+      -- self.settings:set("document.baselineskip", SILE.types.length("1ex") - self.settings:get("document.baselineskip").height)
       -- undoSkip.stretch = hbox.height
       -- SILE.typesetter:pushHbox({ value = {} })
       -- SILE.typesetter:pushVglue({ height = undoSkip })

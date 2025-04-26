@@ -4,8 +4,8 @@ local nodemaker = pl.class(unicode)
 nodemaker._name = "am"
 
 function nodemaker:iterator (items)
-   local ics = SILE.settings:get("document.letterspaceglue")
-   local style = SILE.settings:get("languages.am.justification")
+   local ics = self.language.settings:get("document.letterspaceglue")
+   local style = self.language.settings:get("languages.am.justification")
    return coroutine.wrap(function ()
       for i = 1, #items do
          local item = items[i]

@@ -10,10 +10,10 @@ function language:setupNodeMaker ()
    self.nodemaker = require("languages.ja.nodemaker")
 end
 
-function language.registerCommands (_)
-   SILE.registerCommand("book:chapter:post:ja", function (_, _)
+function language:registerCommands ()
+   self:registerCommand("book:chapter:post:ja", function (_, _)
       SILE.call("medskip")
-   end, nil, nil, true)
+   end)
 end
 
 return language

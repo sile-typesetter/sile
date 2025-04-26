@@ -69,7 +69,7 @@ function package:registerCommands ()
    self:registerCommand("svg-glyph", function (_, content)
       local fontoptions = SILE.font.loadDefaults({})
       local items = SILE.shaper:shapeToken(content[1], fontoptions)
-      local face = SILE.shaper.getFace(fontoptions)
+      local face = SILE.shaper:getFace(fontoptions)
       otparser.parseFont(face)
       if not face.font.svg then
          return SILE.process(content)

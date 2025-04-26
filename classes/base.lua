@@ -1,11 +1,11 @@
 --- SILE document class interface.
 -- @interfaces classes
 
-local class = pl.class()
-class.type = "class"
-class._name = "base"
+local module = require("types.module")
 
-class._initialized = false
+local class = pl.class(module)
+class.type = "class"
+
 class.deferredInit = {}
 class.pageTemplate = { frames = {}, firstContentFrame = nil }
 class.defaultFrameset = {}
@@ -51,17 +51,7 @@ class.packages = {}
 
 function class:_init (options)
    SILE.scratch.half_initialized_class = self
-   if self == options then
-      options = {}
-   end
-   self:_declareBaseOptions()
-   self:declareOptions()
-   self:registerRawHandlers()
-   self:_declareBaseSettings()
-   self:declareSettings()
-   self:_registerBaseCommands()
-   self:registerCommands()
-   self:setOptions(options)
+   module._init(self, options)
    self:declareFrames(self.defaultFrameset)
    self:registerPostinit(function (self_)
       if type(self.firstContentFrame) == "string" then
@@ -81,8 +71,8 @@ function class:_init (options)
 end
 
 function class:_post_init ()
+   module._post_init(self)
    SILE.documentState.documentClass = self
-   self._initialized = true
    for i, func in ipairs(self.deferredInit) do
       func(self)
       self.deferredInit[i] = nil
@@ -90,7 +80,7 @@ function class:_post_init ()
    SILE.scratch.half_initialized_class = nil
 end
 
-function class:setOptions (options)
+function class:_setOptions (options)
    options = options or {}
    -- Classes that add options with dependencies should explicitly handle them, then exempt them from further processing.
    -- The landscape and crop related options are handled explicitly before papersize, then the "rest" of options that are not interdependent.
@@ -112,9 +102,7 @@ function class:declareOption (option, setter)
    self.options[option] = setter
 end
 
-function class:declareOptions () end
-
-function class:_declareBaseOptions ()
+function class:_declareOptions ()
    self:declareOption("class", function (_, name)
       if name then
          if name ~= self._name then
@@ -175,22 +163,20 @@ function class:_declareBaseOptions ()
    end)
 end
 
-function class:declareSettings () end
-
-function class:_declareBaseSettings ()
-   SILE.settings:declare({
+function class:_declareSettings ()
+   self.settings:declare({
       parameter = "current.parindent",
       type = "glue or nil",
       default = nil,
       help = "Glue at start of paragraph",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "current.hangIndent",
       type = "measurement or nil",
       default = nil,
       help = "Size of hanging indent",
    })
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "current.hangAfter",
       type = "integer or nil",
       default = nil,
@@ -301,28 +287,11 @@ function class:runHooks (category, options)
    end
 end
 
---- Register a function as a SILE command.
--- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
--- nodes identified with the command name.
---
--- @tparam string name Name of cammand to register.
--- @tparam function func Callback function to use as command handler.
--- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
--- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
--- messages. Usually auto-detected.
-function class:registerCommand (name, func, help, pack, defaults)
-   SILE.commands:register(self, name, func, help, pack, defaults)
-end
-
-function class:registerRawHandler (format, callback)
-   SILE.rawHandlers[format] = callback
-end
-
-function class:registerRawHandlers ()
+function class:_registerRawHandlers ()
    self:registerRawHandler("text", function (_, content)
-      SILE.settings:temporarily(function ()
-         SILE.settings:set("typesetter.parseppattern", "\n")
-         SILE.settings:set("typesetter.obeyspaces", true)
+      self.settings:temporarily(function ()
+         self.settings:set("typesetter.parseppattern", "\n")
+         self.settings:set("typesetter.obeyspaces", true)
          SILE.typesetter:typeset(content[1])
       end)
    end)
@@ -337,17 +306,8 @@ local function packOptions (options)
    return relevant
 end
 
-function class.registerCommands () end
-
-local _registered_base_commands = false
-
 -- These need refactoring probably somewhere outside of the document class system
-function class:_registerBaseCommands ()
-   if _registered_base_commands then
-      return
-   end
-   _registered_base_commands = true
-
+function class:_registerCommands ()
    local function replaceProcessBy (replacement, tree)
       if type(tree) ~= "table" then
          return tree
@@ -453,11 +413,11 @@ function class:_registerBaseCommands ()
       if SU.ast.hasContent(content) then
          _deprecated("\\script{...}", "\\lua{...}")
       elseif options.src then
-         local module = options.src:gsub("%/", ".")
+         local spec = options.src:gsub("%/", ".")
          local original = (("\\script[src=%s]"):format(options.src))
          local result = SILE.require(options.src)
          local suggested = (type(result) == "table" and result._name and "\\use[module=%s]" or "\\lua[require=%s]"):format(
-            module
+            spec
          )
          _deprecated(original, suggested)
       else
@@ -487,8 +447,8 @@ function class:_registerBaseCommands ()
          elseif options.src then
             return SILE.processFile(options.src, "lua", packopts)
          elseif options.require then
-            local module = SU.required(options, "require", "lua")
-            return require(module)
+            local spec = SU.required(options, "require", "lua")
+            return require(spec)
          else
             SU.error("\\lua function requires inline content or a src file path or a require module name")
          end
@@ -537,8 +497,8 @@ function class:_registerBaseCommands ()
                ]])
                SILE.processFile(options.src, "lua", packopts)
             else
-               local module = SU.required(options, "module", "use")
-               SILE.use(module, packopts)
+               local spec = SU.required(options, "module", "use")
+               SILE.use(spec, packopts)
             end
          end
       end,
@@ -660,9 +620,12 @@ function class:declareFrames (specs)
    end
 end
 
--- WARNING: not called as class method
-function class.newPar (typesetter)
-   local parindent = SILE.settings:get("current.parindent") or SILE.settings:get("document.parindent")
+function class:newPar (typesetter)
+   if not typesetter then
+      SU.deprecated("class.newPar", "class:newPar", "0.16.0", "0.17.0")
+      return class:newPar(self)
+   end
+   local parindent = self.settings:get("current.parindent") or self.settings:get("document.parindent")
    -- See https://github.com/sile-typesetter/sile/issues/1361
    -- The parindent *cannot* be pushed non-absolutized, as it may be evaluated
    -- outside the (possibly temporary) setting scope where it was used for line
@@ -675,18 +638,21 @@ function class.newPar (typesetter)
    -- new frame context. However, defining a parindent in such a unit is quite
    -- unlikely. And anyway pushback() has plenty of other issues.
    typesetter:pushGlue(parindent:absolute())
-   local hangIndent = SILE.settings:get("current.hangIndent")
+   local hangIndent = self.settings:get("current.hangIndent")
    if hangIndent then
-      SILE.settings:set("linebreak.hangIndent", hangIndent)
+      self.settings:set("linebreak.hangIndent", hangIndent)
    end
-   local hangAfter = SILE.settings:get("current.hangAfter")
+   local hangAfter = self.settings:get("current.hangAfter")
    if hangAfter then
-      SILE.settings:set("linebreak.hangAfter", hangAfter)
+      self.settings:set("linebreak.hangAfter", hangAfter)
    end
 end
 
--- WARNING: not called as class method
-function class.endPar (typesetter)
+function class:endPar (typesetter)
+   if not typesetter then
+      SU.deprecated("class.endPar", "class:endPar", "0.16.0", "0.17.0")
+      return class:endPar(self)
+   end
    -- If we're already explicitly out of hmode don't do anything special in the way of skips or indents. Assume the user
    -- has handled that how they want, e.g. with a skip.
    local queue = typesetter.state.outputQueue
@@ -696,9 +662,9 @@ function class.endPar (typesetter)
    if typesetter:vmode() and (last_is_vglue or last_is_vpenalty) then
       return
    end
-   SILE.settings:set("current.parindent", nil)
+   self.settings:set("current.parindent", nil)
    typesetter:leaveHmode()
-   typesetter:pushVglue(SILE.settings:get("document.parskip"))
+   typesetter:pushVglue(self.settings:get("document.parskip"))
 end
 
 function class:newPage ()

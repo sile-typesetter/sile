@@ -18,9 +18,9 @@ local theme = {
    codeblock = "#303040", -- dark grey with a hint of blue
 }
 
-local colorWrapper = function (ctype, content)
+function package:_colorWrapper (ctype, content)
    local color = SILE.scratch.autodoc.theme[ctype]
-   if color and SILE.settings:get("autodoc.highlighting") and SILE.commands:exists("color") then
+   if color and self.settings:get("autodoc.highlighting") and SILE.commands:exists("color") then
       SILE.call("color", { color = color }, content)
    else
       SILE.process(content)
@@ -126,7 +126,7 @@ function package:_init (options)
 end
 
 function package:declareSettings ()
-   SILE.settings:declare({
+   self.settings:declare({
       parameter = "autodoc.highlighting",
       default = false,
       type = "boolean",
@@ -181,13 +181,13 @@ function package:registerCommands ()
 
    self:registerCommand("autodoc:package:style", function (_, content)
       SILE.call("font", { weight = 700 }, function ()
-         colorWrapper("package", content)
+         self:_colorWrapper("package", content)
       end)
    end)
 
    self:registerCommand("autodoc:class:style", function (_, content)
       SILE.call("font", { weight = 700 }, function ()
-         colorWrapper("class", content)
+         self:_colorWrapper("class", content)
       end)
    end)
 
@@ -200,14 +200,14 @@ function package:registerCommands ()
          SILE.call("code", {}, content)
       elseif options.type == "setting" then
          SILE.call("code", {}, function ()
-            colorWrapper(options.type, content)
+            self:_colorWrapper(options.type, content)
          end)
       elseif options.type == "environment" then
          SILE.call("code", {}, function ()
-            colorWrapper("command", content)
+            self:_colorWrapper("command", content)
          end)
       else
-         colorWrapper(options.type, content)
+         self:_colorWrapper(options.type, content)
       end
    end)
 
@@ -225,7 +225,7 @@ function package:registerCommands ()
       -- Conditional existence check (can be disable is passing check=false), e.g.
       -- for settings that would be define in another context.
       if SU.boolean(options.check, true) then
-         SILE.settings:get(name) -- will issue an error if unknown
+         self.settings:get(name) -- will issue an error if unknown
       end
       -- Inserts breakpoints after dots
       local nameWithBreaks = self.class.packages.inputfilter:transformContent(content, settingFilter)
@@ -376,31 +376,31 @@ function package:registerCommands ()
       -- we trim it off here.
       content = SU.ast.trimSubContent(content)
       SILE.typesetter:leaveHmode()
-      local parindent = SILE.settings:get("document.parindent"):absolute()
-      local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()).width:absolute() + parindent
-      local rskip = (SILE.settings:get("document.rskip") or SILE.types.node.glue()).width:absolute() + parindent
-      SILE.settings:temporarily(function ()
+      local parindent = self.settings:get("document.parindent"):absolute()
+      local lskip = (self.settings:get("document.lskip") or SILE.types.node.glue()).width:absolute() + parindent
+      local rskip = (self.settings:get("document.rskip") or SILE.types.node.glue()).width:absolute() + parindent
+      self.settings:temporarily(function ()
          -- Note: We avoid using the verbatim environment and simplify things a bit
          -- (and try to better enforce novbreak points of insertion)
          SILE.call("verbatim:font")
          SILE.call("language", { main = "und" })
          -- Rather than absolutizing 4 different values, just do it once and cache it
          local pushline = function (offset)
-            colorWrapper("note", function ()
+            self:_colorWrapper("note", function ()
                SILE.call("raise", { height = offset }, function ()
                   SILE.call("hrule", { thickness = "0.5pt", width = "100%lw" })
                end)
             end)
          end
-         SILE.settings:set("typesetter.parseppattern", "\n")
-         SILE.settings:set("typesetter.obeyspaces", true)
-         SILE.settings:set("document.lskip", SILE.types.node.glue(lskip))
-         SILE.settings:set("document.rskip", SILE.types.node.glue(rskip))
-         SILE.settings:set("document.parindent", SILE.types.node.glue())
-         SILE.settings:set("document.parskip", SILE.types.node.vglue())
-         SILE.settings:set("document.spaceskip", SILE.types.length("1spc"))
-         SILE.settings:set("shaper.variablespaces", false)
-         colorWrapper("codeblock", function ()
+         self.settings:set("typesetter.parseppattern", "\n")
+         self.settings:set("typesetter.obeyspaces", true)
+         self.settings:set("document.lskip", SILE.types.node.glue(lskip))
+         self.settings:set("document.rskip", SILE.types.node.glue(rskip))
+         self.settings:set("document.parindent", SILE.types.node.glue())
+         self.settings:set("document.parskip", SILE.types.node.vglue())
+         self.settings:set("document.spaceskip", SILE.types.length("1spc"))
+         self.settings:set("shaper.variablespaces", false)
+         self:_colorWrapper("codeblock", function ()
             pushline("0.2ex")
             SILE.call("novbreak")
             SILE.process(content)
@@ -420,16 +420,16 @@ function package:registerCommands ()
       -- Replacing the \note command from the original SILE manual...
       local linedimen = SILE.types.length("0.75em")
       local linethickness = SILE.types.length("0.3pt")
-      local ls = SILE.settings:get("document.lskip") or SILE.types.node.glue()
-      local p = SILE.settings:get("document.parindent")
+      local ls = self.settings:get("document.lskip") or SILE.types.node.glue()
+      local p = self.settings:get("document.parindent")
       local leftindent = (p.width:absolute() + ls.width:absolute()).length -- fixed part
       local innerindent = SILE.types.measurement("1em"):absolute()
-      SILE.settings:temporarily(function ()
+      self.settings:temporarily(function ()
          SILE.typesetter:leaveHmode()
-         SILE.settings:set("document.lskip", leftindent)
-         SILE.settings:set("document.rskip", leftindent)
-         SILE.settings:set("current.parindent", SILE.types.node.glue())
-         colorWrapper("note", function ()
+         self.settings:set("document.lskip", leftindent)
+         self.settings:set("document.rskip", leftindent)
+         self.settings:set("current.parindent", SILE.types.node.glue())
+         self:_colorWrapper("note", function ()
             SILE.call("hrule", { width = linethickness, height = linethickness, depth = linedimen })
             SILE.call("hrule", { width = 3 * linedimen, height = linethickness })
             SILE.call("hfill")
@@ -437,16 +437,16 @@ function package:registerCommands ()
             SILE.call("hrule", { width = linethickness, height = linethickness, depth = linedimen })
 
             SILE.call("novbreak")
-            SILE.settings:temporarily(function ()
-               SILE.settings:set("document.lskip", SILE.types.node.glue(leftindent + innerindent))
-               SILE.settings:set("document.rskip", SILE.types.node.glue(leftindent + innerindent))
+            self.settings:temporarily(function ()
+               self.settings:set("document.lskip", SILE.types.node.glue(leftindent + innerindent))
+               self.settings:set("document.rskip", SILE.types.node.glue(leftindent + innerindent))
                SILE.call("font", { size = "0.95em", style = "italic " }, content)
                SILE.call("novbreak")
                SILE.typesetter:pushVglue(SILE.types.node.vglue(-0.5 * linedimen))
                SILE.call("novbreak")
             end)
 
-            SILE.settings:set("current.parindent", SILE.types.node.glue())
+            self.settings:set("current.parindent", SILE.types.node.glue())
             SILE.call("hrule", { width = linethickness, depth = linethickness, height = linedimen })
             SILE.call("hrule", { width = 3 * linedimen, depth = linethickness })
             SILE.call("hfill")
