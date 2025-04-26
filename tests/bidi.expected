@@ -2,7 +2,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	20.9764
 My 	48.2574
-Set font 	SBL Hebrew;25;400;;normal;;;LTR
+Set font 	SBL Hebrew;25;400;;normal;;;LTR;
 T	280 318 w=34.1064	(My)
 Mx 	63.2238
 T	301 308 315 298 311 296 311 294 299 313 w=107.2632	(hovercraft)
@@ -18,7 +18,7 @@ Mx 	315.5507
 T	7 w=6.9580	(.)
 Mx 	20.9764
 My 	77.2574
-Set font 	SBL Hebrew;25;400;;normal;;;RTL
+Set font 	SBL Hebrew;25;400;;normal;;;RTL;
 Mx 	13.6475
 Mx 	5.9448
 Mx 	14.4287
@@ -36,21 +36,21 @@ Mx 	222.8726
 T	61 54 37 58 33 w=68.0786	(הרחפת)
 Mx 	20.9764
 My 	106.2574
-Set font 	SBL Hebrew;25;400;;normal;;;LTR
+Set font 	SBL Hebrew;25;400;;normal;;;LTR;
 T	282 307 298 w=44.3970	(One)
 Mx 	73.5316
 T	313 316 308 w=39.1235	(two)
 Mx 	120.8134
-Set font 	SBL Hebrew;25;400;;normal;;;RTL
+Set font 	SBL Hebrew;25;400;;normal;;;RTL;
 T	30 29 27 w=36.1084	(אבג)
 Mx 	165.0801
-Set font 	SBL Hebrew;25;400;;normal;;;LTR
+Set font 	SBL Hebrew;25;400;;normal;;;LTR;
 T	313 301 311 298 298 w=54.0283	(three)
 Mx 	227.2667
 T	299 308 314 311 w=44.0186	(four)
 Mx 	20.9764
 My 	135.2574
-Set font 	SBL Hebrew;25;400;;normal;;;RTL
+Set font 	SBL Hebrew;25;400;;normal;;;RTL;
 Mx 	13.6475
 Mx 	5.9448
 Mx 	6.2500
@@ -60,10 +60,10 @@ T	45 a=13.6475 39 a=6.2500 x=-0.3052 39 a=6.2500 61 a=14.7705 x=-0.7324 60 a=16.
 Mx 	85.9111
 T	31 37 27 w=41.0645	(אחד)
 Mx 	135.1232
-Set font 	SBL Hebrew;25;400;;normal;;;LTR
+Set font 	SBL Hebrew;25;400;;normal;;;LTR;
 T	268 269 270 w=48.5962	(ABC)
 Mx 	191.8671
-Set font 	SBL Hebrew;25;400;;normal;;;RTL
+Set font 	SBL Hebrew;25;400;;normal;;;RTL;
 Mx 	12.6221
 Mx 	12.5366
 Mx 	11.4868
@@ -73,7 +73,7 @@ Mx 	251.0523
 T	60 35 43 60 w=51.6235	(שלוש)
 Mx 	20.9764
 My 	164.2574
-Set font 	SBL Hebrew;25;400;;normal;;;LTR
+Set font 	SBL Hebrew;25;400;;normal;;;LTR;
 T	280 318 w=34.1064	(My)
 Mx 	60.9438
 T	301 308 315 298 311 296 311 294 299 313 w=107.2632	(hovercraft)
@@ -90,7 +90,7 @@ Mx 	155.7507
 T	7 w=6.9580	(.)
 Mx 	20.9764
 My 	222.2574
-Set font 	SBL Hebrew;25;400;;normal;;;RTL
+Set font 	SBL Hebrew;25;400;;normal;;;RTL;
 T	33 27 43 47 w=53.8086	(מלאה)
 Mx 	80.6460
 T	39 43 60 w=34.3750	(שלי)
@@ -109,7 +109,7 @@ Mx 	12.8418
 T	45 a=13.6475 39 a=6.2500 x=-0.3052 37 a=14.4287 54 a=12.9761 35 a=6.5918 x=-0.3662 43 a=11.2183 56 a=11.9751 29 a=12.8418	(בצלופחים)
 Mx 	359.1835
 My 	282.1295
-Set font 	SBL Hebrew;25;400;;normal;;;LTR
+Set font 	SBL Hebrew;25;400;;normal;;;LTR;
 T	298 298 305 312 w=39.3677	(eels)
 Mx 	330.1197
 T	308 299 w=20.9229	(of)
@@ -122,7 +122,7 @@ T	301 308 315 298 311 296 311 294 299 313 w=107.2632	(hovercraft)
 Mx 	103.9768
 T	280 318 w=34.1064	(My)
 Mx 	97.0188
-Set font 	SBL Hebrew;25;400;;normal;;;RTL
+Set font 	SBL Hebrew;25;400;;normal;;;RTL;
 T	7 w=6.9580	(.)
 Mx 	330.4726
 My 	311.1295
@@ -143,21 +143,21 @@ Mx 	12.8418
 T	45 a=13.6475 39 a=6.2500 x=-0.3052 37 a=14.4287 54 a=12.9761 35 a=6.5918 x=-0.3662 43 a=11.2183 56 a=11.9751 29 a=12.8418	(בצלופחים)
 Mx 	359.4277
 My 	340.1295
-Set font 	SBL Hebrew;25;400;;normal;;;LTR
+Set font 	SBL Hebrew;25;400;;normal;;;LTR;
 T	313 316 308 w=39.1235	(two)
 Mx 	306.8724
 T	282 307 298 w=44.3970	(One)
 Mx 	262.6057
-Set font 	SBL Hebrew;25;400;;normal;;;RTL
+Set font 	SBL Hebrew;25;400;;normal;;;RTL;
 T	30 29 27 w=36.1084	(אבג)
 Mx 	210.4289
-Set font 	SBL Hebrew;25;400;;normal;;;LTR
+Set font 	SBL Hebrew;25;400;;normal;;;LTR;
 T	299 308 314 311 w=44.0186	(four)
 Mx 	148.2423
 T	313 301 311 298 298 w=54.0283	(three)
 Mx 	357.4867
 My 	369.1295
-Set font 	SBL Hebrew;25;400;;normal;;;RTL
+Set font 	SBL Hebrew;25;400;;normal;;;RTL;
 T	31 37 27 w=41.0645	(אחד)
 Mx 	292.5520
 Mx 	13.6475
@@ -167,10 +167,10 @@ Mx 	14.0381
 Mx 	16.9067
 T	45 a=13.6475 39 a=6.2500 x=-0.3052 39 a=6.2500 61 a=14.7705 x=-0.7324 60 a=16.9067	(שתיים)
 Mx 	235.8081
-Set font 	SBL Hebrew;25;400;;normal;;;LTR
+Set font 	SBL Hebrew;25;400;;normal;;;LTR;
 T	268 269 270 w=48.5962	(ABC)
 Mx 	176.0369
-Set font 	SBL Hebrew;25;400;;normal;;;RTL
+Set font 	SBL Hebrew;25;400;;normal;;;RTL;
 T	60 35 43 60 w=51.6235	(שלוש)
 Mx 	116.8517
 Mx 	12.6221
@@ -180,7 +180,7 @@ Mx 	14.3921
 T	51 a=12.6221 29 a=12.8418 x=-0.3052 58 a=12.0972 x=-0.6104 27 a=14.3921	(ארבע)
 Mx 	291.2880
 My 	398.1295
-Set font 	SBL Hebrew;25;400;;normal;;;LTR
+Set font 	SBL Hebrew;25;400;;normal;;;LTR;
 T	301 308 315 298 311 296 311 294 299 313 w=107.2632	(hovercraft)
 Mx 	251.3206
 T	280 318 w=34.1064	(My)
@@ -194,7 +194,7 @@ T	299 314 305 305 w=35.1440	(full)
 Mx 	263.7769
 T	302 312 w=17.0654	(is)
 Mx 	256.8189
-Set font 	SBL Hebrew;25;400;;normal;;;RTL
+Set font 	SBL Hebrew;25;400;;normal;;;RTL;
 T	7 w=6.9580	(.)
 Mx 	330.4726
 My 	456.1295
@@ -216,7 +216,7 @@ Mx 	12.8418
 T	45 a=13.6475 39 a=6.2500 x=-0.3052 37 a=14.4287 54 a=12.9761 35 a=6.5918 x=-0.3662 43 a=11.2183 56 a=11.9751 29 a=12.8418	(בצלופחים)
 Mx 	203.5138
 My 	561.7893
-Set font 	SBL Hebrew;25;400;;normal;;;LTR
+Set font 	SBL Hebrew;25;400;;normal;;;LTR;
 T	189 w=12.5000	(1)
 End page
 Finish

@@ -11,7 +11,7 @@ Draw line	10.4882	91.6819	116.2969	34.5868
 Pop color
 Mx 	10.4882
 My 	154.3006
-Set font 	Gentium Plus;32;400;;normal;;;LTR
+Set font 	Gentium Plus;32;400;;normal;;;LTR;
 T	79 82 74 76 16 w=59.8281	(logi-)
 Mx 	70.3163
 T	93 82 87 92 w=56.4688	(zoty)

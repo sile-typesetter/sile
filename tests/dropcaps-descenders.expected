@@ -4,11 +4,11 @@ Mx 	32.5576
 My 	28.9514
 Mx 	14.8819
 My 	55.3514
-Set font 	Cormorant Infant;53.24;400;;normal;;;LTR
+Set font 	Cormorant Infant;53.24;400;;normal;;;LTR;
 T	74 w=17.6757	(I)
 Mx 	32.5576
 My 	28.9514
-Set font 	Cormorant Infant;11;400;;normal;;;LTR
+Set font 	Cormorant Infant;11;400;;normal;;;LTR;
 T	550 597 679 w=12.3310	(bis)
 Mx 	49.8658
 Mx 	2.8380
@@ -157,11 +157,11 @@ Mx 	27.2116
 My 	81.7514
 Mx 	14.8819
 My 	98.8083
-Set font 	Cormorant Infant;38.2911;400;;normal;;;LTR
+Set font 	Cormorant Infant;38.2911;400;;normal;;;LTR;
 T	88 w=12.3297	(J)
 Mx 	27.2116
 My 	81.7514
-Set font 	Cormorant Infant;11;400;;normal;;;LTR
+Set font 	Cormorant Infant;11;400;;normal;;;LTR;
 T	522 632 699 522 w=21.8900	(anua)
 Mx 	53.4770
 Mx 	2.8380
@@ -310,11 +310,11 @@ Mx 	32.0252
 My 	134.5514
 Mx 	14.8819
 My 	160.9514
-Set font 	Cormorant Infant;53.24;400;;normal;;;LTR
+Set font 	Cormorant Infant;53.24;400;;normal;;;LTR;
 T	88 w=17.1433	(J)
 Mx 	32.0252
 My 	134.5514
-Set font 	Cormorant Infant;11;400;;normal;;;LTR
+Set font 	Cormorant Infant;11;400;;normal;;;LTR;
 T	522 632 699 522 w=21.8900	(anua)
 Mx 	57.6028
 Mx 	2.8380
@@ -511,11 +511,11 @@ Mx 	39.2060
 My 	200.5514
 Mx 	14.8819
 My 	213.7514
-Set font 	Cormorant Infant;31.7547;400;;normal;;;LTR
+Set font 	Cormorant Infant;31.7547;400;;normal;;;LTR;
 T	115 w=24.3241	(O)
 Mx 	39.2060
 My 	200.5514
-Set font 	Cormorant Infant;11;400;;normal;;;LTR
+Set font 	Cormorant Infant;11;400;;normal;;;LTR;
 T	557 642 679 w=14.6190	(dos)
 Mx 	57.5256
 Mx 	2.8380
@@ -664,11 +664,11 @@ Mx 	33.7709
 My 	253.3514
 Mx 	14.8819
 My 	262.0387
-Set font 	Cormorant Infant;24.6593;400;;normal;;;LTR
+Set font 	Cormorant Infant;24.6593;400;;normal;;;LTR;
 T	144 w=18.8890	(Q)
 Mx 	33.7709
 My 	253.3514
-Set font 	Cormorant Infant;11;400;;normal;;;LTR
+Set font 	Cormorant Infant;11;400;;normal;;;LTR;
 T	699 642 w=10.6920	(uo)
 Mx 	49.5009
 Mx 	2.8380
@@ -794,11 +794,11 @@ Mx 	39.2060
 My 	292.9514
 Mx 	14.8819
 My 	306.1514
-Set font 	Cormorant Infant;31.7547;400;;normal;;;LTR
+Set font 	Cormorant Infant;31.7547;400;;normal;;;LTR;
 T	144 w=24.3241	(Q)
 Mx 	39.2060
 My 	292.9514
-Set font 	Cormorant Infant;11;400;;normal;;;LTR
+Set font 	Cormorant Infant;11;400;;normal;;;LTR;
 T	699 642 w=10.6920	(uo)
 Mx 	54.1596
 Mx 	2.8380

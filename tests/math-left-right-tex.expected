@@ -2,7 +2,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	177.5243
 My 	43.9388
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
 T	830 w=4.9700	(nil)
 Mx 	182.4943
 Mx 	3.6700
@@ -32,11 +32,11 @@ Mx 	234.2932
 T	10 w=3.5600	(nil)
 Mx 	237.8532
 My 	38.9388
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
 T	19 w=3.7200	(nil)
 Mx 	177.5243
 My 	84.2978
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
 T	830 w=4.9700	(nil)
 Mx 	182.4943
 Mx 	3.6700
@@ -66,11 +66,11 @@ Mx 	234.2932
 T	10 w=3.5600	(nil)
 Mx 	237.8532
 My 	79.2978
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
 T	19 w=3.7200	(nil)
 Mx 	177.7838
 My 	124.6569
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
 Mx 	0.5000
 T	4275 a=2.1000	(nil)
 Draw line	180.6338	121.7319	4.8900	0.6500

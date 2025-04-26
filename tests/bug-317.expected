@@ -2,7 +2,7 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	14.8819
 My 	28.9695
-Set font 	Hack;10;400;;normal;;;LTR
+Set font 	Hack;10;400;;normal;;;LTR;
 T	198 205 139 215 135 184 130 184 135 139 w=60.2051	(pseudocode)
 Mx 	81.1075
 T	621 w=6.0205	({)
@@ -12,7 +12,7 @@ Mx 	123.2510
 T	622 w=6.0205	(})
 Mx 	34.8819
 My 	40.9695
-Set font 	Gentium Plus;10;400;;normal;;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	55 75 76 86 w=17.5977	(This)
 Mx 	55.1313
 T	87 72 91 87 w=16.5332	(text)
