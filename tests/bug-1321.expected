@@ -2,7 +2,7 @@ Set paper size 	209.7637818	297.6377985
 Begin page
 Mx 	181.5556
 My 	284.1868
-Set font 	Amiri;10;400;;normal;;;RTL
+Set font 	Amiri;10;400;;normal;;;RTL;
 Mx 	4.7600
 Mx 	2.5800
 Mx 	5.6100
@@ -10,14 +10,14 @@ Mx 	4.7700
 T	5147 a=4.7600 5064 a=2.5800 430 x=0.7100 y=-4.6400 3119 a=4.7300 x=0.8800 430 x=-0.7600 2055 a=4.7700	(عَرَبي)
 Mx 	10.4882
 My 	140.7470
-Set font 	Amiri;10;400;;normal;;;LTR
+Set font 	Amiri;10;400;;normal;;;LTR;
 Mx 	2.8900
 Mx 	4.9700
 Mx 	4.9700
 T	73 a=3.0000 82 a=4.9700 82 a=4.9700	(foo)
 Mx 	181.5556
 My 	84.7694
-Set font 	Amiri;10;400;;normal;;;RTL
+Set font 	Amiri;10;400;;normal;;;RTL;
 Mx 	4.7600
 Mx 	2.5800
 Mx 	5.6100
@@ -32,14 +32,14 @@ Mx 	4.7700
 T	5147 a=4.7600 5064 a=2.5800 430 x=0.7100 y=-4.6400 3119 a=4.7300 x=0.8800 430 x=-0.7600 2055 a=4.7700	(عَرَبي)
 Mx 	178.2040
 My 	22.3019
-Set font 	Amiri;6.3;400;;normal;;;LTR
+Set font 	Amiri;6.3;400;;normal;;;LTR;
 T	20 w=3.3516	(1)
 Mx 	194.4876
 My 	263.7880
-Set font 	Amiri;9;400;;normal;;;LTR
+Set font 	Amiri;9;400;;normal;;;LTR;
 T	20 w=4.7880	(1)
 Mx 	192.6696
-Set font 	Amiri;9;400;;normal;;;RTL
+Set font 	Amiri;9;400;;normal;;;RTL;
 T	17 w=1.8180	(.)
 Mx 	158.7216
 Mx 	4.2840

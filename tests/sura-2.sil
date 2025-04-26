@@ -5,13 +5,10 @@
   -- property changes in this text. Both outputs are fine, but we
   -- don't have tooling to expect different outputs for the same
   -- inputs yet, so this work around just allows this test to fail
-  -- on ICU 74. As of this commit our CI system uses ICU 70, so
-  -- only some local developer testing is affected. When CI ever
-  -- starts breaking we might make that the expectation and mark it
-  -- unsupported on other versions.
+  -- on old ICU.
   local icu = require("justenoughicu")
   local icu74plus = tostring(icu.version()) >= "74.0"
-  if icu74plus then SILE._status.unsupported = true end
+  if not icu74plus then SILE._status.unsupported = true end
 \end{lua}
 \nofolios
 \font[family=Amiri Quran,size=20pt]

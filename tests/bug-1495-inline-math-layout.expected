@@ -2,7 +2,7 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	14.8819
 My 	28.5447
-Set font 	Gentium Plus;10;400;;normal;;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	47 82 85 72 80 w=26.4014	(Lorem)
 Mx 	44.8661
 T	76 83 86 88 80 w=25.2002	(ipsum)
@@ -17,7 +17,7 @@ T	15 w=2.2900	(,)
 Mx 	139.3147
 T	70 82 81 86 72 70 87 72 87 88 85 w=48.5303	(consectetur)
 Mx 	191.4279
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
 T	18 w=4.6500	(nil)
 Mx 	199.2489
 T	12 w=6.4800	(nil)
@@ -28,7 +28,7 @@ T	30 w=6.4800	(nil)
 Mx 	230.3298
 T	19 w=4.6500	(nil)
 Mx 	238.5627
-Set font 	Gentium Plus;10;400;;normal;;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	72 79 76 87 w=13.4814	(elit)
 Mx 	252.0441
 T	17 w=2.2900	(.)
@@ -50,17 +50,17 @@ T	74 85 68 89 76 71 68 w=30.8594	(gravida)
 Mx 	164.9011
 T	80 68 86 86 68 w=24.9365	(massa)
 Mx 	192.8542
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
 T	2750 w=3.8100	(nil)
 Mx 	196.6642
 My 	37.4447
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
 T	2753 w=1.8320	(nil)
 Mx 	198.4962
 T	3421 w=4.5776	(nil)
 Mx 	207.2250
 My 	40.5447
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
 T	30 w=6.4800	(nil)
 Mx 	217.4262
 T	68 80 84 w=13.2200	(nil)
@@ -77,7 +77,7 @@ T	2088 w=6.4800	(nil)
 Mx 	264.0786
 T	18 w=4.6500	(nil)
 Mx 	271.7452
-Set font 	Gentium Plus;10;400;;normal;;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	89 76 w=7.6416	(vi)
 Mx 	279.3868
 T	16 w=3.3691	(-)
@@ -97,17 +97,17 @@ T	17 w=2.2900	(.)
 Mx 	154.6581
 T	51 75 68 86 72 79 79 88 86 w=38.3984	(Phasellus)
 Mx 	195.9401
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
 T	2750 w=3.8100	(nil)
 Mx 	199.7501
 My 	49.5701
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR
+Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
 T	2753 w=1.8320	(nil)
 Mx 	201.5821
 T	3413 w=3.5152	(nil)
 Mx 	208.9129
 My 	52.6701
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
 T	30 w=6.4800	(nil)
 Mx 	218.7785
 T	68 80 84 w=13.2200	(nil)
@@ -131,7 +131,7 @@ Mx 	279.1959
 T	10 w=3.5600	(nil)
 Mx 	14.8819
 My 	64.6701
-Set font 	Gentium Plus;10;400;;normal;;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	72 79 72 80 72 81 87 88 80 w=46.8896	(elementum)
 Mx 	64.2939
 T	84 88 68 80 w=23.0713	(quam)

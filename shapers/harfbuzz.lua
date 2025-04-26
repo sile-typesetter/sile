@@ -46,7 +46,12 @@ function shaper:shapeToken (text, options)
    if not face then
       SU.error("Could not find requested font " .. options .. " or any suitable substitutes")
    end
-   if not options.filename and face.family ~= options.family and not substwarnings[options.family] then
+   if
+      not options.filename
+      and options.family
+      and face.family ~= options.family
+      and not substwarnings[options.family]
+   then
       substwarnings[options.family] = true
       SU.warn("Font family '" .. options.family .. "' not available, falling back to '" .. face.family .. "'")
    end

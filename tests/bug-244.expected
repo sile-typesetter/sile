@@ -2,7 +2,7 @@ Set paper size 	595.275597	841.8897729
 Begin page
 Mx 	539.9079
 My 	117.7638
-Set font 	Noto Sans CJK JP;10;400;;normal;;;LTR
+Set font 	Noto Sans CJK JP;10;400;;normal;;;LTR;
 T	41 70 77 77 80 w=24.5800	(Hello)
 My 	144.6306
 T	88 80 83 77 69 w=26.9700	(world)

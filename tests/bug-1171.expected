@@ -3,7 +3,7 @@ Begin page
 Push color	C<r1.0000,g0.8000,b0.3020>
 Mx 	542.4079
 My 	97.6592
-Set font 	Twemoji Mozilla;10;400;;normal;;;TTB
+Set font 	Twemoji Mozilla;10;400;;normal;;;TTB;
 T	7876 a=10.0000	()
 Pop color
 Push color	C<r0.4000,g0.2706,b0.0000>

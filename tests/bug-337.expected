@@ -1,7 +1,7 @@
 Set paper size 	209.7637818	297.6377985
 Begin page
 My 	6.2500
-Set font 	Gentium Plus;10;400;;normal;;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	21 20 19 83 87 w=22.8174	(210pt)
 Mx 	25.4770
 T	2258 w=4.1016	(×)
@@ -17,7 +17,7 @@ Draw line	219.7638	297.6378	20.0000	0.5000
 Draw line	209.7638	307.6378	0.5000	20.0000
 Mx 	10.0000
 My 	-14.0000
-Set font 	Gentium Plus;6;400;;normal;;;LTR
+Set font 	Gentium Plus;6;400;;normal;;;LTR;
 T	87 72 86 87 86 w=11.5371	(tests)
 Mx 	21.5371
 T	18 w=2.8154	(/)
@@ -34,7 +34,7 @@ T	86 76 79 w=5.5693	(sil)
 New page
 Mx 	0.0000
 My 	6.2500
-Set font 	Gentium Plus;10;400;;normal;;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	21 20 19 83 87 w=22.8174	(210pt)
 Mx 	25.4770
 T	2258 w=4.1016	(×)
@@ -50,7 +50,7 @@ Draw line	219.7638	297.6378	20.0000	0.5000
 Draw line	209.7638	307.6378	0.5000	20.0000
 Mx 	10.0000
 My 	-14.0000
-Set font 	Gentium Plus;6;400;;normal;;;LTR
+Set font 	Gentium Plus;6;400;;normal;;;LTR;
 T	87 72 86 87 86 w=11.5371	(tests)
 Mx 	21.5371
 T	18 w=2.8154	(/)

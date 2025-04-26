@@ -2,7 +2,7 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	14.8819
 My 	27.9564
-Set font 	Libertinus Serif;10;400;;normal;;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR;
 T	37 70 71 66 86 77 85 w=30.2600	(Default)
 Mx 	45.1419
 T	27 w=2.3600	(:)
@@ -51,7 +51,7 @@ T	43 66 81 66 79 70 84 70 w=35.8100	(Japanese)
 Mx 	50.6919
 T	27 w=2.3600	(:)
 Mx 	56.0727
-Set font 	Noto Sans CJK JP;10;400;;normal;;;LTR
+Set font 	Noto Sans CJK JP;10;400;;normal;;;LTR;
 T	11657 w=10.0000	(千)
 Mx 	66.1143
 T	9669 w=10.0000	(二)
@@ -65,7 +65,7 @@ Mx 	106.2808
 T	13131 w=10.0000	(四)
 Mx 	14.8819
 My 	87.9564
-Set font 	Libertinus Serif;10;400;;normal;;;LTR
+Set font 	Libertinus Serif;10;400;;normal;;;LTR;
 T	34 83 66 67 74 68 w=27.1600	(Arabic)
 Mx 	42.0419
 T	14 w=3.3800	(-)
@@ -74,7 +74,7 @@ T	42 79 69 74 68 w=20.4400	(Indic)
 Mx 	65.8619
 T	27 w=2.3600	(:)
 Mx 	71.2462
-Set font 	Noto Naskh Arabic;10;400;;normal;;;LTR
+Set font 	Noto Naskh Arabic;10;400;;normal;;;LTR;
 T	1268 1269 1270 1293 w=16.7200	(۱۲۳۴)
 End page
 Finish
