@@ -67,7 +67,7 @@ function package:registerCommands ()
          "linebreak.hangAfter",
          "linebreak.hangIndent",
       }) do
-         self.settings:set(v, self.settings.defaults[v])
+         self.settings:pull(v):reset()
       end
       -- Apply the font before boxing, so relative baselineskip applies #1027
       local material

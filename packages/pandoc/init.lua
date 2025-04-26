@@ -14,7 +14,7 @@ local handlePandocOptions = function (options)
    if options.lang then
       SU.debug("pandoc", "Set lang in tag:", options.lang)
       local fontfunc =
-         SILE.commands:get(SILE.commands:exists("font:" .. options.lang) and "font:" .. options.lang or "font")
+         SILE.commands:pull(SILE.commands:exists("font:" .. options.lang) and "font:" .. options.lang or "font")
       local innerWrapper = wrapper
       wrapper = function (content)
          innerWrapper(function ()

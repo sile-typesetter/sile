@@ -146,8 +146,8 @@ SILE.types = core_loader("types")
 -- Internal registries that are tracked with a single instance per SILE invocation.
 -- These should typically accessed as attributes on other modules.
 SILE.traceStack = require("core.tracestack")()
-SILE.commands = require("core.commands")()
-SILE.settings = require("core.settings")()
+SILE.commands = require("core.commands")():forModule(SILE)
+SILE.settings = require("core.settings")():forModule(SILE)
 
 -- Internal modules and return classes that need instantiation (loading is idempotent)
 SILE.inputters = core_loader("inputters")

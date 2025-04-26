@@ -173,10 +173,10 @@ function package:recede_commands (target)
       for command, get_function in pairs(commands) do
          SU.debug("retrograde", ("Shimming command '%s' to behavior similar to prior to v%s."):format(command, version))
 
-         local current, index = SILE.commands:get(command)
+         local current, index = SILE.commands:pull(command)
          local func, defaults = get_function(current)
          local new = SILE.types.command(self, command, func, nil, nil, defaults)
-         SILE.commands:_push(command, new)
+         self.commands:push(command, new)
          currents[command] = index
       end
    end

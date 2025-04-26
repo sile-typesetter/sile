@@ -26,10 +26,9 @@ local function script_path ()
    return base
 end
 
--- TODO: Wrap this so settings are scoped in a stack like commands
-module.settings = SILE.settings
-
 function module:_init (options)
+   self.commands = SILE.commands:forModule(self)
+   self.settings = SILE.settings:forModule(self)
    if not self.type then
       SU.error("Attempted it initialize module with no type")
    end
@@ -85,7 +84,8 @@ function module:registerCommands () end
 -- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
 -- messages. Usually auto-detected.
 function module:registerCommand (name, func, help, pack, defaults)
-   SILE.commands:register(self, name, func, help, pack, defaults)
+   SU.deprecated("module:registerCommand", "module.commands:register", "0.16.0", "0.17.0")
+   return self.commands:register(name, func, help, pack, defaults)
 end
 
 function module:_setOptions () end

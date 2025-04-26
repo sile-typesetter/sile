@@ -35,7 +35,7 @@ function package:outputFolio (frame)
                "linebreak.hangAfter",
                "linebreak.hangIndent",
             }) do
-               self.settings:set(v, self.settings.defaults[v])
+               self.settings:pull(v):reset()
             end
 
             SILE.call("foliostyle", {}, { folio })
