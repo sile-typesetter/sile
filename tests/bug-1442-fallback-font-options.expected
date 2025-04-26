@@ -2,28 +2,28 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	14.8819
 My 	24.8192
-Set font 	Symbola;5;400;;normal;;;LTR
+Set font 	Symbola;5;400;;normal;;;LTR;
 T	3681 w=5.0000	(☑)
 My 	84.8192
 T	3681 w=5.0000	(☑)
 Mx 	19.8819
-Set font 	Libertinus Serif;50;400;;normal;;;LTR
+Set font 	Libertinus Serif;50;400;;normal;;;LTR;
 T	66 w=22.8500	(a)
 Mx 	14.8819
 My 	144.8192
 T	67 w=24.6500	(b)
 Mx 	39.5319
-Set font 	Symbola;5;400;;normal;;;LTR
+Set font 	Symbola;5;400;;normal;;;LTR;
 T	3681 w=5.0000	(☑)
 Mx 	14.8819
 My 	204.8192
-Set font 	Libertinus Serif;50;400;;normal;;;LTR
+Set font 	Libertinus Serif;50;400;;normal;;;LTR;
 T	68 w=21.4000	(c)
 Mx 	36.2819
-Set font 	Symbola;5;400;;normal;;;LTR
+Set font 	Symbola;5;400;;normal;;;LTR;
 T	3681 w=5.0000	(☑)
 Mx 	41.2819
-Set font 	Libertinus Serif;50;400;;normal;;;LTR
+Set font 	Libertinus Serif;50;400;;normal;;;LTR;
 T	69 w=25.3000	(d)
 End page
 Finish

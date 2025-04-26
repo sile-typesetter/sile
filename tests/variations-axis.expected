@@ -2,13 +2,13 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	14.8819
 My 	56.9764
-Set font 	Tourney;48;400;;normal;;wght=150,wdth=120;LTR
+Set font 	Tourney;48;400;;normal;;wght=150,wdth=120;LTR;
 T	68 369 369 w=104.0880	(Foo)
 Mx 	138.3008
 T	272 244 408 w=101.0400	(bar)
 Mx 	14.8819
 My 	114.5764
-Set font 	Tourney;48;750;;normal;;wdth=80;LTR
+Set font 	Tourney;48;750;;normal;;wdth=80;LTR;
 T	68 369 369 w=68.3520	(Foo)
 Mx 	95.6771
 T	272 244 408 w=72.2880	(bar)

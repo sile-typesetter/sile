@@ -2,7 +2,7 @@ Set paper size 	419.5275636	595.275597
 Begin page
 Mx 	40.9764
 My 	36.0626
-Set font 	Gentium Plus;10;400;;normal;;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	38 88 86 87 82 80 w=31.0254	(Custom)
 Mx 	74.6747
 T	68 87 82 80 w=21.0938	(atom)
@@ -12,7 +12,7 @@ Mx 	120.5947
 T	29 w=2.2900	(:)
 Mx 	186.7988
 My 	57.1446
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
 T	2768 w=5.4100	(nil)
 Mx 	194.9866
 T	30 w=6.4800	(nil)
@@ -119,7 +119,7 @@ Mx 	225.9238
 T	2747 w=4.3400	(nil)
 Mx 	40.9764
 My 	289.3751
-Set font 	Gentium Plus;10;400;;normal;;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	48 82 71 88 79 88 86 w=35.4590	(Modulus)
 Mx 	79.1089
 T	82 83 72 85 68 87 82 85 w=35.9277	(operator)
@@ -127,7 +127,7 @@ Mx 	115.0366
 T	29 w=2.2900	(:)
 Mx 	180.8988
 My 	310.4571
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR
+Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
 T	21 19 w=9.3000	(nil)
 Mx 	192.4210
 Mx 	7.9000
@@ -191,7 +191,7 @@ Mx 	242.5177
 T	10 w=3.5600	(nil)
 Mx 	207.4176
 My 	553.7327
-Set font 	Gentium Plus;10;400;;normal;;;LTR
+Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	20 w=4.6924	(1)
 End page
 Finish

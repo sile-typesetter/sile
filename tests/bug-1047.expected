@@ -2,7 +2,7 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	24.7039
 My 	42.3452
-Set font 	FRB Taiwanese Kana;24;400;;normal;+ruby;;LTR
+Set font 	FRB Taiwanese Kana;24;400;;normal;+ruby;;LTR;
 T	172 w=24.0000	(タ)
 Mx 	48.7039
 T	145 w=24.0000	(イ)
@@ -11,7 +11,7 @@ T	122 w=12.0000	(𚿳)
 Mx 	24.7039
 My 	82.3452
 Mx 	34.7039
-Set font 	Noto Serif CJK TC;40;400;;normal;;;LTR
+Set font 	Noto Serif CJK TC;40;400;;normal;;;LTR;
 T	34119 w=40.0000	(臺)
 End page
 Finish
