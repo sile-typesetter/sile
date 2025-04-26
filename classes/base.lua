@@ -165,6 +165,54 @@ end
 
 function class:_declareSettings ()
    self.settings:declare({
+      parameter = "document.parindent",
+      type = "glue",
+      default = SILE.types.node.glue("1bs"),
+      help = "Glue at start of paragraph",
+   })
+   self.settings:declare({
+      parameter = "document.baselineskip",
+      type = "vglue",
+      default = SILE.types.node.vglue("1.2em plus 1pt"),
+      help = "Leading",
+   })
+   self.settings:declare({
+      parameter = "document.lineskip",
+      type = "vglue",
+      default = SILE.types.node.vglue("1pt"),
+      help = "Leading",
+   })
+   self.settings:declare({
+      parameter = "document.parskip",
+      type = "vglue",
+      default = SILE.types.node.vglue("0pt plus 1pt"),
+      help = "Leading",
+   })
+   self.settings:declare({
+      parameter = "document.spaceskip",
+      type = "length or nil",
+      default = nil,
+      help = "The length of a space (if nil, then measured from the font)",
+   })
+   self.settings:declare({
+      parameter = "document.rskip",
+      type = "glue or nil",
+      default = nil,
+      help = "Skip to be added to right side of line",
+   })
+   self.settings:declare({
+      parameter = "document.lskip",
+      type = "glue or nil",
+      default = nil,
+      help = "Skip to be added to left side of line",
+   })
+   self.settings:declare({
+      parameter = "document.zenkakuchar",
+      default = "あ",
+      type = "string",
+      help = "The character measured to determine the length of a zenkaku width (全角幅)",
+   })
+   self.settings:declare({
       parameter = "current.parindent",
       type = "glue or nil",
       default = nil,

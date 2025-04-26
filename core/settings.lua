@@ -15,63 +15,6 @@ function settings:_init ()
    self.state = {}
    self.stateQueue = {}
    self.hooks = {}
-
-   self:declare({
-      parameter = "document.parindent",
-      type = "glue",
-      default = SILE.types.node.glue("1bs"),
-      help = "Glue at start of paragraph",
-   })
-
-   self:declare({
-      parameter = "document.baselineskip",
-      type = "vglue",
-      default = SILE.types.node.vglue("1.2em plus 1pt"),
-      help = "Leading",
-   })
-
-   self:declare({
-      parameter = "document.lineskip",
-      type = "vglue",
-      default = SILE.types.node.vglue("1pt"),
-      help = "Leading",
-   })
-
-   self:declare({
-      parameter = "document.parskip",
-      type = "vglue",
-      default = SILE.types.node.vglue("0pt plus 1pt"),
-      help = "Leading",
-   })
-
-   self:declare({
-      parameter = "document.spaceskip",
-      type = "length or nil",
-      default = nil,
-      help = "The length of a space (if nil, then measured from the font)",
-   })
-
-   self:declare({
-      parameter = "document.rskip",
-      type = "glue or nil",
-      default = nil,
-      help = "Skip to be added to right side of line",
-   })
-
-   self:declare({
-      parameter = "document.lskip",
-      type = "glue or nil",
-      default = nil,
-      help = "Skip to be added to left side of line",
-   })
-
-   self:declare({
-      parameter = "document.zenkakuchar",
-      default = "あ",
-      type = "string",
-      help = "The character measured to determine the length of a zenkaku width (全角幅)",
-   })
-
    SILE.commands:register(self, "set", function (options, content)
       local makedefault = SU.boolean(options.makedefault, false)
       local reset = SU.boolean(options.reset, false)
