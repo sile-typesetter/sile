@@ -27,7 +27,9 @@ function inputter:parse (doc)
 end
 
 function inputter:process (doc)
-   local tree = self:parse(doc)()
+   local tree_func = self:parse(doc)
+   pl.compat.setfenv(tree_func, SILE.commands:env(SILE.typesetter))
+   local tree = tree_func()
    if type(tree) == "string" then
       return SILE.processString(tree, nil, nil, self.options)
    elseif type(tree) == "function" then

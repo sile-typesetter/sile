@@ -2,8 +2,17 @@ local commands = pl.class()
 
 commands.registry = {}
 
-function commands:register (parent, name, func, help, pack, defaults)
-   if type(parent) ~= "table" then
+local function list_current_globals ()
+   local globals = {}
+   for k, _ in pairs(_G) do
+      globals[k] = true
+   end
+   return globals
+end
+local reserved_globals = list_current_globals()
+
+function commands:register (scope, name, func, help, pack, defaults)
+   if type(scope) ~= "table" then
       SU.deprecated(
          "SILE.registerCommand",
          "class:registerCommand / package:registerCommand",
@@ -18,7 +27,7 @@ function commands:register (parent, name, func, help, pack, defaults)
    if self:exists(name) then
       SU.debug("commands", "WARNING: Redefining command", name)
    end
-   local command = SILE.types.command(parent, name, func, help, pack, defaults)
+   local command = SILE.types.command(scope, name, func, help, pack, defaults)
    return self:_push(name, command)
 end
 
@@ -73,11 +82,11 @@ function commands:setDefaults (name, options)
    self:get(name):setDefaults(options)
 end
 
-function commands:pushWrapper (parent, name, func, defaults)
+function commands:pushWrapper (scope, name, func, defaults)
    local original = self:get(name)
-   local command = SILE.types.command(parent, name, function (options, content)
+   local command = SILE.types.command(scope, name, function (options, content)
       return func(options, content, original)
-   end, original.help, original.pack, defaults)
+   end, original._help, original.pack, defaults)
    return self:_push(name, command)
 end
 
@@ -93,13 +102,49 @@ function commands:dump ()
          #stack,
          "times",
          "most recently by",
-         cmd.parent.type,
-         cmd.parent._name,
+         cmd.scope.type,
+         cmd.scope._name,
          "with help =",
-         cmd.help
+         cmd._help
       )
    end
    SILE.debugFlags.commands = flag
+end
+
+function commands:env (scope)
+   local global_or_command_from_registry = {}
+   if not SILE.scratch.docvars then
+      SILE.scratch.docvars = {}
+   end
+   setmetatable(global_or_command_from_registry, {
+      __index = function (_, key)
+         if key == "self" then
+            return scope[key]
+         elseif SILE.scratch.docvars[key] then
+            return SILE.scratch.docvars[key]
+         elseif reserved_globals[key] then
+            return _G[key]
+         elseif self:exists(key) then
+            return self:get(key)
+         -- TODO: Consider making this less aggressive with an explicit exports system
+         elseif scope and scope[key] then
+            if type(scope[key]) == "function" then
+               return function (...)
+                  return scope[key](scope, ...)
+               end
+            end
+            return scope[key]
+         elseif SILE[key] then
+            return SILE[key]
+         else
+            return _G[key]
+         end
+      end,
+      __newindex = function (_, key, val)
+         SILE.scratch.docvars[key] = val
+      end,
+   })
+   return global_or_command_from_registry
 end
 
 return commands

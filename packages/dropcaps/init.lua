@@ -99,7 +99,7 @@ function package:registerCommands ()
       -- Note this only works for the default linespace mechanism.
       -- We determine the height of the first line by measuring the size the initial content *would have* been.
       local tmpHbox = shapeHbox(options, content)
-      local extraHeight = SILE.types.measurement((lines - 1) .. "bs"):tonumber()
+      local extraHeight = types.measurement((lines - 1) .. "bs"):tonumber()
       local curHeight = tmpHbox.height:tonumber() + depthAdjustment
       local targetHeight = (curHeight - depthAdjustment) * scale + extraHeight
       if strict then
@@ -110,7 +110,7 @@ function package:registerCommands ()
 
       -- Now we need to figure out how to scale the dropcap font to get an initial of targetHeight.
       -- From that we can also figure out the width it will be at that height.
-      local curSize = SILE.types.measurement(SILE.settings:get("font.size")):tonumber()
+      local curSize = types.measurement(settings:get("font.size")):tonumber()
       local curWidth = tmpHbox.width:tonumber()
       options.size = size and size:tonumber() or (targetHeight / curHeight * curSize)
       local targetWidth = curWidth / curSize * options.size
@@ -131,7 +131,7 @@ function package:registerCommands ()
          local toleranceDepth = getToleranceDepth()
          if extraDepth > toleranceDepth then
             SU.debug("dropcaps", "Extra depth", extraDepth, "> tolerance", toleranceDepth)
-            local extraLines = math.ceil((extraDepth - toleranceDepth) / SILE.types.measurement("1bs"):tonumber())
+            local extraLines = math.ceil((extraDepth - toleranceDepth) / types.measurement("1bs"):tonumber())
             lines = lines + extraLines
             SU.debug("dropcaps", "Extra lines needed to fit", extraLines)
          else
@@ -144,18 +144,18 @@ function package:registerCommands ()
 
       -- Setup up the necessary indents for the final paragraph content
       local joinOffset = join and standoff:tonumber() or 0
-      SILE.settings:set("current.hangAfter", -lines)
-      SILE.settings:set("current.hangIndent", targetWidth + joinOffset)
-      SILE.call("noindent")
+      settings:set("current.hangAfter", -lines)
+      settings:set("current.hangIndent", targetWidth + joinOffset)
+      noindent()
       SU.debug("dropcaps", "joinOffset", joinOffset)
 
       -- The paragraph is indented so as to leave enough space for the drop cap.
       -- We "trick" the typesetter with a zero-dimension box wrapping our original box.
-      SILE.call("rebox", { height = 0, depth = 0, width = -joinOffset }, function ()
-         SILE.call("glue", { width = shift - targetWidth - joinOffset })
-         SILE.call("lower", { height = extraHeight - raise }, function ()
-            SILE.call(color and "color" or "noop", { color = color }, function ()
-               SILE.typesetter:pushHbox(hbox)
+      rebox({ height = 0, depth = 0, width = -joinOffset }, function ()
+         glue({ width = shift - targetWidth - joinOffset })
+         lower({ height = extraHeight - raise }, function ()
+            call(color and "color" or "noop", { color = color }, function ()
+               typesetter:pushHbox(hbox)
             end)
          end)
       end)

@@ -29,6 +29,9 @@ function repl.initRepl ()
    _repl:loadplugin("completion")
    _repl:loadplugin("autoreturn")
    _repl:loadplugin("rcfile")
+   _repl.getcontext = function ()
+      return SILE.commands:env()
+   end
 end
 
 function repl:enter ()

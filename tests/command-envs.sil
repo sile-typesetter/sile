@@ -1,0 +1,12 @@
+\begin[papersize=a7]{document}
+\begin{lua}
+
+neverindent()
+nofolios()
+
+settings:set("font.size", 20)
+
+font({ family = "Libertinus Serif" }, { "no fuss syntax" })
+
+\end{lua}
+\end{document}
