@@ -129,24 +129,16 @@ function settings:declare (spec)
    if not spec then
       return deprecator()
    end
-   if spec.name then
-      SU.deprecated(
-         "'name' argument of SILE.settings:declare",
-         "'parameter' argument of SILE.settings:declare",
-         "0.10.10",
-         "0.11.0"
-      )
-   end
    if self.declarations[spec.parameter] then
       SU.debug("settings", "Attempt to re-declare setting:", spec.parameter)
       return
    end
-   self.declarations[spec.parameter] = spec
+   local setting = SILE.types.setting(SILE, spec.parameter, spec.type, spec.default, spec.help, spec.hook)
+   self.declarations[spec.parameter] = setting
    self.hooks[spec.parameter] = {}
    if spec.hook then
       self:registerHook(spec.parameter, spec.hook)
    end
-   self:set(spec.parameter, spec.default, true)
 end
 
 --- Reset all settings to their registered default values.
@@ -154,8 +146,8 @@ function settings:reset ()
    if not self then
       return deprecator()
    end
-   for k, _ in pairs(self.state) do
-      self:set(k, self.defaults[k])
+   for _, setting in pairs(self.state) do
+      setting:reset()
    end
 end
 
@@ -187,14 +179,11 @@ function settings:get (parameter)
    if not parameter then
       return deprecator()
    end
-   if not self.declarations[parameter] then
+   local setting = self.declarations[parameter]
+   if not setting then
       SU.error("Undefined setting '" .. parameter .. "'")
    end
-   if type(self.state[parameter]) ~= "nil" then
-      return self.state[parameter]
-   else
-      return self.defaults[parameter]
-   end
+   return setting:get()
 end
 
 --- Set the value of a setting
@@ -230,21 +219,17 @@ function settings:set (parameter, value, makedefault, reset)
    if type(self) ~= "table" then
       return deprecator()
    end
-   if not self.declarations[parameter] then
+   local setting = self.declarations[parameter]
+   if not setting then
       SU.error("Undefined setting '" .. parameter .. "'")
    end
    if reset then
       if makedefault then
          SU.error("Can't set a new default and revert to and old default setting at the same time")
       end
-      value = self.defaults[parameter]
-   else
-      value = SU.cast(self.declarations[parameter].type, value)
+      setting:reset()
    end
-   self.state[parameter] = value
-   if makedefault then
-      self.defaults[parameter] = value
-   end
+   setting:set(value, makedefault)
    self:runHooks(parameter, value)
 end
 
