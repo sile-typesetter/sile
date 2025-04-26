@@ -117,40 +117,6 @@ local function calculateFrameHeight(frame, ts)
    return h
 end
 
-local function addPhantomHeight(h)
-   SILE.call("rebox", { height = h, phantom = true })
-end
-
-local phantomText = function(typesetter, color, text, numLines)
-   SILE.call("color", { color = color }, function()
-      for _ = 1, numLines do
-         typesetter:typeset(text) -- Simulate actual content
-         SILE.call("break")
-      end
-   end)
-end
-
---  Fill a short frame with “dummy” lines so that it visually aligns
-local createDummyContent = function(height, frame, dummyText)
-   local typesetter = typesetterPool[frame]
-   local lineHeight = SILE.settings:get("document.baselineskip").height:tonumber()
-      + SILE.settings:get("document.lineskip").height:tonumber()
-
-   local fitLines = math.floor(height:tonumber() / lineHeight)
-   local remainingHeight = height:tonumber() % lineHeight
-
-   if not dummyText then
-      -- Add phantom boxes for each line
-      for _ = 1, fitLines do
-         addPhantomHeight(lineHeight)
-      end
-   else
-      -- If dummyText is true, add phantom text for each line
-      phantomText(typesetter, "red", "dummyText", fitLines)
-   end
-
-end
-
 -- Utility function: Manage the heights of frames.
 local manageFrameHeights = function(frames, callback)
    local frameHeights = {}
@@ -168,19 +134,6 @@ local manageFrameHeights = function(frames, callback)
    -- Apply the callback function to each frame
    iterateTypesetters(frames, function(frame, typesetter)
       callback(frame, frameHeights[frame], maxHeight - frameHeights[frame])
-   end)
-end
-
--- Balance the heights of frames by adding dummy content to shorter frames.
--- This ensures that all frames are aligned to the height of the tallest frame.
-local balanceFramesWithPhantomBox = function()
-   manageFrameHeights(typesetterPool, function(frame, currentHeight, heightDiff)
-      if heightDiff:tonumber() > 0 then
-         -- addPhantomHeight(heightDiff)
-         -- This seems to work better than adding dummy content. I don't know why.
-         createDummyContent(heightDiff, frame, false)
-         log("Added phantom height of", heightDiff, "to frame", frame)
-      end
    end)
 end
 
@@ -420,37 +373,12 @@ local parallelPagebreak = function()
          end
 
          -- Rebalance frames
-         balanceFramesWithPhantomBox()
+         -- addBalancingGlue()
       end
    end
 
-   -- Ensure all the first pair of frames on the new page are synchronized
+   -- Ensure all the first pair of frames on the new page are synchronised and balanced
    SILE.call("sync")
-end
-
-----------------------------------------------------------------
---  Font fallback (utility + public command)
-----------------------------------------------------------------
-local fallbackFonts = {
-   "Noto Sans CJK JP",
-   "Noto Sans Symbols2",
-   "Symbola",
-}
-
-local function fontFallback(primary, char)
-   -- 1. preferred font?
-   if SILE.fonts.getGlyph(primary, char) then
-      return primary
-   end
-   -- 2. cascade through fallbacks
-   for _, fb in ipairs(fallbackFonts) do
-      if SILE.fonts.getGlyph(fb, char) then
-         return fb
-      end
-   end
-   -- 3. give up, but warn once per session
-   SU.warn("No glyph for U+" .. string.format("%04X", SU.codepoint(char)) .. " in fallback chain")
-   return primary
 end
 
 ----------------------------------------------------------------
@@ -699,15 +627,11 @@ function package:registerCommands()
    end)
 
    -- inline fallback font (user convenience)
-   self:registerCommand("parallel:font-fallback", function(_, c)
-      local ts = SILE.typesetter
-      local out = {}
-      for _, ch in ipairs(c) do
-         local glyphFont = fontFallback(ts.state.font.family, ch.text)
-         SILE.call("font", { family = glyphFont }, function()
-            SILE.typesetter:typeset(ch.text)
-         end)
-      end
+   self:registerCommand("parallel:font-fallback", function(_, content)
+      SILE.settings:temporarily(function()
+         SILE.settings:set("font.family", "Noto Sans CJK JP")
+         SILE.process(content)
+      end)
    end)
 end
 
@@ -728,6 +652,7 @@ Insertions like footnotes add further complexity, as they occupy independent fra
 Using different font sizes or baselines for frames (e.g., for bilingual text) requires fine-tuning \code{baselineskip}, \code{lineskip}, or \code{parskip} settings to maintain alignment. Frames may also have varying widths or layout constraints, making it difficult to directly compare their heights.
 
 Dynamic content, such as varying paragraph lengths, images, or tables, can lead to unpredictable behavior in each frame. Frequent recalibration is necessary to address these issues. Managing overflow content for the main frames and their footnote counterparts without disrupting alignment adds yet another layer of complexity.
+
 To align frames effectively, dummy content, vertical glue, or phantom boxes are often added to the shorter frame. However, these adjustments require precise calculations to avoid visual artifacts caused by estimation errors. Even small inaccuracies in frame height or glue measurements can lead to noticeable misalignment.
 
 SILE is primarily designed for single-frame typesetting, with limited native support for parallel or multi-frame layouts. Consequently, most parallel typesetting functionality must be implemented manually, requiring a deep understanding of SILE’s internals. Achieving proper frame alignment often involves trial and error, such as adding dummy text or phantom boxes to fine-tune the layout.
