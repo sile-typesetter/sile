@@ -132,22 +132,33 @@ SILE.input = {
    postambles = {}, -- deprecated, undocumented
 }
 
--- Internal libraries that are idempotent and return classes that need instantiation
-SILE.inputters = SILE.utilities._module_loader("inputters")
-SILE.shapers = SILE.utilities._module_loader("shapers")
-SILE.outputters = SILE.utilities._module_loader("outputters")
-SILE.classes = SILE.utilities._module_loader("classes")
-SILE.packages = SILE.utilities._module_loader("packages")
-SILE.typesetters = SILE.utilities._module_loader("typesetters")
-SILE.pagebuilders = SILE.utilities._module_loader("pagebuilders")
-SILE.types = SILE.utilities._module_loader("types")
-SILE.languages = SILE.utilities._module_loader("languages")
-
 -- Internal libraries that don't try to use anything on load, only provide something
 SILE.parserBits = require("core.parserbits")
 SILE.frameParser = require("core.frameparser")
 SILE.fontManager = require("core.fontmanager")
 SILE.papersize = require("core.papersize")
+
+-- Helper function thata creates a sparse table, then loads modules into it on demand if/when accessed.
+local core_loader = require("core.loader")
+
+-- Internal types may be used anywhere, and access to them is per SILE invocation.
+SILE.types = core_loader("types")
+
+-- Internal registries that are tracked with a single instance per SILE invocation.
+-- These should typically accessed as attributes on other modules.
+SILE.traceStack = require("core.tracestack")()
+SILE.commands = require("core.commands")()
+SILE.settings = require("core.settings")()
+
+-- Internal modules and return classes that need instantiation (loading is idempotent)
+SILE.inputters = core_loader("inputters")
+SILE.shapers = core_loader("shapers")
+SILE.outputters = core_loader("outputters")
+SILE.classes = core_loader("classes")
+SILE.packages = core_loader("packages")
+SILE.typesetters = core_loader("typesetters")
+SILE.pagebuilders = core_loader("pagebuilders")
+SILE.languages = core_loader("languages")
 
 -- NOTE:
 -- See remainaing internal libraries loaded at the end of this file because
@@ -240,11 +251,6 @@ SILE.paperSizeParser = require("core.misc").paperSizeParser
 -- 5. Close out the Lua profiler if it was running.
 -- 6. Output version information if versions debug flag is set.
 SILE.finish = require("core.init").finish
-
--- Internal libraries that return classes, but we have no subclasses an only ever use one instantiation of the base
-SILE.commands = require("core.commands")()
-SILE.traceStack = require("core.tracestack")()
-SILE.settings = require("core.settings")()
 
 -- Internal libraries that run core SILE functions on load
 SILE.linebreak = require("core.break")
