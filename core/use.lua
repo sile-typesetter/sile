@@ -97,10 +97,14 @@ local function use (module, options, reload)
       SILE.typesetter = pack(options)
    elseif pack.type == "linebreaker" then
       SILE.linebreakers[name] = pack
-      SILE.linebreak = pack(options)
+      if SILE.typesetter then
+         SILE.typesetter.linebreaker = pack(options)
+      end
    elseif pack.type == "pagebuilder" then
       SILE.pagebuilders[name] = pack
-      SILE.pagebuilder = pack(options)
+      if SILE.typesetter then
+         SILE.typesetter.pagebuilder = pack(options)
+      end
    elseif pack.type == "package" then
       SILE.packages[pack._name] = pack
       if class then

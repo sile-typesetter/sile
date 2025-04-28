@@ -723,10 +723,9 @@ function linebreaker:doBreak (nodes, hsize, sideways)
          self.threshold = self.inf_bad
       end
       if self.pass == "second" then
-         -- TODO give line break modules proper access to typesetter
-         local hyphenator = SILE.typesetter.language.hyphenator
+         local hyphenator = self.typesetter.language.hyphenator
          self.nodes = hyphenator:hyphenate(self.nodes)
-         SILE.typesetter.state.nodes = self.nodes -- Horrible breaking of separation of concerns here. :-(
+         self.typesetter.state.nodes = self.nodes -- Horrible breaking of separation of concerns here. :-(
       end
       -- 890
       self.activeListHead = {

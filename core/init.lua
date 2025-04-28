@@ -43,8 +43,6 @@ local function init ()
    if not SILE.shaper then
       SILE.shaper = SILE.shapers.default()
    end
-   SILE.linebreak = SILE.linebreakers.default()
-   SILE.pagebuilder = SILE.pagebuilders.default()
    io.stdout:setvbuf("no")
    if SU.debugging("profile") then
       ProFi = require("ProFi")

@@ -90,17 +90,17 @@ The meat of the matter comes in the \autodoc:command[check=false]{\sync} command
 Every time we call \autodoc:command[check=false]{\sync}, we want to ensure that they are both at the same position on the page.
 In other words, if the left typesetter has gone further down the page than the right one, we need to insert some blank space onto the right typesetter’s output queue to get them back in sync, and vice versa.
 
-SILE’s page builder has a method called \code{SILE.pagebuilder:collateVboxes} which bundles a bunch of vertical boxes into one.
+SILE’s page builder has a method called \code{pagebuilder:collateVboxes} which bundles a bunch of vertical boxes into one.
 We can use this method to bundle up each typesetter’s output queue and measure the height of the combined vbox.
 (Of course, it’s possible to sum the heights of each box on the output queue by hand, but this achieves the same goal a bit more cleanly.)
 Next we end each paragraph—after adding the glue so that paragraph skips do not get in the way—and go back to handling paragraphing as normal.
 
 \begin[type=autodoc:codeblock]{raw}
   self:registerCommand("sync", function()
-    local lVbox = SILE.pagebuilder:collateVboxes(
+    local lVbox = SILE.typesetter.pagebuilder:collateVboxes(
       diglot.leftTypesetter.state.outputQueue
     )
-    local rVbox = SILE.pagebuilder:collateVboxes(
+    local rVbox = SILE.typesetter.pagebuilder:collateVboxes(
       diglot.rightTypesetter.state.outputQueue
     )
     if (rVbox.height > lVbox.height) then
@@ -268,9 +268,9 @@ As with the parallels example, we start by totaling up the height of the materia
 function discovery:typesetCrossReference (xref)
   self.innerTypesetter:leaveHmode(1)
   local innerVbox =
-    SILE.pagebuilder:collateVboxes(self.innerTypesetter.state.outputQueue)
+    SILE.typesetter.pagebuilder:collateVboxes(self.innerTypesetter.state.outputQueue)
   local mainVbox =
-    SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue)
+    SILE.typesetter.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue)
 \end{raw}
 
 This deals with the completed paragraphs which have already been put into the output queue.
@@ -291,7 +291,7 @@ The height of this box is the distance we need to add to \code{mainVbox} to get 
   SILE.typesetter:pushState()
   SILE.typesetter.state.nodes = unprocessedNodes
   SILE.typesetter:leaveHmode(1)
-  local subsidiary = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue)
+  local subsidiary = SILE.typesetter.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue)
   SILE.typesetter:popState()
   mainVbox.height = mainVbox.height + subsidiary.height
 \end{raw}

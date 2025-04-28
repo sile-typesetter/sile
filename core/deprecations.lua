@@ -262,6 +262,22 @@ SILE.setCommandDefaults = function (command, options)
    return SILE.commands:setDefaults(command, options)
 end
 
+SILE.linebreak = {}
+setmetatable(SILE.linebreak, {
+   __index = function (_, key)
+      SU.deprecated("SILE.linebreak:*", "typesetter.linebreaker:*", "0.16.0", "0.17.0")
+      return SILE.linebreakers.default[key]
+   end,
+})
+
+SILE.pagebuilder = {}
+setmetatable(SILE.pagebuilder, {
+   __index = function (_, key)
+      SU.deprecated("SILE.pagebuilder:*", "typesetter.pagebuilder:*", "0.16.0", "0.17.0")
+      return SILE.linebreakers.default[key]
+   end,
+})
+
 -- luacheck: ignore updatePackage
 -- luacheck: ignore installPackage
 updatePackage = nopackagemanager
