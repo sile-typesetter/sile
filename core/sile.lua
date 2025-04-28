@@ -157,6 +157,7 @@ SILE.outputters = core_loader("outputters")
 SILE.classes = core_loader("classes")
 SILE.packages = core_loader("packages")
 SILE.typesetters = core_loader("typesetters")
+SILE.linebreakers = core_loader("linebreakers")
 SILE.pagebuilders = core_loader("pagebuilders")
 SILE.languages = core_loader("languages")
 
@@ -253,7 +254,6 @@ SILE.paperSizeParser = require("core.misc").paperSizeParser
 SILE.finish = require("core.init").finish
 
 -- Internal libraries that run core SILE functions on load
-SILE.linebreak = require("core.break")
 require("core.frame")
 SILE.font = require("core.font")
 

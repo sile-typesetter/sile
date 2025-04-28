@@ -11,6 +11,7 @@ file = {
    "../languages/",
    "../outputters/",
    "../packages/",
+   "../linebreakers/",
    "../pagebuilders/",
    "../shapers/",
    "../types/",
