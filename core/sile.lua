@@ -135,7 +135,6 @@ SILE.input = {
 -- Internal libraries that don't try to use anything on load, only provide something
 SILE.parserBits = require("core.parserbits")
 SILE.frameParser = require("core.frameparser")
-SILE.fontManager = require("core.fontmanager")
 SILE.papersize = require("core.papersize")
 
 -- Helper function thata creates a sparse table, then loads modules into it on demand if/when accessed.
@@ -153,6 +152,7 @@ SILE.settings = require("core.settings")()
 -- Internal modules and return classes that need instantiation (loading is idempotent)
 SILE.inputters = core_loader("inputters")
 SILE.shapers = core_loader("shapers")
+SILE.fontmanagers = core_loader("fontmanagers")
 SILE.outputters = core_loader("outputters")
 SILE.classes = core_loader("classes")
 SILE.packages = core_loader("packages")

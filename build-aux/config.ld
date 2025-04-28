@@ -6,16 +6,17 @@ format = "discount"
 file = {
    "../sile-lua",
    "../core/",
-   "../classes/",
-   "../inputters/",
-   "../languages/",
+   "../types/",
+   "../shapers/",
    "../outputters/",
+   "../inputters/",
+   "../classes/",
    "../packages/",
+   "../typesetters/",
+   "../fontmanagers/",
    "../linebreakers/",
    "../pagebuilders/",
-   "../shapers/",
-   "../types/",
-   "../typesetters/",
+   "../languages/",
 }
 merge = true
 no_space_before_args = true

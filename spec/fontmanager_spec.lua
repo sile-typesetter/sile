@@ -38,7 +38,9 @@ describe("The fontconfig manager", function ()
 end)
 
 describe("The macfonts manager", function ()
-   if not SILE.fontManager.macfonts then
+   local has_macfonts = pcall(SILE.fontmanagers.macfonts)
+
+   if not has_macfonts then
       return
    end
 

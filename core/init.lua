@@ -43,6 +43,10 @@ local function init ()
    if not SILE.shaper then
       SILE.shaper = SILE.shapers.default()
    end
+   if not SILE.fontmanager then
+      SILE.fontmanager = SILE.input.fontmanager and SILE.fontmanagers[SILE.input.fontmanager]()
+         or SILE.fontmanagers.default()
+   end
    io.stdout:setvbuf("no")
    if SU.debugging("profile") then
       ProFi = require("ProFi")

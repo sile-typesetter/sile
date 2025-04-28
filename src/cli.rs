@@ -64,7 +64,8 @@ pub struct Cli {
     /// Specify which font manager to use.
     ///
     /// The font manager is responsible for discovering the locations on font files on the system given a font name.
-    /// The default font manager is `fontconfig` on non-macOS systems and `macfonts` on macOS.
+    /// The default font manager is a multipurpose one that checks for a font via `macfonts`, then falls back to `fontconfig`.
+    /// This can be used to force a specific loader when more than one is available.
     #[clap(short, long, value_name = "FONTMANAGER")]
     pub fontmanager: Option<String>,
 
