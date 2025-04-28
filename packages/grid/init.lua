@@ -49,9 +49,9 @@ function package:registerCommands ()
          self.spacing = SU.cast("measurement", options.spacing):absolute()
       end
       SILE.typesetter.state.grid = true
-      oldPagebuilderType = SILE.pagebuilder._name
+      oldPagebuilderType = SILE.typesetter.pagebuilder._name
       oldTypesetterType = SILE.typesetter._name
-      SILE.pagebuilders.grid:cast(SILE.pagebuilder)
+      SILE.pagebuilders.grid:cast(SILE.typesetter.pagebuilder)
       SILE.typesetters.grid:cast(SILE.typesetter)
       SILE.typesetter.options = { spacing = self.spacing }
       if SILE.typesetter.frame then
@@ -63,7 +63,7 @@ function package:registerCommands ()
    self:registerCommand("no-grid", function (_, _)
       SILE.typesetter.state.grid = false
       SILE.typesetters[oldTypesetterType]:cast(SILE.typesetter)
-      SILE.pagebuilders[oldPagebuilderType]:cast(SILE.pagebuilder)
+      SILE.pagebuilders[oldPagebuilderType]:cast(SILE.typesetter.pagebuilder)
    end, "Stops grid typesetting.")
 end
 

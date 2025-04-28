@@ -128,7 +128,7 @@ function package:registerCommands ()
          -- but page breaking has not been run. See if page breaking would cause a
          -- break
          local lines = pl.tablex.copy(typesetter.state.outputQueue)
-         if SILE.pagebuilder:findBestBreak({ vboxlist = lines, target = typesetter:getTargetLength() }) then
+         if typesetter.pagebuilder:findBestBreak({ vboxlist = lines, target = typesetter:getTargetLength() }) then
             anybreak = true
          end
       end)

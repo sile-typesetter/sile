@@ -5,7 +5,8 @@ local module = require("types.module")
 local pagebuilder = pl.class(module)
 pagebuilder.type = "pagebuilder"
 
-function pagebuilder:_init ()
+function pagebuilder:_init (typesetter)
+   self.typesetter = typesetter
    module._init(self)
    self.awful_bad = 1073741823
    self.inf_bad = 10000
@@ -42,7 +43,7 @@ function pagebuilder:findBestBreak (options)
    local leastC = self.inf_bad
    SU.debug("pagebuilder", function ()
       return "Page builder for frame "
-         .. SILE.typesetter.frame.id
+         .. self.typesetter.frame.id
          .. " called with "
          .. #vboxlist
          .. " nodes, "

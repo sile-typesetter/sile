@@ -18,7 +18,7 @@ am_list () {
 
 printf '%s =' SILEDATA
 finder core -name '*.lua' -not -name '*_spec.lua' -not -name 'version.lua' -not -name 'features.lua' -not -name 'pathsetup.lua'
-finder classes inputters languages outputters packages shapers types typesetters pagebuilders -name '*.lua' -not -name '*_spec.lua'
+finder classes inputters languages outputters packages shapers types typesetters linebreakers pagebuilders -name '*.lua' -not -name '*_spec.lua'
 finder classes languages packages -name '*.ftl'
 finder packages -name '*.csl'
 finder packages -name '*.svg'

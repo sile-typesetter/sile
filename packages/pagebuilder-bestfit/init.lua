@@ -24,7 +24,7 @@ function package:_init ()
       SU.debug("pagebuilder", "Finally running pagebuilder")
       repeat
          q = typesetter.state.outputQueue
-         local breaks = SILE.linebreak:doBreak(q, typesetter.frame:height(), true)
+         local breaks = SILE.typesetter.linebreak:doBreak(q, typesetter.frame:height(), true)
          --Height is variable! therefore only the first break is believable
          local point = breaks[1]
          if point.position == 0 then

@@ -438,7 +438,7 @@ function class:registerCommands ()
          SILE.typesetter:pushState()
          SILE.process(content)
          SILE.typesetter:leaveHmode(1)
-         vbox = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue)
+         vbox = SILE.typesetter.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue)
          SILE.typesetter:popState()
       end)
       return vbox

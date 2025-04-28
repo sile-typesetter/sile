@@ -68,8 +68,8 @@ local function buildPage (typesetter, independent)
       end
    end
    typesetter.state.lastPenalty = 0
-   local oldPageBuilder = SILE.pagebuilder
-   SILE.pagebuilder = SILE.pagebuilders.default()
+   local oldPageBuilder = typesetter.pagebuilder
+   typesetter.pagebuilder = SILE.pagebuilders.default()
    while typesetter.frame and typesetter.frame.balanced do
       unbalanced_buildPage(typesetter, true)
       if typesetter.frame.next and SILE.getFrame(typesetter.frame.next).balanced == true then
@@ -79,7 +79,7 @@ local function buildPage (typesetter, independent)
          break -- Break early, because when we return
       end
    end
-   SILE.pagebuilder = oldPageBuilder
+   typesetter.pagebuilder = oldPageBuilder
    SU.debug("balancer", "Finished this balance, frame id is now", typesetter.frame)
    -- SILE.typesetter:debugState()
    -- We're done.

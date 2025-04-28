@@ -32,6 +32,8 @@ local _margins = pl.class({
 function typesetter:_init (frame)
    -- TODO: make class first arg of typesetter init, ditch globals hack
    self.class = SILE.documentState.documentClass
+   self.linebreaker = SILE.linebreakers.default(self)
+   self.pagebuilder = SILE.pagebuilders.default(self)
    module._init(self)
    self.hooks = {}
    self.breadcrumbs = SU.breadcrumbs()
@@ -453,7 +455,7 @@ end
 
 function typesetter:breakIntoLines (nodelist, breakWidth)
    self:shapeAllNodes(nodelist)
-   local breakpoints = SILE.linebreak:doBreak(nodelist, breakWidth)
+   local breakpoints = self.linebreaker:doBreak(nodelist, breakWidth)
    return self:breakpointsToLines(breakpoints)
 end
 
@@ -764,7 +766,7 @@ function typesetter:buildPage ()
    if SILE.scratch.insertions then
       SILE.scratch.insertions.thisPage = {}
    end
-   pageNodeList, res = SILE.pagebuilder:findBestBreak({
+   pageNodeList, res = self.pagebuilder:findBestBreak({
       vboxlist = self.state.outputQueue,
       target = self:getTargetLength(),
       restart = self.frame.state.pageRestart,

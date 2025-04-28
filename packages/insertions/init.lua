@@ -139,7 +139,7 @@ function SILE.types.node.insertion:dropDiscardables ()
 end
 
 function SILE.types.node.insertion:split (materialToSplit, maxsize)
-   local firstpage = SILE.pagebuilder:findBestBreak({
+   local firstpage = SILE.typesetter.pagebuilder:findBestBreak({
       vboxlist = materialToSplit,
       target = maxsize,
       restart = false,
@@ -152,7 +152,7 @@ function SILE.types.node.insertion:split (materialToSplit, maxsize)
       self.contentDepth = self.depth
       self.depth = SILE.types.length(0)
       self.height = SILE.types.length(0)
-      return SILE.pagebuilder:collateVboxes(firstpage)
+      return SILE.typesetter.pagebuilder:collateVboxes(firstpage)
    end
 end
 

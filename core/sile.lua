@@ -157,6 +157,7 @@ SILE.outputters = core_loader("outputters")
 SILE.classes = core_loader("classes")
 SILE.packages = core_loader("packages")
 SILE.typesetters = core_loader("typesetters")
+SILE.linebreakers = core_loader("linebreakers")
 SILE.pagebuilders = core_loader("pagebuilders")
 SILE.languages = core_loader("languages")
 
@@ -173,10 +174,9 @@ SILE.languages = core_loader("languages")
 --
 -- 1. If no backend has been loaded already (e.g. via `--use`) then assumes *libtexpdf*.
 -- 2. Loads and instantiates a shaper and outputter module appropriate for the chosen backend.
--- 3. Instantiates a pagebuilder.
--- 4. Starts a Lua profiler if the profile debug flag is set.
--- 5. Instantiates a dependency tracker if we've been asked to write make dependencies.
--- 6. Runs any code snippents passed with `--eval`.
+-- 3. Starts a Lua profiler if the profile debug flag is set.
+-- 4. Instantiates a dependency tracker if we've been asked to write make dependencies.
+-- 5. Runs any code snippents passed with `--eval`.
 --
 -- Does not move on to processing input document(s).
 SILE.init = require("core.init").init
@@ -253,7 +253,6 @@ SILE.paperSizeParser = require("core.misc").paperSizeParser
 SILE.finish = require("core.init").finish
 
 -- Internal libraries that run core SILE functions on load
-SILE.linebreak = require("core.break")
 require("core.frame")
 SILE.font = require("core.font")
 

@@ -1,6 +1,6 @@
 SILE = require("core.sile")
 
-describe("SILE.linebreak", function ()
+describe("SILE.linebreakers.default", function ()
    SILE.documentState = { documentClass = { state = {} } }
    SILE.typesetter = SILE.typesetters.default(SILE.newFrame({ id = "foo" }))
 
@@ -75,6 +75,6 @@ describe("SILE.linebreak", function ()
    nnode({ text = "sex.", height = 4.6875, depth = 0.1953, width = 15.6543 })
 
    it("should sleuth the right break point", function ()
-      -- print(SILE.linebreak:doBreak(hlist, 30.0))
+      -- print(SILE.linebreaker:doBreak(hlist, 30.0))
    end)
 end)

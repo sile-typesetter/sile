@@ -320,7 +320,7 @@ are doing with these.
       rejected by the algorithm.
       (Default: 500)}
 \item{\autodoc:setting{linebreak.parShape}: Whether to utilize a callback to
-      \code{SILE.linebreak:parShape()} to get a customized shape for each line in a paragraph.
+      \code{typesetter.linebreaker:parShape()} to get a customized shape for each line in a paragraph.
       (Default: false)}
 \item{\autodoc:setting{linebreak.pretolerance}: If there are no breakpoints better than
       this, the paragraph is considered for hyphenation.

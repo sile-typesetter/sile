@@ -219,7 +219,7 @@ function package:registerCommands ()
    self:registerCommand("float", function (options, content)
       SILE.typesetter:leaveHmode()
       local hbox = SILE.typesetter:makeHbox(content) -- HACK What about migrating nodes here?
-      local heightOfPageSoFar = SILE.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue).height
+      local heightOfPageSoFar = SILE.typesetter.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue).height
       local overshoot = SILE.types.length(heightOfPageSoFar + hbox.height - SILE.typesetter:getTargetLength())
       if overshoot > SILE.types.length(0) then
          SILE.call("eject")
