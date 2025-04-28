@@ -26,13 +26,13 @@ pub struct Cli {
     /// Specify a preset combination of backend modules to use.
     ///
     /// This option specifies a combination of modules with more relation to the system and output format than the input document.
-    /// These typically need to be chosen and initialized at runtime before the input ducument processing begins.
+    /// These typically need to be chosen and initialized at runtime before the input document processing begins.
     /// The default combination is generating a PDF via the `libtexpdf` outputter, using `harfbuzz` for shaping, and whatever fontmanagers are available on the system.
-    /// This compination and suitible for most PDF output on most systems.
+    /// This combination and suitable for most PDF output on most systems.
     /// Alternatives supported out of the box include `text`, `debug`, `dummy`, `cairo`, and `podofo`.
     /// Changing this may change the both the output format and shaper, notable the Cairo backend uses Pango for shaping.
     ///
-    /// Each option may also be specified sparately which takes precedence over this option.
+    /// Each option may also be specified separately which takes precedence over this option.
     /// Support for other backends may be enabled by loading modules with `--use`.
     #[clap(short, long, value_name = "BACKEND")]
     pub backend: Option<String>,

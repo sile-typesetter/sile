@@ -16,7 +16,7 @@ local _deprecate = function ()
          The SU.formanNumber function and it's associated language specific variants have
          been moved to the language support modules. Some default styles are provided in
          the unicode base module, and language specific features are in their own
-         modules. Access to this function should be achived by getting the current
+         modules. Access to this function should be achieved by getting the current
          language instance from the typesetter at `typesetter.language`, then calling it
          with the desired formatting function, e.g. `language:formatNumber()`.
       ]]
