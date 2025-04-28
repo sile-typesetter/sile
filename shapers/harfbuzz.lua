@@ -40,9 +40,6 @@ function shaper:shapeToken (text, options)
       end
    end
    local face = SILE.font.cache(options, self:_getFaceCallback())
-   if self:checkHBProblems(text, face) then
-      return {}
-   end
    if not face then
       SU.error("Could not find requested font " .. options .. " or any suitable substitutes")
    end
@@ -194,22 +191,6 @@ function shaper:debugVersions ()
       end
       print(face.filename .. ":" .. face.index, version)
    end
-end
-
-function shaper:checkHBProblems (text, face)
-   if hb.version_lessthan(1, 0, 4) and #text < 1 then
-      return true
-   end
-   if hb.version_lessthan(2, 3, 0) and hb.get_table(face, "CFF "):len() > 0 and not substwarnings["CFF "] then
-      SILE._status.unsupported = true
-      SU.warn([[
-         Vertical spacing of CFF fonts may be subtly inconsistent between systems
-
-         Upgrade to Harfbuzz 2.3.0 if you need absolute consistency.
-      ]])
-      substwarnings["CFF "] = true
-   end
-   return false
 end
 
 return shaper
