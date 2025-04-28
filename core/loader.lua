@@ -1,4 +1,4 @@
-function core_loader (scope)
+local function core_loader (scope)
    return setmetatable({}, {
       __index = function (self, key)
          local spec = ("%s.%s"):format(scope, key)

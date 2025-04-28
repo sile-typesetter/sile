@@ -7,13 +7,13 @@ local fontmanager = pl.class(base)
 fontmanager._name = "default"
 
 function fontmanager:_init ()
-   local havefontconfig, fontconfig = pcall(fontconfig)
+   local havefontconfig, fc = pcall(fontconfig)
    if havefontconfig then
-      self.fontconfig = fontconfig
+      self.fontconfig = fc
    end
-   local havemacfonts, macfonts = pcall(macfonts)
+   local havemacfonts, mf = pcall(macfonts)
    if havemacfonts then
-      self.macfonts = macfonts
+      self.macfonts = mf
    end
 end
 
