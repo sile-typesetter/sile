@@ -26,27 +26,15 @@ local function init ()
    for _, tree in ipairs(SILE.input.luarocksTrees) do
       _G["extendSilePathRocks"](tree)
    end
-   if not SILE.input.backend then
-      SILE.input.backend = "libtexpdf"
+   SILE.fontmanager = SILE.fontmanager or SILE.fontmanagers[SILE.input.fontmanager or "default"]()
+   if SILE.input.backend then
+      if SILE.input.backend == "cairo" then
+         SILE.shaper = SILE.shapers[SILE.input.shaper or "pango"]()
+      end
+      SILE.outputter = SILE.outputters[SILE.input.outputter or SILE.input.backend]()
    end
-   if SILE.input.backend == "libtexpdf" then
-      SILE.outputter = SILE.outputters.libtexpdf()
-   elseif SILE.input.backend == "cairo" then
-      SILE.outputter = SILE.outputters.cairo()
-   elseif SILE.input.backend == "debug" then
-      SILE.outputter = SILE.outputters.debug()
-   elseif SILE.input.backend == "text" then
-      SILE.outputter = SILE.outputters.text()
-   elseif SILE.input.backend == "dummy" then
-      SILE.outputter = SILE.outputters.dummy()
-   end
-   if not SILE.shaper then
-      SILE.shaper = SILE.shapers.default()
-   end
-   if not SILE.fontmanager then
-      SILE.fontmanager = SILE.input.fontmanager and SILE.fontmanagers[SILE.input.fontmanager]()
-         or SILE.fontmanagers.default()
-   end
+   SILE.shaper = SILE.shaper or SILE.shapers[SILE.input.shaper or "default"]()
+   SILE.outputter = SILE.outputter or SILE.outputters[SILE.input.outputter or "libtexpdf"]()
    io.stdout:setvbuf("no")
    if SU.debugging("profile") then
       ProFi = require("ProFi")

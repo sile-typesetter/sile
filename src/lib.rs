@@ -124,6 +124,8 @@ pub fn run(
     debugs: Option<Vec<String>>,
     evaluates: Option<Vec<String>>,
     evaluate_afters: Option<Vec<String>>,
+    outputter: Option<String>,
+    shaper: Option<String>,
     fontmanager: Option<String>,
     luarocks_tree: Option<Vec<PathBuf>>,
     makedeps: Option<PathBuf>,
@@ -156,6 +158,12 @@ pub fn run(
     }
     if let Some(backend) = backend {
         sile_input.set("backend", backend)?;
+    }
+    if let Some(outputter) = outputter {
+        sile_input.set("outputter", outputter)?;
+    }
+    if let Some(shaper) = shaper {
+        sile_input.set("shaper", shaper)?;
     }
     if let Some(fontmanager) = fontmanager {
         sile_input.set("fontmanager", fontmanager)?;

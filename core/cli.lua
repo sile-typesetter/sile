@@ -16,11 +16,13 @@ cli.parseArguments = function ()
       a module with the `--use` argument to add support for them first.
     ]])
    cliargs:splat("INPUTS", "Input document filename(s), by default in SIL, XML, or Lua formats.", nil, 999)
-   cliargs:option("-b, --backend=VALUE", "Specify the output backend")
+   cliargs:option("-b, --backend=VALUE", "Specify a preset combination of backend modules to use")
    cliargs:option("-c, --class=VALUE", "Override the default or specified document class")
    cliargs:option("-d, --debug=VALUE", "Show debug information for tagged aspects of SILE’s operation", {})
    cliargs:option("-e, --evaluate=VALUE", "Evaluate Lua expression before processing input", {})
    cliargs:option("-E, --evaluate-after=VALUE", "Evaluate Lua expression after processing input", {})
+   cliargs:option("-F, --outputter=VALUE", "Specify which outputter to use")
+   cliargs:option("-s, --shaper=VALUE", "Specify which shaper to use")
    cliargs:option("-f, --fontmanager=VALUE", "Specify which font manager to use")
    cliargs:option("-I, --include=FILE", "Deprecated, see --use, --preamble, --postamble, or multiple input files", {})
    cliargs:option(
@@ -93,6 +95,12 @@ cli.parseArguments = function ()
    end
    for _, statement in ipairs(opts["evaluate-after"]) do
       table.insert(SILE.input.evaluateAfters, statement)
+   end
+   if opts.outputter then
+      SILE.input.outputter = opts.outputter
+   end
+   if opts.shaper then
+      SILE.input.shaper = opts.shaper
    end
    if opts.fontmanager then
       SILE.input.fontmanager = opts.fontmanager

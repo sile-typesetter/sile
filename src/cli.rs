@@ -23,11 +23,17 @@ pub struct Cli {
     /// Use `-` to read a content stream from STDIN.
     pub input: Option<Vec<PathBuf>>,
 
-    /// Specify the output backend.
+    /// Specify a preset combination of backend modules to use.
     ///
-    /// The default is `libtexpdf` and suitible for most PDF output.
+    /// This option specifies a combination of modules with more relation to the system and output format than the input document.
+    /// These typically need to be chosen and initialized at runtime before the input ducument processing begins.
+    /// The default combination is generating a PDF via the `libtexpdf` outputter, using `harfbuzz` for shaping, and whatever fontmanagers are available on the system.
+    /// This compination and suitible for most PDF output on most systems.
     /// Alternatives supported out of the box include `text`, `debug`, `dummy`, `cairo`, and `podofo`.
-    /// Other outputters may be enabled via `--use`.
+    /// Changing this may change the both the output format and shaper, notable the Cairo backend uses Pango for shaping.
+    ///
+    /// Each option may also be specified sparately which takes precedence over this option.
+    /// Support for other backends may be enabled by loading modules with `--use`.
     #[clap(short, long, value_name = "BACKEND")]
     pub backend: Option<String>,
 
@@ -60,6 +66,23 @@ pub struct Cli {
     /// May be specified more than once.
     #[clap(short = 'E', long, value_name = "EXRPESION")]
     pub evaluate_after: Option<Vec<String>>,
+
+    /// Specify which outputter to use.
+    ///
+    /// By default the backend will generate PDFs using the `libtexpdf` outputter.
+    /// This can be used to override specifically which outputter is used.
+    /// Other available outputters include `text` and `debug` which output plain text, `dummy` which produces no output, and `cairo` and `podofo` which are alternative ways of writing PDFS.
+    #[clap(short = 'F', long, value_name = "OUTPUTTER")]
+    pub outputter: Option<String>,
+
+    /// Specify which shaper to use.
+    ///
+    /// By default the backend will use the best suited shaper.
+    /// This can be used to override specifically which shaper is used.
+    /// The default depends on the backend, but most outputters use `harfbuzz`.
+    /// The main alternative shaper is `pango`.
+    #[clap(short, long, value_name = "SHAPER")]
+    pub shaper: Option<String>,
 
     /// Specify which font manager to use.
     ///

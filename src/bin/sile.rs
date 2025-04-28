@@ -44,6 +44,8 @@ fn main() -> Result<()> {
         args.debug,
         args.evaluate,
         args.evaluate_after,
+        args.outputter,
+        args.shaper,
         args.fontmanager,
         args.luarocks_tree,
         args.makedeps,
