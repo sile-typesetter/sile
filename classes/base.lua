@@ -356,6 +356,29 @@ end
 
 -- These need refactoring probably somewhere outside of the document class system
 function class:_registerCommands ()
+   self.commands:register("set", function (options, content)
+      local makedefault = SU.boolean(options.makedefault, false)
+      local reset = SU.boolean(options.reset, false)
+      local value = options.value
+      if content and (type(content) == "function" or content[1]) then
+         if makedefault then
+            SU.warn(
+               "Are you sure meant to set default settings *and* pass content to ostensibly apply them to temporarily?"
+            )
+         end
+         self.settings:temporarily(function ()
+            if options.parameter then
+               local parameter = SU.required(options, "parameter", "\\set command")
+               self.settings:set(parameter, value, makedefault, reset)
+            end
+            SILE.process(content)
+         end)
+      else
+         local parameter = SU.required(options, "parameter", "\\set command")
+         self.settings:set(parameter, value, makedefault, reset)
+      end
+   end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")
+
    local function replaceProcessBy (replacement, tree)
       if type(tree) ~= "table" then
          return tree

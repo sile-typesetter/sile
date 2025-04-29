@@ -15,30 +15,6 @@ function settings:_init ()
    self.state = {}
    self.stateQueue = {}
    self.hooks = {}
-   SILE.commands:register(self, "set", function (options, content)
-      local makedefault = SU.boolean(options.makedefault, false)
-      local reset = SU.boolean(options.reset, false)
-      local value = options.value
-      if content and (type(content) == "function" or content[1]) then
-         if makedefault then
-            SU.warn(
-               "Are you sure meant to set default settings *and* pass content to ostensibly apply them to temporarily?"
-            )
-         end
-         self:temporarily(parent, function ()
-            if options.parameter then
-               local parameter = SU.required(options, "parameter", "\\set command")
-               self:set(parent, parameter, value, makedefault, reset)
-            end
-            SILE.process(content)
-         end)
-      else
-         local parameter = SU.required(options, "parameter", "\\set command")
-         self:set(parent, parameter, value, makedefault, reset)
-      end
-   end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")
-
-   return registry._init(self, parent)
 end
 
 --- Stash the current values of all settings in a stack to be returned to later
