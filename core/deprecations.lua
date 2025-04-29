@@ -286,6 +286,19 @@ setmetatable(SILE.fontManager, {
    end,
 })
 
+local mt = getmetatable(SILE)
+function mt:__index (key)
+   -- if key == "frames" then
+   --    SU.deprecated("SILE.frames:*", "class.frames:*", "0.16.0", "0.17.0")
+   --    return SILE.documentState.documentClass.frames
+   -- end
+   if key == "framePrototype" then
+      SU.deprecated("SILE.framePrototype", "SILE.types.frame", "0.16.0", "0.17.0")
+      return SILE.types.frame
+   end
+   return rawget(SILE, key)
+end
+
 -- luacheck: ignore updatePackage
 -- luacheck: ignore installPackage
 updatePackage = nopackagemanager

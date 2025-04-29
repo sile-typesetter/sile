@@ -1,6 +1,10 @@
 SILE = require("core.sile")
+SILE.input.backend = "dummy"
+SILE.init()
 
 describe("The frame factory", function ()
+   require("classes.plain")({})
+
    it("should exist", function ()
       assert.is.truthy(SILE.newFrame)
    end)
@@ -15,6 +19,10 @@ describe("The frame factory", function ()
       end)
       it("should have height", function ()
          assert.is.equal(180, frame:height():tonumber())
+      end)
+      it("should be registered in the class frames table", function ()
+         assert.is.truthy(SILE.frames["hello"])
+         assert.is.equal(frame, SILE.frames["hello"])
       end)
    end)
 end)
