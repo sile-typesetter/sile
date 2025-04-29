@@ -10,6 +10,9 @@ require("core.globals")
 -- Placeholder for SILE internals table
 SILE = {}
 
+-- Currently used for deprecation shims, in the future may have other uses
+setmetatable(SILE, {})
+
 --- Fields
 -- @section fields
 

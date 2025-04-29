@@ -58,7 +58,7 @@ local declareHanmenFrame = function (class, id, spec)
    local skip = spec.hanmen.linegap + spec.hanmen.gridsize
    class.settings:set("document.baselineskip", SILE.types.node.vglue(skip))
    class.settings:set("document.parskip", SILE.types.node.vglue())
-   local frame = SILE.newFrame(spec, spec.tate and SILE.tateFramePrototype or SILE.framePrototype)
+   local frame = (spec.tate and class.packages.tate._tateFrame or SILE.types.frame)(spec)
    if spec.id then
       class.pageTemplate.frames[spec.id] = frame
    end

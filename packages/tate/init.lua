@@ -3,23 +3,27 @@ local base = require("packages.base")
 local package = pl.class(base)
 package._name = "tate"
 
-SILE.tateFramePrototype = pl.class(SILE.framePrototype)
-SILE.tateFramePrototype.direction = "TTB-RTL"
-
-SILE.tateFramePrototype.enterHooks = {
+package._tateFrame = pl.class(SILE.types.frame)
+package._tateFrame.direction = "TTB-RTL"
+package._tateFrame.enterHooks = {
    function (_, typesetter)
       SILE.typesetters.tate:cast(typesetter)
    end,
 }
-
-SILE.tateFramePrototype.leaveHooks = {
+package._tateFrame.leaveHooks = {
    function (_, typesetter)
       SILE.typesetters.base:cast(typesetter)
    end,
 }
 
+package._dummyFrame = pl.class(SILE.types.frame)
+package._dummyFrame.init = function (frame, _typesetter)
+   frame.state = {}
+end
+
 SILE.newTateFrame = function (spec)
-   return SILE.newFrame(spec, SILE.tateFramePrototype)
+   SU.deprecated("SILE.newTateFrame", "packages.tate._tateFrame", "0.16.0", "0.17.0")
+   return SILE.newFrame(spec, package._tateFrame)
 end
 
 local outputLatinInTate = function (self, typesetter, line)
@@ -61,11 +65,7 @@ function package:registerCommands ()
       local prevDirection = oldT.frame.direction
       self:loadPackage("rotate")
       self.settings:temporarily(function ()
-         local dummyFrame = pl.class(SILE.framePrototype)
-         dummyFrame.init = function (f)
-            f.state = {}
-         end
-         local frame = dummyFrame({}, true)
+         local frame = self._dummyFrame({ id = "dummy" }, true)
          SILE.typesetter = SILE.typesetters["latin-in-tate"](frame)
          self.settings:set("document.language", "und")
          self.settings:set("font.direction", "LTR")

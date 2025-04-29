@@ -654,7 +654,9 @@ end
 
 function class:initialFrame ()
    SILE.documentState.thisPageTemplate = pl.tablex.deepcopy(self.pageTemplate)
+   -- Truncate list of frames to just the page
    SILE.frames = { page = SILE.frames.page }
+   -- Re-init the frameset for a new page
    for k, v in pairs(SILE.documentState.thisPageTemplate.frames) do
       SILE.frames[k] = v
    end

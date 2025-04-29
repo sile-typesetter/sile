@@ -22,12 +22,11 @@ describe("The frame parser", function ()
    end)
 
    describe("function", function () -- also tests identifier
-      SILE.documentState = {
-         thisPageTemplate = {
-            frames = {
-               a = SILE.newFrame({ id = "A", top = 20, left = 30, bottom = 200, right = 300 }),
-               bb3 = SILE.newFrame({ id = "B", top = 20, left = 30, bottom = 200, right = 300 }),
-            },
+      require("classes.plain")({})
+      SILE.documentState.thisPageTemplate = {
+         frames = {
+            a = SILE.newFrame({ id = "A", top = 20, left = 30, bottom = 200, right = 300 }),
+            bb3 = SILE.newFrame({ id = "B", top = 20, left = 30, bottom = 200, right = 300 }),
          },
       }
       --it("should match valid functions", function() assert.is.equal(30,r:match("left(a)")) end)
