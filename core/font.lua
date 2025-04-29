@@ -1,18 +1,6 @@
 --- font
 -- @module SILE.font
 
-SILE.settings:declare({ parameter = "font.family", type = "string or nil", default = "Gentium Plus" })
-SILE.settings:declare({ parameter = "font.size", type = "number or integer", default = 10 })
-SILE.settings:declare({ parameter = "font.weight", type = "integer", default = 400 })
-SILE.settings:declare({ parameter = "font.variant", type = "string", default = "normal" })
-SILE.settings:declare({ parameter = "font.script", type = "string", default = "" })
-SILE.settings:declare({ parameter = "font.style", type = "string", default = "" })
-SILE.settings:declare({ parameter = "font.direction", type = "string", default = "" })
-SILE.settings:declare({ parameter = "font.filename", type = "string or nil", default = "" })
-SILE.settings:declare({ parameter = "font.features", type = "string", default = "" })
-SILE.settings:declare({ parameter = "font.variations", type = "string", default = "" })
-SILE.settings:declare({ parameter = "font.hyphenchar", type = "string", default = "-" })
-
 SILE.fontCache = {}
 
 local _key = function (options)

@@ -21,6 +21,20 @@ end
 
 function fontmanager:face (_) end
 
+function fontmanager:_declareSettings ()
+   self.settings:declare({ parameter = "font.family", type = "string or nil", default = "Gentium Plus" })
+   self.settings:declare({ parameter = "font.size", type = "number or integer", default = 10 })
+   self.settings:declare({ parameter = "font.weight", type = "integer", default = 400 })
+   self.settings:declare({ parameter = "font.variant", type = "string", default = "normal" })
+   self.settings:declare({ parameter = "font.script", type = "string", default = "" })
+   self.settings:declare({ parameter = "font.style", type = "string", default = "" })
+   self.settings:declare({ parameter = "font.direction", type = "string", default = "" })
+   self.settings:declare({ parameter = "font.filename", type = "string or nil", default = "" })
+   self.settings:declare({ parameter = "font.features", type = "string", default = "" })
+   self.settings:declare({ parameter = "font.variations", type = "string", default = "" })
+   self.settings:declare({ parameter = "font.hyphenchar", type = "string", default = "-" })
+end
+
 function fontmanager:_registerCommands ()
    local function measureFontAdjustment (metric)
       if metric == "ex-height" then
