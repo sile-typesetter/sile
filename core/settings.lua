@@ -1,10 +1,6 @@
 --- core settings registry instance
 --- @module SILE.settings
 
-local deprecator = function ()
-   SU.deprecated("SILE.settings.*", "SILE.settings:*", "0.13.0", "0.15.0")
-end
-
 --- @type settings
 local registry = require("types.registry")
 local settings = pl.class(registry)
@@ -19,18 +15,12 @@ end
 
 --- Stash the current values of all settings in a stack to be returned to later
 function settings:pushState (_parent)
-   if not self then
-      return deprecator()
-   end
    table.insert(self.stateQueue, self.state)
    self.state = pl.tablex.copy(self.state)
 end
 
 --- Return the most recently pushed set of values in the setting stack
 function settings:popState (parent)
-   if not self then
-      return deprecator()
-   end
    local previous = self.state
    self.state = table.remove(self.stateQueue)
    for parameter, oldvalue in pairs(previous) do
@@ -45,10 +35,8 @@ function settings:popState (parent)
 end
 
 --- Declare a new setting
+--- @tparam table spec { parameter, type, default, help, hook, ... } declaration specification
 function settings:declare (parent, spec)
-   if not spec then
-      return deprecator()
-   end
    if self:exists(parent, spec.parameter) then
       SU.debug("settings", "WARNING: Redeclaring setting", spec.parameter)
    else
@@ -75,9 +63,6 @@ end
 --- Restore all settings to the value they had in the top-level state,
 -- that is at the tap of the settings stack (normally the document level).
 function settings:toplevelState (parent)
-   if not self then
-      return deprecator()
-   end
    if #self.stateQueue ~= 0 then
       for parameter, _ in pairs(self.state) do
          -- Bypass self:set() as the latter performs some tests and a cast,
@@ -96,9 +81,6 @@ function settings:get (parent, parameter)
    -- See comment on set() below.
    if parameter == "current.parindent" then
       return SILE.typesetter and SILE.typesetter.state.parindent
-   end
-   if not parameter then
-      return deprecator()
    end
    local setting = self:pull(parent, parameter)
    if not setting then
@@ -137,9 +119,6 @@ function settings:set (parent, parameter, value, makedefault, reset)
       end
       return
    end
-   if type(self) ~= "table" then
-      return deprecator()
-   end
    local setting = self:pull(parent, parameter)
    if not setting then
       SU.error("Undefined setting '" .. parameter .. "'")
@@ -158,7 +137,7 @@ function settings:set (parent, parameter, value, makedefault, reset)
    end
 end
 
-function settings:reset(parent, parameter)
+function settings:reset (parent, parameter)
    local setting = self:pull(parent, parameter)
    setting:reset()
 end
@@ -195,9 +174,6 @@ end
 -- (Under the hood this just uses `:pushState()`, the processes the function, then runs `:popState()`)
 -- @tparam function func A function wrapping the actions to take without affecting settings for future use.
 function settings:temporarily (parent, func)
-   if not func then
-      return deprecator()
-   end
    self:pushState(parent)
    func()
    self:popState(parent)
@@ -207,9 +183,6 @@ end
 --- @treturn function a closure function accepting one argument (content) to process using
 --- typesetter settings as they are at the time of closure creation.
 function settings:wrap (parent)
-   if not self then
-      return deprecator()
-   end
    local clSettings = pl.tablex.copy(self.state)
    return function (content)
       table.insert(self.stateQueue, self.state)
