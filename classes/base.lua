@@ -394,12 +394,12 @@ function class:_registerCommands ()
       end
    end
 
-   self:registerCommand("define", function (options, content)
+   self.commands:register("define", function (options, content)
       SU.required(options, "command", "defining command")
       if type(content) == "function" then
          -- A macro defined as a function can take no argument, so we register
          -- it as-is.
-         self:registerCommand(options["command"], content)
+         self.commands:register(options["command"], content)
          return
       elseif options.command == "process" then
          SU.warn([[
@@ -408,7 +408,7 @@ function class:_registerCommands ()
             That probably won't go well.
          ]])
       end
-      self:registerCommand(options["command"], function (_, inner_content)
+      self.commands:register(options["command"], function (_, inner_content)
          SU.debug("macros", "Processing macro \\" .. options["command"])
          local macroArg
          if type(inner_content) == "function" then
@@ -434,7 +434,7 @@ function class:_registerCommands ()
    end, "Define a new macro. \\define[command=example]{ ... \\process }")
 
    -- A utility function that allows SILE.call() to be used as a noop wrapper.
-   self:registerCommand("noop", function (_, content)
+   self.commands:register("noop", function (_, content)
       SILE.process(content)
    end)
 
@@ -443,20 +443,20 @@ function class:_registerCommands ()
    -- actually handled by SILE.inputter:classInit() before we get here, so these
    -- are just pass through functions. Theoretically, this could be a useful
    -- point to hook into-especially for included documents.
-   self:registerCommand("document", function (_, content)
+   self.commands:register("document", function (_, content)
       SILE.process(content)
    end)
-   self:registerCommand("sile", function (_, content)
+   self.commands:register("sile", function (_, content)
       SILE.process(content)
    end)
 
-   self:registerCommand("comment", function (_, _) end, "Ignores any text within this command's body.")
+   self.commands:register("comment", function (_, _) end, "Ignores any text within this command's body.")
 
-   self:registerCommand("process", function ()
+   self.commands:register("process", function ()
       SU.error("Encountered unsubstituted \\process")
    end, "Within a macro definition, processes the contents of the macro body.")
 
-   self:registerCommand("script", function (options, content)
+   self.commands:register("script", function (options, content)
       local function _deprecated (original, suggested)
          SU.deprecated(
             "\\script",
@@ -496,7 +496,7 @@ function class:_registerCommands ()
       end
    end, "Runs lua code. The code may be supplied either inline or using src=...")
 
-   self:registerCommand("include", function (options, content)
+   self.commands:register("include", function (options, content)
       local packopts = packOptions(options)
       if SU.ast.hasContent(content) then
          local doc = SU.ast.contentToString(content)
@@ -508,7 +508,7 @@ function class:_registerCommands ()
       end
    end, "Includes a content file for processing.")
 
-   self:registerCommand(
+   self.commands:register(
       "lua",
       function (options, content)
          local packopts = packOptions(options)
@@ -527,7 +527,7 @@ function class:_registerCommands ()
       "Run Lua code. The code may be supplied either inline, using require=... for a Lua module, or using src=... for a file path"
    )
 
-   self:registerCommand("sil", function (options, content)
+   self.commands:register("sil", function (options, content)
       local packopts = packOptions(options)
       if SU.ast.hasContent(content) then
          local doc = SU.ast.contentToString(content)
@@ -539,7 +539,7 @@ function class:_registerCommands ()
       end
    end, "Process sil content. The content may be supplied either inline or using src=...")
 
-   self:registerCommand("xml", function (options, content)
+   self.commands:register("xml", function (options, content)
       local packopts = packOptions(options)
       if SU.ast.hasContent(content) then
          local doc = SU.ast.contentToString(content)
@@ -551,7 +551,7 @@ function class:_registerCommands ()
       end
    end, "Process xml content. The content may be supplied either inline or using src=...")
 
-   self:registerCommand(
+   self.commands:register(
       "use",
       function (options, content)
          local packopts = packOptions(options)
@@ -576,7 +576,7 @@ function class:_registerCommands ()
       "Load and initialize a SILE module (can be a package, a shaper, a typesetter, or whatever). Use module=... to specif what to load or include module code inline."
    )
 
-   self:registerCommand("raw", function (options, content)
+   self.commands:register("raw", function (options, content)
       local rawtype = SU.required(options, "type", "raw")
       local handler = SILE.rawHandlers[rawtype]
       if not handler then
@@ -585,7 +585,7 @@ function class:_registerCommands ()
       handler(options, content)
    end, "Invoke a raw passthrough handler")
 
-   self:registerCommand("pagetemplate", function (options, content)
+   self.commands:register("pagetemplate", function (options, content)
       SILE.typesetter:pushState()
       SILE.documentState.thisPageTemplate = { frames = {} }
       SILE.process(content)
@@ -594,11 +594,11 @@ function class:_registerCommands ()
       SILE.typesetter:popState()
    end, "Defines a new page template for the current page and sets the typesetter to use it.")
 
-   self:registerCommand("frame", function (options, _)
+   self.commands:register("frame", function (options, _)
       SILE.documentState.thisPageTemplate.frames[options.id] = SILE.newFrame(options)
    end, "Declares (or re-declares) a frame on this page.")
 
-   self:registerCommand("penalty", function (options, _)
+   self.commands:register("penalty", function (options, _)
       if SU.boolean(options.vertical, false) and not SILE.typesetter:vmode() then
          SILE.typesetter:leaveHmode()
       end
@@ -609,7 +609,7 @@ function class:_registerCommands ()
       end
    end, "Inserts a penalty node. Option is penalty= for the size of the penalty.")
 
-   self:registerCommand("discretionary", function (options, _)
+   self.commands:register("discretionary", function (options, _)
       local discretionary = SILE.types.node.discretionary({})
       if options.prebreak then
          local hbox = SILE.typesetter:makeHbox({ options.prebreak })
@@ -626,17 +626,17 @@ function class:_registerCommands ()
       table.insert(SILE.typesetter.state.nodes, discretionary)
    end, "Inserts a discretionary node.")
 
-   self:registerCommand("glue", function (options, _)
+   self.commands:register("glue", function (options, _)
       local width = SU.cast("length", options.width):absolute()
       SILE.typesetter:pushGlue(width)
    end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-   self:registerCommand("kern", function (options, _)
+   self.commands:register("kern", function (options, _)
       local width = SU.cast("length", options.width):absolute()
       SILE.typesetter:pushHorizontal(SILE.types.node.kern(width))
    end, "Inserts a glue node. The width option denotes the glue dimension.")
 
-   self:registerCommand("skip", function (options, _)
+   self.commands:register("skip", function (options, _)
       options.discardable = SU.boolean(options.discardable, false)
       options.height = SILE.types.length(options.height):absolute()
       SILE.typesetter:leaveHmode()
@@ -647,7 +647,7 @@ function class:_registerCommands ()
       end
    end, "Inserts vertical skip. The height options denotes the skip dimension.")
 
-   self:registerCommand("par", function (_, _)
+   self.commands:register("par", function (_, _)
       SILE.typesetter:endline()
    end, "Ends the current paragraph.")
 end
