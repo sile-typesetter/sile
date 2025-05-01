@@ -37,7 +37,8 @@ SILE.framePrototype = pl.class({
             self.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method })
             self[method] = function (instance_self)
                instance_self:solve()
-               return SILE.types.measurement(instance_self.variables[method].value)
+               local value = instance_self.variables[method].value
+               return SILE.types.measurement(value)
             end
          end
          -- Add definitions of width and height

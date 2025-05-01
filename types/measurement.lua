@@ -74,6 +74,9 @@ function measurement:_init (amount, unit)
       self.unit = amount.length.unit
    elseif type(amount) == "table" then
       self.amount = amount.amount
+      if not amount.unit or amount.unit == "" then
+         amount.unit = "pt"
+      end
       self.unit = amount.unit
    elseif type(tonumber(amount)) == "number" then
       self.amount = tonumber(amount)
@@ -88,7 +91,7 @@ function measurement:_init (amount, unit)
    end
    local _su = SILE.types.unit[self.unit]
    if not _su then
-      SU.error("Unknown unit: " .. unit)
+      SU.error("Unknown unit: " .. tostring(unit))
    end
    self.relative = _su.relative
    if self.unit == "pt" then
