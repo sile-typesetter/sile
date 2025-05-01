@@ -32,9 +32,9 @@ package.default_settings = {
 }
 
 local function _v14_aligns (content)
-   SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
-   SILE.settings:set("document.parindent", SILE.types.node.glue())
-   SILE.settings:set("document.spaceskip", SILE.types.length("1spc", 0, 0))
+   self.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+   self.settings:set("document.parindent", SILE.types.node.glue())
+   self.settings:set("document.spaceskip", SILE.types.length("1spc", 0, 0))
    SILE.process(content)
    SILE.call("par")
 end
@@ -46,25 +46,25 @@ package.shim_commands = {
             if #SILE.typesetter.state.nodes ~= 0 then
                SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
             end
-            SILE.settings:temporarily(function ()
-               SILE.settings:set("document.rskip", SILE.types.node.hfillglue())
-               SILE.settings:set("document.lskip", SILE.types.node.hfillglue())
+            self.settings:temporarily(function ()
+               self.settings:set("document.rskip", SILE.types.node.hfillglue())
+               self.settings:set("document.lskip", SILE.types.node.hfillglue())
                _v14_aligns(content)
             end)
          end
       end,
       ["raggedright"] = function (_)
          return function (_, content)
-            SILE.settings:temporarily(function ()
-               SILE.settings:set("document.rskip", SILE.types.node.hfillglue())
+            self.settings:temporarily(function ()
+               self.settings:set("document.rskip", SILE.types.node.hfillglue())
                _v14_aligns(content)
             end)
          end
       end,
       ["raggedleft"] = function (_)
          return function (_, content)
-            SILE.settings:temporarily(function ()
-               SILE.settings:set("document.lskip", SILE.types.node.hfillglue())
+            self.settings:temporarily(function ()
+               self.settings:set("document.lskip", SILE.types.node.hfillglue())
                _v14_aligns(content)
             end)
          end
@@ -78,7 +78,7 @@ package.shim_classes = {
          local newPar = SILE.documentState.documentClass.newPar
          SILE.documentState.documentClass.newPar = function (typesetter)
             newPar(typesetter)
-            SILE.settings:set("current.parindent", nil)
+            self.settings:set("current.parindent", nil)
          end
          return function ()
             SILE.classes.book.newPar = newPar
@@ -87,9 +87,9 @@ package.shim_classes = {
       ["classes.base.endPar"] = function ()
          local endPar = SILE.documentState.documentClass.endPar
          SILE.documentState.documentClass.endPar = function (typesetter)
-            local current_parindent = SILE.settings:get("current.parindent")
+            local current_parindent = self.settings:get("current.parindent")
             endPar(typesetter)
-            SILE.settings:set("current.parindent", current_parindent)
+            self.settings:set("current.parindent", current_parindent)
          end
          return function ()
             SILE.classes.book.endPar = endPar
