@@ -127,7 +127,7 @@ function settings:set (parent, parameter, value, makedefault, reset)
       if makedefault then
          SU.error("Can't set a new default and revert to and old default setting at the same time")
       end
-      SU.deprecated("settings:set(parameter, _, _, _, true)", "settings:reset(parameter)", "0.16.0", "0.17.0")
+      -- SU.deprecated("settings:set(parameter, _, _, _, true)", "settings:reset(parameter)", "0.16.0", "0.17.0")
       setting:reset()
    else
       -- if makedefault then
