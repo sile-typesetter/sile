@@ -26,8 +26,12 @@ function settings:popState (parent)
    for parameter, oldvalue in pairs(previous) do
       if self.hooks[parameter] then
          local newvalue = self.state[parameter]
-         if oldvalue ~= newvalue then
-            self:set(parent, parameter, newvalue)
+         if newvalue == nil then
+            self:reset(parent, parameter)
+         else
+            if oldvalue ~= newvalue then
+               self:set(parent, parameter, newvalue)
+            end
          end
       end
    end

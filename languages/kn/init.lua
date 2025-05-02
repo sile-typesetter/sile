@@ -13,7 +13,7 @@ function language:declareSettings ()
          prev_script = script
          self.settings:set("font.script", "Knda")
       elseif lang ~= "kn" and prev_script ~= "Knda" then
-         self.settings:set("font.script", prev_script)
+         self.settings:set("font.script", prev_script or "")
          prev_script = nil
       end
    end)

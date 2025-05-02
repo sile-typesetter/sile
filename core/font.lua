@@ -35,8 +35,9 @@ local font = {
       if not options.variant then
          options.variant = SILE.settings:get("font.variant")
       end
-      if SILE.settings:get("font.filename") ~= "" then
-         options.filename = SILE.settings:get("font.filename")
+      local fn = SILE.settings:get("font.filename")
+      if fn ~= "" and fn ~= nil then
+         options.filename = fn
          options.family = ""
       end
       if not options.language then
