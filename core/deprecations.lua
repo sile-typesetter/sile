@@ -217,17 +217,17 @@ setmetatable(SILE.Commands, {
    __index = function (_, name)
       nocommands()
       -- Return the bare function for legacy use since a table type would be unexpected
-      return SILE.commands:get(name).func
+      return SILE.commands:pull(name).func
    end,
    __newindex = function (_, name, func, help, pack)
       nocommands()
-      return SILE.commands:register(SILE, name, func, help, pack, _)
+      return SILE.commands:register(name, func, help, pack, _)
    end,
 })
 
 SILE.registerCommand = function (name, func, help, pack)
    nocommands()
-   return SILE.commands:register(SILE, name, func, help, pack)
+   return SILE.commands:register(name, func, help, pack)
 end
 
 local function nohelp ()
@@ -246,13 +246,13 @@ SILE.Help = {}
 setmetatable(SILE.Help, {
    __index = function (_, name)
       nohelp()
-      local command = SILE.commands:get(name)
+      local command = SILE.commands:pull(name)
       return {
          description = command.help,
       }
    end,
    __newindex = function (_, name, spec)
-      local command = SILE.commands:get(name)
+      local command = SILE.commands:pull(name)
       command.help = spec.description
    end,
 })

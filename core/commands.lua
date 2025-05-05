@@ -1,91 +1,46 @@
-local commands = pl.class()
+--- core command registry instance
+--- @module SILE.commands
 
-commands.registry = {}
+--- @type commands
+local registry = require("types.registry")
+local commands = pl.class(registry)
+commands._name = "commands"
+
+function commands:_init ()
+   registry._init(self)
+end
 
 function commands:register (parent, name, func, help, pack, defaults)
-   if type(parent) ~= "table" then
-      SU.deprecated(
-         "SILE.registerCommand",
-         "class:registerCommand / package:registerCommand",
-         "0.14.0",
-         "0.16.0",
-         [[
-            Commands are being scoped to the document classes or packages they are
-            loaded into rather than using a global registry.
-         ]]
-      )
-   end
-   if self:exists(name) then
+   if self:exists(parent, name) then
       SU.debug("commands", "WARNING: Redefining command", name)
-   end
-   local command = SILE.types.command(parent, name, func, help, pack, defaults)
-   return self:_push(name, command)
-end
-
-function commands:_push (name, command)
-   if not self.registry[name] then
-      self.registry[name] = {}
-   end
-   table.insert(self.registry[name], command)
-   return command, #self.registry[name]
-end
-
-function commands:pop (name, count)
-   if not self:exists(name) then
-      SU.error("Cannot pop '%s' from the command registry, never registered."):format(name)
-   end
-   local stack = self.registry[name]
-   local command
-   count = tonumber(count) or 1
-   SU.debug("commands", function ()
-      return ("Popping %d registrations of command '%s'"):format(count, name)
-   end)
-   if count <= #stack then
-      for _ = 1, count do
-         command = table.remove(stack)
-      end
-      return command
    else
-      SU.error(("Cannot pop %d registrations of command '%s', only %d registered."):format(count, name, #stack))
+      self._registry[name] = {}
    end
+   local command = SILE.types.command(name, func, help, pack, defaults)
+   self:push(parent, command)
 end
 
-function commands:exists (name)
-   local stack = self.registry[name]
-   return stack and #stack > 0 and SILE.types.command:class_of(stack[#stack])
+function commands:call (parent, name, options, content)
+   return self:pull(parent, name)(options, content)
 end
 
-function commands:get (name, count)
-   if not self:exists(name) then
-      SU.error(("No function '%s' exists"):format(name))
-   end
-   local stack = self.registry[name]
-   count = tonumber(count) or 1
-   local index = #stack - count + 1
-   return stack[index], index
-end
-
-function commands:call (name, options, content)
-   return self:get(name)(options, content)
-end
-
-function commands:setDefaults (name, options)
-   self:get(name):setDefaults(options)
+function commands:setDefaults (parent, name, options)
+   self:pull(parent, name):setDefaults(options)
 end
 
 function commands:pushWrapper (parent, name, func, defaults)
-   local original = self:get(name)
-   local command = SILE.types.command(parent, name, function (options, content)
+   local original = self:pull(parent, name)
+   local command = SILE.types.command(name, function (options, content)
       return func(options, content, original)
    end, original.help, original.pack, defaults)
-   return self:_push(name, command)
+   return self:push(parent, command)
 end
 
-function commands:dump ()
+function commands:dump (parent)
    local flag = SILE.debugFlags.commands
    SILE.debugFlags.commands = true
-   for name, stack in pairs(self.registry) do
-      local cmd = self:get(name)
+   for name, stack in pairs(self._registry) do
+      local cmd = self:pull(parent, name)
       SU.debug(
          "commands",
          name,

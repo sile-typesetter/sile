@@ -325,7 +325,7 @@ function class:registerCommands ()
          self.settings:set("document.rskip", SILE.types.node.glue(rskip.width.length))
          -- Reset parfillskip to its default value, in case the surrounding context
          -- is ragged and cancelled it.
-         self.settings:set("typesetter.parfillskip", nil, false, true)
+         self.settings:reset("typesetter.parfillskip")
          self.settings:set("document.spaceskip", nil)
          SILE.process(content)
          SILE.call("par")

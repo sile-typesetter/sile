@@ -7,6 +7,7 @@ local fontmanager = pl.class(base)
 fontmanager._name = "default"
 
 function fontmanager:_init ()
+   base._init(self)
    local havefontconfig, fc = pcall(fontconfig)
    if havefontconfig then
       self.fontconfig = fc

@@ -173,7 +173,7 @@ function package:registerCommands ()
       end
       if type(pkg.registerCommands) == "function" then
          -- faking an uninstantiated package
-         pkg.class = self.class
+         pkg.class, pkg.settings, pkg.commands = self.class, self.settings, self.commands
          pkg.registerCommands(pkg)
       end
       SILE.processString(pkg.documentation)

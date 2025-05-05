@@ -31,41 +31,41 @@ package.default_settings = {
    },
 }
 
-local function _v14_aligns (content)
-   SILE.settings:set("typesetter.parfillskip", SILE.types.node.glue())
-   SILE.settings:set("document.parindent", SILE.types.node.glue())
-   SILE.settings:set("document.spaceskip", SILE.types.length("1spc", 0, 0))
+local function _v14_aligns (self, content)
+   self.settings:set("typesetter.parfillskip", SILE.types.node.glue())
+   self.settings:set("document.parindent", SILE.types.node.glue())
+   self.settings:set("document.spaceskip", SILE.types.length("1spc", 0, 0))
    SILE.process(content)
    SILE.call("par")
 end
 
 package.shim_commands = {
    ["0.15.0"] = {
-      ["center"] = function (_)
+      ["center"] = function (self, _)
          return function (_, content)
             if #SILE.typesetter.state.nodes ~= 0 then
                SU.warn("\\center environment started after other nodes in a paragraph, may not center as expected")
             end
-            SILE.settings:temporarily(function ()
-               SILE.settings:set("document.rskip", SILE.types.node.hfillglue())
-               SILE.settings:set("document.lskip", SILE.types.node.hfillglue())
-               _v14_aligns(content)
+            self.settings:temporarily(function ()
+               self.settings:set("document.rskip", SILE.types.node.hfillglue())
+               self.settings:set("document.lskip", SILE.types.node.hfillglue())
+               _v14_aligns(self, content)
             end)
          end
       end,
-      ["raggedright"] = function (_)
+      ["raggedright"] = function (self, _)
          return function (_, content)
-            SILE.settings:temporarily(function ()
-               SILE.settings:set("document.rskip", SILE.types.node.hfillglue())
-               _v14_aligns(content)
+            self.settings:temporarily(function ()
+               self.settings:set("document.rskip", SILE.types.node.hfillglue())
+               _v14_aligns(self, content)
             end)
          end
       end,
-      ["raggedleft"] = function (_)
+      ["raggedleft"] = function (self, _)
          return function (_, content)
-            SILE.settings:temporarily(function ()
-               SILE.settings:set("document.lskip", SILE.types.node.hfillglue())
-               _v14_aligns(content)
+            self.settings:temporarily(function ()
+               self.settings:set("document.lskip", SILE.types.node.hfillglue())
+               _v14_aligns(self, content)
             end)
          end
       end,
@@ -76,9 +76,9 @@ package.shim_classes = {
    ["0.15.0"] = {
       ["classes.base.newPar"] = function ()
          local newPar = SILE.documentState.documentClass.newPar
-         SILE.documentState.documentClass.newPar = function (typesetter)
-            newPar(typesetter)
-            SILE.settings:set("current.parindent", nil)
+         SILE.documentState.documentClass.newPar = function (class, typesetter)
+            newPar(class, typesetter)
+            class.settings:set("current.parindent", nil)
          end
          return function ()
             SILE.classes.book.newPar = newPar
@@ -86,10 +86,10 @@ package.shim_classes = {
       end,
       ["classes.base.endPar"] = function ()
          local endPar = SILE.documentState.documentClass.endPar
-         SILE.documentState.documentClass.endPar = function (typesetter)
-            local current_parindent = SILE.settings:get("current.parindent")
-            endPar(typesetter)
-            SILE.settings:set("current.parindent", current_parindent)
+         SILE.documentState.documentClass.endPar = function (class, typesetter)
+            local current_parindent = class.settings:get("current.parindent")
+            endPar(class, typesetter)
+            class.settings:set("current.parindent", current_parindent)
          end
          return function ()
             SILE.classes.book.endPar = endPar
@@ -173,17 +173,17 @@ function package:recede_commands (target)
       for command, get_function in pairs(commands) do
          SU.debug("retrograde", ("Shimming command '%s' to behavior similar to prior to v%s."):format(command, version))
 
-         local current, index = SILE.commands:get(command)
-         local func, defaults = get_function(current)
-         local new = SILE.types.command(self, command, func, nil, nil, defaults)
-         SILE.commands:_push(command, new)
+         local current, index = self.commands:pull(command)
+         local func, defaults = get_function(self, current)
+         local new = SILE.types.command(command, func, nil, nil, defaults)
+         self.commands:push(new)
          currents[command] = index
       end
    end
    local function reverter ()
       for command, orig_index in pairs(currents) do
          repeat
-            local _, index = SILE.commands:pop(command)
+            local _, index = self.commands:pop(command)
          until index == orig_index
       end
    end

@@ -4,6 +4,7 @@ local fontmanager = pl.class(base)
 fontmanager._name = "fontconfig"
 
 function fontmanager:_init ()
+   base._init(self)
    self._fc = require("justenoughfontconfig")
 end
 

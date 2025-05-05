@@ -39,8 +39,10 @@ local applyConverter = function (source, converter)
    end
 end
 
+package._converters = {}
+
 function package:register (sourceExt, targetExt, command)
-   table.insert(SILE.scratch.converters, {
+   table.insert(self._converters, {
       sourceExt = sourceExt,
       targetExt = targetExt,
       command = command,
@@ -49,7 +51,7 @@ end
 
 function package:checkConverters (source)
    local resolvedSrc = SILE.resolveFile(source) or SU.error("Couldn't find file " .. source)
-   for _, converter in ipairs(SILE.scratch.converters) do
+   for _, converter in ipairs(self._converters) do
       local extLen = string.len(converter.sourceExt)
       if (string.len(resolvedSrc) > extLen) and (string.sub(resolvedSrc, -extLen) == converter.sourceExt) then
          return applyConverter(resolvedSrc, converter)
@@ -60,10 +62,10 @@ end
 
 function package:_init ()
    base._init(self)
-   if not SILE.scratch.converters then
-      SILE.scratch.converters = {}
-   end
-   SILE.commands:pushWrapper("include", function (options, content, original)
+end
+
+function package:registerCommands ()
+   self.commands:pushWrapper("include", function (options, content, original)
       local source = SU.required(options, "src", "include (converters)")
       local result = self:checkConverters(source)
       if result then
@@ -73,7 +75,7 @@ function package:_init ()
          SU.error("Conversion failure for include '" .. source .. '"')
       end
    end)
-   SILE.commands:pushWrapper("img", function (options, content, original)
+   self.commands:pushWrapper("img", function (options, content, original)
       local source = SU.required(options, "src", "img (converters)")
       local result = self:checkConverters(source)
       if result then
@@ -83,14 +85,12 @@ function package:_init ()
          SU.error("Conversion failure for image '" .. source .. '"')
       end
    end)
-end
 
-function package:registerCommands ()
-   self:registerCommand("converters:register", function (options, _)
+   self.commands:register("converters:register", function (options, _)
       self:register(options.from, options.to, options.command)
    end)
 
-   self:registerCommand("converters:check", function (_, _)
+   self.commands:register("converters:check", function (_, _)
       SU.deprecated("\\converters:check", nil, "0.14.10", "0.16.0")
    end)
 end

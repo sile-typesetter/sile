@@ -1,176 +1,78 @@
---- core settings instance
+--- core settings registry instance
 --- @module SILE.settings
 
-local deprecator = function ()
-   SU.deprecated("SILE.settings.*", "SILE.settings:*", "0.13.0", "0.15.0")
-end
-
 --- @type settings
-local settings = pl.class()
-settings.type = "settings"
-settings._name = "prototype"
+local registry = require("types.registry")
+local settings = pl.class(registry)
+settings._name = "settings"
 
 function settings:_init ()
+   registry._init(self)
    self.state = {}
-   self.declarations = {}
    self.stateQueue = {}
-   self.defaults = {}
    self.hooks = {}
-
-   self:declare({
-      parameter = "document.parindent",
-      type = "glue",
-      default = SILE.types.node.glue("1bs"),
-      help = "Glue at start of paragraph",
-   })
-
-   self:declare({
-      parameter = "document.baselineskip",
-      type = "vglue",
-      default = SILE.types.node.vglue("1.2em plus 1pt"),
-      help = "Leading",
-   })
-
-   self:declare({
-      parameter = "document.lineskip",
-      type = "vglue",
-      default = SILE.types.node.vglue("1pt"),
-      help = "Leading",
-   })
-
-   self:declare({
-      parameter = "document.parskip",
-      type = "vglue",
-      default = SILE.types.node.vglue("0pt plus 1pt"),
-      help = "Leading",
-   })
-
-   self:declare({
-      parameter = "document.spaceskip",
-      type = "length or nil",
-      default = nil,
-      help = "The length of a space (if nil, then measured from the font)",
-   })
-
-   self:declare({
-      parameter = "document.rskip",
-      type = "glue or nil",
-      default = nil,
-      help = "Skip to be added to right side of line",
-   })
-
-   self:declare({
-      parameter = "document.lskip",
-      type = "glue or nil",
-      default = nil,
-      help = "Skip to be added to left side of line",
-   })
-
-   self:declare({
-      parameter = "document.zenkakuchar",
-      default = "あ",
-      type = "string",
-      help = "The character measured to determine the length of a zenkaku width (全角幅)",
-   })
-
-   SILE.commands:register(self, "set", function (options, content)
-      local makedefault = SU.boolean(options.makedefault, false)
-      local reset = SU.boolean(options.reset, false)
-      local value = options.value
-      if content and (type(content) == "function" or content[1]) then
-         if makedefault then
-            SU.warn(
-               "Are you sure meant to set default settings *and* pass content to ostensibly apply them to temporarily?"
-            )
-         end
-         self:temporarily(function ()
-            if options.parameter then
-               local parameter = SU.required(options, "parameter", "\\set command")
-               self:set(parameter, value, makedefault, reset)
-            end
-            SILE.process(content)
-         end)
-      else
-         local parameter = SU.required(options, "parameter", "\\set command")
-         self:set(parameter, value, makedefault, reset)
-      end
-   end, "Set a SILE parameter <parameter> to value <value> (restoring the value afterwards if <content> is provided)")
 end
 
 --- Stash the current values of all settings in a stack to be returned to later
-function settings:pushState ()
-   if not self then
-      return deprecator()
-   end
+function settings:pushState (_parent)
    table.insert(self.stateQueue, self.state)
    self.state = pl.tablex.copy(self.state)
 end
 
 --- Return the most recently pushed set of values in the setting stack
-function settings:popState ()
-   if not self then
-      return deprecator()
-   end
+function settings:popState (parent)
    local previous = self.state
    self.state = table.remove(self.stateQueue)
    for parameter, oldvalue in pairs(previous) do
       if self.hooks[parameter] then
          local newvalue = self.state[parameter]
-         if oldvalue ~= newvalue then
-            self:runHooks(parameter, newvalue)
+         if newvalue == nil then
+            self:reset(parent, parameter)
+         else
+            if oldvalue ~= newvalue then
+               self:set(parent, parameter, newvalue)
+            end
          end
       end
    end
+   self:_runAllHooks(parent)
 end
 
 --- Declare a new setting
---- @tparam table specs { parameter, type, default, help, hook, ... } declaration specification
-function settings:declare (spec)
-   if not spec then
-      return deprecator()
+--- @tparam table spec { parameter, type, default, help, hook, ... } declaration specification
+function settings:declare (parent, spec)
+   if self:exists(parent, spec.parameter) then
+      SU.debug("settings", "WARNING: Redeclaring setting", spec.parameter)
+   else
+      self._registry[spec.parameter] = {}
+      self.hooks[spec.parameter] = {}
+      if spec.hook then
+         self:registerHook(parent, spec.parameter, spec.hook)
+      end
    end
-   if spec.name then
-      SU.deprecated(
-         "'name' argument of SILE.settings:declare",
-         "'parameter' argument of SILE.settings:declare",
-         "0.10.10",
-         "0.11.0"
-      )
+   local callback = function (value)
+      self:runHooks(parent, spec.parameter, value)
    end
-   if self.declarations[spec.parameter] then
-      SU.debug("settings", "Attempt to re-declare setting:", spec.parameter)
-      return
-   end
-   self.declarations[spec.parameter] = spec
-   self.hooks[spec.parameter] = {}
-   if spec.hook then
-      self:registerHook(spec.parameter, spec.hook)
-   end
-   self:set(spec.parameter, spec.default, true)
+   local setting = SILE.types.setting(spec.parameter, spec.type, spec.default, spec.help, callback)
+   return self:push(parent, setting)
 end
 
 --- Reset all settings to their registered default values.
-function settings:reset ()
-   if not self then
-      return deprecator()
-   end
-   for k, _ in pairs(self.state) do
-      self:set(k, self.defaults[k])
+function settings:reset (_parent)
+   for _, setting in pairs(self.state) do
+      setting:reset()
    end
 end
 
 --- Restore all settings to the value they had in the top-level state,
 -- that is at the tap of the settings stack (normally the document level).
-function settings:toplevelState ()
-   if not self then
-      return deprecator()
-   end
+function settings:toplevelState (parent)
    if #self.stateQueue ~= 0 then
       for parameter, _ in pairs(self.state) do
          -- Bypass self:set() as the latter performs some tests and a cast,
          -- but the setting might not have been defined in the top level state
-         -- (in which case, assume the default value).
-         self.state[parameter] = self.stateQueue[1][parameter] or self.defaults[parameter]
+         local setting = self:pull(parent, parameter)
+         setting.value = self.stateQueue[1][parameter]
       end
    end
 end
@@ -178,23 +80,17 @@ end
 --- Get the value of a setting
 -- @tparam string parameter The full name of the setting to fetch.
 -- @return Value of setting
-function settings:get (parameter)
+function settings:get (parent, parameter)
    -- HACK FIXME https://github.com/sile-typesetter/sile/issues/1699
    -- See comment on set() below.
    if parameter == "current.parindent" then
       return SILE.typesetter and SILE.typesetter.state.parindent
    end
-   if not parameter then
-      return deprecator()
-   end
-   if not self.declarations[parameter] then
+   local setting = self:pull(parent, parameter)
+   if not setting then
       SU.error("Undefined setting '" .. parameter .. "'")
    end
-   if type(self.state[parameter]) ~= "nil" then
-      return self.state[parameter]
-   else
-      return self.defaults[parameter]
-   end
+   return setting:get()
 end
 
 --- Set the value of a setting
@@ -202,7 +98,7 @@ end
 -- @param value The new value to change it to.
 -- @tparam[opt=false] boolean makedefault Whether to make this the new default value.
 -- @tparam[opt=false] boolean reset Whether to reset the value to the current default value.
-function settings:set (parameter, value, makedefault, reset)
+function settings:set (parent, parameter, value, makedefault, reset)
    -- HACK FIXME https://github.com/sile-typesetter/sile/issues/1699
    -- Anything dubbed current.xxx should likely NOT be a "setting" (subject
    -- to being pushed/popped via temporary stacking) and actually has its
@@ -227,71 +123,76 @@ function settings:set (parameter, value, makedefault, reset)
       end
       return
    end
-   if type(self) ~= "table" then
-      return deprecator()
-   end
-   if not self.declarations[parameter] then
+   local setting = self:pull(parent, parameter)
+   if not setting then
       SU.error("Undefined setting '" .. parameter .. "'")
    end
    if reset then
       if makedefault then
          SU.error("Can't set a new default and revert to and old default setting at the same time")
       end
-      value = self.defaults[parameter]
+      -- SU.deprecated("settings:set(parameter, _, _, _, true)", "settings:reset(parameter)", "0.16.0", "0.17.0")
+      setting:reset()
    else
-      value = SU.cast(self.declarations[parameter].type, value)
+      -- if makedefault then
+      --    SU.deprecated("settings:set(parameter, value, _, true)", "settings:setDefault(parameter, value)", "0.16.0", "0.17.0")
+      -- end
+      setting:set(value, makedefault)
    end
-   self.state[parameter] = value
-   if makedefault then
-      self.defaults[parameter] = value
-   end
-   self:runHooks(parameter, value)
+end
+
+function settings:reset (parent, parameter)
+   local setting = self:pull(parent, parameter)
+   setting:reset()
 end
 
 --- Register a callback hook to be run when a setting changes.
 -- @tparam string parameter Name of the setting to add a hook to.
 -- @tparam function func Callback function accepting one argument (the new value).
-function settings:registerHook (parameter, func)
+function settings:registerHook (_parent, parameter, func)
    table.insert(self.hooks[parameter], func)
 end
 
 --- Trigger execution of callback hooks for a given setting.
 -- @tparam string parameter The name of the parameter changes.
 -- @param value The new value of the setting, passed as the first argument to the hook function.
-function settings:runHooks (parameter, value)
+function settings:runHooks (_parent, parameter, value)
+   self.state[parameter] = value
    if self.hooks[parameter] then
       for _, func in ipairs(self.hooks[parameter]) do
-         SU.debug("classhooks", "Running setting hook for", parameter)
+         SU.debug("settings", "Running setting hook for", parameter)
          func(value)
       end
+   end
+end
+
+function settings:_runAllHooks (parent)
+   SU.debug("settings", "Running all hooks after push/pop")
+   for parameter, _ in pairs(self.hooks) do
+      local setting = self:pull(parent, parameter)
+      self:runHooks(parent, parameter, setting:get())
    end
 end
 
 --- Isolate a block of processing so that setting changes made during the block don't last past the block.
 -- (Under the hood this just uses `:pushState()`, the processes the function, then runs `:popState()`)
 -- @tparam function func A function wrapping the actions to take without affecting settings for future use.
-function settings:temporarily (func)
-   if not func then
-      return deprecator()
-   end
-   self:pushState()
+function settings:temporarily (parent, func)
+   self:pushState(parent)
    func()
-   self:popState()
+   self:popState(parent)
 end
 
 --- Create a settings wrapper function that applies current settings to later content processing.
 --- @treturn function a closure function accepting one argument (content) to process using
 --- typesetter settings as they are at the time of closure creation.
-function settings:wrap ()
-   if not self then
-      return deprecator()
-   end
+function settings:wrap (parent)
    local clSettings = pl.tablex.copy(self.state)
    return function (content)
       table.insert(self.stateQueue, self.state)
       self.state = clSettings
       SILE.process(content)
-      self:popState()
+      self:popState(parent)
    end
 end
 

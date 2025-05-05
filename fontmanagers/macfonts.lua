@@ -4,6 +4,7 @@ local fontmanager = pl.class(base)
 fontmanager._name = "macfonts"
 
 function fontmanager:_init ()
+   base._init(self)
    self._mf = require("macfonts")
 end
 

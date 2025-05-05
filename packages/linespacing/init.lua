@@ -55,7 +55,7 @@ local linespacingLeading = function (self, vbox, previous)
    end
 
    if method == "tex" then
-      return SILE.typesetters.base:leadingFor(vbox, previous)
+      return SILE.typesetters.base.leadingFor(self, vbox, previous)
    end
 
    if method == "fit-glyph" then

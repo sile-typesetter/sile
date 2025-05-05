@@ -58,7 +58,7 @@ function hyphenator:_registerCommands ()
       return
    end
    _registered_base_commands = true
-   self:registerCommand("hyphenator:add-exceptions", function (options, content)
+   self.commands:register("hyphenator:add-exceptions", function (options, content)
       local lang = options.lang or self.settings:get("document.language")
       local language = SILE.typesetter:_cacheLanguage(lang)
       for token in SU.gtoke(content[1]) do
@@ -67,21 +67,6 @@ function hyphenator:_registerCommands ()
          end
       end
    end, "Add patterns to the languages hyphenation rules")
-end
-
-function hyphenator:registerCommands () end
-
---- Register a function as a SILE command.
--- Takes any Lua function and registers it for use as a SILE command (which will in turn be used to process any content
--- nodes identified with the command name.
---
--- @tparam string name Name of cammand to register.
--- @tparam function func Callback function to use as command handler.
--- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
--- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
--- messages. Usually auto-detected.
-function hyphenator:registerCommand (name, func, help, pack, defaults)
-   SILE.commands:register(self, name, func, help, pack, defaults)
 end
 
 function hyphenator:addPattern (pattern)
