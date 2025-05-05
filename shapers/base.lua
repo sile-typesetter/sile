@@ -153,19 +153,19 @@ function shaper:formNnode (contents, token, options)
    -- local glyphNames = {}
    local nnodeValue = { text = token, options = options, glyphString = {} }
    SILE.shaper:preAddNodes(contents, nnodeValue)
-   local misfit = false
+   local orthogonal = false
    if SILE.typesetter.frame and SILE.typesetter.frame:writingDirection() == "TTB" then
       if options.direction == "LTR" then
-         misfit = true
+         orthogonal = true
       end
    else
       if options.direction == "TTB" then
-         misfit = true
+         orthogonal = true
       end
    end
    for i = 1, #contents do
       local glyph = contents[i]
-      if (options.direction == "TTB") ~= misfit then
+      if (options.direction == "TTB") ~= orthogonal then
          if glyph.width > totalHeight then
             totalHeight = glyph.width
          end
@@ -186,7 +186,7 @@ function shaper:formNnode (contents, token, options)
       SILE.types.node.hbox({
          depth = totalDepth,
          height = totalHeight,
-         misfit = misfit,
+         orthogonal = orthogonal,
          width = SILE.types.length(totalWidth),
          value = nnodeValue,
       })
@@ -194,7 +194,7 @@ function shaper:formNnode (contents, token, options)
    return SILE.types.node.nnode({
       nodes = nnodeContents,
       text = token,
-      misfit = misfit,
+      orthogonal = orthogonal,
       options = options,
       language = options.language,
    })
