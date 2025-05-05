@@ -39,8 +39,10 @@ local applyConverter = function (source, converter)
    end
 end
 
+package._converters = {}
+
 function package:register (sourceExt, targetExt, command)
-   table.insert(SILE.scratch.converters, {
+   table.insert(self._converters, {
       sourceExt = sourceExt,
       targetExt = targetExt,
       command = command,
@@ -49,7 +51,7 @@ end
 
 function package:checkConverters (source)
    local resolvedSrc = SILE.resolveFile(source) or SU.error("Couldn't find file " .. source)
-   for _, converter in ipairs(SILE.scratch.converters) do
+   for _, converter in ipairs(self._converters) do
       local extLen = string.len(converter.sourceExt)
       if (string.len(resolvedSrc) > extLen) and (string.sub(resolvedSrc, -extLen) == converter.sourceExt) then
          return applyConverter(resolvedSrc, converter)
@@ -60,9 +62,6 @@ end
 
 function package:_init ()
    base._init(self)
-   if not SILE.scratch.converters then
-      SILE.scratch.converters = {}
-   end
 end
 
 function package:registerCommands ()
