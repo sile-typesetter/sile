@@ -1,6 +1,6 @@
-local fontconfig = require("fontmanagers.base")
+local base = require("fontmanagers.base")
 
-local fontmanager = pl.class(fontconfig)
+local fontmanager = pl.class(base)
 fontmanager._name = "macfonts"
 
 function fontmanager:_init ()
