@@ -7,7 +7,7 @@ AC_DEFUN_ONCE([QUE_RUST_BOILERPLATE], [
         AC_ARG_ENABLE(debug,
                 AS_HELP_STRING([--enable-debug],
                         [Build Rust code with debugging information]))
-        AM_CONDITIONAL([DEBUG_RELEASE], [test "x$debug_release" = "xyes"])
+        AM_CONDITIONAL([DEBUG_RELEASE], [test "x$enable_debug" = "xyes"])
 
         AC_MSG_NOTICE([checking for tools used by automake to build Rust projects])
         AC_REQUIRE([AC_PROG_INSTALL])
