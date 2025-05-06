@@ -12,6 +12,15 @@ function class:_init (options)
 
    self:registerPostinit(function ()
       SILE.scratch.counters.folio = { value = 1, display = "arabic" }
+      self:loadPackage("parallel", {
+         frames = {
+            left = "a",
+            middle = "b",
+            right = "c",
+         },
+      })
+      self.settings:set("linebreak.tolerance", 5000)
+      self.settings:set("document.parindent", SILE.types.node.glue())
    end)
 
    self:declareFrame("a", {
@@ -38,16 +47,6 @@ function class:_init (options)
       top = "bottom(a)+3%pw",
       bottom = "bottom(a)+8%ph",
    })
-   self:loadPackage("parallel", {
-      frames = {
-         left = "a",
-         middle = "b",
-         right = "c",
-      },
-   })
-
-   self.settings:set("linebreak.tolerance", 5000)
-   self.settings:set("document.parindent", SILE.types.node.glue())
 end
 
 return class

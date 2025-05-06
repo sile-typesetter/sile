@@ -379,12 +379,12 @@ function typesetter:initline ()
    end -- https://github.com/sile-typesetter/sile/issues/1718
    if #self.state.nodes == 0 then
       table.insert(self.state.nodes, SILE.types.node.zerohbox())
-      self.class.newPar(self)
+      self.class:newPar(self)
    end
 end
 
 function typesetter:endline ()
-   self.class.endPar(self)
+   self.class:endPar(self)
    self:leaveHmode()
    if self.settings:get("current.hangIndent") then
       self.settings:set("current.hangIndent", nil)
