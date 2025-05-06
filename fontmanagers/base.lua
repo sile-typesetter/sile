@@ -71,50 +71,50 @@ function fontmanager:_registerCommands ()
       SILE.call("font", baseOpts, function ()
          newMeasure = measureFontAdjustment(parsed.unit)
       end)
-      return SILE.settings:get("font.size") * ratio * (currentMeasure / newMeasure)
+      return self.settings:get("font.size") * ratio * (currentMeasure / newMeasure)
    end
 
    self.commands:register("font", function (options, content)
       if SU.ast.hasContent(content) then
-         SILE.settings:pushState()
+         self.settings:pushState()
       end
       if options.adjust then
          if options.size then
             SU.error("Can't specify both 'size' and 'adjust' in a \\font command")
          end
-         SILE.settings:set("font.size", adjustedFontSize(options))
+         self.settings:set("font.size", adjustedFontSize(options))
       end
       if options.filename then
-         SILE.settings:set("font.filename", options.filename)
+         self.settings:set("font.filename", options.filename)
       end
       if options.family then
-         SILE.settings:set("font.family", options.family)
-         SILE.settings:set("font.filename", "")
+         self.settings:set("font.family", options.family)
+         self.settings:set("font.filename", "")
       end
       if options.size then
          local size = SU.cast("measurement", options.size)
          if not size then
             SU.error("Couldn't parse font size " .. options.size)
          end
-         SILE.settings:set("font.size", size:absolute())
+         self.settings:set("font.size", size:absolute())
       end
       if options.weight then
-         SILE.settings:set("font.weight", 0 + options.weight)
+         self.settings:set("font.weight", 0 + options.weight)
       end
       if options.style then
-         SILE.settings:set("font.style", options.style)
+         self.settings:set("font.style", options.style)
       end
       if options.variant then
-         SILE.settings:set("font.variant", options.variant)
+         self.settings:set("font.variant", options.variant)
       end
       if options.features then
-         SILE.settings:set("font.features", options.features)
+         self.settings:set("font.features", options.features)
       end
       if options.variations then
-         SILE.settings:set("font.variations", options.variations)
+         self.settings:set("font.variations", options.variations)
       end
       if options.direction then
-         SILE.settings:set("font.direction", options.direction)
+         self.settings:set("font.direction", options.direction)
       end
       if options.language then
          if options.language ~= "und" and icu and icu.canonicalize_language then
@@ -124,14 +124,14 @@ function fontmanager:_registerCommands ()
             -- end
             options.language = newlang
          end
-         SILE.settings:set("document.language", options.language)
+         self.settings:set("document.language", options.language)
       end
       if options.script then
-         SILE.settings:set("font.script", options.script)
+         self.settings:set("font.script", options.script)
       end
       if options.hyphenchar then
          -- must be in the form of, for example, "-" or "U+2010" or "0x2010" (Unicode hex codepoint)
-         SILE.settings:set("font.hyphenchar", SU.utf8charfromcodepoint(options.hyphenchar))
+         self.settings:set("font.hyphenchar", SU.utf8charfromcodepoint(options.hyphenchar))
       end
 
       -- We must *actually* load the font here, because by the time we're inside
@@ -141,7 +141,7 @@ function fontmanager:_registerCommands ()
 
       if SU.ast.hasContent(content) then
          SILE.process(content)
-         SILE.settings:popState()
+         self.settings:popState()
          if SILE.shaper._name == "harfbuzz-color" and SILE.scratch._lastshaper then
             SU.debug("color-fonts", "Switching from color fonts shaper back to previous shaper")
             SILE.typesetter:leaveHmode(true)

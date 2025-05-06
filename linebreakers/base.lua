@@ -57,7 +57,7 @@ end
 ]]
 
 function linebreaker:_param (key)
-   local value = SILE.settings:get("linebreak." .. key)
+   local value = self.settings:get("linebreak." .. key)
    return type(value) == "table" and value:absolute() or value
 end
 
@@ -72,8 +72,8 @@ function linebreaker:init ()
    self.curActiveWidth = SILE.types.length()
    self.breakWidth = SILE.types.length()
    -- 853
-   local rskip = (SILE.settings:get("document.rskip") or SILE.types.node.glue()).width:absolute()
-   local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()).width:absolute()
+   local rskip = (self.settings:get("document.rskip") or SILE.types.node.glue()).width:absolute()
+   local lskip = (self.settings:get("document.lskip") or SILE.types.node.glue()).width:absolute()
    self.background = rskip + lskip
    -- 860
    self.bestInClass = {}
