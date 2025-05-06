@@ -38,7 +38,7 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("info", function (options, _)
+   self.commands:register("info", function (options, _)
       SU.required(options, "category", "info node")
       SU.required(options, "value", "info node")
       table.insert(

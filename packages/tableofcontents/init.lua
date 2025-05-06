@@ -49,8 +49,8 @@ function package:readToc ()
    return SILE.scratch._tableofcontents
 end
 
-local function _linkWrapper (dest, func)
-   if dest and SILE.commands:exists("pdf:link") then
+function package:_linkWrapper (dest, func)
+   if dest and self.commands:exists("pdf:link") then
       return function ()
          SILE.call("pdf:link", { dest = dest }, func)
       end
@@ -75,7 +75,7 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("tableofcontents", function (options, _)
+   self.commands:register("tableofcontents", function (options, _)
       local depth = SU.cast("integer", options.depth or 3)
       local linking = SU.boolean(options.linking, true)
       toc_used = true
@@ -99,13 +99,13 @@ function package:registerCommands ()
       SILE.call("tableofcontents:footer")
    end)
 
-   self:registerCommand("tableofcontents:item", function (options, content)
+   self.commands:register("tableofcontents:item", function (options, content)
       self.settings:temporarily(function ()
          self.settings:set("typesetter.parfillskip", SILE.types.node.glue())
          SILE.call(
             "tableofcontents:level" .. options.level .. "item",
             {},
-            _linkWrapper(options.link, function ()
+            self:_linkWrapper(options.link, function ()
                SILE.call("tableofcontents:level" .. options.level .. "number", {}, function ()
                   if options.number then
                      SILE.typesetter:typeset(options.number or "")
@@ -120,9 +120,9 @@ function package:registerCommands ()
       end)
    end)
 
-   self:registerCommand("tocentry", function (options, content)
+   self.commands:register("tocentry", function (options, content)
       local dest
-      if SILE.commands:exists("pdf:destination") then
+      if self.commands:exists("pdf:destination") then
          dest = "dest" .. tostring(SILE.scratch.pdf_destination_counter)
          SILE.call("pdf:destination", { name = dest })
          -- Reconstruct a textual representation of the content tree
@@ -141,17 +141,17 @@ function package:registerCommands ()
       })
    end)
 
-   self:registerCommand("tableofcontents:notocmessage", function (_, _)
+   self.commands:register("tableofcontents:notocmessage", function (_, _)
       SILE.call("tableofcontents:headerfont", {}, function ()
          SILE.call("fluent", {}, { "tableofcontents-not-generated" })
       end)
    end)
 
-   self:registerCommand("tableofcontents:headerfont", function (_, content)
+   self.commands:register("tableofcontents:headerfont", function (_, content)
       SILE.call("font", { size = 24, weight = 800 }, content)
    end)
 
-   self:registerCommand("tableofcontents:header", function (_, _)
+   self.commands:register("tableofcontents:header", function (_, _)
       SILE.call("par")
       SILE.call("noindent")
       SILE.call("tableofcontents:headerfont", {}, function ()
@@ -160,32 +160,32 @@ function package:registerCommands ()
       SILE.call("medskip")
    end)
 
-   self:registerCommand("tableofcontents:footer", function (_, _) end)
+   self.commands:register("tableofcontents:footer", function (_, _) end)
 
-   self:registerCommand("tableofcontents:level1item", function (_, content)
+   self.commands:register("tableofcontents:level1item", function (_, content)
       SILE.call("bigskip")
       SILE.call("noindent")
       SILE.call("font", { size = 14, weight = 800 }, content)
       SILE.call("medskip")
    end)
 
-   self:registerCommand("tableofcontents:level2item", function (_, content)
+   self.commands:register("tableofcontents:level2item", function (_, content)
       SILE.call("noindent")
       SILE.call("font", { size = 12 }, content)
       SILE.call("medskip")
    end)
 
-   self:registerCommand("tableofcontents:level3item", function (_, content)
+   self.commands:register("tableofcontents:level3item", function (_, content)
       SILE.call("indent")
       SILE.call("font", { size = 10 }, content)
       SILE.call("smallskip")
    end)
 
-   self:registerCommand("tableofcontents:level1number", function (_, _) end)
+   self.commands:register("tableofcontents:level1number", function (_, _) end)
 
-   self:registerCommand("tableofcontents:level2number", function (_, _) end)
+   self.commands:register("tableofcontents:level2number", function (_, _) end)
 
-   self:registerCommand("tableofcontents:level3number", function (_, _) end)
+   self.commands:register("tableofcontents:level3number", function (_, _) end)
 end
 
 package.documentation = [[

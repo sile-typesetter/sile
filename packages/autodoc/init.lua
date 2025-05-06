@@ -20,7 +20,7 @@ local theme = {
 
 function package:_colorWrapper (ctype, content)
    local color = SILE.scratch.autodoc.theme[ctype]
-   if color and self.settings:get("autodoc.highlighting") and SILE.commands:exists("color") then
+   if color and self.settings:get("autodoc.highlighting") and self.commands:exists("color") then
       SILE.call("color", { color = color }, content)
    else
       SILE.process(content)
@@ -46,7 +46,7 @@ local function optionSorter (o1, o2)
    return o1 < o2
 end
 
-local function typesetAST (options, content)
+function package:_typesetAST (options, content)
    if not content then
       return
    end
@@ -68,7 +68,7 @@ local function typesetAST (options, content)
             SILE.typesetter:typeset(ast)
          end
       elseif ast.command then
-         if not SILE.commands:exists(ast.command) and SU.boolean(options.check, true) then
+         if not self.commands:exists(ast.command) and SU.boolean(options.check, true) then
             SU.error("Unexpected command '" .. ast.command .. "'")
          end
          SILE.typesetter:typeset("\\")
@@ -95,14 +95,14 @@ local function typesetAST (options, content)
          if #ast >= 1 then
             SILE.call("penalty", { penalty = 200 }) -- Less than optimal break.
             SILE.typesetter:typeset("{")
-            typesetAST(options, ast)
+            self:_typesetAST(options, ast)
             SILE.typesetter:typeset("}")
          else
             seenCommandWithoutArg = true
          end
       elseif not ast.command and not ast.id then
          -- Mere list of nodes
-         typesetAST(options, ast)
+         self:_typesetAST(options, ast)
       else
          SU.error("Unrecognized AST element, type " .. type(ast))
       end
@@ -164,7 +164,7 @@ function package:registerCommands ()
       return result
    end
 
-   self:registerCommand("package-documentation", function (_, content)
+   self.commands:register("package-documentation", function (_, content)
       local packname = content[1]
       SU.debug("autodoc", packname)
       local pkg = require("packages." .. packname)
@@ -179,19 +179,19 @@ function package:registerCommands ()
       SILE.processString(pkg.documentation)
    end)
 
-   self:registerCommand("autodoc:package:style", function (_, content)
+   self.commands:register("autodoc:package:style", function (_, content)
       SILE.call("font", { weight = 700 }, function ()
          self:_colorWrapper("package", content)
       end)
    end)
 
-   self:registerCommand("autodoc:class:style", function (_, content)
+   self.commands:register("autodoc:class:style", function (_, content)
       SILE.call("font", { weight = 700 }, function ()
          self:_colorWrapper("class", content)
       end)
    end)
 
-   self:registerCommand("autodoc:code:style", function (options, content)
+   self.commands:register("autodoc:code:style", function (options, content)
       -- options.type is used to distinguish the type of code element and style
       -- it accordingly: "ast", "setting", "environment" shall select the font
       -- (by default, using \code) and color, the other (lower-level in an AST)
@@ -211,7 +211,7 @@ function package:registerCommands ()
       end
    end)
 
-   self:registerCommand("autodoc:setting", function (options, content)
+   self.commands:register("autodoc:setting", function (options, content)
       if type(content) ~= "table" then
          SU.error("Expected a table content")
       end
@@ -233,16 +233,16 @@ function package:registerCommands ()
       SILE.call("autodoc:code:style", { type = "setting" }, nameWithBreaks)
    end, "Outputs a settings name in code, ensuring good line breaks and possibly checking their existence.")
 
-   self:registerCommand("autodoc:internal:ast", function (options, content)
+   self.commands:register("autodoc:internal:ast", function (options, content)
       if type(content) ~= "table" then
          SU.error("Expected a table content")
       end
       SILE.call("autodoc:code:style", { type = "ast" }, function ()
-         typesetAST(options, content)
+         self:_typesetAST(options, content)
       end)
    end, "Outputs a nicely typeset AST (low-level command).")
 
-   self:registerCommand("autodoc:internal:bracketed", function (_, content)
+   self.commands:register("autodoc:internal:bracketed", function (_, content)
       SILE.typesetter:typeset("⟨")
       SILE.call("autodoc:code:style", { type = "bracketed" }, function ()
          SILE.call("em", {}, content)
@@ -251,7 +251,7 @@ function package:registerCommands ()
       SILE.typesetter:typeset("⟩")
    end, "Outputs a nicely formatted user-given value within <brackets>.")
 
-   self:registerCommand("autodoc:value", function (_, content)
+   self.commands:register("autodoc:value", function (_, content)
       local value = type(content) == "table" and content[1] or content
       if type(value) ~= "string" then
          SU.error("Expected a string")
@@ -269,7 +269,7 @@ function package:registerCommands ()
 
    -- Documenting a command, benefiting from AST parsing
 
-   self:registerCommand("autodoc:command", function (options, content)
+   self.commands:register("autodoc:command", function (options, content)
       if type(content) ~= "table" then
          SU.error("Expected a table content")
       end
@@ -282,7 +282,7 @@ function package:registerCommands ()
 
    -- Documenting a parameter
 
-   self:registerCommand("autodoc:parameter", function (_, content)
+   self.commands:register("autodoc:parameter", function (_, content)
       if type(content) ~= "table" then
          SU.error("Expected a table content")
       end
@@ -311,7 +311,7 @@ function package:registerCommands ()
 
    -- Documenting an environment
 
-   self:registerCommand("autodoc:environment", function (options, content)
+   self.commands:register("autodoc:environment", function (options, content)
       if type(content) ~= "table" then
          SU.error("Expected a table content")
       end
@@ -324,7 +324,7 @@ function package:registerCommands ()
       end
       -- Conditional existence check
       if SU.boolean(options.check, true) then
-         if not SILE.commands:exists(name) then
+         if not self.commands:exists(name) then
             SU.error("Unknown command " .. name)
          end
       end
@@ -334,7 +334,7 @@ function package:registerCommands ()
 
    -- Documenting a package name
 
-   self:registerCommand("autodoc:package", function (_, content)
+   self.commands:register("autodoc:package", function (_, content)
       if type(content) ~= "table" then
          SU.error("Expected a table content")
       end
@@ -352,7 +352,7 @@ function package:registerCommands ()
 
    -- Documenting a class name
 
-   self:registerCommand("autodoc:class", function (_, content)
+   self.commands:register("autodoc:class", function (_, content)
       if type(content) ~= "table" then
          SU.error("Expected a table content")
       end
@@ -369,7 +369,7 @@ function package:registerCommands ()
    end, "Outputs a class name.")
 
    -- Homogenizing the appearance of blocks of code
-   self:registerCommand("autodoc:codeblock", function (_, content)
+   self.commands:register("autodoc:codeblock", function (_, content)
       -- The way we use this command in the SILE manual is both on it's own *and* nested inside
       -- a \raw environment. For this purpose we don't care about and don't want to bother with
       -- making sure the leading and trailing whitespace is minimized in the SIL source, so
@@ -411,12 +411,12 @@ function package:registerCommands ()
       end)
    end, "Outputs its content as a standardized block of code")
 
-   self:registerCommand("autodoc:example", function (_, content)
+   self.commands:register("autodoc:example", function (_, content)
       -- Loosely derived from the \examplefont command from the original SILE manual...
       SILE.call("font", { family = "Cormorant Infant", size = "1.1em" }, content)
    end, "Marks content as an example (possibly typeset in a distinct font, etc.)")
 
-   self:registerCommand("autodoc:note", function (_, content)
+   self.commands:register("autodoc:note", function (_, content)
       -- Replacing the \note command from the original SILE manual...
       local linedimen = SILE.types.length("0.75em")
       local linethickness = SILE.types.length("0.3pt")

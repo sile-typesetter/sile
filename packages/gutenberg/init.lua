@@ -4,7 +4,7 @@ local package = pl.class(base)
 package._name = "gutenberg"
 
 function package:registerCommands ()
-   self:registerCommand("alternative", function (_, content)
+   self.commands:register("alternative", function (_, content)
       local alts = {}
       for _, fragment in ipairs(content) do
          local hbox, hlist = SILE.typesetter:makeHbox({ fragment })

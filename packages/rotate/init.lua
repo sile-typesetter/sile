@@ -76,7 +76,7 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("rotate", function (options, content)
+   self.commands:register("rotate", function (options, content)
       if not SILE.outputter.rotateFn then
          SU.warn("Output will not be rotated: backend '" .. SILE.outputter._name .. "' does not support rotation")
          return SILE.process(content)

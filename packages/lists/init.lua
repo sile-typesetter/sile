@@ -285,15 +285,15 @@ function package:declareSettings ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("enumerate", function (options, content)
+   self.commands:register("enumerate", function (options, content)
       self:doNestedList("enumerate", options, content)
    end)
 
-   self:registerCommand("itemize", function (options, content)
+   self.commands:register("itemize", function (options, content)
       self:doNestedList("itemize", options, content)
    end)
 
-   self:registerCommand("item", function (options, content)
+   self.commands:register("item", function (options, content)
       if not content._lists_ then
          SU.error("The item command shall not be called outside a list")
       end

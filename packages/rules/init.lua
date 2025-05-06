@@ -49,7 +49,7 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("hrule", function (options, _)
+   self.commands:register("hrule", function (options, _)
       local width = SU.cast("length", options.width)
       local height = SU.cast("length", options.height)
       local depth = SU.cast("length", options.depth)
@@ -73,7 +73,7 @@ function package:registerCommands ()
       })
    end, "Draws a blob of ink of width <width>, height <height> and depth <depth>")
 
-   self:registerCommand("hrulefill", function (options, _)
+   self.commands:register("hrulefill", function (options, _)
       local raise
       local thickness
       if options.position and options.raise then
@@ -102,7 +102,7 @@ function package:registerCommands ()
       }))
    end, "Add a huge horizontal hrule glue")
 
-   self:registerCommand("fullrule", function (options, _)
+   self.commands:register("fullrule", function (options, _)
       local thickness = SU.cast("measurement", options.thickness or "0.2pt")
       local raise = SU.cast("measurement", options.raise or "0.5em")
 
@@ -122,7 +122,7 @@ function package:registerCommands ()
       SILE.typesetter:leaveHmode()
    end, "Draw a full width hrule centered on the current line")
 
-   self:registerCommand("underline", function (_, content)
+   self.commands:register("underline", function (_, content)
       local underlinePosition, underlineThickness = getUnderlineParameters()
 
       SILE.typesetter:liner("underline", content, function (box, typesetter, line)
@@ -142,7 +142,7 @@ function package:registerCommands ()
       end)
    end, "Underlines some content")
 
-   self:registerCommand("strikethrough", function (_, content)
+   self.commands:register("strikethrough", function (_, content)
       local yStrikeoutPosition, yStrikeoutSize = getStrikethroughParameters()
 
       SILE.typesetter:liner("strikethrough", content, function (box, typesetter, line)
@@ -161,7 +161,7 @@ function package:registerCommands ()
       end)
    end, "Strikes out some content")
 
-   self:registerCommand("boxaround", function (_, content)
+   self.commands:register("boxaround", function (_, content)
       -- This command was not documented and lacks feature.
       -- Plan replacement with a better suited package.
       SU.deprecated("\\boxaround (undocumented)", "\\framebox (package)", "0.12.0")

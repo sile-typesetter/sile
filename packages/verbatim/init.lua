@@ -4,7 +4,7 @@ local package = pl.class(base)
 package._name = "verbatim"
 
 function package:registerCommands ()
-   self:registerCommand("verbatim:font", function (options, content)
+   self.commands:register("verbatim:font", function (options, content)
       options.family = options.family or "Hack"
       if not options.size and not options.adjust then
          options.adjust = "ex-height"
@@ -12,7 +12,7 @@ function package:registerCommands ()
       SILE.call("font", options, content)
    end, "The font chosen for the verbatim environment")
 
-   self:registerCommand("verbatim", function (_, content)
+   self.commands:register("verbatim", function (_, content)
       SILE.typesetter:pushVglue(6)
       SILE.typesetter:leaveHmode()
       local lskip = self.settings:get("document.lskip") or SILE.types.node.glue()
@@ -33,7 +33,7 @@ function package:registerCommands ()
       end)
    end, "Typesets its contents in a monospaced font.")
 
-   self:registerCommand("obeylines", function (_, content)
+   self.commands:register("obeylines", function (_, content)
       self.settings:temporarily(function ()
          self.settings:set("typesetter.parseppattern", "\n")
          SILE.process(content)

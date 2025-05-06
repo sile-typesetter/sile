@@ -150,11 +150,11 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("mergecolumns", function (_, _)
+   self.commands:register("mergecolumns", function (_, _)
       mergeColumns()
    end, "Merge multiple columns into one")
 
-   self:registerCommand("showframe", function (options, _)
+   self.commands:register("showframe", function (options, _)
       local id = options.id or SILE.typesetter.frame.id
       if id == "all" then
          for _, frame in pairs(SILE.frames) do
@@ -165,14 +165,14 @@ function package:registerCommands ()
       end
    end)
 
-   self:registerCommand("shiftframeedge", function (options, _)
+   self.commands:register("shiftframeedge", function (options, _)
       local cFrame = SILE.typesetter.frame
       shiftframeedge(cFrame, options)
       SILE.typesetter:initFrame(cFrame)
       --SILE.outputter:debugFrame(cFrame)
    end, "Adjusts the edge of the frame horizontally by amounts specified in <left> and <right>")
 
-   self:registerCommand(
+   self.commands:register(
       "breakframevertical",
       function (options, _)
          self:breakFrameVertical(options.offset)
@@ -180,7 +180,7 @@ function package:registerCommands ()
       "Breaks the current frame in two vertically at the current location or at a point <offset> below the current location"
    )
 
-   self:registerCommand("makecolumns", function (options, _)
+   self.commands:register("makecolumns", function (options, _)
       -- Set a default value for column count
       options.columns = options.columns or 2
       local current_frame = SILE.typesetter.frame
@@ -208,7 +208,7 @@ function package:registerCommands ()
       end
    end, "Split the current frame into multiple columns")
 
-   self:registerCommand(
+   self.commands:register(
       "breakframehorizontal",
       function (options, _)
          breakFrameHorizontalAt(options.offset)
@@ -216,7 +216,7 @@ function package:registerCommands ()
       "Breaks the current frame in two horizontally either at the current location or at a point <offset> from the left of the current frame"
    )
 
-   self:registerCommand("float", function (options, content)
+   self.commands:register("float", function (options, content)
       SILE.typesetter:leaveHmode()
       local hbox = SILE.typesetter:makeHbox(content) -- HACK What about migrating nodes here?
       local heightOfPageSoFar = SILE.typesetter.pagebuilder:collateVboxes(SILE.typesetter.state.outputQueue).height
@@ -240,7 +240,7 @@ function package:registerCommands ()
       --SILE.outputter:debugFrame(SILE.typesetter.frame)
    end, "Sets the given content in its own frame, flowing the remaining content around it")
 
-   self:registerCommand("typeset-into", function (options, content)
+   self.commands:register("typeset-into", function (options, content)
       SU.required(options, "frame", "calling \\typeset-into")
       if not SILE.frames[options.frame] then
          SU.error("Can't find frame " .. options.frame .. " to typeset into")
@@ -250,7 +250,7 @@ function package:registerCommands ()
       end)
    end)
 
-   self:registerCommand("fit-frame", function (options, _)
+   self.commands:register("fit-frame", function (options, _)
       SU.required(options, "frame", "calling \\fit-frame")
       if not SILE.frames[options.frame] then
          SU.error("Can't find frame " .. options.frame .. " to fit")

@@ -281,7 +281,7 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("thisframeLTR", function (_, _)
+   self.commands:register("thisframeLTR", function (_, _)
       local direction = "LTR"
       SILE.typesetter.frame.direction = direction
       self.settings:set("font.direction", direction)
@@ -289,7 +289,7 @@ function package:registerCommands ()
       SILE.typesetter.frame:newLine()
    end)
 
-   self:registerCommand("thisframedirection", function (options, _)
+   self.commands:register("thisframedirection", function (options, _)
       local direction = SU.required(options, "direction", "frame direction")
       SILE.typesetter.frame.direction = direction
       self.settings:set("font.direction", direction)
@@ -297,7 +297,7 @@ function package:registerCommands ()
       SILE.typesetter.frame:init()
    end)
 
-   self:registerCommand("thisframeRTL", function (_, _)
+   self.commands:register("thisframeRTL", function (_, _)
       local direction = "RTL"
       SILE.typesetter.frame.direction = direction
       self.settings:set("font.direction", direction)
@@ -305,11 +305,11 @@ function package:registerCommands ()
       SILE.typesetter.frame:newLine()
    end)
 
-   self:registerCommand("bidi-on", function (_, _)
+   self.commands:register("bidi-on", function (_, _)
       self:bidiEnableTypesetter(SILE.typesetter)
    end)
 
-   self:registerCommand("bidi-off", function (_, _)
+   self.commands:register("bidi-off", function (_, _)
       self:bidiDisableTypesetter(SILE.typesetter)
    end)
 end

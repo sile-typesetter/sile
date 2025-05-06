@@ -32,17 +32,17 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("pullquote:font", function (_, _) end, "The font chosen for the pullquote environment")
+   self.commands:register("pullquote:font", function (_, _) end, "The font chosen for the pullquote environment")
 
-   self:registerCommand("pullquote:author-font", function (_, _)
+   self.commands:register("pullquote:author-font", function (_, _)
       self.settings:set("font.style", "italic")
    end, "The font style with which to typeset the author attribution.")
 
-   self:registerCommand("pullquote:mark-font", function (_, _)
+   self.commands:register("pullquote:mark-font", function (_, _)
       self.settings:set("font.family", "Libertinus Serif")
    end, "The font from which to pull the quotation marks.")
 
-   self:registerCommand(
+   self.commands:register(
       "pullquote",
       function (options, content)
          SILE.typesetter:leaveHmode()

@@ -60,19 +60,19 @@ function package:_init (options)
 end
 
 function package:registerCommands ()
-   self:registerCommand("folios", function (_, _)
+   self.commands:register("folios", function (_, _)
       SILE.scratch.counters.folio.off = false
    end)
 
-   self:registerCommand("nofolios", function (_, _)
+   self.commands:register("nofolios", function (_, _)
       SILE.scratch.counters.folio.off = true
    end)
 
-   self:registerCommand("nofoliothispage", function (_, _)
+   self.commands:register("nofoliothispage", function (_, _)
       SILE.scratch.counters.folio.off = 2
    end)
 
-   self:registerCommand("foliostyle", function (_, content)
+   self.commands:register("foliostyle", function (_, content)
       SILE.call("center", {}, content)
    end)
 end

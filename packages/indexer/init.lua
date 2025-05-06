@@ -41,8 +41,8 @@ end
 -- @tparam string dest The destination name
 -- @tparam string page The page number
 -- @treturn table The content AST, possibly wrapped in a link
-local function _linkWrapper (dest, page)
-   if dest and SILE.commands:exists("pdf:link") then
+function package:_linkWrapper (dest, page)
+   if dest and self.commands:exists("pdf:link") then
       return SU.ast.createCommand("pdf:link", { dest = dest }, page)
    end
    return page
@@ -166,7 +166,10 @@ function package:formatPageRanges (pages)
    local ranges = {}
    for _, range in ipairs(_groupPageRanges(pages)) do
       if #range == 1 then
-         table.insert(ranges, _linkWrapper(range[1].link, self.class.packages.counters:formatCounter(range[1].pageno)))
+         table.insert(
+            ranges,
+            self:_linkWrapper(range[1].link, self.class.packages.counters:formatCounter(range[1].pageno))
+         )
       else
          local p1 = self.class.packages.counters:formatCounter(range[1].pageno)
          local p2 = self.class.packages.counters:formatCounter(range[#range].pageno)
@@ -174,9 +177,9 @@ function package:formatPageRanges (pages)
             p2 = _simplifyArabicInRange(p1, p2, self.config["page-range-format"])
          end
          table.insert(ranges, {
-            _linkWrapper(range[1].link, p1),
+            self:_linkWrapper(range[1].link, p1),
             self.config["page-range-delimiter"],
-            _linkWrapper(range[#range].link, p2),
+            self:_linkWrapper(range[#range].link, p2),
          })
       end
    end
@@ -191,7 +194,7 @@ function package:formatPages (pages)
       return self:formatPageRanges(pages)
    end
    local ret = pl.tablex.map(function (page)
-      return _linkWrapper(page.link, self.class.packages.counters:formatCounter(page.pageno))
+      return self:_linkWrapper(page.link, self.class.packages.counters:formatCounter(page.pageno))
    end, pages)
    return _addDelimiter(ret, self.config["page-delimiter"])
 end
@@ -223,7 +226,7 @@ end
 
 -- Register the indexer commands.
 function package:registerCommands ()
-   self:registerCommand("indexentry", function (options, content)
+   self.commands:register("indexentry", function (options, content)
       if not options.label then
          -- Reconstruct the text from the content tree
          options.label = SILE.typesetter:contentToText(content)
@@ -232,7 +235,7 @@ function package:registerCommands ()
          options.index = "main"
       end
       local dest
-      if SILE.commands:exists("pdf:destination") then
+      if self.commands:exists("pdf:destination") then
          dest = "dest" .. tostring(SILE.scratch.pdf_destination_counter)
          SILE.call("pdf:destination", { name = dest })
          SILE.scratch.pdf_destination_counter = SILE.scratch.pdf_destination_counter + 1
@@ -247,7 +250,7 @@ function package:registerCommands ()
       })
    end, "Add an entry to the index")
 
-   self:registerCommand("printindex", function (options, _)
+   self.commands:register("printindex", function (options, _)
       _indexer_used = true
       local idx = self:readIndex()
       if idx == false then
@@ -276,11 +279,11 @@ function package:registerCommands ()
    end, "Print the index")
 
    -- Hooks for styling the index
-   self:registerCommand("index:entry:style", function (_, content)
+   self.commands:register("index:entry:style", function (_, content)
       SILE.process(content)
    end, "Hook for styling an index entry")
 
-   self:registerCommand("index:pages:style", function (_, content)
+   self.commands:register("index:pages:style", function (_, content)
       SILE.process(content)
    end, "Hook for styling index pages")
 end

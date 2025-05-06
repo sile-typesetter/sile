@@ -4,7 +4,7 @@ local package = pl.class(base)
 package._name = "color"
 
 function package:registerCommands ()
-   self:registerCommand("color", function (options, content)
+   self.commands:register("color", function (options, content)
       local color = SILE.types.color(options.color or "black")
       -- This is a bit of a hack to use a liner.
       -- (Due to how the color stack is currently handled)

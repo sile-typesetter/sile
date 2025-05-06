@@ -98,7 +98,7 @@ function package:_init (options)
 end
 
 function package:registerCommands ()
-   self:registerCommand("balancecolumns", function (_, _)
+   self.commands:register("balancecolumns", function (_, _)
       SILE.typesetter:leaveHmode()
       SILE.call("penalty", { penalty = BALANCE_PENALTY })
    end)

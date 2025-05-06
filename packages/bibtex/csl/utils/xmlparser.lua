@@ -14,7 +14,7 @@ local defaultRules = {
    -- If defined, prefix is prepended to the tag name to create the SILE
    -- command name.
    -- This is a way to avoid conflicts between different XML formats and
-   -- SILE commands.
+   -- sile.commands.
    prefix = nil,
    -- SPACES CLEANING:
    -- Depending on the XML schema, some spaces may be irrelevant.

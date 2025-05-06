@@ -4,7 +4,7 @@ local package = pl.class(base)
 package._name = "unichar"
 
 function package:registerCommands ()
-   self:registerCommand("unichar", function (_, content)
+   self.commands:register("unichar", function (_, content)
       local cp = content[1]
       if type(cp) ~= "string" then
          SU.error("Bad argument to \\unicode")

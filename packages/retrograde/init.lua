@@ -191,11 +191,11 @@ function package:recede_commands (target)
 end
 
 function package:registerCommands ()
-   self:registerCommand("recede", function (options, content)
+   self.commands:register("recede", function (options, content)
       SILE.call("recede-defaults", options, content)
    end)
 
-   self:registerCommand("recede-defaults", function (options, content)
+   self.commands:register("recede-defaults", function (options, content)
       if content then
          self.settings:temporarily(function ()
             self:recede_defaults(options.target)
@@ -206,7 +206,7 @@ function package:registerCommands ()
       end
    end)
 
-   self:registerCommand("recede-classes", function (options, content)
+   self.commands:register("recede-classes", function (options, content)
       if content then
          self.settings:temporarily(function ()
             local reverter = self:recede_classes(options.target)
@@ -218,7 +218,7 @@ function package:registerCommands ()
       end
    end)
 
-   self:registerCommand("recede-commands", function (options, content)
+   self.commands:register("recede-commands", function (options, content)
       if content then
          local reverter = self:recede_commands(options.target)
          SILE.process(content)

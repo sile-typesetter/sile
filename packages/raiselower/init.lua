@@ -18,12 +18,12 @@ local function raise (height, content)
 end
 
 function package:registerCommands ()
-   self:registerCommand("raise", function (options, content)
+   self.commands:register("raise", function (options, content)
       local height = SU.cast("measurement", options.height)
       raise(height:absolute(), content)
    end, "Raises the contents of the command by the amount specified in the <height> option")
 
-   self:registerCommand("lower", function (options, content)
+   self.commands:register("lower", function (options, content)
       local height = SU.cast("measurement", options.height)
       raise(-height:absolute(), content)
    end, "Lowers the contents of the command by the amount specified in the <height> option")

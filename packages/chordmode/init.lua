@@ -19,7 +19,7 @@ function package:declareSettings ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("ch", function (options, content)
+   self.commands:register("ch", function (options, content)
       local chordBox = SILE.typesetter:makeHbox(function ()
          SILE.call("chordmode:chordfont", {}, { options.name })
       end)
@@ -118,11 +118,11 @@ function package:registerCommands ()
       return result
    end
 
-   self:registerCommand("chordmode", function (_, content)
+   self.commands:register("chordmode", function (_, content)
       SILE.process(self.class.packages.inputfilter:transformContent(content, _addChords))
    end, "Transform embedded chords to 'ch' commands")
 
-   self:registerCommand("chordmode:chordfont", function (_, content)
+   self.commands:register("chordmode:chordfont", function (_, content)
       SILE.process(content)
    end, "Override this command to change chord style.")
 end

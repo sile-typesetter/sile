@@ -70,7 +70,7 @@ function package:declareSettings ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("ruby:font", function (_, _)
+   self.commands:register("ruby:font", function (_, _)
       if self.settings:get("ruby.opentype") then
          SILE.call("font", { size = "0.6zw", features = "+ruby" })
       else
@@ -78,7 +78,7 @@ function package:registerCommands ()
       end
    end)
 
-   self:registerCommand("ruby", function (options, content)
+   self.commands:register("ruby", function (options, content)
       local reading = SU.required(options, "reading", "\\ruby")
       SILE.typesetter:setpar("")
 

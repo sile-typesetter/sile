@@ -37,7 +37,7 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("background", function (options, _)
+   self.commands:register("background", function (options, _)
       if SU.boolean(options.disable, false) then
          -- This option is certainly better than enforcing a white color.
          background.bg = nil

@@ -25,7 +25,7 @@ local function outputMarks (self)
       self.settings:temporarily(function ()
          SILE.call("noindent")
          SILE.call("font", { size = "6pt" })
-         if SILE.commands:exists("crop:header") then
+         if self.commands:exists("crop:header") then
             -- Deprecation shim:
             -- If user redefined this command, still use it with a warning...
             SU.deprecated("crop:header", "cropmarks:header", "0.15.0", "0.16.0")
@@ -55,7 +55,7 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("cropmarks:header", function (_, _)
+   self.commands:register("cropmarks:header", function (_, _)
       local info = SILE.input.filenames[1]
          .. " - "
          .. self.class.packages.date:date({ format = "%x %X" })
@@ -64,13 +64,13 @@ function package:registerCommands ()
       SILE.typesetter:typeset(info)
    end)
 
-   self:registerCommand("cropmarks:setup", function (_, _)
+   self.commands:register("cropmarks:setup", function (_, _)
       self.class:registerHook("endpage", function ()
          return outputMarks(self)
       end)
    end)
 
-   self:registerCommand("crop:setup", function (_, _)
+   self.commands:register("crop:setup", function (_, _)
       SU.deprecated("crop:setup", "cropmarks:setup", "0.15.10", "0.17.0")
       SILE.call("cropmarks:setup")
    end)

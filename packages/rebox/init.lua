@@ -4,7 +4,7 @@ local package = pl.class(base)
 package._name = "rebox"
 
 function package:registerCommands ()
-   self:registerCommand("rebox", function (options, content)
+   self.commands:register("rebox", function (options, content)
       local hbox, hlist = SILE.typesetter:makeHbox(content)
       if options.width then
          hbox.width = SILE.types.length(options.width)

@@ -55,7 +55,7 @@ function package:registerRawHandlers ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("svg", function (options, _)
+   self.commands:register("svg", function (options, _)
       local src = SU.required(options, "src", "filename")
       src = SILE.resolveFile(src) or SU.error("Couldn't find file " .. src)
       local width = options.width and SU.cast("measurement", options.width):absolute() or nil
@@ -66,7 +66,7 @@ function package:registerCommands ()
       _drawSVG(svgdata, width, height, density)
    end)
 
-   self:registerCommand("svg-glyph", function (_, content)
+   self.commands:register("svg-glyph", function (_, content)
       local fontoptions = SILE.font.loadDefaults({})
       local items = SILE.shaper:shapeToken(content[1], fontoptions)
       local face = SILE.shaper:getFace(fontoptions)

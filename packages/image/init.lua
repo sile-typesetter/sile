@@ -4,7 +4,7 @@ local package = pl.class(base)
 package._name = "image"
 
 function package:registerCommands ()
-   self:registerCommand("img", function (options, _)
+   self.commands:register("img", function (options, _)
       SU.required(options, "src", "including image file")
       local width = SU.cast("measurement", options.width or 0):tonumber()
       local height = SU.cast("measurement", options.height or 0):tonumber()

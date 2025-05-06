@@ -78,18 +78,18 @@ function package:_init (options)
 end
 
 function package:registerCommands ()
-   self:registerCommand("open-double-page", function ()
+   self.commands:register("open-double-page", function ()
       SILE.call("open-spread", { double = false, odd = true, blank = false })
    end)
 
-   self:registerCommand("open-spread-eject", function ()
+   self.commands:register("open-spread-eject", function ()
       SILE.call("supereject")
    end)
 
    -- This is upstreamed from CaSILE. Similar to the original open-double-page,
    -- but can disable headers and folios on blank pages and allows opening the
    -- even side (with or without a leading blank).
-   self:registerCommand("open-spread", function (options)
+   self.commands:register("open-spread", function (options)
       local odd = SU.boolean(options.odd, true)
       local double = SU.boolean(options.double, true)
       local blank = SU.boolean(options.blank, true)

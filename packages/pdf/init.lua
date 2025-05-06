@@ -11,7 +11,7 @@ local package = pl.class(base)
 package._name = "pdf"
 
 function package:registerCommands ()
-   self:registerCommand("pdf:destination", function (options, _)
+   self.commands:register("pdf:destination", function (options, _)
       local name = SU.required(options, "name", "pdf:destination")
       SILE.typesetter:pushHbox({
          outputYourself = function (_, typesetter, line)
@@ -25,7 +25,7 @@ function package:registerCommands ()
       })
    end)
 
-   self:registerCommand("pdf:bookmark", function (options, _)
+   self.commands:register("pdf:bookmark", function (options, _)
       local dest = SU.required(options, "dest", "pdf:bookmark")
       local title = SU.required(options, "title", "pdf:bookmark")
       local level = SU.cast("integer", options.level or 1)
@@ -41,8 +41,8 @@ function package:registerCommands ()
    end)
 
    -- TODO: Shim to pdfannotations package
-   -- self:registerCommand("pdf:literal", function (_, content)
-   self:registerCommand("pdf:link", function (options, content)
+   -- self.commands:register("pdf:literal", function (_, content)
+   self.commands:register("pdf:link", function (options, content)
       local dest = SU.required(options, "dest", "pdf:link")
       local external = SU.boolean(options.external, false)
       local borderwidth = options.borderwidth and SU.cast("measurement", options.borderwidth):tonumber() or 0
@@ -71,7 +71,7 @@ function package:registerCommands ()
       end)
    end)
 
-   self:registerCommand("pdf:metadata", function (options, _)
+   self.commands:register("pdf:metadata", function (options, _)
       local key = SU.required(options, "key", "pdf:metadata")
       local value = SU.required(options, "value", "pdf:metadata")
       SILE.outputter:setMetadata(key, value)

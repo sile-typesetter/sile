@@ -74,7 +74,7 @@ ipsum dolor sit amet
 local _, nwords = lorem:gsub("%S+", "")
 
 function package:registerCommands ()
-   self:registerCommand("lorem", function (options, _)
+   self.commands:register("lorem", function (options, _)
       local words = tonumber(options.words) or 50
       local counter = SU.boolean(options.counter, false)
 

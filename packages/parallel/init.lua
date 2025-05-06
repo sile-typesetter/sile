@@ -81,12 +81,12 @@ function package:_init (options)
       -- get very complicated...
       -- typesetterPool[frame].leadingFor = function() return SILE.types.node.vglue(self.settings:get("document.lineskip")) end
       local fontcommand = frame .. ":font"
-      self:registerCommand(frame, function (_, _) -- \left ...
+      self.commands:register(frame, function (_, _) -- \left ...
          SILE.typesetter = typesetterPool[frame]
          SILE.call(fontcommand)
       end)
-      if not SILE.commands:exists(fontcommand) then
-         self:registerCommand(fontcommand, function () end) -- to be overridden
+      if not self.commands:exists(fontcommand) then
+         self.commands:register(fontcommand, function () end) -- to be overridden
       end
    end
    if not options.folios then
@@ -117,7 +117,7 @@ function package:_init (options)
 end
 
 function package:registerCommands ()
-   self:registerCommand("sync", function (_, _)
+   self.commands:register("sync", function (_, _)
       local anybreak = false
       local maxheight = SILE.types.length()
       SU.debug("parallel", "Trying a sync")

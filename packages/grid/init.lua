@@ -30,7 +30,7 @@ function package:_init (options)
 end
 
 function package:registerCommands ()
-   self:registerCommand("grid:debug", function (options, _)
+   self.commands:register("grid:debug", function (options, _)
       local spacing = SU.cast("measurement", options.spacing or self.spacing):absolute()
       local debugGrid = function ()
          local frame = SILE.typesetter.frame
@@ -44,7 +44,7 @@ function package:registerCommands ()
       SILE.typesetter:registerNewFrameHook(debugGrid)
    end)
 
-   self:registerCommand("grid", function (options, _)
+   self.commands:register("grid", function (options, _)
       if options.spacing then
          self.spacing = SU.cast("measurement", options.spacing):absolute()
       end
@@ -60,7 +60,7 @@ function package:registerCommands ()
       SILE.typesetter:registerNewFrameHook(startGridInFrame)
    end, "Begins typesetting on a grid spaced at <spacing> intervals.")
 
-   self:registerCommand("no-grid", function (_, _)
+   self.commands:register("no-grid", function (_, _)
       SILE.typesetter.state.grid = false
       SILE.typesetters[oldTypesetterType]:cast(SILE.typesetter)
       SILE.pagebuilders[oldPagebuilderType]:cast(SILE.typesetter.pagebuilder)

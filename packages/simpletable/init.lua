@@ -28,13 +28,13 @@ function package:_init (options)
    -- method using our package loader because we don't know what commands to register
    -- until we've been instantiated.
    self.class:registerPostinit(function (_)
-      self:registerCommand(trTag, function (_, content)
+      self.commands:register(trTag, function (_, content)
          local tbl = SILE.scratch.simpletable.tables[#SILE.scratch.simpletable.tables]
          tbl[#tbl + 1] = {}
          SILE.process(content)
       end)
 
-      self:registerCommand(tdTag, function (_, content)
+      self.commands:register(tdTag, function (_, content)
          local tbl = SILE.scratch.simpletable.tables[#SILE.scratch.simpletable.tables]
          local row = tbl[#tbl]
          local hbox, hlist = SILE.typesetter:makeHbox(content)
@@ -47,7 +47,7 @@ function package:_init (options)
          end
       end)
 
-      self:registerCommand(tableTag, function (_, content)
+      self.commands:register(tableTag, function (_, content)
          local tbl = {}
          table.insert(SILE.scratch.simpletable.tables, tbl)
          self.settings:temporarily(function ()

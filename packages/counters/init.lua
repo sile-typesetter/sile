@@ -72,7 +72,7 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("increment-counter", function (options, _)
+   self.commands:register("increment-counter", function (options, _)
       local id = SU.required(options, "id", "increment-counter")
       local counter = self.class:getCounter(id)
       if options["set-to"] then
@@ -85,7 +85,7 @@ function package:registerCommands ()
       end
    end, "Increments the counter named by the <id> option")
 
-   self:registerCommand(
+   self.commands:register(
       "set-counter",
       function (options, _)
          local id = SU.required(options, "id", "set-counter")
@@ -100,7 +100,7 @@ function package:registerCommands ()
       "Sets the counter named by the <id> option to <value>; sets its display type (roman/Roman/arabic) to type <display>."
    )
 
-   self:registerCommand("show-counter", function (options, _)
+   self.commands:register("show-counter", function (options, _)
       local id = SU.required(options, "id", "show-counter")
       local counter = self.class:getCounter(id)
       if options.display then
@@ -109,7 +109,7 @@ function package:registerCommands ()
       SILE.typesetter:typeset(self:formatCounter(counter))
    end, "Outputs the value of counter <id>, optionally displaying it with the <display> format.")
 
-   self:registerCommand("increment-multilevel-counter", function (options, _)
+   self.commands:register("increment-multilevel-counter", function (options, _)
       local id = SU.required(options, "id", "increment-multilevel-counter")
       local counter = self.class:getMultilevelCounter(id)
       local currentLevel = #counter.value
@@ -143,7 +143,7 @@ function package:registerCommands ()
       end
    end, "Increments the value of the multilevel counter <id> at the given <level> or the current level.")
 
-   self:registerCommand(
+   self.commands:register(
       "set-multilevel-counter",
       function (options, _)
          local level = SU.cast("integer", SU.required(options, "level", "set-multilevel-counter"))
@@ -188,7 +188,7 @@ function package:registerCommands ()
       "Sets the multilevel counter named by the <id> option to <value> at level <level>; optionally sets its display type at that level to <display>."
    )
 
-   self:registerCommand("show-multilevel-counter", function (options, _)
+   self.commands:register("show-multilevel-counter", function (options, _)
       local id = SU.required(options, "id", "show-multilevel-counter")
       local counter = self.class:getMultilevelCounter(id)
       if options.display then

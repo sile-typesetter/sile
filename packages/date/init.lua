@@ -21,7 +21,7 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("date", function (options, _)
+   self.commands:register("date", function (options, _)
       local datestring = self:date(options)
       SILE.typesetter:typeset(datestring)
    end, "Output a timestamp using the system date function")

@@ -98,7 +98,7 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("pdf:structure", function (options, content)
+   self.commands:register("pdf:structure", function (options, content)
       local notetype = SU.required(options, "type", "pdf structure")
       local node = self:_stNode(notetype)
       addChild(node)
@@ -124,7 +124,7 @@ function package:registerCommands ()
       stPointer = oldstPointer
    end)
 
-   self:registerCommand("pdf:literal", function (_, content)
+   self.commands:register("pdf:literal", function (_, content)
       -- NOTE: This method is used by the pdfstructure package and should
       -- probably be moved elsewhere, so there's no attempt here to delegate
       -- the low-level libtexpdf call to te outputter.

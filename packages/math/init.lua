@@ -90,7 +90,7 @@ function package:declareSettings ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("mathml", function (options, content)
+   self.commands:register("mathml", function (options, content)
       local mbox
       xpcall(function ()
          mbox = self:ConvertMathML(content)
@@ -101,7 +101,7 @@ function package:registerCommands ()
       self:handleMath(mbox, options)
    end)
 
-   self:registerCommand("math", function (options, content)
+   self.commands:register("math", function (options, content)
       local mbox
       xpcall(function ()
          mbox = self:ConvertMathML(self:compileToMathML({}, self:convertTexlike(content)))
@@ -112,7 +112,7 @@ function package:registerCommands ()
       self:handleMath(mbox, options)
    end)
 
-   self:registerCommand("math:numberingstyle", function (options, _)
+   self.commands:register("math:numberingstyle", function (options, _)
       SILE.typesetter:typeset("(")
       if options.counter then
          SILE.call("show-counter", { id = options.counter })

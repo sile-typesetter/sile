@@ -71,7 +71,7 @@ function package:_init ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("show-hanmen", function (_, _)
+   self.commands:register("show-hanmen", function (_, _)
       local frame = SILE.typesetter.frame
       if not frame.hanmen then
          SU.error("show-hanmen called on a frame with no hanmen")

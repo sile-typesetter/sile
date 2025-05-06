@@ -128,9 +128,9 @@ local otFeatures = pl.class(pl.Map)
 
 -- stylua: ignore end
 
-function otFeatures:_init ()
+function otFeatures:_init (pkg)
    self:super()
-   local str = SILE.settings:get("font.features")
+   local str = pkg.settings:get("font.features")
    local tbl = featurestring:match(str)
    if not tbl then
       SU.error("Unparsable Opentype feature string '" .. str .. "'")
@@ -190,19 +190,19 @@ end
 
 function package:registerCommands ()
    self.commands:register("add-font-feature", function (options, _)
-      local otfeatures = otFeatures()
+      local otfeatures = otFeatures(self)
       otfeatures:loadOptions(options)
       self.settings:set("font.features", tostring(otfeatures))
    end)
 
    self.commands:register("remove-font-feature", function (options, _)
-      local otfeatures = otFeatures()
+      local otfeatures = otFeatures(self)
       otfeatures:unloadOptions(options)
       self.settings:set("font.features", tostring(otfeatures))
    end)
 
    self.commands:pushWrapper("font", function (options, content, original)
-      local otfeatures = otFeatures()
+      local otfeatures = otFeatures(self)
       -- It is guaranteed that future releases of SILE will not implement non-OT \font
       -- features with capital letters.
       -- Cf. https://github.com/sile-typesetter/sile/issues/992#issuecomment-665575353

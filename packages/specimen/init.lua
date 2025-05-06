@@ -6,7 +6,7 @@ package._name = "specimen"
 function package:registerCommands ()
    local metrics = require("fontmetrics")
 
-   self:registerCommand("repertoire", function (_, _)
+   self.commands:register("repertoire", function (_, _)
       local ot = require("core.opentype-parser")
       local fontoptions = SILE.font.loadDefaults({})
       local face = SILE.font.cache(fontoptions, SILE.shaper:_getFaceCallback())
@@ -24,7 +24,7 @@ function package:registerCommands ()
       end
    end)
 
-   self:registerCommand("pangrams", function (_, _)
+   self.commands:register("pangrams", function (_, _)
       local pg = {
          "Sphinx of black quartz, judge my vow!",
          "The five boxing wizards jump quickly.",
@@ -39,7 +39,7 @@ function package:registerCommands ()
       SILE.call("bigskip")
    end)
 
-   self:registerCommand("set-to-width", function (options, content)
+   self.commands:register("set-to-width", function (options, content)
       local width = SU.required(options, "width", "set to width", "length"):absolute()
       local fontOptions = SILE.font.loadDefaults({})
       for line in SU.gtoke(content[1], "\n+") do

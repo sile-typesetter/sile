@@ -13,7 +13,7 @@ local function hackVboxDir (v, dir)
 end
 
 function package:registerCommands ()
-   self:registerCommand("boustrophedon", function (_, content)
+   self.commands:register("boustrophedon", function (_, content)
       SILE.typesetter:leaveHmode()
       local saveBoxup = SILE.typesetter.boxUpNodes
       SILE.typesetter.boxUpNodes = function (self_)

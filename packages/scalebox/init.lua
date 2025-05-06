@@ -4,7 +4,7 @@ local package = pl.class(base)
 package._name = "scalebox"
 
 function package:registerCommands ()
-   self:registerCommand("scalebox", function (options, content)
+   self.commands:register("scalebox", function (options, content)
       if not SILE.outputter.scaleFn then
          SU.warn("Output will not be scaled: backend '" .. SILE.outputter._name .. "' does not support scaling")
          return SILE.process(content)

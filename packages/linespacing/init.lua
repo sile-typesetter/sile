@@ -147,11 +147,11 @@ function package:declareSettings ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("linespacing-on", function ()
+   self.commands:register("linespacing-on", function ()
       SILE.typesetter.leadingFor = linespacingLeading
    end)
 
-   self:registerCommand("linespacing-off", function ()
+   self.commands:register("linespacing-off", function ()
       SILE.typesetter.leadingFor = SILE.typesetters.base.leadingFor
    end)
 end

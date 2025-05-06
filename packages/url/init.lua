@@ -39,7 +39,7 @@ function package:declareSettings ()
 end
 
 function package:registerCommands ()
-   self:registerCommand("href", function (options, content)
+   self.commands:register("href", function (options, content)
       if options.src then
          SILE.call("pdf:link", {
             dest = options.src,
@@ -123,7 +123,7 @@ function package:registerCommands ()
       return result
    end
 
-   self:registerCommand("url", function (options, content)
+   self.commands:register("url", function (options, content)
       self.settings:temporarily(function ()
          local primaryPenalty = self.settings:get("url.linebreak.primaryPenalty")
          local secondaryPenalty = self.settings:get("url.linebreak.secondaryPenalty")
@@ -154,7 +154,7 @@ function package:registerCommands ()
       end)
    end, "Inserts penalties in an URL so it can be broken over multiple lines at appropriate places.")
 
-   self:registerCommand("urlstyle", function (options, content)
+   self.commands:register("urlstyle", function (options, content)
       SILE.call("code", options, content)
    end, "Hook that may be redefined to change the styling of URLs")
 end

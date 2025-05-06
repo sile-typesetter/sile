@@ -93,7 +93,7 @@ function package:_init ()
    -- If not available, fallback to raiselower to implement textsuperscript
    if not self:loadOptPackage("textsubsuper") then
       self:loadPackage("raiselower")
-      self:registerCommand("textsuperscript", function (_, content)
+      self.commands:register("textsuperscript", function (_, content)
          -- Fake more or less ad hoc superscripting
          SILE.call("raise", { height = "0.7ex" }, function ()
             SILE.call("font", { size = "1.5ex" }, content)
@@ -237,12 +237,12 @@ function package:_getLocator (options)
 end
 
 function package:registerCommands ()
-   self:registerCommand("loadbibliography", function (options, _)
+   self.commands:register("loadbibliography", function (options, _)
       local file = SU.required(options, "file", "loadbibliography")
       parseBibtex(file, self._data.bib)
    end)
 
-   self:registerCommand("nocite", function (options, content)
+   self.commands:register("nocite", function (options, content)
       local key = self:_getCitationKey(options, content)
       -- Just mark the entry as cited.
       self:_getEntryForCite(key, false) -- no warning if not yet cited
@@ -250,7 +250,7 @@ function package:registerCommands ()
 
    -- LEGACY COMMANDS
 
-   self:registerCommand("cite", function (options, content)
+   self.commands:register("cite", function (options, content)
       local style = self.settings:get("bibtex.style")
       if style == "csl" then
          SILE.call("csl:cite", options, content)
@@ -270,7 +270,7 @@ function package:registerCommands ()
       end
    end, "Produce a single citation.")
 
-   self:registerCommand("reference", function (options, content)
+   self.commands:register("reference", function (options, content)
       local style = self.settings:get("bibtex.style")
       if style == "csl" then
          SILE.call("csl:reference", options, content)
@@ -298,12 +298,12 @@ function package:registerCommands ()
 
    -- Hooks for CSL processing
 
-   self:registerCommand("bibSmallCaps", function (_, content)
+   self.commands:register("bibSmallCaps", function (_, content)
       -- To avoid attributes in the CSL-processed content
       SILE.call("font", { features = "+smcp" }, content)
    end)
 
-   self:registerCommand("bibSuperScript", function (_, content)
+   self.commands:register("bibSuperScript", function (_, content)
       -- Superscripted content from CSL may contain characters that are not
       -- available in the font even with +sups.
       -- E.g. ACS style uses superscripted numbers for references, but also
@@ -325,12 +325,12 @@ function package:registerCommands ()
    --   "Citation processors should include an option flag for calling
    --   applications to disable bibliography linking behavior."
    -- (But users can redefine these commands to their liking...)
-   self:registerCommand("bibLink", function (options, content)
+   self.commands:register("bibLink", function (options, content)
       SILE.call("href", { src = options.src }, {
          SU.ast.createCommand("url", {}, { content[1] }),
       })
    end)
-   self:registerCommand("bibURL", function (_, content)
+   self.commands:register("bibURL", function (_, content)
       local link = content[1]
       if not link:match("^https?://") then
          -- Play safe
@@ -338,21 +338,21 @@ function package:registerCommands ()
       end
       SILE.call("bibLink", { src = link }, content)
    end)
-   self:registerCommand("bibDOI", function (_, content)
+   self.commands:register("bibDOI", function (_, content)
       local link = content[1]
       if not link:match("^https?://") then
          link = "https://doi.org/" .. link
       end
       SILE.call("bibLink", { src = link }, content)
    end)
-   self:registerCommand("bibPMID", function (_, content)
+   self.commands:register("bibPMID", function (_, content)
       local link = content[1]
       if not link:match("^https?://") then
          link = "https://www.ncbi.nlm.nih.gov/pubmed/" .. link
       end
       SILE.call("bibLink", { src = link }, content)
    end)
-   self:registerCommand("bibPMCID", function (_, content)
+   self.commands:register("bibPMCID", function (_, content)
       local link = content[1]
       if not link:match("^https?://") then
          link = "https://www.ncbi.nlm.nih.gov/pmc/articles/" .. link
@@ -360,7 +360,7 @@ function package:registerCommands ()
       SILE.call("bibLink", { src = link }, content)
    end)
 
-   self:registerCommand("bibRule", function (_, content)
+   self.commands:register("bibRule", function (_, content)
       local n = content[1] and tonumber(content[1]) or 3
       local width = n .. "em"
       SILE.call("raise", { height = "0.4ex" }, function ()
@@ -368,7 +368,7 @@ function package:registerCommands ()
       end)
    end)
 
-   self:registerCommand("bibBoxForIndent", function (_, content)
+   self.commands:register("bibBoxForIndent", function (_, content)
       local hbox = SILE.typesetter:makeHbox(content)
       local margin = SILE.types.length(self.settings:get("bibliography.indent"):absolute())
       if hbox.width > margin then
@@ -382,7 +382,7 @@ function package:registerCommands ()
 
    -- Style and locale loading
 
-   self:registerCommand("bibliographystyle", function (options, _)
+   self.commands:register("bibliographystyle", function (options, _)
       local sty = SU.required(options, "style", "bibliographystyle")
       local style = loadCslStyle(sty)
       -- FIXME: lang is mandatory until we can map document.lang to a resolved
@@ -400,7 +400,7 @@ function package:registerCommands ()
       })
    end)
 
-   self:registerCommand("csl:cite", function (options, content)
+   self.commands:register("csl:cite", function (options, content)
       local key = self:_getCitationKey(options, content)
       local entry, citnum = self:_getEntryForCite(key, false) -- no warning if not yet cited
       if entry then
@@ -417,7 +417,7 @@ function package:registerCommands ()
       end
    end, "Produce a single citation.")
 
-   self:registerCommand("cites", function (_, content)
+   self.commands:register("cites", function (_, content)
       if type(content) ~= "table" then
          SU.error("Table content expected in \\cites")
       end
@@ -459,7 +459,7 @@ function package:registerCommands ()
       end
    end, "Produce a group of citations.")
 
-   self:registerCommand("csl:reference", function (options, content)
+   self.commands:register("csl:reference", function (options, content)
       local key = self:_getCitationKey(options, content)
       local entry, citnum = self:_getEntryForCite(key, nil, true) -- no locator, warn if not yet cited
       if entry then
@@ -472,7 +472,7 @@ function package:registerCommands ()
       end
    end, "Produce a single bibliographic reference.")
 
-   self:registerCommand("printbibliography", function (options, _)
+   self.commands:register("printbibliography", function (options, _)
       local bib
       if SU.boolean(options.cited, true) then
          bib = {}
