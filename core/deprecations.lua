@@ -219,9 +219,9 @@ setmetatable(SILE.Commands, {
       -- Return the bare function for legacy use since a table type would be unexpected
       return SILE.commands:pull(name).func
    end,
-   __newindex = function (_, name, func, help, pack)
+   __newindex = function (_, name, func)
       nocommands()
-      return SILE.commands:register(name, func, help, pack, _)
+      return SILE.commands:register(name, func)
    end,
 })
 

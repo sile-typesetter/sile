@@ -17,7 +17,7 @@ function commands:register (parent, name, func, help, pack, defaults)
       self._registry[name] = {}
    end
    local command = SILE.types.command(name, func, help, pack, defaults)
-   self:push(parent, command)
+   return self:push(parent, command)
 end
 
 function commands:call (parent, name, options, content)
