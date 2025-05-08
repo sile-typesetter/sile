@@ -8,11 +8,8 @@ local function resolveMeasurement (str)
 end
 
 local functionOfFrame = function (dim, id)
-   if not SILE.frames[id] then
-      -- TODO: Fix this race condition properly!
-      SILE.newFrame({ id = id })
-   end
-   return SILE.frames[id].variables[dim]
+   -- TODO implement without a private attribute
+   return SILE.frames:pull(id)._variables[dim]
 end
 
 -- stylua: ignore start
