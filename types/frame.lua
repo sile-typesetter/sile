@@ -15,52 +15,99 @@ local heightdims = pl.Set({ "top", "bottom", "height" })
 local alldims = widthdims + heightdims
 
 frame.direction = "LTR-TTB"
+
+-- TODO refactor with a hook table with multiple types
 frame.enterHooks = {}
 frame.leaveHooks = {}
 
 function frame:_init (spec, dummy)
    SU.required(spec, "id", "frame declaration")
+   self._spec = spec
+   -- Redo this to read form the typesetter status on enter, not on frame creation
    local direction = SILE.documentState.direction
    if direction then
       self.direction = direction
    end
-   self.constraints = {}
-   self.variables = {}
    self.id = spec.id
+   self.balanced = SU.boolean(spec.balanced, false)
+   self.mirrored = SU.boolean(spec.mirrored, false) -- TODO redo twoside, use this to swap constraints
+   self.flipped = SU.boolean(spec.flipped, false) -- TODO implement the same as mirroring for vertical
+   self.dummy = SU.boolean(dummy or spec.dummy, false)
    for k, v in pairs(spec) do
       if not alldims[k] then
          self[k] = v
       end
    end
-   self.balanced = SU.boolean(self.balanced, false)
-   self.dummy = dummy
-   if not self.dummy then
-      for method in pairs(alldims) do
-         self.variables[method] = cassowary.Variable({ name = spec.id .. "_" .. method })
-         self[method] = function (instance_self)
-            instance_self:solve()
-            local value = instance_self.variables[method].value
-            return SILE.types.measurement(value)
-         end
-      end
-      -- Add definitions of width and height
-      for method in pairs(alldims) do
-         if spec[method] then
-            self:constrain(method, spec[method])
-         end
+   self._constraints = {}
+   self._variables = {}
+   for method in pairs(alldims) do
+      self[method] = function ()
+         SU.error("Attempt to use a size method from an unresolved frame", true)
       end
    end
 end
 
 function frame:_post_init ()
-   -- SILE.frames[self.id] = self
+   self.constraints = setmetatable({}, {
+      __index = function (_, key)
+         SU.deprecated(
+            "frame.constraints.*",
+            "frame._constraints",
+            "0.16.0",
+            "0.17.0",
+            [[Use the contsraint method to fetch constraints.]]
+         )
+         return self._constraints[key]
+      end,
+      __newindex = function (_, key, value)
+         SU.deprecated(
+            "frame.constraints.*",
+            "frame:constrain()",
+            "0.16.0",
+            "0.17.0",
+            [[Use the constrain method to add constraints.]]
+         )
+         return self:constrain(key, value)
+      end,
+   })
+   if not self.dummy then
+      for method in pairs(alldims) do
+         self._variables[method] = cassowary.Variable({ name = self._spec.id .. "_" .. method })
+         self[method] = function (self_)
+            self_:solve()
+            local value = self_._variables[method].value
+            return SILE.types.measurement(value)
+         end
+      end
+      -- Add definitions of width and height
+      for method in pairs(alldims) do
+         if self._spec[method] then
+            self:constrain(method, self._spec[method])
+         end
+      end
+   end
+end
+
+function frame:init (typesetter)
+   SU.deprecated("frame:init", "frame:connectToTypesetter", "0.16.0", "0.17.0")
+   return self:connectToTypesetter(typesetter)
 end
 
 -- This gets called by us in typesetter before we start to use the frame
-function frame:init (typesetter)
+function frame:connectToTypesetter (typesetter)
+   -- TODO make sure is solved
+   if self.typesetter then
+      SU.warn("Re-using frame that has already been connected to a typesetter")
+   end
    self.state = { totals = { height = SILE.types.measurement(0) } }
    self:enter(typesetter)
+   self:resetCursor()
    self:newLine(typesetter)
+   self.typesetter = typesetter
+   return self
+end
+
+function frame:resetCursor ()
    if self:pageAdvanceDirection() == "TTB" then
       self.state.cursorY = self:top()
    elseif self:pageAdvanceDirection() == "LTR" then
@@ -73,8 +120,17 @@ function frame:init (typesetter)
 end
 
 function frame:constrain (method, dimension)
-   self.constraints[method] = tostring(dimension)
+   self._constraints[method] = tostring(dimension)
    self:invalidate()
+end
+
+function frame:constraint (method)
+   return tostring(self._constraints[method])
+end
+
+function frame:iterateConstraints ()
+   SU.debug("frames", "Iterating constraints for", self.id)
+   return pairs(self._constraints)
 end
 
 function frame:invalidate ()
@@ -82,19 +138,20 @@ function frame:invalidate ()
 end
 
 function frame:relax (method)
-   self.constraints[method] = nil
+   self._constraints[method] = nil
+   self:invalidate()
 end
 
 function frame:reifyConstraint (solver, method, stay)
-   local constraint = self.constraints[method]
+   local constraint = self._constraints[method]
    if not constraint then
       return
    end
    constraint = SU.type(constraint) == "measurement" and constraint:tonumber() or SILE.frameParser:match(constraint)
-   SU.debug("frames", "Adding constraint", self.id, function ()
-      return "(" .. method .. ") = " .. tostring(constraint)
+   SU.debug("frames", function ()
+      return "Adding constraint " .. method .. " to " .. self.id .. " as " .. tostring(constraint)
    end)
-   local eq = cassowary.Equation(self.variables[method], constraint)
+   local eq = cassowary.Equation(self._variables[method], constraint)
    solver:addConstraint(eq)
    if stay then
       solver:addStay(eq)
@@ -102,7 +159,7 @@ function frame:reifyConstraint (solver, method, stay)
 end
 
 function frame:addWidthHeightDefinitions (solver)
-   local vars = self.variables
+   local vars = self._variables
    solver:addConstraint(cassowary.Equation(vars.width, cassowary.minus(vars.right, vars.left)))
    solver:addConstraint(cassowary.Equation(vars.height, cassowary.minus(vars.bottom, vars.top)))
 end
@@ -113,17 +170,19 @@ function frame:solve ()
    if not solverNeedsReloading then
       return
    end
-   SU.debug("frames", "Solving...")
+   SU.debug("frames", "Begin solving...")
    solver = cassowary.SimplexSolver()
-   if SILE.frames.page then
-      for method, _ in pairs(SILE.frames.page.constraints) do
-         SILE.frames.page:reifyConstraint(solver, method, true)
+   if SILE.frames:exists("page") then
+      local page = SILE.frames:pull("page")
+      for method, _ in page:iterateConstraints() do
+         page:reifyConstraint(solver, method, true)
       end
-      SILE.frames.page:addWidthHeightDefinitions(solver)
+      page:addWidthHeightDefinitions(solver)
    end
-   for id, frame in pairs(SILE.frames) do
-      if not (id == "page") then
-         for method, _ in pairs(frame.constraints) do
+   for id, frame in SILE.frames:iterate() do
+      SU.debug("frame", "Solving", id)
+      if id ~= "page" then
+         for method, _ in frame:iterateConstraints() do
             frame:reifyConstraint(solver, method)
          end
          frame:addWidthHeightDefinitions(solver)
@@ -212,6 +271,7 @@ function frame:getTargetLength ()
 end
 
 function frame:enter (typesetter)
+   -- TODO make sure is solved
    for i = 1, #self.enterHooks do
       self.enterHooks[i](self, typesetter)
    end
@@ -243,14 +303,13 @@ function frame:isAbsoluteConstraint (method)
 end
 
 function frame:isMainContentFrame ()
-   local tpt = SILE.documentState.thisPageTemplate
-   local frame = tpt.firstContentFrame
+   local frame = self.typesetter.frames:getDefault()
    while frame do
       if frame == self then
          return true
       end
       if frame.next then
-         frame = SILE.getFrame(frame.next)
+         frame = frame:getNext()
       else
          return false
       end
@@ -258,11 +317,30 @@ function frame:isMainContentFrame ()
    return false
 end
 
+-- Return a fresh copy of the frame based on the original specs without being "in use" by a typesetter or having any of
+-- the constraints solved.
+function frame:clone ()
+   local spec = pl.tablex.copy(self._spec)
+   local frame = self._class(spec)
+   for _, k in ipairs({ "balanced", "mirrored", "flipped", "dummy", "direction", "enterHooks", "leaveHooks" }) do
+      frame[k] = self[k]
+   end
+   return frame
+end
+
 function frame:__tostring ()
+   return self.id
+end
+
+function frame:__debug ()
    local str = "<Frame: " .. self.id .. ": "
    str = str .. " next=" .. (self.next or "nil") .. " "
-   for method, dimension in pairs(self.constraints) do
-      str = str .. method .. "=" .. dimension .. "; "
+   if not solverNeedsReloading then
+      for method, dimension in self:iterateConstraints() do
+         str = str .. method .. "=" .. dimension .. "; "
+      end
+   else
+      str = str .. "unsolved"
    end
    if self.hanmen then
       str = str .. "tate=" .. (self.tate and "true" or "false") .. "; "
@@ -275,4 +353,6 @@ function frame:__tostring ()
    return str
 end
 
-return frame
+-- Work around _post_init() only getting called from base classes
+local _frame = pl.class(frame)
+return _frame

@@ -30,11 +30,15 @@ local _margins = pl.class({
 --- Constructor
 -- @param frame A initial frame to attach the typesetter to.
 function typesetter:_init (frame)
+   if not frame then
+      SU.warn("No frame specified for typesetter, creating dummy frame")
+      frame = SILE.types.frame({ id = "dummy" }, true)
+   end
+   module._init(self)
    -- TODO: make class first arg of typesetter init, ditch globals hack
    self.class = SILE.documentState.documentClass
    self.linebreaker = SILE.linebreakers.default(self)
    self.pagebuilder = SILE.pagebuilders.default(self)
-   module._init(self)
    self.hooks = {}
    self.breadcrumbs = SU.breadcrumbs()
    self.frame = frame
@@ -43,7 +47,7 @@ end
 
 function typesetter:_post_init ()
    module._post_init(self)
-   self:initFrame(self.frame)
+   self:switchToFrame(self.frame)
    self:initState()
    self.language = SILE.languages.en(self)
    -- Since it is the default and will get created as an instance before the callback triggers for the first *change*,
@@ -194,10 +198,22 @@ function typesetter:initState ()
 end
 
 function typesetter:initFrame (frame)
-   if frame then
-      self.frame = frame
-      self.frame:init(self)
+   SU.deprecated("typesetter:initFrame()", "typesetter:switchToFrame()", "0.16.0", "0.17.0")
+   self:switchToFrame(frame)
+end
+
+function typesetter:switchToFrame (frame)
+   if not frame or not frame.id then
+      SU.deprecated(
+         "typesetter:switchToFrame",
+         "typesetter:switchToFrame",
+         "0.16.0",
+         "0.17.0",
+         [[Frame argument must be instantiated frame, not an id]]
+      )
+      frame = self.frames:pull(frame or self.frame.id)
    end
+   self.frames:use(frame)
 end
 
 function typesetter:getMargins ()
@@ -872,8 +888,10 @@ function typesetter:initNextFrame ()
    if #self.state.outputQueue == 0 then
       self.state.previousVbox = nil
    end
-   if self.frame.next and self.state.lastPenalty > supereject_penalty then
-      self:initFrame(SILE.getFrame(self.frame.next))
+   local next = self.frames:getNext()
+   -- TODO this if/elseif/else is missing a branch
+   if next and self.state.lastPenalty > supereject_penalty then
+      self:switchToFrame(next)
    elseif not self.frame:isMainContentFrame() then
       if #self.state.outputQueue > 0 then
          SU.warn("Overfull content for frame " .. self.frame.id)
@@ -882,7 +900,8 @@ function typesetter:initNextFrame ()
    else
       self:runHooks("pageend")
       self.class:endPage()
-      self:initFrame(self.class:newPage())
+      next = self.class:newPage()
+      self:switchToFrame(next)
    end
 
    if not SU.feq(oldframe:getLineWidth(), self.frame:getLineWidth()) then
