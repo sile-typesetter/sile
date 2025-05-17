@@ -41,8 +41,9 @@ function frame:_init (spec, dummy)
    self._constraints = {}
    self._variables = {}
    for method in pairs(alldims) do
-      self[method] = function ()
-         SU.error("Attempt to use a size method from an unresolved frame", true)
+      self[method] = function (self_)
+         SU.warn("Attempt to use a size method from an unresolved frame", true)
+         self_:solve()
       end
    end
 end

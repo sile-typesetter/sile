@@ -31,7 +31,7 @@ local _margins = pl.class({
 -- @param frame A initial frame to attach the typesetter to.
 function typesetter:_init (frame)
    if not frame then
-      SU.warn("No frame specified for typesetter, creating dummy frame")
+      SU.error("No frame specified for typesetter, creating dummy frame")
       frame = SILE.types.frame({ id = "dummy" }, true)
    end
    module._init(self)
