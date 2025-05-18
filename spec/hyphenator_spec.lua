@@ -3,10 +3,9 @@ SILE = require("core.sile")
 SILE.input.backend = "debug"
 SILE.init()
 
--- Work around not having an active class in this test but needing language modules
-SILE.typesetter = SILE.typesetters.default()
-
 describe("Hyphenation module", function ()
+   require("classes.plain")({})
+
    SILE.call("language", { main = "fr" })
    local hyphenator = SILE.typesetter.language.hyphenator
 

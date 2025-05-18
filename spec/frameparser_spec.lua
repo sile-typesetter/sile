@@ -23,12 +23,9 @@ describe("The frame parser", function ()
 
    describe("function", function () -- also tests identifier
       require("classes.plain")({})
-      SILE.documentState.thisPageTemplate = {
-         frames = {
-            a = SILE.newFrame({ id = "A", top = 20, left = 30, bottom = 200, right = 300 }),
-            bb3 = SILE.newFrame({ id = "B", top = 20, left = 30, bottom = 200, right = 300 }),
-         },
-      }
+      local a = SILE.frames:new({ id = "a", top = 20, left = 30, bottom = 200, right = 300 })
+      local bb3 = SILE.frames:new({ id = "bb3", top = 20, left = 30, bottom = 200, right = 300 })
+
       --it("should match valid functions", function() assert.is.equal(30,r:match("left(a)")) end)
       it("should match valid functions", function ()
          assert.is.truthy(r:match("top(bb3)"))
