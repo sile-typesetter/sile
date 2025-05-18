@@ -16,6 +16,8 @@ local run_once = {
    "registerRawHandlers",
    "_registerCommands",
    "registerCommands",
+   "_declareFrames",
+   "declareFrames",
    "_setOptions",
    "setOptions",
 }
@@ -28,6 +30,7 @@ end
 
 function module:_init (options)
    self.commands = SILE.commands:forModule(self)
+   self.frames = SILE.frames:forModule(self)
    self.settings = SILE.settings:forModule(self)
    if not self.type then
       SU.error("Attempted it initialize module with no type")
@@ -87,6 +90,9 @@ function module:registerCommand (name, func, help, pack, defaults)
    SU.deprecated("module:registerCommand", "module.commands:register", "0.16.0", "0.17.0")
    return self.commands:register(name, func, help, pack, defaults)
 end
+
+function module:_declareFrames () end
+function module:declareFrames () end
 
 function module:_setOptions () end
 function module:setOptions () end

@@ -168,9 +168,6 @@ entered yet.
 --]]
 
 local initShrinkage = function (frame)
-   if not frame.state or not frame.state.totals then
-      frame:init()
-   end
    if not frame.state.totals.shrinkage then
       frame.state.totals.shrinkage = SILE.types.measurement(0)
    end

@@ -1,10 +1,9 @@
 SILE = require("core.sile")
 SILE.init()
 
--- Work around not having an active class in this test but needing language modules
-SILE.typesetter = SILE.typesetters.default()
-
 describe("SILE.utilities", function ()
+   require("classes.plain")({})
+
    it("should exist as SU", function ()
       assert.is.truthy(SU)
    end)
