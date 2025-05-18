@@ -28,7 +28,7 @@ SILE._frameParserBits = {
    relation = relation,
 }
 
-return P{
+local frameparser = P{
    "additive",
    additive = V"plus" + V"minus" + V"multiplicative",
    multiplicative = V"times" + V"divide" + V"primary",
@@ -40,3 +40,5 @@ return P{
    braced = ws * P"(" * ws * V"additive" * ws * P")" * ws
 }
 -- stylua: ignore end
+
+return frameparser
