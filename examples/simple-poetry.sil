@@ -1,0 +1,20 @@
+-- examples/simple-poetry.sil
+
+SILE.require("packages/poetry")
+
+SILE.call("document", {}, function ()
+  SILE.call("title", {}, "A Poem About the Moon")
+  SILE.call("author", {}, "Ada Lovelace")
+
+  SILE.call("poem", {}, [[
+    The moonlight bathes the silent trees,  
+    With silver breath upon the leaves.  
+    A hush descends across the land,  
+    As night slips gently from its hand.
+
+    No hurried feet, no call, no cry,  
+    Just quiet stars up in the sky.  
+    Beneath their watch, the world is still,  
+    Enchanted by the moon’s own will.
+  ]])
+end)
