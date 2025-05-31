@@ -28,7 +28,7 @@
     "conventional-changelog-cli": "^5.0",
     "husky": "^9.1",
     "commit-and-tag-version": "^12.5",
-    "yaml": "^2.7"
+    "yaml": "^2.8"
   },
   "config": {
     "commitizen": {
