@@ -3,10 +3,10 @@ name = "sile"
 description = "Simon’s Improved Layout Engine"
 readme = "README.md"
 build = "build-aux/build.rs"
-version = "0.15.12"
+version = "0.15.13"
 
 [workspace.package]
-version = "0.15.12"
+version = "0.15.13"
 edition = "2021"
 rust-version = "1.80.1"
 authors = [
@@ -73,7 +73,7 @@ features = ["anyhow"]
 
 [workspace.dependencies.sile]
 path = "."
-version = "0.15.12"
+version = "0.15.13"
 
 [dependencies.anyhow]
 version = "1.0"
