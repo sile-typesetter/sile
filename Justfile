@@ -21,6 +21,11 @@ rel-conf: nuke-n-pave
 perfect:
 	make check lint
 
+restyle:
+	git ls-files '*.lua' '*.lua.in' '*.rockspec.in' .busted .luacov .luacheckrc build-aux/config.ld | xargs stylua --respect-ignores
+	git ls-files '*.rs' '*.rs.in' | xargs rustfmt --edition 2021 --config skip_children=true
+	git ls-files '*.toml' | xargs taplo format
+
 [private]
 [doc('Block execution if Git working tree isn’t pristine.')]
 pristine:
