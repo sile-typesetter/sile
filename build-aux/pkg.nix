@@ -20,10 +20,12 @@
 
   # buildInputs
   cargo-edit,
+  cargo-deny,
   lua,
   harfbuzz,
   icu,
   fontconfig,
+  just,
   libiconv,
   libxslt,
   stylua,
@@ -82,9 +84,11 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs = [
     finalAttrs.finalPackage.passthru.luaEnv
     cargo-edit
+    cargo-deny
     harfbuzz
     icu
     fontconfig
+    just
     libiconv
     libxslt
     stylua
