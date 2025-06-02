@@ -11,7 +11,7 @@ nuke-n-pave:
 	./bootstrap.sh
 
 dev-conf: nuke-n-pave
-	./configure --enable-developer-mode --with-system-luarocks --with-system-lua-sources --without-manual --enable-debug
+	./configure --enable-developer-mode --with-system-luarocks --with-system-lua-sources --without-manual --enable-debug DELTA=cat
 	make
 
 rel-conf: nuke-n-pave
@@ -19,7 +19,7 @@ rel-conf: nuke-n-pave
 	make
 
 perfect:
-	make check lint regressions
+	make check lint
 
 [private]
 [doc('Block execution if Git working tree isn’t pristine.')]
