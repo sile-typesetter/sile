@@ -334,6 +334,16 @@ local function deprecations_post ()
       end
       return rawset(self, key, value)
    end
+
+   setmetatable(SILE.documentState, {
+      __index = function (self, key)
+         if key == "thisPageTemplate" then
+            SU.deprecated("SILE.documentState.thisPageTemplate", "class.frames", "0.16.0", "0.17.0")
+            return { frames = SILE.frames }
+         end
+         return rawget(self, key)
+      end,
+   })
 end
 
 return deprecations_post

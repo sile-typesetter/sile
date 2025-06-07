@@ -94,7 +94,7 @@ SILE.scratch = {}
 -- everything in here probably belongs elsewhere, but for now it is what it is.
 -- @table documentState
 -- @tfield table documentClass The instantiated document processing class.
--- @tfield table thisPageTemplate The frameset used for the current page.
+-- @tfield table thisPageTemplate The frameset used for the current page (deprecated).
 -- @tfield table paperSize The current paper size.
 -- @tfield table orgPaperSize The original paper size if the current one is modified via packages.
 SILE.documentState = {}
