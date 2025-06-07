@@ -8,11 +8,8 @@ local function resolveMeasurement (str)
 end
 
 local functionOfFrame = function (dim, id)
-   if not SILE.frames[id] then
-      -- TODO: Fix this race condition properly!
-      SILE.newFrame({ id = id })
-   end
-   return SILE.frames[id].variables[dim]
+   -- TODO implement without a private attribute
+   return SILE.frames:pull(id)._variables[dim]
 end
 
 -- stylua: ignore start
@@ -31,7 +28,7 @@ SILE._frameParserBits = {
    relation = relation,
 }
 
-return P{
+local frameparser = P{
    "additive",
    additive = V"plus" + V"minus" + V"multiplicative",
    multiplicative = V"times" + V"divide" + V"primary",
@@ -43,3 +40,5 @@ return P{
    braced = ws * P"(" * ws * V"additive" * ws * P")" * ws
 }
 -- stylua: ignore end
+
+return frameparser

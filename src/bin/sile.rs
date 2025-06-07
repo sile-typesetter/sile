@@ -29,6 +29,7 @@ type Result<T, E = Error> = std::result::Result<T, E>;
 fn main() -> Result<()> {
     let version = option_env!("VERGEN_GIT_DESCRIBE").unwrap_or_else(|| env!("CARGO_PKG_VERSION"));
     let version = version.replacen('-', ".r", 1);
+    // TODO: figure out how to compose and embed this without running SILE twice
     let long_version = sile::version()
         .context(VersionSnafu)?
         .strip_prefix("SILE ")

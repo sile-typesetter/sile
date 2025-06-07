@@ -1,8 +1,9 @@
 SILE = require("core.sile")
+SILE.input.backend = "dummy"
+SILE.init()
 
 describe("SILE.linebreakers.default", function ()
-   SILE.documentState = { documentClass = { state = {} } }
-   SILE.typesetter = SILE.typesetters.default(SILE.newFrame({ id = "foo" }))
+   require("classes.plain")({})
 
    -- This is a list of boxes, with their dimensions, extracted from a specially hacked version of TeX.
    local hlist = {}
