@@ -40,7 +40,7 @@ keys:
 	gpg -a --sign > /dev/null <<< "test"
 
 cut-release type: pristine
-	make release RELTYPE=type
+	make release RELTYPE={{type}}
 
 release semver: pristine
 	git describe HEAD --tags | grep -Fx 'v{{semver}}'
