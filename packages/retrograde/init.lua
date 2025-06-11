@@ -17,17 +17,17 @@ package.default_settings = {
       -- behavior to have any stretchness in their spaces at all, the "fix" breaks a lot of projects. Just enabling this
       -- isn't a clean revert since if people were mixing and matching methods this wouldn't make everything the same,
       -- but it's more likely to work than having this setting unexpectedly *actually* disabled.
-      ["shaper.variablespaces"] = true,
+      ["shaper.variablespaces"] = { true, true },
    },
    ["0.15.10"] = {
-      ["typesetter.brokenpenalty"] = 0,
+      ["typesetter.brokenpenalty"] = { 100, 0 },
    },
    ["0.15.0"] = {
-      ["shaper.spaceenlargementfactor"] = 1.2,
-      ["document.parindent"] = "20pt",
+      ["shaper.spaceenlargementfactor"] = { 1, 1.2 },
+      ["document.parindent"] = { "G<1bs>", "20pt" },
    },
    ["0.9.5"] = {
-      ["font.family"] = "Gentium Basic",
+      ["font.family"] = { "Gentium Plus", "Gentium Basic" },
    },
 }
 
@@ -129,12 +129,30 @@ function package:recede_defaults (target)
          terminal(version)
          break
       end
-      for parameter, value in pairs(settings) do
-         SU.debug(
-            "retrograde",
-            ("Resetting '%s' to '%s' as it was prior to v%s."):format(parameter, tostring(value), version)
-         )
-         SILE.settings:set(parameter, value, true)
+      for parameter, values in pairs(settings) do
+         local fresh, legacy = values[1], values[2]
+         local current = SILE.settings:get(parameter)
+         if tostring(current) ~= tostring(fresh) then
+            SU.debug(
+               "retrograde",
+               ("NOT resetting '%s' as the current value '%s' is not the new default '%s' suggesting other user overrides."):format(
+                  parameter,
+                  tostring(current),
+                  tostring(fresh)
+               )
+            )
+         else
+            SU.debug(
+               "retrograde",
+               ("Resetting '%s' from '%s' to '%s' as it was prior to v%s."):format(
+                  parameter,
+                  tostring(fresh),
+                  tostring(legacy),
+                  version
+               )
+            )
+            SILE.settings:set(parameter, legacy, true)
+         end
       end
    end
 end
