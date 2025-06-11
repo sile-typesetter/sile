@@ -7,7 +7,7 @@ local cursorY = 0
 local started = false
 local lastkey = false
 
-local debugfont = SILE.font.loadDefaults({ family = "Gentium Plus", language = "en", size = 10 })
+local debugfont = SILE.font.loadDefaults({ family = "Gentium Book", language = "en", size = 10 })
 
 local glyph2string = function (glyph)
    return string.char(math.floor(glyph % 2 ^ 32 / 2 ^ 8)) .. string.char(glyph % 0x100)

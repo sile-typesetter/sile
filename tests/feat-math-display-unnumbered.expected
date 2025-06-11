@@ -2,10 +2,10 @@ Set paper size 	297.6377985	419.5275636
 Begin page
 Mx 	36.8819
 My 	28.8853
-Set font 	Gentium Plus;10.45;400;;normal;;;LTR;
-T	37 72 74 76 81 w=24.2677	(Begin)
-Mx 	63.4695
-T	77 88 86 87 76 737 72 71 w=35.0493	(justified)
+Set font 	Gentium Book;10.45;400;;normal;;;LTR;
+T	37 72 74 76 81 w=24.8290	(Begin)
+Mx 	64.0306
+T	77 88 86 87 76 789 72 71 w=35.9984	(justified)
 Mx 	131.9113
 My 	51.4155
 Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
@@ -26,17 +26,25 @@ Mx 	161.0765
 T	18 w=4.6500	(nil)
 Mx 	36.8819
 My 	73.9458
-Set font 	Gentium Plus;10.45;400;;normal;;;LTR;
-T	40 81 71 w=16.3843	(End)
-Mx 	55.5867
-T	77 88 86 87 76 737 72 71 w=35.0493	(justified)
-Mx 	90.6360
-T	17 w=2.3931	(.)
-Mx 	116.5428
+Set font 	Gentium Book;10.45;400;;normal;;;LTR;
+T	40 81 71 w=16.7312	(End)
+Mx 	55.9335
+T	77 88 86 87 76 789 72 71 w=35.9984	(justified)
+Mx 	91.9319
+T	17 w=2.5360	(.)
+Mx 	115.9381
 My 	86.4858
-T	37 72 74 76 81 w=24.2677	(Begin)
-Mx 	143.1117
-T	70 72 81 87 72 85 72 71 w=37.9833	(centered)
+T	37 72 74 76 81 w=24.8290	(Begin)
+Mx 	143.0683
+Mx 	4.6331
+Mx 	4.9035
+Mx 	5.8679
+Mx 	3.6891
+Mx 	4.9035
+Mx 	4.1535
+Mx 	4.9035
+Mx 	5.5771
+T	70 a=4.6331 72 a=4.9035 81 a=5.8679 87 a=3.6891 72 a=4.9035 85 a=4.3065 72 a=4.9035 71 a=5.5771	(centered)
 Mx 	131.9113
 My 	109.0160
 Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
@@ -55,21 +63,29 @@ Mx 	154.5965
 T	2088 w=6.4800	(nil)
 Mx 	161.0765
 T	18 w=4.6500	(nil)
-Mx 	120.4845
+Mx 	119.9870
 My 	131.5463
-Set font 	Gentium Plus;10.45;400;;normal;;;LTR;
-T	40 81 71 w=16.3843	(End)
-Mx 	139.1700
-T	70 72 81 87 72 85 72 71 w=37.9833	(centered)
+Set font 	Gentium Book;10.45;400;;normal;;;LTR;
+T	40 81 71 w=16.7312	(End)
+Mx 	139.0195
+Mx 	4.6331
+Mx 	4.9035
+Mx 	5.8679
+Mx 	3.6891
+Mx 	4.9035
+Mx 	4.1535
+Mx 	4.9035
+Mx 	5.5771
+T	70 a=4.6331 72 a=4.9035 81 a=5.8679 87 a=3.6891 72 a=4.9035 85 a=4.3065 72 a=4.9035 71 a=5.5771	(centered)
 Mx 	36.8819
 My 	144.0863
-T	37 72 74 76 81 w=24.2677	(Begin)
-Mx 	63.4508
-T	79 72 73 87 w=14.5065	(left)
-Mx 	77.9573
-T	16 w=3.5208	(-)
-Mx 	81.4781
-T	68 79 76 74 81 72 71 w=31.5847	(aligned)
+T	37 72 74 76 81 w=24.8290	(Begin)
+Mx 	64.0121
+T	79 72 73 87 w=14.8790	(left)
+Mx 	78.8911
+T	16 w=3.5871	(-)
+Mx 	82.4782
+T	68 79 76 74 81 72 71 w=32.3552	(aligned)
 Mx 	131.9113
 My 	166.6165
 Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
@@ -90,25 +106,25 @@ Mx 	161.0765
 T	18 w=4.6500	(nil)
 Mx 	36.8819
 My 	189.1467
-Set font 	Gentium Plus;10.45;400;;normal;;;LTR;
-T	40 81 71 w=16.3843	(End)
-Mx 	55.5674
-T	79 72 73 87 w=14.5065	(left)
-Mx 	70.0739
-T	16 w=3.5208	(-)
-Mx 	73.5947
-T	68 79 76 74 81 72 71 w=31.5847	(aligned)
-Mx 	105.1794
-T	17 w=2.3931	(.)
-Mx 	177.6509
+Set font 	Gentium Book;10.45;400;;normal;;;LTR;
+T	40 81 71 w=16.7312	(End)
+Mx 	55.9144
+T	79 72 73 87 w=14.8790	(left)
+Mx 	70.7934
+T	16 w=3.5871	(-)
+Mx 	74.3804
+T	68 79 76 74 81 72 71 w=32.3552	(aligned)
+Mx 	106.7356
+T	17 w=2.5360	(.)
+Mx 	175.6864
 My 	201.6867
-T	37 72 74 76 81 w=24.2677	(Begin)
-Mx 	204.2198
-T	85 76 74 75 87 w=21.4307	(right)
-Mx 	225.6504
-T	16 w=3.5208	(-)
-Mx 	229.1712
-T	68 79 76 74 81 72 71 w=31.5847	(aligned)
+T	37 72 74 76 81 w=24.8290	(Begin)
+Mx 	202.8166
+T	85 76 74 75 87 w=21.9970	(right)
+Mx 	224.8136
+T	16 w=3.5871	(-)
+Mx 	228.4007
+T	68 79 76 74 81 72 71 w=32.3552	(aligned)
 Mx 	131.9113
 My 	224.2170
 Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
@@ -127,15 +143,15 @@ Mx 	154.5965
 T	2088 w=6.4800	(nil)
 Mx 	161.0765
 T	18 w=4.6500	(nil)
-Mx 	185.5343
+Mx 	183.7841
 My 	246.7472
-Set font 	Gentium Plus;10.45;400;;normal;;;LTR;
-T	40 81 71 w=16.3843	(End)
-Mx 	204.2198
-T	85 76 74 75 87 w=21.4307	(right)
-Mx 	225.6504
-T	16 w=3.5208	(-)
-Mx 	229.1712
-T	68 79 76 74 81 72 71 w=31.5847	(aligned)
+Set font 	Gentium Book;10.45;400;;normal;;;LTR;
+T	40 81 71 w=16.7312	(End)
+Mx 	202.8166
+T	85 76 74 75 87 w=21.9970	(right)
+Mx 	224.8136
+T	16 w=3.5871	(-)
+Mx 	228.4007
+T	68 79 76 74 81 72 71 w=32.3552	(aligned)
 End page
 Finish
