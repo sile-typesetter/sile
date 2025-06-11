@@ -1,9 +1,9 @@
 digraph G {
   rankdir = "LR";
   margin = 0.25;
-  fontname = "Gentium Book Basic";
+  fontname = "Gentium Book";
 
-  node [fontname = "Gentium Book Basic"];
+  node [fontname = "Gentium Book"];
   edge [arrowhead = "vee"];
 
   inputfiles [shape = note, style = filled, fillcolor = aliceblue, label = "Input\nfile(s)"]
