@@ -1,6 +1,8 @@
 --- SILE typesetter class.
 -- @interfaces typesetters
 
+local bidi = require("core.bidi")
+
 --- @type typesetter
 local typesetter = pl.class()
 
@@ -659,6 +661,8 @@ function typesetter:boxUpNodes ()
    if #nodelist == 0 then
       return {}
    end
+   nodelist = bidi.splitNodelistIntoBidiRuns(nodelist, self.frame:writingDirection())
+   self.state.nodes = nodelist
    self:shapeAllNodes(nodelist)
    local parfillskip = SILE.settings:get("typesetter.parfillskip")
    parfillskip.discardable = false
@@ -703,6 +707,12 @@ function typesetter:boxUpNodes ()
       if pageBreakPenalty > 0 then
          SU.debug("typesetter", "adding penalty of", pageBreakPenalty, "after", vbox)
          vboxes[#vboxes + 1] = SILE.types.node.penalty(pageBreakPenalty)
+      end
+   end
+   for i = 1, #vboxes do
+      local v = vboxes[i]
+      if v.is_vbox then
+         v.nodes = bidi.reorder(v.nodes, self.frame:writingDirection())
       end
    end
    return vboxes
@@ -1427,17 +1437,6 @@ end
 -- is responsible of doing it, if the hbox is built for anything
 -- else than e.g. measuring it. Likewise, the call has to decide
 -- what to do with the migrating content.
-local _rtl_pre_post = function (box, atypesetter, line)
-   local advance = function ()
-      atypesetter.frame:advanceWritingDirection(box:scaledWidth(line))
-   end
-   if atypesetter.frame:writingDirection() == "RTL" then
-      advance()
-      return function () end
-   else
-      return advance
-   end
-end
 function typesetter:makeHbox (content)
    local recentContribution = {}
    local migratingNodes = {}
@@ -1446,9 +1445,12 @@ function typesetter:makeHbox (content)
    self.state.hmodeOnly = true
    SILE.process(content)
 
+   self.state.nodes = bidi.splitNodelistIntoBidiRuns(self.state.nodes, self.frame:writingDirection())
    -- We must do a first pass for shaping the nnodes:
    -- This is also where italic correction may occur.
    local nodes = self:shapeAllNodes(self.state.nodes, false)
+
+   nodes = bidi.reorder(nodes, self.frame:writingDirection())
 
    -- Then we can process and measure the nodes.
    local l = SILE.types.length()
@@ -1489,14 +1491,20 @@ function typesetter:makeHbox (content)
       depth = d,
       value = recentContribution,
       outputYourself = function (box, atypesetter, line)
-         local _post = _rtl_pre_post(box, atypesetter, line)
          local ox = atypesetter.frame.state.cursorX
          local oy = atypesetter.frame.state.cursorY
          SILE.outputter:setCursor(atypesetter.frame.state.cursorX, atypesetter.frame.state.cursorY)
          SU.debug("hboxes", function ()
+            local isRtl = atypesetter.frame:writingDirection() == "RTL"
             -- setCursor is also invoked by the internal (wrapped) hboxes etc.
             -- so we must show our debug box before outputting its content.
+            if isRtl then
+               SILE.outputter:setCursor(ox - box:scaledWidth(line), oy)
+            end
             SILE.outputter:debugHbox(box, box:scaledWidth(line))
+            if isRtl then
+               SILE.outputter:setCursor(ox, oy)
+            end
             return "Drew debug outline around hbox"
          end)
          for _, node in ipairs(box.value) do
@@ -1504,7 +1512,8 @@ function typesetter:makeHbox (content)
          end
          atypesetter.frame.state.cursorX = ox
          atypesetter.frame.state.cursorY = oy
-         _post()
+         -- _post()
+         atypesetter.frame:advanceWritingDirection(box:scaledWidth(line))
       end,
    })
    return hbox, migratingNodes
