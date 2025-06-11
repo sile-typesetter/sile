@@ -1,0 +1,14 @@
+[graph]
+all-features = false
+features = ["luajit"]
+exclude-dev = true
+
+[advisories]
+ignore = ["RUSTSEC-2025-0021"]
+
+[bans]
+multiple-versions = "allow"
+
+# Not exhaustive, just whitelist the current dependency tree
+[licenses]
+allow = ["Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "MIT", "Unicode-3.0"]

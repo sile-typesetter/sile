@@ -187,8 +187,10 @@ AM_COND_IF([DEVELOPER_MODE], [
 
 AM_COND_IF([DEVELOPER_TOOLS], [
     AX_REQUIRE_PROG([busted])
+    AX_REQUIRE_PROG([cargo-deny])
     AX_REQUIRE_PROG([cargo-set-version])
     AX_REQUIRE_PROG([curl])
+    AX_REQUIRE_PROG([just])
     AX_REQUIRE_PROG([ldoc])
     AX_REQUIRE_PROG([luacheck])
     AX_REQUIRE_PROG([nix])
