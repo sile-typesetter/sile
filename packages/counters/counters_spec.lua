@@ -4,11 +4,8 @@ SILE.init()
 SILE.utilities.error = error
 
 describe("#counters #package", function ()
-   -- We need to instantiate a class first, in order to load a package.
-   -- Minimally emulate what SILE does.
-   local constructor = require("classes.plain")
-   local class = constructor({})
-   SILE.documentState.documentClass = class
+   local class = require("classes.plain")({})
+
    -- Then we load the package and can use it as actual code would do.
    class:loadPackage("counters")
 

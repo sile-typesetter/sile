@@ -49,6 +49,7 @@ end
 local function finish ()
    SILE.documentState.documentClass:finish()
    SILE.font.finish()
+   SILE.frames:dump()
    runEvals(SILE.input.evaluateAfters, "evaluate-after")
    if SILE.makeDeps then
       SILE.makeDeps:write()

@@ -10,6 +10,9 @@ require("core.globals")
 -- Placeholder for SILE internals table
 SILE = {}
 
+-- Currently used for deprecation shims, in the future may have other uses
+setmetatable(SILE, {})
+
 --- Fields
 -- @section fields
 
@@ -64,7 +67,7 @@ SU = SILE.utilities -- regrettable global alias
 -- For warnings and shims scheduled for removal that are easier to keep track
 -- of when they are not spread across so many locations...
 -- Loaded early to make it easier to manage migrations in core code.
-require("core.deprecations")
+local deprecations_post = require("core.deprecations")
 
 --- Data tables
 --- @section data
@@ -91,7 +94,7 @@ SILE.scratch = {}
 -- everything in here probably belongs elsewhere, but for now it is what it is.
 -- @table documentState
 -- @tfield table documentClass The instantiated document processing class.
--- @tfield table thisPageTemplate The frameset used for the current page.
+-- @tfield table thisPageTemplate The frameset used for the current page (deprecated).
 -- @tfield table paperSize The current paper size.
 -- @tfield table orgPaperSize The original paper size if the current one is modified via packages.
 SILE.documentState = {}
@@ -147,7 +150,13 @@ SILE.types = core_loader("types")
 -- These should typically accessed as attributes on other modules.
 SILE.traceStack = require("core.tracestack")()
 SILE.commands = require("core.commands")():forModule(SILE)
+SILE.frames = require("core.frames")():forModule(SILE)
 SILE.settings = require("core.settings")():forModule(SILE)
+
+-- local x = string.format("%p %p %p", SILE.commands, SILE.frames, SILE.settings)
+-- local y = string.format("%s %s %s", SILE.commands.lvl, SILE.frames.lvl, SILE.settings.lvl)
+-- SU.warn(x)
+-- SU.warn(y)
 
 -- Internal modules and return classes that need instantiation (loading is idempotent)
 SILE.inputters = core_loader("inputters")
@@ -253,7 +262,8 @@ SILE.paperSizeParser = require("core.misc").paperSizeParser
 SILE.finish = require("core.init").finish
 
 -- Internal libraries that run core SILE functions on load
-require("core.frame")
 SILE.font = require("core.font")
+
+deprecations_post()
 
 return SILE

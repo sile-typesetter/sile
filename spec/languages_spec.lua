@@ -2,10 +2,9 @@ SILE = require("core.sile")
 SILE.input.backend = "debug"
 SILE.init()
 
--- Work around not having an active class in this test but needing language modules
-SILE.typesetter = SILE.typesetters.default()
-
 describe("Language module", function ()
+   require("classes.plain")({})
+
    it("should set env locale", function ()
       SILE.call("language", { main = "tr" })
       local syslang = os.getenv("LANG")

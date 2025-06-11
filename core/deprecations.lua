@@ -286,7 +286,64 @@ setmetatable(SILE.fontManager, {
    end,
 })
 
+SILE.newFrame = function (spec, prototype)
+   SU.deprecated("SILE.newFrame", "<module>:frames:new", "0.16.0", "0.17.0")
+   return SILE.frames:new(spec, prototype)
+end
+
+SILE.getFrame = function (id)
+   SU.deprecated("SILE.getFrame", "class.frames:pull", "0.16.0", "0.17.0")
+   return SILE.frames:pull(id)
+end
+
+SILE.parseComplexFrameDimension = function (dimension)
+   SU.deprecated("SILE.parseComplexFrameDimension", "module.frames:parseComplexFrameDimension", "0.16.0", "0.17.0")
+   return SILE.frames:parseComplexFrameDimension(dimension)
+end
+
 -- luacheck: ignore updatePackage
 -- luacheck: ignore installPackage
 updatePackage = nopackagemanager
 installPackage = nopackagemanager
+
+local function deprecations_post ()
+   local the_actual_frame_registry = SILE.frames
+   SILE.frames = nil
+
+   local mt = getmetatable(SILE)
+
+   function mt:__index (key)
+      if key == "frames" then
+         SU.deprecated("SILE.frames[]", "<module>.frames", "0.16.0", "0.17.0")
+         return the_actual_frame_registry
+      elseif key == "framePrototype" then
+         SU.deprecated("SILE.framePrototype", "SILE.types.frame", "0.16.0", "0.17.0")
+         return SILE.types.frame
+      end
+      return rawget(SILE, key)
+   end
+
+   function mt:__newindex (key, value)
+      if key == "frames" then
+         SU.warn("Implement frameset redo")
+         the_actual_frame_registry._registry = value
+         for _, v in pairs(value) do
+            SU.deprecated("SILE.frames[]", "<module>.frames:new()", "0.16.0", "0.17.0")
+            the_actual_frame_registry:new(v)
+         end
+      end
+      return rawset(self, key, value)
+   end
+
+   setmetatable(SILE.documentState, {
+      __index = function (self, key)
+         if key == "thisPageTemplate" then
+            SU.deprecated("SILE.documentState.thisPageTemplate", "class.frames", "0.16.0", "0.17.0")
+            return { frames = SILE.frames }
+         end
+         return rawget(self, key)
+      end,
+   })
+end
+
+return deprecations_post

@@ -16,15 +16,17 @@ function registry:forModule (parent)
    if not SILE.types.module:class_of(parent) and parent ~= SILE then
       SU.error("Attempted to initialize registry for non-module " .. parent)
    end
-   local wrapper = {}
+   local root = self._root_registry or self
+   local wrapper = { _root_registry = root }
    setmetatable(wrapper, {
-      __index = function (_, key)
-         if type(self[key]) == "function" then
+      __index = function (wrapper_, key)
+         local _root = wrapper_._root_registry
+         if type(_root[key]) == "function" and key ~= "forModule" then
             return function (_, ...)
-               return self[key](self, parent, ...)
+               return _root[key](_root, parent, ...)
             end
          else
-            return self[key]
+            return _root[key]
          end
       end,
    })
@@ -46,6 +48,20 @@ function registry:push (parent, entry)
    end
    table.insert(self._registry[name], entry)
    return entry, #self._registry[name]
+end
+
+function registry:clear (parent, name)
+   SU.debug("registries", "Clearing active value for", name and name or "*", "from registry")
+   if name then
+      if not self:exists(parent, name) then
+         SU.error("Attempted to clear an entry from a registry that does not exist")
+      end
+      table.insert(self._registry[name], false)
+   else
+      for id in self:iterate() do
+         self:clear(parent, id)
+      end
+   end
 end
 
 function registry:pull (parent, name, count)
@@ -75,6 +91,19 @@ function registry:pop (parent, name, count)
       return command
    else
       SU.error(("Cannot pop %d registrations of '%s', only %d registered."):format(count, name, #stack))
+   end
+end
+
+function registry:iterate ()
+   local ids = pl.tablex.keys(self._registry)
+   local i = 0
+   return function ()
+      i = i + 1
+      local id = ids[i]
+      if id then
+         local stack = self._registry[id]
+         return id, stack[#stack]
+      end
    end
 end
 

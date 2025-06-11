@@ -3,8 +3,8 @@ SILE = require("core.sile")
 SILE.input.backend = "dummy"
 SILE.init()
 
-local base = require("classes.base")
-local tClass = pl.class(base)
+local plain = require("classes.plain")
+local tClass = pl.class(plain)
 tClass._name = "tClass"
 
 tClass.defaultFrameset = {
@@ -21,14 +21,9 @@ tClass.defaultFrameset = {
       height = "4pt",
    },
 }
-
 tClass.firstContentFrame = "a"
 
-function tClass:_init ()
-   base._init(self)
-end
-
-SILE.documentState.documentClass = tClass()
+tClass()
 
 describe("Overlapping frame definitions", function ()
    it("should work", function ()

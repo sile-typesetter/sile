@@ -3,6 +3,8 @@ SILE.input.backend = "debug"
 SILE.init()
 
 describe("SILE.shapers.default", function ()
+   require("classes.plain")({})
+
    it("should always have positive stretch and shrink", function ()
       SILE.settings:set("shaper.variablespaces", true)
       SILE.settings:set("shaper.spacestretchfactor", 2)
@@ -14,9 +16,6 @@ describe("SILE.shapers.default", function ()
    end)
 
    describe("measureChar", function ()
-      -- Work around not having an active class in this test but needing language modules
-      SILE.typesetter = SILE.typesetters.default()
-
       SILE.settings:set("font.family", "Libertinus Serif", true)
 
       it("should measure simple characters", function ()
