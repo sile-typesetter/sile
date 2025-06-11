@@ -18,6 +18,7 @@ fonttooling:
 
 # List of font files we _actually need_
 DEFSFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf
+DEFSFONTFILES += GentiumBook-Regular.ttf GentiumBook-Italic.ttf
 
 DOCSFONTFILES  = $(DEFSFONTFILES)
 DOCSFONTFILES += CormorantInfant-Italic.ttf CormorantInfant-Regular.ttf
@@ -96,6 +97,9 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 .sources/GentiumPlus-5.000.zip: | .sources
 	$(CURL) -fsSL https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
 
+.sources/GentiumBook-7.000.zip: | .sources
+	$(CURL) -fsSL https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
+
 .sources/Hack-v3.003-ttf.tar.xz: | .sources
 	$(CURL) -fsSL https://github.com/source-foundry/Hack/releases/download/v3.003/$(notdir $@) -o $@
 
@@ -132,6 +136,10 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 	touch $@
 
 .fonts/GentiumPlus%: .sources/GentiumPlus-5.000.zip | .fonts
+	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@) && \
+	touch $@
+
+.fonts/GentiumBook%: .sources/GentiumBook-7.000.zip | .fonts
 	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@) && \
 	touch $@
 
