@@ -226,7 +226,7 @@ function class:loadPackage (packname, options, reload)
          pack._create = function ()
             return current_instance
          end
-         pack(options, true)
+         pack(options, reload)
       else
          self.packages[packname] = pack(options, reload)
       end

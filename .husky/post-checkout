@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+set -e
+
+# Get the previous and current HEAD refs
+prev_head="$1"
+new_head="$2"
+branch_checkout="$3"
+
+# Only run when actually changing branches (not just checking out files)
+if [ "$branch_checkout" -eq 1 ] && [ "$prev_head" != "$new_head" ]; then
+  echo 'Branch changed, clearing .deps directory...'
+  rm -rf .deps
+fi

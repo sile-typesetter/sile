@@ -9,7 +9,7 @@ concurrency:
 jobs:
 
   nix-flake:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v17
       - name: Cache Nix dependencies
-        uses: DeterminateSystems/flakehub-cache-action@v1
+        uses: DeterminateSystems/flakehub-cache-action@v2
       # Upstream package sometimes has flags set that disable flake checking
       - name: Setup test env
         run: |

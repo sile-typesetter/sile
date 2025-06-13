@@ -3,10 +3,10 @@ name = "sile"
 description = "Simon’s Improved Layout Engine"
 readme = "README.md"
 build = "build-aux/build.rs"
-version = "0.15.12"
+version = "0.15.13"
 
 [workspace.package]
-version = "0.15.12"
+version = "0.15.13"
 edition = "2021"
 rust-version = "1.80.1"
 authors = [
@@ -73,7 +73,7 @@ features = ["anyhow"]
 
 [workspace.dependencies.sile]
 path = "."
-version = "0.15.12"
+version = "0.15.13"
 
 [dependencies.anyhow]
 version = "1.0"
@@ -128,6 +128,7 @@ locale = "en-us"
 extend-ignore-re = [
   "(?s)(#|//|--|%)\\s*typos: ignore start.*?\\n\\s*(#|//|--|%)\\s*typos: ignore end",
 ]
+# False positives, extrenal APIs, and/or 3rd party vendored sources
 extend-ignore-identifiers-re = [
   "[a-f0-9]{7}",
   "^.{2,3}$",
@@ -149,15 +150,17 @@ extend-ignore-identifiers-re = [
 ]
 
 [package.metadata.typos.default.extend-words]
+# Miss-spellings retained for various reasons
 annote = "annote"     # CSL / Bibtex abbreviation
 beveled = "bevelled"  # mathML uses en-gb spelling
 bevelled = "bevelled" # mathML uses en-gb spelling
 centred = "centred"   # Unicode character description
-craters = "creators"
 lamda = "lamda"       # Unicode character description
-neet = "need"
 noet = "noet"         # VIM modeline
 supporte = "supporte" # CHANGELOG blooper
+# Miss-spellings with actual corrections
+craters = "creators"
+neet = "need"
 
 [package.metadata.typos.files]
 ignore-hidden = false
