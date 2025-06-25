@@ -646,6 +646,9 @@ function typesetter:boxUpNodes ()
    if #nodelist == 0 then
       return {}
    end
+   nodelist = bidi.splitNodelistIntoBidiRuns(nodelist, self.frame:writingDirection())
+   self:shapeAllNodes(nodelist)
+   self.state.nodes = nodelist
    for j = #nodelist, 1, -1 do
       if not nodelist[j].is_migrating then
          if nodelist[j].discardable then
@@ -661,8 +664,6 @@ function typesetter:boxUpNodes ()
    if #nodelist == 0 then
       return {}
    end
-   nodelist = bidi.splitNodelistIntoBidiRuns(nodelist, self.frame:writingDirection())
-   self.state.nodes = nodelist
    self:shapeAllNodes(nodelist)
    local parfillskip = SILE.settings:get("typesetter.parfillskip")
    parfillskip.discardable = false
