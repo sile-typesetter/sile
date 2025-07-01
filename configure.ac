@@ -235,7 +235,7 @@ AM_COND_IF([SYSTEM_LUAROCKS], [
     AX_REQUIRE_PROG([git]) # required for luarocks to install zlib rock
 ])
 
-QUE_FONT(Gentium Plus)
+QUE_FONT(Gentium Book)
 
 AC_SUBST([APPKIT_TRUE])
 AC_SUBST([FONTCONFIG_TRUE])

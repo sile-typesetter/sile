@@ -243,9 +243,9 @@ Mx 	215.5414
 T	2088 w=6.4800	(nil)
 Mx 	222.0214
 T	18 w=4.6500	(nil)
-Mx 	207.4176
+Mx 	207.3566
 My 	553.7327
-Set font 	Gentium Plus;10;400;;normal;;;LTR;
-T	20 w=4.6924	(1)
+Set font 	Gentium Book;10;400;;normal;;;LTR;
+T	20 w=4.8145	(1)
 End page
 Finish
