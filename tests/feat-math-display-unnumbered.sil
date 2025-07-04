@@ -9,6 +9,11 @@
 % and in all alignments
 
 \begin{blockquote}
+% Side effect of #2145: the math font size now follow the current document
+% font size, so whould now be some ratio of 11pt (due to the blockquote)
+% The previous behavior was an hard-coded 10 pt.
+% Restore it here, so the test passes unchanged.
+\set[parameter=math.font.size, value=10]
 Begin justified
 \math[mode=display]{e^{i\pi} = -1}
 End justified.
