@@ -164,6 +164,18 @@ That being said the initial focus and energy of each project is still very visib
 
 \end{itemize}
 
+Another alternative worth mentioning is Speedata Publisher.
+Speedata is a bit of a Unicorn: using much of LuaLaTeX under the hood while being neither a LaTeX engine nor a wrapper.
+Its main use case is taking XML data and laying it out programmatically; and the emphasis is on data handling.
+If you are trying to typeset a product catalog from a database or data-rich newsletters using fancy templates it might be worth a look.
+
+Most other alternatives are based in one way or another on browser technology.
+WeasyPrint and some others\footnote{PDFreactor, Prince, Antenna House, Typeset.sh, Vivliostyle, BFO Publisher, etc.} take HTML and CSS input and converts them to printable output using web-technology libraries.
+Paged.js and several others\footnote{pdfChip, quarkdown, etc.} do the same by actually shipping the content off to a full browser and asking for print versions back.
+Like paged.js, Quarkdown offloads the actual typesetting to a browser, but uses a home-grown superset of Markdown as its input format instead of HTML plus CSS directly.
+
+See \href{https://polytype.dev} for samples comparing and contrasting many typesetting engines.
+
 \section{SILE versus InDesign and competitors}
 
 The other category of tool that people reach for when designing printed material on a computer desktop publishing software (DTP).
