@@ -216,7 +216,7 @@ jobs:
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v17
+        uses: DeterminateSystems/nix-installer-action@v18
       - name: Cache Nix dependencies
         uses: DeterminateSystems/flakehub-cache-action@v2
       - name: Setup developer environment
