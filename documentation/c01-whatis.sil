@@ -82,11 +82,105 @@ SILE does not benefit from the large ecosystem and community that has grown up a
 In that sense, TeX will remain ahead of SILE for some time to come.
 But in terms of \em{core capabilities}, SILE aims at being at least equivalent to TeX.
 
+\section{SILE versus Typst and other new alternatives}
+
+Almost exactly one decade after SILE development started, a new competitor to LaTeX entered the scene with a bang:
+\footnote{Days of front-page coverage on Hacker News, Lobsters, and the like propelled it past 10k GitHub stars in the first 6 days of being public, a milestone SILE is still very far from reaching.}
+Typst.
+There is no shame in stating that Typst is a great piece of software and a worthy competitor to SILE as well as well as LaTeX.
+Typst is (very) fast, well documented, and relatively versatile.
+While both typesetting engines cover much of the same ground, the respective focus and implementation choices of each are so varied that direct comparisons don’t always have clear winners.
+At the end of the day the specific use case and workflow preferences are at least as relevant as the overall merits of each engine.
+
+When Typst was first conceived, SILE had been around the block in production for a while; but had only really been used for prose.
+Its math support was barely at a proof-of-concept stage and definitely not robust enough for scientific publishing work.
+This niche was exactly the felt need of Typst’s developers; the major focus right out of the gate was math and science papers.
+In the first releases it was more than a little bit rough in the prose department.
+Since then SILE’s math chops have greatly expanded to cover the majority of MathML.
+Typst’s feature set for handling prose have also improved.
+That being said the initial focus and energy of each project is still very visible.
+
+\begin{itemize}
+
+\item{\strong{Field of focus:}
+	SILE was initially conceived to handle hard problems in automated typesetting of books in many world orthographies.
+	Typst has some multi-lingual support but does not have robust support for the wide variety of typesetting issues posed by the world’s scripts and languages to the extent SILE does.
+	Typst was initially conceived for work in the academic sciences, and the robustness of the math and figure APIs directly reflects this.
+	SILE has math support but it has not been exercised to nearly the extent of Typst’s.}
+
+\item{\strong{Input formats:}
+	SILE was conceived to handle multiple input formats; out of the box it supports a LaTeX-like syntax but also includes an XML reader suitable for inputting other formats.
+	In addition writing input drivers is relatively easy and 3rd party ones for Markdown, DJot, and others have been developed.
+	Typst on the other hand developed their own input format, loosely based on Markdown but distinct and unique; it does not support input in anything else.
+	Pandoc support allows some other formats to be converted and imported, but not worked with natively.}
+
+\item{\strong{Scripting:}
+	SILE exposes (and indeed is actually mostly implemented in) Lua, an industry standard embedded scripting language with an already large ecosystem of code and packages.
+	Lua’s syntax and features are well known and documented.
+	Besides being used in other Typesetting applications\footnote{%
+		SILE was initially implemented in JavaScript, then ported to Lua.
+		The thought behind the switch to Lua was to gain advantage of its use in LuaLaTeX and other typesetting applications.
+		In practice, using the same language as other typesetting systems has not really provided much of the hoped for opportunities for code re-use.
+		It turns out algorithms and expertise themselves are more relevant than the language they happen to be written in and LuaLaTeX specific libraries are not very flexible.}
+	it can be found embedded in web servers, game engines, code editors, and a myriad of other applications.
+	Typst’s approach to scripting was to invent their own language from scratch.
+	The language they invented is clean, logical, and robust—but also unique and, to some extent, constraining.}
+
+\item{\strong{Security model:}
+	Typst attempts to make the renderer safe to run on arbitrary input.
+	This is a noble goal and serves a purpose for some use cases, but by definition it introduces significant limitations.
+	The scripting language is deliberately sandboxed and not allowed direct access to arbitrary disk I/O, network, or system processes.
+	SILE on the other hand makes the assumption that the user, including whatever scripting they may embed in a document or project, should have complete freedom to do anything the user wants.
+	As such document rendering is not sandboxed at all and scripting has complete control to do anything the user of the system is permitted—to include spawning processes, accessing the network, and file system access.}
+
+\item{\strong{Adaptability:}
+	Typst’s core engine is written in Rust, and very specific APIs are provided to the user via the custom scripting interface.
+	This interface is well documented and really quite versatile considering the design constraint, but it does not allow any arbitrary part of the engine to be accessed or changed.
+	In SILE’s case 100\% of the internals are exposed via Lua and/or FFI and can be inspected or overridden by the user.\footnote{%
+		In addition to the native Lua interface, users may extend SILE with modules written in Rust, C, or any other language with an FFI interface or any executable that can be spawned in a process.
+		In other words almost anything can be integrated.}
+	This includes the parts documented to be user-facing API surfaces; but also the core modules and other bits the SILE developers generally consider as private APIs.
+	This is a blessing and a curse: you can do anything you want, but also anything that can be touched can be broken.
+	As such it is no secret that SILE is both more flexible more brittle than Typst.
+}
+
+\item{\strong{Market usage:}
+	The Typst’s developers’ background in academia has heavily influenced how and where it is used.
+	The largest demographic is almost certainly university students writing papers for their math and science curriculum, with some journal publishing thrown in for good measure.
+	SILE’s active developers are book publishers and the majority of the work it has grown up around is literature and languages.
+	Its flexibility also makes it an ideal tinkerer’s tool: used in font proofing and other workflows unrelated to book publishing.
+}
+
+\item{\strong{Speed:}
+	Typst is faster than SILE.
+	Full stop.
+	This may matter a lot when you’re making lots of changes to detailed formulas and need to review previews.
+	This may matter less if you work on a book design first with minimal content, copy-edit the actual content separately, then just combine the two in a final step.}
+
+\item{\strong{Platform support:}
+	Typst’s pure Rust implementation with WASM-only plugins makes it easy to compile and run for many platforms including Linux, macOS, Windows, and even the web.
+	SILE’s approach to programming with system access does require a bit more “wiring” to get working on a platform, which currently limits it to use on Linux and macOS.
+	Windows support is certainly possible, although to date has not been published.}
+
+\end{itemize}
+
+Another alternative worth mentioning is Speedata Publisher.
+Speedata is a bit of a Unicorn: using much of LuaLaTeX under the hood while being neither a LaTeX engine nor a wrapper.
+Its main use case is taking XML data and laying it out programmatically; and the emphasis is on data handling.
+If you are trying to typeset a product catalog from a database or data-rich newsletters using fancy templates it might be worth a look.
+
+Most other alternatives are based in one way or another on browser technology.
+WeasyPrint and some others\footnote{PDFreactor, Prince, Antenna House, Typeset.sh, Vivliostyle, BFO Publisher, etc.} take HTML and CSS input and converts them to printable output using web-technology libraries.
+Paged.js and several others\footnote{pdfChip, quarkdown, etc.} do the same by actually shipping the content off to a full browser and asking for print versions back.
+Like paged.js, Quarkdown offloads the actual typesetting to a browser, but uses a home-grown superset of Markdown as its input format instead of HTML plus CSS directly.
+
+See \href{https://polytype.dev} for samples comparing and contrasting many typesetting engines.
+
 \section{SILE versus InDesign and competitors}
 
 The other category of tool that people reach for when designing printed material on a computer desktop publishing software (DTP).
-Adobe's InDesign is a prominent package in this space, but many others exist.
-Affinity Publisher is a newcommer but popular alternative.
+Adobe’s InDesign is a prominent package in this space, but many others exist.
+Affinity Publisher is a newcomer but popular alternative.
 Old timers and newspaper publishers will remember QuarkXPress.
 Scribus is a capable Open Source entry in this space.
 
