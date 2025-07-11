@@ -6,8 +6,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    reviewers:
-      - "alerque"
     labels:
       - "todo"
     commit-message:
@@ -18,8 +16,6 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-    reviewers:
-      - "alerque"
     labels:
       - "todo"
     commit-message:
@@ -31,8 +27,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    reviewers:
-      - "alerque"
     labels:
       - "todo"
     commit-message:
