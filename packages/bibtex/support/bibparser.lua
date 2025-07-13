@@ -82,6 +82,18 @@ local crossrefmap, fieldmap = bibcompat.crossrefmap, bibcompat.fieldmap
 local months =
    { jan = 1, feb = 2, mar = 3, apr = 4, may = 5, jun = 6, jul = 7, aug = 8, sep = 9, oct = 10, nov = 11, dec = 12 }
 
+local function splitSeparatedField (str)
+   -- BibLaTeX says that some field values can be separated by commas.
+   -- Exception made of the 'keywords' field, it's not totally clear whether spaces should be
+   -- trimmed, and there's even some wording in the BibLaTeX manual that suggests that TeX csv
+   -- list should not include extraneous spaces.
+   -- That sounds as a bad parser limitation, so we will always trim spaces here, and filter out
+   -- empty strings, so as to be more robust.
+   return pl.stringx.split(str, ",")
+      :map(pl.stringx.strip)
+      :filter(function (s) return s ~= "" end)
+end
+
 local function consolidateEntry (entry, label)
    local consolidated = {}
    -- BibLaTeX aliases for legacy BibTeX fields
@@ -130,6 +142,13 @@ local function consolidateEntry (entry, label)
             SU.warn("Invalid '" .. field .. "' skipped in entry '" .. label .. "'")
             consolidated[field] = nil
          end
+      end
+   end
+   -- Lists of (comma-)separated fields
+   for _, field in ipairs({ "ids", "keywords", "related", "xdata" }) do
+      if consolidated[field] then
+         local refs = splitSeparatedField(consolidated[field])
+         consolidated[field] = refs
       end
    end
    entry.attributes = consolidated
@@ -199,6 +218,8 @@ end
 -- effect on subsequent uses: BibTeX does seem to mandate cross references
 -- to be defined before the entry that uses it, or even in the same bibliography
 -- file.
+-- Once an entry is resolved, we also check the 'related' field, which is a list
+-- of related entries, but does not imply any inheritance.
 -- Implementation note:
 -- We are not here to check the consistency of the BibTeX file, so there is
 -- no check that xdata refers only to @xdata entries
@@ -210,7 +231,7 @@ local function crossrefAndXDataResolve (bib, entry)
    local refs
    local xdata = entry.attributes.xdata
    if xdata then
-      refs = xdata and pl.stringx.split(xdata, ",")
+      refs = xdata
       entry.attributes.xdata = nil
    end
    local crossref = entry.attributes.crossref
@@ -220,16 +241,25 @@ local function crossrefAndXDataResolve (bib, entry)
       entry.attributes.crossref = nil
    end
 
-   if not refs then
-      return
+   if refs then
+      for _, ref in ipairs(refs) do
+         local parent = bib[ref]
+         if parent then
+            crossrefAndXDataResolve(bib, parent)
+            fieldsInherit(parent, entry)
+         else
+            SU.warn("Unknown crossref " .. ref .. " in bibliography entry " .. entry.label)
+         end
+      end
    end
-   for _, ref in ipairs(refs) do
-      local parent = bib[ref]
-      if parent then
-         crossrefAndXDataResolve(bib, parent)
-         fieldsInherit(parent, entry)
-      else
-         SU.warn("Unknown crossref " .. ref .. " in bibliography entry " .. entry.label)
+
+   local related = entry.attributes.related
+   if related then
+      for _, ref in ipairs(related) do
+         local parent = bib[ref]
+         if not parent then
+            SU.warn("Unknown related entry " .. ref .. " in bibliography entry " .. entry.label)
+         end
       end
    end
 end
