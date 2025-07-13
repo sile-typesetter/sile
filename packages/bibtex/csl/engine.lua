@@ -405,8 +405,13 @@ function CslEngine:_render_quotes (t, options)
       -- Smart transform straight quotes in the input to localized inner quotes.
       t = luautf8.gsub(t, '^"', self.punctuation.open_inner_quote)
       t = luautf8.gsub(t, '"$', self.punctuation.close_inner_quote)
-      t = luautf8.gsub(t, '([’%s])"', "%1" .. self.punctuation.open_inner_quote)
-      t = luautf8.gsub(t, '"([%s%p])', self.punctuation.close_inner_quote .. "%1")
+      if self.extras.italicExtension then
+         t = luautf8.gsub(t, '([’%s_])"', "%1" .. self.punctuation.open_inner_quote)
+         t = luautf8.gsub(t, '"([%s%p_])', self.punctuation.close_inner_quote .. "%1")
+      else
+         t = luautf8.gsub(t, '([’%s])"', "%1" .. self.punctuation.open_inner_quote)
+         t = luautf8.gsub(t, '"([%s%p])', self.punctuation.close_inner_quote .. "%1")
+      end
       -- Wrap the result in localized outer quotes.
       t = self.punctuation.open_quote .. t .. self.punctuation.close_quote
    end
