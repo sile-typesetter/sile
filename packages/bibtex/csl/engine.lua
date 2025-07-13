@@ -398,7 +398,7 @@ function CslEngine:_render_quotes (t, options)
       -- Skip all quotes in sorting mode
       return luautf8.gsub(t, '[“”"]', "")
    end
-   if t and options.quotes then
+   if t and SU.boolean(options.quotes, false) then
       -- Smart transform curly quotes in the input to localized inner quotes.
       t = luautf8.gsub(t, "“", self.punctuation.open_inner_quote)
       t = luautf8.gsub(t, "”", self.punctuation.close_inner_quote)
