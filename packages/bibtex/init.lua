@@ -14,8 +14,6 @@ local parseBibtex, crossrefAndXDataResolve = bibparser.parseBibtex, bibparser.cr
 local bib2csl = require("packages.bibtex.support.bib2csl")
 local locators = require("packages.bibtex.support.locators")
 
-local Bibliography = require("packages.bibtex.bibliography") -- Legacy
-
 local function loadCslLocale (name)
    local filename = SILE.resolveFile("packages/bibtex/csl/locales/locales-" .. name .. ".xml")
       or cslLocaleLoader("packages.bibtex.csl.locales.locales-" .. name)
@@ -104,7 +102,7 @@ end
 
 function package:declareSettings ()
    SILE.settings:declare({
-      parameter = "bibtex.style",
+      parameter = "bibtex.style", -- Kept for compatibility but no longer used
       type = "string",
       default = "csl",
       help = "BibTeX style",
@@ -248,58 +246,6 @@ function package:registerCommands ()
       self:_getEntryForCite(key, false) -- no warning if not yet cited
    end, "Mark an entry as cited without actually producing a citation.")
 
-   -- LEGACY COMMANDS
-
-   self:registerCommand("bibstyle", function (_, _)
-      SU.deprecated("\\bibstyle", "\\set[parameter=bibtex.style]", "0.13.2", "0.14.0")
-   end)
-
-   self:registerCommand("cite", function (options, content)
-      local style = SILE.settings:get("bibtex.style")
-      if style == "csl" then
-         SILE.call("csl:cite", options, content)
-         return -- done via CSL
-      end
-      if not self._deprecated_legacy_warning then
-         self._deprecated_legacy_warning = true
-         SU.warn("Legacy bibtex.style is deprecated, consider enabling the CSL implementation.")
-      end
-      -- Ensure the key is set in the options as this was the legacy behavior
-      options.key = self:_getCitationKey(options, content)
-      local entry = self:_getEntryForCite(options.key, false) -- no warning if not yet cited
-      if entry then
-         local bibstyle = require("packages.bibtex.styles." .. style)
-         local cite = Bibliography.produceCitation(options, self._data.bib, bibstyle)
-         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
-      end
-   end, "Produce a single citation.")
-
-   self:registerCommand("reference", function (options, content)
-      local style = SILE.settings:get("bibtex.style")
-      if style == "csl" then
-         SILE.call("csl:reference", options, content)
-         return -- done via CSL
-      end
-      if not self._deprecated_legacy_warning then
-         self._deprecated_legacy_warning = true
-         SU.warn("Legacy bibtex.style is deprecated, consider enabling the CSL implementation.")
-      end
-      -- Ensure the key is set in the options as this was the legacy behavior
-      options.key = self:_getCitationKey(options, content)
-      local entry = self:_getEntryForCite(options.key, true) -- warn if uncited
-      if entry then
-         local bibstyle = require("packages.bibtex.styles." .. style)
-         local cite, err = Bibliography.produceReference(options, self._data.bib, bibstyle)
-         if cite == Bibliography.Errors.UNKNOWN_TYPE then
-            SU.warn("Unknown type @" .. err .. " in citation for reference " .. options.key)
-            return
-         end
-         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
-      end
-   end, "Produce a single bibliographic reference.")
-
-   -- CSL IMPLEMENTATION COMMANDS
-
    -- Hooks for CSL processing
 
    self:registerCommand("bibSmallCaps", function (_, content)
@@ -404,7 +350,9 @@ function package:registerCommands ()
       })
    end)
 
-   self:registerCommand("csl:cite", function (options, content)
+   -- Citation commands
+
+   self:registerCommand("cite", function (options, content)
       local key = self:_getCitationKey(options, content)
       local entry, citnum = self:_getEntryForCite(key, false) -- no warning if not yet cited
       if entry then
@@ -463,7 +411,7 @@ function package:registerCommands ()
       end
    end, "Produce a group of citations.")
 
-   self:registerCommand("csl:reference", function (options, content)
+   self:registerCommand("reference", function (options, content)
       local key = self:_getCitationKey(options, content)
       local entry, citnum = self:_getEntryForCite(key, nil, true) -- no locator, warn if not yet cited
       if entry then
@@ -564,11 +512,11 @@ You can load multiple files, and the entries will be merged into a single biblio
 
 \smallskip
 \noindent
-\em{Producing citations and references (CSL implementation)}
+\em{Producing citations and references}
 \novbreak
 
 \indent
-The CSL (Citation Style Language) implementation is more powerful and flexible than the former legacy solution available in earlier versions of this package (see below).
+The package relies the Citation Style Language (CSL) standard to format citations and bibliographic references.
 
 You should first invoke \autodoc:command{\bibliographystyle[style=<style>, lang=<lang>]}, where \autodoc:parameter{style} is the name of the CSL style file (without the \code{.csl} extension), and \autodoc:parameter{lang} is the language code of the CSL locale to use (e.g., \code{en-US}).
 
@@ -602,27 +550,6 @@ If you want to include all entries in the bibliography, not just those that have
 To produce a bibliographic reference, use \autodoc:command{\reference{<key>}}.
 Note that this command is not intended for actual use, but for testing purposes.
 It may be removed in the future.
-
-\smallskip
-\noindent
-\em{Producing citations and references (legacy commands)}
-\novbreak
-
-\indent
-The “legacy” implementation is based on a custom rendering system.
-The plan is to eventually deprecate and remove it, as the CSL implementation covers more use cases and is more powerful.
-
-The \autodoc:setting[check=false]{bibtex.style} setting controls the style of the bibliography.
-It may be set, for instance, to \code{chicago}, the only style supported out of the box.
-(By default, it is set to \code{csl} to enforce the use of the CSL implementation.)
-
-To produce an inline citation, call \autodoc:command{\cite{<key>}}, which will typeset something like “Jones 1982”.
-If you want to cite a particular page number, use \autodoc:command{\cite[page=22]{<key>}}.
-
-To produce a bibliographic reference, use \autodoc:command{\reference{<key>}}.
-
-This implementation doesn’t currently produce full bibliography listings.
-(Actually, you can use the \autodoc:command{\printbibliography} introduced above, but then it always uses the CSL implementation for rendering the bibliography, differing from the output of the \autodoc:command{\reference} command.)
 
 \smallskip
 \noindent
