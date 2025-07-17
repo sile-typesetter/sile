@@ -300,7 +300,11 @@ Any other element triggers an error, and any text content is silently ignored.
 
 To produce a bibliography of cited references, use \autodoc:command{\printbibliography}.
 After printing the bibliography, the list of cited entries will be cleared. This allows you to start fresh for subsequent uses (e.g., in a different chapter).
+
 If you want to include all entries in the bibliography, not just those that have been cited, set the option \autodoc:parameter{cited} to false.
+
+In that case, the \autodoc:parameter{filter} option can be used to filter the entries to be included in the bibliography.
+It accepts list of space-separated filters, such as \code{type-book} or \code{not-type-book}, or \code{keyword-foo} or \code{not-keyword-foo}, \code{issued-2020} or \code{issued-2023-2025}.
 
 To produce a bibliographic reference, use \autodoc:command{\reference{<key>}}.
 Note that this command is not intended for actual use, but for testing purposes.

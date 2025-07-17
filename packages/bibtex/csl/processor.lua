@@ -1,4 +1,4 @@
---- A processor for bibliographies.
+--- A CSL processor for bibliographies.
 --
 -- @copyright License: MIT (c) 2025 Omikhleia
 --
@@ -23,13 +23,6 @@ local resolveFile = SILE and SILE.resolveFile or function (filename)
 end
 
 -- Loaders for CSL locale and style files.
--- They will look for a file in the following order:
---  - First in csl/locales/ (resp. csl/styles/) wherever SILE looks at these from the working directory.
---    This allows users to put their own CSL files in a simple place
---  - Then in `packages/bibtex/csl/locales/` (ibid.)
---    This allows users to put their own CSL files e.g. in a local copy of the package, following its structure
---  - Then in `packages.bibtex.csl.locales.locales` (ibid.)
---    This allows users to use CSL files from the (extended) Lua path, e.g. from a module.
 local function loadCslLocale (name)
    local filename = resolveFile("csl/locales/" .. name .. ".xml")
       or resolveFile("packages/bibtex/csl/locales/locales-" .. name .. ".xml")
@@ -59,6 +52,71 @@ local function loadCslStyle (name)
    return style
 end
 
+local OP = {
+   EQ = 0,
+   IN = 1,
+}
+
+local CSLVAR = {
+   ["type"] = OP.EQ,
+   keyword = OP.IN,
+}
+local function isMatching (entry, var, val)
+   if not entry[var] then
+      return false
+   end
+   if CSLVAR[var] == OP.EQ then
+      return entry[var] == val
+   elseif CSLVAR[var] == OP.IN then
+      return entry[var]:contains(val)
+   end
+   SU.error("Unsupported CSL variable " .. var .. " in filter")
+end
+local getIssuedYear = function (entry)
+   local d = entry.issued
+   if not d then
+      return nil
+   end
+   if type(d) == "table" then -- range of dates
+      if d.startdate then
+         return d.startdate.year
+      end
+      if d.enddate then
+         return d.enddate.year
+      end
+   end
+   return d.year
+end
+local function builtinFilter(name)
+   local year = name:match("^issued%-(%d+)$")
+   if year then
+      return function (entry)
+         local issuedYear = getIssuedYear(entry)
+         return issuedYear and issuedYear == year
+      end
+   end
+   local year1, year2 = name:match("^issued%-(%d+)%-(%d+)$")
+   if year1 and year2 then
+      return function (entry)
+         local issuedYear = getIssuedYear(entry)
+         return issuedYear and tonumber(issuedYear) >= tonumber(year1) and tonumber(issuedYear) <= tonumber(year2)
+      end
+   end
+   local varkey, val = name:match("^not%-([^-]+)%-(.+)$")
+   if varkey and val then
+      return function (entry)
+         return not isMatching(entry, varkey, val)
+      end
+   end
+   varkey, val = name:match("^([^-]+)%-(.+)$")
+   if varkey and val then
+      return function (entry)
+         return isMatching(entry, varkey, val)
+      end
+   end
+   return false
+end
+
 -- CSL ENTRY PROXY (PSEUDO-CLASS)
 
 local NIL_SENTINEL = {} -- Sentinel value to indicate that a field is overridden to nil
@@ -68,7 +126,7 @@ local NIL_SENTINEL = {} -- Sentinel value to indicate that a field is overridden
 -- so that we can for instance cache the CSL item and override some fields at some later
 -- processing time.
 -- @tparam  table entry Orignal table to proxy
--- @treturn table       Proxy object wrapping the original entry
+-- @treturn table Proxy object wrapping the original entry
 local function CslEntry(entry)
    local proxy = {
       _entry = entry,
@@ -101,8 +159,13 @@ end
 local CslProcessor = pl.class()
 
 --- (Constructor) Create a new CSL Bibliography manager.
+-- Usage example:
+--
+--    local biblio = CslProcessor()
+--
 -- @treturn CslProcessor New CSL Bibliography manager instance
 function CslProcessor:_init ()
+   self._filter = {}
    self._data = {
       bib = {},
       cited = {
@@ -128,9 +191,26 @@ function CslProcessor:getCslEngine ()
 end
 
 ---- Set the bibliography style and locale for the CSL engine.
+-- Example usage:
+--
+--    biblio:setBibliographyStyle('chicago-author-date', 'en-US', {
+--       localizedPunctuation = false,
+--       italicExtension = true,
+--       mathExtension = true,
+--    })
+--
+--  Style and locale files are searched in the following order:
+--
+--  - First in `csl/locales/` (resp. `csl/styles/`) wherever SILE looks at these from the working directory.
+--    This allows users to put their own CSL files in a simple place
+--  - Then in `packages/bibtex/csl/locales/` (ibid.)
+--    This allows users to put their own CSL files e.g. in a local copy of the package, following its structure
+--  - Then in `packages.bibtex.csl.locales.locales` (ibid.)
+--    This allows users to use CSL files from the (extended) Lua path, e.g. from a module.
+--
 -- @tparam string stylename Name of the CSL style to use
--- @tparam string lang      Language code for the locale (e.g., "en-US")
--- @tparam[opt]   table     options Additional options for the CSL engine
+-- @tparam string lang Language code for the locale (e.g., "en-US")
+-- @tparam[opt] table options Additional options for the CSL engine
 function CslProcessor:setBibliographyStyle (stylename, lang, options)
    options = options or {
       localizedPunctuation = false,
@@ -196,6 +276,8 @@ function CslProcessor:_getEntryForCite (key, warn_uncited)
 end
 
 --- Retrieve a locator from an options table.
+-- Keys are expected to be locators like "page", "chapter", etc. as per CSL rules,
+-- Some some extra convenience abbreviations are also supported.
 -- @tparam table options Options (key-value pairs) that may contain a locator
 -- @treturn table Locator
 function CslProcessor:_getLocator (options)
@@ -219,7 +301,7 @@ end
 
 --- Track the position of a citation acconrding to the CSL rules.
 -- @tparam string key Citation key
--- @tparam {label=string, value=string}|nil locator Locator
+-- @tparam {label=string,value=string}|nil locator Locator
 -- @tparam boolean is_single Single or multiple citation
 -- @treturn string Position of the citation ("first", "subsequent", "ibid", "ibid-with-locator")
 function CslProcessor:_getCitePosition (key, locator, is_single)
@@ -276,15 +358,22 @@ function CslProcessor:_adapter (entry, citnum)
    return cslentry
 end
 
+--- Load a bibliography file and parse it.
+-- @tparam string bibfile Path to the BibTeX file to load
+function CslProcessor:loadBibliography (bibfile)
+   local bib = self._data.bib
+   parseBibtex(bibfile, bib)
+end
+
 --- Cite a sigle entry with optional locator.
 -- Usage example:
--- ```lua
--- local cite = biblio:cite({
---    key = 'mykey1',
---    page = "191-193",
--- })
--- ```
--- @tparam {key=string, [string]=string} item Citation item with a key and optional locator
+--
+--    local cite = biblio:cite({
+--       key = 'mykey1',
+--       page = "191-193",
+--    })
+--
+-- @tparam {key=string,[string]=string} item Citation item with a key and optional locator
 -- @treturn string|nil Formatted citation string or nil if the entry is not found
 function CslProcessor:cite (item)
    local key = item.key
@@ -311,13 +400,14 @@ end
 
 --- Cite multiple entries with optional locators.
 -- Usage example:
--- ```lua
--- local cites = biblio:cites({
---    { key = 'mykey1', page = "191" },
---    { key = 'mykey2', chapter = "2" },
---    { key = 'mykey3' },
--- })
--- @tparam table items List of citation items, each with a key and optional locator
+--
+--    local cites = biblio:cites({
+--       { key = 'mykey1', page = "191" },
+--       { key = 'mykey2', chapter = "2" },
+--       { key = 'mykey3' },
+--    })
+--
+-- @tparam {key:string,[string]:string}[] items List of citation items, each with a key and optional locator
 -- @treturn string|nil Formatted citation string or nil if no entries are found
 function CslProcessor:cites (items)
    local is_single = #items == 1
@@ -343,10 +433,10 @@ function CslProcessor:cites (items)
 end
 
 --- Retrieve a reference for a given key.
--- This is used to get the full reference for an entry, e.g. for a bibliography.
--- It will return the entry as a CSL item, with the citation number set.
+-- This is used to get the full reference for an entry, though this is more for debugging
+-- purposes than for actual bibliography processing.
 -- @tparam string key Citation key
--- @treturn string[nul Formatted reference string or nil if the entry is not found
+-- @treturn string|nil Formatted reference string or nil if the entry is not found
 function CslProcessor:reference (key)
    local entry, citnum = self:_getEntryForCite(key, true) -- warn if not yet cited
    if entry then
@@ -357,11 +447,30 @@ function CslProcessor:reference (key)
    end
 end
 
---- Retrieve a bibliography of entries
--- @tparam {cited=boolean} options Options for the bibliography
+--- Retrieve a bibliography of entries.
+-- Supported options are:
+--
+--  - `cited`: boolean, whether to include only cited entries (default: true)
+--  - `filter`: string, filters to apply to the entries, if cited is false.
+--
+-- The filter is a space-separated list of filter names.
+-- These can consist of named filters, or built-in filters.
+-- The list is understood as a logical AND, i.e. all filters must match.
+--
+-- Built-in filters are:
+--
+--  - `issued-Y`: entries issued in year Y
+--  - `issued-Y1-Y2`: entries issued between two years Y1 and Y2
+--  - `type-x`: entries of the given type (e.g. book, article-journal, etc.)
+--  - `not-type-x`: entries that are not of the given type
+--  - `keyword-x`: entries that have the given keyword
+--  - `not-keyword-x`: entries that do not have the given keyword
+--
+-- @tparam {cited=boolean,filter=string} options Options for the bibliography
 -- @treturn string Formatted bibliography string
 function CslProcessor:bibliography (options)
    local bib
+   local filter = options.filter
    if SU.boolean(options.cited, true) then
       bib = {}
       for _, key in ipairs(self._data.cited.keys) do
@@ -397,7 +506,10 @@ function CslProcessor:bibliography (options)
                citnum = prevcite.citnum
             end
             local cslentry = self:_adapter(entry, citnum)
-            table.insert(entries, cslentry)
+            local isFiltered = not filter or self:applyFilter(cslentry, filter)
+            if isFiltered then
+               table.insert(entries, cslentry)
+            end
          end
       end
    end
@@ -410,12 +522,26 @@ function CslProcessor:bibliography (options)
    return cite
 end
 
---- Load a bibliography file and parse it.
--- @tparam string bibfile Path to the BibTeX file to load
--- @treturn nil
-function CslProcessor:loadBibliography (bibfile)
-   local bib = self._data.bib
-   parseBibtex(bibfile, bib)
+--- Define a named filter for the CSL processor.
+-- @tparam string name Name of the filter
+-- @tparam function filterFn Function taking a CSL entry and returning true if the filter matches
+function CslProcessor:defineFilter(name, filterFn)
+   self._filter[name] = filterFn
+end
+
+--- Apply a filter to a CSL entry.
+-- It will check if the entry matches the filter by calling the filter function.
+-- @tparam CslEntry entry CSL entry to filter
+-- @tparam string names Names of the filters to apply (separated by spaces)
+function CslProcessor:applyFilter(entry, names)
+   local filters = pl.stringx.split(names, " "):filter(function (s) return s ~= "" end)
+   for _, f in ipairs(filters) do
+      local filterFn = self._filter[f] or builtinFilter(f)
+      if not filterFn(entry) then
+         return false
+      end
+   end
+   return true
 end
 
 local bibTagsToHtml = {
@@ -431,10 +557,12 @@ local function biblink (url, _, class)
 end
 
 --- Convert a formatted bibliography to HTML format.
--- NOTE: Very naive implementation for now :)
+--
+-- **NOTE**: Very naive implementation for now. Private, may change in the future.
+--
 -- @tparam string out The bibliography output as a string
 -- @treturn string HTML formatted bibliography
-function CslProcessor:toHtml (out)
+function CslProcessor:_toHtml (out)
    -- Replace custom tags with HTML equivalents
    for tag, html in pairs(bibTagsToHtml) do
       local openTag = "<" .. tag .. ">"
