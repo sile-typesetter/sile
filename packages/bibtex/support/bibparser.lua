@@ -158,7 +158,8 @@ end
 --- Parse a BibTeX file and populate a bibliography table.
 -- @tparam string fn Filename
 -- @tparam table biblio Table of entries
-local function parseBibtex (fn, biblio)
+-- @tparam table aliases Table for aliased entries
+local function parseBibtex (fn, biblio, aliases)
    fn = SILE.resolveFile(fn) or SU.error("Unable to resolve Bibtex file " .. fn)
    local fh, e = io.open(fn)
    if e then
@@ -176,10 +177,33 @@ local function parseBibtex (fn, biblio)
          if biblio[ent.label] then
             SU.warn("Duplicate entry key '" .. ent.label .. "', picking the last one")
          end
-         biblio[ent.label] = consolidateEntry(entry, ent.label)
+         local consolidated = consolidateEntry(entry, ent.label)
+         biblio[ent.label] = consolidated
+         if consolidated.attributes.ids then
+            -- Note that 'ids' is is not inheritable, so we can safely consolidate them
+            -- now.
+            for _, id in ipairs(consolidated.attributes.ids) do
+               if not biblio[id] and not aliases[id] then
+                  -- We are not supporting aliases of aliases:
+                  -- It's not clear whether BibLaTeX supports that, but v3.21 §2.3.3 seems to suggest
+                  -- the contrary (mentioning that aliases are to the "primary key".
+                  aliases[id] = consolidated
+               else
+                  SU.warn("Duplicate entry alias '" .. id .. "' in entry '" .. ent.label .. "', skipped")
+               end
+            end
+         end
       end
    end
 end
+
+-- BibLaTeX v3.21 appendix B, first part of the table
+local NEVER_INHERITED = pl.Set({
+   "ids", "crossref", "xref", "entryset", "entrysubtype", "execute",
+   "label", "options", "presort", "related", "relatedoptions",
+   "relatedstring", "relatedtype", "shorthand", "shorthandintro",
+   "sortkey",
+})
 
 --- Copy fields from the parent entry to the child entry.
 -- BibLaTeX/Biber have a complex inheritance system for fields.
@@ -192,16 +216,18 @@ local function fieldsInherit (parent, entry)
    if not map then
       -- @xdata and any other unknown types: inherit all missing fields
       for field, value in pairs(parent.attributes) do
-         if not entry.attributes[field] then
+         if not entry.attributes[field] and not NEVER_INHERITED[field] then
             entry.attributes[field] = value
          end
       end
       return -- done
    end
    for field, value in pairs(parent.attributes) do
-      if map[field] == nil and not entry.attributes[field] then
+      -- Fields that can be inherited without re-mapping
+      if map[field] == nil and not entry.attributes[field] and not NEVER_INHERITED[field] then
          entry.attributes[field] = value
       end
+      -- Fields that are inherited with a different name by inheritance
       for childfield, parentfield in pairs(map) do
          if parentfield and not entry.attributes[parentfield] then
             entry.attributes[parentfield] = parent.attributes[childfield]

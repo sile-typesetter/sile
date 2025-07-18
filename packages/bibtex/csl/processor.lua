@@ -167,7 +167,8 @@ local CslProcessor = pl.class()
 function CslProcessor:_init ()
    self._filter = {}
    self._data = {
-      bib = {},
+      bib = {}, -- Primary bibliography entries
+      aliases = {}, -- Aliases for entries (usable as citation keys)
       cited = {
          keys = {}, -- Cited keys in the order they are cited (ordered set)
          refs = {}, -- Table of cited keys with their first citation number, last locator and last position (table)
@@ -256,6 +257,7 @@ end
 -- @treturn number Citation number
 -- @treturn string|nil Locator value
 function CslProcessor:_getEntryForCite (key, warn_uncited)
+   key = self._data.aliases[key] and self._data.aliases[key].label or key
    local entry = resolveEntry(self._data.bib, key)
    if not entry then
       return
@@ -305,6 +307,7 @@ end
 -- @tparam boolean is_single Single or multiple citation
 -- @treturn string Position of the citation ("first", "subsequent", "ibid", "ibid-with-locator")
 function CslProcessor:_getCitePosition (key, locator, is_single)
+   key = self._data.aliases[key] and self._data.aliases[key].label or key
    local cited = self._data.cited.refs[key]
    if not cited then
       -- This method is assumed to be invoked only for cited entries
@@ -362,7 +365,8 @@ end
 -- @tparam string bibfile Path to the BibTeX file to load
 function CslProcessor:loadBibliography (bibfile)
    local bib = self._data.bib
-   parseBibtex(bibfile, bib)
+   local aliases = self._data.aliases
+   parseBibtex(bibfile, bib, aliases)
 end
 
 --- Cite a sigle entry with optional locator.
