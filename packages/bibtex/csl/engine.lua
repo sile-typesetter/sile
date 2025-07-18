@@ -478,7 +478,9 @@ function CslEngine:_layout (options, content, entries)
          table.insert(output, elem)
       end
    end
-   return table.concat(output, "<par/>")
+   local openTag = "<bibParagraph>\n"
+   local closeTag = "</bibParagraph>\n"
+   return openTag .. table.concat(output, closeTag .. openTag) .. closeTag
 end
 
 function CslEngine:_text (options, content, entry)

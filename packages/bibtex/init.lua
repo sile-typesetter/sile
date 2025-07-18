@@ -248,6 +248,11 @@ function package:registerCommands ()
          SILE.typesetter:pushHbox(hbox)
       end
    end)
+
+   self:registerCommand("bibParagraph", function (_, content)
+      SILE.process(content)
+      SILE.call("par")
+   end)
 end
 
 package.documentation = [[
