@@ -551,7 +551,7 @@ end
 local bibTagsToHtml = {
    bibSmallCaps = { '<span class="bib-smallcaps">', "</span>" },
    bibSuperScript = { '<span class="bib-superscript">', "</span>" },
-   bibPar = { '<div class="bib-par">', "</div>" },
+   bibParagraph = { '<div class="bib-par">', "</div>" },
    bibBoxForIndent = { 'span class="bib-box-for-indent"', "</span>" },
 }
 
@@ -601,7 +601,7 @@ function CslProcessor:_toHtml (out)
 <title>Bibliography</title>
 <style>
 body { font-family: Arial, sans-serif; }
-.bib-par { padding-left: 3em; text-indent: -3em; padding-top: 0.5em; }
+.bib-par { padding-left: 3em; text-indent: -3em; padding-bottom: 0.5em; }
 .bib-smallcaps { font-variant: small-caps; }
 .bib-superscript { vertical-align: super; font-size: smaller; }
 .bib-url, .bib-doi, .bib-pmid, .bib-pmcid { text-decoration: none; }
