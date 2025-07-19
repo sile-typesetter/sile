@@ -253,6 +253,16 @@ function package:registerCommands ()
       SILE.process(content)
       SILE.call("par")
    end)
+
+   self:registerCommand("bibRelated", function (_, content)
+      SILE.settings:temporarily(function ()
+         local indent = SILE.settings:get("bibliography.indent"):absolute()
+         local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()):absolute()
+         SILE.settings:set("font.size", 0.9 * SILE.settings:get("font.size"))
+         SILE.settings:set("document.lskip", lskip.width + indent)
+         SILE.process(content)
+      end)
+   end)
 end
 
 package.documentation = [[
@@ -310,6 +320,9 @@ If you want to include all entries in the bibliography, not just those that have
 
 In that case, the \autodoc:parameter{filter} option can be used to filter the entries to be included in the bibliography.
 It accepts list of space-separated filters, such as \code{type-book} or \code{not-type-book}, or \code{keyword-foo} or \code{not-keyword-foo}, \code{issued-2020} or \code{issued-2023-2025}.
+
+You can also use the \autodoc:parameter{related=true} option to include related entries in a smaller section after a main entry.
+The may be interesting when, for reviews of a work, which you may find interesting to have directly after the main entry for that work.
 
 To produce a bibliographic reference, use \autodoc:command{\reference{<key>}}.
 Note that this command is not intended for actual use, but for testing purposes.

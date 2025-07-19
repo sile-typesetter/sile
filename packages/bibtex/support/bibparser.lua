@@ -159,7 +159,8 @@ end
 -- @tparam string fn Filename
 -- @tparam table biblio Table of entries
 -- @tparam table aliases Table for aliased entries
-local function parseBibtex (fn, biblio, aliases)
+-- @tparam table related Table for related entries
+local function parseBibtex (fn, biblio, aliases, related)
    fn = SILE.resolveFile(fn) or SU.error("Unable to resolve Bibtex file " .. fn)
    local fh, e = io.open(fn)
    if e then
@@ -191,6 +192,17 @@ local function parseBibtex (fn, biblio, aliases)
                else
                   SU.warn("Duplicate entry alias '" .. id .. "' in entry '" .. ent.label .. "', skipped")
                end
+            end
+         end
+         if consolidated.attributes.related then
+            -- Note that 'related' is not inheritable, so we can safely consolidate them
+            -- now, but in their own table as there's no guranteee that a related entry is
+            -- from the same bibliography file, and has been loaded yet.
+            for _, rel in ipairs(consolidated.attributes.related) do
+               if not related[rel] then
+                  related[rel] = {}
+               end
+               table.insert(related[rel], ent.label)
             end
          end
       end
@@ -279,15 +291,17 @@ local function crossrefAndXDataResolve (bib, entry)
       end
    end
 
-   local related = entry.attributes.related
-   if related then
-      for _, ref in ipairs(related) do
-         local parent = bib[ref]
-         if not parent then
-            SU.warn("Unknown related entry " .. ref .. " in bibliography entry " .. entry.label)
-         end
-      end
-   end
+   -- Quite verbose if one only uses some biblibliography files for say an editor,
+   -- without including journals that may have related entries (reviews, etc.)
+   -- local related = entry.attributes.related
+   -- if related then
+   --    for _, ref in ipairs(related) do
+   --       local parent = bib[ref]
+   --       if not parent then
+   --          SU.warn("Unknown related entry " .. ref .. " in bibliography entry " .. entry.label)
+   --       end
+   --    end
+   -- end
 end
 
 return {

@@ -477,6 +477,10 @@ function CslEngine:_layout (options, content, entries)
       if elem then
          table.insert(output, elem)
       end
+      if entry._related then
+         local relations = self:reference(entry._related)
+         table.insert(output, "<bibRelated>\n" .. relations .. "</bibRelated>\n")
+      end
    end
    local openTag = "<bibParagraph>\n"
    local closeTag = "</bibParagraph>\n"
