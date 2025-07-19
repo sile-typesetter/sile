@@ -6,13 +6,13 @@
 -- counterparts.
 --
 -- Based on Datafile for Unicode Technical Report #30
--- http://unicode.org/reports/tr30/datafiles/SuperscriptFolding.txt
+-- (<http://unicode.org/reports/tr30/datafiles/SuperscriptFolding.txt>).
 -- Copyright (c) 1991-2004 Unicode, Inc.
--- For terms of use, and documentation see http://www.unicode.org/reports/tr30/
+-- For terms of use, and documentation see <http://www.unicode.org/reports/tr30/>.
 --
--- Note that TR30 is not normative (and is currently suspended)
--- Maybe we should use other sources, see:
--- https://en.wikipedia.org/wiki/Unicode_subscripts_and_superscripts
+-- Note that TR30 is not normative (and is currently suspended).
+-- Maybe we should use other sources, such as
+-- <https://en.wikipedia.org/wiki/Unicode_subscripts_and_superscripts>.
 --
 
 local supersyms = {
@@ -133,6 +133,7 @@ end
 local pat = "[" .. table.concat(vals) .. "]+"
 
 --- Replace Unicode superscripted characters with their normal counterparts.
+-- @function superfolding
 -- @tparam string str The string to process.
 -- @treturn string The string with superscripted characters replaced.
 local function superfolding (str)

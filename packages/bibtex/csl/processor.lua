@@ -287,9 +287,10 @@ end
 
 --- Retrieve a locator from an options table.
 -- Keys are expected to be locators like "page", "chapter", etc. as per CSL rules,
--- Some some extra convenience abbreviations are also supported.
+-- Some some extra convenience abbreviations and aliases are also supported,
+-- and mapped to the corresponding CSL locator labels.
 -- @tparam table options Options (key-value pairs) that may contain a locator
--- @treturn table Locator
+-- @treturn {label=string,value=string}|nil Locator
 function CslProcessor:_getLocator (options)
    local locator
    for k, v in pairs(options) do
@@ -359,6 +360,10 @@ function CslProcessor:_getCitePosition (key, locator, is_single)
    return pos
 end
 
+--- Adapt a (BibTeX) entry to a CSL entry.
+-- @tparam table entry Raw (BibTeX)
+-- @tparam number|nil citnum Citation number (when citing)
+-- @treturn CslEntry CSL entry proxy object
 function CslProcessor:_adapter (entry, citnum)
    -- Convert the BibTeX entry to a CSL item and cache it in the entry.
    -- Then wrap it in a CslEntry proxy to allow overriding fields,
@@ -561,9 +566,9 @@ function CslProcessor:defineFilter(name, filterFn)
 end
 
 --- Apply a filter to a CSL entry.
--- It will check if the entry matches the filter by calling the filter function.
 -- @tparam CslEntry entry CSL entry to filter
 -- @tparam string names Names of the filters to apply (separated by spaces)
+-- @treturn boolean True if the entry matches all filters, false otherwise
 function CslProcessor:applyFilter(entry, names)
    local filters = pl.stringx.split(names, " "):filter(function (s) return s ~= "" end)
    for _, f in ipairs(filters) do

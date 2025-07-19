@@ -1,11 +1,15 @@
---- Modified XML parser
+--- Modified XML parser.
 --
--- MOSTLY ADAPTED FROM SILE's XML INPUTTER
--- BUT WITH EXTRA FEATURES FOR NAMESPACING AND SPACES CLEANING.
+-- This parser is mostly adapted from SILE's XML inputter,
+-- but with extra features for namespacing and spaces cleaning,
+-- configurable through rules.
 --
--- It simplifies the processing a lot later...
+-- It simplifies the processing a lot later, for documents where the XML
+-- schema is known, and appropriate rules can be used to simplify the
+-- resulting parsed tree.
+--
 -- TODO FIXME: This could raise an interesting discussion about the supposedly
--- generic XML support in SILE...
+-- generic XML support in SILE, and how to generalize it.
 
 local lxp = require("lxp")
 
@@ -96,6 +100,12 @@ local function text (parser, msg)
    end
 end
 
+--- Parse an XML document and return a syntax tree.
+-- @function parse
+-- @tparam string doc The XML document to parse
+-- @tparam[opt] table rules Parsing rules
+-- @treturn table|nil The syntax tree
+-- @treturn string|nil Error message if parsing failed
 local function parse (doc, rules)
    local content = {
       StartElement = startcommand,
