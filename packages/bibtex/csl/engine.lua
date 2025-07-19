@@ -3,28 +3,31 @@
 -- @copyright License: MIT (c) 2024, 2025 Omikhleia
 --
 -- Public API:
---  - (constructor) CslEngine(style, locale) -> CslEngine
---  - CslEngine:cite(entries) -> string
---  - CslEngine:reference(entries) -> string
+--
+--  - (constructor) CslEngine(style, locale) → CslEngine
+--  - CslEngine:cite(entries) → string
+--  - CslEngine:reference(entries) → string
 --
 -- The expected internal representation of a CSL entry is similar to CSL-JSON
 -- but with some differences:
---    Date fields are structured tables (not an array of numbers as in CSL-JSON).
---    citation-number (mandatory) is supposed to have been added by the citation processor.
---    locator (optional, also possibly added by the citation processor) is a table with label and value fields.
---    names are parsed,
---        as personal names (ex. `{ given = "George", family = "Smith" ... }`),
---        or are literal strings (ex. `{ literal = "T.C.B.S" }`).
+--
+--  - Date fields are structured tables (not an array of numbers as in CSL-JSON).
+--  - `citation-number` (mandatory) is supposed to have been added by the citation processor.
+--  - `locator` (optional, also possibly added by the citation processor) is a table with label and value fields.
+--  - Names are assumed to be already parsed, as personal names (ex. `{ given = "George", family = "Smith" ... }`),
+--  or are literal strings (ex. `{ literal = "T.C.B.S" }`).
 --
 -- Important: while some consistency checks are performed, this engine is not
 -- intended to handle errors in the locale, style or input data. It is assumed
 -- that they are all valid.
 --
--- THINGS NOT DONE
---  - disambiguation logic (not done at all)
---  - collapse logic in citations (not done at all)
---  - other FIXME in the code on quite specific features
+-- FEATURES NOT IMPLEMENTED YET:
 --
+--  - Disambiguation logic (not done at all)
+--  - Collapse logic in citations (not done at all)
+--  - Other FIXME in the code on quite specific features
+--
+
 -- luacheck: no unused args
 
 local CslLocale = require("packages.bibtex.csl.locale")
@@ -37,8 +40,11 @@ local CslEngine = pl.class()
 
 --- (Constructor) Create a new CSL engine.
 -- The optional extras table is for features not part of CSL 1.0.2.
--- Currently:
---   localizedPunctuation: boolean (default false) - use localized punctuation
+-- Currently supported:
+--
+--  - `localizedPunctuation` (boolean, default false): use localized punctuation marks (experimental)
+--  - `italicExtension` (boolean,default true): interpret `_text_` as italic
+--  - `mathExtension` (boolean, default true): interpret `$text$` as a TeX-like math expression
 --
 -- @tparam CslStyle  style CSL style
 -- @tparam CslLocale locale CSL locale

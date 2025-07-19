@@ -3,12 +3,13 @@
 -- @copyright License: MIT (c) 2024 Omikhleia
 --
 -- Public API:
---  - (static method) CslLocale.parse(doc) -> CslLocale
---  - (static method) CslLocale.read(filename) -> CslLocale
---  - CslLocale:date(form) -> table<cs:date-parts>
---  - CslLocale:term(name, form?, plural?) -> string, gender
---  - CslLocale:ordinal(number, form?, gender-form?, plural?) -> string
---  - CslLocale:case(text, textCase) -> string
+--
+--  - (static method) CslLocale.parse(doc) → CslLocale
+--  - (static method) CslLocale.read(filename) → CslLocale
+--  - CslLocale:date(form) → table<cs:date-parts>
+--  - CslLocale:term(name, form?, plural?) → string, gender
+--  - CslLocale:ordinal(number, form?, gender-form?, plural?) → string
+--  - CslLocale:case(text, textCase) → string
 --
 
 local casing = require("packages.bibtex.csl.utils.casing")
