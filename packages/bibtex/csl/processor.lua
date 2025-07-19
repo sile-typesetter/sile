@@ -119,36 +119,43 @@ end
 
 -- CSL ENTRY PROXY (PSEUDO-CLASS)
 
-local NIL_SENTINEL = {} -- Sentinel value to indicate that a field is overridden to nil
-
 --- Construct a proxy object that overrides the original entry table.
 -- It is used to allow overriding CSL field values without modifying the original entry,
 -- so that we can for instance cache the CSL item and override some fields at some later
 -- processing time.
+-- We also want the proxy to work if the value is deep copied, so we cannot just use a sentinel
+-- value representing nil, but must actually keep track of nil-hidden fields.
 -- @tparam  table entry Orignal table to proxy
 -- @treturn table Proxy object wrapping the original entry
-local function CslEntry(entry)
-   local proxy = {
-      _entry = entry,
-      _override = {},
-   }
+local function CslEntry (entry)
+   local override = {}
+   local hidden = {}
+   local proxy = {}
    setmetatable(proxy, {
-      __index = function (self, key)
-         local override = rawget(self._override, key)
-         if override ~= nil then
-            if override == NIL_SENTINEL then
-               return nil
-            end
-            return override
-         end
-         return rawget(self._entry, key)
+      __index = function(_, key)
+         if hidden[key] then return nil end
+         local val = override[key]
+         if val ~= nil then return val end
+         return entry[key]
       end,
-      __newindex = function (self, key, value)
+      __newindex = function(_, key, value)
          if value == nil then
-            rawset(self._override, key, NIL_SENTINEL)
+            hidden[key] = true
+            override[key] = nil
          else
-            rawset(self._override, key, value)
+            hidden[key] = nil
+            override[key] = value
          end
+      end,
+      __pairs = function()
+         local merged = {}
+         for k, v in pairs(entry) do
+            if not hidden[k] then merged[k] = v end
+         end
+         for k, v in pairs(override) do
+            if not hidden[k] then merged[k] = v end
+         end
+         return pairs(merged)
       end,
    })
    return proxy
@@ -169,6 +176,7 @@ function CslProcessor:_init ()
    self._data = {
       bib = {}, -- Primary bibliography entries
       aliases = {}, -- Aliases for entries (usable as citation keys)
+      related = {}, -- Related entries (for reviews, etc.)
       cited = {
          keys = {}, -- Cited keys in the order they are cited (ordered set)
          refs = {}, -- Table of cited keys with their first citation number, last locator and last position (table)
@@ -356,6 +364,19 @@ function CslProcessor:_adapter (entry, citnum)
    -- Then wrap it in a CslEntry proxy to allow overriding fields,
    -- and set the citation number.
    entry._csl = entry._csl or bib2csl(entry)
+   if self._data.related[entry.label] then
+      -- If the entry has related entries, we need to resolve them
+      -- and add them to the CSL entry.
+      local related = pl.List(self._data.related[entry.label]):map(function (r)
+         local related_entry = resolveEntry(self._data.bib, r)
+         if not related_entry then
+            SU.error("Related entry " .. r .. " not found in bibliography")
+            return nil
+         end
+         return self:_adapter(related_entry, nil) -- no citation number for related entries
+      end):filter(function (e) return e ~= nil end)
+      entry._csl._related = related
+   end
    local cslentry = CslEntry(entry._csl)
    cslentry['citation-number'] = citnum
    return cslentry
@@ -366,7 +387,8 @@ end
 function CslProcessor:loadBibliography (bibfile)
    local bib = self._data.bib
    local aliases = self._data.aliases
-   parseBibtex(bibfile, bib, aliases)
+   local related = self._data.related
+   parseBibtex(bibfile, bib, aliases, related)
 end
 
 --- Cite a sigle entry with optional locator.
@@ -446,6 +468,7 @@ function CslProcessor:reference (key)
    if entry then
       local engine = self:getCslEngine()
       local cslentry = self:_adapter(entry, citnum)
+      cslentry._related = nil -- don't include related entries in the reference
       local cite = engine:reference(cslentry)
       return cite
    end
@@ -456,6 +479,7 @@ end
 --
 --  - `cited`: boolean, whether to include only cited entries (default: true)
 --  - `filter`: string, filters to apply to the entries, if cited is false.
+--  - `related`: boolean, whether to include related entries in the bibliography (default: false)
 --
 -- The filter is a space-separated list of filter names.
 -- These can consist of named filters, or built-in filters.
@@ -470,7 +494,7 @@ end
 --  - `keyword-x`: entries that have the given keyword
 --  - `not-keyword-x`: entries that do not have the given keyword
 --
--- @tparam {cited=boolean,filter=string} options Options for the bibliography
+-- @tparam {cited=boolean,filter=string,related=boolean} options Options for the bibliography
 -- @treturn string Formatted bibliography string
 function CslProcessor:bibliography (options)
    local bib
@@ -510,6 +534,9 @@ function CslProcessor:bibliography (options)
                citnum = prevcite.citnum
             end
             local cslentry = self:_adapter(entry, citnum)
+            if not SU.boolean(options.related, false) then
+               cslentry._related = nil -- Don't include related entries in the bibliography
+            end
             local isFiltered = not filter or self:applyFilter(cslentry, filter)
             if isFiltered then
                table.insert(entries, cslentry)
@@ -553,6 +580,7 @@ local bibTagsToHtml = {
    bibSuperScript = { '<span class="bib-superscript">', "</span>" },
    bibParagraph = { '<div class="bib-par">', "</div>" },
    bibBoxForIndent = { 'span class="bib-box-for-indent"', "</span>" },
+   bibRelated = { '<div class="bib-rel">', "</div>" },
 }
 
 local function biblink (url, _, class)
@@ -606,6 +634,7 @@ body { font-family: Arial, sans-serif; }
 .bib-superscript { vertical-align: super; font-size: smaller; }
 .bib-url, .bib-doi, .bib-pmid, .bib-pmcid { text-decoration: none; }
 .bib-box-for-indent { display: inline-block; width: 3em; }
+.bib-rel { font-size: 0.9em; }
 </style>
 </head>
 <body>
