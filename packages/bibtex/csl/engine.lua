@@ -16,6 +16,7 @@
 --  - `locator` (optional, also possibly added by the citation processor) is a table with label and value fields.
 --  - Names are assumed to be already parsed, as personal names (ex. `{ given = "George", family = "Smith" ... }`),
 --  or are literal strings (ex. `{ literal = "T.C.B.S" }`).
+--  - The internal `_related` field is a table of related CSL entries.
 --
 -- Important: while some consistency checks are performed, this engine is not
 -- intended to handle errors in the locale, style or input data. It is assumed
@@ -120,22 +121,38 @@ function CslEngine:_init (style, locale, extras)
          self.subsequentAuthorSubstitute = "<bibRule>" .. count .. "</bibRule>" .. trail
       end
    end
+
+   self.states = {}
+   self.state = {}
+end
+
+function CslEngine:pushState ()
+   table.insert(self.states, self.state)
+   self.state = {}
+end
+
+function CslEngine:popState ()
+   if #self.states > 0 then
+      self.state = table.remove(self.states)
+   else
+      SU.error("Something went wrong: no state to pop")
+   end
 end
 
 function CslEngine:_prerender ()
    -- Stack for processing of cs:group as conditional
-   self.groupQueue = {}
-   self.groupState = { variables = {}, count = 0 }
+   self.state.groupQueue = {}
+   self.state.groupState = { variables = {}, count = 0 }
 
    -- Track first name for name-as-sort-order
-   self.firstName = true
+   self.state.firstName = true
 
    -- Track first rendered cs:names for subsequent-author-substitute
-   self.doAuthorSubstitute = self.mode == "bibliography" and self.subsequentAuthorSubstitute
-   self.hasRenderedNames = false
+   self.state.doAuthorSubstitute = self.state.mode == "bibliography" and self.subsequentAuthorSubstitute
+   self.state.hasRenderedNames = false
    -- Track authors for subsequent-author-substitute
-   self.precAuthors = self.currentAuthors
-   self.currentAuthors = {}
+   self.state.precAuthors = self.state.currentAuthors
+   self.state.currentAuthors = {}
 end
 
 function CslEngine:_merge_locales (locale1, locale2)
@@ -188,11 +205,11 @@ end
 -- GROUP LOGIC (tracking variables in groups, conditional rendering)
 
 function CslEngine:_enterGroup ()
-   self.groupState.count = self.groupState.count + 1
-   SU.debug("csl", "Enter group", self.groupState.count, "level", #self.groupQueue)
+   self.state.groupState.count = self.state.groupState.count + 1
+   SU.debug("csl", "Enter group", self.state.groupState.count, "level", #self.state.groupQueue)
 
-   table.insert(self.groupQueue, self.groupState)
-   self.groupState = { variables = {}, count = 0 }
+   table.insert(self.state.groupQueue, self.state.groupState)
+   self.state.groupState = { variables = {}, count = 0 }
 end
 
 function CslEngine:_leaveGroup (rendered, macro)
@@ -201,7 +218,7 @@ function CslEngine:_leaveGroup (rendered, macro)
    -- But the group is kept if no variable is called.
    local emptyVariables = true
    local hasVariables = false
-   for _, cond in pairs(self.groupState.variables) do
+   for _, cond in pairs(self.state.groupState.variables) do
       hasVariables = true
       if cond then -- non-empty variable found
          emptyVariables = false
@@ -212,7 +229,7 @@ function CslEngine:_leaveGroup (rendered, macro)
    if suppressGroup then
       rendered = nil -- Suppress group
    end
-   self.groupState = table.remove(self.groupQueue)
+   self.state.groupState = table.remove(self.state.groupQueue)
    if macro then
       -- If a macro (pseudo-group) is suppressed, we need to track it as an
       -- empty variable for the group it is in.
@@ -230,15 +247,15 @@ function CslEngine:_leaveGroup (rendered, macro)
       -- purposes of determining suppression of the outer group.
       -- So add a pseudo-variable for the inner group into the outer group, to
       -- track this.
-      local groupCond = "_group_" .. self.groupState.count
+      local groupCond = "_group_" .. self.state.groupState.count
       self:_addGroupVariable(groupCond, true)
    end
    SU.debug(
       "csl",
       "Leave group",
-      self.groupState.count,
+      self.state.groupState.count,
       "level",
-      #self.groupQueue,
+      #self.state.groupQueue,
       suppressGroup and "(suppressed)" or "(rendered)"
    )
    return rendered
@@ -246,7 +263,7 @@ end
 
 function CslEngine:_addGroupVariable (variable, value)
    SU.debug("csl", "Group variable", variable, value and "true" or "false")
-   self.groupState.variables[variable] = value and true or false
+   self.state.groupState.variables[variable] = value and true or false
 end
 
 -- INTERNAL HELPERS
@@ -444,7 +461,7 @@ end
 
 function CslEngine:_layout (options, content, entries)
    local output = {}
-   if self.mode == "citation" then
+   if self.state.mode == "citation" then
       for _, entry in ipairs(entries) do
          self:_prerender()
          local elem = self:_render_children(content, entry)
@@ -818,11 +835,11 @@ end
 
 function CslEngine:_leaveSubstitute (t, entry)
    SU.debug("csl", "Leave substitute")
-   local vars = self.groupState.variables
+   local vars = self.state.groupState.variables
    -- "Substituted variables are considered empty for the purposes of
    -- determining whether to suppress an enclosing cs:group."
    -- So it's as if we hadn't seen any variable in our substitute.
-   self.groupState.variables = {}
+   self.state.groupState.variables = {}
    -- "Substituted variables are suppressed in the rest of the output
    -- to prevent duplication"
    -- So if the substitution was successful, we remove referenced variables
@@ -975,7 +992,7 @@ function CslEngine:_a_name (options, content, entry)
    end
 
    local nameAsSortOrder = options["name-as-sort-order"]
-   local familyFirst = nameAsSortOrder == "all" or (nameAsSortOrder == "first" and self.firstName) or false
+   local familyFirst = nameAsSortOrder == "all" or (nameAsSortOrder == "first" and self.state.firstName) or false
    if not familyFirst then
       -- Order is: [Given] [DP] [NDP] Family [Suffix] e.g. Vincent van Gogh III
       local t = {}
@@ -1100,15 +1117,15 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
          local l = {}
 
          -- FIXME EXPLAIN
-         if not self.hasRenderedNames then
-            pl.tablex.insertvalues(self.currentAuthors, names)
+         if not self.state.hasRenderedNames then
+            pl.tablex.insertvalues(self.state.currentAuthors, names)
          end
          if
-            self.doAuthorSubstitute
+            self.state.doAuthorSubstitute
             and not self.sorting
-            and not self.hasRenderedNames
-            and self.precAuthors
-            and pl.tablex.deepcompare(names, self.precAuthors)
+            and not self.state.hasRenderedNames
+            and self.state.precAuthors
+            and pl.tablex.deepcompare(names, self.state.precAuthors)
          then
             -- FIXME NOT IMPLEMENTED
             --   subsequent-author-substitute-rule (default "complete-all" is assumed here)
@@ -1116,7 +1133,7 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
             -- substitutions might affect quotes...
             -- So we use a simple "wrapper" command.
             table.insert(l, self.subsequentAuthorSubstitute)
-            self.firstName = false
+            self.state.firstName = false
          else
             for i, name in ipairs(names) do
                if #names >= et_al_min and i > et_al_use_first then
@@ -1124,7 +1141,7 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
                   break
                end
                local t = self:_a_name(name_node.options, name_node, name)
-               self.firstName = false
+               self.state.firstName = false
                table.insert(l, t)
             end
          end
@@ -1203,7 +1220,7 @@ function CslEngine:_names (options, content, entry)
       name_node = { command = "cs:name", options = {} }
    end
    -- Build inherited options
-   local inherited_opts = pl.tablex.union(self.inheritable[self.mode], options)
+   local inherited_opts = pl.tablex.union(self.inheritable[self.state.mode], options)
    name_node.options = pl.tablex.union(inherited_opts, name_node.options)
    name_node.options.form = name_node.options.form or inherited_opts["name-form"]
    local et_al_min = tonumber(name_node.options["et-al-min"]) or 4 -- No default in the spec, using Chicago's
@@ -1242,8 +1259,8 @@ function CslEngine:_names (options, content, entry)
    resolved = pl.tablex.union(options, resolved)
 
    local rendered = self:_names_with_resolved_opts(resolved, substitute, entry)
-   if rendered and not self.hasRenderedNames then
-      self.hasRenderedNames = true
+   if rendered and not self.state.hasRenderedNames then
+      self.state.hasRenderedNames = true
    end
    return rendered
 end
@@ -1645,10 +1662,11 @@ function CslEngine:_postrender (text)
 end
 
 function CslEngine:_process (entries, mode)
+   self:pushState()
    if mode ~= "citation" and mode ~= "bibliography" then
       SU.error("CSL processing mode must be 'citation' or 'bibliography'")
    end
-   self.mode = mode
+   self.state.mode = mode
    -- Deep copy the entries as cs:substitute may remove fields
    entries = pl.tablex.deepcopy(entries)
 
@@ -1684,7 +1702,9 @@ function CslEngine:_process (entries, mode)
       end
    end
 
-   return self:_render_children(ast, entries)
+   local res = self:_render_children(ast, entries)
+   self:popState()
+   return res
 end
 
 --- Generate a citation string.
