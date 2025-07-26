@@ -586,11 +586,11 @@ local bibTagsToHtml = {
    bibParagraph = { '<div class="bib-par">', "</div>" },
    bibBoxForIndent = { 'span class="bib-box-for-indent"', "</span>" },
    bibRelated = { '<div class="bib-rel">', "</div>" },
+   math = { '<span class="bib-math">\\(', "\\)</span>" }, -- MathJax-compatible \( .. \) delimiters
 }
 
-local function biblink (url, _, class)
-   -- U+1F517 is 🔗
-   return string.format('<a class="%s" href="%s">%s</a>', class, url, "&#x1F517;")
+local function biblink (url, text, class)
+   return string.format('<a class="%s" href="%s">%s</a>', class, url, text)
 end
 
 --- Convert a formatted bibliography to HTML format.
@@ -598,8 +598,11 @@ end
 -- **NOTE**: Very naive implementation for now. Private, may change in the future.
 --
 -- @tparam string out The bibliography output as a string
+-- @tparam[opt=true] boolean standalone Whether to wrap the output in a full HTML document
 -- @treturn string HTML formatted bibliography
-function CslProcessor:_toHtml (out)
+function CslProcessor:_toHtml (out, standalone)
+   standalone = SU.boolean(standalone, true)
+
    -- Replace custom tags with HTML equivalents
    for tag, html in pairs(bibTagsToHtml) do
       local openTag = "<" .. tag .. ">"
@@ -626,24 +629,56 @@ function CslProcessor:_toHtml (out)
       local url = not pmcid:match("^https?://") and "https://www.ncbi.nlm.nih.gov/pmc/articles/" .. pmcid or pmcid
       return biblink(url, pmcid, "bib-pmcid")
    end)
+   if not standalone then
+      return out
+   end
    return table.concat({([[<!DOCTYPE html>
 <html lang="%s">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bibliography</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+<script id="MathJax-script" async
+   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
 <style>
-body { font-family: Arial, sans-serif; }
-.bib-par { padding-left: 3em; text-indent: -3em; padding-bottom: 0.5em; }
-.bib-smallcaps { font-variant: small-caps; }
-.bib-superscript { vertical-align: super; font-size: smaller; }
-.bib-url, .bib-doi, .bib-pmid, .bib-pmcid { text-decoration: none; }
-.bib-box-for-indent { display: inline-block; width: 3em; }
-.bib-rel { font-size: 0.9em; }
+body {
+   font-family: "EB Garamond", serif;
+   font-optical-sizing: auto;
+   font-size: 16pt;
+}
+.bib-par {
+   padding-left: 3em;
+   text-indent: -3em;
+   padding-bottom: 0.5em;
+}
+.bib-smallcaps {
+   font-variant: small-caps;
+}
+.bib-superscript {
+   vertical-align: super;
+   font-size: smaller;
+}
+.bib-url, .bib-doi, .bib-pmid, .bib-pmcid {
+   text-decoration: none;
+   font-size: 0.85em
+}
+.bib-box-for-indent {
+   display: inline-block;
+   width: 3em;
+}
+.bib-rel {
+   font-size: 0.9em;
+   border-left: 2px solid #bdb1df;
+   padding-left: 0.5em;
+   color: #54467b;
+}
 </style>
 </head>
 <body>
-<h1>Bibliography</h1>
 <div class="bibliography">
 ]]):format(self._engine.locale.lang),
    out,
