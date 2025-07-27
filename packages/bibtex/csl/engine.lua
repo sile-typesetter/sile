@@ -33,7 +33,6 @@
 
 local CslLocale = require("packages.bibtex.csl.locale")
 
-local superfolding = require("packages.bibtex.csl.utils.superfolding")
 local endash = luautf8.char(0x2013)
 local emdash = luautf8.char(0x2014)
 
@@ -70,18 +69,18 @@ function CslEngine:_init (style, locale, extras)
 
    -- Cache for some small string operations (e.g. XML escaping)
    -- to avoid repeated processing.
-   self.cache = {}
+   self._cache = {}
 
    -- Early lookups for often used localized punctuation marks
    self.punctuation = {
-      open_quote = self:_render_term("open-quote") or luautf8.char(0x201C), -- 0x201C curly left quote
-      close_quote = self:_render_term("close-quote") or luautf8.char(0x201D), -- 0x201D curly right quote
-      open_inner_quote = self:_render_term("open-inner-quote") or luautf8.char(0x2018), -- 0x2018 curly left single quote
-      close_inner_quote = self:_render_term("close-inner-quote") or luautf8.char(0x2019), -- 0x2019 curly right single quote
-      page_range_delimiter = self:_render_term("page-range-delimiter") or endash,
-      [","] = self:_render_term("comma") or ",",
-      [";"] = self:_render_term("semicolon") or ";",
-      [":"] = self:_render_term("colon") or ":",
+      open_quote = self.locale:term("open-quote") or luautf8.char(0x201C), -- 0x201C curly left quote
+      close_quote = self.locale:term("close-quote") or luautf8.char(0x201D), -- 0x201D curly right quote
+      open_inner_quote = self.locale:term("open-inner-quote") or luautf8.char(0x2018), -- 0x2018 curly left single quote
+      close_inner_quote = self.locale:term("close-inner-quote") or luautf8.char(0x2019), -- 0x2019 curly right single quote
+      page_range_delimiter = self.locale:term("page-range-delimiter") or endash,
+      [","] = self.locale:term("comma") or ",",
+      [";"] = self.locale:term("semicolon") or ";",
+      [":"] = self.locale:term("colon") or ":",
    }
 
    -- Small utility for page ranges, see text processing for <text variable="page">
@@ -268,24 +267,6 @@ end
 
 -- INTERNAL HELPERS
 
-function CslEngine:_render_term (name, form, plural)
-   local t = self.locale:term(name, form, plural)
-   if t then
-      if self.cache[t] then
-         return self.cache[t]
-      end
-      t = self:_xmlEscape(t)
-      -- The CSL specification states, regarding terms:
-      --   "Superscripted Unicode characters can be used for superscripting."
-      -- We replace the latter with their normal form, wrapped in a command.
-      -- The result is cached in the term object to avoid repeated processing.
-      -- (Done after XML escaping as superfolding may add commands.)
-      t = superfolding(t)
-      self.cache[t] = t
-   end
-   return t
-end
-
 function CslEngine:_render_text_specials (value)
    -- Extensions for italic and math...
    -- CAVEAT: the implementation is fairly naive.
@@ -323,8 +304,8 @@ function CslEngine:_xmlEscape (t)
 end
 
 function CslEngine:_punctuation_extra (t)
-   if self.cache[t] then
-      return self.cache[t]
+   if self._cache[t] then
+      return self._cache[t]
    end
    if self.extras.localizedPunctuation then
       -- non-standard: localized punctuation
@@ -333,7 +314,7 @@ function CslEngine:_punctuation_extra (t)
       end)
    end
    t = self:_xmlEscape(t)
-   self.cache[t] = t
+   self._cache[t] = t
    return t
 end
 
@@ -532,7 +513,7 @@ function CslEngine:_text (options, content, entry)
          SU.error("CSL macro " .. options.macro .. " not found")
       end
    elseif options.term then
-      t = self:_render_term(options.term, options.form, SU.boolean(options.plural, false))
+      t = self.locale:term(options.term, options.form, SU.boolean(options.plural, false))
    elseif options.variable then
       variable = options.variable
       t = entry[variable]
@@ -609,7 +590,7 @@ function CslEngine:_a_day (options, day, month) -- month needed to get gender fo
       local genderForm
       if month then
          local monthKey = ("month-%02d"):format(month)
-         local _, gender = self:_render_term(monthKey)
+         local _, gender = self.locale:term(monthKey)
          genderForm = gender or "neuter"
       end
       if SU.boolean(self.locale.styleOptions["limit-day-ordinals-to-day-1"], false) then
@@ -632,7 +613,7 @@ function CslEngine:_a_month (options, month)
       t = ("%02d"):format(month)
    else -- short or long (default)
       local monthKey = ("month-%02d"):format(month)
-      t = self:_render_term(monthKey, form or "long")
+      t = self.locale:term(monthKey, form or "long")
    end
    t = self:_render_stripPeriods(t, options)
    return t
@@ -647,7 +628,7 @@ function CslEngine:_a_season (options, season)
       SU.warn("CSL season formatting as a number is ignored")
    else
       local seasonKey = ("season-%02d"):format(season)
-      t = self:_render_term(seasonKey, form or "long")
+      t = self.locale:term(seasonKey, form or "long")
    end
    t = self:_render_stripPeriods(t, options)
    return t
@@ -802,7 +783,7 @@ function CslEngine:_number (options, content, entry)
       value = value and value.value
    end
    if value then
-      local _, gender = self:_render_term(variable)
+      local _, gender = self.locale:term(variable)
       local genderForm = gender or "neuter"
 
       -- FIXME TODO: Some complex stuff about name ranges, commas, etc. in the spec.
@@ -876,7 +857,7 @@ function CslEngine:_substitute (options, content, entry)
 end
 
 function CslEngine:_name_et_al (options)
-   local t = self:_render_term(options.term or "et-al")
+   local t = self.locale:term(options.term or "et-al")
    t = self:_render_formatting(t, options)
    return t
 end
@@ -1230,7 +1211,7 @@ function CslEngine:_names (options, content, entry)
    if and_opt == "symbol" then
       and_word = "&amp;"
    elseif and_opt == "text" then
-      and_word = self:_render_term("and")
+      and_word = self.locale:term("and")
    end
    local name_delimiter = name_node.options.delimiter or inherited_opts["names-delimiter"] or ", "
    -- local delimiter_precedes_et_al = name_node.options["delimiter-precedes-et-al"] -- FIXME NOT IMPLEMENTED
@@ -1238,9 +1219,9 @@ function CslEngine:_names (options, content, entry)
       or inherited_opts["delimiter-precedes-last"]
       or "contextual"
 
-   if name_delimiter and not self.cache[name_delimiter] then
+   if name_delimiter and not self._cache[name_delimiter] then
       name_delimiter = self:_xmlEscape(name_delimiter)
-      self.cache[name_delimiter] = name_delimiter
+      self._cache[name_delimiter] = name_delimiter
    end
 
    local resolved = {
@@ -1248,7 +1229,7 @@ function CslEngine:_names (options, content, entry)
       et_al_min = et_al_min,
       et_al_use_first = et_al_use_first,
       and_word = and_word,
-      name_delimiter = name_delimiter and self.cache[name_delimiter],
+      name_delimiter = name_delimiter and self._cache[name_delimiter],
       is_label_first = is_label_first,
       label_opts = label_opts,
       et_al_opts = et_al_opts,
@@ -1292,7 +1273,7 @@ function CslEngine:_label (options, content, entry)
             end
          end
       end
-      value = self:_render_term(variable, options.form or "long", plural)
+      value = self.locale:term(variable, options.form or "long", plural)
       value = self:_render_stripPeriods(value, options)
       value = self:_render_textCase(value, options)
       value = self:_render_formatting(value, options)
