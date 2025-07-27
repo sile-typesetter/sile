@@ -14,6 +14,7 @@
 
 local casing = require("packages.bibtex.csl.utils.casing")
 local xmlparser = require("packages.bibtex.csl.utils.xmlparser")
+local superfolding = require("packages.bibtex.csl.utils.superfolding")
 
 local parse = xmlparser.parse
 local rules = {
@@ -31,6 +32,10 @@ function CslLocale:_init (tree)
    self.dates = {}
    self.styleOptions = {}
    self:_preprocess(tree)
+
+   -- Cache for some small string operations to avoid repeated processing
+   -- (XML escaping and superfolding)
+   self._cache = {}
 end
 
 -- Store items from the syntax tree in more convenient structures and maps
@@ -70,8 +75,21 @@ function CslLocale:_preprocess (tree)
    end
 end
 
-function CslLocale:_termvalue (term) -- luacheck: no unused args
-   return term[1]
+function CslLocale:_termvalue (term)
+   local t = term[1]
+   if t then
+      if self._cache[t] then
+         return self._cache[t]
+      end
+      -- XML escape the term value
+      t = t:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;")
+      -- The CSL specification states, regarding terms:
+      --   "Superscripted Unicode characters can be used for superscripting."
+      -- We replace the latter with their normal form, wrapped in a command.
+      t = superfolding(t)
+      self._cache[t] = t
+   end
+   return t
 end
 
 function CslLocale:_lookupTerm (name, form, genderf)
@@ -158,11 +176,13 @@ function CslLocale:date (form)
 end
 
 --- Lookup a term in the locale.
--- Reserved for non-ordinal terms.
+--
+-- This method is intended to be used for non-ordinal terms.
 -- @tparam string name The name of the term
 -- @tparam string form The form of the term (default: "long")
 -- @tparam boolean plural Whether to return the plural form (default: false)
--- @treturn string,string The term (or empty string), and the gender or the term (or nil)
+-- @treturn string|nil The term
+-- @treturn string|nil The gender of the term when applicable
 function CslLocale:term (name, form, plural)
    local term = self:_lookupTerm(name, form)
    if not term then
@@ -173,18 +193,18 @@ function CslLocale:term (name, form, plural)
    end
    local sgpl = SU.ast.findInTree(term, plural and "cs:multiple" or "cs:single")
    if not sgpl then
-      pl.pretty.dump(term)
       return SU.error("CSL term error for singular/multiple: " .. name)
    end
    return self:_termvalue(sgpl), term.options.gender
 end
 
---- Lookup an ordinal term in the locale.
--- Reserved for ordinal terms.
+
+--- Render an ordinal number in the locale, using the appropriate term.
 -- @tparam number number The numeric value to be formatted
--- @tparam string form The form of the term (default: "short")
--- @tparam string genderf The gender-form of the term (default: "neuter")
--- @tparam boolean plural Whether to return the plural form (default: false)
+-- @tparam string|nil form The form of the term (default: "short")
+-- @tparam string|nil genderf The gender-form of the term (default: "neuter")
+-- @tparam boolean|nil plural Whether to return the plural form (default: false)
+-- @treturn string The formatted ordinal term
 function CslLocale:ordinal (number, form, genderf, plural)
    if form == "long" then
       -- TODO FIXME: Not sure this is widely used, not bothering for now
