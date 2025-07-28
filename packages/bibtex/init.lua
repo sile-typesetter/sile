@@ -86,6 +86,7 @@ function package:registerCommands ()
          localizedPunctuation = SU.boolean(options.localizedPunctuation, false),
          italicExtension = SU.boolean(options.italicExtension, true),
          mathExtension = SU.boolean(options.mathExtension, true),
+         breakISBN = SU.boolean(options.breakISBN, true),
       })
    end, "Set the bibliography style and locale for citations and references.")
 
@@ -296,6 +297,7 @@ The command accepts a few additional options:
 \item{\autodoc:parameter{localizedPunctuation} (default \code{false}): whether to use localized punctuation – this is non-standard but may be useful when using a style that was not designed for the target language;}
 \item{\autodoc:parameter{italicExtension} (default \code{true}): whether to convert \code{_text_} to italic text (“à la Markdown”);}
 \item{\autodoc:parameter{mathExtension} (default \code{true}): whether to recognize \code{$formula$} as math formulae in (a subset of the) TeX-like syntax.}
+\item{\autodoc:parameter{breakISBN} (default \code{true}): whether to allow breaking ISBN and ISSN at their dashes.}
 \end{itemize}
 
 The locale and styles files are searched in the \code{csl/locales} and \code{csl/styles} directories, respectively, in your project directory, or in the Lua package path.

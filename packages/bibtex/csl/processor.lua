@@ -190,11 +190,7 @@ end
 -- @treturn CslEngine CSL engine instance
 function CslProcessor:getCslEngine ()
    if not self._engine then
-      self:setBibliographyStyle('chicago-author-date', "en-US", {
-         localizedPunctuation = false,
-         italicExtension = true,
-         mathExtension = true,
-      })
+      self:setBibliographyStyle('chicago-author-date', "en-US")
    end
    return self._engine
 end
@@ -206,6 +202,7 @@ end
 --       localizedPunctuation = false,
 --       italicExtension = true,
 --       mathExtension = true,
+--       hyphenateISBN = true,
 --    })
 --
 --  Style and locale files are searched in the following order:
@@ -221,11 +218,6 @@ end
 -- @tparam string lang Language code for the locale (e.g., "en-US")
 -- @tparam[opt] table options Additional options for the CSL engine
 function CslProcessor:setBibliographyStyle (stylename, lang, options)
-   options = options or {
-      localizedPunctuation = false,
-      italicExtension = true,
-      mathExtension = true,
-   }
    local style = loadCslStyle(stylename)
    if not lang then
       -- Pick the default locale from the style, if any
@@ -237,11 +229,7 @@ function CslProcessor:setBibliographyStyle (stylename, lang, options)
       SU.error("No language specified for CSL style '" .. stylename .. "'")
    end
    local locale = loadCslLocale(lang)
-   self._engine = CslEngine(style, locale, {
-      localizedPunctuation = SU.boolean(options.localizedPunctuation, false),
-      italicExtension = SU.boolean(options.italicExtension, true),
-      mathExtension = SU.boolean(options.mathExtension, true),
-   })
+   self._engine = CslEngine(style, locale, options)
 end
 
 local function resolveEntry (bib, key)

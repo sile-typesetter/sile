@@ -45,20 +45,21 @@ local CslEngine = pl.class()
 --  - `localizedPunctuation` (boolean, default false): use localized punctuation marks (experimental)
 --  - `italicExtension` (boolean,default true): interpret `_text_` as italic
 --  - `mathExtension` (boolean, default true): interpret `$text$` as a TeX-like math expression
+--  - `breakISBN` (boolean, default true): allow breaking ISBNs and ISSNs at their dashes
 --
 -- @tparam CslStyle  style CSL style
 -- @tparam CslLocale locale CSL locale
--- @tparam table     extras Additional data to pass to the engine
+-- @tparam[opt] table extras Additional data to pass to the engine
 -- @treturn CslEngine
 function CslEngine:_init (style, locale, extras)
    self.locale = locale
    self.style = style
-   self.extras = extras
-      or {
-         localizedPunctuation = false,
-         italicExtension = true,
-         mathExtension = true,
-      }
+   self.extras = pl.tablex.union({
+      localizedPunctuation = false,
+      italicExtension = true,
+      mathExtension = true,
+      breakISBN = true,
+   }, extras or {})
 
    -- Shortcuts for often used style elements
    self.macros = style.macros or {}
@@ -525,6 +526,12 @@ function CslEngine:_text (options, content, entry)
       if variable == "page" and t then
          -- Replace any dash in page ranges
          t = self.page_range_replace(t)
+      end
+      if (variable == "ISBN" or variable == "ISSN") and self.extras.breakISBN and t then
+         -- These fields might be problematic for justification, and the default line breaking
+         -- algorithm may not recognize these dashes as word boundaries when occurring in the middle
+         -- of the number.
+         t = luautf8.gsub(t, "([%-–—])", "%1" .. luautf8.char(0x200B)) -- zero-width space to enforce word boundaries
       end
 
       -- FIXME NOT IMPLEMENTED:
