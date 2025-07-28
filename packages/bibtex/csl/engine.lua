@@ -1475,11 +1475,6 @@ function CslEngine:_key (options, content, entry)
    SU.error("CSL key without variable or macro")
 end
 
--- FIXME: A bit ugly: When implementing SU.collatedSort, I didn't consider
--- sorting structured tables, so we need to go low level here.
--- Moreover, I made icu.compare return a boolean, so we have to pay twice
--- the comparison cost to check equality...
--- See PR #2105
 local icu = require("justenoughicu")
 
 function CslEngine:_sort (options, content, entries)
@@ -1494,6 +1489,9 @@ function CslEngine:_sort (options, content, entries)
          table.insert(ordering, child.options.sort ~= "descending") -- true for ascending (default)
       end
    end
+   -- Add two extra keys to ensure a stable sort, see below.
+   table.insert(ordering, true)
+   table.insert(ordering, true)
    -- Compute the sorting keys for each entry
    for _, entry in ipairs(entries) do
       local keys = {}
@@ -1508,10 +1506,18 @@ function CslEngine:_sort (options, content, entries)
             table.insert(keys, key or "")
          end
       end
+      -- Enforce last-chance sorting keys so that the sort function is stable
+      -- with proper strict weak ordering, even if the style leads to identical
+      -- sorting keys for different entries.
+      table.insert(keys, entry["citation-number"] or "")
+      table.insert(keys, entry["citation-key"]) -- Defined, and assumed to be unique
       entry._keys = keys
    end
    -- Perform the sort
    -- Using the locale language (BCP47).
+   -- I wish we could use SU.collatedSort() introduced in PR #2105 (SILE 0.15.6),
+   -- but it relies on setting "document.language" and SILE does not yet support
+   -- setting a BCP47 qualified language here, so we are going low-level.
    local lang = self.locale.lang
    local collator = icu.collation_create(lang, {})
    table.sort(entries, function (a, b)
@@ -1524,25 +1530,20 @@ function CslEngine:_sort (options, content, entries)
       local ak = a._keys
       local bk = b._keys
       for i = 1, #ordering do
-         -- "Items with an empty sort key value are placed at the end of the sort,
-         -- both for ascending and descending sorts."
-         if ak[i] == "" then
-            return bk[i] == ""
-         end
-         if bk[i] == "" then
-            return true
-         end
-
-         if ak[i] ~= bk[i] then -- HACK: See comment above, ugly inequality check
-            local cmp = icu.compare(collator, ak[i], bk[i])
-            -- Hack to keep on working whenever PR #2105 lands and changes icu.compare
-            local islower
-            if type(cmp) == "number" then
-               islower = cmp < 0
-            else
-               islower = cmp
+         local cmp = icu.compare(collator, ak[i], bk[i])
+         if cmp ~= 0 then
+            -- CSL 1.0.2 says:
+            -- "Items with an empty sort key value are placed at the end of the sort,
+            -- both for ascending and descending sorts."
+            -- It's a bit unclear if it applies each key separately.
+            -- This is our interpretation here.
+            if ak[i] == "" then
+               return false
             end
-            -- Now order accordingly
+            if bk[i] == "" then
+               return true
+            end
+            local islower = cmp < 0
             if ordering[i] then
                return islower
             else
@@ -1550,12 +1551,10 @@ function CslEngine:_sort (options, content, entries)
             end
          end
       end
-      -- If we reach this point, the keys are equal (or we had no keys)
-      -- Probably unlikely in real life, and not mentioned in the CSL spec
-      -- unless I missed it. Let's fallback to the citation order, so at
-      -- least cited entries are ordered predictably.
-      SU.warn("CSL sort keys are equal for " .. a["citation-key"] .. " and " .. b["citation-key"])
-      return a["citation-number"] < b["citation-number"]
+      -- We added two extra sorting keys to ensure a stable sort on citation-number,
+      -- and most of all on citation-key which is assumed to be unique.
+      -- So we should never reach this point.
+      SU.error("Something is broken, CSL sort keys are equal for " .. a["citation-key"] .. " and " .. b["citation-key"])
    end)
    icu.collation_destroy(collator)
 end
