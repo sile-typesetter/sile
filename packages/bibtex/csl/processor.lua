@@ -572,7 +572,7 @@ local bibTagsToHtml = {
    bibSmallCaps = { '<span class="bib-smallcaps">', "</span>" },
    bibSuperScript = { '<span class="bib-superscript">', "</span>" },
    bibParagraph = { '<div class="bib-par">', "</div>" },
-   bibBoxForIndent = { 'span class="bib-box-for-indent"', "</span>" },
+   bibBoxForIndent = { '<span class="bib-box-for-indent">', "</span>" },
    bibRelated = { '<div class="bib-rel">', "</div>" },
    math = { '<span class="bib-math">\\(', "\\)</span>" }, -- MathJax-compatible \( .. \) delimiters
 }
@@ -656,7 +656,9 @@ body {
 }
 .bib-box-for-indent {
    display: inline-block;
-   width: 3em;
+   min-width: 2.7em;
+   text-indent: 0;
+   padding-right: 0.3em;
 }
 .bib-rel {
    font-size: 0.9em;
