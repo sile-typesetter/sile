@@ -1286,7 +1286,8 @@ function elements.text:output (x, y, line)
    else
       compensatedY = y
    end
-   SILE.outputter:setCursor(scaleWidth(x, line), compensatedY.length)
+   local xs = scaleWidth(x, line) -- account for stretchability/shrinkability in line justification
+   SILE.outputter:setCursor(xs, compensatedY.length)
    SILE.outputter:setFont(self.font)
    -- There should be no stretch or shrink on the width of a text
    -- element.
@@ -1300,7 +1301,7 @@ function elements.text:output (x, y, line)
       local xratio = self.horizScalingRatio or 1
       local yratio = self.vertScalingRatio or 1
       SU.debug("math", "fake glyph stretch: xratio =", xratio, "yratio =", yratio)
-      SILE.outputter:scaleFn(x, y, xratio, yratio, function ()
+      SILE.outputter:scaleFn(xs, y, xratio, yratio, function ()
          SILE.outputter:drawHbox(self.value, width)
       end)
    else
