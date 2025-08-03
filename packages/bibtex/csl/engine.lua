@@ -128,7 +128,9 @@ end
 
 function CslEngine:pushState ()
    table.insert(self.states, self.state)
-   self.state = {}
+   self.state = {
+      mode = self.state.mode -- Keep the current mode (citation or bibliography) by default
+   }
 end
 
 function CslEngine:popState ()
@@ -229,6 +231,7 @@ function CslEngine:_leaveGroup (rendered, macro)
    if suppressGroup then
       rendered = nil -- Suppress group
    end
+   local vars = self.state.groupState.variables
    self.state.groupState = table.remove(self.state.groupQueue)
    if macro then
       -- If a macro (pseudo-group) is suppressed, we need to track it as an
@@ -240,8 +243,16 @@ function CslEngine:_leaveGroup (rendered, macro)
       -- </group>
       -- Macro "accessed" refers to variable(s) and can be suppressed,
       -- in which case the whole group needs to be suppressed too.
-      local groupCond = "_macro_" .. macro
-      self:_addGroupVariable(groupCond, not suppressGroup)
+      if suppressGroup then
+         self:_addGroupVariable("_macro_" .. macro, false)
+      else
+         -- If the macro is not suppressed, we need to track all variables
+         -- that were called in it, so that they can be used in the outer group.
+         -- Typical use case is <substitute>
+         for variable, value in pairs(vars) do
+            self:_addGroupVariable(variable, value)
+         end
+      end
    elseif not suppressGroup then
       -- A nested non-empty group is treated as a non-empty variable for the
       -- purposes of determining suppression of the outer group.
@@ -280,7 +291,7 @@ function CslEngine:_render_text_specials (value)
             -- Use pseudo-markdown italic extension (_text_) to wrap
             -- the text in emphasis.
             -- Skip if sorting, as it's not supposed to affect sorting.
-            local repl = self.sorting and "%1" or "<em>%1</em>"
+            local repl = self.state.sorting and "%1" or "<em>%1</em>"
             s = luautf8.gsub(s, "_([^_]+)_", repl)
          end
          table.insert(pieces, s)
@@ -345,7 +356,7 @@ function CslEngine:_render_formatting (t, options)
    if not t then
       return
    end
-   if self.sorting then
+   if self.state.sorting then
       -- Skip all formatting in sorting mode
       return t
    end
@@ -399,7 +410,7 @@ function CslEngine:_render_quotes (t, options)
    if not t then
       return
    end
-   if self.sorting then
+   if self.state.sorting then
       -- Skip all quotes in sorting mode
       return luautf8.gsub(t, '[“”"]', "")
    end
@@ -424,7 +435,7 @@ function CslEngine:_render_quotes (t, options)
 end
 
 function CslEngine:_render_link (t, link)
-   if t and link and not self.sorting then
+   if t and link and not self.state.sorting then
       -- We'll let the processor implement CSL 1.0.2 link handling.
       -- (appendix VI)
       -- NOTE: Avoid (quoted) attributes and dashes in tags, as some global
@@ -898,7 +909,7 @@ function CslEngine:_a_name (options, content, entry)
    end
    local demoteNonDroppingParticle = options["demote-non-dropping-particle"] or "never"
 
-   if self.sorting then
+   if self.state.sorting then
       -- Implicitly we are in long form, name-as-sort-order all, and no formatting.
       if demoteNonDroppingParticle == "never" then
          -- Order is: [NDP] Family [Given] [Suffix] e.g. van Gogh Vincent III
@@ -1094,7 +1105,7 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
       local skip = editortranslator and var == "translator" -- done via the "editor" field
       if not skip and entry[var] then
          local label
-         if label_opts and not self.sorting then
+         if label_opts and not self.state.sorting then
             -- (labels in names are skipped in sorting mode)
             local v = var == "editor" and editortranslator and "editortranslator" or var
             local opts = pl.tablex.union(label_opts, { variable = v })
@@ -1110,7 +1121,7 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
          end
          if
             self.state.doAuthorSubstitute
-            and not self.sorting
+            and not self.state.sorting
             and not self.state.hasRenderedNames
             and self.state.precAuthors
             and pl.tablex.deepcompare(names, self.state.precAuthors)
@@ -1485,7 +1496,7 @@ end
 local icu = require("justenoughicu")
 
 function CslEngine:_sort (options, content, entries)
-   if not self.sorting then
+   if not self.state.sorting then
       -- Skipped at rendering
       return
    end
@@ -1637,7 +1648,7 @@ function CslEngine:_postrender (text)
    text = luautf8.gsub(text, "%.%.", ".")
    -- HACK: remove extraneous periods after exclamation and question marks, period or ellipsis
    -- (Follows the preceding rule to also account for moved periods.)
-   text = luautf8.gsub(text, "([…!?]%.)%.", "%1")
+   text = luautf8.gsub(text, "([…!?.])%.", "%1")
    if not piquote then
       -- HACK: remove extraneous periods after quotes.
       -- Opinionated, e.g. for French at least, some typographers wouldn't
@@ -1663,9 +1674,10 @@ function CslEngine:_process (entries, mode)
    end
    local sort = SU.ast.findInTree(ast, "cs:sort")
    if sort then
-      self.sorting = true
+      self:pushState()
+      self.state.sorting = true
       self:_sort(sort.options, sort, entries)
-      self.sorting = false
+      self:popState()
    else
       -- The CSL specification says:
       -- "In the absence of cs:sort, cites and bibliographic entries appear in
