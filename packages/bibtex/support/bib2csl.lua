@@ -80,9 +80,8 @@ end
 
 --- Convert a BibTeX entry to a CSL item.
 -- @tparam table entry The BibTeX entry
--- @tparam number citnum The citation number (computed, not from BibTeX but from actual citation order)
 -- @treturn table The CSL item
-local function bib2csl (entry, citnum)
+local function bib2csl (entry)
    local csl = {}
    local bibtex = entry.attributes
    local bibtype = entry.type:lower()
@@ -97,8 +96,6 @@ local function bib2csl (entry, citnum)
 
    -- Citation key may be wanted by some styles
    csl["citation-key"] = entry.label
-   -- Citation number is used by some styles such as ACS
-   csl["citation-number"] = citnum
 
    -- BibLaTeX label / shorthand
    -- The label "provides a substitute for any missing data"

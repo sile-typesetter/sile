@@ -124,36 +124,38 @@ end
 -- so that we can for instance cache the CSL item and override some fields at some later
 -- processing time.
 -- We also want the proxy to work if the value is deep copied, so we cannot just use a sentinel
--- value representing nil, but must actually keep track of nil-hidden fields.
+-- value representing nil, but must actually keep track of nil-hidden fields inside the proxy.
 -- @tparam  table entry Orignal table to proxy
 -- @treturn table Proxy object wrapping the original entry
-local function CslEntry (entry)
-   local override = {}
-   local hidden = {}
-   local proxy = {}
+local function CslEntry(entry)
+   local proxy = {
+      __entry = entry,
+      __override = {},
+      __hidden = {},
+   }
    setmetatable(proxy, {
-      __index = function(_, key)
-         if hidden[key] then return nil end
-         local val = override[key]
+      __index = function(t, key)
+         if t.__hidden[key] then return nil end
+         local val = t.__override[key]
          if val ~= nil then return val end
-         return entry[key]
+         return t.__entry[key]
       end,
-      __newindex = function(_, key, value)
+      __newindex = function(t, key, value)
          if value == nil then
-            hidden[key] = true
-            override[key] = nil
+            t.__hidden[key] = true
+            t.__override[key] = nil
          else
-            hidden[key] = nil
-            override[key] = value
+            t.__hidden[key] = nil
+            t.__override[key] = value
          end
       end,
-      __pairs = function()
+      __pairs = function(t)
          local merged = {}
-         for k, v in pairs(entry) do
-            if not hidden[k] then merged[k] = v end
+         for k, v in pairs(t.__entry) do
+            if not t.__hidden[k] then merged[k] = v end
          end
-         for k, v in pairs(override) do
-            if not hidden[k] then merged[k] = v end
+         for k, v in pairs(t.__override) do
+            if not t.__hidden[k] then merged[k] = v end
          end
          return pairs(merged)
       end,
@@ -366,7 +368,7 @@ function CslProcessor:_adapter (entry, citnum)
             SU.error("Related entry " .. r .. " not found in bibliography")
             return nil
          end
-         return self:_adapter(related_entry, nil) -- no citation number for related entries
+         return self:_adapter(related_entry, 0) -- Some styles break without a citation number...
       end):filter(function (e) return e ~= nil end)
       entry._csl._related = related
    end
@@ -511,20 +513,11 @@ function CslProcessor:bibliography (options)
          crossrefAndXDataResolve(bib, entry)
          if entry then
             local citnum
-            local prevcite = self._data.cited.refs[key]
-            if not prevcite then
-               -- This is just to make happy CSL styles that require a citation number
-               -- However, table order is not guaranteed in Lua so the output may be
-               -- inconsistent across runs with styles that use this number for sorting.
-               -- This may only happen for non-cited entries in the bibliography, and it
-               -- would be a bad practice to use such a style to print the full bibliography,
-               -- so I don't see a strong need to fix this at the expense of performance.
-               -- (and we can't really, some styles might have several sorting criteria
-               -- leading to unpredictable order anyway).
-               ncites = ncites + 1
-               citnum = ncites
+            local cited = self._data.cited.refs[key]
+            if not cited then
+               citnum = 0
             else
-               citnum = prevcite.citnum
+               citnum = cited.citnum
             end
             local cslentry = self:_adapter(entry, citnum)
             if not SU.boolean(options.related, false) then
@@ -532,6 +525,13 @@ function CslProcessor:bibliography (options)
             end
             local isFiltered = not filter or self:applyFilter(cslentry, filter)
             if isFiltered then
+               if citnum == 0 then
+                  -- This is a non-cited entry, so we need to set the citation number
+                  -- to the next available number in the bibliography.
+                  ncites = ncites + 1
+                  citnum = ncites
+                  cslentry['citation-number'] = citnum
+               end
                table.insert(entries, cslentry)
             end
          end
