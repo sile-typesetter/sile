@@ -20,7 +20,7 @@ jobs:
     name: Build Ubuntu ${{ matrix.configuration[0] }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Cache test fonts
@@ -102,7 +102,7 @@ jobs:
     name: Build from source tarball without automake
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Cache lua_modules
@@ -150,7 +150,7 @@ jobs:
       SHA256SUM: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Cache test fonts
@@ -205,7 +205,7 @@ jobs:
     name: Build Nix
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Cache test fonts
