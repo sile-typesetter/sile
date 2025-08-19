@@ -114,12 +114,16 @@ function package:registerCommands ()
       local children = {}
       for _, child in ipairs(content) do
          if type(child) == "table" then
-            if child.command ~= "cite" then
-               SU.error("Only \\cite commands are allowed in \\cites")
+            if child.command == "cite" then
+               local key = self:_getCitationKey(child.options, child)
+               child.options.key = key
+               table.insert(children, child.options)
+            elseif child.command == "nocite" then
+               local key = self:_getCitationKey(child.options, child)
+               self._processor:nocite(key)
+            else
+               SU.error("Only \\cite and \\nocite commands are allowed in \\cites")
             end
-            local key = self:_getCitationKey(child.options, child)
-            child.options.key = key
-            table.insert(children, child.options)
          end
          -- Silently ignore other content (normally only blank lines)
       end
@@ -312,7 +316,7 @@ To mark an entry as cited without actually producing a citation, use \autodoc:co
 This is useful when you want to include an entry in the bibliography without citing it in the text.
 
 To generate multiple citations grouped correctly, use \autodoc:command{\cites{\cite{<key1>} \cite{<key2>}, …}}.
-This wrapper command only accepts \autodoc:command{\cite} elements following their standard syntax.
+This wrapper command only accepts \autodoc:command{\cite} and \autodoc:command{\nocite} elements following their standard syntax.
 Any other element triggers an error, and any text content is silently ignored.
 
 To produce a bibliography of cited references, use \autodoc:command{\printbibliography}.
@@ -324,7 +328,7 @@ In that case, the \autodoc:parameter{filter} option can be used to filter the en
 It accepts list of space-separated filters, such as \code{type-book} or \code{not-type-book}, or \code{keyword-foo} or \code{not-keyword-foo}, \code{issued-2020} or \code{issued-2023-2025}.
 
 You can also use the \autodoc:parameter{related=true} option to include related entries in a smaller section after a main entry.
-The may be interesting when, for reviews of a work, which you may find interesting to have directly after the main entry for that work.
+The may be useful when, for reviews of a work, which you may find interesting to have directly after the main entry for that work.
 
 To produce a bibliographic reference, use \autodoc:command{\reference{<key>}}.
 Note that this command is not intended for actual use, but for testing purposes.
