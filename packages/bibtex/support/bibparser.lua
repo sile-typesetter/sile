@@ -187,7 +187,7 @@ local function parseBibtex (fn, biblio, aliases, related)
                if not biblio[id] and not aliases[id] then
                   -- We are not supporting aliases of aliases:
                   -- It's not clear whether BibLaTeX supports that, but v3.21 §2.3.3 seems to suggest
-                  -- the contrary (mentioning that aliases are to the "primary key".
+                  -- the contrary (mentioning that aliases are to the "primary key").
                   aliases[id] = consolidated
                else
                   SU.warn("Duplicate entry alias '" .. id .. "' in entry '" .. ent.label .. "', skipped")
@@ -260,7 +260,7 @@ end
 -- of related entries, but does not imply any inheritance.
 -- Implementation note:
 -- We are not here to check the consistency of the BibTeX file, so there is
--- no check that xdata refers only to @xdata entries
+-- no check that xdata refers only to @xdata entries.
 -- Removing the crossref field implies we won't track its use and implicitly
 -- cite referenced entries in the bibliography over a certain threshold.
 -- @tparam table bib Bibliography
