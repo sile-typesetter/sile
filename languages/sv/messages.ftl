@@ -1,11 +1,3 @@
-bibliography-and = och
-
-bibliography-edited-by = Redigerad av { $name }
-
-bibliography-et-al = m.fl.
-
-bibliography-translated-by = Översatt av { $name }
-
 book-chapter-title = Kapitel { $number }
 
 hello = Hej <em>{ $name }</em>!
