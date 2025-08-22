@@ -150,28 +150,14 @@ local mathGrammar = function (_ENV)
          (P"}" + E("`}` expected"))
          ) / function (...)
             local t = {...}
-            -- Remove the last mathlist if empty. This way,
-            -- `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
-            if not t[#t][1] or not t[#t][1][1] then table.remove(t) end
+            local last = t[#t]
+            -- Remove the last element if empty:
+            -- So that `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
+            if #last == 0 or (#last == 1 and #last[#last] == 0) then
+               -- Empty mathlist, or mathlist containing a single empty mathlist.
+               table.remove(t)
+            end
             return pl.utils.unpack(t)
-         end
-
-   local dim2_arg_inner = Ct(V"mathlist" * (P"&" * V"mathlist")^0) /
-      function (t)
-         t.id = "mathlist"
-         return t
-      end
-   local dim2_arg =
-      Cg(P"{" *
-         dim2_arg_inner *
-         (P"\\\\" * dim2_arg_inner)^1 *
-         (P"}" + E("`}` expected"))
-         ) / function (...)
-         local t = {...}
-         -- Remove the last mathlist if empty. This way,
-         -- `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
-         if not t[#t][1] or not t[#t][1][1] then table.remove(t) end
-         return pl.utils.unpack(t)
          end
 
    -- TeX uses the regular asterisk (* = U+002A) in superscripts or subscript:
