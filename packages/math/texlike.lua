@@ -648,47 +648,56 @@ local function compileToMathML_aux (_, arg_env, tree)
       end
       return res
    elseif tree.id == "command" and symbols[tree.command] then
-      local atom = { id = "atom", [1] = symbols[tree.command] }
       if isAccentSymbol(symbols[tree.command]) and #tree > 0 then
-         -- LaTeX-style accents \overrightarrow{v} = <mover accent="true"><mi>v</mi><mo>&#x20D7;</mo></mover>
+         -- LaTeX-style accents
+         -- \overrightarrow{v} = <mover accent="true"><mi>v</mi><mo>&#x20D7;</mo></mover>
          local accent = {
-            id = "command",
             command = "mover",
             options = {
                accent = "true",
             },
+            [1] = tree[1],
+            [2] = {
+               command = "mo", -- accents are always <mo>
+               options = {},
+               symbols[tree.command]
+            },
          }
-         accent[1] = compileToMathML_aux(nil, arg_env, tree[1])
-         accent[2] = compileToMathML_aux(nil, arg_env, atom)
          tree = accent
       elseif isBottomAccentSymbol(symbols[tree.command]) and #tree > 0 then
-         -- LaTeX-style bottom accents \underleftarrow{v} = <munder accent="true"><mi>v</mi><mo>&#x20EE;</mo></munder>
+         -- LaTeX-style bottom accents
+         -- \underleftarrow{v} = <munder accentunder="true"><mi>v</mi><mo>&#x20EE;</mo></munder>
          local accent = {
-            id = "command",
             command = "munder",
             options = {
                accentunder = "true",
             },
+            [1] = tree[1],
+            [2] = {
+               command = "mo", -- accents are always <mo>
+               options = {},
+               symbols[tree.command]
+            },
          }
-         accent[1] = compileToMathML_aux(nil, arg_env, tree[1])
-         accent[2] = compileToMathML_aux(nil, arg_env, atom)
          tree = accent
       elseif #tree > 0 then
          -- Play cool with LaTeX-style commands that don't take arguments:
          -- Edge case for non-accent symbols so we don't loose bracketed groups
          -- that might have been seen as command arguments.
          -- Ex. \langle{x}\rangle (without space after \langle)
+         -- The symbol may lead to something else than a bare <mo>, so we
+         -- need to compile it properly via an atom.
+         local atom = { id = "atom", [1] = symbols[tree.command] }
          local sym = compileToMathML_aux(nil, arg_env, atom)
-         -- Compile all children in-place
-         for i, child in ipairs(tree) do
-            tree[i] = compileToMathML_aux(nil, arg_env, child)
-         end
          -- Insert symbol at the beginning,
          -- And add a wrapper mrow to be unwrapped in the parent.
          table.insert(tree, 1, sym)
          tree.command = "mrow"
          tree.id = "wrapper"
       else
+         -- The symbol may lead to something else than a bare <mo>, so we
+         -- need to compile it properly via an atom.
+         local atom = { id = "atom", [1] = symbols[tree.command] }
          tree = compileToMathML_aux(nil, arg_env, atom)
       end
    elseif tree.id == "argument" then
