@@ -48,8 +48,8 @@ function package:declareSettings ()
    })
    SILE.settings:declare({
       parameter = "math.font.size",
-      type = "integer",
-      default = 10,
+      type = "number or nil",
+      default = nil,
    })
    -- Whether to show debug boxes around mboxes
    SILE.settings:declare({
@@ -89,8 +89,35 @@ function package:declareSettings ()
    })
 end
 
-function package:registerCommands ()
-   self:registerCommand("mathml", function (options, content)
+function package:processMathML (options, content)
+   SILE.settings:temporarily(function ()
+      local font = {
+         style = SILE.settings:get("math.font.style"),
+         weight = SILE.settings:get("math.font.weight"),
+         -- https://learn.microsoft.com/en-us/typography/opentype/spec/math#opentype-layout-tags-used-with-the-math-table
+         --   "Script tag to be used for features in math layout.
+         --   The only language system supported with this tag is the default language system."
+         -- Thus, needed for the ssty feature in superscript/subscript to work properly.
+         script = "math",
+      }
+      local filename = SILE.settings:get("math.font.filename")
+      if filename and filename ~= "" then
+         font.filename = filename
+      else
+         font.family = SILE.settings:get("math.font.family")
+      end
+      local size = SILE.settings:get("math.font.size")
+      if size then
+         font.size = size
+      else
+         font.adjust = "ex-height"
+      end
+      -- Set the current font to the math font
+      SILE.call("font", font)
+      -- Ensure the (possibly adjusted) math font size is stored
+      -- (for use in mu units, etc.)
+      SILE.settings:set("math.font.size", SILE.settings:get("font.size"))
+
       local mbox
       xpcall(function ()
          mbox = self:ConvertMathML(content)
@@ -100,16 +127,16 @@ function package:registerCommands ()
       end)
       self:handleMath(mbox, options)
    end)
+end
+
+function package:registerCommands ()
+   self:registerCommand("mathml", function (options, content)
+      self:processMathML(options, content)
+   end)
 
    self:registerCommand("math", function (options, content)
-      local mbox
-      xpcall(function ()
-         mbox = self:ConvertMathML(self:compileToMathML({}, self:convertTexlike(content)))
-      end, function (err)
-         print(err)
-         print(debug.traceback())
-      end)
-      self:handleMath(mbox, options)
+      content = self:compileToMathML({}, self:convertTexlike(content))
+      self:processMathML(options, content)
    end)
 
    self:registerCommand("math:numberingstyle", function (options, _)
@@ -127,7 +154,6 @@ package.documentation = [[
 \begin{document}
 \use[module=packages.math]
 \set[parameter=math.font.family, value=Libertinus Math]
-\set[parameter=math.font.size, value=11]
 % Default verbatim font (Hack) is missing a few math symbols
 \use[module=packages.font-fallback]
 \font:add-fallback[family=Symbola]
@@ -142,11 +168,16 @@ Feedback and contributions are always welcome.}
 By default, this package uses Libertinus Math, so it will fail if Libertinus Math can’t be found.
 Another font may be specified via the setting \autodoc:setting{math.font.family}.
 If required, you can set the font style and weight via \autodoc:setting{math.font.style} and \autodoc:setting{math.font.weight}.
-The font size can be set via \autodoc:setting{math.font.size}.
+
+The \autodoc:setting{math.font.size} setting controls the math font size.
+By default, it is \emph{not} set, and the math font size is computed to match the ex-height of the current document font (and the setting accordingly is temporarily defined within math mode).
+It allows math formulas to blend well with the surrounding text, even when the text font size changes (e.g., in section titles, footnotes, etc.).
+(At your convenience, fix it to a fixed size, but then the automatic adjustment is disabled.)
+
 The \autodoc:setting{math.font.script.feature} setting can be used to specify OpenType features for the math font, which are applied to the smaller script styles.
 It defaults to \code{ssty} (script style alternates), notably to ensure that some symbols such as the prime, double prime, etc. are displayed correctly.
 The default setting applies to Libertinus Math, STIX Two Math, TeX Gyre Termes Math, and all well-designed math fonts, but some fonts may require different features.
-(The STIX Two Math font has a stylitic set \code{ss04} from primes only, but also supports \code{ssty} with additional optical adjustments.)
+(The STIX Two Math font has a stylistic set \code{ss04} from primes only, but also supports \code{ssty} with additional optical adjustments.)
 
 \paragraph{MathML}
 The first way to typeset math formulas is to enter them in the MathML format.

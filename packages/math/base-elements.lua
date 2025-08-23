@@ -209,22 +209,8 @@ function elements.mbox:_init ()
    self.value = {}
    self.mode = mathMode.display
    self.atom = atoms.types.ord
-   local font = {
-      family = SILE.settings:get("math.font.family"),
-      size = SILE.settings:get("math.font.size"),
-      style = SILE.settings:get("math.font.style"),
-      weight = SILE.settings:get("math.font.weight"),
-      -- https://learn.microsoft.com/en-us/typography/opentype/spec/math#opentype-layout-tags-used-with-the-math-table
-      --   "Script tag to be used for features in math layout.
-      --   The only language system supported with this tag is the default language system."
-      -- Thus, needed for the ssty feature in superscript/subscript to work properly.
-      script = "math",
-   }
-   local filename = SILE.settings:get("math.font.filename")
-   if filename and filename ~= "" then
-      font.filename = filename
-   end
-   self.font = SILE.font.loadDefaults(font)
+   -- The math font is assumed to be already set as current by the calling context.
+   self.font = SILE.font.loadDefaults({})
 end
 
 function elements.mbox:styleChildren ()
@@ -1468,7 +1454,7 @@ function elements.table:_init (children, options)
       return #row.children
    end, self.children)))
    SU.debug("math", "self.ncols =", self.ncols)
-   local spacing = SILE.settings:get("math.font.size") * 0.6 -- arbitrary ratio of the current math font size
+   local spacing = self.font.size * 0.6 -- arbitrary ratio of the current math font size
    self.rowspacing = self.options.rowspacing and SILE.types.length(self.options.rowspacing) or spacing
    self.columnspacing = self.options.columnspacing and SILE.types.length(self.options.columnspacing) or spacing
    -- Pad rows that do not have enough cells by adding cells to the
@@ -1752,9 +1738,6 @@ function elements.padded:styleChildren ()
 end
 
 function elements.padded:shape ()
-   -- TODO MathML allows percentages font-relative units (em, ex) for padding
-   -- But our units work with font.size, not math.font.size (possibly adjusted by scaleDown)
-   -- so the expectations might not be met.
    local width = self.attributes.width and SU.cast("measurement", self.attributes.width)
    local height = self.attributes.height and SU.cast("measurement", self.attributes.height)
    local depth = self.attributes.depth and SU.cast("measurement", self.attributes.depth)
