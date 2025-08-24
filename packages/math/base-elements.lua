@@ -1763,7 +1763,7 @@ function elements.padded:output (_, _, _) end
 -- Bevelled fractions are not part of MathML Core, and MathML4 does not
 -- exactly specify how to compute the layout.
 elements.bevelledFraction = pl.class(elements.fraction) -- Inherit from fraction
-elements.fraction._type = "BevelledFraction"
+elements.bevelledFraction._type = "BevelledFraction"
 
 function elements.bevelledFraction:shape ()
    local constants = self:getMathMetrics().constants
