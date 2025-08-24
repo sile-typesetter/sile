@@ -1447,7 +1447,7 @@ elements.table._type = "table" -- TODO why case difference?
 function elements.table:_init (children, options)
    elements.mbox._init(self)
    self.children = children
-   self.options = options
+   self.options = pl.tablex.copy(options) -- Shallow copy the options as columnalign is modified below
    self.nrows = #self.children
    self.ncols = math.max(pl.utils.unpack(mapList(function (_, row)
       return #row.children
