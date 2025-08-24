@@ -12,42 +12,82 @@ local adjust_metric = P("ex-height") + P("cap-height")
 local adjustment = Ct(Cg(bits.number, "amount")^-1 * bits.ws * Cg(adjust_metric, "unit"))
 -- stylua: ignore end
 
-local function measureFontAdjustment (metric)
+--- Measure a font adjustment metric (ex-height or cap-height) for a given font options.
+-- @tparam string metric The metric to measure ("ex-height" or "cap-height")
+-- @tparam table fontoptions The font options to use
+local function measureFontAdjustment (metric, fontoptions)
    if metric == "ex-height" then
       -- Uses the height of lowercase letters.
       -- This is used to normalize lowercase letters across fonts.
       -- The height of the lowercase letter "x" is used as the reference.
       -- Another option would be to use the OS/2 font table sxHeight value when available.
-      return SILE.shaper:measureChar("x").height
+      return SILE.shaper:measureChar("x", fontoptions).height
    end
    if metric == "cap-height" then
       -- Uses the the height of uppercase letters.
       -- This is used to normalize uppercase letters across fonts.
       -- The height of the uppercase letter "H" is used as the reference.
       -- Another option would be to use the OS/2 font table sCapHeight value when available.
-      return SILE.shaper:measureChar("H").height
+      return SILE.shaper:measureChar("H", fontoptions).height
    end
    SU.error("Unknown font adjust metric " .. metric)
 end
 
+local _fontAdjustmentCache = {}
+local FONT_SIZE_FOR_ADJUSTMENT = 10 -- arbitrary size to measure adjustments
+
+--- Compute the adjusted font size based on an "adjust" option
+-- @tparam table options The font options, including the "adjust" field (in units of ex-height or cap-height)
+-- @treturn number The font size adjusted to the current font size
 local function adjustedFontSize (options)
    local adjust = options.adjust
    local parsed = adjustment:match(adjust)
    if not parsed then
       SU.error("Couldn't parse font adjust value " .. adjust)
    end
+   local ratio = parsed.amount or 1
+
+   -- We will adjust to the current font, but a neutral style, no variant, no features, no variations.
+   -- We assume the adjustment ratio between two fonts is not affected by the size, and only need
+   -- to be measured once per couple of fonts, for efficient caching.
+   -- The weight however is kept as it may affect the metrics, esp. if one of the fonts has some
+   -- weight unavailable in the other.
+   -- Variations are kept too, who knows if some axis may affect the ex-height/cap-height ratio...
+   local currentOptions = SILE.font.loadDefaults({
+      size = FONT_SIZE_FOR_ADJUSTMENT,
+      style = "",
+      variant = "normal",
+      features = "",
+   })
+   local currentKey = SILE.font._key(currentOptions)
+
    -- Shallow copy: we don't want to modify the original AST as content may be reused
    -- in other contexts (e.g. running headers) and may need to adapt to different font sizes.
    local baseOpts = pl.tablex.copy(options)
    baseOpts.adjust = nil -- cancel for target font size calculation
-   local currentMeasure = measureFontAdjustment(parsed.unit)
-   local ratio = parsed.amount or 1
-   local newMeasure
-   -- Apply the target font size to measure the new font
-   SILE.call("font", baseOpts, function ()
-      newMeasure = measureFontAdjustment(parsed.unit)
-   end)
-   return SILE.settings:get("font.size") * ratio * (currentMeasure / newMeasure)
+   baseOpts.size = FONT_SIZE_FOR_ADJUSTMENT
+   baseOpts.style = ""
+   baseOpts.variant = "normal"
+   baseOpts.features = ""
+   local newOptions = SILE.font.loadDefaults(baseOpts)
+   if newOptions.filename then
+      newOptions.family = nil
+   end
+   local newKey = SILE.font._key(newOptions)
+
+   local cacheKey = parsed.unit .. ":" .. currentKey .. ":" .. newKey
+   local adjustmentRatio = _fontAdjustmentCache[cacheKey]
+   if not adjustmentRatio then
+      local currentMeasure = measureFontAdjustment(parsed.unit, currentOptions)
+      local newMeasure
+      -- Apply the target font size to measure the new font
+      SILE.call("font", newOptions, function ()
+         newMeasure = measureFontAdjustment(parsed.unit, newOptions)
+      end)
+      adjustmentRatio = currentMeasure / newMeasure
+      _fontAdjustmentCache[cacheKey] = adjustmentRatio
+   end
+   return SILE.settings:get("font.size") * ratio * adjustmentRatio
 end
 
 SILE.registerCommand("font", function (options, content)
