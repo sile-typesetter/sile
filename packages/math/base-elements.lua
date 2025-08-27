@@ -1817,6 +1817,76 @@ function elements.bevelledFraction:output (x, y, line)
    SILE.outputter:drawSVG(svg, xscaled, y, barwidth, h, 1)
 end
 
+--- <menclose> is not part of MathML Core, but is in MathML3 and MathML4.
+elements.enclose = pl.class(elements.mbox)
+elements.enclose._type = "Enclose"
+
+function elements.enclose:__tostring ()
+   return self._type .. "(" .. tostring(self.enclosed) .. ")"
+end
+
+function elements.enclose:_init (attributes, enclosed)
+   elements.mbox._init(self)
+   self.enclosed = enclosed
+   self.attributes = attributes or {}
+   table.insert(self.children, enclosed)
+end
+
+function elements.enclose:styleChildren ()
+   self.enclosed.mode = self.mode
+end
+
+function elements.enclose:shape ()
+   -- MathML4 umpteenth draft, 3.3.0.2: The amount of distance around "the contents are not specified by MathML,
+   -- and left to the renderer."
+   -- "In practice, paddings on each side of 0.4em in the horizontal direction and .5ex in the vertical direction seem to work well."
+   -- This informal appreciation in a standard is... weird at best.
+   -- The renderer says: "It looks nicer with other values."
+   -- MathML Core has nothing to say, since it does not support <menclose>.
+   self.hpadding = SILE.types.length("0.25em"):absolute();
+   self.vpadding = SILE.types.length("0.4ex"):absolute();
+   self.width = self.enclosed.width + 2 * self.hpadding
+   self.height = self.enclosed.height + self.vpadding
+   self.depth = self.enclosed.depth + self.vpadding
+   self.enclosed.relX = self.hpadding
+
+   -- Let's use the fraction rule as a default thickness.
+   -- We're in the land of a totally ill-defined specifications, so at least use something plausible.
+   local constants = self:getMathMetrics().constants
+   local scaleDown = self:getScaleDown()
+   self.ruleThickness = self.attributes.linethickness
+         and SU.cast("measurement", self.attributes.linethickness):tonumber()
+      or constants.fractionRuleThickness * scaleDown
+end
+
+function elements.enclose:output (x, y, line)
+   local notationShapes = require("packages.math.menclose-notations")
+   local h = self.height:tonumber()
+   local d = self.depth:tonumber()
+   local w = scaleWidth(self.width, line):tonumber()
+   local thickness = _r(self.ruleThickness)
+   local offset = SILE.types.measurement("0.1em"):tonumber() -- Empirical, "seems to work well"
+   local arrow = SILE.types.measurement("0.8ex"):tonumber() -- Ibid.
+   local notations = self.attributes.notations
+      and pl.stringx.split(self.attributes.notations)
+      or {}
+   local paths = {}
+   for _, n in ipairs(notations) do
+      if notationShapes[n] then
+         local nShape = notationShapes[n](_r(w), _r(h + d), thickness, offset, arrow)
+         if nShape then
+            table.insert(paths, table.concat(nShape, " "))
+         end
+      end
+   end
+   if #paths == 0 then
+      return
+   end
+   local svg = table.concat(paths, " ")
+   local xscaled = scaleWidth(x, line)
+   SILE.outputter:drawSVG(svg, xscaled, y, w, h, 1)
+end
+
 elements.mathMode = mathMode
 elements.newSubscript = newSubscript
 elements.newUnderOver = newUnderOver
