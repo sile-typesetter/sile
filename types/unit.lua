@@ -198,10 +198,48 @@ unittypes["em"] = {
    end,
 }
 
+--- Return the x-height of the current font, in points.
+--
+-- It uses font metrics when available, or a few heuristics otherwise.
+-- @treturn number x-height
+local function getExHeight()
+   local fontoptions = SILE.font.loadDefaults({})
+   local ot = require("core.opentype-parser")
+   local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+   local font = ot.parseFont(face)
+   local fontSize = SILE.settings:get("font.size")
+   local unitsPerEm = font.head.unitsPerEm
+   -- Use OS/2 metrics, if available.
+   local h = font.os2 and font.os2.sxHeight
+   if h and h > 0 then
+      return h / unitsPerEm * fontSize
+   end
+   -- Else, try measuring a character.
+   -- CSS3 states: "One possible heuristic is to look at how far the glyph for
+   -- the lowercase "o" extends below the baseline, and subtract that value
+   -- from the top of its bounding box."
+   local m, exists = SILE.shaper:measureChar("o")
+   if exists then
+      return m.height - m.depth
+   end
+   -- OpenType mentions that "the value may be set equal to the top of the
+   -- unscaled and unhinted glyph bounding box of the glyph encoded at U+0078
+   -- (LATIN SMALL LETTER X)"
+   -- Some "x" glyphs may diagonals that overshoot the x-height, but if we
+   -- failed measuring "o" above, it's probably the best we can do indeed.
+   m, exists = SILE.shaper:measureChar("x")
+   if exists then
+      return m.height
+   end
+   -- Not all fonts have an "o" or an "x"...
+   -- Last resort (empirical approximation) as per CSS3.
+   return fontSize * 0.5
+end
+
 unittypes["ex"] = {
    relative = true,
    definition = function (value)
-      return value * SILE.shaper:measureChar("x").height
+      return value * getExHeight()
    end,
 }
 
