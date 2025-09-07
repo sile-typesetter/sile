@@ -806,19 +806,56 @@ local function parsePost (s)
    }
 end
 
+-- OS/2 table definitions
+-- Version 0 minimum fields (length: 78 bytes)
+local panose = "panose:{ bFamilyType:u1 bSerifStyle:u1 bWeight:u1 bProportion:u1 bContrast:u1 bStrokeVariation:u1 bArmStyle:u1 bLetterForm:u1 bMidline:u1 bXHeight:u1 }"
+local OS2v0Base = table.concat({
+   ">version:u2 xAvgCharWidth:i2 usWeightClass:u2 usWidthClass:u2 fsType:u2 ySubscriptXSize:i2 ySubscriptYSize:i2 ySubscriptXOffset:i2 ySubscriptYOffset:i2 ySuperscriptXSize:i2 ySuperscriptYSize:i2 ySuperscriptXOffset:i2 ySuperscriptYOffset:i2 yStrikeoutSize:i2 yStrikeoutPosition:i2 sFamilyClass:i2 ",
+   panose,
+   "ulUnicodeRange1:u4 ulUnicodeRange2:u4 ulUnicodeRange3:u4 ulUnicodeRange4:u4 achVendID:s4 fsSelection:u2 usFirstCharIndex:u2 usLastCharIndex:u2",
+}, " ")
+-- Some legacy TrueType fonts have a shortened version 0 table and the size has to be checked.
+-- Normally version 0 includes more fields.
+local OS2v0Ext = ">sTypoAscender:i2 sTypoDescender:i2 sTypoLineGap:i2 usWinAscent:u2 usWinDescent:u2"
+-- Version 1 adds two fields
+local OS2v1Ext = ">ulCodePageRange1:u4 ulCodePageRange2:u4"
+-- Version 2 to 4 are identical and add five fields
+local OS2v2Ext = ">sxHeight:i2 sCapHeight:i2 usDefaultChar:u2 usBreakChar:u2 usMaxContext:u2"
+-- Version 5 adds two fields
+local OS2v5Ext = ">usLowerOpticalPointSize:u2 usUpperOpticalPointSize:u2"
+
 local function parseOs2 (s)
    if s:len() <= 0 then
       return
    end
    local fd = vstruct.cursor(s)
-   local header = vstruct.read(
-      ">version:u2 xAvgCharWidth:i2 usWeightClass:u2 usWidthClass:u2 fsType:u2 ySubscriptXSize:i2 ySubscriptYSize:i2 ySubscriptXOffset:i2 ySubscriptYOffset:i2 ySuperscriptXSize:i2 ySuperscriptYSize:i2 ySuperscriptXOffset:i2 ySuperscriptYOffset:i2, yStrikeoutSize:i2 yStrikeoutPosition:i2",
-      fd
-   )
-   return {
-      yStrikeoutPosition = header.yStrikeoutPosition,
-      yStrikeoutSize = header.yStrikeoutSize,
-   }
+   local header = vstruct.read(OS2v0Base, fd)
+   if header.version == 0 then
+      -- Some legacy TrueType fonts can have a shortened table,
+      -- We need to check the length of the table.
+      if s:len() > 78 then
+         local ext = vstruct.read(OS2v0Ext, fd)
+         pl.tablex.update(header, ext)
+      end
+      return header
+   end
+
+   -- version >= 1
+   local ext0 = vstruct.read(OS2v0Ext, fd)
+   pl.tablex.update(header, ext0)
+   if header.version >= 1 then
+      local ext1 = vstruct.read(OS2v1Ext, fd)
+      pl.tablex.update(header, ext1)
+   end
+   if header.version >= 2 then
+      local ext2 = vstruct.read(OS2v2Ext, fd)
+      pl.tablex.update(header, ext2)
+   end
+   if header.version >= 5 then
+      local ext5 = vstruct.read(OS2v5Ext, fd)
+      pl.tablex.update(header, ext5)
+   end
+   return header
 end
 
 local parseFont = function (face)
