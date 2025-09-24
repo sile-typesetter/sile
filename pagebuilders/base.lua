@@ -111,7 +111,7 @@ function pagebuilder:findBestBreak (options)
          else
             c = badness
          end
-         if c < leastC then
+         if c <= leastC then
             leastC = c
             bestBreak = i
          else
