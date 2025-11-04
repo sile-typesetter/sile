@@ -200,8 +200,9 @@ function elements.mbox:__tostring ()
    return self._type
 end
 
-function elements.mbox:_init ()
+function elements.mbox:_init (attributes)
    nodefactory.hbox._init(self)
+   self.attributes = attributes or {}
    self.font = {}
    self.children = {} -- The child nodes
    self.relX = SILE.types.length(0) -- x position relative to its parent box
@@ -395,8 +396,8 @@ function elements.stackbox:__tostring ()
    return result
 end
 
-function elements.stackbox:_init (direction, children)
-   elements.mbox._init(self)
+function elements.stackbox:_init (attributes, direction, children)
+   elements.mbox._init(self, attributes)
    if not (direction == "H" or direction == "V") then
       SU.error("Wrong direction '" .. direction .. "'; should be H or V")
    end
@@ -470,7 +471,11 @@ function elements.stackbox:styleChildren ()
          return a > b
       end)
       for _, idx in ipairs(spaceIdx) do
-         local hsp = elements.space(spaces[idx], 0, 0)
+         local hsp = elements.space({
+            width = spaces[idx],
+            height = 0,
+            depth = 0,
+         })
          table.insert(self.children, idx, hsp)
       end
    end
@@ -545,7 +550,7 @@ function elements.stackbox:output (_, _, _) end
 elements.phantom = pl.class(elements.stackbox) -- inherit from stackbox
 elements.phantom._type = "Phantom"
 
-function elements.phantom:_init (children)
+function elements.phantom:_init (attributes, children)
    -- MathML core 3.3.7:
    -- "Its layout algorithm is the same as the mrow element".
    -- Also not the MathML states that <mphantom> is sort of legacy, "implemented
@@ -553,7 +558,7 @@ function elements.phantom:_init (children)
    -- Core are encouraged to use CSS for styling."
    -- The thing is that we don't have CSS in SILE, so supporting <mphantom> is
    -- a must.
-   elements.stackbox._init(self, "H", children)
+   elements.stackbox._init(self, attributes, "H", children)
 end
 
 function elements.phantom:output (_, _, _)
@@ -575,8 +580,8 @@ function elements.subscript:__tostring ()
       .. ")"
 end
 
-function elements.subscript:_init (base, sub, sup)
-   elements.mbox._init(self)
+function elements.subscript:_init (attributes, base, sub, sup)
+   elements.mbox._init(self, attributes)
    self.base = base
    self.sub = sub
    self.sup = sup
@@ -757,10 +762,9 @@ local function unwrapSingleElementMrow (elt)
 end
 
 function elements.underOver:_init (attributes, base, sub, sup)
-   elements.mbox._init(self)
+   elements.mbox._init(self, attributes)
    base = unwrapSingleElementMrow(base)
    self.atom = base.atom
-   self.attributes = attributes or {}
    self.attributes.accent = SU.boolean(self.attributes.accent, false)
    self.attributes.accentunder = SU.boolean(self.attributes.accentunder, false)
    self.base = base
@@ -974,11 +978,12 @@ end
 function elements.underOver:output (_, _, _) end
 
 -- terminal is the base class for leaf node
+-- MathML 4.0 Draft 23 October 2025 call these "token elements"
 elements.terminal = pl.class(elements.mbox)
 elements.terminal._type = "Terminal"
 
-function elements.terminal:_init ()
-   elements.mbox._init(self)
+function elements.terminal:_init (attributes)
+   elements.mbox._init(self, attributes)
 end
 
 function elements.terminal:styleChildren () end
@@ -987,10 +992,6 @@ function elements.terminal:shape () end
 
 elements.space = pl.class(elements.terminal)
 elements.space._type = "Space"
-
-function elements.space:_init ()
-   elements.terminal._init(self)
-end
 
 function elements.space:__tostring ()
    return self._type
@@ -1021,11 +1022,11 @@ local function getStandardLength (value)
    return SILE.types.length(value)
 end
 
-function elements.space:_init (width, height, depth)
-   elements.terminal._init(self)
-   self.width = getStandardLength(width)
-   self.height = getStandardLength(height)
-   self.depth = getStandardLength(depth)
+function elements.space:_init (attributes)
+   elements.terminal._init(self, attributes)
+   self.width = getStandardLength(attributes.width)
+   self.height = getStandardLength(attributes.height)
+   self.depth = getStandardLength(attributes.depth)
 end
 
 function elements.space:shape ()
@@ -1056,7 +1057,7 @@ function elements.text:__tostring ()
 end
 
 function elements.text:_init (kind, attributes, script, text)
-   elements.terminal._init(self)
+   elements.terminal._init(self, attributes)
    if not (kind == "number" or kind == "identifier" or kind == "operator" or kind == "string") then
       SU.error("Unknown text node kind '" .. kind .. "'; should be one of: number, identifier, operator, string")
    end
@@ -1317,10 +1318,9 @@ function elements.fraction:__tostring ()
 end
 
 function elements.fraction:_init (attributes, numerator, denominator)
-   elements.mbox._init(self)
+   elements.mbox._init(self, attributes)
    self.numerator = numerator
    self.denominator = denominator
-   self.attributes = attributes
    table.insert(self.children, numerator)
    table.insert(self.children, denominator)
 end
@@ -1408,12 +1408,12 @@ function elements.fraction:output (x, y, line)
    end
 end
 
-local function newSubscript (spec)
-   return elements.subscript(spec.base, spec.sub, spec.sup)
+local function newSubscript (attributes, spec)
+   return elements.subscript(attributes, spec.base, spec.sub, spec.sup)
 end
 
-local function newUnderOver (spec)
-   return elements.underOver(spec.attributes, spec.base, spec.sub, spec.sup)
+local function newUnderOver (attributes, spec)
+   return elements.underOver(attributes, spec.base, spec.sub, spec.sup)
 end
 
 -- TODO replace with penlight equivalent
@@ -1426,9 +1426,10 @@ local function mapList (f, l)
 end
 
 elements.mtr = pl.class(elements.mbox)
--- elements.mtr._type = "" -- TODO why not set?
+elements.mtr._type = "TableRow"
 
-function elements.mtr:_init (children)
+function elements.mtr:_init (attributes, children)
+   elements.mbox._init(self, attributes)
    self.children = children
 end
 
@@ -1443,12 +1444,12 @@ function elements.mtr:shape () end -- done by parent table
 function elements.mtr:output () end
 
 elements.table = pl.class(elements.mbox)
-elements.table._type = "table" -- TODO why case difference?
+elements.table._type = "Table"
 
-function elements.table:_init (children, options)
-   elements.mbox._init(self)
+function elements.table:_init (attributes, children)
+   elements.mbox._init(self, attributes)
    self.children = children
-   self.options = pl.tablex.copy(options) -- Shallow copy the options as columnalign is modified below
+   self.options = pl.tablex.copy(attributes) -- Shallow copy the attributes as columnalign is modified below
    self.nrows = #self.children
    self.ncols = math.max(pl.utils.unpack(mapList(function (_, row)
       return #row.children
@@ -1462,13 +1463,13 @@ function elements.table:_init (children, options)
    for i, row in ipairs(self.children) do
       for j = 1, (self.ncols - #row.children) do
          SU.debug("math", "padding i =", i, "j =", j)
-         table.insert(row.children, elements.stackbox("H", {}))
+         table.insert(row.children, elements.stackbox({}, "H", {}))
          SU.debug("math", "size", #row.children)
       end
    end
-   if options.columnalign then
+   if attributes.columnalign then
       local l = {}
-      for w in string.gmatch(options.columnalign, "[^%s]+") do
+      for w in string.gmatch(attributes.columnalign, "[^%s]+") do
          if not (w == "left" or w == "center" or w == "right") then
             SU.error("Invalid specifier in `columnalign` attribute: " .. w)
          end
@@ -1594,8 +1595,8 @@ function elements.sqrt:__tostring ()
    return self._type .. "(" .. tostring(self.radicand) .. (self.degree and ", " .. tostring(self.degree) or "") .. ")"
 end
 
-function elements.sqrt:_init (radicand, degree)
-   elements.mbox._init(self)
+function elements.sqrt:_init (attributes, radicand, degree)
+   elements.mbox._init(self, attributes)
    self.radicand = radicand
    if degree then
       self.degree = degree
@@ -1727,9 +1728,8 @@ function elements.padded:__tostring ()
 end
 
 function elements.padded:_init (attributes, impadded)
-   elements.mbox._init(self)
+   elements.mbox._init(self, attributes)
    self.impadded = impadded
-   self.attributes = attributes or {}
    table.insert(self.children, impadded)
 end
 
@@ -1826,9 +1826,8 @@ function elements.enclose:__tostring ()
 end
 
 function elements.enclose:_init (attributes, enclosed)
-   elements.mbox._init(self)
+   elements.mbox._init(self, attributes)
    self.enclosed = enclosed
-   self.attributes = attributes or {}
    table.insert(self.children, enclosed)
 end
 
