@@ -268,16 +268,37 @@ end
 
 -- Output the node and all its descendants
 function elements.mbox:outputTree (x, y, line)
+   local xs = scaleWidth(x, line)
+   local ws = scaleWidth(self.width, line)
+   local h = self.height.length
+   local d = self.depth.length
+
+   -- MathML 4.0 Draft 23 October 2025 §3.1.9.1 for mathcolor and mathbackground
+   if self.attributes.mathbackground then
+      local color = SILE.types.color(self.attributes.mathbackground)
+      SILE.outputter:pushColor(color)
+      SILE.outputter:drawRule(xs, y - h, ws, h + d)
+      SILE.outputter:popColor()
+   end
+   if self.attributes.mathcolor then
+      local color = SILE.types.color(self.attributes.mathcolor)
+      SILE.outputter:pushColor(color)
+   end
+
    self:output(x, y, line)
    local debug = SILE.settings:get("math.debug.boxes")
    if debug and not (self:is_a(elements.space)) then
-      SILE.outputter:setCursor(scaleWidth(x, line), y.length)
-      SILE.outputter:debugHbox({ height = self.height.length, depth = self.depth.length }, scaleWidth(self.width, line))
+      SILE.outputter:setCursor(xs, y.length)
+      SILE.outputter:debugHbox({ height = h, depth = d }, ws)
    end
    for _, n in ipairs(self.children) do
       if n then
          n:outputTree(x + n.relX, y + n.relY, line)
       end
+   end
+
+   if self.attributes.mathcolor then
+      SILE.outputter:popColor()
    end
 end
 
