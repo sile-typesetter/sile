@@ -383,7 +383,7 @@ local function handleMath (_, mbox, options)
    if mode == "display" then
       mbox.mode = b.mathMode.display
    elseif mode == "text" then
-      mbox.mode = b.mathMode.textCramped
+      mbox.mode = b.mathMode.text
    else
       SU.error("Unknown math mode " .. mode)
    end
