@@ -336,10 +336,10 @@ Third party packages must be installed for the same version of Lua that SILE use
 On systems with more than one Lua version installed, *and* where SILE does not use the default one you may need to specify the version manually.
 In these examples, we'll ask SILE directory which version it is running.
 
-For example, to install [markdown.sile](https://github.com/Omikhleia/markdown.sile) (a plugin that provides a SILE inputter that reads and processes Markdown documents) one could run:
+For example, to install [resilient.sile](https://github.com/Omikhleia/resilient.sile) (a 3rd-party plugin that provides advanced document classes, and  SILE inputters that read and process Djot and Markdown documents) one could run:
 
 ```console
-$ luarocks --lua-version $(sile -q <<< SILE.lua_version) install markdown.sile
+$ luarocks --lua-version $(sile -q <<< SILE.lua_version) install resilient.sile
 ```
 
 By default, this will try to install the package to your system (the `--global` option).
