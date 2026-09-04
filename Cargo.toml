@@ -8,7 +8,7 @@ version = "0.15.13"
 [workspace.package]
 version = "0.15.13"
 edition = "2021"
-rust-version = "1.80.1"
+rust-version = "1.91.1"
 authors = [
   "Simon Cozens",
   "Caleb Maclennan <caleb@alerque.com>",
