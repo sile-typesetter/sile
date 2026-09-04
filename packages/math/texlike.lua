@@ -960,6 +960,15 @@ compileToMathML(
   % Package "amsmath" went with its own generic \overset and \underset.
   \def{overset}{\mover{#2}{#1}}
   \def{underset}{\munder{#2}{#1}}
+
+  % Boxing and cancelling
+  % The boxing command is from "amsmath".
+  \def{boxed}{\menclose[notations=box]{#1}}
+  % Canceling commands are from "cancel" package.
+  \def{cancel}{\menclose[notations=updiagonalstrike]{#1}}
+  \def{bcancel}{\menclose[notations=downdiagonalstrike]{#1}}
+  \def{xcancel}{\menclose[notations=updiagonalstrike downdiagonalstrike]{#1}}
+  \def{cancelto}{\menclose[notations=northeastarrow]{#2}^{#1}}
 ]==],
    })
 )
