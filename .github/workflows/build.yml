@@ -24,14 +24,14 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             lua_modules
@@ -106,7 +106,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache lua_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             lua_modules
@@ -154,14 +154,14 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             lua_modules
@@ -209,7 +209,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .fonts
