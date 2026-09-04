@@ -1,7 +1,7 @@
 set ignore-comments
-set shell := ["zsh", "+o", "nomatch", "-ecu"]
+set shell := ["zsh", "+o", "nomatch", "-fecu"]
 set unstable
-set script-interpreter := ["zsh", "+o", "nomatch", "-eu"]
+set script-interpreter := ["zsh", "+o", "nomatch", "-feu"]
 
 _default:
     @just --list --unsorted
