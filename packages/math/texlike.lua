@@ -175,7 +175,7 @@ local mathGrammar = function (_ENV)
          end
 
    -- TeX uses the regular asterisk (* = U+002A) in superscripts or subscript:
-   -- The TeXbook exercice 18.32 (p. 179, 330) for instance.
+   -- The TeXbook exercise 18.32 (p. 179, 330) for instance.
    -- Fonts usually have the asterisk raised too high, so using the Unicode
    -- asterisk operator U+2217 looks better (= \ast in TeX).
    local astop = P"*" / luautf8.char(0x2217)
@@ -381,7 +381,7 @@ local function isOperatorKind (tree, typeOfAtom)
    if tree.options and tree.options.atom then
       return atoms.types[tree.options.atom] == typeOfAtom
    end
-   -- Case \mo{ops} where ops is registered with the resquested type
+   -- Case \mo{ops} where ops is registered with the requested type
    -- E.g. \mo{∑) or \sum
    if tree[1] and operatorDict[tree[1]] and operatorDict[tree[1]].atom then
       return operatorDict[tree[1]].atom == typeOfAtom

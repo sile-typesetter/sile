@@ -72,7 +72,7 @@ function package:registerCommands () end
 -- nodes identified with the command name.
 --
 -- A similar method is available for classes, `classes:registerCommand`.
--- @tparam string name Name of cammand to register.
+-- @tparam string name Name of command to register.
 -- @tparam function func Callback function to use as command handler.
 -- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
 -- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
