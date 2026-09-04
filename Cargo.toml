@@ -154,10 +154,12 @@ extend-ignore-identifiers-re = [
 annote = "annote"     # CSL / Bibtex abbreviation
 beveled = "bevelled"  # mathML uses en-gb spelling
 bevelled = "bevelled" # mathML uses en-gb spelling
+oint = "oint"         # mathML smokes things bad for its health
 centred = "centred"   # Unicode character description
 lamda = "lamda"       # Unicode character description
 noet = "noet"         # VIM modeline
 supporte = "supporte" # CHANGELOG blooper
+fial = "fial"         # made up word in hyphenation debugging
 # Miss-spellings with actual corrections
 craters = "creators"
 neet = "need"
@@ -167,8 +169,12 @@ ignore-hidden = false
 extend-exclude = [
   "/.git",
   "CHANGELOG.md",
+  "build-aux/*.xml",
+  "build-aux/*.xsl",
   "build-aux/ax*",
   "cmake/*.diff",
+  "justenough/nanosvg.h",
+  "justenough/podofo_wrap.cxx",
   "languages/*/hyphens*",
   "libtexpdf",
   "lua-libraries/*",
