@@ -184,7 +184,7 @@ jobs:
           brew link icu4c@77 --force
           brew link zlib --force
           brew link expat --force
-          brew install --cask font-gentium-plus
+          brew install font-gentium-book
       - name: Configure
         run: |
           ./bootstrap.sh

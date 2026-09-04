@@ -48,11 +48,10 @@ $ brew install sile --HEAD
 ```
 
 Note the Homebrew package does not automatically install the [default font](#default-font).
-The easiest way to install Gentium Book is through the [Homebrew Fonts caskroom][brewfonts]:
+The easiest way to install Gentium Book is through the [Homebrew Casks][casks]:
 
 ```console
-$ brew tap homebrew/cask-fonts
-$ brew install --cask font-gentium-plus
+$ brew install font-gentium-book
 ```
 
 ### For Linux
@@ -378,7 +377,7 @@ SILE is distributed under the [MIT license][license].
   [aur]: https://wiki.archlinux.org/index.php/Arch_User_Repository
   [azure]: https://dev.azure.com/sile-typesetter/sile/_build?view=runs
   [brew]: http://brew.sh
-  [brewfonts]: https://github.com/Homebrew/homebrew-cask-fonts
+  [casks]: https://github.com/homebrew/homebrew-cask
   [copr]: https://copr.fedorainfracloud.org/coprs/jonny/SILE/
   [doc]: http://sile-typesetter.org/manual/sile-latest.pdf
   [examples]: http://www.sile-typesetter.org/examples/
