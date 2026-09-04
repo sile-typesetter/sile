@@ -68,7 +68,7 @@ powershell = ["completions"]
 zsh = ["completions"]
 
 [workspace.dependencies.mlua]
-version = "0.10"
+version = "0.12"
 features = ["anyhow"]
 
 [workspace.dependencies.sile]
@@ -76,13 +76,13 @@ path = "."
 version = "0.15.13"
 
 [dependencies.anyhow]
-version = "1.0"
+version = "1"
 
 [dependencies.snafu]
-version = "0.8"
+version = "0.9"
 
 [dependencies.clap]
-version = "4.4"
+version = "4"
 optional = true
 features = ["color", "derive", "string", "wrap_help"]
 
@@ -91,23 +91,23 @@ workspace = true
 features = ["macros"]
 
 [dependencies.rust-embed]
-version = "8.0"
+version = "8"
 optional = true
 features = ["include-exclude"]
 
 [dependencies.harfbuzz-sys]
-version = "0.6"
+version = "0.8"
 optional = true
 
 [dependencies.semver]
 version = "1.0"
 
 [build-dependencies.clap_complete]
-version = "4.4"
+version = "4.6"
 optional = true
 
 [build-dependencies.clap_mangen]
-version = "0.2"
+version = "0.3"
 optional = true
 
 [build-dependencies.clap]
