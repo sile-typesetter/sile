@@ -1,10 +1,9 @@
-set ignore-comments
 set shell := ["zsh", "+o", "nomatch", "-fecu"]
-set unstable
 set script-interpreter := ["zsh", "+o", "nomatch", "-feu"]
 
-_default:
-    @just --list --unsorted
+set default-list
+set ignore-comments
+set unstable
 
 nuke-n-pave:
     git clean -dxff -e .husky -e .fonts -e .sources -e node_modules -e target -e completions
