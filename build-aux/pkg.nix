@@ -33,7 +33,7 @@
   typos,
   # FONTCONFIG_FILE
   makeFontsConf,
-  gentium,
+  gentium-book,
 
   # passthru.tests
   runCommand,
@@ -123,7 +123,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   FONTCONFIG_FILE = makeFontsConf {
     fontDirectories = [
-      gentium
+      gentium-book
     ];
   };
 
