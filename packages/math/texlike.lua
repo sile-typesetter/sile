@@ -114,6 +114,7 @@ local mathGrammar = function (_ENV)
       leftrightgroup + -- Important: before command
       V"def" +
       V"text" + -- Important: before command
+      V"sqrt" + -- Important: before command
       V"command" +
       group +
       V"argument" +
@@ -150,28 +151,14 @@ local mathGrammar = function (_ENV)
          (P"}" + E("`}` expected"))
          ) / function (...)
             local t = {...}
-            -- Remove the last mathlist if empty. This way,
-            -- `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
-            if not t[#t][1] or not t[#t][1][1] then table.remove(t) end
+            local last = t[#t]
+            -- Remove the last element if empty:
+            -- So that `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
+            if #last == 0 or (#last == 1 and #last[#last] == 0) then
+               -- Empty mathlist, or mathlist containing a single empty mathlist.
+               table.remove(t)
+            end
             return pl.utils.unpack(t)
-         end
-
-   local dim2_arg_inner = Ct(V"mathlist" * (P"&" * V"mathlist")^0) /
-      function (t)
-         t.id = "mathlist"
-         return t
-      end
-   local dim2_arg =
-      Cg(P"{" *
-         dim2_arg_inner *
-         (P"\\\\" * dim2_arg_inner)^1 *
-         (P"}" + E("`}` expected"))
-         ) / function (...)
-         local t = {...}
-         -- Remove the last mathlist if empty. This way,
-         -- `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
-         if not t[#t][1] or not t[#t][1][1] then table.remove(t) end
-         return pl.utils.unpack(t)
          end
 
    -- TeX uses the regular asterisk (* = U+002A) in superscripts or subscript:
@@ -206,6 +193,13 @@ local mathGrammar = function (_ENV)
          + primes -- or standalone primes
       )
 
+   -- For sqrt with degree:
+   -- We might not be very robust below if brackets are used in the optional argument,
+   -- but that's an edge case and both LaTeX and MathJax do weird things in that case too.
+   local mathlist_no_bracket = (comment + (WS * _) + (element - P"]"))^0 / function (...)
+      return { id = "mathlist", ... }
+   end
+
    START "math"
    math = V"mathlist" * EOF"Unexpected character at end of math code"
    mathlist = (comment + (WS * _) + element)^0
@@ -228,6 +222,14 @@ local mathGrammar = function (_ENV)
          Cg(ctrl_sequence_name, "command") *
          Cg(parameters, "options") *
          (dim2_arg + group^0)
+      )
+   -- TeX-like square root (\sqrt{...}) or nth-root (\sqrt[...]{...}):
+   -- One of the very few math commands with an expression as optional argument
+   -- between brackets, and likely the only usual one/
+   sqrt = (
+         P"\\sqrt" *
+         (P"[" * mathlist_no_bracket * P"]")^-1 *
+         P"{" * V"mathlist" * P"}"
       )
    def = P"\\def" * _ * P"{" *
       Cg(ctrl_sequence_name, "command-name") * P"}" * _ *
@@ -609,6 +611,15 @@ local function compileToMathML_aux (_, arg_env, tree)
       return nil
    elseif tree.id == "text" then
       tree.command = "mtext"
+   elseif tree.id == "sqrt" then
+      if #tree == 2 then
+         tree.command = "mroot"
+         local tmp = tree[1]
+         tree[1] = tree[2]
+         tree[2] = tmp
+      else
+         tree.command = "msqrt"
+      end
    elseif tree.id == "command" and commands[tree.command] then
       local argTypes = commands[tree.command][1]
       local cmdFun = commands[tree.command][2]
@@ -648,47 +659,56 @@ local function compileToMathML_aux (_, arg_env, tree)
       end
       return res
    elseif tree.id == "command" and symbols[tree.command] then
-      local atom = { id = "atom", [1] = symbols[tree.command] }
       if isAccentSymbol(symbols[tree.command]) and #tree > 0 then
-         -- LaTeX-style accents \overrightarrow{v} = <mover accent="true"><mi>v</mi><mo>&#x20D7;</mo></mover>
+         -- LaTeX-style accents
+         -- \overrightarrow{v} = <mover accent="true"><mi>v</mi><mo>&#x20D7;</mo></mover>
          local accent = {
-            id = "command",
             command = "mover",
             options = {
                accent = "true",
             },
+            [1] = tree[1],
+            [2] = {
+               command = "mo", -- accents are always <mo>
+               options = {},
+               symbols[tree.command]
+            },
          }
-         accent[1] = compileToMathML_aux(nil, arg_env, tree[1])
-         accent[2] = compileToMathML_aux(nil, arg_env, atom)
          tree = accent
       elseif isBottomAccentSymbol(symbols[tree.command]) and #tree > 0 then
-         -- LaTeX-style bottom accents \underleftarrow{v} = <munder accent="true"><mi>v</mi><mo>&#x20EE;</mo></munder>
+         -- LaTeX-style bottom accents
+         -- \underleftarrow{v} = <munder accentunder="true"><mi>v</mi><mo>&#x20EE;</mo></munder>
          local accent = {
-            id = "command",
             command = "munder",
             options = {
                accentunder = "true",
             },
+            [1] = tree[1],
+            [2] = {
+               command = "mo", -- accents are always <mo>
+               options = {},
+               symbols[tree.command]
+            },
          }
-         accent[1] = compileToMathML_aux(nil, arg_env, tree[1])
-         accent[2] = compileToMathML_aux(nil, arg_env, atom)
          tree = accent
       elseif #tree > 0 then
          -- Play cool with LaTeX-style commands that don't take arguments:
          -- Edge case for non-accent symbols so we don't loose bracketed groups
          -- that might have been seen as command arguments.
          -- Ex. \langle{x}\rangle (without space after \langle)
+         -- The symbol may lead to something else than a bare <mo>, so we
+         -- need to compile it properly via an atom.
+         local atom = { id = "atom", [1] = symbols[tree.command] }
          local sym = compileToMathML_aux(nil, arg_env, atom)
-         -- Compile all children in-place
-         for i, child in ipairs(tree) do
-            tree[i] = compileToMathML_aux(nil, arg_env, child)
-         end
          -- Insert symbol at the beginning,
          -- And add a wrapper mrow to be unwrapped in the parent.
          table.insert(tree, 1, sym)
          tree.command = "mrow"
          tree.id = "wrapper"
       else
+         -- The symbol may lead to something else than a bare <mo>, so we
+         -- need to compile it properly via an atom.
+         local atom = { id = "atom", [1] = symbols[tree.command] }
          tree = compileToMathML_aux(nil, arg_env, atom)
       end
    elseif tree.id == "argument" then
@@ -832,7 +852,13 @@ compileToMathML(
    convertTexlike(nil, {
       [==[
   \def{frac}{\mfrac{#1}{#2}}
+
+  % Already defined in the parser, but we are not robust against closing brackets in the optional
+  % arguments(see above).
+  % We may hit the macro definition instead of the native command, and the error message
+  % will be less cryptic this way, ensuring the command doesn't reach the MathML typesetter.
   \def{sqrt}{\msqrt{#1}}
+
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
 
@@ -951,8 +977,17 @@ compileToMathML(
   % Package "amsmath" went with its own generic \overset and \underset.
   \def{overset}{\mover{#2}{#1}}
   \def{underset}{\munder{#2}{#1}}
+
+  % Boxing and cancelling
+  % The boxing command is from "amsmath".
+  \def{boxed}{\menclose[notations=box]{#1}}
+  % Canceling commands are from "cancel" package.
+  \def{cancel}{\menclose[notations=updiagonalstrike]{#1}}
+  \def{bcancel}{\menclose[notations=downdiagonalstrike]{#1}}
+  \def{xcancel}{\menclose[notations=updiagonalstrike downdiagonalstrike]{#1}}
+  \def{cancelto}{\menclose[notations=northeastarrow]{#2}^{#1}}
 ]==],
    })
 )
 
-return { convertTexlike, compileToMathML }
+return { convertTexlike, compileToMathML, printMathML }

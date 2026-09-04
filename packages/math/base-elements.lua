@@ -200,8 +200,9 @@ function elements.mbox:__tostring ()
    return self._type
 end
 
-function elements.mbox:_init ()
+function elements.mbox:_init (attributes)
    nodefactory.hbox._init(self)
+   self.attributes = attributes or {}
    self.font = {}
    self.children = {} -- The child nodes
    self.relX = SILE.types.length(0) -- x position relative to its parent box
@@ -209,22 +210,8 @@ function elements.mbox:_init ()
    self.value = {}
    self.mode = mathMode.display
    self.atom = atoms.types.ord
-   local font = {
-      family = SILE.settings:get("math.font.family"),
-      size = SILE.settings:get("math.font.size"),
-      style = SILE.settings:get("math.font.style"),
-      weight = SILE.settings:get("math.font.weight"),
-      -- https://learn.microsoft.com/en-us/typography/opentype/spec/math#opentype-layout-tags-used-with-the-math-table
-      --   "Script tag to be used for features in math layout.
-      --   The only language system supported with this tag is the default language system."
-      -- Thus, needed for the ssty feature in superscript/subscript to work properly.
-      script = "math",
-   }
-   local filename = SILE.settings:get("math.font.filename")
-   if filename and filename ~= "" then
-      font.filename = filename
-   end
-   self.font = SILE.font.loadDefaults(font)
+   -- The math font is assumed to be already set as current by the calling context.
+   self.font = SILE.font.loadDefaults({})
 end
 
 function elements.mbox:styleChildren ()
@@ -281,16 +268,37 @@ end
 
 -- Output the node and all its descendants
 function elements.mbox:outputTree (x, y, line)
+   local xs = scaleWidth(x, line)
+   local ws = scaleWidth(self.width, line)
+   local h = self.height.length
+   local d = self.depth.length
+
+   -- MathML 4.0 Draft 23 October 2025 §3.1.9.1 for mathcolor and mathbackground
+   if self.attributes.mathbackground then
+      local color = SILE.types.color(self.attributes.mathbackground)
+      SILE.outputter:pushColor(color)
+      SILE.outputter:drawRule(xs, y - h, ws, h + d)
+      SILE.outputter:popColor()
+   end
+   if self.attributes.mathcolor then
+      local color = SILE.types.color(self.attributes.mathcolor)
+      SILE.outputter:pushColor(color)
+   end
+
    self:output(x, y, line)
    local debug = SILE.settings:get("math.debug.boxes")
    if debug and not (self:is_a(elements.space)) then
-      SILE.outputter:setCursor(scaleWidth(x, line), y.length)
-      SILE.outputter:debugHbox({ height = self.height.length, depth = self.depth.length }, scaleWidth(self.width, line))
+      SILE.outputter:setCursor(xs, y.length)
+      SILE.outputter:debugHbox({ height = h, depth = d }, ws)
    end
    for _, n in ipairs(self.children) do
       if n then
          n:outputTree(x + n.relX, y + n.relY, line)
       end
+   end
+
+   if self.attributes.mathcolor then
+      SILE.outputter:popColor()
    end
 end
 
@@ -409,8 +417,8 @@ function elements.stackbox:__tostring ()
    return result
 end
 
-function elements.stackbox:_init (direction, children)
-   elements.mbox._init(self)
+function elements.stackbox:_init (attributes, direction, children)
+   elements.mbox._init(self, attributes)
    if not (direction == "H" or direction == "V") then
       SU.error("Wrong direction '" .. direction .. "'; should be H or V")
    end
@@ -484,7 +492,11 @@ function elements.stackbox:styleChildren ()
          return a > b
       end)
       for _, idx in ipairs(spaceIdx) do
-         local hsp = elements.space(spaces[idx], 0, 0)
+         local hsp = elements.space({
+            width = spaces[idx],
+            height = 0,
+            depth = 0,
+         })
          table.insert(self.children, idx, hsp)
       end
    end
@@ -510,7 +522,12 @@ function elements.stackbox:shape ()
       -- Handle stretchy operators
       for _, elt in ipairs(self.children) do
          if elt:is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
-            elt:_vertStretchyReshape(self.depth, self.height)
+            local stretched = elt:_vertStretchyReshape(self.depth, self.height)
+            if stretched then
+               -- Stretched elements may have altered height and depth
+               self.height = maxLength(self.height, elt.height)
+               self.depth = maxLength(self.depth, elt.depth)
+            end
          end
       end
       -- Set self.width
@@ -554,7 +571,7 @@ function elements.stackbox:output (_, _, _) end
 elements.phantom = pl.class(elements.stackbox) -- inherit from stackbox
 elements.phantom._type = "Phantom"
 
-function elements.phantom:_init (children)
+function elements.phantom:_init (attributes, children)
    -- MathML core 3.3.7:
    -- "Its layout algorithm is the same as the mrow element".
    -- Also not the MathML states that <mphantom> is sort of legacy, "implemented
@@ -562,7 +579,7 @@ function elements.phantom:_init (children)
    -- Core are encouraged to use CSS for styling."
    -- The thing is that we don't have CSS in SILE, so supporting <mphantom> is
    -- a must.
-   elements.stackbox._init(self, "H", children)
+   elements.stackbox._init(self, attributes, "H", children)
 end
 
 function elements.phantom:output (_, _, _)
@@ -584,8 +601,8 @@ function elements.subscript:__tostring ()
       .. ")"
 end
 
-function elements.subscript:_init (base, sub, sup)
-   elements.mbox._init(self)
+function elements.subscript:_init (attributes, base, sub, sup)
+   elements.mbox._init(self, attributes)
    self.base = base
    self.sub = sub
    self.sup = sup
@@ -762,10 +779,9 @@ local function unwrapSingleElementMrow (elt)
 end
 
 function elements.underOver:_init (attributes, base, sub, sup)
-   elements.mbox._init(self)
+   elements.mbox._init(self, attributes)
    base = unwrapSingleElementMrow(base)
    self.atom = base.atom
-   self.attributes = attributes or {}
    self.attributes.accent = SU.boolean(self.attributes.accent, false)
    self.attributes.accentunder = SU.boolean(self.attributes.accentunder, false)
    self.base = base
@@ -979,11 +995,12 @@ end
 function elements.underOver:output (_, _, _) end
 
 -- terminal is the base class for leaf node
+-- MathML 4.0 Draft 23 October 2025 call these "token elements"
 elements.terminal = pl.class(elements.mbox)
 elements.terminal._type = "Terminal"
 
-function elements.terminal:_init ()
-   elements.mbox._init(self)
+function elements.terminal:_init (attributes)
+   elements.mbox._init(self, attributes)
 end
 
 function elements.terminal:styleChildren () end
@@ -992,10 +1009,6 @@ function elements.terminal:shape () end
 
 elements.space = pl.class(elements.terminal)
 elements.space._type = "Space"
-
-function elements.space:_init ()
-   elements.terminal._init(self)
-end
 
 function elements.space:__tostring ()
    return self._type
@@ -1026,11 +1039,11 @@ local function getStandardLength (value)
    return SILE.types.length(value)
 end
 
-function elements.space:_init (width, height, depth)
-   elements.terminal._init(self)
-   self.width = getStandardLength(width)
-   self.height = getStandardLength(height)
-   self.depth = getStandardLength(depth)
+function elements.space:_init (attributes)
+   elements.terminal._init(self, attributes)
+   self.width = getStandardLength(attributes.width)
+   self.height = getStandardLength(attributes.height)
+   self.depth = getStandardLength(attributes.depth)
 end
 
 function elements.space:shape ()
@@ -1061,7 +1074,7 @@ function elements.text:__tostring ()
 end
 
 function elements.text:_init (kind, attributes, script, text)
-   elements.terminal._init(self)
+   elements.terminal._init(self, attributes)
    if not (kind == "number" or kind == "identifier" or kind == "operator" or kind == "string") then
       SU.error("Unknown text node kind '" .. kind .. "'; should be one of: number, identifier, operator, string")
    end
@@ -1245,10 +1258,16 @@ function elements.text:_vertStretchyReshape (depth, height)
       -- We only do it if the scaling logic found constructions on the vertical block axis.
       -- It's a dirty hack until we properly implement assembly of glyphs in the case we couldn't
       -- find a big enough variant.
-      self.vertExpectedSz = height + depth
-      self.vertScalingRatio = (depth + height):tonumber() / (self.height:tonumber() + self.depth:tonumber())
-      self.height = height
-      self.depth = depth
+      -- At output, We will peform a symmetric scaling of the glyphs, centered on the height axis.
+      local constants = self:getMathMetrics().constants
+      local scaleDown = self:getScaleDown()
+      local axisHeight = constants.axisHeight * scaleDown
+
+      local midSz = maxLength(height - axisHeight, depth + axisHeight)
+      self.vertScalingRatio = 2 * midSz:tonumber() / (self.height + self.depth):tonumber()
+      self.vertScalingOffset = self.height - (midSz + axisHeight) / self.vertScalingRatio
+      self.height = midSz + axisHeight
+      self.depth = midSz - axisHeight
    end
    return hasStretched
 end
@@ -1282,7 +1301,11 @@ function elements.text:output (x, y, line)
    else
       compensatedY = y
    end
-   SILE.outputter:setCursor(scaleWidth(x, line), compensatedY.length)
+   if self.vertScalingOffset then
+      compensatedY = compensatedY + self.vertScalingOffset
+   end
+   local xs = scaleWidth(x, line) -- account for stretchability/shrinkability in line justification
+   SILE.outputter:setCursor(xs, compensatedY.length)
    SILE.outputter:setFont(self.font)
    -- There should be no stretch or shrink on the width of a text
    -- element.
@@ -1296,7 +1319,7 @@ function elements.text:output (x, y, line)
       local xratio = self.horizScalingRatio or 1
       local yratio = self.vertScalingRatio or 1
       SU.debug("math", "fake glyph stretch: xratio =", xratio, "yratio =", yratio)
-      SILE.outputter:scaleFn(x, y, xratio, yratio, function ()
+      SILE.outputter:scaleFn(xs, y, xratio, yratio, function ()
          SILE.outputter:drawHbox(self.value, width)
       end)
    else
@@ -1312,10 +1335,9 @@ function elements.fraction:__tostring ()
 end
 
 function elements.fraction:_init (attributes, numerator, denominator)
-   elements.mbox._init(self)
+   elements.mbox._init(self, attributes)
    self.numerator = numerator
    self.denominator = denominator
-   self.attributes = attributes
    table.insert(self.children, numerator)
    table.insert(self.children, denominator)
 end
@@ -1403,12 +1425,12 @@ function elements.fraction:output (x, y, line)
    end
 end
 
-local function newSubscript (spec)
-   return elements.subscript(spec.base, spec.sub, spec.sup)
+local function newSubscript (attributes, spec)
+   return elements.subscript(attributes, spec.base, spec.sub, spec.sup)
 end
 
-local function newUnderOver (spec)
-   return elements.underOver(spec.attributes, spec.base, spec.sub, spec.sup)
+local function newUnderOver (attributes, spec)
+   return elements.underOver(attributes, spec.base, spec.sub, spec.sup)
 end
 
 -- TODO replace with penlight equivalent
@@ -1421,9 +1443,10 @@ local function mapList (f, l)
 end
 
 elements.mtr = pl.class(elements.mbox)
--- elements.mtr._type = "" -- TODO why not set?
+elements.mtr._type = "TableRow"
 
-function elements.mtr:_init (children)
+function elements.mtr:_init (attributes, children)
+   elements.mbox._init(self, attributes)
    self.children = children
 end
 
@@ -1438,18 +1461,18 @@ function elements.mtr:shape () end -- done by parent table
 function elements.mtr:output () end
 
 elements.table = pl.class(elements.mbox)
-elements.table._type = "table" -- TODO why case difference?
+elements.table._type = "Table"
 
-function elements.table:_init (children, options)
-   elements.mbox._init(self)
+function elements.table:_init (attributes, children)
+   elements.mbox._init(self, attributes)
    self.children = children
-   self.options = options
+   self.options = pl.tablex.copy(attributes) -- Shallow copy the attributes as columnalign is modified below
    self.nrows = #self.children
    self.ncols = math.max(pl.utils.unpack(mapList(function (_, row)
       return #row.children
    end, self.children)))
    SU.debug("math", "self.ncols =", self.ncols)
-   local spacing = SILE.settings:get("math.font.size") * 0.6 -- arbitrary ratio of the current math font size
+   local spacing = self.font.size * 0.6 -- arbitrary ratio of the current math font size
    self.rowspacing = self.options.rowspacing and SILE.types.length(self.options.rowspacing) or spacing
    self.columnspacing = self.options.columnspacing and SILE.types.length(self.options.columnspacing) or spacing
    -- Pad rows that do not have enough cells by adding cells to the
@@ -1457,13 +1480,13 @@ function elements.table:_init (children, options)
    for i, row in ipairs(self.children) do
       for j = 1, (self.ncols - #row.children) do
          SU.debug("math", "padding i =", i, "j =", j)
-         table.insert(row.children, elements.stackbox("H", {}))
+         table.insert(row.children, elements.stackbox({}, "H", {}))
          SU.debug("math", "size", #row.children)
       end
    end
-   if options.columnalign then
+   if attributes.columnalign then
       local l = {}
-      for w in string.gmatch(options.columnalign, "[^%s]+") do
+      for w in string.gmatch(attributes.columnalign, "[^%s]+") do
          if not (w == "left" or w == "center" or w == "right") then
             SU.error("Invalid specifier in `columnalign` attribute: " .. w)
          end
@@ -1565,13 +1588,17 @@ end
 function elements.table:output () end
 
 local function getRadicandMode (mode)
-   -- Not too sure if we should do something special/
-   return mode
+   -- TeX \sqrt changes regular styles to cramped ones.
+   if isCrampedMode(mode) then
+      return mode
+   end
+   return mode + 1
 end
 
 local function getDegreeMode (mode)
-   -- 2 levels smaller, up to scriptScript evntually.
-   -- Not too sure if we should do something else.
+   -- Two levels smaller, up to scriptScript eventually.
+   -- As far as can be observed, LaTeX doesn't change cramped vs. non-cramped
+   -- for the degree.
    if mode == mathMode.display then
       return mathMode.scriptScript
    elseif mode == mathMode.displayCramped then
@@ -1589,8 +1616,8 @@ function elements.sqrt:__tostring ()
    return self._type .. "(" .. tostring(self.radicand) .. (self.degree and ", " .. tostring(self.degree) or "") .. ")"
 end
 
-function elements.sqrt:_init (radicand, degree)
-   elements.mbox._init(self)
+function elements.sqrt:_init (attributes, radicand, degree)
+   elements.mbox._init(self, attributes)
    self.radicand = radicand
    if degree then
       self.degree = degree
@@ -1722,9 +1749,8 @@ function elements.padded:__tostring ()
 end
 
 function elements.padded:_init (attributes, impadded)
-   elements.mbox._init(self)
+   elements.mbox._init(self, attributes)
    self.impadded = impadded
-   self.attributes = attributes or {}
    table.insert(self.children, impadded)
 end
 
@@ -1733,9 +1759,6 @@ function elements.padded:styleChildren ()
 end
 
 function elements.padded:shape ()
-   -- TODO MathML allows percentages font-relative units (em, ex) for padding
-   -- But our units work with font.size, not math.font.size (possibly adjusted by scaleDown)
-   -- so the expectations might not be met.
    local width = self.attributes.width and SU.cast("measurement", self.attributes.width)
    local height = self.attributes.height and SU.cast("measurement", self.attributes.height)
    local depth = self.attributes.depth and SU.cast("measurement", self.attributes.depth)
@@ -1761,7 +1784,7 @@ function elements.padded:output (_, _, _) end
 -- Bevelled fractions are not part of MathML Core, and MathML4 does not
 -- exactly specify how to compute the layout.
 elements.bevelledFraction = pl.class(elements.fraction) -- Inherit from fraction
-elements.fraction._type = "BevelledFraction"
+elements.bevelledFraction._type = "BevelledFraction"
 
 function elements.bevelledFraction:shape ()
    local constants = self:getMathMetrics().constants
@@ -1813,6 +1836,75 @@ function elements.bevelledFraction:output (x, y, line)
    }
    local svg = table.concat(symbol, " ")
    SILE.outputter:drawSVG(svg, xscaled, y, barwidth, h, 1)
+end
+
+--- <menclose> is not part of MathML Core, but is in MathML3 and MathML4.
+elements.enclose = pl.class(elements.mbox)
+elements.enclose._type = "Enclose"
+
+function elements.enclose:__tostring ()
+   return self._type .. "(" .. tostring(self.enclosed) .. ")"
+end
+
+function elements.enclose:_init (attributes, enclosed)
+   elements.mbox._init(self, attributes)
+   self.enclosed = enclosed
+   table.insert(self.children, enclosed)
+end
+
+function elements.enclose:styleChildren ()
+   self.enclosed.mode = self.mode
+end
+
+function elements.enclose:shape ()
+   -- MathML4 umpteenth draft, 3.3.0.2: The amount of distance around "the contents are not specified by MathML,
+   -- and left to the renderer."
+   -- "In practice, paddings on each side of 0.4em in the horizontal direction and .5ex in the vertical direction seem to work well."
+   -- This informal appreciation in a standard is... weird at best.
+   -- The renderer says: "It looks nicer with other values."
+   -- MathML Core has nothing to say, since it does not support <menclose>.
+   self.hpadding = SILE.types.length("0.25em"):absolute();
+   self.vpadding = SILE.types.length("0.4ex"):absolute();
+   self.width = self.enclosed.width + 2 * self.hpadding
+   self.height = self.enclosed.height + self.vpadding
+   self.depth = self.enclosed.depth + self.vpadding
+   self.enclosed.relX = self.hpadding
+
+   -- Let's use the fraction rule as a default thickness.
+   -- We're in the land of a totally ill-defined specifications, so at least use something plausible.
+   local constants = self:getMathMetrics().constants
+   local scaleDown = self:getScaleDown()
+   self.ruleThickness = self.attributes.linethickness
+         and SU.cast("measurement", self.attributes.linethickness):tonumber()
+      or constants.fractionRuleThickness * scaleDown
+end
+
+function elements.enclose:output (x, y, line)
+   local notationShapes = require("packages.math.menclose-notations")
+   local h = self.height:tonumber()
+   local d = self.depth:tonumber()
+   local w = scaleWidth(self.width, line):tonumber()
+   local thickness = _r(self.ruleThickness)
+   local offset = SILE.types.measurement("0.1em"):tonumber() -- Empirical, "seems to work well"
+   local arrow = SILE.types.measurement("0.8ex"):tonumber() -- Ibid.
+   local notations = self.attributes.notations
+      and pl.stringx.split(self.attributes.notations)
+      or {}
+   local paths = {}
+   for _, n in ipairs(notations) do
+      if notationShapes[n] then
+         local nShape = notationShapes[n](_r(w), _r(h + d), thickness, offset, arrow)
+         if nShape then
+            table.insert(paths, table.concat(nShape, " "))
+         end
+      end
+   end
+   if #paths == 0 then
+      return
+   end
+   local svg = table.concat(paths, " ")
+   local xscaled = scaleWidth(x, line)
+   SILE.outputter:drawSVG(svg, xscaled, y, w, h, 1)
 end
 
 elements.mathMode = mathMode
