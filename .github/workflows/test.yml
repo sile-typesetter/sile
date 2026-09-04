@@ -46,14 +46,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
       - name: Setup ‘lua’
-        uses: hishamhm/gh-actions-lua@master
+        uses: luarocks/gh-actions-lua@v14
         with:
           luaVersion: ${{ matrix.luaVersion[0] }}
           luaCompileFlags: ${{ matrix.luaVersion[1] }}
       - name: Setup ‘cargo’
         uses: actions-rs/toolchain@v1
       - name: Setup ‘luarocks’
-        uses: hishamhm/gh-actions-luarocks@master
+        uses: luarocks/gh-actions-luarocks@v7
       - name: Prep system Lua for use
         run: |
           luarocks install busted
