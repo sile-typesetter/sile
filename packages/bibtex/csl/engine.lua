@@ -3,33 +3,36 @@
 -- @copyright License: MIT (c) 2024, 2025 Omikhleia
 --
 -- Public API:
---  - (constructor) CslEngine(style, locale) -> CslEngine
---  - CslEngine:cite(entries) -> string
---  - CslEngine:reference(entries) -> string
+--
+--  - (constructor) CslEngine(style, locale) → CslEngine
+--  - CslEngine:cite(entries) → string
+--  - CslEngine:reference(entries) → string
 --
 -- The expected internal representation of a CSL entry is similar to CSL-JSON
 -- but with some differences:
---    Date fields are structured tables (not an array of numbers as in CSL-JSON).
---    citation-number (mandatory) is supposed to have been added by the citation processor.
---    locator (optional, also possibly added by the citation processor) is a table with label and value fields.
---    names are parsed,
---        as personal names (ex. `{ given = "George", family = "Smith" ... }`),
---        or are literal strings (ex. `{ literal = "T.C.B.S" }`).
+--
+--  - Date fields are structured tables (not an array of numbers as in CSL-JSON).
+--  - `citation-number` (mandatory) is supposed to have been added by the citation processor.
+--  - `locator` (optional, also possibly added by the citation processor) is a table with label and value fields.
+--  - Names are assumed to be already parsed, as personal names (ex. `{ given = "George", family = "Smith" ... }`),
+--  or are literal strings (ex. `{ literal = "T.C.B.S" }`).
+--  - The internal `_related` field is a table of related CSL entries.
 --
 -- Important: while some consistency checks are performed, this engine is not
 -- intended to handle errors in the locale, style or input data. It is assumed
 -- that they are all valid.
 --
--- THINGS NOT DONE
---  - disambiguation logic (not done at all)
---  - collapse logic in citations (not done at all)
---  - other FIXME in the code on quite specific features
+-- FEATURES NOT IMPLEMENTED YET:
 --
+--  - Disambiguation logic (not done at all)
+--  - Collapse logic in citations (not done at all)
+--  - Other FIXME in the code on quite specific features
+--
+
 -- luacheck: no unused args
 
 local CslLocale = require("packages.bibtex.csl.locale")
 
-local superfolding = require("packages.bibtex.csl.utils.superfolding")
 local endash = luautf8.char(0x2013)
 local emdash = luautf8.char(0x2014)
 
@@ -37,22 +40,26 @@ local CslEngine = pl.class()
 
 --- (Constructor) Create a new CSL engine.
 -- The optional extras table is for features not part of CSL 1.0.2.
--- Currently:
---   localizedPunctuation: boolean (default false) - use localized punctuation
+-- Currently supported:
+--
+--  - `localizedPunctuation` (boolean, default false): use localized punctuation marks (experimental)
+--  - `italicExtension` (boolean,default true): interpret `_text_` as italic
+--  - `mathExtension` (boolean, default true): interpret `$text$` as a TeX-like math expression
+--  - `breakISBN` (boolean, default true): allow breaking ISBNs and ISSNs at their dashes
 --
 -- @tparam CslStyle  style CSL style
 -- @tparam CslLocale locale CSL locale
--- @tparam table     extras Additional data to pass to the engine
+-- @tparam[opt] table extras Additional data to pass to the engine
 -- @treturn CslEngine
 function CslEngine:_init (style, locale, extras)
    self.locale = locale
    self.style = style
-   self.extras = extras
-      or {
-         localizedPunctuation = false,
-         italicExtension = true,
-         mathExtension = true,
-      }
+   self.extras = pl.tablex.union({
+      localizedPunctuation = false,
+      italicExtension = true,
+      mathExtension = true,
+      breakISBN = true,
+   }, extras or {})
 
    -- Shortcuts for often used style elements
    self.macros = style.macros or {}
@@ -63,18 +70,18 @@ function CslEngine:_init (style, locale, extras)
 
    -- Cache for some small string operations (e.g. XML escaping)
    -- to avoid repeated processing.
-   self.cache = {}
+   self._cache = {}
 
    -- Early lookups for often used localized punctuation marks
    self.punctuation = {
-      open_quote = self:_render_term("open-quote") or luautf8.char(0x201C), -- 0x201C curly left quote
-      close_quote = self:_render_term("close-quote") or luautf8.char(0x201D), -- 0x201D curly right quote
-      open_inner_quote = self:_render_term("open-inner-quote") or luautf8.char(0x2018), -- 0x2018 curly left single quote
-      close_inner_quote = self:_render_term("close-inner-quote") or luautf8.char(0x2019), -- 0x2019 curly right single quote
-      page_range_delimiter = self:_render_term("page-range-delimiter") or endash,
-      [","] = self:_render_term("comma") or ",",
-      [";"] = self:_render_term("semicolon") or ";",
-      [":"] = self:_render_term("colon") or ":",
+      open_quote = self.locale:term("open-quote") or luautf8.char(0x201C), -- 0x201C curly left quote
+      close_quote = self.locale:term("close-quote") or luautf8.char(0x201D), -- 0x201D curly right quote
+      open_inner_quote = self.locale:term("open-inner-quote") or luautf8.char(0x2018), -- 0x2018 curly left single quote
+      close_inner_quote = self.locale:term("close-inner-quote") or luautf8.char(0x2019), -- 0x2019 curly right single quote
+      page_range_delimiter = self.locale:term("page-range-delimiter") or endash,
+      [","] = self.locale:term("comma") or ",",
+      [";"] = self.locale:term("semicolon") or ";",
+      [":"] = self.locale:term("colon") or ":",
    }
 
    -- Small utility for page ranges, see text processing for <text variable="page">
@@ -114,22 +121,40 @@ function CslEngine:_init (style, locale, extras)
          self.subsequentAuthorSubstitute = "<bibRule>" .. count .. "</bibRule>" .. trail
       end
    end
+
+   self.states = {}
+   self.state = {}
+end
+
+function CslEngine:pushState ()
+   table.insert(self.states, self.state)
+   self.state = {
+      mode = self.state.mode -- Keep the current mode (citation or bibliography) by default
+   }
+end
+
+function CslEngine:popState ()
+   if #self.states > 0 then
+      self.state = table.remove(self.states)
+   else
+      SU.error("Something went wrong: no state to pop")
+   end
 end
 
 function CslEngine:_prerender ()
    -- Stack for processing of cs:group as conditional
-   self.groupQueue = {}
-   self.groupState = { variables = {}, count = 0 }
+   self.state.groupQueue = {}
+   self.state.groupState = { variables = {}, count = 0 }
 
    -- Track first name for name-as-sort-order
-   self.firstName = true
+   self.state.firstName = true
 
    -- Track first rendered cs:names for subsequent-author-substitute
-   self.doAuthorSubstitute = self.mode == "bibliography" and self.subsequentAuthorSubstitute
-   self.hasRenderedNames = false
+   self.state.doAuthorSubstitute = self.state.mode == "bibliography" and self.subsequentAuthorSubstitute
+   self.state.hasRenderedNames = false
    -- Track authors for subsequent-author-substitute
-   self.precAuthors = self.currentAuthors
-   self.currentAuthors = {}
+   self.state.precAuthors = self.state.currentAuthors
+   self.state.currentAuthors = {}
 end
 
 function CslEngine:_merge_locales (locale1, locale2)
@@ -182,11 +207,11 @@ end
 -- GROUP LOGIC (tracking variables in groups, conditional rendering)
 
 function CslEngine:_enterGroup ()
-   self.groupState.count = self.groupState.count + 1
-   SU.debug("csl", "Enter group", self.groupState.count, "level", #self.groupQueue)
+   self.state.groupState.count = self.state.groupState.count + 1
+   SU.debug("csl", "Enter group", self.state.groupState.count, "level", #self.state.groupQueue)
 
-   table.insert(self.groupQueue, self.groupState)
-   self.groupState = { variables = {}, count = 0 }
+   table.insert(self.state.groupQueue, self.state.groupState)
+   self.state.groupState = { variables = {}, count = 0 }
 end
 
 function CslEngine:_leaveGroup (rendered, macro)
@@ -195,7 +220,7 @@ function CslEngine:_leaveGroup (rendered, macro)
    -- But the group is kept if no variable is called.
    local emptyVariables = true
    local hasVariables = false
-   for _, cond in pairs(self.groupState.variables) do
+   for _, cond in pairs(self.state.groupState.variables) do
       hasVariables = true
       if cond then -- non-empty variable found
          emptyVariables = false
@@ -206,7 +231,8 @@ function CslEngine:_leaveGroup (rendered, macro)
    if suppressGroup then
       rendered = nil -- Suppress group
    end
-   self.groupState = table.remove(self.groupQueue)
+   local vars = self.state.groupState.variables
+   self.state.groupState = table.remove(self.state.groupQueue)
    if macro then
       -- If a macro (pseudo-group) is suppressed, we need to track it as an
       -- empty variable for the group it is in.
@@ -217,22 +243,30 @@ function CslEngine:_leaveGroup (rendered, macro)
       -- </group>
       -- Macro "accessed" refers to variable(s) and can be suppressed,
       -- in which case the whole group needs to be suppressed too.
-      local groupCond = "_macro_" .. macro
-      self:_addGroupVariable(groupCond, not suppressGroup)
+      if suppressGroup then
+         self:_addGroupVariable("_macro_" .. macro, false)
+      else
+         -- If the macro is not suppressed, we need to track all variables
+         -- that were called in it, so that they can be used in the outer group.
+         -- Typical use case is <substitute>
+         for variable, value in pairs(vars) do
+            self:_addGroupVariable(variable, value)
+         end
+      end
    elseif not suppressGroup then
       -- A nested non-empty group is treated as a non-empty variable for the
       -- purposes of determining suppression of the outer group.
       -- So add a pseudo-variable for the inner group into the outer group, to
       -- track this.
-      local groupCond = "_group_" .. self.groupState.count
+      local groupCond = "_group_" .. self.state.groupState.count
       self:_addGroupVariable(groupCond, true)
    end
    SU.debug(
       "csl",
       "Leave group",
-      self.groupState.count,
+      self.state.groupState.count,
       "level",
-      #self.groupQueue,
+      #self.state.groupQueue,
       suppressGroup and "(suppressed)" or "(rendered)"
    )
    return rendered
@@ -240,28 +274,10 @@ end
 
 function CslEngine:_addGroupVariable (variable, value)
    SU.debug("csl", "Group variable", variable, value and "true" or "false")
-   self.groupState.variables[variable] = value and true or false
+   self.state.groupState.variables[variable] = value and true or false
 end
 
 -- INTERNAL HELPERS
-
-function CslEngine:_render_term (name, form, plural)
-   local t = self.locale:term(name, form, plural)
-   if t then
-      if self.cache[t] then
-         return self.cache[t]
-      end
-      t = self:_xmlEscape(t)
-      -- The CSL specification states, regarding terms:
-      --   "Superscripted Unicode characters can be used for superscripting."
-      -- We replace the latter with their normal form, wrapped in a command.
-      -- The result is cached in the term object to avoid repeated processing.
-      -- (Done after XML escaping as superfolding may add commands.)
-      t = superfolding(t)
-      self.cache[t] = t
-   end
-   return t
-end
 
 function CslEngine:_render_text_specials (value)
    -- Extensions for italic and math...
@@ -275,7 +291,7 @@ function CslEngine:_render_text_specials (value)
             -- Use pseudo-markdown italic extension (_text_) to wrap
             -- the text in emphasis.
             -- Skip if sorting, as it's not supposed to affect sorting.
-            local repl = self.sorting and "%1" or "<em>%1</em>"
+            local repl = self.state.sorting and "%1" or "<em>%1</em>"
             s = luautf8.gsub(s, "_([^_]+)_", repl)
          end
          table.insert(pieces, s)
@@ -300,8 +316,8 @@ function CslEngine:_xmlEscape (t)
 end
 
 function CslEngine:_punctuation_extra (t)
-   if self.cache[t] then
-      return self.cache[t]
+   if self._cache[t] then
+      return self._cache[t]
    end
    if self.extras.localizedPunctuation then
       -- non-standard: localized punctuation
@@ -310,7 +326,7 @@ function CslEngine:_punctuation_extra (t)
       end)
    end
    t = self:_xmlEscape(t)
-   self.cache[t] = t
+   self._cache[t] = t
    return t
 end
 
@@ -340,7 +356,7 @@ function CslEngine:_render_formatting (t, options)
    if not t then
       return
    end
-   if self.sorting then
+   if self.state.sorting then
       -- Skip all formatting in sorting mode
       return t
    end
@@ -394,19 +410,24 @@ function CslEngine:_render_quotes (t, options)
    if not t then
       return
    end
-   if self.sorting then
+   if self.state.sorting then
       -- Skip all quotes in sorting mode
       return luautf8.gsub(t, '[“”"]', "")
    end
-   if t and options.quotes then
+   if t and SU.boolean(options.quotes, false) then
       -- Smart transform curly quotes in the input to localized inner quotes.
       t = luautf8.gsub(t, "“", self.punctuation.open_inner_quote)
       t = luautf8.gsub(t, "”", self.punctuation.close_inner_quote)
       -- Smart transform straight quotes in the input to localized inner quotes.
       t = luautf8.gsub(t, '^"', self.punctuation.open_inner_quote)
       t = luautf8.gsub(t, '"$', self.punctuation.close_inner_quote)
-      t = luautf8.gsub(t, '([’%s])"', "%1" .. self.punctuation.open_inner_quote)
-      t = luautf8.gsub(t, '"([%s%p])', self.punctuation.close_inner_quote .. "%1")
+      if self.extras.italicExtension then
+         t = luautf8.gsub(t, '([’%s_])"', "%1" .. self.punctuation.open_inner_quote)
+         t = luautf8.gsub(t, '"([%s%p_])', self.punctuation.close_inner_quote .. "%1")
+      else
+         t = luautf8.gsub(t, '([’%s])"', "%1" .. self.punctuation.open_inner_quote)
+         t = luautf8.gsub(t, '"([%s%p])', self.punctuation.close_inner_quote .. "%1")
+      end
       -- Wrap the result in localized outer quotes.
       t = self.punctuation.open_quote .. t .. self.punctuation.close_quote
    end
@@ -414,7 +435,7 @@ function CslEngine:_render_quotes (t, options)
 end
 
 function CslEngine:_render_link (t, link)
-   if t and link and not self.sorting then
+   if t and link and not self.state.sorting then
       -- We'll let the processor implement CSL 1.0.2 link handling.
       -- (appendix VI)
       -- NOTE: Avoid (quoted) attributes and dashes in tags, as some global
@@ -433,7 +454,7 @@ end
 
 function CslEngine:_layout (options, content, entries)
    local output = {}
-   if self.mode == "citation" then
+   if self.state.mode == "citation" then
       for _, entry in ipairs(entries) do
          self:_prerender()
          local elem = self:_render_children(content, entry)
@@ -472,8 +493,14 @@ function CslEngine:_layout (options, content, entries)
       if elem then
          table.insert(output, elem)
       end
+      if entry._related then
+         local relations = self:reference(entry._related)
+         table.insert(output, "<bibRelated>\n" .. relations .. "</bibRelated>\n")
+      end
    end
-   return table.concat(output, "<par/>")
+   local openTag = "<bibParagraph>\n"
+   local closeTag = "</bibParagraph>\n"
+   return openTag .. table.concat(output, closeTag .. openTag) .. closeTag
 end
 
 function CslEngine:_text (options, content, entry)
@@ -498,7 +525,7 @@ function CslEngine:_text (options, content, entry)
          SU.error("CSL macro " .. options.macro .. " not found")
       end
    elseif options.term then
-      t = self:_render_term(options.term, options.form, SU.boolean(options.plural, false))
+      t = self.locale:term(options.term, options.form, SU.boolean(options.plural, false))
    elseif options.variable then
       variable = options.variable
       t = entry[variable]
@@ -510,6 +537,12 @@ function CslEngine:_text (options, content, entry)
       if variable == "page" and t then
          -- Replace any dash in page ranges
          t = self.page_range_replace(t)
+      end
+      if (variable == "ISBN" or variable == "ISSN") and self.extras.breakISBN and t then
+         -- These fields might be problematic for justification, and the default line breaking
+         -- algorithm may not recognize these dashes as word boundaries when occurring in the middle
+         -- of the number.
+         t = luautf8.gsub(t, "([%-–—])", "%1" .. luautf8.char(0x200B)) -- zero-width space to enforce word boundaries
       end
 
       -- FIXME NOT IMPLEMENTED:
@@ -575,7 +608,7 @@ function CslEngine:_a_day (options, day, month) -- month needed to get gender fo
       local genderForm
       if month then
          local monthKey = ("month-%02d"):format(month)
-         local _, gender = self:_render_term(monthKey)
+         local _, gender = self.locale:term(monthKey)
          genderForm = gender or "neuter"
       end
       if SU.boolean(self.locale.styleOptions["limit-day-ordinals-to-day-1"], false) then
@@ -598,7 +631,7 @@ function CslEngine:_a_month (options, month)
       t = ("%02d"):format(month)
    else -- short or long (default)
       local monthKey = ("month-%02d"):format(month)
-      t = self:_render_term(monthKey, form or "long")
+      t = self.locale:term(monthKey, form or "long")
    end
    t = self:_render_stripPeriods(t, options)
    return t
@@ -613,7 +646,7 @@ function CslEngine:_a_season (options, season)
       SU.warn("CSL season formatting as a number is ignored")
    else
       local seasonKey = ("season-%02d"):format(season)
-      t = self:_render_term(seasonKey, form or "long")
+      t = self.locale:term(seasonKey, form or "long")
    end
    t = self:_render_stripPeriods(t, options)
    return t
@@ -768,7 +801,7 @@ function CslEngine:_number (options, content, entry)
       value = value and value.value
    end
    if value then
-      local _, gender = self:_render_term(variable)
+      local _, gender = self.locale:term(variable)
       local genderForm = gender or "neuter"
 
       -- FIXME TODO: Some complex stuff about name ranges, commas, etc. in the spec.
@@ -801,11 +834,11 @@ end
 
 function CslEngine:_leaveSubstitute (t, entry)
    SU.debug("csl", "Leave substitute")
-   local vars = self.groupState.variables
+   local vars = self.state.groupState.variables
    -- "Substituted variables are considered empty for the purposes of
    -- determining whether to suppress an enclosing cs:group."
    -- So it's as if we hadn't seen any variable in our substitute.
-   self.groupState.variables = {}
+   self.state.groupState.variables = {}
    -- "Substituted variables are suppressed in the rest of the output
    -- to prevent duplication"
    -- So if the substitution was successful, we remove referenced variables
@@ -842,7 +875,7 @@ function CslEngine:_substitute (options, content, entry)
 end
 
 function CslEngine:_name_et_al (options)
-   local t = self:_render_term(options.term or "et-al")
+   local t = self.locale:term(options.term or "et-al")
    t = self:_render_formatting(t, options)
    return t
 end
@@ -876,7 +909,7 @@ function CslEngine:_a_name (options, content, entry)
    end
    local demoteNonDroppingParticle = options["demote-non-dropping-particle"] or "never"
 
-   if self.sorting then
+   if self.state.sorting then
       -- Implicitly we are in long form, name-as-sort-order all, and no formatting.
       if demoteNonDroppingParticle == "never" then
          -- Order is: [NDP] Family [Given] [Suffix] e.g. van Gogh Vincent III
@@ -958,7 +991,7 @@ function CslEngine:_a_name (options, content, entry)
    end
 
    local nameAsSortOrder = options["name-as-sort-order"]
-   local familyFirst = nameAsSortOrder == "all" or (nameAsSortOrder == "first" and self.firstName) or false
+   local familyFirst = nameAsSortOrder == "all" or (nameAsSortOrder == "first" and self.state.firstName) or false
    if not familyFirst then
       -- Order is: [Given] [DP] [NDP] Family [Suffix] e.g. Vincent van Gogh III
       local t = {}
@@ -1072,7 +1105,7 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
       local skip = editortranslator and var == "translator" -- done via the "editor" field
       if not skip and entry[var] then
          local label
-         if label_opts and not self.sorting then
+         if label_opts and not self.state.sorting then
             -- (labels in names are skipped in sorting mode)
             local v = var == "editor" and editortranslator and "editortranslator" or var
             local opts = pl.tablex.union(label_opts, { variable = v })
@@ -1083,15 +1116,15 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
          local l = {}
 
          -- FIXME EXPLAIN
-         if not self.hasRenderedNames then
-            pl.tablex.insertvalues(self.currentAuthors, names)
+         if not self.state.hasRenderedNames then
+            pl.tablex.insertvalues(self.state.currentAuthors, names)
          end
          if
-            self.doAuthorSubstitute
-            and not self.sorting
-            and not self.hasRenderedNames
-            and self.precAuthors
-            and pl.tablex.deepcompare(names, self.precAuthors)
+            self.state.doAuthorSubstitute
+            and not self.state.sorting
+            and not self.state.hasRenderedNames
+            and self.state.precAuthors
+            and pl.tablex.deepcompare(names, self.state.precAuthors)
          then
             -- FIXME NOT IMPLEMENTED
             --   subsequent-author-substitute-rule (default "complete-all" is assumed here)
@@ -1099,7 +1132,7 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
             -- substitutions might affect quotes...
             -- So we use a simple "wrapper" command.
             table.insert(l, self.subsequentAuthorSubstitute)
-            self.firstName = false
+            self.state.firstName = false
          else
             for i, name in ipairs(names) do
                if #names >= et_al_min and i > et_al_use_first then
@@ -1107,7 +1140,7 @@ function CslEngine:_names_with_resolved_opts (options, substitute_node, entry)
                   break
                end
                local t = self:_a_name(name_node.options, name_node, name)
-               self.firstName = false
+               self.state.firstName = false
                table.insert(l, t)
             end
          end
@@ -1186,7 +1219,7 @@ function CslEngine:_names (options, content, entry)
       name_node = { command = "cs:name", options = {} }
    end
    -- Build inherited options
-   local inherited_opts = pl.tablex.union(self.inheritable[self.mode], options)
+   local inherited_opts = pl.tablex.union(self.inheritable[self.state.mode], options)
    name_node.options = pl.tablex.union(inherited_opts, name_node.options)
    name_node.options.form = name_node.options.form or inherited_opts["name-form"]
    local et_al_min = tonumber(name_node.options["et-al-min"]) or 4 -- No default in the spec, using Chicago's
@@ -1196,7 +1229,7 @@ function CslEngine:_names (options, content, entry)
    if and_opt == "symbol" then
       and_word = "&amp;"
    elseif and_opt == "text" then
-      and_word = self:_render_term("and")
+      and_word = self.locale:term("and")
    end
    local name_delimiter = name_node.options.delimiter or inherited_opts["names-delimiter"] or ", "
    -- local delimiter_precedes_et_al = name_node.options["delimiter-precedes-et-al"] -- FIXME NOT IMPLEMENTED
@@ -1204,9 +1237,9 @@ function CslEngine:_names (options, content, entry)
       or inherited_opts["delimiter-precedes-last"]
       or "contextual"
 
-   if name_delimiter and not self.cache[name_delimiter] then
+   if name_delimiter and not self._cache[name_delimiter] then
       name_delimiter = self:_xmlEscape(name_delimiter)
-      self.cache[name_delimiter] = name_delimiter
+      self._cache[name_delimiter] = name_delimiter
    end
 
    local resolved = {
@@ -1214,7 +1247,7 @@ function CslEngine:_names (options, content, entry)
       et_al_min = et_al_min,
       et_al_use_first = et_al_use_first,
       and_word = and_word,
-      name_delimiter = name_delimiter and self.cache[name_delimiter],
+      name_delimiter = name_delimiter and self._cache[name_delimiter],
       is_label_first = is_label_first,
       label_opts = label_opts,
       et_al_opts = et_al_opts,
@@ -1225,8 +1258,8 @@ function CslEngine:_names (options, content, entry)
    resolved = pl.tablex.union(options, resolved)
 
    local rendered = self:_names_with_resolved_opts(resolved, substitute, entry)
-   if rendered and not self.hasRenderedNames then
-      self.hasRenderedNames = true
+   if rendered and not self.state.hasRenderedNames then
+      self.state.hasRenderedNames = true
    end
    return rendered
 end
@@ -1258,7 +1291,7 @@ function CslEngine:_label (options, content, entry)
             end
          end
       end
-      value = self:_render_term(variable, options.form or "long", plural)
+      value = self.locale:term(variable, options.form or "long", plural)
       value = self:_render_stripPeriods(value, options)
       value = self:_render_textCase(value, options)
       value = self:_render_formatting(value, options)
@@ -1460,15 +1493,10 @@ function CslEngine:_key (options, content, entry)
    SU.error("CSL key without variable or macro")
 end
 
--- FIXME: A bit ugly: When implementing SU.collatedSort, I didn't consider
--- sorting structured tables, so we need to go low level here.
--- Moreover, I made icu.compare return a boolean, so we have to pay twice
--- the comparison cost to check equality...
--- See PR #2105
 local icu = require("justenoughicu")
 
 function CslEngine:_sort (options, content, entries)
-   if not self.sorting then
+   if not self.state.sorting then
       -- Skipped at rendering
       return
    end
@@ -1479,6 +1507,9 @@ function CslEngine:_sort (options, content, entries)
          table.insert(ordering, child.options.sort ~= "descending") -- true for ascending (default)
       end
    end
+   -- Add two extra keys to ensure a stable sort, see below.
+   table.insert(ordering, true)
+   table.insert(ordering, true)
    -- Compute the sorting keys for each entry
    for _, entry in ipairs(entries) do
       local keys = {}
@@ -1493,10 +1524,18 @@ function CslEngine:_sort (options, content, entries)
             table.insert(keys, key or "")
          end
       end
+      -- Enforce last-chance sorting keys so that the sort function is stable
+      -- with proper strict weak ordering, even if the style leads to identical
+      -- sorting keys for different entries.
+      table.insert(keys, entry["citation-number"] or "")
+      table.insert(keys, entry["citation-key"]) -- Defined, and assumed to be unique
       entry._keys = keys
    end
    -- Perform the sort
    -- Using the locale language (BCP47).
+   -- I wish we could use SU.collatedSort() introduced in PR #2105 (SILE 0.15.6),
+   -- but it relies on setting "document.language" and SILE does not yet support
+   -- setting a BCP47 qualified language here, so we are going low-level.
    local lang = self.locale.lang
    local collator = icu.collation_create(lang, {})
    table.sort(entries, function (a, b)
@@ -1509,25 +1548,20 @@ function CslEngine:_sort (options, content, entries)
       local ak = a._keys
       local bk = b._keys
       for i = 1, #ordering do
-         -- "Items with an empty sort key value are placed at the end of the sort,
-         -- both for ascending and descending sorts."
-         if ak[i] == "" then
-            return bk[i] == ""
-         end
-         if bk[i] == "" then
-            return true
-         end
-
-         if ak[i] ~= bk[i] then -- HACK: See comment above, ugly inequality check
-            local cmp = icu.compare(collator, ak[i], bk[i])
-            -- Hack to keep on working whenever PR #2105 lands and changes icu.compare
-            local islower
-            if type(cmp) == "number" then
-               islower = cmp < 0
-            else
-               islower = cmp
+         local cmp = icu.compare(collator, ak[i], bk[i])
+         if cmp ~= 0 then
+            -- CSL 1.0.2 says:
+            -- "Items with an empty sort key value are placed at the end of the sort,
+            -- both for ascending and descending sorts."
+            -- It's a bit unclear if it applies each key separately.
+            -- This is our interpretation here.
+            if ak[i] == "" then
+               return false
             end
-            -- Now order accordingly
+            if bk[i] == "" then
+               return true
+            end
+            local islower = cmp < 0
             if ordering[i] then
                return islower
             else
@@ -1535,12 +1569,10 @@ function CslEngine:_sort (options, content, entries)
             end
          end
       end
-      -- If we reach this point, the keys are equal (or we had no keys)
-      -- Probably unlikely in real life, and not mentioned in the CSL spec
-      -- unless I missed it. Let's fallback to the citation order, so at
-      -- least cited entries are ordered predictably.
-      SU.warn("CSL sort keys are equal for " .. a["citation-key"] .. " and " .. b["citation-key"])
-      return a["citation-number"] < b["citation-number"]
+      -- We added two extra sorting keys to ensure a stable sort on citation-number,
+      -- and most of all on citation-key which is assumed to be unique.
+      -- So we should never reach this point.
+      SU.error("Something is broken, CSL sort keys are equal for " .. a["citation-key"] .. " and " .. b["citation-key"])
    end)
    icu.collation_destroy(collator)
 end
@@ -1616,7 +1648,7 @@ function CslEngine:_postrender (text)
    text = luautf8.gsub(text, "%.%.", ".")
    -- HACK: remove extraneous periods after exclamation and question marks, period or ellipsis
    -- (Follows the preceding rule to also account for moved periods.)
-   text = luautf8.gsub(text, "([…!?]%.)%.", "%1")
+   text = luautf8.gsub(text, "([…!?.])%.", "%1")
    if not piquote then
       -- HACK: remove extraneous periods after quotes.
       -- Opinionated, e.g. for French at least, some typographers wouldn't
@@ -1628,10 +1660,11 @@ function CslEngine:_postrender (text)
 end
 
 function CslEngine:_process (entries, mode)
+   self:pushState()
    if mode ~= "citation" and mode ~= "bibliography" then
       SU.error("CSL processing mode must be 'citation' or 'bibliography'")
    end
-   self.mode = mode
+   self.state.mode = mode
    -- Deep copy the entries as cs:substitute may remove fields
    entries = pl.tablex.deepcopy(entries)
 
@@ -1641,9 +1674,10 @@ function CslEngine:_process (entries, mode)
    end
    local sort = SU.ast.findInTree(ast, "cs:sort")
    if sort then
-      self.sorting = true
+      self:pushState()
+      self.state.sorting = true
       self:_sort(sort.options, sort, entries)
-      self.sorting = false
+      self:popState()
    else
       -- The CSL specification says:
       -- "In the absence of cs:sort, cites and bibliographic entries appear in
@@ -1667,7 +1701,9 @@ function CslEngine:_process (entries, mode)
       end
    end
 
-   return self:_render_children(ast, entries)
+   local res = self:_render_children(ast, entries)
+   self:popState()
+   return res
 end
 
 --- Generate a citation string.

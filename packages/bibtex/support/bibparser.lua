@@ -82,6 +82,18 @@ local crossrefmap, fieldmap = bibcompat.crossrefmap, bibcompat.fieldmap
 local months =
    { jan = 1, feb = 2, mar = 3, apr = 4, may = 5, jun = 6, jul = 7, aug = 8, sep = 9, oct = 10, nov = 11, dec = 12 }
 
+local function splitSeparatedField (str)
+   -- BibLaTeX says that some field values can be separated by commas.
+   -- Exception made of the 'keywords' field, it's not totally clear whether spaces should be
+   -- trimmed, and there's even some wording in the BibLaTeX manual that suggests that TeX csv
+   -- list should not include extraneous spaces.
+   -- That sounds as a bad parser limitation, so we will always trim spaces here, and filter out
+   -- empty strings, so as to be more robust.
+   return pl.stringx.split(str, ",")
+      :map(pl.stringx.strip)
+      :filter(function (s) return s ~= "" end)
+end
+
 local function consolidateEntry (entry, label)
    local consolidated = {}
    -- BibLaTeX aliases for legacy BibTeX fields
@@ -132,6 +144,13 @@ local function consolidateEntry (entry, label)
          end
       end
    end
+   -- Lists of (comma-)separated fields
+   for _, field in ipairs({ "ids", "keywords", "related", "xdata" }) do
+      if consolidated[field] then
+         local refs = splitSeparatedField(consolidated[field])
+         consolidated[field] = refs
+      end
+   end
    entry.attributes = consolidated
    return entry
 end
@@ -139,7 +158,9 @@ end
 --- Parse a BibTeX file and populate a bibliography table.
 -- @tparam string fn Filename
 -- @tparam table biblio Table of entries
-local function parseBibtex (fn, biblio)
+-- @tparam table aliases Table for aliased entries
+-- @tparam table related Table for related entries
+local function parseBibtex (fn, biblio, aliases, related)
    fn = SILE.resolveFile(fn) or SU.error("Unable to resolve Bibtex file " .. fn)
    local fh, e = io.open(fn)
    if e then
@@ -157,10 +178,44 @@ local function parseBibtex (fn, biblio)
          if biblio[ent.label] then
             SU.warn("Duplicate entry key '" .. ent.label .. "', picking the last one")
          end
-         biblio[ent.label] = consolidateEntry(entry, ent.label)
+         local consolidated = consolidateEntry(entry, ent.label)
+         biblio[ent.label] = consolidated
+         if consolidated.attributes.ids then
+            -- Note that 'ids' is is not inheritable, so we can safely consolidate them
+            -- now.
+            for _, id in ipairs(consolidated.attributes.ids) do
+               if not biblio[id] and not aliases[id] then
+                  -- We are not supporting aliases of aliases:
+                  -- It's not clear whether BibLaTeX supports that, but v3.21 §2.3.3 seems to suggest
+                  -- the contrary (mentioning that aliases are to the "primary key").
+                  aliases[id] = consolidated
+               else
+                  SU.warn("Duplicate entry alias '" .. id .. "' in entry '" .. ent.label .. "', skipped")
+               end
+            end
+         end
+         if consolidated.attributes.related then
+            -- Note that 'related' is not inheritable, so we can safely consolidate them
+            -- now, but in their own table as there's no guranteee that a related entry is
+            -- from the same bibliography file, and has been loaded yet.
+            for _, rel in ipairs(consolidated.attributes.related) do
+               if not related[rel] then
+                  related[rel] = {}
+               end
+               table.insert(related[rel], ent.label)
+            end
+         end
       end
    end
 end
+
+-- BibLaTeX v3.21 appendix B, first part of the table
+local NEVER_INHERITED = pl.Set({
+   "ids", "crossref", "xref", "entryset", "entrysubtype", "execute",
+   "label", "options", "presort", "related", "relatedoptions",
+   "relatedstring", "relatedtype", "shorthand", "shorthandintro",
+   "sortkey",
+})
 
 --- Copy fields from the parent entry to the child entry.
 -- BibLaTeX/Biber have a complex inheritance system for fields.
@@ -173,16 +228,18 @@ local function fieldsInherit (parent, entry)
    if not map then
       -- @xdata and any other unknown types: inherit all missing fields
       for field, value in pairs(parent.attributes) do
-         if not entry.attributes[field] then
+         if not entry.attributes[field] and not NEVER_INHERITED[field] then
             entry.attributes[field] = value
          end
       end
       return -- done
    end
    for field, value in pairs(parent.attributes) do
-      if map[field] == nil and not entry.attributes[field] then
+      -- Fields that can be inherited without re-mapping
+      if map[field] == nil and not entry.attributes[field] and not NEVER_INHERITED[field] then
          entry.attributes[field] = value
       end
+      -- Fields that are inherited with a different name by inheritance
       for childfield, parentfield in pairs(map) do
          if parentfield and not entry.attributes[parentfield] then
             entry.attributes[parentfield] = parent.attributes[childfield]
@@ -199,9 +256,11 @@ end
 -- effect on subsequent uses: BibTeX does seem to mandate cross references
 -- to be defined before the entry that uses it, or even in the same bibliography
 -- file.
+-- Once an entry is resolved, we also check the 'related' field, which is a list
+-- of related entries, but does not imply any inheritance.
 -- Implementation note:
 -- We are not here to check the consistency of the BibTeX file, so there is
--- no check that xdata refers only to @xdata entries
+-- no check that xdata refers only to @xdata entries.
 -- Removing the crossref field implies we won't track its use and implicitly
 -- cite referenced entries in the bibliography over a certain threshold.
 -- @tparam table bib Bibliography
@@ -210,7 +269,7 @@ local function crossrefAndXDataResolve (bib, entry)
    local refs
    local xdata = entry.attributes.xdata
    if xdata then
-      refs = xdata and pl.stringx.split(xdata, ",")
+      refs = xdata
       entry.attributes.xdata = nil
    end
    local crossref = entry.attributes.crossref
@@ -220,18 +279,29 @@ local function crossrefAndXDataResolve (bib, entry)
       entry.attributes.crossref = nil
    end
 
-   if not refs then
-      return
-   end
-   for _, ref in ipairs(refs) do
-      local parent = bib[ref]
-      if parent then
-         crossrefAndXDataResolve(bib, parent)
-         fieldsInherit(parent, entry)
-      else
-         SU.warn("Unknown crossref " .. ref .. " in bibliography entry " .. entry.label)
+   if refs then
+      for _, ref in ipairs(refs) do
+         local parent = bib[ref]
+         if parent then
+            crossrefAndXDataResolve(bib, parent)
+            fieldsInherit(parent, entry)
+         else
+            SU.warn("Unknown crossref " .. ref .. " in bibliography entry " .. entry.label)
+         end
       end
    end
+
+   -- Quite verbose if one only uses some biblibliography files for say an editor,
+   -- without including journals that may have related entries (reviews, etc.)
+   -- local related = entry.attributes.related
+   -- if related then
+   --    for _, ref in ipairs(related) do
+   --       local parent = bib[ref]
+   --       if not parent then
+   --          SU.warn("Unknown related entry " .. ref .. " in bibliography entry " .. entry.label)
+   --       end
+   --    end
+   -- end
 end
 
 return {

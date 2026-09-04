@@ -1,64 +1,9 @@
 local base = require("packages.base")
 
-local loadkit = require("loadkit")
-local cslStyleLoader = loadkit.make_loader("csl")
-local cslLocaleLoader = loadkit.make_loader("xml")
-
-local CslLocale = require("packages.bibtex.csl.locale")
-local CslStyle = require("packages.bibtex.csl.style")
-local CslEngine = require("packages.bibtex.csl.engine")
-
-local bibparser = require("packages.bibtex.support.bibparser")
-local parseBibtex, crossrefAndXDataResolve = bibparser.parseBibtex, bibparser.crossrefAndXDataResolve
-
-local bib2csl = require("packages.bibtex.support.bib2csl")
-local locators = require("packages.bibtex.support.locators")
-
-local Bibliography = require("packages.bibtex.bibliography") -- Legacy
-
-local function loadCslLocale (name)
-   local filename = SILE.resolveFile("packages/bibtex/csl/locales/locales-" .. name .. ".xml")
-      or cslLocaleLoader("packages.bibtex.csl.locales.locales-" .. name)
-   if not filename then
-      SU.error("Could not find CSL locale '" .. name .. "'")
-   end
-   local locale, err = CslLocale.read(filename)
-   if not locale then
-      SU.error("Could not open CSL locale '" .. name .. "'': " .. err)
-      return
-   end
-   return locale
-end
-local function loadCslStyle (name)
-   local filename = SILE.resolveFile("packages/bibtex/csl/styles/" .. name .. ".csl")
-      or cslStyleLoader("packages.bibtex.csl.styles." .. name)
-   if not filename then
-      SU.error("Could not find CSL style '" .. name .. "'")
-   end
-   local style, err = CslStyle.read(filename)
-   if not style then
-      SU.error("Could not open CSL style '" .. name .. "'': " .. err)
-      return
-   end
-   return style
-end
+local CslProcessor = require("packages.bibtex.csl.processor")
 
 local package = pl.class(base)
 package._name = "bibtex"
-
-local function resolveEntry (bib, key)
-   local entry = bib[key]
-   if not entry then
-      SU.warn("Unknown citation key " .. key)
-      return
-   end
-   if entry.type == "xdata" then
-      SU.warn("Skipped citation of @xdata entry " .. key)
-      return
-   end
-   crossrefAndXDataResolve(bib, entry)
-   return entry
-end
 
 function package:loadOptPackage (pack)
    local ok, _ = pcall(function ()
@@ -71,16 +16,7 @@ end
 
 function package:_init ()
    base._init(self)
-   -- Formerly we used a SILE.scratch variable, but these expose too much of the internals to the outer world.
-   -- So we now use a private member instead.
-   self._data = {
-      bib = {},
-      cited = {
-         keys = {}, -- Cited keys in the order they are cited (ordered set)
-         refs = {}, -- Table of cited keys with their first citation number, last locator and last position (table)
-         lastkey = nil, -- Last entry key used in a citation, to track ibid/ibid-with-locator (string)
-      },
-   }
+   self._processor = CslProcessor()
 
    -- For DOI, PMID, PMCID and URL support.
    self:loadPackage("url")
@@ -92,6 +28,7 @@ function package:_init ()
    -- Play fair: try to load 3rd-party optional textsubsuper package.
    -- If not available, fallback to raiselower to implement textsuperscript
    if not self:loadOptPackage("textsubsuper") then
+      SU.debug("bibtex", "Superscripting support using raised and scaled text")
       self:loadPackage("raiselower")
       self:registerCommand("textsuperscript", function (_, content)
          -- Fake more or less ad hoc superscripting
@@ -104,7 +41,7 @@ end
 
 function package:declareSettings ()
    SILE.settings:declare({
-      parameter = "bibtex.style",
+      parameter = "bibtex.style", -- Kept for compatibility but no longer used
       type = "string",
       default = "csl",
       help = "BibTeX style",
@@ -119,186 +56,119 @@ function package:declareSettings ()
    })
 end
 
---- Retrieve the CSL engine, creating it if necessary.
--- @treturn CslEngine CSL engine instance
-function package:getCslEngine ()
-   if not self._engine then
-      SILE.call("bibliographystyle", { lang = "en-US", style = "chicago-author-date" })
-   end
-   return self._engine
-end
-
---- Retrieve an entry and mark it as cited if it is not already.
--- @tparam string key Citation key
--- @tparam boolean warn_uncited Warn if the entry is not cited yet
--- @treturn table Bibliography entry
--- @treturn number Citation number
--- @treturn string|nil Locator value
-function package:_getEntryForCite (key, warn_uncited)
-   local entry = resolveEntry(self._data.bib, key)
-   if not entry then
-      return
-   end
-   -- Keep track of cited entries
-   local cited = self._data.cited.refs[key]
-   if not cited then
-      if warn_uncited then
-         SU.warn("Reference to a non-cited entry " .. key)
-      end
-      -- Make it cited
-      table.insert(self._data.cited.keys, key)
-      local citnum = #self._data.cited.keys
-      cited = { citnum = citnum }
-      self._data.cited.refs[key] = cited
-   end
-   return entry, cited.citnum
-end
-
---- Track the position of a citation acconrding to the CSL rules.
--- @tparam string key Citation key
--- @tparam table locator Locator (label and value)
--- @tparam boolean is_single Single or multiple citation
--- @treturn string Position of the citation (first, subsequent, ibid, ibid-with-locator)
-function package:_getCitePosition (key, locator, is_single)
-   local cited = self._data.cited.refs[key]
-   if not cited then
-      -- This method is assumed to be invoked only for cited entries
-      -- (i.e. after a call to getEntryForCite).
-      SU.error("Entry " .. key .. " not cited yet, cannot track position")
-   end
-   local pos
-   if not cited.position then
-      pos = "first"
-   else
-      -- CSL 1.0.2 for "ibid" and "ibid-with-locator":
-      --    a. the current cite immediately follows on another cite, within the same citation,
-      --       that references the same item
-      --  or
-      --    b. the current cite is the first cite in the citation, and the previous citation consists
-      --       of a single cite referencing the same item.
-      if self._data.cited.lastkey ~= key or not cited.single then
-         pos = "subsequent"
-      elseif cited.locator then
-         -- CSL 1.0.2 rule when preceding cite does have a locator:
-         --    If the current cite has the same locator, the position of the current cite is “ibid”.
-         --    If the locator differs the position is “ibid-with-locator”.
-         --    If the current cite lacks a locator its only position is “subsequent”."
-         if locator then
-            local same = cited.locator.label == locator.label and cited.locator.value == locator.value
-            pos = same and "ibid" or "ibid-with-locator"
-         else
-            pos = "subsequent"
-         end
-      else
-         -- CSL 1.0.2 rule when preceding cite does not have a locator:
-         --    If the current cite has a locator, the position of the current cite is “ibid-with-locator”.
-         --    Otherwise the position is “ibid”."
-         pos = locator and "ibid-with-locator" or "ibid"
-      end
-   end
-   cited.position = pos
-   cited.locator = locator
-   cited.single = is_single
-   self._data.cited.lastkey = key
-   return pos
-end
-
 --- Get the citation key from the options or content (of a command).
 -- @tparam table options Options
 -- @tparam table content Content
 -- @treturn string Citation key
-function package._getCitationKey (_, options, content)
+function package:_getCitationKey (options, content)
    if options.key then
       return options.key
    end
    return SU.ast.contentToString(content)
 end
 
---- Retrieve a locator from the options.
--- @tparam table options Options
--- @treturn table Locator
-function package:_getLocator (options)
-   local locator
-   for k, v in pairs(options) do
-      if k ~= "key" then
-         if not locators[k] then
-            SU.warn("Unknown option '" .. k .. "' in \\cite")
-         else
-            if not locator then
-               local label = locators[k]
-               locator = { label = label, value = v }
-            else
-               SU.warn("Multiple locators in \\cite, using the first one")
-            end
-         end
-      end
-   end
-   return locator
-end
-
 function package:registerCommands ()
+   -- Bibliography loading
+
    self:registerCommand("loadbibliography", function (options, _)
       local file = SU.required(options, "file", "loadbibliography")
-      parseBibtex(file, self._data.bib)
-   end)
+
+      self._processor:loadBibliography(file)
+   end, "Load a bibliography file, merging it with the current bibliography database.")
+
+   -- Style and locale loading
+
+   self:registerCommand("bibliographystyle", function (options, _)
+      local sty = SU.required(options, "style", "bibliographystyle")
+      local lang = options.lang -- Can be nil
+
+      self._processor:setBibliographyStyle(sty, lang, {
+         localizedPunctuation = SU.boolean(options.localizedPunctuation, false),
+         italicExtension = SU.boolean(options.italicExtension, true),
+         mathExtension = SU.boolean(options.mathExtension, true),
+         breakISBN = SU.boolean(options.breakISBN, true),
+      })
+   end, "Set the bibliography style and locale for citations and references.")
+
+   -- Citation commands
 
    self:registerCommand("nocite", function (options, content)
       local key = self:_getCitationKey(options, content)
-      -- Just mark the entry as cited.
-      self:_getEntryForCite(key, false) -- no warning if not yet cited
+      self._processor:nocite(key)
    end, "Mark an entry as cited without actually producing a citation.")
 
-   -- LEGACY COMMANDS
-
-   self:registerCommand("bibstyle", function (_, _)
-      SU.deprecated("\\bibstyle", "\\set[parameter=bibtex.style]", "0.13.2", "0.14.0")
-   end)
-
    self:registerCommand("cite", function (options, content)
-      local style = SILE.settings:get("bibtex.style")
-      if style == "csl" then
-         SILE.call("csl:cite", options, content)
-         return -- done via CSL
-      end
-      if not self._deprecated_legacy_warning then
-         self._deprecated_legacy_warning = true
-         SU.warn("Legacy bibtex.style is deprecated, consider enabling the CSL implementation.")
-      end
-      -- Ensure the key is set in the options as this was the legacy behavior
-      options.key = self:_getCitationKey(options, content)
-      local entry = self:_getEntryForCite(options.key, false) -- no warning if not yet cited
-      if entry then
-         local bibstyle = require("packages.bibtex.styles." .. style)
-         local cite = Bibliography.produceCitation(options, self._data.bib, bibstyle)
+      local key = self:_getCitationKey(options, content)
+      options.key = key
+      local cite = self._processor:cite(options)
+      if cite then
          SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
       end
    end, "Produce a single citation.")
 
-   self:registerCommand("reference", function (options, content)
-      local style = SILE.settings:get("bibtex.style")
-      if style == "csl" then
-         SILE.call("csl:reference", options, content)
-         return -- done via CSL
+   self:registerCommand("cites", function (_, content)
+      if type(content) ~= "table" then
+         SU.error("Table content expected in \\cites")
       end
-      if not self._deprecated_legacy_warning then
-         self._deprecated_legacy_warning = true
-         SU.warn("Legacy bibtex.style is deprecated, consider enabling the CSL implementation.")
-      end
-      -- Ensure the key is set in the options as this was the legacy behavior
-      options.key = self:_getCitationKey(options, content)
-      local entry = self:_getEntryForCite(options.key, true) -- warn if uncited
-      if entry then
-         local bibstyle = require("packages.bibtex.styles." .. style)
-         local cite, err = Bibliography.produceReference(options, self._data.bib, bibstyle)
-         if cite == Bibliography.Errors.UNKNOWN_TYPE then
-            SU.warn("Unknown type @" .. err .. " in citation for reference " .. options.key)
-            return
+      -- Extract sub-commands
+      local children = {}
+      for _, child in ipairs(content) do
+         if type(child) == "table" then
+            if child.command == "cite" then
+               local key = self:_getCitationKey(child.options, child)
+               child.options.key = key
+               table.insert(children, child.options)
+            elseif child.command == "nocite" then
+               local key = self:_getCitationKey(child.options, child)
+               self._processor:nocite(key)
+            else
+               SU.error("Only \\cite and \\nocite commands are allowed in \\cites")
+            end
          end
+         -- Silently ignore other content (normally only blank lines)
+      end
+      local cite = self._processor:cites(children)
+      if cite then
          SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+      end
+   end, "Produce a group of citations.")
+
+   self:registerCommand("reference", function (options, content)
+      local key = self:_getCitationKey(options, content)
+      local ref = self._processor:reference(key)
+      if ref then
+         SILE.processString(("<sile>%s</sile>"):format(ref), "xml")
       end
    end, "Produce a single bibliographic reference.")
 
-   -- CSL IMPLEMENTATION COMMANDS
+   self:registerCommand("printbibliography", function (options, _)
+      local cite = self._processor:bibliography(options)
+      local engine = self._processor:getCslEngine()
+
+      if not SILE.typesetter:vmode() then
+         SILE.call("par")
+      end
+      SILE.settings:temporarily(function ()
+         local hanging_indent = SU.boolean(engine.bibliography.options["hanging-indent"], false)
+         local must_align = engine.bibliography.options["second-field-align"]
+         local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()):absolute()
+         if hanging_indent or must_align then
+            -- Respective to the fixed part of the current lskip, all lines are indented
+            -- but the first one.
+            local indent = SILE.settings:get("bibliography.indent"):absolute()
+            SILE.settings:set("document.lskip", lskip.width + indent)
+            SILE.settings:set("document.parindent", -indent)
+            SILE.settings:set("current.parindent", -indent)
+         else
+            -- Fixed part of the current lskip, and no paragraph indentation
+            SILE.settings:set("document.lskip", lskip.width)
+            SILE.settings:set("document.parindent", SILE.types.length())
+            SILE.settings:set("current.parindent", SILE.types.length())
+         end
+         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
+         SILE.call("par")
+      end)
+   end, "Produce a bibliography of references.")
 
    -- Hooks for CSL processing
 
@@ -384,167 +254,20 @@ function package:registerCommands ()
       end
    end)
 
-   -- Style and locale loading
-
-   self:registerCommand("bibliographystyle", function (options, _)
-      local sty = SU.required(options, "style", "bibliographystyle")
-      local style = loadCslStyle(sty)
-      -- FIXME: lang is mandatory until we can map document.lang to a resolved
-      -- BCP47 with region always present, as this is what CSL locales require.
-      if not options.lang then
-         -- Pick the default locale from the style, if any
-         options.lang = style.globalOptions["default-locale"]
-      end
-      local lang = SU.required(options, "lang", "bibliographystyle")
-      local locale = loadCslLocale(lang)
-      self._engine = CslEngine(style, locale, {
-         localizedPunctuation = SU.boolean(options.localizedPunctuation, false),
-         italicExtension = SU.boolean(options.italicExtension, true),
-         mathExtension = SU.boolean(options.mathExtension, true),
-      })
+   self:registerCommand("bibParagraph", function (_, content)
+      SILE.process(content)
+      SILE.call("par")
    end)
 
-   self:registerCommand("csl:cite", function (options, content)
-      local key = self:_getCitationKey(options, content)
-      local entry, citnum = self:_getEntryForCite(key, false) -- no warning if not yet cited
-      if entry then
-         local engine = self:getCslEngine()
-         local locator = self:_getLocator(options)
-         local pos = self:_getCitePosition(key, locator, true) -- locator, single cite
-
-         local cslentry = bib2csl(entry, citnum)
-         cslentry.locator = locator
-         cslentry.position = pos
-         local cite = engine:cite(cslentry)
-
-         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
-      end
-   end, "Produce a single citation.")
-
-   self:registerCommand("cites", function (_, content)
-      if type(content) ~= "table" then
-         SU.error("Table content expected in \\cites")
-      end
-      -- We need no count cites to properly handle ibid/ibid-with-locator, as these depend
-      -- on the previous citation being a single cite.
-      local children = {}
-      local nb = 0
-      for _, child in ipairs(content) do
-         if type(child) == "table" then
-            if child.command ~= "cite" then
-               SU.error("Only \\cite commands are allowed in \\cites")
-            end
-            nb = nb + 1
-            table.insert(children, child)
-         end
-         -- Silently ignore other content (normally only blank lines)
-      end
-      local is_single = nb == 1
-      -- Now we can collect the citations
-      local cites = {}
-      for _, c in ipairs(children) do
-         local o = c.options
-         local key = self:_getCitationKey(o, c)
-         local entry, citnum = self:_getEntryForCite(key, false) -- no warning if not yet cited
-         if entry then
-            local locator = self:_getLocator(o)
-            local pos = self:_getCitePosition(key, locator, is_single) -- no locator, single or multiple citation
-
-            local cslentry = bib2csl(entry, citnum)
-            cslentry.locator = locator
-            cslentry.position = pos
-            cites[#cites + 1] = cslentry
-         end
-      end
-      if #cites > 0 then
-         local engine = self:getCslEngine()
-         local cite = engine:cite(cites)
-         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
-      end
-   end, "Produce a group of citations.")
-
-   self:registerCommand("csl:reference", function (options, content)
-      local key = self:_getCitationKey(options, content)
-      local entry, citnum = self:_getEntryForCite(key, nil, true) -- no locator, warn if not yet cited
-      if entry then
-         local engine = self:getCslEngine()
-
-         local cslentry = bib2csl(entry, citnum)
-         local cite = engine:reference(cslentry)
-
-         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
-      end
-   end, "Produce a single bibliographic reference.")
-
-   self:registerCommand("printbibliography", function (options, _)
-      local bib
-      if SU.boolean(options.cited, true) then
-         bib = {}
-         for _, key in ipairs(self._data.cited.keys) do
-            bib[key] = self._data.bib[key]
-         end
-      else
-         bib = self._data.bib
-      end
-
-      local entries = {}
-      local ncites = #self._data.cited.keys
-      for key, entry in pairs(bib) do
-         if entry.type ~= "xdata" then
-            crossrefAndXDataResolve(bib, entry)
-            if entry then
-               local citnum
-               local prevcite = self._data.cited.refs[key]
-               if not prevcite then
-                  -- This is just to make happy CSL styles that require a citation number
-                  -- However, table order is not guaranteed in Lua so the output may be
-                  -- inconsistent across runs with styles that use this number for sorting.
-                  -- This may only happen for non-cited entries in the bibliography, and it
-                  -- would be a bad practice to use such a style to print the full bibliography,
-                  -- so I don't see a strong need to fix this at the expense of performance.
-                  -- (and we can't really, some styles might have several sorting criteria
-                  -- leading to unpredictable order anyway).
-                  ncites = ncites + 1
-                  citnum = ncites
-               else
-                  citnum = prevcite.citnum
-               end
-               local cslentry = bib2csl(entry, citnum)
-               table.insert(entries, cslentry)
-            end
-         end
-      end
-      -- Reset the list of cited entries after having build the entries
-      self._data.cited = { keys = {}, refs = {}, lastkey = nil }
-
-      local engine = self:getCslEngine()
-      local cite = engine:reference(entries)
-
-      print("<bibliography: " .. #entries .. " entries>")
-      if not SILE.typesetter:vmode() then
-         SILE.call("par")
-      end
+   self:registerCommand("bibRelated", function (_, content)
       SILE.settings:temporarily(function ()
-         local hanging_indent = SU.boolean(engine.bibliography.options["hanging-indent"], false)
-         local must_align = engine.bibliography.options["second-field-align"]
+         local indent = SILE.settings:get("bibliography.indent"):absolute()
          local lskip = (SILE.settings:get("document.lskip") or SILE.types.node.glue()):absolute()
-         if hanging_indent or must_align then
-            -- Respective to the fixed part of the current lskip, all lines are indented
-            -- but the first one.
-            local indent = SILE.settings:get("bibliography.indent"):absolute()
-            SILE.settings:set("document.lskip", lskip.width + indent)
-            SILE.settings:set("document.parindent", -indent)
-            SILE.settings:set("current.parindent", -indent)
-         else
-            -- Fixed part of the current lskip, and no paragraph indentation
-            SILE.settings:set("document.lskip", lskip.width)
-            SILE.settings:set("document.parindent", SILE.types.length())
-            SILE.settings:set("current.parindent", SILE.types.length())
-         end
-         SILE.processString(("<sile>%s</sile>"):format(cite), "xml")
-         SILE.call("par")
+         SILE.settings:set("font.size", 0.9 * SILE.settings:get("font.size"))
+         SILE.settings:set("document.lskip", lskip.width + indent)
+         SILE.process(content)
       end)
-   end, "Produce a bibliography of references.")
+   end)
 end
 
 package.documentation = [[
@@ -564,11 +287,11 @@ You can load multiple files, and the entries will be merged into a single biblio
 
 \smallskip
 \noindent
-\em{Producing citations and references (CSL implementation)}
+\em{Producing citations and references}
 \novbreak
 
 \indent
-The CSL (Citation Style Language) implementation is more powerful and flexible than the former legacy solution available in earlier versions of this package (see below).
+The package relies the Citation Style Language (CSL) standard to format citations and bibliographic references.
 
 You should first invoke \autodoc:command{\bibliographystyle[style=<style>, lang=<lang>]}, where \autodoc:parameter{style} is the name of the CSL style file (without the \code{.csl} extension), and \autodoc:parameter{lang} is the language code of the CSL locale to use (e.g., \code{en-US}).
 
@@ -578,6 +301,7 @@ The command accepts a few additional options:
 \item{\autodoc:parameter{localizedPunctuation} (default \code{false}): whether to use localized punctuation – this is non-standard but may be useful when using a style that was not designed for the target language;}
 \item{\autodoc:parameter{italicExtension} (default \code{true}): whether to convert \code{_text_} to italic text (“à la Markdown”);}
 \item{\autodoc:parameter{mathExtension} (default \code{true}): whether to recognize \code{$formula$} as math formulae in (a subset of the) TeX-like syntax.}
+\item{\autodoc:parameter{breakISBN} (default \code{true}): whether to allow breaking ISBN and ISSN at their dashes.}
 \end{itemize}
 
 The locale and styles files are searched in the \code{csl/locales} and \code{csl/styles} directories, respectively, in your project directory, or in the Lua package path.
@@ -592,37 +316,23 @@ To mark an entry as cited without actually producing a citation, use \autodoc:co
 This is useful when you want to include an entry in the bibliography without citing it in the text.
 
 To generate multiple citations grouped correctly, use \autodoc:command{\cites{\cite{<key1>} \cite{<key2>}, …}}.
-This wrapper command only accepts \autodoc:command{\cite} elements following their standard syntax.
+This wrapper command only accepts \autodoc:command{\cite} and \autodoc:command{\nocite} elements following their standard syntax.
 Any other element triggers an error, and any text content is silently ignored.
 
 To produce a bibliography of cited references, use \autodoc:command{\printbibliography}.
 After printing the bibliography, the list of cited entries will be cleared. This allows you to start fresh for subsequent uses (e.g., in a different chapter).
+
 If you want to include all entries in the bibliography, not just those that have been cited, set the option \autodoc:parameter{cited} to false.
+
+In that case, the \autodoc:parameter{filter} option can be used to filter the entries to be included in the bibliography.
+It accepts list of space-separated filters, such as \code{type-book} or \code{not-type-book}, or \code{keyword-foo} or \code{not-keyword-foo}, \code{issued-2020} or \code{issued-2023-2025}.
+
+You can also use the \autodoc:parameter{related=true} option to include related entries in a smaller section after a main entry.
+The may be useful when, for reviews of a work, which you may find interesting to have directly after the main entry for that work.
 
 To produce a bibliographic reference, use \autodoc:command{\reference{<key>}}.
 Note that this command is not intended for actual use, but for testing purposes.
 It may be removed in the future.
-
-\smallskip
-\noindent
-\em{Producing citations and references (legacy commands)}
-\novbreak
-
-\indent
-The “legacy” implementation is based on a custom rendering system.
-The plan is to eventually deprecate and remove it, as the CSL implementation covers more use cases and is more powerful.
-
-The \autodoc:setting[check=false]{bibtex.style} setting controls the style of the bibliography.
-It may be set, for instance, to \code{chicago}, the only style supported out of the box.
-(By default, it is set to \code{csl} to enforce the use of the CSL implementation.)
-
-To produce an inline citation, call \autodoc:command{\cite{<key>}}, which will typeset something like “Jones 1982”.
-If you want to cite a particular page number, use \autodoc:command{\cite[page=22]{<key>}}.
-
-To produce a bibliographic reference, use \autodoc:command{\reference{<key>}}.
-
-This implementation doesn’t currently produce full bibliography listings.
-(Actually, you can use the \autodoc:command{\printbibliography} introduced above, but then it always uses the CSL implementation for rendering the bibliography, differing from the output of the \autodoc:command{\reference} command.)
 
 \smallskip
 \noindent
