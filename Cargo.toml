@@ -43,8 +43,8 @@ workspace = true
 
 [[bin]]
 name = "sile"
-required-features = ["cli"]
 
+required-features = ["cli"]
 [profile.release]
 lto = true
 
@@ -116,7 +116,7 @@ optional = true
 features = ["derive"]
 
 [build-dependencies.vergen-gix]
-version = "1.0"
+version = "9"
 default-features = false
 features = ["build", "cargo", "rustc"]
 
