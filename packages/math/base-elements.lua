@@ -1565,13 +1565,17 @@ end
 function elements.table:output () end
 
 local function getRadicandMode (mode)
-   -- Not too sure if we should do something special/
-   return mode
+   -- TeX \sqrt changes regular styles to cramped ones.
+   if isCrampedMode(mode) then
+      return mode
+   end
+   return mode + 1
 end
 
 local function getDegreeMode (mode)
-   -- 2 levels smaller, up to scriptScript evntually.
-   -- Not too sure if we should do something else.
+   -- Two levels smaller, up to scriptScript eventually.
+   -- As far as can be observed, LaTeX doesn't change cramped vs. non-cramped
+   -- for the degree.
    if mode == mathMode.display then
       return mathMode.scriptScript
    elseif mode == mathMode.displayCramped then
