@@ -510,7 +510,12 @@ function elements.stackbox:shape ()
       -- Handle stretchy operators
       for _, elt in ipairs(self.children) do
          if elt:is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
-            elt:_vertStretchyReshape(self.depth, self.height)
+            local stretched = elt:_vertStretchyReshape(self.depth, self.height)
+            if stretched then
+               -- Stretched elements may have altered height and depth
+               self.height = maxLength(self.height, elt.height)
+               self.depth = maxLength(self.depth, elt.depth)
+            end
          end
       end
       -- Set self.width
@@ -1245,10 +1250,16 @@ function elements.text:_vertStretchyReshape (depth, height)
       -- We only do it if the scaling logic found constructions on the vertical block axis.
       -- It's a dirty hack until we properly implement assembly of glyphs in the case we couldn't
       -- find a big enough variant.
-      self.vertExpectedSz = height + depth
-      self.vertScalingRatio = (depth + height):tonumber() / (self.height:tonumber() + self.depth:tonumber())
-      self.height = height
-      self.depth = depth
+      -- At output, We will peform a symmetric scaling of the glyphs, centered on the height axis.
+      local constants = self:getMathMetrics().constants
+      local scaleDown = self:getScaleDown()
+      local axisHeight = constants.axisHeight * scaleDown
+
+      local midSz = maxLength(height - axisHeight, depth + axisHeight)
+      self.vertScalingRatio = 2 * midSz:tonumber() / (self.height + self.depth):tonumber()
+      self.vertScalingOffset = self.height - (midSz + axisHeight) / self.vertScalingRatio
+      self.height = midSz + axisHeight
+      self.depth = midSz - axisHeight
    end
    return hasStretched
 end
@@ -1282,7 +1293,11 @@ function elements.text:output (x, y, line)
    else
       compensatedY = y
    end
-   SILE.outputter:setCursor(scaleWidth(x, line), compensatedY.length)
+   if self.vertScalingOffset then
+      compensatedY = compensatedY + self.vertScalingOffset
+   end
+   local xs = scaleWidth(x, line) -- account for stretchability/shrinkability in line justification
+   SILE.outputter:setCursor(xs, compensatedY.length)
    SILE.outputter:setFont(self.font)
    -- There should be no stretch or shrink on the width of a text
    -- element.
@@ -1296,7 +1311,7 @@ function elements.text:output (x, y, line)
       local xratio = self.horizScalingRatio or 1
       local yratio = self.vertScalingRatio or 1
       SU.debug("math", "fake glyph stretch: xratio =", xratio, "yratio =", yratio)
-      SILE.outputter:scaleFn(x, y, xratio, yratio, function ()
+      SILE.outputter:scaleFn(xs, y, xratio, yratio, function ()
          SILE.outputter:drawHbox(self.value, width)
       end)
    else
