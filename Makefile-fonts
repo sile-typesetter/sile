@@ -55,7 +55,7 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 # Tell make how to download individual font files directly (when available)
 
 .fonts/Amiri%: | .fonts
-	$(CURL) -fsSL https://github.com/alif-type/amiri/raw/0.113/$(notdir $@) -o $@
+	$(CURL) -fsSL https://github.com/aliftype/amiri/raw/0.113/$(notdir $@) -o $@
 
 .fonts/Noto%.ttf: | .fonts
 	$(CURL) -fsSL https://raw.githubusercontent.com/googlefonts/noto-fonts/v20201206-phase3/hinted/ttf/$(call notobase,$@)/$(notdir $@) -o $@
@@ -64,7 +64,7 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 	$(CURL) -fsSL https://raw.githubusercontent.com/googlefonts/noto-cjk/v20201206-cjk/$(notdir $@) -o $@
 
 .fonts/SBL_Hbrw.ttf: | .fonts
-	$(CURL) -fsSL https://www.sbl-site.org/Fonts/$(notdir $@) -o $@
+	$(CURL) -fsSL https://www.sbl-site.org/wp-content/themes/basket/fonts/bib-fonts/$(notdir $@) -o $@
 
 .fonts/Symbola.otf: | .fonts
 	$(CURL) -fsSL https://github.com/ChiefMikeK/ttf-symbola/raw/master/Symbola-13.otf -o $@
