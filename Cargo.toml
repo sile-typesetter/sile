@@ -7,7 +7,7 @@ version = "0.15.13"
 
 [workspace.package]
 version = "0.15.13"
-edition = "2021"
+edition = "2024"
 rust-version = "1.91.1"
 authors = [
   "Simon Cozens",
@@ -20,7 +20,7 @@ repository = "https://github.com/sile-typesetter/sile"
 license = "MIT"
 
 [workspace]
-resolver = "2"
+resolver = "3"
 members = [".", "rusile"]
 
 [package.edition]

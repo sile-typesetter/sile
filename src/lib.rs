@@ -88,7 +88,9 @@ pub fn get_rusile_exports(lua: &Lua) -> LuaResult<LuaTable> {
 }
 
 fn setenv(key: String, value: String) {
-    env::set_var(key, value);
+    unsafe {
+        env::set_var(key, value);
+    }
 }
 
 pub fn inject_version(lua: Lua) -> crate::Result<Lua> {
