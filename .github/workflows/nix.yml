@@ -16,9 +16,12 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v18
-      - name: Cache Nix dependencies
-        uses: DeterminateSystems/flakehub-cache-action@v2
+        uses: cachix/install-nix-action@v31
+      - name: Cache Nix builds
+        uses: cachix/cachix-action@v17
+        with:
+          name: sile-typesetter
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
       # Upstream package sometimes has flags set that disable flake checking
       - name: Setup test env
         run: |
