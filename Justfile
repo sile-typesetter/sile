@@ -1,3 +1,8 @@
+gh := require('gh')
+git := require('git')
+gpg := require('gpg')
+make := require('make')
+
 set shell := ["zsh", "+o", "nomatch", "-fecu"]
 set script-interpreter := ["zsh", "+o", "nomatch", "-feu"]
 
@@ -6,49 +11,49 @@ set ignore-comments
 set unstable
 
 nuke-n-pave:
-    git clean -dxff -e .husky -e .fonts -e .sources -e node_modules -e target -e completions
+    {{ git }} clean -dxff -e .husky -e .fonts -e .sources -e node_modules -e target -e completions
     ./bootstrap.sh
 
 dev-conf: nuke-n-pave
     ./configure --enable-developer-mode --with-system-luarocks --with-system-lua-sources --without-manual --enable-debug DELTA=cat
-    make
+    {{ make }}
 
 rel-conf: nuke-n-pave
     ./configure --enable-developer-mode --with-system-luarocks --with-system-lua-sources --with-manual
-    make
+    {{ make }}
 
 perfect:
-    make check lint
+    {{ make }} check lint
 
 restyle:
-    git ls-files '*.lua' '*.lua.in' '*.rockspec.in' .busted .luacov .luacheckrc build-aux/config.ld | xargs stylua --respect-ignores
-    git ls-files '*.rs' '*.rs.in' | xargs rustfmt --edition 2021 --config skip_children=true
-    git ls-files '*.toml' | xargs taplo format
+    {{ git }} ls-files '*.lua' '*.lua.in' '*.rockspec.in' .busted .luacov .luacheckrc build-aux/config.ld | xargs stylua --respect-ignores
+    {{ git }} ls-files '*.rs' '*.rs.in' | xargs rustfmt --edition 2021 --config skip_children=true
+    {{ git }} ls-files '*.toml' | xargs taplo format
 
 [doc('Block execution if Git working tree isn’t pristine.')]
 [private]
 pristine:
     # Ensure there are no changes in staging
-    git diff-index --quiet --cached HEAD || exit 1
+    {{ git }} diff-index --quiet --cached HEAD || exit 1
     # Ensure there are no changes in the working tree
-    git diff-files --quiet || exit 1
+    {{ git }} diff-files --quiet || exit 1
 
 [doc('Block execution if we don’t have access to private keys.')]
 [private]
 keys:
-    gpg -a --sign > /dev/null <<< "test"
+    {{ gpg }} -a --sign > /dev/null <<< "test"
 
 cut-release type: pristine
-    make release RELTYPE={{ type }}
+    {{ make }} release RELTYPE={{ type }}
 
 release semver: pristine
-    git describe HEAD --tags | grep -Fx 'v{{ semver }}'
-    git push --atomic upstream master v{{ semver }}
-    git push --atomic origin master v{{ semver }}
-    git push --atomic gitlab master v{{ semver }}
-    git push --atomic codeberg master v{{ semver }}
+    {{ git }} describe HEAD --tags | grep -Fx 'v{{ semver }}'
+    {{ git }} push --atomic upstream master v{{ semver }}
+    {{ git }} push --atomic origin master v{{ semver }}
+    {{ git }} push --atomic gitlab master v{{ semver }}
+    {{ git }} push --atomic codeberg master v{{ semver }}
 
 post-release semver: keys
-    gh release download --clobber v{{ semver }}
+    {{ gh }} release download --clobber v{{ semver }}
     ls sile-{{ semver }}.{pdf,zip,tar.zst} sile-x86_64 sile-vendored-crates-{{ semver }}.tar.zst | xargs -n1 gpg -a --detach-sign
-    gh release upload v{{ semver }} sile*-{{ semver }}.asc sile-x86_64.asc
+    {{ gh }} release upload v{{ semver }} sile*-{{ semver }}.asc sile-x86_64.asc
