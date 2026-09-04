@@ -48,11 +48,10 @@ $ brew install sile --HEAD
 ```
 
 Note the Homebrew package does not automatically install the [default font](#default-font).
-The easiest way to install Gentium Plus is through the [Homebrew Fonts caskroom][brewfonts]:
+The easiest way to install Gentium Book is through the [Homebrew Casks][casks]:
 
 ```console
-$ brew tap homebrew/cask-fonts
-$ brew install --cask font-gentium-plus
+$ brew install font-gentium-book
 ```
 
 ### For Linux
@@ -271,8 +270,11 @@ $ ldconfig
 
 ### Default Font
 
-Since SILE v0.9.5, the default font has been Gentium Plus which is freely available from [SIL’s site][gentium].
-(Previously we used Gentium Basic, but that’s getting harder to get hold of.)
+
+Starting with SILE v0.15.14, the default font will be Gentium Book, which is freely available from [SIL’s site][gentium].
+This is a sightly heavier weight of the (new 7 series) Gentium family of fonts, the successor to Gentium Plus.
+Previously at version v0.9.5, the default font was changed to Gentium Plus, the successor to (the original) Gentium.
+Up through v0.9.4 we used Gentium Basic, formerly known as (the original) Gentium.
 The math package uses [Libertinus Math][libertinus] by default to render formulas.
 Additionally, monospace text by default is set in [Hack][hack].
 It is not absolutely required that you install default fonts, but if this font is not installed on your system you won’t be able to use the examples without modification.
@@ -375,7 +377,7 @@ SILE is distributed under the [MIT license][license].
   [aur]: https://wiki.archlinux.org/index.php/Arch_User_Repository
   [azure]: https://dev.azure.com/sile-typesetter/sile/_build?view=runs
   [brew]: http://brew.sh
-  [brewfonts]: https://github.com/Homebrew/homebrew-cask-fonts
+  [casks]: https://github.com/homebrew/homebrew-cask
   [copr]: https://copr.fedorainfracloud.org/coprs/jonny/SILE/
   [doc]: http://sile-typesetter.org/manual/sile-latest.pdf
   [examples]: http://www.sile-typesetter.org/examples/

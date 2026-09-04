@@ -66,12 +66,12 @@ To use it, you will need to set the font’s language to ancient Greek (\code{gr
 
 \set[parameter=document.parindent,value=0]{\par
 \begin{boustrophedon}
-\font[size=22pt,family=Gentium Plus,language=grc]
+\font[size=22pt,family=Gentium Book,language=grc]
 \noindent{}ΧΑΙΡΕΔΕΜΟΤΟΔΕΣΕΜΑΠΑΤΕΡΕΣΤΕΣΕΘΑΝΟΝΤΟΣΑΝΦΙΧΑΡΕΣΑΓΑΘΟΝΠΑΙΔΑΟΛΟΦΘΡΟΜΕΝΟΣΦΑΙΔΙΜΟΣΕΠΟΙΕ
 \end{boustrophedon}
 }
 
-(Under normal circumstances, that line would appear as \font[language=grc,family=Gentium Plus]{
+(Under normal circumstances, that line would appear as \font[language=grc,family=Gentium Book]{
 ΧΑΙΡΕΔΕΜΟΤΟΔΕΣΕΜΑΠΑΤΕΡΕΣΤΕΣΕΘΑΝΟΝΤΟΣΑΝΦΙΧΑΡΕΣΑΓΑΘΟΝΠΑΙΔΑΟΛΟΦΘΡΟΜΕΝΟΣΦΑΙΔΙΜΟΣΕΠΟΙΕ
 }.)
 

@@ -18,10 +18,11 @@ fonttooling:
 
 # List of font files we _actually need_
 DEFSFONTFILES  = GentiumPlus-R.ttf GentiumPlus-I.ttf
+DEFSFONTFILES += GentiumBook-Regular.ttf GentiumBook-Italic.ttf
 
 DOCSFONTFILES  = $(DEFSFONTFILES)
 DOCSFONTFILES += CormorantInfant-Italic.ttf CormorantInfant-Regular.ttf
-DOCSFONTFILES += GenBkBasR.ttf GenBkBasI.ttf GenBkBasB.ttf
+DOCSFONTFILES += GentiumBook-Bold.ttf
 DOCSFONTFILES += Hack-Regular.ttf
 DOCSFONTFILES += LateefGR-Regular.ttf
 DOCSFONTFILES += LibertinusMath-Regular.otf
@@ -79,7 +80,7 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 	: $(CURL) -fsSL https://github.com/ctrlcctrlv/FRBTaiwaneseKana/releases/download/v1.1/$(notdir $@) -o $@
 	$(CURL) -fsSL https://raw.githubusercontent.com/ctrlcctrlv/FRBTaiwaneseKana/5c367e9ee5aefd54b5c9c9e996705f0561fe3d15/$(notdir $@) -o $@
 
-# Tell  make how to download font file bundles (when not downloadable individually)
+# Tell make how to download font file bundles (when not downloadable individually)
 
 .sources/AwamiNastaliq-2.200.zip: | .sources
 	$(CURL) -fsSL https://software.sil.org/downloads/r/awami/$(notdir $@) -o $@
@@ -90,10 +91,10 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 .sources/Cormorant_Install_v3.601.zip: | .sources
 	$(CURL) -fsSL https://github.com/CatharsisFonts/Cormorant/releases/download/v3.601/$(notdir $@) -o $@
 
-.sources/GentiumBasic_1102.zip: | .sources
+.sources/GentiumPlus-5.000.zip: | .sources
 	$(CURL) -fsSL https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
 
-.sources/GentiumPlus-5.000.zip: | .sources
+.sources/GentiumBook-7.000.zip: | .sources
 	$(CURL) -fsSL https://software.sil.org/downloads/r/gentium/$(notdir $@) -o $@
 
 .sources/Hack-v3.003-ttf.tar.xz: | .sources
@@ -127,11 +128,11 @@ notobase = $(shell echo $(notdir $1) | sed -e 's/-.*//')
 	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 1 static/$(notdir $@) && \
 	touch $@
 
-.fonts/GenB%: .sources/GentiumBasic_1102.zip | .fonts
+.fonts/GentiumPlus%: .sources/GentiumPlus-5.000.zip | .fonts
 	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@) && \
 	touch $@
 
-.fonts/GentiumPlus%: .sources/GentiumPlus-5.000.zip | .fonts
+.fonts/GentiumBook%: .sources/GentiumBook-7.000.zip | .fonts
 	$(BSDTAR) -x -f $< -C $(dir $@) --strip-components 1 $(basename $(<F))/$(notdir $@) && \
 	touch $@
 
