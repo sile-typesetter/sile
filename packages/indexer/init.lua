@@ -134,7 +134,7 @@ function package.buildIndex ()
          index[node.label] = {}
       end
       local pages = index[node.label]
-      if not #pages or _isNotSamePage(pages[#pages], pageno) then
+      if #pages == 0 or _isNotSamePage(pages[#pages].pageno, pageno) then
          table.insert(pages, { pageno = pageno, link = node.link })
       end
    end
