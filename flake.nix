@@ -59,7 +59,6 @@
                 ".husky"
                 ".editorconfig"
                 # CI files
-                ".cirrus.yml"
                 ".github"
                 "action.yml"
                 "azure-pipelines.yml"
