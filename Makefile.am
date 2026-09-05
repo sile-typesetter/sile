@@ -390,10 +390,10 @@ if !SYSTEM_LUAROCKS
 endif
 # Note: Busted tests can't run with out static build since the Rusile module is
 # only available embedded into it. We can test on the dynamic builds where it
-# is available as a use space module. This could change if we enable a lua vm
+# is available as a use space module. This could change if we enable a Lua VM
 # pass through mode and use that as busted's interpreter.
 if SHARED
-# Note: use of --lua causes this to be passed back through a shell loosing one
+# Note: use of --lua causes this to be passed back through a shell losing one
 # layer of quoting. Drop single quotes if removing.
 	$(LOCALFONTS) $(BUSTED) --lua=$(LUA) --lpath="'$${packagepath[*]};;'" --cpath="'$${packagecpath[*]};;'" $(BUSTEDFLAGS) .
 endif
