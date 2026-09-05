@@ -1,72 +1,72 @@
 Set paper size 	595.275597	841.8897729
 Begin page
 Mx 	49.7638
-My 	51.7585
+My 	52.2765
 Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	41 85 68 70 87 76 82 81 86 w=38.2617	(Fractions)
 Mx 	88.0255
 T	15 w=2.2900	(,)
-Mx 	92.9973
+Mx 	92.9970
 T	87 72 91 87 w=16.5332	(text)
-Mx 	109.5305
+Mx 	109.5302
 T	15 w=2.2900	(,)
-Mx 	114.5023
+Mx 	114.5017
 T	48 68 87 75 48 47 w=34.4336	(MathML)
-Mx 	148.9359
+Mx 	148.9353
 T	29 w=2.2900	(:)
-Draw line	154.6577	48.8335	37.9800	0.6500
-Mx 	171.7877
-My 	46.9585
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	18 w=3.7200	(nil)
-Mx 	154.6577
-My 	57.6215
-T	18 w=3.7200	(nil)
-Mx 	158.3777
-T	12 w=5.1840	(nil)
-Draw line	164.3117	55.2815	27.5760	0.5200
-Mx 	176.7047
-My 	53.7815
-Set font 	Libertinus Math;6;400;Regular;normal;+ssty=2;;LTR;
-T	18 w=2.7900	(nil)
-Mx 	164.3117
-My 	62.8495
-T	19 w=2.7900	(nil)
-Mx 	167.1017
-T	12 w=3.8880	(nil)
-Draw line	171.7397	61.0945	19.3980	0.3900
-Mx 	180.0437
-My 	59.9695
-T	18 w=2.7900	(nil)
-Mx 	171.7397
-My 	68.4025
-T	20 w=2.7900	(nil)
-Mx 	174.5297
-T	12 w=3.8880	(nil)
-Draw line	179.1677	66.6475	11.2200	0.3900
-Mx 	183.3827
-My 	65.5225
-T	18 w=2.7900	(nil)
-Mx 	179.1677
-My 	71.2825
-T	21 w=2.7900	(nil)
-Mx 	181.9577
-T	12 w=3.8880	(nil)
-Mx 	185.8457
-T	2287 w=4.5420	(nil)
-Mx 	195.6495
-My 	51.7585
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	12 w=6.4800	(nil)
-Draw line	205.1412	48.8335	3.7200	0.6500
-Mx 	205.1412
-My 	46.9585
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	18 w=3.7200	(nil)
-My 	56.5585
-T	19 w=3.7200	(nil)
+Draw line	154.6569	49.1947	39.7745	0.6848
+Mx 	172.5844
+My 	47.2192
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	18 w=3.9194	(nil)
+Mx 	154.6569
+My 	58.4537
+T	18 w=3.9194	(nil)
+Mx 	158.5762
+T	12 w=5.4619	(nil)
+Draw line	164.7881	55.9883	28.8933	0.5479
+Mx 	177.7650
+My 	54.4079
+Set font 	Libertinus Math;6.3216;400;Regular;normal;+ssty=2;;LTR;
+T	18 w=2.9395	(nil)
+Mx 	164.7881
+My 	63.9620
+T	19 w=2.9395	(nil)
+Mx 	167.7277
+T	12 w=4.0964	(nil)
+Draw line	172.5741	62.1129	20.3573	0.4109
+Mx 	181.2829
+My 	60.9276
+T	18 w=2.9395	(nil)
+Mx 	172.5741
+My 	69.8126
+T	20 w=2.9395	(nil)
+Mx 	175.5136
+T	12 w=4.0964	(nil)
+Draw line	180.3600	67.9635	11.8214	0.4109
+Mx 	184.8009
+My 	66.7782
+T	18 w=2.9395	(nil)
+Mx 	180.3600
+My 	72.8470
+T	21 w=2.9395	(nil)
+Mx 	183.2995
+T	12 w=4.0964	(nil)
+Mx 	187.3959
+T	2287 w=4.7855	(nil)
+Mx 	197.5641
+My 	52.2765
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	12 w=6.8273	(nil)
+Draw line	207.5241	49.1947	3.9194	0.6848
+Mx 	207.5241
+My 	47.2192
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	18 w=3.9194	(nil)
+My 	57.3338
+T	19 w=3.9194	(nil)
 Mx 	49.7638
-My 	79.9528
+My 	81.5228
 Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	41 85 68 70 87 76 82 81 86 w=38.2617	(Fractions)
 Mx 	88.0255
@@ -79,124 +79,124 @@ Mx 	127.2809
 T	48 68 87 75 48 47 w=34.4336	(MathML)
 Mx 	161.7145
 T	29 w=2.2900	(:)
-Draw line	265.6624	101.4313	46.8764	0.6500
-Mx 	286.7756
-My 	98.5563
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	18 w=4.6500	(nil)
-Mx 	265.6624
-My 	113.7253
-T	18 w=4.6500	(nil)
-Mx 	272.5346
-T	12 w=6.4800	(nil)
-Draw line	281.9868	110.8003	29.8020	0.6500
-Mx 	295.0278
-My 	108.9253
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	18 w=3.7200	(nil)
-Mx 	281.9868
-My 	119.5883
-T	19 w=3.7200	(nil)
-Mx 	285.7068
-T	12 w=5.1840	(nil)
-Draw line	291.6408	117.2483	19.3980	0.5200
-Mx 	299.9448
-My 	115.7483
-Set font 	Libertinus Math;6;400;Regular;normal;+ssty=2;;LTR;
-T	18 w=2.7900	(nil)
-Mx 	291.6408
-My 	124.8163
-T	20 w=2.7900	(nil)
-Mx 	294.4308
-T	12 w=3.8880	(nil)
-Draw line	299.0688	123.0613	11.2200	0.3900
-Mx 	303.2838
-My 	121.9363
-T	18 w=2.7900	(nil)
-Mx 	299.0688
-My 	127.6963
-T	21 w=2.7900	(nil)
-Mx 	301.8588
-T	12 w=3.8880	(nil)
-Mx 	305.7468
-T	2287 w=4.5420	(nil)
-Mx 	315.5110
-My 	104.3563
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	12 w=6.4800	(nil)
-Draw line	324.9632	101.4313	4.6500	0.6500
-Mx 	324.9632
-My 	98.5563
-T	18 w=4.6500	(nil)
-My 	111.3563
-T	19 w=4.6500	(nil)
+Draw line	264.1093	103.4812	49.1478	0.6848
+Mx 	286.2336
+My 	100.4521
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	18 w=4.8992	(nil)
+Mx 	264.1093
+My 	116.4342
+T	18 w=4.8992	(nil)
+Mx 	271.3498
+T	12 w=6.8273	(nil)
+Draw line	281.2685	113.3524	31.2386	0.6848
+Mx 	294.9281
+My 	111.3769
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	18 w=3.9194	(nil)
+Mx 	281.2685
+My 	122.6114
+T	19 w=3.9194	(nil)
+Mx 	285.1879
+T	12 w=5.4619	(nil)
+Draw line	291.3998	120.1460	20.3573	0.5479
+Mx 	300.1087
+My 	118.5656
+Set font 	Libertinus Math;6.3216;400;Regular;normal;+ssty=2;;LTR;
+T	18 w=2.9395	(nil)
+Mx 	291.3998
+My 	128.1197
+T	20 w=2.9395	(nil)
+Mx 	294.3393
+T	12 w=4.0964	(nil)
+Draw line	299.1857	126.2706	11.8214	0.4109
+Mx 	303.6266
+My 	125.0853
+T	18 w=2.9395	(nil)
+Mx 	299.1857
+My 	131.1540
+T	21 w=2.9395	(nil)
+Mx 	302.1252
+T	12 w=4.0964	(nil)
+Mx 	306.2216
+T	2287 w=4.7855	(nil)
+Mx 	316.3484
+My 	106.5630
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	12 w=6.8273	(nil)
+Draw line	326.2671	103.4812	4.8992	0.6848
+Mx 	326.2671
+My 	100.4521
+T	18 w=4.8992	(nil)
+My 	113.9382
+T	19 w=4.8992	(nil)
 Mx 	49.7638
-My 	147.5443
+My 	151.5255
 Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	41 85 68 70 87 76 82 81 86 w=38.2617	(Fractions)
 Mx 	88.0255
 T	15 w=2.2900	(,)
-Mx 	92.9993
+Mx 	92.9990
 T	87 72 91 87 w=16.5332	(text)
-Mx 	109.5325
+Mx 	109.5322
 T	15 w=2.2900	(,)
-Mx 	114.5063
+Mx 	114.5057
 T	55 72 59 w=16.2793	(TeX)
-Mx 	130.7856
+Mx 	130.7850
 T	29 w=2.2900	(:)
-Draw line	136.5094	144.6193	37.9800	0.6500
-Mx 	153.6394
-My 	142.7443
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	18 w=3.7200	(nil)
-Mx 	136.5094
-My 	153.4073
-T	18 w=3.7200	(nil)
-Mx 	140.2294
-T	12 w=5.1840	(nil)
-Draw line	146.1634	151.0673	27.5760	0.5200
-Mx 	158.5564
-My 	149.5673
-Set font 	Libertinus Math;6;400;Regular;normal;+ssty=2;;LTR;
-T	18 w=2.7900	(nil)
-Mx 	146.1634
-My 	158.6353
-T	19 w=2.7900	(nil)
-Mx 	148.9534
-T	12 w=3.8880	(nil)
-Draw line	153.5914	156.8803	19.3980	0.3900
-Mx 	161.8954
-My 	155.7553
-T	18 w=2.7900	(nil)
-Mx 	153.5914
-My 	164.1883
-T	20 w=2.7900	(nil)
-Mx 	156.3814
-T	12 w=3.8880	(nil)
-Draw line	161.0194	162.4333	11.2200	0.3900
-Mx 	165.2344
-My 	161.3083
-T	18 w=2.7900	(nil)
-Mx 	161.0194
-My 	167.0683
-T	21 w=2.7900	(nil)
-Mx 	163.8094
-T	12 w=3.8880	(nil)
-Mx 	167.6974
-T	2287 w=4.5420	(nil)
-Mx 	177.5032
-My 	147.5443
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	12 w=6.4800	(nil)
-Draw line	186.9970	144.6193	3.7200	0.6500
-Mx 	186.9970
-My 	142.7443
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	18 w=3.7200	(nil)
-My 	152.3443
-T	19 w=3.7200	(nil)
+Draw line	136.5086	148.4437	39.7745	0.6848
+Mx 	154.4361
+My 	146.4682
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	18 w=3.9194	(nil)
+Mx 	136.5086
+My 	157.7028
+T	18 w=3.9194	(nil)
+Mx 	140.4279
+T	12 w=5.4619	(nil)
+Draw line	146.6398	155.2373	28.8933	0.5479
+Mx 	159.6167
+My 	153.6569
+Set font 	Libertinus Math;6.3216;400;Regular;normal;+ssty=2;;LTR;
+T	18 w=2.9395	(nil)
+Mx 	146.6398
+My 	163.2110
+T	19 w=2.9395	(nil)
+Mx 	149.5794
+T	12 w=4.0964	(nil)
+Draw line	154.4257	161.3619	20.3573	0.4109
+Mx 	163.1346
+My 	160.1766
+T	18 w=2.9395	(nil)
+Mx 	154.4257
+My 	169.0616
+T	20 w=2.9395	(nil)
+Mx 	157.3653
+T	12 w=4.0964	(nil)
+Draw line	162.2117	167.2126	11.8214	0.4109
+Mx 	166.6526
+My 	166.0273
+T	18 w=2.9395	(nil)
+Mx 	162.2117
+My 	172.0960
+T	21 w=2.9395	(nil)
+Mx 	165.1512
+T	12 w=4.0964	(nil)
+Mx 	169.2476
+T	2287 w=4.7855	(nil)
+Mx 	179.4179
+My 	151.5255
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	12 w=6.8273	(nil)
+Draw line	189.3800	148.4437	3.9194	0.6848
+Mx 	189.3800
+My 	146.4682
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	18 w=3.9194	(nil)
+My 	156.5828
+T	19 w=3.9194	(nil)
 Mx 	49.7638
-My 	175.7387
+My 	180.7718
 Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	41 85 68 70 87 76 82 81 86 w=38.2617	(Fractions)
 Mx 	88.0255
@@ -209,74 +209,74 @@ Mx 	127.2849
 T	55 72 59 w=16.2793	(TeX)
 Mx 	143.5642
 T	29 w=2.2900	(:)
-Draw line	265.6624	197.2171	46.8764	0.6500
-Mx 	286.7756
-My 	194.3421
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	18 w=4.6500	(nil)
-Mx 	265.6624
-My 	209.5111
-T	18 w=4.6500	(nil)
-Mx 	272.5346
-T	12 w=6.4800	(nil)
-Draw line	281.9868	206.5861	29.8020	0.6500
-Mx 	295.0278
-My 	204.7111
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	18 w=3.7200	(nil)
-Mx 	281.9868
-My 	215.3741
-T	19 w=3.7200	(nil)
-Mx 	285.7068
-T	12 w=5.1840	(nil)
-Draw line	291.6408	213.0341	19.3980	0.5200
-Mx 	299.9448
-My 	211.5341
-Set font 	Libertinus Math;6;400;Regular;normal;+ssty=2;;LTR;
-T	18 w=2.7900	(nil)
-Mx 	291.6408
-My 	220.6021
-T	20 w=2.7900	(nil)
-Mx 	294.4308
-T	12 w=3.8880	(nil)
-Draw line	299.0688	218.8471	11.2200	0.3900
-Mx 	303.2838
-My 	217.7221
-T	18 w=2.7900	(nil)
-Mx 	299.0688
-My 	223.4821
-T	21 w=2.7900	(nil)
-Mx 	301.8588
-T	12 w=3.8880	(nil)
-Mx 	305.7468
-T	2287 w=4.5420	(nil)
-Mx 	315.5110
-My 	200.1421
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	12 w=6.4800	(nil)
-Draw line	324.9632	197.2171	4.6500	0.6500
-Mx 	324.9632
-My 	194.3421
-T	18 w=4.6500	(nil)
-My 	207.1421
-T	19 w=4.6500	(nil)
-Draw line	50.5138	240.4851	10.7360	0.6500
+Draw line	264.1093	202.7302	49.1478	0.6848
+Mx 	286.2336
+My 	199.7011
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	18 w=4.8992	(nil)
+Mx 	264.1093
+My 	215.6832
+T	18 w=4.8992	(nil)
+Mx 	271.3498
+T	12 w=6.8273	(nil)
+Draw line	281.2685	212.6014	31.2386	0.6848
+Mx 	294.9281
+My 	210.6259
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	18 w=3.9194	(nil)
+Mx 	281.2685
+My 	221.8605
+T	19 w=3.9194	(nil)
+Mx 	285.1879
+T	12 w=5.4619	(nil)
+Draw line	291.3998	219.3950	20.3573	0.5479
+Mx 	300.1087
+My 	217.8146
+Set font 	Libertinus Math;6.3216;400;Regular;normal;+ssty=2;;LTR;
+T	18 w=2.9395	(nil)
+Mx 	291.3998
+My 	227.3687
+T	20 w=2.9395	(nil)
+Mx 	294.3393
+T	12 w=4.0964	(nil)
+Draw line	299.1857	225.5196	11.8214	0.4109
+Mx 	303.6266
+My 	224.3343
+T	18 w=2.9395	(nil)
+Mx 	299.1857
+My 	230.4030
+T	21 w=2.9395	(nil)
+Mx 	302.1252
+T	12 w=4.0964	(nil)
+Mx 	306.2216
+T	2287 w=4.7855	(nil)
+Mx 	316.3484
+My 	205.8120
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	12 w=6.8273	(nil)
+Draw line	326.2671	202.7302	4.8992	0.6848
+Mx 	326.2671
+My 	199.7011
+T	18 w=4.8992	(nil)
+My 	213.1872
+T	19 w=4.8992	(nil)
+Draw line	50.5138	247.7770	11.3114	0.6848
 Mx 	50.5138
-My 	238.6101
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	2753 w=1.8320	(nil)
-Mx 	52.3458
-T	12 w=5.1840	(nil)
-Mx 	57.5298
-T	18 w=3.7200	(nil)
-Draw line	62.7498	240.4851	10.7360	0.6500
-Mx 	62.7498
-My 	248.2101
-T	2753 w=1.8320	(nil)
-Mx 	64.5818
-T	12 w=5.1840	(nil)
-Mx 	69.7658
-T	18 w=3.7200	(nil)
+My 	245.8015
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	2753 w=1.9302	(nil)
+Mx 	52.4440
+T	12 w=5.4619	(nil)
+Mx 	57.9058
+T	18 w=3.9194	(nil)
+Draw line	63.3252	247.7770	11.3114	0.6848
+Mx 	63.3252
+My 	255.9161
+T	2753 w=1.9302	(nil)
+Mx 	65.2554
+T	12 w=5.4619	(nil)
+Mx 	70.7173
+T	18 w=3.9194	(nil)
 Mx 	295.2916
 My 	780.6177
 Set font 	Gentium Plus;10;400;;normal;;;LTR;

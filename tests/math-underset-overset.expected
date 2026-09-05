@@ -1,111 +1,111 @@
 Set paper size 	297.6377985	419.5275636
 Begin page
-Mx 	135.0361
-My 	27.5564
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	2720 w=7.0300	(nil)
-Mx 	144.8439
-T	1960 w=9.1200	(nil)
-Mx 	156.7417
-T	2721 w=5.8600	(nil)
-Mx 	135.0361
-My 	57.7204
-T	2720 w=7.0300	(nil)
-Mx 	144.8439
-T	1960 w=9.1200	(nil)
-Mx 	147.1823
-My 	64.0844
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	2751 w=4.4432	(nil)
-Mx 	156.7417
-My 	57.7204
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	2721 w=5.8600	(nil)
-Mx 	135.0361
-My 	98.6205
-T	2720 w=7.0300	(nil)
-Mx 	147.1823
-My 	90.7365
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	2751 w=4.4432	(nil)
-Mx 	144.8439
-My 	98.6205
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	1960 w=9.1200	(nil)
-Mx 	156.7417
-T	2721 w=5.8600	(nil)
-Mx 	132.4961
-My 	128.7846
-T	2720 w=7.0300	(nil)
-Mx 	142.3039
-T	2577 w=14.2000	(nil)
-Mx 	159.2817
-T	2721 w=5.8600	(nil)
-Mx 	132.4961
-My 	160.5326
-T	2720 w=7.0300	(nil)
-Mx 	144.1455
-My 	153.5526
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	69 70 71 w=10.5168	(nil)
-Mx 	142.3039
-My 	160.5326
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	2577 w=14.2000	(nil)
-Mx 	159.2817
-T	2721 w=5.8600	(nil)
-Mx 	128.7121
-My 	190.6967
-T	2720 w=7.0300	(nil)
-Mx 	142.3039
-T	2577 w=14.2000	(nil)
-Mx 	138.5199
-My 	197.0607
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	66 77 78 80 84 85 w=21.7680	(nil)
-Mx 	163.0657
-My 	190.6967
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	2721 w=5.8600	(nil)
-Mx 	136.3561
-My 	222.8848
-T	2720 w=7.0300	(nil)
-Mx 	146.1639
-T	30 w=6.4800	(nil)
-Mx 	155.4217
-T	2721 w=5.8600	(nil)
-Mx 	136.3561
-My 	253.6348
-T	2720 w=7.0300	(nil)
-Mx 	147.0559
-My 	247.2848
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	51 w=4.6960	(nil)
-Mx 	146.1639
-My 	253.6348
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	30 w=6.4800	(nil)
-Mx 	155.4217
-T	2721 w=5.8600	(nil)
-Mx 	136.5017
-My 	283.7989
-T	2720 w=7.0300	(nil)
-Mx 	145.7539
-T	2219 w=7.3000	(nil)
-Mx 	155.2761
-T	2721 w=5.8600	(nil)
-Mx 	136.5017
-My 	313.9629
-T	2720 w=7.0300	(nil)
-Mx 	145.7539
-T	2219 w=7.3000	(nil)
-Mx 	146.4839
-My 	321.1889
-Set font 	Libertinus Math;8;400;Regular;normal;+ssty=1;;LTR;
-T	41 w=5.8400	(nil)
-Mx 	155.2761
-My 	313.9629
-Set font 	Libertinus Math;10;400;Regular;normal;;;LTR;
-T	2721 w=5.8600	(nil)
+Mx 	134.2974
+My 	27.9091
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	2720 w=7.4068	(nil)
+Mx 	144.6308
+T	1960 w=9.6088	(nil)
+Mx 	157.1663
+T	2721 w=6.1741	(nil)
+Mx 	134.2974
+My 	58.7163
+T	2720 w=7.4068	(nil)
+Mx 	144.6308
+T	1960 w=9.6088	(nil)
+Mx 	147.0946
+My 	65.4214
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	2751 w=4.6814	(nil)
+Mx 	157.1663
+My 	58.7163
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	2721 w=6.1741	(nil)
+Mx 	134.2974
+My 	100.7814
+T	2720 w=7.4068	(nil)
+Mx 	147.0946
+My 	92.4749
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	2751 w=4.6814	(nil)
+Mx 	144.6308
+My 	100.7814
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	1960 w=9.6088	(nil)
+Mx 	157.1663
+T	2721 w=6.1741	(nil)
+Mx 	131.6212
+My 	131.5887
+T	2720 w=7.4068	(nil)
+Mx 	141.9547
+T	2577 w=14.9611	(nil)
+Mx 	159.8425
+T	2721 w=6.1741	(nil)
+Mx 	131.6212
+My 	164.0113
+T	2720 w=7.4068	(nil)
+Mx 	143.8950
+My 	156.6571
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	69 70 71 w=11.0805	(nil)
+Mx 	141.9547
+My 	164.0113
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	2577 w=14.9611	(nil)
+Mx 	159.8425
+T	2721 w=6.1741	(nil)
+Mx 	127.6344
+My 	194.8185
+T	2720 w=7.4068	(nil)
+Mx 	141.9547
+T	2577 w=14.9611	(nil)
+Mx 	137.9679
+My 	201.5236
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	66 77 78 80 84 85 w=22.9348	(nil)
+Mx 	163.8293
+My 	194.8185
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	2721 w=6.1741	(nil)
+Mx 	135.6881
+My 	227.7047
+T	2720 w=7.4068	(nil)
+Mx 	146.0216
+T	30 w=6.8273	(nil)
+Mx 	155.7756
+T	2721 w=6.1741	(nil)
+Mx 	135.6881
+My 	259.0757
+T	2720 w=7.4068	(nil)
+Mx 	146.9614
+My 	252.3854
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	51 w=4.9477	(nil)
+Mx 	146.0216
+My 	259.0757
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	30 w=6.8273	(nil)
+Mx 	155.7756
+T	2721 w=6.1741	(nil)
+Mx 	135.8415
+My 	289.8830
+T	2720 w=7.4068	(nil)
+Mx 	145.5896
+T	2219 w=7.6913	(nil)
+Mx 	155.6222
+T	2721 w=6.1741	(nil)
+Mx 	135.8415
+My 	320.6903
+T	2720 w=7.4068	(nil)
+Mx 	145.5896
+T	2219 w=7.6913	(nil)
+Mx 	146.3587
+My 	328.3036
+Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
+T	41 w=6.1530	(nil)
+Mx 	155.6222
+My 	320.6903
+Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
+T	2721 w=6.1741	(nil)
 End page
 Finish
