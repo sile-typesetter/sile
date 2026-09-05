@@ -16,16 +16,12 @@ local function measureFontAdjustment (metric)
    if metric == "ex-height" then
       -- Uses the height of lowercase letters.
       -- This is used to normalize lowercase letters across fonts.
-      -- The height of the lowercase letter "x" is used as the reference.
-      -- Another option would be to use the OS/2 font table sxHeight value when available.
-      return SILE.shaper:measureChar("x").height
+      return SILE.types.measurement("1ex"):tonumber()
    end
    if metric == "cap-height" then
       -- Uses the the height of uppercase letters.
       -- This is used to normalize uppercase letters across fonts.
-      -- The height of the uppercase letter "H" is used as the reference.
-      -- Another option would be to use the OS/2 font table sCapHeight value when available.
-      return SILE.shaper:measureChar("H").height
+      return SILE.types.measurement("1cap"):tonumber()
    end
    SU.error("Unknown font adjust metric " .. metric)
 end
