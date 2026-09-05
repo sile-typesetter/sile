@@ -12,23 +12,23 @@ Mx 	155.0460
 T	29 w=2.2900	(:)
 Mx 	49.7638
 My 	61.6628
-Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
-T	85 73 74 79 w=17.5635	(nil)
-Mx 	69.0833
-Mx 	8.3234
-Mx 	4.7833
-Mx 	5.3312
-T	78 a=8.3234 70 a=4.7096 69 a=5.3312	(nil)
-Mx 	89.8287
-T	85 73 74 68 76 w=21.7568	(nil)
-Mx 	114.6119
-T	70 79 w=10.4201	(nil)
-Mx 	130.3000
-T	82 86 66 69 w=21.0404	(nil)
-Mx 	161.8764
-T	82 82 86 66 69 w=26.3400	(nil)
-Mx 	209.2884
-T	70 79 69 w=15.7513	(nil)
+Set font 	Libertinus Math;10.5851;400;Regular;normal;;;LTR;
+T	85 73 74 79 w=17.6454	(nil)
+Mx 	69.1733
+Mx 	8.3622
+Mx 	4.8056
+Mx 	5.3561
+T	78 a=8.3622 70 a=4.7315 69 a=5.3561	(nil)
+Mx 	90.0154
+T	85 73 74 68 76 w=21.8582	(nil)
+Mx 	114.9138
+T	70 79 w=10.4687	(nil)
+Mx 	130.6750
+T	82 86 66 69 w=21.1384	(nil)
+Mx 	162.3986
+T	82 82 86 66 69 w=26.4628	(nil)
+Mx 	210.0315
+T	70 79 69 w=15.8247	(nil)
 Mx 	49.7638
 My 	79.6628
 Set font 	Gentium Plus;10;400;;normal;;;LTR;
@@ -47,19 +47,19 @@ Mx 	191.0029
 T	29 w=2.2900	(:)
 Mx 	49.7638
 My 	91.6628
-Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
-T	85 73 74 79 w=17.5635	(nil)
-Mx 	69.0833
-Mx 	8.3234
-Mx 	4.7833
-Mx 	5.3312
-T	78 a=8.3234 70 a=4.7096 69 a=5.3312	(nil)
-Mx 	89.8380
-T	85 73 74 68 76 w=21.7568	(nil)
-Mx 	114.6442
-T	70 79 w=10.4201	(nil)
-Mx 	130.3323
-T	70 79 69 w=15.7513	(nil)
+Set font 	Libertinus Math;10.5851;400;Regular;normal;;;LTR;
+T	85 73 74 79 w=17.6454	(nil)
+Mx 	69.1733
+Mx 	8.3622
+Mx 	4.8056
+Mx 	5.3561
+T	78 a=8.3622 70 a=4.7315 69 a=5.3561	(nil)
+Mx 	90.0247
+T	85 73 74 68 76 w=21.8582	(nil)
+Mx 	114.9464
+T	70 79 w=10.4687	(nil)
+Mx 	130.7076
+T	70 79 69 w=15.8247	(nil)
 Mx 	49.7638
 My 	109.6628
 Set font 	Gentium Plus;10;400;;normal;;;LTR;
@@ -74,48 +74,48 @@ Mx 	166.9289
 T	29 w=2.2900	(:)
 Mx 	49.7638
 My 	121.6628
-Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
-T	2768 w=5.7000	(nil)
-Mx 	54.6103
-My 	123.8754
-Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
-T	85 73 74 79 w=14.0508	(nil)
-Mx 	70.0659
-Mx 	6.6588
-Mx 	3.8267
-Mx 	4.2650
-T	78 a=6.6588 70 a=3.7677 69 a=4.2650	(nil)
-Mx 	86.6552
-T	85 73 74 68 76 w=17.4055	(nil)
-Mx 	106.4640
-T	70 79 w=8.3361	(nil)
-Mx 	119.0145
-T	82 86 66 69 w=16.8323	(nil)
-Mx 	144.2756
-T	82 82 86 66 69 w=21.0720	(nil)
-Mx 	182.2052
-T	70 79 69 w=12.6011	(nil)
-Mx 	194.8062
-My 	125.6455
-Set font 	Libertinus Math;6.3216;400;Regular;normal;+ssty=2;;LTR;
-T	85 73 74 79 w=10.5381	(nil)
-Mx 	206.3980
-Mx 	4.9941
-Mx 	2.8700
-Mx 	3.1987
-T	78 a=4.9941 70 a=2.8258 69 a=3.1987	(nil)
-Mx 	218.8399
-T	85 73 74 68 76 w=13.0541	(nil)
-Mx 	233.6965
-T	70 79 w=6.2521	(nil)
-Mx 	243.1094
-T	82 86 66 69 w=12.6242	(nil)
-Mx 	262.0552
-T	82 82 86 66 69 w=15.8040	(nil)
-Mx 	290.5024
-T	70 79 69 w=9.4508	(nil)
+Set font 	Libertinus Math;10.5851;400;Regular;normal;;;LTR;
+T	2768 w=5.7265	(nil)
+Mx 	54.6329
+My 	123.8857
+Set font 	Libertinus Math;8.46809;400;Regular;normal;+ssty=1;;LTR;
+T	85 73 74 79 w=14.1163	(nil)
+Mx 	70.1606
+Mx 	6.6898
+Mx 	3.8445
+Mx 	4.2849
+T	78 a=6.6898 70 a=3.7852 69 a=4.2849	(nil)
+Mx 	86.8271
+T	85 73 74 68 76 w=17.4866	(nil)
+Mx 	106.7279
+T	70 79 w=8.3749	(nil)
+Mx 	119.3369
+T	82 86 66 69 w=16.9108	(nil)
+Mx 	144.7158
+T	82 82 86 66 69 w=21.1702	(nil)
+Mx 	182.8222
+T	70 79 69 w=12.6598	(nil)
+Mx 	195.4820
+My 	125.6640
+Set font 	Libertinus Math;6.35107;400;Regular;normal;+ssty=2;;LTR;
+T	85 73 74 79 w=10.5872	(nil)
+Mx 	207.1277
+Mx 	5.0173
+Mx 	2.8834
+Mx 	3.2136
+T	78 a=5.0173 70 a=2.8389 69 a=3.2136	(nil)
+Mx 	219.6276
+T	85 73 74 68 76 w=13.1150	(nil)
+Mx 	234.5532
+T	70 79 w=6.2812	(nil)
+Mx 	244.0100
+T	82 86 66 69 w=12.6831	(nil)
+Mx 	263.0441
+T	82 82 86 66 69 w=15.8777	(nil)
+Mx 	291.6240
+T	70 79 69 w=9.4948	(nil)
 Mx 	49.7638
-My 	141.6931
+My 	141.7185
 Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	49 72 74 68 87 76 89 72 w=36.2793	(Negative)
 Mx 	88.7302
@@ -125,21 +125,21 @@ T	70 82 80 80 68 81 71 86 w=44.6338	(commands)
 Mx 	158.7903
 T	29 w=2.2900	(:)
 Mx 	49.7638
-My 	153.6931
-Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
-T	79 85 73 74 79 w=23.2740	(nil)
-Mx 	71.2818
-Mx 	5.7105
-Mx 	8.3234
-Mx 	4.7833
-Mx 	5.3312
-T	79 a=5.7105 78 a=8.3234 70 a=4.7096 69 a=5.3312	(nil)
-Mx 	93.0152
-T	79 85 73 74 68 76 w=27.4674	(nil)
-Mx 	117.5559
-T	70 79 69 w=15.7513	(nil)
+My 	153.7185
+Set font 	Libertinus Math;10.5851;400;Regular;normal;;;LTR;
+T	79 85 73 74 79 w=23.3825	(nil)
+Mx 	71.3821
+Mx 	5.7371
+Mx 	8.3622
+Mx 	4.8056
+Mx 	5.3561
+T	79 a=5.7371 78 a=8.3622 70 a=4.7315 69 a=5.3561	(nil)
+Mx 	93.2168
+T	79 85 73 74 68 76 w=27.5954	(nil)
+Mx 	117.8718
+T	70 79 69 w=15.8247	(nil)
 Mx 	49.7638
-My 	171.6931
+My 	171.7185
 Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	49 72 74 68 87 76 89 72 w=36.2793	(Negative)
 Mx 	88.7272
@@ -155,13 +155,13 @@ T	12 w=3.1689	())
 Mx 	186.2682
 T	29 w=2.2900	(:)
 Mx 	49.7638
-My 	183.6931
-Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
-T	79 85 73 74 79 w=23.2740	(nil)
-Mx 	71.2818
-T	70 79 69 w=15.7513	(nil)
+My 	183.7185
+Set font 	Libertinus Math;10.5851;400;Regular;normal;;;LTR;
+T	79 85 73 74 79 w=23.3825	(nil)
+Mx 	71.3821
+T	70 79 69 w=15.8247	(nil)
 Mx 	49.7638
-My 	201.6931
+My 	201.7185
 Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	49 72 74 68 87 76 89 72 w=36.2793	(Negative)
 Mx 	88.7289
@@ -173,39 +173,39 @@ T	86 88 69 86 70 85 76 83 87 86 w=41.7432	(subscripts)
 Mx 	170.6727
 T	29 w=2.2900	(:)
 Mx 	49.7638
-My 	213.6931
-Set font 	Libertinus Math;10.536;400;Regular;normal;;;LTR;
-T	2768 w=5.7000	(nil)
-Mx 	54.6103
-My 	215.9056
-Set font 	Libertinus Math;8.4288;400;Regular;normal;+ssty=1;;LTR;
-T	79 85 73 74 79 w=18.6192	(nil)
-Mx 	71.8248
-Mx 	4.5684
-Mx 	6.6588
-Mx 	3.8267
-Mx 	4.2650
-T	79 a=4.5684 78 a=6.6588 70 a=3.7677 69 a=4.2650	(nil)
-Mx 	89.2115
-T	79 85 73 74 68 76 w=21.9739	(nil)
-Mx 	108.8440
-T	70 79 69 w=12.6011	(nil)
-Mx 	121.4451
-My 	217.6757
-Set font 	Libertinus Math;6.3216;400;Regular;normal;+ssty=2;;LTR;
-T	79 85 73 74 79 w=13.9644	(nil)
-Mx 	134.3559
-Mx 	3.4263
-Mx 	4.9941
-Mx 	2.8700
-Mx 	3.1987
-T	79 a=3.4263 78 a=4.9941 70 a=2.8258 69 a=3.1987	(nil)
-Mx 	147.3960
-T	79 85 73 74 68 76 w=16.4804	(nil)
-Mx 	162.1204
-T	70 79 69 w=9.4508	(nil)
+My 	213.7185
+Set font 	Libertinus Math;10.5851;400;Regular;normal;;;LTR;
+T	2768 w=5.7265	(nil)
+Mx 	54.6329
+My 	215.9414
+Set font 	Libertinus Math;8.46809;400;Regular;normal;+ssty=1;;LTR;
+T	79 85 73 74 79 w=18.7060	(nil)
+Mx 	71.9276
+Mx 	4.5897
+Mx 	6.6898
+Mx 	3.8445
+Mx 	4.2849
+T	79 a=4.5897 78 a=6.6898 70 a=3.7852 69 a=4.2849	(nil)
+Mx 	89.3954
+T	79 85 73 74 68 76 w=22.0763	(nil)
+Mx 	109.1194
+T	70 79 69 w=12.6598	(nil)
+Mx 	121.7792
+My 	217.7197
+Set font 	Libertinus Math;6.35107;400;Regular;normal;+ssty=2;;LTR;
+T	79 85 73 74 79 w=14.0295	(nil)
+Mx 	134.7502
+Mx 	3.4423
+Mx 	5.0173
+Mx 	2.8834
+Mx 	3.2136
+T	79 a=3.4423 78 a=5.0173 70 a=2.8389 69 a=3.2136	(nil)
+Mx 	147.8511
+T	79 85 73 74 68 76 w=16.5572	(nil)
+Mx 	162.6441
+T	70 79 69 w=9.4948	(nil)
 Mx 	49.7638
-My 	232.3262
+My 	232.3706
 Set font 	Gentium Plus;10;400;;normal;;;LTR;
 T	57 68 85 92 76 81 74 w=33.0859	(Varying)
 Mx 	85.5386
@@ -215,11 +215,11 @@ T	73 82 81 87 w=17.0996	(font)
 Mx 	129.5980
 T	86 76 93 72 w=15.4346	(size)
 Mx 	49.7638
-My 	244.3262
+My 	244.3706
 Set font 	Libertinus Math;6;400;Regular;normal;;;LTR;
 T	2768 w=3.2460	(nil)
 Mx 	52.5238
-My 	245.5862
+My 	245.6306
 Set font 	Libertinus Math;4.8;400;Regular;normal;+ssty=1;;LTR;
 T	85 73 74 79 w=8.0016	(nil)
 Mx 	61.3254
@@ -238,7 +238,7 @@ T	82 82 86 66 69 w=12.0000	(nil)
 Mx 	125.2062
 T	70 79 69 w=7.1760	(nil)
 Mx 	132.3822
-My 	246.5942
+My 	246.6386
 Set font 	Libertinus Math;3.6;400;Regular;normal;+ssty=2;;LTR;
 T	85 73 74 79 w=6.0012	(nil)
 Mx 	138.9834
@@ -257,11 +257,11 @@ T	82 82 86 66 69 w=9.0000	(nil)
 Mx 	186.8940
 T	70 79 69 w=5.3820	(nil)
 Mx 	49.7638
-My 	256.3386
+My 	256.3830
 Set font 	Libertinus Math;18;400;Regular;normal;;;LTR;
 T	2768 w=9.7380	(nil)
 Mx 	58.0438
-My 	260.1186
+My 	260.1630
 Set font 	Libertinus Math;14.4;400;Regular;normal;+ssty=1;;LTR;
 T	85 73 74 79 w=24.0048	(nil)
 Mx 	84.4486
@@ -280,7 +280,7 @@ T	82 82 86 66 69 w=36.0000	(nil)
 Mx 	275.9310
 T	70 79 69 w=21.5280	(nil)
 Mx 	297.4590
-My 	263.1426
+My 	263.1870
 Set font 	Libertinus Math;10.8;400;Regular;normal;+ssty=2;;LTR;
 T	85 73 74 79 w=18.0036	(nil)
 Mx 	317.2626
