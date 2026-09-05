@@ -19,6 +19,7 @@ SILE_DIST_CHECKSUMS
 # Check for and set variables for tooling used during our build process
 AC_PROG_AWK
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_GREP
 AC_PROG_OBJC
 AC_PROG_SED
@@ -71,6 +72,26 @@ AC_ARG_WITH([harfbuzz],
             AS_HELP_STRING([--without-harfbuzz],
                            [Compile without HarfBuzz support used as default shaping backend]))
 AM_CONDITIONAL([HARFBUZZ], [test "x$with_harfbuzz" != "xno"])
+
+AC_ARG_WITH([libjpeg],
+            AS_HELP_STRING([--without-libjpeg],
+                           [Compile without libjpeg support used for image helpers]))
+AM_CONDITIONAL([LIBJPEG], [test "x$with_libjpeg" != "xno"])
+
+AC_ARG_WITH([libpng],
+            AS_HELP_STRING([--without-libpng],
+                           [Compile without libpng support used for image helpers]))
+AM_CONDITIONAL([LIBPNG], [test "x$with_libpng" != "xno"])
+
+AC_ARG_WITH([openjpeg],
+            AS_HELP_STRING([--without-openjpeg],
+                           [Compile without OpenJPEG support used for image helpers]))
+AM_CONDITIONAL([OPENJPEG], [test "x$with_openjpeg" != "xno"])
+
+AC_ARG_WITH([poppler],
+            AS_HELP_STRING([--without-poppler],
+                           [Compile without poppler support used for image helpers]))
+AM_CONDITIONAL([POPPLER], [test "x$with_poppler" != "xno"])
 
 AC_ARG_WITH([system-libtexpdf],
             AS_HELP_STRING([--with-system-libtexpdf],
@@ -150,6 +171,26 @@ AM_COND_IF([FONT_VARIATIONS],
             [PKG_CHECK_MODULES(HARFBUZZ_SUBSET, [harfbuzz-subset >= 6.0.0],
                                 [AC_DEFINE(HAVE_HARFBUZZ_SUBSET, [1], [Have harfbuzz-subset library])],
                                 [AC_MSG_FAILURE([--enable-font-variations was given, but harfbuzz version not new enough to include required subset library functions])])])
+
+AM_COND_IF([LIBJPEG],
+            [PKG_CHECK_MODULES(LIBJPEG, [libjpeg >= 2.0],
+                                [],
+                                [AC_MSG_FAILURE([--with-libjpeg was given, but libjpeg not found])])])
+
+AM_COND_IF([LIBPNG],
+            [PKG_CHECK_MODULES(LIBPNG, [libpng >= 1.6],
+                                [],
+                                [AC_MSG_FAILURE([--with-libpng was given, but libpng not found])])])
+
+AM_COND_IF([OPENJPEG],
+            [PKG_CHECK_MODULES(OPENJPEG, [libopenjp2 >= 2.5],
+                                [],
+                                [AC_MSG_FAILURE([--with-openjpeg was given, but openjpeg not found])]) ])
+
+AM_COND_IF([POPPLER],
+            [PKG_CHECK_MODULES(POPPLER, [poppler-cpp >= 0.68],
+                                [],
+                                [AC_MSG_FAILURE([--with-poppler was given, but poppler-cpp not found])])])
 
 AM_COND_IF([SYSTEM_LIBTEXPDF],
             [AC_CHECK_LIB([texpdf], [texpdf_doc_set_verbose],

@@ -54,6 +54,7 @@ fn main() {
             Path::new(&dir).join("libtexpdf").join(".libs").display()
         );
         println!("cargo:rustc-link-arg=-l:fontmetrics.a");
+        println!("cargo:rustc-link-arg=-l:imagehelper.a");
         println!("cargo:rustc-link-arg=-l:justenoughfontconfig.a");
         println!("cargo:rustc-link-arg=-l:justenoughharfbuzz.a");
         println!("cargo:rustc-link-arg=-l:justenoughicu.a");

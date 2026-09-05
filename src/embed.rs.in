@@ -46,6 +46,7 @@ pub struct SileModules;
 // we've linked into the CLI binary. Linking happens in build-aux/build.rs.
 extern "C-unwind" {
     fn luaopen_fontmetrics(lua: *mut mlua::lua_State) -> i32;
+    fn luaopen_imagehelper(lua: *mut mlua::lua_State) -> i32;
     fn luaopen_justenoughfontconfig(lua: *mut mlua::lua_State) -> i32;
     fn luaopen_justenoughharfbuzz(lua: *mut mlua::lua_State) -> i32;
     fn luaopen_justenoughicu(lua: *mut mlua::lua_State) -> i32;
@@ -79,6 +80,9 @@ pub fn inject_embedded_loaders(lua: Lua) -> crate::Result<Lua> {
             match module.as_str() {
                 "fontmetrics" => lua
                     .create_c_function(luaopen_fontmetrics)
+                    .map(LuaValue::Function),
+                "imagehelper" => lua
+                    .create_c_function(luaopen_imagehelper)
                     .map(LuaValue::Function),
                 "justenoughfontconfig" => lua
                     .create_c_function(luaopen_justenoughfontconfig)
