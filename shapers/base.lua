@@ -89,8 +89,14 @@ function shaper:measureSpace (options)
    return shapespace(width and width.length or items[1].width)
 end
 
-function shaper:measureChar (char)
-   local options = SILE.font.loadDefaults({})
+--- Measure a single character.
+-- If options is not provided, the current font options are used.
+-- @tparam string char The character to measure
+-- @tparam[opt] table fontoptions Font options to use
+-- @treturn table A table with width, height and depth fields for each glyph in the character
+-- @treturn boolean Whether the character was found in the font
+function shaper:measureChar (char, fontoptions)
+   local options = fontoptions or SILE.font.loadDefaults({})
    options.tracking = SILE.settings:get("shaper.tracking")
    local items = self:shapeToken(char, options)
    if items and #items > 0 then
