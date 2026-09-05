@@ -68,7 +68,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
   # luarocks propagates cmake, but it shouldn't be used as a build system.
   dontUseCmakeConfigure = true;
-  # just propogates a setup-hook that takes over build, check, and install
+  # just propagates a setup-hook that takes over build, check, and install
   # phases, but we want to keep our autotools based make rules.
   dontUseJustBuild = true;
   dontUseJustCheck = true;

@@ -1236,7 +1236,7 @@ function elements.text:_vertStretchyReshape (depth, height)
       -- We only do it if the scaling logic found constructions on the vertical block axis.
       -- It's a dirty hack until we properly implement assembly of glyphs in the case we couldn't
       -- find a big enough variant.
-      -- At output, We will peform a symmetric scaling of the glyphs, centered on the height axis.
+      -- At output, We will perform a symmetric scaling of the glyphs, centered on the height axis.
       local constants = self:getMathMetrics().constants
       local scaleDown = self:getScaleDown()
       local axisHeight = constants.axisHeight * scaleDown
