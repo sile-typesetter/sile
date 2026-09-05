@@ -128,6 +128,7 @@ nodist_sile_SOURCES = $(_EMBEDDED_SOURCES)
 BUILT_SOURCES += $(_EMBEDDED_SOURCES)
 CLEANFILES += $(_EMBEDDED_SOURCES)
 $(CARGO_BIN): justenough/.libs/fontmetrics.a
+$(CARGO_BIN): justenough/.libs/imagehelper.a
 $(CARGO_BIN): justenough/.libs/justenoughfontconfig.a
 $(CARGO_BIN): justenough/.libs/justenoughharfbuzz.a
 $(CARGO_BIN): justenough/.libs/justenoughicu.a

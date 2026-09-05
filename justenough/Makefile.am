@@ -49,6 +49,12 @@ fontmetrics_la_LDFLAGS = $(AM_LDFLAGS)
 fontmetrics_la_CFLAGS = $(AM_CFLAGS) $(LUA_INCLUDE) $(HARFBUZZ_CFLAGS) $(COMPAT53_CFLAGS)
 fontmetrics_la_LIBADD = $(MY_LUA_LIB) $(HARFBUZZ_LIBS)
 
+pkglib_LTLIBRARIES += imagehelper.la
+imagehelper_la_SOURCES = imagehelper.cpp
+imagehelper_la_LDFLAGS = $(AM_LDFLAGS)
+imagehelper_la_CFLAGS = $(AM_CFLAGS) $(LUA_INCLUDE) $(COMPAT53_CFLAGS)
+imagehelper_la_LIBADD = $(MY_LUA_LIB)
+
 pkglib_LTLIBRARIES += svg.la
 svg_la_SOURCES = svg.c nanosvg.h compat-5.3.c compat-5.3.h
 svg_la_LDFLAGS = $(AM_LDFLAGS)
