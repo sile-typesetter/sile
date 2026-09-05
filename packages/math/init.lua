@@ -170,7 +170,7 @@ Another font may be specified via the setting \autodoc:setting{math.font.family}
 If required, you can set the font style and weight via \autodoc:setting{math.font.style} and \autodoc:setting{math.font.weight}.
 
 The \autodoc:setting{math.font.size} setting controls the math font size.
-By default, it is \emph{not} set, and the math font size is computed to match the ex-height of the current document font (and the setting accordingly is temporarily defined within math mode).
+By default, it is \em{not} set, and the math font size is computed to match the ex-height of the current document font (and the setting accordingly is temporarily defined within math mode).
 It allows math formulas to blend well with the surrounding text, even when the text font size changes (e.g., in section titles, footnotes, etc.).
 (At your convenience, fix it to a fixed size, but then the automatic adjustment is disabled.)
 
