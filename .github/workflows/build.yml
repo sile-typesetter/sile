@@ -29,6 +29,7 @@ jobs:
           path: |
             .fonts
             .sources
+            ~/.fonts
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
         uses: actions/cache@v6
@@ -41,7 +42,12 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install fonts-sil-gentiumplus ghostscript graphviz jq libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libluajit-5.1-dev libpng-dev luajit lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+          sudo apt-get install ghostscript graphviz jq libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libluajit-5.1-dev libpng-dev luajit lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+      - name: Install default font
+        run: |
+          mkdir -p ~/.fonts .sources && pushd .sources
+          test -f GentiumBook-7.000.zip || curl -fsSLO https://software.sil.org/downloads/r/gentium/GentiumBook-7.000.zip
+          test -f ~/.fontns/GentiumBook-Regular.ttf || bsdtar -x -f GentiumBook-7.000.zip -C ~/.fonts --strip-components 1 '*.ttf'
       - name: Setup ‘cargo’
         uses: actions-rs/toolchain@v1
       - name: Configure
