@@ -24,7 +24,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libluajit-5.1-dev luajit luarocks
+          sudo apt-get install libluajit-5.1-dev libpng-dev luajit luarocks
       - name: Configure
         run: |
           echo "REF=${GITHUB_REF##refs/*/}" >> $GITHUB_ENV
@@ -36,7 +36,9 @@ jobs:
             --enable-developer-mode \
             --without-developer-tools \
               DOCKER=$(which docker) \
+            --without-fontconfig \
             --without-harfbuzz \
+            --without-system-libtexpdf \
             --disable-font-variations
       - name: Publish Docker Image to GH Container Registry
         run: |
