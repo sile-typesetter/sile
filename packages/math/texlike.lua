@@ -114,6 +114,7 @@ local mathGrammar = function (_ENV)
       leftrightgroup + -- Important: before command
       V"def" +
       V"text" + -- Important: before command
+      V"sqrt" + -- Important: before command
       V"command" +
       group +
       V"argument" +
@@ -192,6 +193,13 @@ local mathGrammar = function (_ENV)
          + primes -- or standalone primes
       )
 
+   -- For sqrt with degree:
+   -- We might not be very robust below if brackets are used in the optional argument,
+   -- but that's an edge case and both LaTeX and MathJax do weird things in that case too.
+   local mathlist_no_bracket = (comment + (WS * _) + (element - P"]"))^0 / function (...)
+      return { id = "mathlist", ... }
+   end
+
    START "math"
    math = V"mathlist" * EOF"Unexpected character at end of math code"
    mathlist = (comment + (WS * _) + element)^0
@@ -214,6 +222,14 @@ local mathGrammar = function (_ENV)
          Cg(ctrl_sequence_name, "command") *
          Cg(parameters, "options") *
          (dim2_arg + group^0)
+      )
+   -- TeX-like square root (\sqrt{...}) or nth-root (\sqrt[...]{...}):
+   -- One of the very few math commands with an expression as optional argument
+   -- between brackets, and likely the only usual one.
+   sqrt = (
+         P"\\sqrt" *
+         (P"[" * mathlist_no_bracket * P"]")^-1 *
+         P"{" * V"mathlist" * P"}"
       )
    def = P"\\def" * _ * P"{" *
       Cg(ctrl_sequence_name, "command-name") * P"}" * _ *
@@ -595,6 +611,15 @@ local function compileToMathML_aux (_, arg_env, tree)
       return nil
    elseif tree.id == "text" then
       tree.command = "mtext"
+   elseif tree.id == "sqrt" then
+      if #tree == 2 then
+         tree.command = "mroot"
+         local tmp = tree[1]
+         tree[1] = tree[2]
+         tree[2] = tmp
+      else
+         tree.command = "msqrt"
+      end
    elseif tree.id == "command" and commands[tree.command] then
       local argTypes = commands[tree.command][1]
       local cmdFun = commands[tree.command][2]
@@ -827,7 +852,13 @@ compileToMathML(
    convertTexlike(nil, {
       [==[
   \def{frac}{\mfrac{#1}{#2}}
+
+  % Already defined in the parser, but we are not robust against closing brackets in the optional
+  % arguments(see above).
+  % We may hit the macro definition instead of the native command, and the error message
+  % will be less cryptic this way, ensuring the command doesn't reach the MathML typesetter.
   \def{sqrt}{\msqrt{#1}}
+
   \def{bi}{\mi[mathvariant=bold-italic]{#1}}
   \def{dsi}{\mi[mathvariant=double-struck]{#1}}
 
