@@ -646,7 +646,7 @@ local function compileToMathML_aux (_, arg_env, tree)
             [2] = {
                command = "mo", -- accents are always <mo>
                options = {},
-               symbols[tree.command]
+               symbols[tree.command],
             },
          }
          tree = accent
@@ -662,7 +662,7 @@ local function compileToMathML_aux (_, arg_env, tree)
             [2] = {
                command = "mo", -- accents are always <mo>
                options = {},
-               symbols[tree.command]
+               symbols[tree.command],
             },
          }
          tree = accent

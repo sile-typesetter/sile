@@ -1843,8 +1843,8 @@ function elements.enclose:shape ()
    -- This informal appreciation in a standard is... weird at best.
    -- The renderer says: "It looks nicer with other values."
    -- MathML Core has nothing to say, since it does not support <menclose>.
-   self.hpadding = SILE.types.length("0.25em"):absolute();
-   self.vpadding = SILE.types.length("0.4ex"):absolute();
+   self.hpadding = SILE.types.length("0.25em"):absolute()
+   self.vpadding = SILE.types.length("0.4ex"):absolute()
    self.width = self.enclosed.width + 2 * self.hpadding
    self.height = self.enclosed.height + self.vpadding
    self.depth = self.enclosed.depth + self.vpadding
@@ -1867,9 +1867,7 @@ function elements.enclose:output (x, y, line)
    local thickness = _r(self.ruleThickness)
    local offset = SILE.types.measurement("0.1em"):tonumber() -- Empirical, "seems to work well"
    local arrow = SILE.types.measurement("0.8ex"):tonumber() -- Ibid.
-   local notations = self.attributes.notations
-      and pl.stringx.split(self.attributes.notations)
-      or {}
+   local notations = self.attributes.notations and pl.stringx.split(self.attributes.notations) or {}
    local paths = {}
    for _, n in ipairs(notations) do
       if notationShapes[n] then

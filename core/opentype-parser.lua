@@ -808,7 +808,8 @@ end
 
 -- OS/2 table definitions
 -- Version 0 minimum fields (length: 78 bytes)
-local panose = "panose:{ bFamilyType:u1 bSerifStyle:u1 bWeight:u1 bProportion:u1 bContrast:u1 bStrokeVariation:u1 bArmStyle:u1 bLetterForm:u1 bMidline:u1 bXHeight:u1 }"
+local panose =
+   "panose:{ bFamilyType:u1 bSerifStyle:u1 bWeight:u1 bProportion:u1 bContrast:u1 bStrokeVariation:u1 bArmStyle:u1 bLetterForm:u1 bMidline:u1 bXHeight:u1 }"
 local OS2v0Base = table.concat({
    ">version:u2 xAvgCharWidth:i2 usWeightClass:u2 usWidthClass:u2 fsType:u2 ySubscriptXSize:i2 ySubscriptYSize:i2 ySubscriptXOffset:i2 ySubscriptYOffset:i2 ySuperscriptXSize:i2 ySuperscriptYSize:i2 ySuperscriptXOffset:i2 ySuperscriptYOffset:i2 yStrikeoutSize:i2 yStrikeoutPosition:i2 sFamilyClass:i2 ",
    panose,

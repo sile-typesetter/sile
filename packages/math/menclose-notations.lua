@@ -13,7 +13,11 @@ local function box (w, h, thickness, _, _)
       "w", -- line width
       1,
       "j", -- round line joins
-      0, 0, w, h, "re",
+      0,
+      0,
+      w,
+      h,
+      "re",
       "S", -- stroke only
    }
 end
@@ -97,7 +101,6 @@ local function northeastarrow (w, h, thickness, offset, sw)
       "S", -- stroke only
    }
 end
-
 
 return {
    box = box,
