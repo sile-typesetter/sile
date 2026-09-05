@@ -4,7 +4,6 @@ features = ["luajit"]
 exclude-dev = true
 
 [advisories]
-ignore = ["RUSTSEC-2026-0173"]
 
 [bans]
 multiple-versions = "allow"
