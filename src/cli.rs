@@ -1,3 +1,4 @@
+use clap::builder::styling::{AnsiColor, Styles};
 use clap::Parser;
 use std::path::PathBuf;
 
@@ -146,3 +147,12 @@ pub struct Cli {
     #[clap(short, long)]
     pub traceback: bool,
 }
+
+pub const STYLES: Styles = Styles::styled()
+    .header(AnsiColor::Magenta.on_default().bold())
+    .usage(AnsiColor::Yellow.on_default().bold())
+    .literal(AnsiColor::BrightCyan.on_default().bold())
+    .placeholder(AnsiColor::Cyan.on_default())
+    .error(AnsiColor::BrightRed.on_default().bold())
+    .valid(AnsiColor::BrightGreen.on_default().bold())
+    .invalid(AnsiColor::BrightYellow.on_default().bold());

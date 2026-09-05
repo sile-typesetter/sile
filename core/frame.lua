@@ -17,7 +17,7 @@ SILE.framePrototype = pl.class({
    enterHooks = {},
    leaveHooks = {},
 
-   -- This gets called by Penlght when creating the frame instance
+   -- This gets called by Penlight when creating the frame instance
    _init = function (self, spec, dummy)
       local direction = SILE.documentState.direction
       if direction then

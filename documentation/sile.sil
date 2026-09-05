@@ -8,7 +8,7 @@
 % to ugly overfull ones:
 \set[parameter=linebreak.emergencyStretch,value=20%lw]
 \set[parameter=autodoc.highlighting, value=true]
-\font[size=11pt,family=Gentium Book Basic]
+\font[size=11pt,family=Gentium Book]
 \nofolios
 \pdf:metadata[key=Title, value=The SILE Book]
 \pdf:metadata[key=Author, value=Simon Cozens]
@@ -26,7 +26,7 @@ Book
 \end{set}
 \end{font}
 % Project members with notable docs contributions by order invited to GitHub org
-\begin[size=16pt,family=Gentium Book Basic]{font}
+\begin[size=16pt,family=Gentium Book]{font}
 \begin[parameter=document.baselineskip,value=3ex]{set}
 Simon Cozens\break
 Caleb Maclennan\break

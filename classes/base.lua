@@ -218,7 +218,7 @@ function class:loadPackage (packname, options, reload)
          -- If the same package name has been loaded before, we might be loading a modified version of the same package or
          -- we might be re-loading the same package, or we might just be doubling up work because somebody called us twice.
          -- The package itself should take care of the difference between load and reload based on the reload flag here,
-         -- but in addition to that we also want to avoid creating a new instance. We want to run the intitializer from the
+         -- but in addition to that we also want to avoid creating a new instance. We want to run the initializer from the
          -- (possibly different) new module, but not create a new instance ID and loose any connections it made.
          -- To do this we add a create function that returns the current instance. This brings along the _initialized flag
          -- and of course anything else already setup and running.
@@ -325,7 +325,7 @@ end
 --
 -- Note that this should only be used to register commands supplied directly by a document class. A similar method is
 -- available for packages, `packages:registerCommand`.
--- @tparam string name Name of cammand to register.
+-- @tparam string name Name of command to register.
 -- @tparam function func Callback function to use as command handler.
 -- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
 -- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage
@@ -395,7 +395,7 @@ function class:_registerBaseCommands ()
          return
       elseif options.command == "process" then
          SU.warn([[
-            Did you mean to re-definine the `\\process` macro?
+            Did you mean to re-define the `\\process` macro?
 
             That probably won't go well.
          ]])
@@ -430,7 +430,7 @@ function class:_registerBaseCommands ()
       SILE.process(content)
    end)
 
-   -- The document (SIL) or sile (XML) command is always the sigular leaf at the
+   -- The document (SIL) or sile (XML) command is always the singular leaf at the
    -- top level of our AST. The work you might expect to see happen here is
    -- actually handled by SILE.inputter:classInit() before we get here, so these
    -- are just pass through functions. Theoretically, this could be a useful

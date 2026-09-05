@@ -6,8 +6,8 @@ set -e
 
 REVISION=$(git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g')
 
-RUNTIME_DEPS='fontconfig freetype2 gentium-plus-font glibc harfbuzz icu libpng luajit zlib'\
-' otf-libertinus luarocks noto-fonts-cjk ttf-hack'
+RUNTIME_DEPS='fontconfig freetype2 glibc harfbuzz icu libpng luajit luarocks zlib'\
+' otf-libertinus ttf-gentium-book noto-fonts-cjk ttf-hack'
 BUILD_DEPS='base-devel cargo clang git jq mold poppler'
 
 : "${DOCKER_BUILDKIT:=1}"

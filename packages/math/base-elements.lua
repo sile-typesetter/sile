@@ -209,22 +209,8 @@ function elements.mbox:_init ()
    self.value = {}
    self.mode = mathMode.display
    self.atom = atoms.types.ord
-   local font = {
-      family = SILE.settings:get("math.font.family"),
-      size = SILE.settings:get("math.font.size"),
-      style = SILE.settings:get("math.font.style"),
-      weight = SILE.settings:get("math.font.weight"),
-      -- https://learn.microsoft.com/en-us/typography/opentype/spec/math#opentype-layout-tags-used-with-the-math-table
-      --   "Script tag to be used for features in math layout.
-      --   The only language system supported with this tag is the default language system."
-      -- Thus, needed for the ssty feature in superscript/subscript to work properly.
-      script = "math",
-   }
-   local filename = SILE.settings:get("math.font.filename")
-   if filename and filename ~= "" then
-      font.filename = filename
-   end
-   self.font = SILE.font.loadDefaults(font)
+   -- The math font is assumed to be already set as current by the calling context.
+   self.font = SILE.font.loadDefaults({})
 end
 
 function elements.mbox:styleChildren ()
@@ -449,7 +435,7 @@ function elements.stackbox:styleChildren ()
                -- Another interpretation of the TeXbook p. 133 for binary operator exceptions:
                if v2.atom == atoms.types.bin then
                   -- If a binary atom follows an atom that is not compatible with it, make it an ordinary.
-                  -- (so as to be conidered as a unary operator).
+                  -- (so as to be considered as a unary operator).
                   -- Typical case: "a = -b" (ord rel bin ord), "a + -b" (ord bin bin ord)
                   v2.atom = atoms.types.ord
                else
@@ -510,7 +496,12 @@ function elements.stackbox:shape ()
       -- Handle stretchy operators
       for _, elt in ipairs(self.children) do
          if elt:is_a(elements.text) and elt.kind == "operator" and SU.boolean(elt.stretchy, false) then
-            elt:_vertStretchyReshape(self.depth, self.height)
+            local stretched = elt:_vertStretchyReshape(self.depth, self.height)
+            if stretched then
+               -- Stretched elements may have altered height and depth
+               self.height = maxLength(self.height, elt.height)
+               self.depth = maxLength(self.depth, elt.depth)
+            end
          end
       end
       -- Set self.width
@@ -650,14 +641,12 @@ function elements.subscript:shape ()
          subShift = 0
       end
       self.sub.relX = self.width + subShift
-      self.sub.relY = SILE.types.length(
-         math.max(
-            constants.subscriptShiftDown * scaleDown,
-            isBaseSymbol and 0 -- TeX (σ19) is more finicky than MathML Core
-               or (self.base.depth + constants.subscriptBaselineDropMin * scaleDown):tonumber(),
-            (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
-         )
-      )
+      self.sub.relY = SILE.types.length(math.max(
+         constants.subscriptShiftDown * scaleDown,
+         isBaseSymbol and 0 -- TeX (σ19) is more finicky than MathML Core
+            or (self.base.depth + constants.subscriptBaselineDropMin * scaleDown):tonumber(),
+         (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
+      ))
       if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or isBaseLargeOp then
          self.sub.relY = maxLength(self.sub.relY, self.base.depth + constants.subscriptBaselineDropMin * scaleDown)
       end
@@ -671,15 +660,13 @@ function elements.subscript:shape ()
          supShift = itCorr
       end
       self.sup.relX = self.width + supShift
-      self.sup.relY = SILE.types.length(
-         math.max(
-            isCrampedMode(self.mode) and constants.superscriptShiftUpCramped * scaleDown
-               or constants.superscriptShiftUp * scaleDown,
-            isBaseSymbol and 0 -- TeX (σ18) is more finicky than MathML Core
-               or (self.base.height - constants.superscriptBaselineDropMax * scaleDown):tonumber(),
-            (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
-         )
-      ) * -1
+      self.sup.relY = SILE.types.length(math.max(
+         isCrampedMode(self.mode) and constants.superscriptShiftUpCramped * scaleDown
+            or constants.superscriptShiftUp * scaleDown,
+         isBaseSymbol and 0 -- TeX (σ18) is more finicky than MathML Core
+            or (self.base.height - constants.superscriptBaselineDropMax * scaleDown):tonumber(),
+         (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
+      )) * -1
       if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or isBaseLargeOp then
          self.sup.relY = maxLength(
             (0 - self.sup.relY),
@@ -1249,10 +1236,16 @@ function elements.text:_vertStretchyReshape (depth, height)
       -- We only do it if the scaling logic found constructions on the vertical block axis.
       -- It's a dirty hack until we properly implement assembly of glyphs in the case we couldn't
       -- find a big enough variant.
-      self.vertExpectedSz = height + depth
-      self.vertScalingRatio = (depth + height):tonumber() / (self.height:tonumber() + self.depth:tonumber())
-      self.height = height
-      self.depth = depth
+      -- At output, We will perform a symmetric scaling of the glyphs, centered on the height axis.
+      local constants = self:getMathMetrics().constants
+      local scaleDown = self:getScaleDown()
+      local axisHeight = constants.axisHeight * scaleDown
+
+      local midSz = maxLength(height - axisHeight, depth + axisHeight)
+      self.vertScalingRatio = 2 * midSz:tonumber() / (self.height + self.depth):tonumber()
+      self.vertScalingOffset = self.height - (midSz + axisHeight) / self.vertScalingRatio
+      self.height = midSz + axisHeight
+      self.depth = midSz - axisHeight
    end
    return hasStretched
 end
@@ -1286,7 +1279,11 @@ function elements.text:output (x, y, line)
    else
       compensatedY = y
    end
-   SILE.outputter:setCursor(scaleWidth(x, line), compensatedY.length)
+   if self.vertScalingOffset then
+      compensatedY = compensatedY + self.vertScalingOffset
+   end
+   local xs = scaleWidth(x, line) -- account for stretchability/shrinkability in line justification
+   SILE.outputter:setCursor(xs, compensatedY.length)
    SILE.outputter:setFont(self.font)
    -- There should be no stretch or shrink on the width of a text
    -- element.
@@ -1300,7 +1297,7 @@ function elements.text:output (x, y, line)
       local xratio = self.horizScalingRatio or 1
       local yratio = self.vertScalingRatio or 1
       SU.debug("math", "fake glyph stretch: xratio =", xratio, "yratio =", yratio)
-      SILE.outputter:scaleFn(x, y, xratio, yratio, function ()
+      SILE.outputter:scaleFn(xs, y, xratio, yratio, function ()
          SILE.outputter:drawHbox(self.value, width)
       end)
    else
@@ -1447,13 +1444,13 @@ elements.table._type = "table" -- TODO why case difference?
 function elements.table:_init (children, options)
    elements.mbox._init(self)
    self.children = children
-   self.options = options
+   self.options = pl.tablex.copy(options) -- Shallow copy the options as columnalign is modified below
    self.nrows = #self.children
    self.ncols = math.max(pl.utils.unpack(mapList(function (_, row)
       return #row.children
    end, self.children)))
    SU.debug("math", "self.ncols =", self.ncols)
-   local spacing = SILE.settings:get("math.font.size") * 0.6 -- arbitrary ratio of the current math font size
+   local spacing = self.font.size * 0.6 -- arbitrary ratio of the current math font size
    self.rowspacing = self.options.rowspacing and SILE.types.length(self.options.rowspacing) or spacing
    self.columnspacing = self.options.columnspacing and SILE.types.length(self.options.columnspacing) or spacing
    -- Pad rows that do not have enough cells by adding cells to the
@@ -1569,13 +1566,17 @@ end
 function elements.table:output () end
 
 local function getRadicandMode (mode)
-   -- Not too sure if we should do something special/
-   return mode
+   -- TeX \sqrt changes regular styles to cramped ones.
+   if isCrampedMode(mode) then
+      return mode
+   end
+   return mode + 1
 end
 
 local function getDegreeMode (mode)
-   -- 2 levels smaller, up to scriptScript evntually.
-   -- Not too sure if we should do something else.
+   -- Two levels smaller, up to scriptScript eventually.
+   -- As far as can be observed, LaTeX doesn't change cramped vs. non-cramped
+   -- for the degree.
    if mode == mathMode.display then
       return mathMode.scriptScript
    elseif mode == mathMode.displayCramped then
@@ -1737,9 +1738,6 @@ function elements.padded:styleChildren ()
 end
 
 function elements.padded:shape ()
-   -- TODO MathML allows percentages font-relative units (em, ex) for padding
-   -- But our units work with font.size, not math.font.size (possibly adjusted by scaleDown)
-   -- so the expectations might not be met.
    local width = self.attributes.width and SU.cast("measurement", self.attributes.width)
    local height = self.attributes.height and SU.cast("measurement", self.attributes.height)
    local depth = self.attributes.depth and SU.cast("measurement", self.attributes.depth)
@@ -1765,7 +1763,7 @@ function elements.padded:output (_, _, _) end
 -- Bevelled fractions are not part of MathML Core, and MathML4 does not
 -- exactly specify how to compute the layout.
 elements.bevelledFraction = pl.class(elements.fraction) -- Inherit from fraction
-elements.fraction._type = "BevelledFraction"
+elements.bevelledFraction._type = "BevelledFraction"
 
 function elements.bevelledFraction:shape ()
    local constants = self:getMathMetrics().constants
@@ -1817,6 +1815,74 @@ function elements.bevelledFraction:output (x, y, line)
    }
    local svg = table.concat(symbol, " ")
    SILE.outputter:drawSVG(svg, xscaled, y, barwidth, h, 1)
+end
+
+--- <menclose> is not part of MathML Core, but is in MathML3 and MathML4.
+elements.enclose = pl.class(elements.mbox)
+elements.enclose._type = "Enclose"
+
+function elements.enclose:__tostring ()
+   return self._type .. "(" .. tostring(self.enclosed) .. ")"
+end
+
+function elements.enclose:_init (attributes, enclosed)
+   elements.mbox._init(self)
+   self.enclosed = enclosed
+   self.attributes = attributes or {}
+   table.insert(self.children, enclosed)
+end
+
+function elements.enclose:styleChildren ()
+   self.enclosed.mode = self.mode
+end
+
+function elements.enclose:shape ()
+   -- MathML4 umpteenth draft, 3.3.0.2: The amount of distance around "the contents are not specified by MathML,
+   -- and left to the renderer."
+   -- "In practice, paddings on each side of 0.4em in the horizontal direction and .5ex in the vertical direction seem to work well."
+   -- This informal appreciation in a standard is... weird at best.
+   -- The renderer says: "It looks nicer with other values."
+   -- MathML Core has nothing to say, since it does not support <menclose>.
+   self.hpadding = SILE.types.length("0.25em"):absolute()
+   self.vpadding = SILE.types.length("0.4ex"):absolute()
+   self.width = self.enclosed.width + 2 * self.hpadding
+   self.height = self.enclosed.height + self.vpadding
+   self.depth = self.enclosed.depth + self.vpadding
+   self.enclosed.relX = self.hpadding
+
+   -- Let's use the fraction rule as a default thickness.
+   -- We're in the land of a totally ill-defined specifications, so at least use something plausible.
+   local constants = self:getMathMetrics().constants
+   local scaleDown = self:getScaleDown()
+   self.ruleThickness = self.attributes.linethickness
+         and SU.cast("measurement", self.attributes.linethickness):tonumber()
+      or constants.fractionRuleThickness * scaleDown
+end
+
+function elements.enclose:output (x, y, line)
+   local notationShapes = require("packages.math.menclose-notations")
+   local h = self.height:tonumber()
+   local d = self.depth:tonumber()
+   local w = scaleWidth(self.width, line):tonumber()
+   local thickness = _r(self.ruleThickness)
+   local offset = SILE.types.measurement("0.1em"):tonumber() -- Empirical, "seems to work well"
+   local arrow = SILE.types.measurement("0.8ex"):tonumber() -- Ibid.
+   local notations = self.attributes.notations and pl.stringx.split(self.attributes.notations) or {}
+   local paths = {}
+   for _, n in ipairs(notations) do
+      if notationShapes[n] then
+         local nShape = notationShapes[n](_r(w), _r(h + d), thickness, offset, arrow)
+         if nShape then
+            table.insert(paths, table.concat(nShape, " "))
+         end
+      end
+   end
+   if #paths == 0 then
+      return
+   end
+   local svg = table.concat(paths, " ")
+   local xscaled = scaleWidth(x, line)
+   SILE.outputter:drawSVG(svg, xscaled, y, w, h, 1)
 end
 
 elements.mathMode = mathMode

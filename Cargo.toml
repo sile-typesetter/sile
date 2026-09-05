@@ -7,8 +7,8 @@ version = "0.15.13"
 
 [workspace.package]
 version = "0.15.13"
-edition = "2021"
-rust-version = "1.80.1"
+edition = "2024"
+rust-version = "1.91.1"
 authors = [
   "Simon Cozens",
   "Caleb Maclennan <caleb@alerque.com>",
@@ -20,7 +20,7 @@ repository = "https://github.com/sile-typesetter/sile"
 license = "MIT"
 
 [workspace]
-resolver = "2"
+resolver = "3"
 members = [".", "rusile"]
 
 [package.edition]
@@ -43,8 +43,8 @@ workspace = true
 
 [[bin]]
 name = "sile"
-required-features = ["cli"]
 
+required-features = ["cli"]
 [profile.release]
 lto = true
 
@@ -68,7 +68,7 @@ powershell = ["completions"]
 zsh = ["completions"]
 
 [workspace.dependencies.mlua]
-version = "0.10"
+version = "0.12"
 features = ["anyhow"]
 
 [workspace.dependencies.sile]
@@ -76,38 +76,38 @@ path = "."
 version = "0.15.13"
 
 [dependencies.anyhow]
-version = "1.0"
+version = "1"
 
 [dependencies.snafu]
-version = "0.8"
+version = "0.9"
 
 [dependencies.clap]
-version = "4.4"
+version = "4"
 optional = true
-features = ["derive", "string", "wrap_help"]
+features = ["color", "derive", "string", "wrap_help"]
 
 [dependencies.mlua]
 workspace = true
 features = ["macros"]
 
 [dependencies.rust-embed]
-version = "8.0"
+version = "8"
 optional = true
 features = ["include-exclude"]
 
 [dependencies.harfbuzz-sys]
-version = "0.6"
+version = "0.8"
 optional = true
 
 [dependencies.semver]
 version = "1.0"
 
 [build-dependencies.clap_complete]
-version = "4.4"
+version = "4.6"
 optional = true
 
 [build-dependencies.clap_mangen]
-version = "0.2"
+version = "0.3"
 optional = true
 
 [build-dependencies.clap]
@@ -116,7 +116,7 @@ optional = true
 features = ["derive"]
 
 [build-dependencies.vergen-gix]
-version = "1.0"
+version = "9"
 default-features = false
 features = ["build", "cargo", "rustc"]
 
@@ -154,10 +154,12 @@ extend-ignore-identifiers-re = [
 annote = "annote"     # CSL / Bibtex abbreviation
 beveled = "bevelled"  # mathML uses en-gb spelling
 bevelled = "bevelled" # mathML uses en-gb spelling
+oint = "oint"         # mathML smokes things bad for its health
 centred = "centred"   # Unicode character description
 lamda = "lamda"       # Unicode character description
 noet = "noet"         # VIM modeline
 supporte = "supporte" # CHANGELOG blooper
+fial = "fial"         # made up word in hyphenation debugging
 # Miss-spellings with actual corrections
 craters = "creators"
 neet = "need"
@@ -167,8 +169,12 @@ ignore-hidden = false
 extend-exclude = [
   "/.git",
   "CHANGELOG.md",
+  "build-aux/*.xml",
+  "build-aux/*.xsl",
   "build-aux/ax*",
   "cmake/*.diff",
+  "justenough/nanosvg.h",
+  "justenough/podofo_wrap.cxx",
   "languages/*/hyphens*",
   "libtexpdf",
   "lua-libraries/*",

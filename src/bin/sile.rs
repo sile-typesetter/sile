@@ -1,4 +1,4 @@
-use sile::cli::Cli;
+use sile::cli::{Cli, STYLES};
 
 use snafu::prelude::*;
 
@@ -34,7 +34,10 @@ fn main() -> Result<()> {
         .strip_prefix("SILE ")
         .unwrap_or("")
         .to_string();
-    let app = Cli::command().version(version).long_version(long_version);
+    let app = Cli::command()
+        .version(version)
+        .long_version(long_version)
+        .styles(STYLES);
     let matches = app.get_matches();
     let args = Cli::from_arg_matches(&matches).context(ArgsSnafu)?;
     sile::run(

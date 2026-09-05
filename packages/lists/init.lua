@@ -303,7 +303,7 @@ end
 
 package.documentation = [[
 \begin{document}
-\font:add-fallback[family=Symbola]% HACK Gentium Plus (SILE default font) lacks the circle bullet :(
+\font:add-fallback[family=Symbola]% HACK Gentium Book (SILE default font) lacks the circle bullet :(
 The \autodoc:package{lists} package provides enumerated and itemized (also known as \em{bulleted lists}) which can be nested together.
 
 \smallskip

@@ -764,7 +764,7 @@ function typesetter:buildPage ()
       self:runHooks("noframebreak")
       return false
    end
-   SU.debug("pagebuilder", "Buildding page for", self.frame.id)
+   SU.debug("pagebuilder", "Building page for", self.frame.id)
    self.state.lastPenalty = res
    self.frame.state.pageRestart = nil
    pageNodeList = self:runHooks("framebreak", pageNodeList)

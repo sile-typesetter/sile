@@ -12,6 +12,9 @@ end
 
 -- Default settings that have gone out of fashion
 package.default_settings = {
+   ["0.15.14"] = {
+      ["font.family"] = { "Gentium Book", "Gentium Plus" },
+   },
    ["0.15.11"] = {
       -- This was totally a *bug* fix not a pure defaults change, but since many projects ended up relying on the buggy
       -- behavior to have any stretchness in their spaces at all, the "fix" breaks a lot of projects. Just enabling this

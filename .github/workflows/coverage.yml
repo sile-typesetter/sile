@@ -16,18 +16,18 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             lua_modules

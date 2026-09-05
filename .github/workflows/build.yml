@@ -20,18 +20,19 @@ jobs:
     name: Build Ubuntu ${{ matrix.configuration[0] }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .fonts
             .sources
+            ~/.fonts
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             lua_modules
@@ -41,7 +42,12 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install fonts-sil-gentiumplus ghostscript graphviz jq libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libluajit-5.1-dev libpng-dev luajit lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+          sudo apt-get install ghostscript graphviz jq libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libluajit-5.1-dev libpng-dev luajit lua-sec lua-socket lua-zlib-dev luarocks poppler-utils
+      - name: Install default font
+        run: |
+          mkdir -p ~/.fonts .sources && pushd .sources
+          test -f GentiumBook-7.000.zip || curl -fsSLO https://software.sil.org/downloads/r/gentium/GentiumBook-7.000.zip
+          test -f ~/.fontns/GentiumBook-Regular.ttf || bsdtar -x -f GentiumBook-7.000.zip -C ~/.fonts --strip-components 1 '*.ttf'
       - name: Setup ‘cargo’
         uses: actions-rs/toolchain@v1
       - name: Configure
@@ -69,7 +75,7 @@ jobs:
           make vendored-crates
       - name: Upload source dist artifact
         if: matrix.configuration[0] == 'dynamic' && !startsWith(github.ref, 'refs/tags/v')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sile-${{ env.VERSION }}
           path: sile-${{ env.VERSION }}.zip
@@ -80,7 +86,7 @@ jobs:
           sha256sum sile-${{ env.CARCH }} | tee -a sile-${{ env.VERSION }}.sha256.txt
       - name: Upload static binary artifact
         if: matrix.configuration[0] == 'static' && !startsWith(github.ref, 'refs/tags/v')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sile-${{ env.CARCH }}
           path: sile-${{ env.CARCH }}
@@ -102,11 +108,11 @@ jobs:
     name: Build from source tarball without automake
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Cache lua_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             lua_modules
@@ -150,18 +156,18 @@ jobs:
       SHA256SUM: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             lua_modules
@@ -181,10 +187,10 @@ jobs:
             rust \
             unzip \
             zlib
-          brew link icu4c@77 --force
+          brew link icu4c@78 --force
           brew link zlib --force
           brew link expat --force
-          brew install --cask font-gentium-plus
+          brew install font-gentium-book
       - name: Configure
         run: |
           ./bootstrap.sh
@@ -205,20 +211,23 @@ jobs:
     name: Build Nix
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v18
-      - name: Cache Nix dependencies
-        uses: DeterminateSystems/flakehub-cache-action@v2
+        uses: cachix/install-nix-action@v31
+      - name: Cache Nix builds
+        uses: cachix/cachix-action@v17
+        with:
+          name: sile-typesetter
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
       - name: Setup developer environment
         run: |
           nix develop --command ./bootstrap.sh

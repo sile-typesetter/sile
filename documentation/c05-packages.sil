@@ -48,7 +48,7 @@ This directory could be in your system Lua directory, in your user directory, or
 By default, LuaRocks will install these modules to the Lua search path.
 
 \begin[type=autodoc:codeblock]{raw}
-$ luarocks install markdown.sile
+$ luarocks install resilient.sile
 $ sile ...
 \end{raw}
 
@@ -57,7 +57,7 @@ If you either don’t have root permissions or don’t want to pollute your syst
 To use packages installed as a user you will need to have LuaRocks add its user tree to your Lua search path before running SILE.
 
 \begin[type=autodoc:codeblock]{raw}
-$ luarocks --local install markdown.sile
+$ luarocks --local install resilient.sile
 $ eval $(luarocks --local path)
 $ sile ...
 \end{raw}

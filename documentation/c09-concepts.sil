@@ -91,10 +91,8 @@ local vglue = SILE.types.node.vglue({ height = l })
 
 \section{Kerns}
 
-\define[command=SILEkern]{\font[family=Gentium Plus]{% Book Basic has no +smcp, but readers don't need to know, since we're only using Book Basic as a holdover from old SILE which did.
-S\lower[height=0.5ex]{I}L\kern[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}}
-\define[command=SILEglue]{\font[family=Gentium Plus]{%
-S\lower[height=0.5ex]{I}L\glue[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}}
+\define[command=SILEkern]{S\lower[height=0.5ex]{I}L\kern[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}
+\define[command=SILEglue]{S\lower[height=0.5ex]{I}L\glue[width=-.2em]\raise[height=0.6ex]{\font[features=+smcp]{e}}}
 \autodoc:command{\kern}’s are a type of \autodoc:command{\glue}, only different in that while a \autodoc:command{\glue} can be broken at the end of a line, a \autodoc:command{\kern}
 can’t.
 Hearkening back to our \SILEkern example from the \em{Macros and Commands} chapter, consider that example, repeated enough times to cause a linebreak, but with \autodoc:command{\glue}’s everywhere \autodoc:command{\kern}’s are used instead:
@@ -110,7 +108,7 @@ Hearkening back to our \SILEkern example from the \em{Macros and Commands} chapt
 \SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue\SILEglue%
 \end{autodoc:example}
 \par
-Note end of lines where \SILEglue is broken between its ‘L’ and ‘\raise[height=0.6ex]{\font[family=Gentium Plus,features=+smcp]{e}}’.
+Note end of lines where \SILEglue is broken between its ‘L’ and ‘\raise[height=0.6ex]{\font[features=+smcp]{e}}’.
 Instead, if we typeset the same line using \autodoc:command{\kern}’s as we had originally:
 
 \begin{autodoc:example}%
