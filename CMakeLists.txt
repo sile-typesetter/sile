@@ -196,6 +196,17 @@ target_link_directories(fontmetrics PUBLIC
 target_link_libraries(fontmetrics PUBLIC harfbuzz.lib lua51.lib)
 target_link_options(fontmetrics PUBLIC /EXPORT:luaopen_fontmetrics)
 
+add_library(imagehelper SHARED justenough/imagehelper.cpp)
+add_dependencies(imagehelper lua)
+target_include_directories(imagehelper PUBLIC
+  "${TMP_INSTALL_DIR}/include"
+  "${TMP_LUA_DIR}/include")
+target_link_directories(imagehelper PUBLIC
+  "${TMP_INSTALL_DIR}/lib"
+  "${TMP_LUA_DIR}")
+target_link_libraries(imagehelper PUBLIC harfbuzz.lib lua51.lib)
+target_link_options(imagehelper PUBLIC /EXPORT:luaopen_imagehelper)
+
 add_library(svg SHARED justenough/svg.c)
 add_dependencies(svg lua)
 target_include_directories(svg PUBLIC
