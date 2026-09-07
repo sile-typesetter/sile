@@ -147,6 +147,7 @@ extend-ignore-identifiers-re = [
   "EPdf",
   "ePdf*",
   "FileAttachement",
+  "PNGs",
 ]
 
 [package.metadata.typos.default.extend-words]
