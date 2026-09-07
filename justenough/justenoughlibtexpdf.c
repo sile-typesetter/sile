@@ -542,6 +542,88 @@ int je_pdf_version(lua_State *L) {
   return 1;
 }
 
+/**
+ * Add a resource to the current page's resource dictionary.
+ *
+ * Note that it creates the resource dictionary if it doesn't exist.
+ */
+int je_pdf_add_page_resource(lua_State *L) {
+  const char* category = luaL_checkstring(L, 1);
+  const char* resource_name = luaL_checkstring(L, 2);
+  pdf_obj* resource_ref = lua_touserdata(L, 3);
+
+  if (!PDF_OBJ_INDIRECTTYPE(resource_ref)) {
+     return luaL_error(L, "Resource reference must be an indirect object");
+  }
+
+  ASSERT_PDF_OPENED(p);
+  texpdf_doc_add_page_resource(p, category, resource_name, resource_ref);
+  return 0;
+}
+
+/*
+ * Note that in the functions below, we cannot use:
+ *   pdf_obj *p = texpdf_doc_get_dictionary(p, "@THISPAGE");
+ * The reason is that it actually returns currentpage->page_obj, not the
+ * toplevel internal page object, but we need access to the internal pointers
+ * it sets up when the page is emitted, such as resources and annotations.
+ * The "current page" is actually the last page currently in the page entries.
+ */
+#define LASTPAGE(p)  (&(p->pages.entries[p->pages.num_entries]))
+
+/**
+ * Get the resource dictionary for the current page.
+ *
+ * It creates the resource dictionary if it doesn't exist, but this is not the
+ * case normally, as some other content will likely have already caused it to
+ * be created (e.g. when adding content to the page, using a font, etc).
+ *
+ * The rationale for this function is we cannot use:
+ *   pdf_obj *p = texpdf_doc_get_dictionary(p, "@THISPAGE");
+ *   pdf_dict *resources = texpdf_lookup_dict(p, "Resources");
+ * because this will not be valued up until the page is actually emitted, from
+ * the internalpointers in the page object.
+ */
+int je_pdf_get_page_resources(lua_State *L) {
+  ASSERT_PDF_OPENED(p);
+  pdf_page *page = LASTPAGE(p);
+  if (!page) {
+    return luaL_error(L, "No current page");
+  }
+
+  if (!page->resources) {
+    page->resources = texpdf_new_dict();
+  }
+  lua_pushlightuserdata(L, page->resources);
+  return 1;
+}
+
+/**
+ * Add a pre-created annotation object to the current page.
+ *
+ * It takes one argument, a reference to an annotation dictionary (as a lightuserdata).
+ * It creates the annotation array if it doesn't exist, and adds the annotation to it.
+ */
+int je_pdf_add_page_annotation(lua_State *L) {
+  pdf_obj *annot_ref = lua_touserdata(L, 1);
+  if (!PDF_OBJ_INDIRECTTYPE(annot_ref)) {
+    return luaL_error(L, "Annotation reference must be an indirect object");
+  }
+
+  ASSERT_PDF_OPENED(p);
+  pdf_page *page = LASTPAGE(p);
+  if (!page) {
+    return luaL_error(L, "No current page");
+  }
+
+  if (!page->annots) {
+    page->annots = texpdf_new_array();
+  }
+
+  texpdf_add_array(page->annots, annot_ref);
+  return 0;
+}
+
 static const struct luaL_Reg lib_table [] = {
   {"init", je_pdf_init},
   {"beginpage", je_pdf_beginpage},
@@ -581,6 +663,9 @@ static const struct luaL_Reg lib_table [] = {
   {"get_array", je_pdf_get_array},
   {"array_length", je_pdf_array_length},
   {"string", je_pdf_new_string},
+  {"add_page_resource", je_pdf_add_page_resource},
+  {"get_page_resources", je_pdf_get_page_resources},
+  {"add_page_annotation", je_pdf_add_page_annotation},
   {NULL, NULL}
 };
 
