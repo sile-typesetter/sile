@@ -10,7 +10,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
       - name: StyLua
-        uses: JohnnyMorganz/stylua-action@v4
+        uses: JohnnyMorganz/stylua-action@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: 2.0.0
