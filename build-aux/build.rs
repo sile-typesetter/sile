@@ -1,8 +1,9 @@
-#[cfg(feature = "manpage")]
-use clap_mangen::Man;
 #[cfg(any(feature = "static", feature = "completions"))]
 use std::path::Path;
 use std::{collections, env};
+
+#[cfg(feature = "manpage")]
+use clap_mangen::Man;
 use vergen_gix::{CargoBuilder, Emitter, GixBuilder, RustcBuilder};
 #[cfg(feature = "completions")]
 use {

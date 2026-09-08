@@ -1,12 +1,12 @@
 // rust-embed include attributes have issues with lots of matches...
 #![recursion_limit = "2048"]
 
-use mlua::prelude::*;
+use std::env;
+use std::path::PathBuf;
 
 #[cfg(not(feature = "static"))]
 use mlua::chunk;
-use std::env;
-use std::path::PathBuf;
+use mlua::prelude::*;
 
 #[cfg(feature = "cli")]
 pub mod cli;
