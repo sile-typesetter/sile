@@ -290,3 +290,123 @@ fn rect_to_coords(doc: &Document, rect: &Object) -> Result<(f64, f64, f64, f64)>
     };
     Ok((get(&arr[0])?, get(&arr[1])?, get(&arr[2])?, get(&arr[3])?))
 }
+
+#[cfg(test)]
+mod tests {
+    use mlua::prelude::*;
+
+    /// A Lua state with the `rusile` exports installed on the globals.
+    fn lua_exports() -> Lua {
+        let lua = Lua::new();
+        let exports = crate::get_rusile_exports(&lua).expect("exports build");
+        lua.globals().set("rusile", exports).unwrap();
+        lua
+    }
+
+    fn export(lua: &Lua, name: &str) -> mlua::Function {
+        let rusile: mlua::Table = lua.globals().get("rusile").unwrap();
+        rusile.get(name).unwrap()
+    }
+
+    #[test]
+    fn imagebbox_measures_a_png() {
+        let lua = lua_exports();
+        let imagebbox = export(&lua, "imagebbox");
+        let (llx, lly, urx, ury, xdpi, ydpi): (f64, f64, f64, f64, f64, f64) =
+            imagebbox.call(("documentation/gutenberg.png", 1)).unwrap();
+        assert_eq!((llx, lly), (0.0, 0.0));
+        assert!(urx > 100.0 && ury > 100.0);
+        assert_eq!(xdpi, ydpi);
+    }
+
+    #[test]
+    fn imagebbox_measures_a_jpg() {
+        let lua = lua_exports();
+        let imagebbox = export(&lua, "imagebbox");
+        let (llx, lly, urx, ury, xdpi, ydpi): (LuaTable, LuaTable, LuaTable, LuaTable, f64, f64) =
+            imagebbox.call(("documentation/gutenberg.jpg", 1)).unwrap();
+        let (llx, lly, urx, ury) = amounts((llx, lly, urx, ury));
+        assert_eq!((llx, lly), (0.0, 0.0));
+        assert_eq!((urx, ury), (144.0, 174.96));
+        assert_eq!((xdpi, ydpi), (100.0, 100.0));
+    }
+
+    #[test]
+    fn imagebbox_measures_a_jp2() {
+        let lua = lua_exports();
+        let imagebbox = export(&lua, "imagebbox");
+        let (llx, lly, urx, ury, xdpi, ydpi): (LuaTable, LuaTable, LuaTable, LuaTable, f64, f64) =
+            imagebbox.call(("documentation/gutenberg.jp2", 1)).unwrap();
+        let (llx, lly, urx, ury) = amounts((llx, lly, urx, ury));
+        assert_eq!((llx, lly), (0.0, 0.0));
+        assert_eq!((urx, ury), (200.0, 243.0));
+        assert_eq!((xdpi, ydpi), (72.0, 72.0));
+    }
+
+    #[test]
+    fn imagebbox_measures_a_pdf() {
+        let lua = lua_exports();
+        let imagebbox = export(&lua, "imagebbox");
+        let (llx, lly, urx, ury, xdpi, ydpi): (f64, f64, f64, f64, Option<f64>, Option<f64>) =
+            imagebbox.call(("documentation/sile-logo.pdf", 1)).unwrap();
+        assert_eq!((llx, lly), (0.0, 0.0));
+        assert!(urx > 200.0 && ury > 100.0);
+        assert_eq!((xdpi, ydpi), (None, None));
+    }
+
+    #[test]
+    fn imagebbox_defaults_page_to_one() {
+        let lua = lua_exports();
+        let imagebbox = export(&lua, "imagebbox");
+        let (llx, lly, urx, ury): (f64, f64, f64, f64) = imagebbox
+            .call::<(f64, f64, f64, f64)>("documentation/sile-logo.pdf")
+            .unwrap();
+        assert_eq!((llx, lly), (0.0, 0.0));
+        assert!(urx > 200.0 && ury > 100.0);
+    }
+
+    #[test]
+    fn imagebbox_returns_six_values() {
+        let lua = lua_exports();
+        let imagebbox = export(&lua, "imagebbox");
+        let multi = imagebbox
+            .call::<mlua::MultiValue>(("documentation/gutenberg.png", 1))
+            .unwrap();
+        assert_eq!(multi.len(), 6);
+    }
+
+    #[test]
+    fn imagebbox_errors_on_a_missing_file() {
+        let lua = lua_exports();
+        let imagebbox = export(&lua, "imagebbox");
+        let result: mlua::Result<mlua::MultiValue> = imagebbox.call("does-not-exist.png");
+        assert!(result.is_err(), "expected a Lua error, got {result:?}");
+    }
+
+    #[test]
+    fn imagenumpages_counts_and_defaults() {
+        let lua = lua_exports();
+        let imagenumpages = export(&lua, "imagenumpages");
+        assert_eq!(
+            imagenumpages
+                .call::<u32>("documentation/gutenberg.png")
+                .unwrap(),
+            1
+        );
+        assert_eq!(
+            imagenumpages
+                .call::<u32>("documentation/sile-logo.pdf")
+                .unwrap(),
+            1
+        );
+    }
+
+    #[test]
+    fn imagebbox_rejects_page_zero() {
+        let lua = lua_exports();
+        let imagebbox = export(&lua, "imagebbox");
+        let result: mlua::Result<mlua::MultiValue> =
+            imagebbox.call(("documentation/sile-logo.pdf", 0));
+        assert!(result.is_err(), "expected a Lua error for page 0");
+    }
+}
