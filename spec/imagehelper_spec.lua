@@ -5,7 +5,6 @@
 SILE = require("core.sile")
 local rusile = require("rusile")
 
-local imagehelper = require("imagehelper")
 local pdf = require("justenoughlibtexpdf")
 
 local callable = require("luassert.util").callable
@@ -69,52 +68,6 @@ describe("pdf.imagebbox", function ()
 
    it("measures PDFs", function ()
       local llx, lly, urx, ury = imagebbox(a_pdf, 1)
-      assert.is.equal(round(pdf_llx), round(llx))
-      assert.is.equal(round(pdf_lly), round(lly))
-      assert.is.equal(round(pdf_urx), round(urx))
-      assert.is.equal(round(pdf_ury), round(ury))
-   end)
-end)
-
-describe("imagehelper.bbox", function ()
-   local bbox = imagehelper.bbox
-
-   it("exists", function ()
-      assert.is.truthy(callable(bbox))
-   end)
-
-   it("measures PNGs", function ()
-      local llx, lly, urx, ury, xresol, yresol = bbox(a_png, 1)
-      assert.is.equal(round(png_llx), round(llx))
-      assert.is.equal(round(png_lly), round(lly))
-      assert.is.equal(round(png_urx), round(urx))
-      assert.is.equal(round(png_ury), round(ury))
-      assert.is.equal(round(png_xresol), round(xresol))
-      assert.is.equal(round(png_yresol), round(yresol))
-   end)
-
-   it("measures JPGs", function ()
-      local llx, lly, urx, ury, xresol, yresol = bbox(a_jpg, 1)
-      assert.is.equal(round(jpg_llx), round(llx))
-      assert.is.equal(round(jpg_lly), round(lly))
-      assert.is.equal(round(jpg_urx), round(urx))
-      assert.is.equal(round(jpg_ury), round(ury))
-      assert.is.equal(round(jpg_xresol), round(xresol))
-      assert.is.equal(round(jpg_yresol), round(yresol))
-   end)
-
-   it("measures JP2s", function ()
-      local llx, lly, urx, ury, xresol, yresol = bbox(a_jp2, 1)
-      assert.is.equal(round(jp2_llx), round(llx))
-      assert.is.equal(round(jp2_lly), round(lly))
-      assert.is.equal(round(jp2_urx), round(urx))
-      assert.is.equal(round(jp2_ury), round(ury))
-      assert.is.equal(round(jp2_xresol), round(xresol))
-      assert.is.equal(round(jp2_yresol), round(yresol))
-   end)
-
-   it("measures PDFs", function ()
-      local llx, lly, urx, ury = bbox(a_pdf, 1)
       assert.is.equal(round(pdf_llx), round(llx))
       assert.is.equal(round(pdf_lly), round(lly))
       assert.is.equal(round(pdf_urx), round(urx))

@@ -130,7 +130,6 @@ nodist_sile_SOURCES = $(_EMBEDDED_SOURCES)
 BUILT_SOURCES += $(_EMBEDDED_SOURCES)
 CLEANFILES += $(_EMBEDDED_SOURCES)
 $(CARGO_BIN): justenough/.libs/fontmetrics.a
-$(CARGO_BIN): justenough/.libs/imagehelper.a
 $(CARGO_BIN): justenough/.libs/justenoughfontconfig.a
 $(CARGO_BIN): justenough/.libs/justenoughharfbuzz.a
 $(CARGO_BIN): justenough/.libs/justenoughicu.a
@@ -273,7 +272,6 @@ _SUBDIR_TELLS =
 
 if SHARED
 _SUBDIR_TELLS += justenough/.libs/fontmetrics$(LIBEXT) \
-				justenough/.libs/imagehelper$(LIBEXT) \
 				justenough/.libs/justenoughfontconfig$(LIBEXT) \
 				justenough/.libs/justenoughharfbuzz$(LIBEXT) \
 				justenough/.libs/justenoughicu$(LIBEXT) \
@@ -284,7 +282,6 @@ endif
 
 if STATIC
 _SUBDIR_TELLS += justenough/.libs/fontmetrics.a \
-				justenough/.libs/imagehelper.a \
 				justenough/.libs/justenoughfontconfig.a \
 				justenough/.libs/justenoughharfbuzz.a \
 				justenough/.libs/justenoughicu.a \
