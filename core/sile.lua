@@ -241,7 +241,7 @@ SILE.call = require("core.misc").call
 --
 -- Note that alternative versions of this action are available as methods on document classes and packages. Those
 -- interfaces should be preferred to this global one.
--- @tparam string name Name of cammand to register.
+-- @tparam string name Name of command to register.
 -- @tparam function func Callback function to use as command handler.
 -- @tparam[opt] nil|string help User friendly short usage string for use in error messages, documentation, etc.
 -- @tparam[opt] nil|string pack Information identifying the module registering the command for use in error and usage

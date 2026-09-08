@@ -198,10 +198,96 @@ unittypes["em"] = {
    end,
 }
 
+--- Return the x-height of the current font, in points.
+--
+-- It uses font metrics when available, or a few heuristics otherwise.
+-- @treturn number x-height
+local function getExHeight()
+   local fontoptions = SILE.font.loadDefaults({})
+   local ot = require("core.opentype-parser")
+   local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+   local font = ot.parseFont(face)
+   local fontSize = SILE.settings:get("font.size")
+   local unitsPerEm = font.head.unitsPerEm
+   -- Use OS/2 metrics, if available.
+   local h = font.os2 and font.os2.sxHeight
+   if h and h > 0 then
+      return h / unitsPerEm * fontSize
+   end
+   -- Else, try measuring a character.
+   -- CSS3 states: "One possible heuristic is to look at how far the glyph for
+   -- the lowercase "o" extends below the baseline, and subtract that value
+   -- from the top of its bounding box."
+   local m, exists = SILE.shaper:measureChar("o")
+   if exists then
+      return m.height - m.depth
+   end
+   -- OpenType mentions that "the value may be set equal to the top of the
+   -- unscaled and unhinted glyph bounding box of the glyph encoded at U+0078
+   -- (LATIN SMALL LETTER X)"
+   -- Some "x" glyphs may diagonals that overshoot the x-height, but if we
+   -- failed measuring "o" above, it's probably the best we can do indeed.
+   m, exists = SILE.shaper:measureChar("x")
+   if exists then
+      return m.height
+   end
+   -- Not all fonts have an "o" or an "x"...
+   -- Last resort (empirical approximation) as per CSS3.
+   return fontSize * 0.5
+end
+
+--- Return the cap-height of the current font, in points.
+--
+-- It uses font metrics when available, or a few heuristics otherwise.
+-- @treturn number cap-height
+local function getCapHeight()
+   local fontoptions = SILE.font.loadDefaults({})
+   local ot = require("core.opentype-parser")
+   local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
+   local font = ot.parseFont(face)
+   local fontSize = SILE.settings:get("font.size")
+   local unitsPerEm = font.head.unitsPerEm
+   -- Use OS/2 metrics, if available.
+   local h = font.os2 and font.os2.sCapHeight
+   if h and h > 0 then
+      return h * fontSize / unitsPerEm
+   end
+   -- Else, try measuring a character.
+   -- CSS4 Draft introduces the "cap" unit and states: "One possible heuristic
+   -- is to look at how far the glyph for the uppercase “O” extends below the
+   -- baseline, and subtract that value from the top of its bounding box."
+   local m, exists = SILE.shaper:measureChar("O")
+   if exists then
+      return m.height - m.depth
+   end
+   -- OpenType mentions that "the value may be set equal to the top of the unscaled and unhinted
+   -- glyph bounding box of the glyph encoded at U+0048 (LATIN CAPITAL LETTER H)"
+   m, exists = SILE.shaper:measureChar("H")
+   if exists then
+      return m.height
+   end
+   -- Not all fonts have an "O" or an "H"...
+   -- Last resort (empirical approximation).
+   -- Note:
+   -- CSS4 Draft suggests using the font ascent as a fallback.
+   -- But looking at font.os2.sTypoAscender in a bunch of fonts, it seems
+   -- that this is often a lot higher than the actual cap height.
+   -- So we use an empirical ratio of 0.7 of the font size instead,
+   -- found to be a reasonable average across a number of fonts.
+   return fontSize * 0.7
+end
+
 unittypes["ex"] = {
    relative = true,
    definition = function (value)
-      return value * SILE.shaper:measureChar("x").height
+      return value * getExHeight()
+   end,
+}
+
+unittypes["cap"] = {
+   relative = true,
+   definition = function (value)
+      return value * getCapHeight()
    end,
 }
 

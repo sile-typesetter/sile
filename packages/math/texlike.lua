@@ -150,32 +150,18 @@ local mathGrammar = function (_ENV)
          (P"}" + E("`}` expected"))
          ) / function (...)
             local t = {...}
-            -- Remove the last mathlist if empty. This way,
-            -- `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
-            if not t[#t][1] or not t[#t][1][1] then table.remove(t) end
+            local last = t[#t]
+            -- Remove the last element if empty:
+            -- So that `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
+            if #last == 0 or (#last == 1 and #last[#last] == 0) then
+               -- Empty mathlist, or mathlist containing a single empty mathlist.
+               table.remove(t)
+            end
             return pl.utils.unpack(t)
          end
 
-   local dim2_arg_inner = Ct(V"mathlist" * (P"&" * V"mathlist")^0) /
-      function (t)
-         t.id = "mathlist"
-         return t
-      end
-   local dim2_arg =
-      Cg(P"{" *
-         dim2_arg_inner *
-         (P"\\\\" * dim2_arg_inner)^1 *
-         (P"}" + E("`}` expected"))
-         ) / function (...)
-         local t = {...}
-         -- Remove the last mathlist if empty. This way,
-         -- `inner1 \\ inner2 \\` is the same as `inner1 \\ inner2`.
-         if not t[#t][1] or not t[#t][1][1] then table.remove(t) end
-         return pl.utils.unpack(t)
-         end
-
    -- TeX uses the regular asterisk (* = U+002A) in superscripts or subscript:
-   -- The TeXbook exercice 18.32 (p. 179, 330) for instance.
+   -- The TeXbook exercise 18.32 (p. 179, 330) for instance.
    -- Fonts usually have the asterisk raised too high, so using the Unicode
    -- asterisk operator U+2217 looks better (= \ast in TeX).
    local astop = P"*" / luautf8.char(0x2217)
@@ -381,7 +367,7 @@ local function isOperatorKind (tree, typeOfAtom)
    if tree.options and tree.options.atom then
       return atoms.types[tree.options.atom] == typeOfAtom
    end
-   -- Case \mo{ops} where ops is registered with the resquested type
+   -- Case \mo{ops} where ops is registered with the requested type
    -- E.g. \mo{∑) or \sum
    if tree[1] and operatorDict[tree[1]] and operatorDict[tree[1]].atom then
       return operatorDict[tree[1]].atom == typeOfAtom
@@ -648,47 +634,56 @@ local function compileToMathML_aux (_, arg_env, tree)
       end
       return res
    elseif tree.id == "command" and symbols[tree.command] then
-      local atom = { id = "atom", [1] = symbols[tree.command] }
       if isAccentSymbol(symbols[tree.command]) and #tree > 0 then
-         -- LaTeX-style accents \overrightarrow{v} = <mover accent="true"><mi>v</mi><mo>&#x20D7;</mo></mover>
+         -- LaTeX-style accents
+         -- \overrightarrow{v} = <mover accent="true"><mi>v</mi><mo>&#x20D7;</mo></mover>
          local accent = {
-            id = "command",
             command = "mover",
             options = {
                accent = "true",
             },
+            [1] = tree[1],
+            [2] = {
+               command = "mo", -- accents are always <mo>
+               options = {},
+               symbols[tree.command],
+            },
          }
-         accent[1] = compileToMathML_aux(nil, arg_env, tree[1])
-         accent[2] = compileToMathML_aux(nil, arg_env, atom)
          tree = accent
       elseif isBottomAccentSymbol(symbols[tree.command]) and #tree > 0 then
-         -- LaTeX-style bottom accents \underleftarrow{v} = <munder accent="true"><mi>v</mi><mo>&#x20EE;</mo></munder>
+         -- LaTeX-style bottom accents
+         -- \underleftarrow{v} = <munder accentunder="true"><mi>v</mi><mo>&#x20EE;</mo></munder>
          local accent = {
-            id = "command",
             command = "munder",
             options = {
                accentunder = "true",
             },
+            [1] = tree[1],
+            [2] = {
+               command = "mo", -- accents are always <mo>
+               options = {},
+               symbols[tree.command],
+            },
          }
-         accent[1] = compileToMathML_aux(nil, arg_env, tree[1])
-         accent[2] = compileToMathML_aux(nil, arg_env, atom)
          tree = accent
       elseif #tree > 0 then
          -- Play cool with LaTeX-style commands that don't take arguments:
          -- Edge case for non-accent symbols so we don't loose bracketed groups
          -- that might have been seen as command arguments.
          -- Ex. \langle{x}\rangle (without space after \langle)
+         -- The symbol may lead to something else than a bare <mo>, so we
+         -- need to compile it properly via an atom.
+         local atom = { id = "atom", [1] = symbols[tree.command] }
          local sym = compileToMathML_aux(nil, arg_env, atom)
-         -- Compile all children in-place
-         for i, child in ipairs(tree) do
-            tree[i] = compileToMathML_aux(nil, arg_env, child)
-         end
          -- Insert symbol at the beginning,
          -- And add a wrapper mrow to be unwrapped in the parent.
          table.insert(tree, 1, sym)
          tree.command = "mrow"
          tree.id = "wrapper"
       else
+         -- The symbol may lead to something else than a bare <mo>, so we
+         -- need to compile it properly via an atom.
+         local atom = { id = "atom", [1] = symbols[tree.command] }
          tree = compileToMathML_aux(nil, arg_env, atom)
       end
    elseif tree.id == "argument" then
@@ -951,6 +946,15 @@ compileToMathML(
   % Package "amsmath" went with its own generic \overset and \underset.
   \def{overset}{\mover{#2}{#1}}
   \def{underset}{\munder{#2}{#1}}
+
+  % Boxing and cancelling
+  % The boxing command is from "amsmath".
+  \def{boxed}{\menclose[notations=box]{#1}}
+  % Canceling commands are from "cancel" package.
+  \def{cancel}{\menclose[notations=updiagonalstrike]{#1}}
+  \def{bcancel}{\menclose[notations=downdiagonalstrike]{#1}}
+  \def{xcancel}{\menclose[notations=updiagonalstrike downdiagonalstrike]{#1}}
+  \def{cancelto}{\menclose[notations=northeastarrow]{#2}^{#1}}
 ]==],
    })
 )

@@ -23,18 +23,18 @@ jobs:
     name: Test on Lua ${{ matrix.luaVersion[0] }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Cache test fonts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .fonts
             .sources
           key: fonts-${{ hashFiles('Makefile-fonts') }}
       - name: Cache lua_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             lua_modules
@@ -44,16 +44,21 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install fonts-sil-gentiumplus libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
+          sudo apt-get install libarchive-tools libfontconfig1-dev libharfbuzz-dev libicu-dev libpng-dev poppler-utils
+      - name: Install default font
+        run: |
+          mkdir -p ~/.fonts .sources && pushd .sources
+          test -f GentiumBook-7.000.zip || curl -fsSLO https://software.sil.org/downloads/r/gentium/GentiumBook-7.000.zip
+          test -f ~/.fontns/GentiumBook-Regular.ttf || bsdtar -x -f GentiumBook-7.000.zip -C ~/.fonts --strip-components 1 '*.ttf'
       - name: Setup ‘lua’
-        uses: hishamhm/gh-actions-lua@master
+        uses: luarocks/gh-actions-lua@v14
         with:
           luaVersion: ${{ matrix.luaVersion[0] }}
           luaCompileFlags: ${{ matrix.luaVersion[1] }}
       - name: Setup ‘cargo’
         uses: actions-rs/toolchain@v1
       - name: Setup ‘luarocks’
-        uses: hishamhm/gh-actions-luarocks@master
+        uses: luarocks/gh-actions-luarocks@v7
       - name: Prep system Lua for use
         run: |
           luarocks install busted
@@ -98,7 +103,7 @@ jobs:
         run: |
           make cargo-test
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-${{ matrix.luaVersion[0] }}-actuals
           path: tests/*.actual

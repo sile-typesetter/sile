@@ -189,23 +189,9 @@ function SILE.nodeMakers.unicode:handleICUBreak (chunks, item)
 end
 
 function SILE.nodeMakers.unicode:handleWordBreak (item)
-   self:makeToken()
-   if self:isSpace(item.text) then
-      -- Spacing word break
-      self:makeGlue(item)
-   elseif self:isActiveNonBreakingSpace(item.text) then
-      -- Non-breaking space word break
-      self:makeNonBreakingSpace()
-   else
-      -- a word break which isn't a space
-      self:addToken(item.text, item)
-   end
-end
-
-function SILE.nodeMakers.unicode:_handleWordBreakRepeatHyphen (item)
-   -- According to some language rules, when a break occurs at an explicit hyphen,
-   -- the hyphen gets repeated at the beginning of the new line
-   if item.text == "-" then
+   if self.hasFeatureRepeatedHyphen and item.text == "-" then
+      -- According to some language rules, when a break occurs at an explicit hyphen,
+      -- the hyphen gets repeated at the beginning of the new line
       self:addToken(item.text, item)
       self:makeToken()
       if self.lastnode ~= "discretionary" then
@@ -215,35 +201,41 @@ function SILE.nodeMakers.unicode:_handleWordBreakRepeatHyphen (item)
          self.lastnode = "discretionary"
       end
    else
-      SILE.nodeMakers.unicode.handleWordBreak(self, item)
+      self:makeToken()
+      if self:isSpace(item.text) then
+         -- Spacing word break
+         self:makeGlue(item)
+      elseif self:isActiveNonBreakingSpace(item.text) then
+         -- Non-breaking space word break
+         self:makeNonBreakingSpace()
+      else
+         -- a word break which isn't a space
+         self:addToken(item.text, item)
+      end
    end
 end
 
 function SILE.nodeMakers.unicode:handleLineBreak (item, subtype)
-   -- Because we are in charge of paragraphing, we
-   -- will override space-type line breaks, and treat
-   -- them just as ordinary word spaces.
-   if self:isSpace(item.text) or self:isActiveNonBreakingSpace(item.text) then
-      self:handleWordBreak(item)
-      return
-   end
-   -- But explicit line breaks we will turn into
-   -- soft and hard breaks.
-   self:makeToken()
-   self:makePenalty(subtype == "soft" and 0 or -1000)
-   local char = item.text
-   self:addToken(char, item)
-   local cp = SU.codepoint(char)
-   self.lasttype = chardata[cp] and chardata[cp].linebreak
-end
-
-function SILE.nodeMakers.unicode:_handleLineBreakRepeatHyphen (item, subtype)
    if self.lastnode == "discretionary" then
       -- Initial word boundary after a discretionary:
       -- Bypass it and just deal with the token.
       self:dealWith(item)
    else
-      SILE.nodeMakers.unicode.handleLineBreak(self, item, subtype)
+      -- Because we are in charge of paragraphing, we
+      -- will override space-type line breaks, and treat
+      -- them just as ordinary word spaces.
+      if self:isSpace(item.text) or self:isActiveNonBreakingSpace(item.text) then
+         self:handleWordBreak(item)
+         return
+      end
+      -- But explicit line breaks we will turn into
+      -- soft and hard breaks.
+      self:makeToken()
+      self:makePenalty(subtype == "soft" and 0 or -1000)
+      local char = item.text
+      self:addToken(char, item)
+      local cp = SU.codepoint(char)
+      self.lasttype = chardata[cp] and chardata[cp].linebreak
    end
 end
 

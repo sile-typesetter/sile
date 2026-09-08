@@ -59,7 +59,6 @@
                 ".husky"
                 ".editorconfig"
                 # CI files
-                ".cirrus.yml"
                 ".github"
                 "action.yml"
                 "azure-pipelines.yml"
@@ -86,6 +85,11 @@
               "--enable-developer-mode"
               "--with-manual"
             ];
+            # c.f. pkg.nix, wish we could inherit stuff from that derivation
+            dontUseCmakeConfigure = true;
+            dontUseJustBuild = true;
+            dontUseJustCheck = true;
+            dontUseJustInstall = true;
             nativeBuildInputs = sile.nativeBuildInputs ++ [
               # For regression test diff highlighting
               pkgs.delta

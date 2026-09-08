@@ -302,6 +302,10 @@ function ConvertMathML (_, content)
       -- MathML Core 3.3.6.1: The <mpadded> element generates an anonymous <mrow> box
       -- called the "impadded inner box"
       return b.padded(content.options, b.stackbox("H", convertChildren(content)))
+   elseif content.command == "menclose" then
+      -- MathML4 §3.3.9:  The <menclose> element accepts a single argument possibly
+      -- being an inferred mrow of multiple children.
+      return b.enclose(content.options, b.stackbox("H", convertChildren(content)))
    else
       SU.error("Unknown math command " .. content.command)
    end
@@ -315,7 +319,7 @@ local function handleMath (_, mbox, options)
    if mode == "display" then
       mbox.mode = b.mathMode.display
    elseif mode == "text" then
-      mbox.mode = b.mathMode.textCramped
+      mbox.mode = b.mathMode.text
    else
       SU.error("Unknown math mode " .. mode)
    end

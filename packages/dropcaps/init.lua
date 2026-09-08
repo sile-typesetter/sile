@@ -44,7 +44,7 @@ local function getToleranceDepth ()
    -- In non-strict mode, we allow using more lines to fit the dropcap.
    -- However we cannot just check if the "extra depth" of the dropcap is above 0.
    -- First, our depth adjustment is but a best attempt.
-   -- Moreover, some characters may have a small depth of their own (ex. "O" in Gentium Plus)
+   -- Moreover, some characters may have a small depth of their own (ex. "O" in Gentium Book)
    -- We must just ensure they stay within "reasonable bounds" with respect to the baseline,
    -- so as not to flow over the next lines.
    -- We compute a tolerance ratio based on the font metrics, expecting the font to be well-designed.

@@ -1,5 +1,4 @@
 [![Actions Build Status](https://img.shields.io/github/actions/workflow/status/sile-typesetter/sile/build.yml?branch=master&label=Linux%20Build&logo=Github)](https://github.com/sile-typesetter/sile/actions?workflow=Build)
-[![Cirrus Build Status](https://img.shields.io/cirrus/github/sile-typesetter/sile?label=FreeBSD%20Build&logo=freebsd)](https://cirrus-ci.com/github/sile-typesetter/sile/master)
 [![Docker Build Status](https://img.shields.io/github/actions/workflow/status/sile-typesetter/sile/deploy.yml?branch=master&label=Docker%20Build&logo=Docker)](https://github.com/sile-typesetter/sile/pkgs/container/sile)
 [![Azure Build Status](https://img.shields.io/azure-devops/build/sile-typesetter/069c3e31-ee59-4bd6-b395-1f1059acd8db/1?label=Windows%20Build&logo=Azuredevops)](https://dev.azure.com/sile-typesetter/sile/_build/latest?definitionId=1&branchName=master)<br />
 [![Luacheck Lint Status](https://img.shields.io/github/actions/workflow/status/sile-typesetter/sile/luacheck.yml?branch=master&label=Luacheck&logo=Lua)](https://github.com/sile-typesetter/sile/actions?workflow=Luacheck)
@@ -48,11 +47,10 @@ $ brew install sile --HEAD
 ```
 
 Note the Homebrew package does not automatically install the [default font](#default-font).
-The easiest way to install Gentium Plus is through the [Homebrew Fonts caskroom][brewfonts]:
+The easiest way to install Gentium Book is through the [Homebrew Casks][casks]:
 
 ```console
-$ brew tap homebrew/cask-fonts
-$ brew install --cask font-gentium-plus
+$ brew install font-gentium-book
 ```
 
 ### For Linux
@@ -271,8 +269,11 @@ $ ldconfig
 
 ### Default Font
 
-Since SILE v0.9.5, the default font has been Gentium Plus which is freely available from [SIL’s site][gentium].
-(Previously we used Gentium Basic, but that’s getting harder to get hold of.)
+
+Starting with SILE v0.15.14, the default font will be Gentium Book, which is freely available from [SIL’s site][gentium].
+This is a sightly heavier weight of the (new 7 series) Gentium family of fonts, the successor to Gentium Plus.
+Previously at version v0.9.5, the default font was changed to Gentium Plus, the successor to (the original) Gentium.
+Up through v0.9.4 we used Gentium Basic, formerly known as (the original) Gentium.
 The math package uses [Libertinus Math][libertinus] by default to render formulas.
 Additionally, monospace text by default is set in [Hack][hack].
 It is not absolutely required that you install default fonts, but if this font is not installed on your system you won’t be able to use the examples without modification.
@@ -336,10 +337,10 @@ Third party packages must be installed for the same version of Lua that SILE use
 On systems with more than one Lua version installed, *and* where SILE does not use the default one you may need to specify the version manually.
 In these examples, we'll ask SILE directory which version it is running.
 
-For example, to install [markdown.sile](https://github.com/Omikhleia/markdown.sile) (a plugin that provides a SILE inputter that reads and processes Markdown documents) one could run:
+For example, to install [resilient.sile](https://github.com/Omikhleia/resilient.sile) (a 3rd-party plugin that provides advanced document classes, and  SILE inputters that read and process Djot and Markdown documents) one could run:
 
 ```console
-$ luarocks --lua-version $(sile -q <<< SILE.lua_version) install markdown.sile
+$ luarocks --lua-version $(sile -q <<< SILE.lua_version) install resilient.sile
 ```
 
 By default, this will try to install the package to your system (the `--global` option).
@@ -375,7 +376,7 @@ SILE is distributed under the [MIT license][license].
   [aur]: https://wiki.archlinux.org/index.php/Arch_User_Repository
   [azure]: https://dev.azure.com/sile-typesetter/sile/_build?view=runs
   [brew]: http://brew.sh
-  [brewfonts]: https://github.com/Homebrew/homebrew-cask-fonts
+  [casks]: https://github.com/homebrew/homebrew-cask
   [copr]: https://copr.fedorainfracloud.org/coprs/jonny/SILE/
   [doc]: http://sile-typesetter.org/manual/sile-latest.pdf
   [examples]: http://www.sile-typesetter.org/examples/

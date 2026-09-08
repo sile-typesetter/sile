@@ -26,9 +26,9 @@ T	45 a=5.2800 70 a=4.4700 87 a=4.9700 70 a=4.4700 77 a=2.6400	(Level)
 Mx 	79.4051
 T	19 w=4.6500	(2)
 Mx 	84.0551
-My 	64.6282
-Set font 	Libertinus Serif;6.465;400;;normal;;;LTR;
-T	18 w=3.0062	(1)
+My 	64.6422
+Set font 	Libertinus Serif;6.435;400;;normal;;;LTR;
+T	18 w=2.9923	(1)
 Mx 	59.4639
 My 	79.6452
 Set font 	Libertinus Serif;10;400;;normal;;;LTR;

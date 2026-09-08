@@ -51,7 +51,8 @@ As you can see, one possible attribute is \code{size}, which can be specified as
 A \code{<dimension>} is like a \code{<basic length>} (described above) but with a few extra possible dimensions.
 There are dimensions which are relative to the size of the \em{current} font: an \code{em} is the size of the font’s current em square (for a 12pt font, this would be 12 points);
     an \code{en} is half the em square;
-    an \code{ex} is the height of the character ‘x’;
+    an \code{ex} is the ‘x-height’ of the font (roughly the height of lowercase letters without ascenders or descenders);
+    a \code{cap} is the ‘cap-height’ of the font (roughly the height of uppercase letters),
     a \code{spc} is the width of the space character.
 
 There are also dimensions which are defined as a percentage of the size of the current page width or height, the current frame width or height, and the line width (\code{\%pw}, \code{\%ph}, \code{\%fw}, \code{\%fh}, and \code{\%lw}, respectively).
