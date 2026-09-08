@@ -63,7 +63,8 @@ bin_SCRIPTS = sile-lua
 pkglib_LIBRARIES =
 nodist_man_MANS =
 dist_man_MANS = sile-lua.1
-sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs src/types.rs src/types/semver.rs
+sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs
+sile_SOURCES += src/types.rs src/types/semver.rs str/types/basic.rs
 EXTRA_sile_SOURCES =
 if !EMBEDDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
