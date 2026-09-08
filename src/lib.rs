@@ -87,6 +87,10 @@ pub fn get_rusile_exports(lua: &Lua) -> LuaResult<LuaTable> {
     exports.set("semver", LuaFunction::wrap_raw(types::semver::semver))?;
     exports.set("setenv", LuaFunction::wrap_raw(setenv))?;
     exports.set("imagebbox", LuaFunction::wrap(imagehelper::imagebbox))?;
+    exports.set(
+        "imagenumpages",
+        LuaFunction::wrap_raw(imagehelper::imagenumpages),
+    )?;
     Ok(exports)
 }
 

@@ -29,6 +29,16 @@ pub fn imagebbox(path: PathBuf, page: PageNo) -> Result<ImageBBox> {
     }
 }
 
+/// The number of pages in a PDF document, or 1 for any raster image.
+pub fn imagenumpages(path: PathBuf) -> Result<u32> {
+    if is_pdf(path.as_path())? {
+        pdf_numpages(path.as_path())
+    } else {
+        // Raster images are always treated as a single page.
+        Ok(1)
+    }
+}
+
 /// Detect whether a file is a PDF by sniffing the `%PDF` magic bytes, rather
 /// than trusting the file extension alone. Returns an error if the file cannot
 /// be read.
@@ -156,6 +166,14 @@ fn read_head(path: &Path, limit: usize) -> Result<Vec<u8>> {
         .read_to_end(&mut buf)
         .with_context(|| format!("failed to read {path:?}"))?;
     Ok(buf)
+}
+
+fn pdf_numpages(path: &Path) -> Result<u32> {
+    let doc = Document::load(path).with_context(|| format!("failed to open PDF {path:?}"))?;
+    if doc.is_encrypted() {
+        return Err(anyhow!("encrypted PDFs are not supported: {path:?}"));
+    }
+    Ok(doc.get_pages().len() as u32)
 }
 
 fn pdf_bbox(path: &Path, page: PageNo) -> Result<ImageBBox> {
