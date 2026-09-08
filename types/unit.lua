@@ -202,7 +202,7 @@ unittypes["em"] = {
 --
 -- It uses font metrics when available, or a few heuristics otherwise.
 -- @treturn number x-height
-local function getExHeight()
+local function getExHeight ()
    local fontoptions = SILE.font.loadDefaults({})
    local ot = require("core.opentype-parser")
    local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
@@ -240,7 +240,7 @@ end
 --
 -- It uses font metrics when available, or a few heuristics otherwise.
 -- @treturn number cap-height
-local function getCapHeight()
+local function getCapHeight ()
    local fontoptions = SILE.font.loadDefaults({})
    local ot = require("core.opentype-parser")
    local face = SILE.font.cache(fontoptions, SILE.shaper.getFace)
