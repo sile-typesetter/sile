@@ -99,6 +99,12 @@ features = ["include-exclude"]
 version = "0.8"
 optional = true
 
+[dependencies.imageinfo]
+version = "0.7"
+
+[dependencies.lopdf]
+version = "0.45"
+
 [dependencies.semver]
 version = "1.0"
 
