@@ -14,7 +14,6 @@ use imageinfo::{ImageFormat, ImageInfo};
 use lopdf::{Dictionary, Document, Object};
 
 use crate::Result;
-use crate::types::PageNo;
 use crate::types::image::ImageBBox;
 use crate::types::{PageNo, Points};
 
@@ -59,10 +58,10 @@ fn raster_bbox(path: &Path) -> Result<ImageBBox> {
     let height = info.size.height as f64;
     let (xdpi, ydpi) = raster_density(&info, &bytes)?;
     Ok(ImageBBox {
-        llx: 0.0,
-        lly: 0.0,
-        urx: width * 72.0 / xdpi,
-        ury: height * 72.0 / ydpi,
+        llx: Points::from(0.0),
+        lly: Points::from(0.0),
+        urx: Points::from(width * 72.0 / xdpi),
+        ury: Points::from(height * 72.0 / ydpi),
         xdpi: Some(xdpi),
         ydpi: Some(ydpi),
     })
@@ -218,10 +217,10 @@ fn pdf_bbox(path: &Path, page: PageNo) -> Result<ImageBBox> {
     }
 
     Ok(ImageBBox {
-        llx,
-        lly,
-        urx,
-        ury,
+        llx: Points::from(llx),
+        lly: Points::from(lly),
+        urx: Points::from(urx),
+        ury: Points::from(ury),
         xdpi: None,
         ydpi: None,
     })
@@ -308,12 +307,21 @@ mod tests {
         rusile.get(name).unwrap()
     }
 
+    /// The measurement tables returned for the box corners, reduced to amounts.
+    fn amounts(
+        (llx, lly, urx, ury): (LuaTable, LuaTable, LuaTable, LuaTable),
+    ) -> (f64, f64, f64, f64) {
+        let amount = |t: &LuaTable| t.get::<f64>("amount").unwrap();
+        (amount(&llx), amount(&lly), amount(&urx), amount(&ury))
+    }
+
     #[test]
     fn imagebbox_measures_a_png() {
         let lua = lua_exports();
         let imagebbox = export(&lua, "imagebbox");
-        let (llx, lly, urx, ury, xdpi, ydpi): (f64, f64, f64, f64, f64, f64) =
+        let (llx, lly, urx, ury, xdpi, ydpi): (LuaTable, LuaTable, LuaTable, LuaTable, f64, f64) =
             imagebbox.call(("documentation/gutenberg.png", 1)).unwrap();
+        let (llx, lly, urx, ury) = amounts((llx, lly, urx, ury));
         assert_eq!((llx, lly), (0.0, 0.0));
         assert!(urx > 100.0 && ury > 100.0);
         assert_eq!(xdpi, ydpi);
@@ -347,8 +355,15 @@ mod tests {
     fn imagebbox_measures_a_pdf() {
         let lua = lua_exports();
         let imagebbox = export(&lua, "imagebbox");
-        let (llx, lly, urx, ury, xdpi, ydpi): (f64, f64, f64, f64, Option<f64>, Option<f64>) =
-            imagebbox.call(("documentation/sile-logo.pdf", 1)).unwrap();
+        let (llx, lly, urx, ury, xdpi, ydpi): (
+            LuaTable,
+            LuaTable,
+            LuaTable,
+            LuaTable,
+            Option<f64>,
+            Option<f64>,
+        ) = imagebbox.call(("documentation/sile-logo.pdf", 1)).unwrap();
+        let (llx, lly, urx, ury) = amounts((llx, lly, urx, ury));
         assert_eq!((llx, lly), (0.0, 0.0));
         assert!(urx > 200.0 && ury > 100.0);
         assert_eq!((xdpi, ydpi), (None, None));
@@ -358,9 +373,10 @@ mod tests {
     fn imagebbox_defaults_page_to_one() {
         let lua = lua_exports();
         let imagebbox = export(&lua, "imagebbox");
-        let (llx, lly, urx, ury): (f64, f64, f64, f64) = imagebbox
-            .call::<(f64, f64, f64, f64)>("documentation/sile-logo.pdf")
+        let (llx, lly, urx, ury): (LuaTable, LuaTable, LuaTable, LuaTable) = imagebbox
+            .call::<(LuaTable, LuaTable, LuaTable, LuaTable)>("documentation/sile-logo.pdf")
             .unwrap();
+        let (llx, lly, urx, ury) = amounts((llx, lly, urx, ury));
         assert_eq!((llx, lly), (0.0, 0.0));
         assert!(urx > 200.0 && ury > 100.0);
     }

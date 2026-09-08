@@ -3,4 +3,4 @@ pub mod semver;
 
 mod basic;
 
-pub use basic::PageNo;
+pub use basic::{PageNo, Points};

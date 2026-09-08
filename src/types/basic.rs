@@ -60,6 +60,47 @@ impl FromLua for PageNo {
     }
 }
 
+/// A measurement in fixed typesetting points (`pt`), 1/72 of an inch.
+///
+/// Convert to a plain `f64` with [`From<Points> for f64`] when passing it to a
+/// library that wants a bare number. When converting to a Lua Value it will
+/// automatically be a SILE.types.measurement with points as the unit.
+#[derive(Clone, Copy, Debug, Deref, PartialEq)]
+pub struct Points(f64);
+
+impl From<f64> for Points {
+    fn from(value: f64) -> Self {
+        Self(value)
+    }
+}
+
+impl From<Points> for f64 {
+    fn from(value: Points) -> Self {
+        value.0
+    }
+}
+
+impl IntoLua for Points {
+    fn into_lua(self, lua: &Lua) -> LuaResult<LuaValue> {
+        let table = lua.create_table()?;
+        table.set("amount", self.0)?;
+        table.set("unit", "pt")?;
+        table.set("relative", false)?;
+        table.set("_mutable", true)?;
+        let measurement: Option<LuaTable> = match lua.globals().get::<Option<LuaTable>>("SILE")? {
+            Some(sile) => match sile.get::<Option<LuaTable>>("types")? {
+                Some(types) => types.get::<Option<LuaTable>>("measurement")?,
+                None => None,
+            },
+            None => None,
+        };
+        if let Some(measurement) = measurement {
+            table.set_metatable(Some(measurement))?;
+        }
+        Ok(LuaValue::Table(table))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -116,5 +157,23 @@ mod tests {
         let lua = Lua::new();
         assert!(PageNo::from_lua(LuaValue::Integer(0), &lua).is_err());
         assert!(PageNo::from_lua(LuaValue::Integer(-1), &lua).is_err());
+    }
+
+    #[test]
+    fn points_convert_to_and_from_f64() {
+        let points = Points::from(3.5);
+        assert_eq!(*points, 3.5);
+        assert_eq!(f64::from(points), 3.5);
+    }
+
+    #[test]
+    fn points_into_lua_builds_a_pt_measurement() {
+        let lua = Lua::new();
+        let value = Points::from(3.5).into_lua(&lua).unwrap();
+        let table: LuaTable = LuaTable::from_lua(value, &lua).unwrap();
+        assert_eq!(table.get::<f64>("amount").unwrap(), 3.5);
+        assert_eq!(table.get::<String>("unit").unwrap(), "pt");
+        assert!(!table.get::<bool>("relative").unwrap());
+        assert!(table.get::<bool>("_mutable").unwrap());
     }
 }

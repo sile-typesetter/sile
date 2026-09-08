@@ -1,5 +1,7 @@
 use mlua::prelude::*;
 
+use crate::types::Points;
+
 /// The bounding box of an image or PDF page, in PDF points (1/72 inch).
 ///
 /// For raster images the lower-left corner is always `(0, 0)` and the upper-right
@@ -7,16 +9,16 @@ use mlua::prelude::*;
 /// when it is known, and are `None` for PDF documents.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ImageBBox {
-    pub llx: f64,
-    pub lly: f64,
-    pub urx: f64,
-    pub ury: f64,
+    pub llx: Points,
+    pub lly: Points,
+    pub urx: Points,
+    pub ury: Points,
     pub xdpi: Option<f64>,
     pub ydpi: Option<f64>,
 }
 
 /// Convert [`ImageBBox`] to six unpacked Lua values `llx`, `lly`, `urx`, `ury`, `xdpi`, `ydpi`,
-/// with `None` resolutions arriving as `nil`.
+/// with the box corners arriving as SILE measurements and `None` resolutions as `nil`.
 impl IntoLuaMulti for ImageBBox {
     fn into_lua_multi(self, lua: &Lua) -> LuaResult<LuaMultiValue> {
         let mut values = LuaMultiValue::new();
