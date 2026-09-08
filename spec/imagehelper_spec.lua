@@ -3,6 +3,7 @@
 -- replacement, and soon to be an alternative proposed Rust replacement.
 
 SILE = require("core.sile")
+local rusile = require("rusile")
 
 local imagehelper = require("imagehelper")
 local pdf = require("justenoughlibtexpdf")
@@ -118,5 +119,85 @@ describe("imagehelper.bbox", function ()
       assert.is.equal(round(pdf_lly), round(lly))
       assert.is.equal(round(pdf_urx), round(urx))
       assert.is.equal(round(pdf_ury), round(ury))
+   end)
+end)
+
+describe("rusile.imagebbox", function ()
+   local imagebbox = rusile.imagebbox
+
+   it("should exist", function ()
+      assert.is.truthy(callable(imagebbox))
+   end)
+
+   it("measures PNGs", function ()
+      local llx, lly, urx, ury, xresol, yresol = imagebbox(a_png, 1)
+      assert.is.equal(round(png_llx), round(llx:tonumber()))
+      assert.is.equal(round(png_lly), round(lly:tonumber()))
+      assert.is.equal(round(png_urx), round(urx:tonumber()))
+      assert.is.equal(round(png_ury), round(ury:tonumber()))
+      assert.is.equal(round(png_xresol), round(xresol))
+      assert.is.equal(round(png_yresol), round(yresol))
+   end)
+
+   it("measures JPGs", function ()
+      local llx, lly, urx, ury, xresol, yresol = imagebbox(a_jpg, 1)
+      assert.is.equal(round(jpg_llx), round(llx:tonumber()))
+      assert.is.equal(round(jpg_lly), round(lly:tonumber()))
+      assert.is.equal(round(jpg_urx), round(urx:tonumber()))
+      assert.is.equal(round(jpg_ury), round(ury:tonumber()))
+      assert.is.equal(round(jpg_xresol), round(xresol))
+      assert.is.equal(round(jpg_yresol), round(yresol))
+   end)
+
+   it("measures JP2s", function ()
+      local llx, lly, urx, ury, xresol, yresol = imagebbox(a_jp2, 1)
+      assert.is.equal(round(jp2_llx), round(llx:tonumber()))
+      assert.is.equal(round(jp2_lly), round(lly:tonumber()))
+      assert.is.equal(round(jp2_urx), round(urx:tonumber()))
+      assert.is.equal(round(jp2_ury), round(ury:tonumber()))
+      assert.is.equal(round(jp2_xresol), round(xresol))
+      assert.is.equal(round(jp2_yresol), round(yresol))
+   end)
+
+   it("measures PDFs", function ()
+      local llx, lly, urx, ury = imagebbox(a_pdf, 1)
+      assert.is.equal(round(pdf_llx), round(llx:tonumber()))
+      assert.is.equal(round(pdf_lly), round(lly:tonumber()))
+      assert.is.equal(round(pdf_urx), round(urx:tonumber()))
+      assert.is.equal(round(pdf_ury), round(ury:tonumber()))
+   end)
+
+   it("defaults the page to 1", function ()
+      local _, _, urx, ury = imagebbox(a_pdf)
+      assert.is.equal(round(pdf_urx), round(urx:tonumber()))
+      assert.is.equal(round(pdf_ury), round(ury:tonumber()))
+   end)
+
+   it("returns nil resolution for PDFs", function ()
+      local _, _, _, _, xresol, yresol = imagebbox(a_pdf)
+      assert.is_nil(xresol)
+      assert.is_nil(yresol)
+   end)
+
+   it("errors on a missing file", function ()
+      assert.has_error(function ()
+         imagebbox("does-not-exist.png")
+      end)
+   end)
+end)
+
+describe("rusile.imagenumpages", function ()
+   local imagenumpages = rusile.imagenumpages
+
+   it("should exist", function ()
+      assert.is.truthy(callable(imagenumpages))
+   end)
+
+   it("counts PDF pages", function ()
+      assert.is.equal(imagenumpages(a_pdf), 1)
+   end)
+
+   it("reports 1 for raster images", function ()
+      assert.is.equal(imagenumpages(a_png), 1)
    end)
 end)
