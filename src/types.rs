@@ -1,3 +1,4 @@
+pub mod image;
 pub mod semver;
 
 mod basic;
