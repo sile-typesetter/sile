@@ -89,9 +89,9 @@ local function splitSeparatedField (str)
    -- list should not include extraneous spaces.
    -- That sounds as a bad parser limitation, so we will always trim spaces here, and filter out
    -- empty strings, so as to be more robust.
-   return pl.stringx.split(str, ",")
-      :map(pl.stringx.strip)
-      :filter(function (s) return s ~= "" end)
+   return pl.stringx.split(str, ","):map(pl.stringx.strip):filter(function (s)
+      return s ~= ""
+   end)
 end
 
 local function consolidateEntry (entry, label)
@@ -211,9 +211,21 @@ end
 
 -- BibLaTeX v3.21 appendix B, first part of the table
 local NEVER_INHERITED = pl.Set({
-   "ids", "crossref", "xref", "entryset", "entrysubtype", "execute",
-   "label", "options", "presort", "related", "relatedoptions",
-   "relatedstring", "relatedtype", "shorthand", "shorthandintro",
+   "ids",
+   "crossref",
+   "xref",
+   "entryset",
+   "entrysubtype",
+   "execute",
+   "label",
+   "options",
+   "presort",
+   "related",
+   "relatedoptions",
+   "relatedstring",
+   "relatedtype",
+   "shorthand",
+   "shorthandintro",
    "sortkey",
 })
 

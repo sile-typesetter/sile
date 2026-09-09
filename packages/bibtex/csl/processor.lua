@@ -87,7 +87,7 @@ local getIssuedYear = function (entry)
    end
    return d.year
 end
-local function builtinFilter(name)
+local function builtinFilter (name)
    local year = name:match("^issued%-(%d+)$")
    if year then
       return function (entry)
@@ -127,20 +127,24 @@ end
 -- value representing nil, but must actually keep track of nil-hidden fields inside the proxy.
 -- @tparam  table entry Orignal table to proxy
 -- @treturn table Proxy object wrapping the original entry
-local function CslEntry(entry)
+local function CslEntry (entry)
    local proxy = {
       __entry = entry,
       __override = {},
       __hidden = {},
    }
    setmetatable(proxy, {
-      __index = function(t, key)
-         if t.__hidden[key] then return nil end
+      __index = function (t, key)
+         if t.__hidden[key] then
+            return nil
+         end
          local val = t.__override[key]
-         if val ~= nil then return val end
+         if val ~= nil then
+            return val
+         end
          return t.__entry[key]
       end,
-      __newindex = function(t, key, value)
+      __newindex = function (t, key, value)
          if value == nil then
             t.__hidden[key] = true
             t.__override[key] = nil
@@ -149,13 +153,17 @@ local function CslEntry(entry)
             t.__override[key] = value
          end
       end,
-      __pairs = function(t)
+      __pairs = function (t)
          local merged = {}
          for k, v in pairs(t.__entry) do
-            if not t.__hidden[k] then merged[k] = v end
+            if not t.__hidden[k] then
+               merged[k] = v
+            end
          end
          for k, v in pairs(t.__override) do
-            if not t.__hidden[k] then merged[k] = v end
+            if not t.__hidden[k] then
+               merged[k] = v
+            end
          end
          return pairs(merged)
       end,
@@ -192,7 +200,7 @@ end
 -- @treturn CslEngine CSL engine instance
 function CslProcessor:getCslEngine ()
    if not self._engine then
-      self:setBibliographyStyle('chicago-author-date', "en-US")
+      self:setBibliographyStyle("chicago-author-date", "en-US")
    end
    return self._engine
 end
@@ -362,18 +370,22 @@ function CslProcessor:_adapter (entry, citnum)
    if self._data.related[entry.label] then
       -- If the entry has related entries, we need to resolve them
       -- and add them to the CSL entry.
-      local related = pl.List(self._data.related[entry.label]):map(function (r)
-         local related_entry = resolveEntry(self._data.bib, r)
-         if not related_entry then
-            SU.error("Related entry " .. r .. " not found in bibliography")
-            return nil
-         end
-         return self:_adapter(related_entry, 0) -- Some styles break without a citation number...
-      end):filter(function (e) return e ~= nil end)
+      local related = pl.List(self._data.related[entry.label])
+         :map(function (r)
+            local related_entry = resolveEntry(self._data.bib, r)
+            if not related_entry then
+               SU.error("Related entry " .. r .. " not found in bibliography")
+               return nil
+            end
+            return self:_adapter(related_entry, 0) -- Some styles break without a citation number...
+         end)
+         :filter(function (e)
+            return e ~= nil
+         end)
       entry._csl._related = related
    end
    local cslentry = CslEntry(entry._csl)
-   cslentry['citation-number'] = citnum
+   cslentry["citation-number"] = citnum
    return cslentry
 end
 
@@ -530,7 +542,7 @@ function CslProcessor:bibliography (options)
                   -- to the next available number in the bibliography.
                   ncites = ncites + 1
                   citnum = ncites
-                  cslentry['citation-number'] = citnum
+                  cslentry["citation-number"] = citnum
                end
                table.insert(entries, cslentry)
             end
@@ -549,7 +561,7 @@ end
 --- Define a named filter for the CSL processor.
 -- @tparam string name Name of the filter
 -- @tparam function filterFn Function taking a CSL entry and returning true if the filter matches
-function CslProcessor:defineFilter(name, filterFn)
+function CslProcessor:defineFilter (name, filterFn)
    self._filter[name] = filterFn
 end
 
@@ -557,8 +569,10 @@ end
 -- @tparam CslEntry entry CSL entry to filter
 -- @tparam string names Names of the filters to apply (separated by spaces)
 -- @treturn boolean True if the entry matches all filters, false otherwise
-function CslProcessor:applyFilter(entry, names)
-   local filters = pl.stringx.split(names, " "):filter(function (s) return s ~= "" end)
+function CslProcessor:applyFilter (entry, names)
+   local filters = pl.stringx.split(names, " "):filter(function (s)
+      return s ~= ""
+   end)
    for _, f in ipairs(filters) do
       local filterFn = self._filter[f] or builtinFilter(f)
       if not filterFn(entry) then
@@ -598,29 +612,31 @@ function CslProcessor:_toHtml (out, standalone)
       out = out:gsub(openTag, html[1])
       out = out:gsub(closeTag, html[2])
    end
-   out = out:gsub("<bibRule>([%d%.]+)</bibRule>", function(n)
+   out = out:gsub("<bibRule>([%d%.]+)</bibRule>", function (n)
       local dashes = string.rep("—", n)
       return dashes
    end)
-   out = out:gsub("<bibURL>(.-)</bibURL>", function(url)
+   out = out:gsub("<bibURL>(.-)</bibURL>", function (url)
       return biblink(url, url, "bib-url")
    end)
-   out = out:gsub("<bibDOI>(.-)</bibDOI>", function(doi)
-      local url =not doi:match("^https?://") and "https://doi.org/" .. doi or doi
+   out = out:gsub("<bibDOI>(.-)</bibDOI>", function (doi)
+      local url = not doi:match("^https?://") and "https://doi.org/" .. doi or doi
       return biblink(url, doi, "bib-doi")
    end)
-   out = out:gsub("<bibPMID>(.-)</bibPMID>", function(pmid)
+   out = out:gsub("<bibPMID>(.-)</bibPMID>", function (pmid)
       local url = not pmid:match("^https?://") and "https://www.ncbi.nlm.nih.gov/pubmed/" .. pmid or pmid
       return biblink(url, pmid, "bib-pmid")
    end)
-   out = out:gsub("<bibPMCID>(.-)</bibPMCID>", function(pmcid)
+   out = out:gsub("<bibPMCID>(.-)</bibPMCID>", function (pmcid)
       local url = not pmcid:match("^https?://") and "https://www.ncbi.nlm.nih.gov/pmc/articles/" .. pmcid or pmcid
       return biblink(url, pmcid, "bib-pmcid")
    end)
    if not standalone then
       return out
    end
-   return table.concat({([[<!DOCTYPE html>
+   return table.concat(
+      {
+         ([[<!DOCTYPE html>
 <html lang="%s">
 <head>
 <meta charset="UTF-8">
@@ -671,11 +687,14 @@ body {
 <body>
 <div class="bibliography">
 ]]):format(self._engine.locale.lang),
-   out,
-[[</div>
+         out,
+         [[</div>
 </body>
 </html>
-]]}, "\n")
+]],
+      },
+      "\n"
+   )
 end
 
 return CslProcessor

@@ -650,14 +650,12 @@ function elements.subscript:shape ()
          subShift = 0
       end
       self.sub.relX = self.width + subShift
-      self.sub.relY = SILE.types.length(
-         math.max(
-            constants.subscriptShiftDown * scaleDown,
-            isBaseSymbol and 0 -- TeX (σ19) is more finicky than MathML Core
-               or (self.base.depth + constants.subscriptBaselineDropMin * scaleDown):tonumber(),
-            (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
-         )
-      )
+      self.sub.relY = SILE.types.length(math.max(
+         constants.subscriptShiftDown * scaleDown,
+         isBaseSymbol and 0 -- TeX (σ19) is more finicky than MathML Core
+            or (self.base.depth + constants.subscriptBaselineDropMin * scaleDown):tonumber(),
+         (self.sub.height - constants.subscriptTopMax * scaleDown):tonumber()
+      ))
       if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or isBaseLargeOp then
          self.sub.relY = maxLength(self.sub.relY, self.base.depth + constants.subscriptBaselineDropMin * scaleDown)
       end
@@ -671,15 +669,13 @@ function elements.subscript:shape ()
          supShift = itCorr
       end
       self.sup.relX = self.width + supShift
-      self.sup.relY = SILE.types.length(
-         math.max(
-            isCrampedMode(self.mode) and constants.superscriptShiftUpCramped * scaleDown
-               or constants.superscriptShiftUp * scaleDown,
-            isBaseSymbol and 0 -- TeX (σ18) is more finicky than MathML Core
-               or (self.base.height - constants.superscriptBaselineDropMax * scaleDown):tonumber(),
-            (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
-         )
-      ) * -1
+      self.sup.relY = SILE.types.length(math.max(
+         isCrampedMode(self.mode) and constants.superscriptShiftUpCramped * scaleDown
+            or constants.superscriptShiftUp * scaleDown,
+         isBaseSymbol and 0 -- TeX (σ18) is more finicky than MathML Core
+            or (self.base.height - constants.superscriptBaselineDropMax * scaleDown):tonumber(),
+         (self.sup.depth + constants.superscriptBottomMin * scaleDown):tonumber()
+      )) * -1
       if self:is_a(elements.underOver) or self:is_a(elements.stackbox) or isBaseLargeOp then
          self.sup.relY = maxLength(
             (0 - self.sup.relY),

@@ -129,7 +129,7 @@ end
 function CslEngine:pushState ()
    table.insert(self.states, self.state)
    self.state = {
-      mode = self.state.mode -- Keep the current mode (citation or bibliography) by default
+      mode = self.state.mode, -- Keep the current mode (citation or bibliography) by default
    }
 end
 

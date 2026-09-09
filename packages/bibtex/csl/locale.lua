@@ -198,7 +198,6 @@ function CslLocale:term (name, form, plural)
    return self:_termvalue(sgpl), term.options.gender
 end
 
-
 --- Render an ordinal number in the locale, using the appropriate term.
 -- @tparam number number The numeric value to be formatted
 -- @tparam string|nil form The form of the term (default: "short")
