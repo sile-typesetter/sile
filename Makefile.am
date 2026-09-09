@@ -56,6 +56,7 @@ endif
 $(MANUAL): $(FIGURES)
 
 BUILT_SOURCES_LUA = core/features.lua core/pathsetup.lua core/version.lua
+RASTER_SAMPLES = documentation/gutenberg.jpg documentation/gutenberg.jp2
 
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
@@ -97,7 +98,7 @@ MATHML_ENTITIES = packages/math/mathml-entities.lua
 EXTRA_DIST += $(MATHML_ENTITIES)
 BUILT_SOURCES += $(MATHML_ENTITIES)
 
-CLEANFILES = $(MANUAL)
+CLEANFILES = $(MANUAL) $(RASTER_SAMPLES)
 
 DISTCLEANFILES = @AMINCLUDE@
 
@@ -314,6 +315,9 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(EXTRA_R
 	$(DOT) -Tpdf $< -o $@.gs
 	$(GS) -q -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -o $@ $@.gs
 
+documentation/gutenberg.%: documentation/gutenberg.png
+	$(MAGICK) convert $< $@
+
 XML_ENTITIES = .sources/unicode.xml
 XML_ENTITIES_COMMIT = 77acf14428202e4e1dba54ff1e5ed43fe5ab474f
 
@@ -382,6 +386,9 @@ stylua:
 
 typos:
 	$(TYPOS) .
+
+busted: $(RASTER_SAMPLES)
+cargo-test: $(RASTER_SAMPLES)
 
 busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'
