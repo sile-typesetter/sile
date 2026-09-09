@@ -67,7 +67,7 @@ describe("CSL engine", function ()
       local engine = CslEngine(style, locale)
       local reference = engine:reference(cslentrySmith2024)
       assert.is.equal(
-         "Smith, George. 2024. “Article title.” In <em>Book Title,</em> edited by Jane Doe, 10:30–50. Series 3. Place: Publisher.",
+         "<bibParagraph>\nSmith, George. 2024. “Article title.” In <em>Book Title,</em> edited by Jane Doe, 10:30–50. Series 3. Place: Publisher.</bibParagraph>\n",
          reference
       )
    end)
