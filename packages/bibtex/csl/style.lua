@@ -3,8 +3,9 @@
 -- @copyright License: MIT (c) 2024 Omikhleia
 --
 -- Public API:
---  - (static method) CslStyle.parse(doc) -> CslStyle
---  - (static method) CslStyle.read(filename) -> CslStyle
+--
+--  - (static method) CslStyle.parse(doc) → CslStyle
+--  - (static method) CslStyle.read(filename) → CslStyle
 --
 
 local xmlparser = require("packages.bibtex.csl.utils.xmlparser")
