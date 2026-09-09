@@ -33,7 +33,7 @@ SILE.features = require("core.features")
 -- Initialize Lua environment and global utilities
 
 --- ABI version of Lua VM.
--- For example may be `"5.1"` or `"5.4"` or others. Note that the ABI version for most LuaJIT implementations is 5.1.
+-- For example may be `"5.1"` or `"5.5"` or others. Note that the ABI version for most LuaJIT implementations is 5.1.
 -- @string lua_version
 SILE.lua_version = _VERSION:sub(-3)
 
@@ -43,7 +43,7 @@ SILE.lua_version = _VERSION:sub(-3)
 SILE.lua_isjit = type(jit) == "table"
 
 --- User friendly long-form version string.
--- For example may be "SILE v0.14.17 (Lua 5.4)".
+-- For example may be "SILE v0.15.14 (Lua 5.5)".
 -- @string full_version
 SILE.full_version = string.format("SILE %s (%s)", SILE.version, SILE.lua_isjit and jit.version or _VERSION)
 

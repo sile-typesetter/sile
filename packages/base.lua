@@ -28,7 +28,7 @@ function package:_init (_, reload)
       SU.error("Attempted to initialize package before class, should have been queued in the preamble", true)
    end
    self.basedir = script_path()
-   -- Note string.format(%p) would be nicer than tostring() but only LuaJIT and Lua 5.4 support it
+   -- Note string.format(%p) would be nicer than tostring() but only LuaJIT and PUC Lua >= 5.4 support it
    local settingsDeclarator = tostring(self.declareSettings)
    if reload or not settingDeclarations[settingsDeclarator] then
       settingDeclarations[settingsDeclarator] = true
