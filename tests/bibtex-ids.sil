@@ -1,0 +1,15 @@
+\begin[papersize=a6]{document}
+\neverindent
+\nofolios
+\use[module=packages.bibtex]
+\language[main=en]
+
+\loadbibliography[file=biblio-ids.bib]
+
+\reference{TestRef}
+
+\reference{Alias1}
+
+\reference{Alias2}
+
+\end{document}
