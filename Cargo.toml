@@ -86,6 +86,10 @@ version = "4"
 optional = true
 features = ["color", "derive", "string", "wrap_help"]
 
+[dependencies.derive_more]
+version = "1"
+features = ["deref", "display"]
+
 [dependencies.mlua]
 workspace = true
 features = ["macros"]
@@ -98,6 +102,12 @@ features = ["include-exclude"]
 [dependencies.harfbuzz-sys]
 version = "0.8"
 optional = true
+
+[dependencies.imageinfo]
+version = "0.7"
+
+[dependencies.lopdf]
+version = "0.45"
 
 [dependencies.semver]
 version = "1.0"
@@ -147,6 +157,7 @@ extend-ignore-identifiers-re = [
   "EPdf",
   "ePdf*",
   "FileAttachement",
+  "PNGs",
 ]
 
 [package.metadata.typos.default.extend-words]

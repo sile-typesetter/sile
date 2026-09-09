@@ -56,13 +56,15 @@ endif
 $(MANUAL): $(FIGURES)
 
 BUILT_SOURCES_LUA = core/features.lua core/pathsetup.lua core/version.lua
+RASTER_SAMPLES = documentation/gutenberg.jpg documentation/gutenberg.jp2
 
 bin_PROGRAMS = sile
 bin_SCRIPTS = sile-lua
 pkglib_LIBRARIES =
 nodist_man_MANS =
 dist_man_MANS = sile-lua.1
-sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs src/types.rs src/types/semver.rs
+sile_SOURCES = src/bin/sile.rs src/lib.rs src/cli.rs src/imagehelper.rs
+sile_SOURCES += src/types.rs src/types/semver.rs src/types/basic.rs src/types/image.rs
 EXTRA_sile_SOURCES =
 if !EMBEDDED_RESOURCES
 nobase_dist_pkgdata_DATA = $(SILEDATA) $(LUALIBRARIES)
@@ -97,7 +99,7 @@ MATHML_ENTITIES = packages/math/mathml-entities.lua
 EXTRA_DIST += $(MATHML_ENTITIES)
 BUILT_SOURCES += $(MATHML_ENTITIES)
 
-CLEANFILES = $(MANUAL)
+CLEANFILES = $(MANUAL) $(RASTER_SAMPLES)
 
 DISTCLEANFILES = @AMINCLUDE@
 
@@ -311,6 +313,9 @@ patterndeps = $(_FORCED) $(_TEST_DEPS) $(_DOCS_DEPS) | $(bin_PROGRAMS) $(EXTRA_R
 	$(DOT) -Tpdf $< -o $@.gs
 	$(GS) -q -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -o $@ $@.gs
 
+documentation/gutenberg.%: documentation/gutenberg.png
+	$(MAGICK) convert $< $@
+
 XML_ENTITIES = .sources/unicode.xml
 XML_ENTITIES_COMMIT = 77acf14428202e4e1dba54ff1e5ed43fe5ab474f
 
@@ -379,6 +384,9 @@ stylua:
 
 typos:
 	$(TYPOS) .
+
+busted: $(RASTER_SAMPLES)
+cargo-test: $(RASTER_SAMPLES)
 
 busted: $(SILELUA) $(addprefix .fonts/,$(TESTFONTFILES)) $(BUSTEDSPECS)
 	set -f; IFS=';'

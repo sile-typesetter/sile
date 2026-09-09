@@ -16,6 +16,8 @@ pub mod embed;
 
 pub mod types;
 
+pub mod imagehelper;
+
 pub type Result<T> = anyhow::Result<T>;
 
 pub fn start_luavm() -> crate::Result<Lua> {
@@ -84,6 +86,11 @@ pub fn get_rusile_exports(lua: &Lua) -> LuaResult<LuaTable> {
     let exports = lua.create_table()?;
     exports.set("semver", LuaFunction::wrap_raw(types::semver::semver))?;
     exports.set("setenv", LuaFunction::wrap_raw(setenv))?;
+    exports.set("imagebbox", LuaFunction::wrap(imagehelper::imagebbox))?;
+    exports.set(
+        "imagenumpages",
+        LuaFunction::wrap_raw(imagehelper::imagenumpages),
+    )?;
     Ok(exports)
 }
 
