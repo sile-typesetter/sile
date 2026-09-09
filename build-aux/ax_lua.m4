@@ -21,7 +21,7 @@
 #   header is checked to match the Lua interpreter version exactly. When
 #   searching for Lua libraries, the version number is used as a suffix.
 #   This is done with the goal of supporting multiple Lua installs (5.1,
-#   5.2, 5.3, and 5.4 side-by-side).
+#   5.2, 5.3, 5.4, and 5.5 side-by-side).
 #
 #   A note on compatibility with previous versions: This file has been
 #   mostly rewritten for serial 18. Most developers should be able to use
