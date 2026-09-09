@@ -21,7 +21,7 @@
 #   header is checked to match the Lua interpreter version exactly. When
 #   searching for Lua libraries, the version number is used as a suffix.
 #   This is done with the goal of supporting multiple Lua installs (5.1,
-#   5.2, 5.3, and 5.4 side-by-side).
+#   5.2, 5.3, 5.4, and 5.5 side-by-side).
 #
 #   A note on compatibility with previous versions: This file has been
 #   mostly rewritten for serial 18. Most developers should be able to use
@@ -240,7 +240,7 @@ AC_DEFUN([AX_PROG_LUA],
   dnl Find a Lua interpreter.
   AM_COND_IF([LUAJIT],
     [_ax_lua_interpreter_list='luajit luajit-2.1.0-beta3 luajit-2.0.5 luajit-2.0.4 luajit-2.0.3'],
-    [_ax_lua_interpreter_list='lua lua5.4 lua54 lua5.3 lua53 lua5.2 lua52 lua5.1 lua51 lua5.0 lua50'])
+    [_ax_lua_interpreter_list='lua lua5.5 lua55 lua5.4 lua54 lua5.3 lua53 lua5.2 lua52 lua5.1 lua51 lua5.0 lua50'])
 
   m4_if([$1], [],
   [ dnl No version check is needed. Find any Lua interpreter.
