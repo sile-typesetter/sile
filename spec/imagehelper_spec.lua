@@ -13,6 +13,15 @@ local a_png = "documentation/gutenberg.png"
 local png_llx, png_lly, png_urx, png_ury, png_xresol, png_yresol =
    0, 0, 144.00028800057603462, 174.96034992069988334, 99.99979999999997915, 99.99979999999997915
 
+-- ImageMagick conversion to JPEG rounds the DPI to an integer
+local a_jpg = "documentation/gutenberg.jpg"
+local jpg_llx, jpg_lly, jpg_urx, jpg_ury, jpg_xresol, jpg_yresol =
+   png_llx, png_lly, 144.0000, 174.9600, 100.0000, 100.0000
+
+-- ImageMagick conversion to JPEG 2000 doesn't have any DPI value at all
+local a_jp2 = "documentation/gutenberg.jp2"
+local jp2_llx, jp2_lly, jp2_urx, jp2_ury, jp2_xresol, jp2_yresol = png_llx, png_lly, 200.0000, 243.000, 72.0000, 72.0000
+
 local a_pdf = "documentation/sile-logo.pdf"
 local pdf_llx, pdf_lly, pdf_urx, pdf_ury = 0, 0, 288.0290, 162.1890
 
@@ -35,6 +44,26 @@ describe("pdf.imagebbox", function ()
       assert.is.equal(round(png_ury), round(ury))
       assert.is.equal(round(png_xresol), round(xresol))
       assert.is.equal(round(png_yresol), round(yresol))
+   end)
+
+   it("measures JPGs", function ()
+      local llx, lly, urx, ury, xresol, yresol = imagebbox(a_jpg, 1)
+      assert.is.equal(round(jpg_llx), round(llx))
+      assert.is.equal(round(jpg_lly), round(lly))
+      assert.is.equal(round(jpg_urx), round(urx))
+      assert.is.equal(round(jpg_ury), round(ury))
+      assert.is.equal(round(jpg_xresol), round(xresol))
+      assert.is.equal(round(jpg_yresol), round(yresol))
+   end)
+
+   it("measures JP2s", function ()
+      local llx, lly, urx, ury, xresol, yresol = imagebbox(a_jp2, 1)
+      assert.is.equal(round(jp2_llx), round(llx))
+      assert.is.equal(round(jp2_lly), round(lly))
+      assert.is.equal(round(jp2_urx), round(urx))
+      assert.is.equal(round(jp2_ury), round(ury))
+      assert.is.equal(round(jp2_xresol), round(xresol))
+      assert.is.equal(round(jp2_yresol), round(yresol))
    end)
 
    it("measures PDFs", function ()
@@ -61,6 +90,26 @@ describe("imagehelper.bbox", function ()
       assert.is.equal(round(png_ury), round(ury))
       assert.is.equal(round(png_xresol), round(xresol))
       assert.is.equal(round(png_yresol), round(yresol))
+   end)
+
+   it("measures JPGs", function ()
+      local llx, lly, urx, ury, xresol, yresol = bbox(a_jpg, 1)
+      assert.is.equal(round(jpg_llx), round(llx))
+      assert.is.equal(round(jpg_lly), round(lly))
+      assert.is.equal(round(jpg_urx), round(urx))
+      assert.is.equal(round(jpg_ury), round(ury))
+      assert.is.equal(round(jpg_xresol), round(xresol))
+      assert.is.equal(round(jpg_yresol), round(yresol))
+   end)
+
+   it("measures JP2s", function ()
+      local llx, lly, urx, ury, xresol, yresol = bbox(a_jp2, 1)
+      assert.is.equal(round(jp2_llx), round(llx))
+      assert.is.equal(round(jp2_lly), round(lly))
+      assert.is.equal(round(jp2_urx), round(urx))
+      assert.is.equal(round(jp2_ury), round(ury))
+      assert.is.equal(round(jp2_xresol), round(xresol))
+      assert.is.equal(round(jp2_yresol), round(yresol))
    end)
 
    it("measures PDFs", function ()
