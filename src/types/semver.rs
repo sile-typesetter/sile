@@ -1,6 +1,7 @@
+use std::ops::Deref;
+
 use mlua::prelude::*;
 use semver::Version;
-use std::ops::Deref;
 
 #[derive(Clone, Debug)]
 pub struct Semver {
@@ -23,6 +24,7 @@ pub fn semver(version: String) -> crate::Result<Semver> {
 
 impl Deref for Semver {
     type Target = Version;
+
     fn deref(&self) -> &Version {
         &self.version
     }

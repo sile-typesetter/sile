@@ -1,7 +1,8 @@
+use std::str;
+
 use mlua::chunk;
 use mlua::prelude::*;
 use rust_embed::{EmbeddedFile, RustEmbed};
-use std::str;
 
 /// Embed everything that would otherwise be installed to datadir
 #[derive(RustEmbed)]

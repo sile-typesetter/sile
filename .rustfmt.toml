@@ -1,0 +1,6 @@
+edition = "2024"
+style_edition = "2024"
+unstable_features = true
+
+group_imports = "StdExternalCrate"
+reorder_impl_items = true

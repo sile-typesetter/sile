@@ -1,6 +1,7 @@
-use clap::builder::styling::{AnsiColor, Styles};
-use clap::Parser;
 use std::path::PathBuf;
+
+use clap::Parser;
+use clap::builder::styling::{AnsiColor, Styles};
 
 /// The SILE Typesetter reads input file(s) and typesets the content into a rendered document
 /// format, typically PDF.

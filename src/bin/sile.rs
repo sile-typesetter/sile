@@ -1,8 +1,6 @@
-use sile::cli::{Cli, STYLES};
-
-use snafu::prelude::*;
-
 use clap::{CommandFactory, FromArgMatches};
+use sile::cli::{Cli, STYLES};
+use snafu::prelude::*;
 
 #[derive(Snafu)]
 enum Error {
