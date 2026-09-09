@@ -15,6 +15,13 @@ SILE.settings:declare({
    default = SILE.types.node.glue("1pt"),
 })
 
+SILE.settings:declare({
+   parameter = "languages.ug.hyphenchar",
+   help = "Hyphen character to use for Uyghur only, defaults to Arabic full stop suppored in some fonts for this purpose in Uyghur",
+   type = "string",
+   default = "۔",
+})
+
 local transliteration = {
    -- I'm going to pretend that normalization isn't a problem
    { al = "ئا", la = "a", lapa = "^a" },
@@ -123,11 +130,11 @@ SILE.hyphenator.languages.ug = function (n)
    local state = n.options
    -- Make "Turkish" nodes
    local newoptions = pl.tablex.deepcopy(n.options)
-   newoptions.language = "lt"
-   if not SILE._hyphenators.lt then
+   newoptions.language = "tr"
+   if not SILE._hyphenators.tr then
       SILE.hyphenate(SILE.shaper:createNnodes(latin, newoptions))
    end
-   local items = SILE._hyphenate(SILE._hyphenators["lt"], latin)
+   local items = SILE._hyphenate(SILE._hyphenators["tr"], latin)
    if #items == 1 then
       SU.debug("uyghur", latin, "No hyphenation points")
       return { n }
@@ -150,7 +157,7 @@ SILE.hyphenator.languages.ug = function (n)
    state.language = "ug"
    items[1] = latinToArabic(items[1])
    items[2] = latinToArabic(items[2])
-   local hyphen = SILE.settings:get("font.hyphenchar")
+   local hyphen = SILE.settings:get("font.ug.hyphenchar") or SILE.settings:get("font.hyphenchar")
    local prebreak = SILE.shaper:createNnodes(items[1] .. (lastjoinable(items[1]) and zwj or ""), state)
    if SILE.settings:get("languages.ug.hyphenoffset") then
       local w = SILE.settings:get("languages.ug.hyphenoffset").width

@@ -7,9 +7,9 @@ describe("Language module", function ()
       assert.is.equal("tr", syslang)
    end)
 
-   describe("Norwegian", function ()
-      local hyphenate = SILE.showHyphenationPoints
+   local hyphenate = SILE.showHyphenationPoints
 
+   describe("Norwegian", function ()
       SILE.call("language", { main = "no" })
 
       it("should hyphenate", function ()
@@ -49,5 +49,19 @@ describe("Language module", function ()
             assert.is.equal("Hei <em>Busted</em>!", hello)
          end)
       end)
+
+   end)
+
+   describe("Uyghur", function ()
+      SILE.call("language", { main = "ug" })
+
+      it("should hyphenate", function ()
+         assert.is.equal("?????????", hyphenate("كۈتۈپخانا", "ug"))
+      end)
+
+      it("should fallback to Turkish for Latin input", function ()
+         assert.is.equal("ky-typ-ka-na", hyphenate("kytypkana", "ug"))
+      end)
+
    end)
 end)
