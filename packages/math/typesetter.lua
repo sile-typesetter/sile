@@ -111,30 +111,39 @@ function ConvertMathML (_, content)
    if content == nil or content.command == nil then
       return nil
    end
+   local attributes = content.options
+
    if content.command == "math" or content.command == "mathml" then -- toplevel
-      return b.stackbox("H", convertChildren(content))
-   elseif content.command == "mrow" then
-      local ret = b.stackbox("H", convertChildren(content))
+      return b.stackbox(attributes, "H", convertChildren(content))
+   end
+
+   if content.command == "mrow" then
+      local ret = b.stackbox(attributes, "H", convertChildren(content))
       -- Internal property to keep tracks or paired open/close in TeX-like syntax
       ret.is_paired = content.is_paired
       return ret
-   elseif content.command == "mphantom" then
-      local special = content.options.special
-      return b.phantom(convertChildren(content), special)
-   elseif content.command == "mi" then
-      local script = content.options.mathvariant and mathVariantToScriptType(content.options.mathvariant)
+   end
+
+   if content.command == "mphantom" then
+      return b.phantom(attributes, convertChildren(content))
+   end
+
+   if content.command == "mi" then
+      local script = attributes.mathvariant and mathVariantToScriptType(attributes.mathvariant)
       local text = content[1]
       if type(text) ~= "string" then
          SU.error("mi command contains content which is not text")
       end
       script = script or (luautf8.len(text) == 1 and scriptType.italic or scriptType.upright)
       return b.text("identifier", {}, script, text)
-   elseif content.command == "mo" then
-      content.options.form = content.options.form or "infix"
-      local script = content.options.mathvariant and mathVariantToScriptType(content.options.mathvariant)
+   end
+
+   if content.command == "mo" then
+      attributes.form = attributes.form or "infix"
+      local script = attributes.mathvariant and mathVariantToScriptType(attributes.mathvariant)
          or scriptType.upright
       local text = content[1]
-      local attributes = {}
+      local attr = {}
       if luautf8.len(text) == 1 then
          -- Re-encode single combining character as non-combining when feasible.
          -- HACK: This is for "accents", but it's not what MathML Core expects.
@@ -143,24 +152,24 @@ function ConvertMathML (_, content)
       end
       -- Attributes from the (default) operator table
       if syms.operatorDict[text] then
-         attributes.atom = syms.operatorDict[text].atom
+         attr.atom = syms.operatorDict[text].atom
          local forms = syms.operatorDict[text].forms
-         local defaultOps = forms and (forms[content.options.form] or forms.infix or forms.prefix or forms.postfix)
+         local defaultOps = forms and (forms[attributes.form] or forms.infix or forms.prefix or forms.postfix)
          if defaultOps then
             for attribute, value in pairs(defaultOps) do
-               attributes[attribute] = value
+               attr[attribute] = value
             end
          end
       end
       -- Overwrite with attributes from the element
-      for attribute, value in pairs(content.options) do
-         attributes[attribute] = value
+      for attribute, value in pairs(attributes) do
+         attr[attribute] = value
       end
-      if content.options.atom then
-         if not atoms.types[content.options.atom] then
-            SU.error("Unknown atom type " .. content.options.atom)
+      if attributes.atom then
+         if not atoms.types[attributes.atom] then
+            SU.error("Unknown atom type " .. attributes.atom)
          else
-            attributes.atom = atoms.types[content.options.atom]
+            attr.atom = atoms.types[attributes.atom]
          end
       end
       if type(text) ~= "string" then
@@ -186,25 +195,46 @@ function ConvertMathML (_, content)
          local number = lpeg.R("09")^0  * (lpeg.P(".")^-1 * lpeg.R("09")^1)^0 / tonumber
          -- stylua: ignore end
          -- 0 something is 0 in whatever unit (ex. "0", "0mu", "0em" etc.)
-         local rspace, lspace = number:match(attributes.rspace), number:match(attributes.lspace)
+         local rspace, lspace = number:match(attr.rspace), number:match(attr.lspace)
          if rspace == 0 and lspace == 0 then
             return nil -- Just skip the invisible operator.
          end
          -- Skip it but honor the non-zero spacing.
          if rspace == 0 then
-            return b.space(attributes.lspace, 0, 0)
+            return b.space({
+               width = attr.lspace,
+               height = 0,
+               depth = 0,
+            })
          end
          if lspace == 0 then
-            return b.space(attributes.rspace, 0, 0)
+            return b.space({
+               width = attr.rspace,
+               height = 0,
+               depth = 0,
+            })
          end
          -- I haven't found examples of invisible operators with both rspace and lspace set,
          -- but it may happen, whatever spaces around something invisible mean.
          -- We'll just stack the spaces in this case (as we can only return one box).
-         return b.stackbox("H", { b.space(attributes.lspace, 0, 0), b.space(attributes.rspace, 0, 0) })
+         return b.stackbox({}, "H", {
+            b.space({
+               width = attr.lspace,
+               height = 0,
+               depth = 0,
+            }),
+            b.space({
+               width = attr.rspace,
+               height = 0,
+               depth = 0,
+            }),
+         })
       end
-      return b.text("operator", attributes, script, text)
-   elseif content.command == "mn" then
-      local script = content.options.mathvariant and mathVariantToScriptType(content.options.mathvariant)
+      return b.text("operator", attr, script, text)
+   end
+
+   if content.command == "mn" then
+      local script = attributes.mathvariant and mathVariantToScriptType(attributes.mathvariant)
          or scriptType.upright
       local text = content[1]
       if type(text) ~= "string" then
@@ -214,71 +244,99 @@ function ConvertMathML (_, content)
          text = "−" .. string.sub(text, 2)
       end
       return b.text("number", {}, script, text)
-   elseif content.command == "mspace" then
-      return b.space(content.options.width, content.options.height, content.options.depth)
-   elseif content.command == "msub" then
+   end
+
+   if content.command == "mspace" then
+      return b.space(attributes)
+   end
+
+   if content.command == "msub" then
       local children = convertChildren(content)
       if #children ~= 2 then
          SU.error("Wrong number of children in msub")
       end
-      return b.newSubscript({ base = children[1], sub = children[2] })
-   elseif content.command == "msup" then
+      return b.newSubscript(attributes, { base = children[1], sub = children[2] })
+   end
+
+   if content.command == "msup" then
       local children = convertChildren(content)
       if #children ~= 2 then
          SU.error("Wrong number of children in msup")
       end
-      return b.newSubscript({ base = children[1], sup = children[2] })
-   elseif content.command == "msubsup" then
+      return b.newSubscript(attributes, { base = children[1], sup = children[2] })
+   end
+
+   if content.command == "msubsup" then
       local children = convertChildren(content)
       if #children ~= 3 then
          SU.error("Wrong number of children in msubsup")
       end
-      return b.newSubscript({ base = children[1], sub = children[2], sup = children[3] })
-   elseif content.command == "munder" then
+      return b.newSubscript(attributes, { base = children[1], sub = children[2], sup = children[3] })
+   end
+
+   if content.command == "munder" then
       local children = convertChildren(content)
       if #children ~= 2 then
          SU.error("Wrong number of children in munder" .. #children)
       end
-      local elt = b.newUnderOver({ attributes = content.options, base = children[1], sub = children[2] })
+      local elt = b.newUnderOver(attributes, { base = children[1], sub = children[2] })
       elt.movablelimits = content.is_hacked_movablelimits
       return elt
-   elseif content.command == "mover" then
+   end
+
+   if content.command == "mover" then
       local children = convertChildren(content)
       if #children ~= 2 then
          SU.error("Wrong number of children in mover")
       end
-      local elt = b.newUnderOver({ attributes = content.options, base = children[1], sup = children[2] })
+      local elt = b.newUnderOver(attributes, { base = children[1], sup = children[2] })
       elt.movablelimits = content.is_hacked_movablelimits
       return elt
-   elseif content.command == "munderover" then
+   end
+
+   if content.command == "munderover" then
       local children = convertChildren(content)
       if #children ~= 3 then
          SU.error("Wrong number of children in munderover")
       end
-      return b.newUnderOver({ attributes = content.options, base = children[1], sub = children[2], sup = children[3] })
-   elseif content.command == "mfrac" then
+      return b.newUnderOver(attributes, { base = children[1], sub = children[2], sup = children[3] })
+   end
+
+   if content.command == "mfrac" then
       local children = convertChildren(content)
       if #children ~= 2 then
          SU.error("Wrong number of children in mfrac: " .. #children)
       end
-      return SU.boolean(content.options.bevelled, false)
-            and b.bevelledFraction(content.options, children[1], children[2])
-         or b.fraction(content.options, children[1], children[2])
-   elseif content.command == "msqrt" then
+      return SU.boolean(attributes.bevelled, false)
+            and b.bevelledFraction(attributes, children[1], children[2])
+         or b.fraction(attributes, children[1], children[2])
+   end
+
+   if content.command == "msqrt" then
       local children = convertChildren(content)
       -- "The <msqrt> element generates an anonymous <mrow> box called the msqrt base
-      return b.sqrt(b.stackbox("H", children))
-   elseif content.command == "mroot" then
+      return b.sqrt(attributes, b.stackbox({}, "H", children))
+   end
+
+   if content.command == "mroot" then
       local children = convertChildren(content)
-      return b.sqrt(children[1], children[2])
-   elseif content.command == "mtable" or content.command == "table" then
+      return b.sqrt(attributes, children[1], children[2])
+   end
+
+   if content.command == "mtable" or content.command == "table" then
       local children = convertChildren(content)
-      return b.table(children, content.options)
-   elseif content.command == "mtr" then
-      return b.mtr(convertChildren(content))
-   elseif content.command == "mtd" then
-      return b.stackbox("H", convertChildren(content))
-   elseif content.command == "mtext" or content.command == "ms" then
+      return b.table(attributes, children)
+   end
+
+   if content.command == "mtr" then
+      return b.mtr(attributes, convertChildren(content))
+   end
+
+   if content.command == "mtd" then
+      return b.stackbox(attributes, "H", convertChildren(content))
+   end
+
+   if content.command == "mtext" or content.command == "ms" then
       if #content > 1 then
          SU.error("Wrong number of children in " .. content.command .. ": " .. #content)
       end
@@ -291,24 +349,30 @@ function ConvertMathML (_, content)
       -- There's also some explanations about CSS, italic correction etc. which we ignore too.
       text = text:gsub("[\n\r]", " ")
       return b.text("string", {}, scriptType.upright, text:gsub("%s+", " "))
-   elseif content.command == "maction" then
+   end
+
+   if content.command == "maction" then
       -- MathML Core 3.6: display as mrow, ignoring all but the first child
-      return b.stackbox("H", { convertFirstChild(content) })
-   elseif content.command == "mstyle" then
-      -- It's an mrow, but with some style attributes that we ignore.
-      SU.warn("MathML mstyle is not fully supported yet")
-      return b.stackbox("H", convertChildren(content))
-   elseif content.command == "mpadded" then
+      return b.stackbox(attributes, "H", { convertFirstChild(content) })
+   end
+
+   if content.command == "mstyle" then
+      -- It's an mrow, but with some extra style attributes).
+      return b.stackbox(attributes, "H", convertChildren(content))
+   end
+
+   if content.command == "mpadded" then
       -- MathML Core 3.3.6.1: The <mpadded> element generates an anonymous <mrow> box
       -- called the "impadded inner box"
-      return b.padded(content.options, b.stackbox("H", convertChildren(content)))
-   elseif content.command == "menclose" then
+      return b.padded(attributes, b.stackbox({}, "H", convertChildren(content)))
+   end
+
+   if content.command == "menclose" then
       -- MathML4 §3.3.9:  The <menclose> element accepts a single argument possibly
       -- being an inferred mrow of multiple children.
-      return b.enclose(content.options, b.stackbox("H", convertChildren(content)))
-   else
-      SU.error("Unknown math command " .. content.command)
+      return b.enclose(attributes, b.stackbox({}, "H", convertChildren(content)))
    end
+   SU.error("Unknown math command " .. content.command)
 end
 
 local function handleMath (_, mbox, options)
