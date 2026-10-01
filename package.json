@@ -20,7 +20,7 @@
   },
   "homepage": "https://sile-typesetter.org",
   "devDependencies": {
-    "@commitlint/cli": "^19.8",
+    "@commitlint/cli": "^21.2",
     "@commitlint/config-conventional": "^21.2",
     "@commitlint/prompt": "^19.8",
     "@iarna/toml": "^2.2",
