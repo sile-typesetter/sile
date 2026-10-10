@@ -81,6 +81,8 @@ tags
 Makefile-distfiles
 documentation/*.pdf
 documentation/fig-input-to-output.pdf.gs
+documentation/gutenberg.jpg
+documentation/gutenberg.jp2
 gource.webm
 *.rockspec
 .fonts/*

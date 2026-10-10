@@ -1,5 +1,6 @@
 local base = require("outputters.base")
 local pdf = require("justenoughlibtexpdf")
+local rusile = require("rusile")
 
 local cursorX = 0
 local cursorY = 0
@@ -210,8 +211,7 @@ function outputter:drawImage (src, x, y, width, height, pageno)
 end
 
 function outputter:getImageSize (src, pageno)
-   self:_ensureInit() -- in case it's a PDF file
-   local llx, lly, urx, ury, xresol, yresol = pdf.imagebbox(src, pageno or 1)
+   local llx, lly, urx, ury, xresol, yresol = rusile.imagebbox(src, pageno or 1)
    return (urx - llx), (ury - lly), xresol, yresol
 end
 

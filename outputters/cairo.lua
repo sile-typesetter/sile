@@ -1,4 +1,5 @@
 local base = require("outputters.base")
+local rusile = require("rusile")
 
 -- This output package is deprecated and should only be used as an
 -- example of how to create alternative output backends, in comparison
@@ -8,7 +9,6 @@ local cairo = lgi.cairo
 -- local pango = lgi.Pango
 -- local fm = lgi.PangoCairo.FontMap.get_default()
 -- local pango_context = lgi.Pango.FontMap.create_context(fm)
-local imagesize = require("imagesize")
 
 local cursorX = 0
 local cursorY = 0
@@ -128,12 +128,9 @@ function outputter:drawImage (src, x, y, width, height)
    cr:restore()
 end
 
-function outputter:getImageSize (src)
-   local box_width, box_height, err = imagesize.imgsize(src)
-   if not box_width then
-      SU.error(err .. " loading image")
-   end
-   return box_width, box_height
+function outputter:getImageSize (src, pageno)
+   local llx, lly, urx, ury, xresol, yresol = rusile.imagebbox(src, pageno or 1)
+   return (urx - llx), (ury - lly), xresol, yresol
 end
 
 function outputter:drawRule (x, y, width, depth)

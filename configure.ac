@@ -195,6 +195,7 @@ AM_COND_IF([DEVELOPER_TOOLS], [
     AX_REQUIRE_PROG([luacheck])
     AX_REQUIRE_PROG([nix])
     AX_REQUIRE_PROG([npm])
+    AX_REQUIRE_PROG([magick])
     AX_REQUIRE_PROG([perl])
     AX_REQUIRE_PROG([stylua])
     AX_REQUIRE_PROG([taplo])

@@ -25,6 +25,7 @@
   harfbuzz,
   icu,
   fontconfig,
+  imagemagick,
   just,
   libiconv,
   libxslt,
@@ -93,6 +94,7 @@ stdenv.mkDerivation (finalAttrs: {
     harfbuzz
     icu
     fontconfig
+    imagemagick
     just
     libiconv
     libxslt

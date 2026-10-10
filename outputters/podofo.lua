@@ -4,7 +4,7 @@ local base = require("outputters.base")
 -- example of how to create alternative output backends, in comparison
 -- with the libtexpdf and debug backends.
 local pdf = require("podofo")
-local imagesize = require("imagesize")
+local rusile = require("rusile")
 
 local cursorX = 0
 local cursorY = 0
@@ -87,12 +87,9 @@ function outputter:setFont (options)
    SILE.fontCache[lastkey] = nil
 end
 
-function outputter:getImageSize (src)
-   local box_width, box_height, err = imagesize.imgsize(src)
-   if not box_width then
-      SU.error(err .. " loading image")
-   end
-   return box_width, box_height
+function outputter:getImageSize (src, pageno)
+   local llx, lly, urx, ury, xresol, yresol = rusile.imagebbox(src, pageno or 1)
+   return (urx - llx), (ury - lly), xresol, yresol
 end
 
 function outputter:drawRule (x, y, width, depth)
