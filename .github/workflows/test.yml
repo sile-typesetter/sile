@@ -13,6 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         luaVersion:
+          - [ '5.5', 'MYCFLAGS=-fPIC' ]
           - [ '5.4', 'MYCFLAGS=-fPIC' ]
           - [ '5.3', 'MYCFLAGS=-fPIC' ]
           - [ '5.2', 'MYCFLAGS=-fPIC' ]

@@ -200,7 +200,7 @@ As of v0.15.0, the CLI you actually execute is a Rust binary with a Lua VM built
 (For compatibility and demonstration purposes a pure Lua version of the CLI is still available as \code{sile-lua}.)
 The Rust binary can be built based on your system's Lua sources or use its own vendored Lua sources.
 All SILE's Lua code takes a lowest-common-denominator approach to Lua compatibility.
-Any of Lua 5.1, 5.2, 5.3, 5.4, or LuaJIT (2.0, 2.1, or OpenResty) are fully supported.
+Any of Lua 5.1, 5.2, 5.3, 5.4, 5.5, or LuaJIT (2.0, 2.1, or OpenResty) are fully supported.
 Compiling it to match your system's Lua version has the advantage of making it easy to access system installed Lua Rocks, but this is not a requirement.
 
 Compiling from sources will require both a Rust toolchain and Lua sources.
