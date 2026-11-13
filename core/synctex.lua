@@ -111,8 +111,7 @@ function synctex:isInput (filename)
    end
    local known = self.inputFiles[filename]
    if known == nil then
-      -- The documents named on the command line are inputs by definition, the
-      -- others have to come from the file system to be of any use.
+      -- The documents named on the command line are inputs by definition.
       known = false
       for _, master in ipairs(SILE.input.filenames or {}) do
          if master == filename then
@@ -121,7 +120,9 @@ function synctex:isInput (filename)
          end
       end
       if not known then
-         known = not filename:match("%.lua$") and pl.path.isfile(filename) and true or false
+         -- Documents processed from code are located in the code itself, which
+         -- the trace stack reports as "<file>.lua:<line>".
+         known = not filename:match("%.lua$") and not filename:match(":%-?%d+$")
       end
       self.inputFiles[filename] = known
    end
@@ -405,6 +406,60 @@ local function tagLine (tags, source)
    return ("%d,%d"):format(tag, line)
 end
 
+-- Boxes are recorded with the geometry of their contents, which leaves the
+-- space between the words of a line and between the lines themselves
+-- unaccounted for. Consumers looking for the box under a point that falls in
+-- one of those gaps have to fall back to heuristics of their own (typically
+-- "the closest box", which may be pages away). To avoid that, each line box
+-- gets a companion horizontal box covering the whole band it occupies, from
+-- the middle of the gap above it to the middle of the gap below it. Being
+-- larger than the boxes of the words it contains, it is only ever selected for
+-- points that no other box contains.
+local function computeBands (page)
+   local lines = {}
+   for _, record in ipairs(page.records) do
+      if record.kind == "vbox" and record.height and record.depth then
+         lines[#lines + 1] = record
+      end
+   end
+   table.sort(lines, function (a, b)
+      return a.y < b.y
+   end)
+   for i, record in ipairs(lines) do
+      local top = record.y - record.height
+      local bottom = record.y + record.depth
+      local above = lines[i - 1]
+      if above then
+         local gap = above.y + above.depth
+         if gap < top then
+            top = (gap + top) / 2
+         end
+      end
+      local below = lines[i + 1]
+      if below then
+         local gap = below.y - below.height
+         if gap > bottom then
+            bottom = (bottom + gap) / 2
+         end
+      end
+      record.band = { top = top, bottom = bottom }
+   end
+end
+
+-- The band of a line box, as a horizontal box, if it is worth recording.
+local function renderBand (tags, record)
+   local band = record.band
+   if not band or band.bottom <= band.top or not record.width or record.width <= 0 then
+      return ""
+   end
+   local x, y = coordinates(record.x, band.bottom)
+   local width, height = toSp(record.width), toSp(band.bottom - band.top)
+   if width <= 0 or height <= 0 then
+      return ""
+   end
+   return ("h%s:%d,%d:%d,%d,0\n"):format(tagLine(tags, record.source), x, y, width, height)
+end
+
 local function renderRecord (self, tags, record)
    if record.kind == "close" then
       return ")\n"
@@ -416,7 +471,7 @@ local function renderRecord (self, tags, record)
    end
    local geometry = ("%d,%d:%d,%d,%d"):format(x, y, toSp(record.width), toSp(record.height), toSp(record.depth))
    if record.kind == "vbox" then
-      return ("(%s:%s\n"):format(location, geometry)
+      return ("(%s:%s\n"):format(location, geometry) .. renderBand(tags, record)
    elseif record.kind == "hbox" then
       return ("h%s:%s\n"):format(location, geometry)
    end
@@ -434,6 +489,7 @@ local function renderPages (self, tags)
       -- output can be attributed to a page. Its "line" field is not
       -- meaningful, the first number being the page number itself.
       emit(("[%d,%d:0,0:%d,%d,0\n"):format(page.number, 0, toSp(page.width or 0), toSp(page.height or 0)))
+      computeBands(page)
       for _, record in ipairs(page.records) do
          emit(renderRecord(self, tags, record))
       end

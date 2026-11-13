@@ -140,8 +140,15 @@ end
 
 -- Push a text that is going to get typeset on to the stack to record the execution trace for debugging.
 -- Must be popped with `pop(returnOfPush)`.
-function traceStack:pushText (text)
+function traceStack:pushText (text, location)
    local frame = traceStack.textFrame(text)
+   if location then
+      -- Text frames are usually locationless, but inputters able to report
+      -- where a run of text starts make it possible to locate it exactly.
+      frame.file = location.file or SILE.currentlyProcessingFile
+      frame.lno = location.lno
+      frame.col = location.col
+   end
    return self:pushFrame(frame)
 end
 

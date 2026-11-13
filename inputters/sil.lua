@@ -97,7 +97,7 @@ local function ast_from_parse_tree (tree, doc, depth)
    end
    SU.debug("inputter", sep and (sep .. "Processing ID:"), tree.id)
 
-   local res
+   local res, position
    if tree.id == "comment" then
       -- Drop comments
       SU.debug("inputter", sep and (sep .. "Discarding comment"))
@@ -117,6 +117,11 @@ local function ast_from_parse_tree (tree, doc, depth)
       -- These nodes have only one child, which needs recursion.
       SU.debug("inputter", sep and (sep .. "Massaging a node"))
       res = ast_from_parse_tree(tree[1], doc, depth)
+      -- Text nodes produce a plain string, which carries no location of its
+      -- own: report it separately so that it isn't lost.
+      if type(res) == "string" and tree.lno then
+         position = { lno = tree.lno, col = tree.col }
+      end
       --res = #res > 1 and not res.id and res or res[1]
    elseif false or tree.id == "environment" or tree.id == "command" then
       -- These nodes have multiple children, which need recursion.
@@ -128,26 +133,40 @@ local function ast_from_parse_tree (tree, doc, depth)
          lno = tree.lno,
          col = tree.col,
       }
+      local positions
       for _, node in ipairs(tree) do
          if type(node) == "table" then
             SU.debug("inputter", sep and (sep .. " -"), node.id or "table")
-            local ast_node = ast_from_parse_tree(node, doc, depth)
+            local ast_node, ast_position = ast_from_parse_tree(node, doc, depth)
             if type(ast_node) == "table" and not ast_node.id then
                SU.debug("inputter", sep and (sep .. " -"), "Collapsing subtree")
                -- Comments can an empty table, skip them
                if #ast_node > 0 then
                   -- Simplify the tree if it's just a plain list
-                  for _, child in ipairs(ast_node) do
+                  local subpositions = rawget(ast_node, "positions")
+                  for i, child in ipairs(ast_node) do
                      if type(child) ~= "table" or child.id or #child > 0 then
                         table.insert(newtree, child)
+                        local childposition = subpositions and subpositions[i]
+                        if childposition then
+                           positions = positions or {}
+                           positions[#newtree] = childposition
+                        end
                      end
                   end
                end
             else
                table.insert(newtree, ast_node)
+               if ast_position then
+                  positions = positions or {}
+                  positions[#newtree] = ast_position
+               end
             end
          end
          -- Non table nodes are skipped (e.g. extraneous text from 'raw' commands)
+      end
+      if positions then
+         newtree.positions = positions
       end
       res = newtree
    elseif tree.id == "content" then
@@ -155,9 +174,18 @@ local function ast_from_parse_tree (tree, doc, depth)
       -- And the node itself needs to be replaced with its children
       SU.debug("inputter", sep and (sep .. "Massage content node"), #tree, "subtrees")
       local newtree = {} -- I don't think we can avoid a shallow copy here
-      for i, node in ipairs(tree) do
+      local positions
+      for _, node in ipairs(tree) do
          SU.debug("inputter", sep and (sep .. " -"), node.id)
-         newtree[i] = ast_from_parse_tree(node, doc, depth)
+         local ast_node, ast_position = ast_from_parse_tree(node, doc, depth)
+         table.insert(newtree, ast_node)
+         if ast_position then
+            positions = positions or {}
+            positions[#newtree] = ast_position
+         end
+      end
+      if positions then
+         newtree.positions = positions
       end
       -- Simplify the tree if it has only one child
       res = #newtree == 1 and not newtree.id and newtree[1] or newtree
@@ -169,7 +197,7 @@ local function ast_from_parse_tree (tree, doc, depth)
       res = #tree == 1 and tree[1] or tree
    end
    SU.debug("inputter", sep and (sep .. "Returning a"), type(res) == "table" and res.id or "string")
-   return res
+   return res, position
 end
 
 function inputter:parse (doc)

@@ -45,6 +45,13 @@ describe("SILE.synctex", function ()
          assert.is.equal(1, SILE.synctex:inputTag("test.sil"))
       end)
 
+      it("should recognize included documents without asking the file system", function ()
+         assert.is_false(SILE.synctex:isInput("packages/base.lua"))
+         assert.is_false(SILE.synctex:isInput("core/process.lua:12"))
+         assert.is_true(SILE.synctex:isInput("chapter-one.sil"))
+         assert.is_false(SILE.synctex:isInput(nil))
+      end)
+
       it("should give further tags to the documented files it comes across", function ()
          local other = os.tmpname() .. ".sil"
          local file = assert(io.open(other, "w"))
@@ -244,6 +251,35 @@ describe("SILE.synctex", function ()
          SILE.synctex:openBox("hbox", unlocated, 1, 2, 3, 4, 5)
          local data = SILE.synctex:serialize()
          assert.is_equal(2, select(2, data:gsub("\nh1,6:", "")))
+      end)
+
+      it("should cover the gap between line boxes with a band", function ()
+         record("vbox", { x = 10, y = 100, width = 50, height = 8, depth = 2 })
+         record("vbox", { x = 10, y = 120, width = 50, height = 8, depth = 2 })
+         local data = SILE.synctex:serialize()
+         local sp = 65781.76
+         local bands = {}
+         for x, y, width, height, depth in data:gmatch("\nh1,2:(%d+),(%d+):(%d+),(%d+),(%d+)\n") do
+            if tonumber(depth) == 0 then -- not one of the boxes recorded above
+               bands[#bands + 1] = {
+                  top = (tonumber(y) - tonumber(height)) / sp,
+                  bottom = tonumber(y) / sp,
+                  width = tonumber(width) / sp,
+                  x = tonumber(x) / sp,
+               }
+            end
+         end
+         assert.is.equal(2, #bands)
+         -- The first band spans the box and half of the gap below it, the last
+         -- one stops at the bottom of its own box.
+         assert.is_true(math.abs(bands[1].top - 92) < 0.1)
+         assert.is_true(math.abs(bands[1].bottom - 107) < 0.1)
+         assert.is_true(math.abs(bands[2].top - 107) < 0.1)
+         assert.is_true(math.abs(bands[2].bottom - 122) < 0.1)
+         -- Bands are as wide as the box they belong to, so that the space
+         -- between words is covered too.
+         assert.is_true(math.abs(bands[1].x - 10) < 0.1)
+         assert.is_true(math.abs(bands[1].width - 50) < 0.1)
       end)
 
       it("should write anchors pointing at their own offset", function ()

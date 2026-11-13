@@ -1,3 +1,27 @@
+-- Typeset a run of text knowing where it starts in the source, one source
+-- line at a time: typesetting it as a whole would leave the whole run
+-- attributed to its first line, whereas splitting it at line breaks doesn't
+-- change what gets typeset (a line break is a space, as far as the typesetter
+-- is concerned) but does allow each part to be located precisely.
+local function typesetPositioned (text, position)
+   local lno, col = position.lno, position.col or 1
+   local start = 1
+   while true do
+      local nl = text:find("\n", start, true)
+      local chunk = nl and text:sub(start, nl) or text:sub(start)
+      if #chunk > 0 then
+         local pId = SILE.traceStack:pushText(chunk, { file = position.file, lno = lno, col = col })
+         SILE.typesetter:typeset(chunk)
+         SILE.traceStack:pop(pId)
+      end
+      if not nl then
+         break
+      end
+      start = nl + 1
+      lno, col = lno + 1, 1
+   end
+end
+
 local function process (ast)
    if not ast then
       return
@@ -8,9 +32,17 @@ local function process (ast)
    if type(ast) == "function" then
       return ast()
    end
-   for _, content in ipairs(ast) do
+   -- Inputters able to report where the text they produced starts record it
+   -- alongside the tree, as an array indexed like the tree itself.
+   local positions = type(ast) == "table" and rawget(ast, "positions") or nil
+   for i, content in ipairs(ast) do
+      local position = positions and positions[i]
       if type(content) == "string" then
-         SILE.typesetter:typeset(content)
+         if position then
+            typesetPositioned(content, position)
+         else
+            SILE.typesetter:typeset(content)
+         end
       elseif type(content) == "function" then
          content()
       elseif SILE.Commands[content.command] then
