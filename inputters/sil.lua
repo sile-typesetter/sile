@@ -43,41 +43,32 @@ function inputter:_init (options)
    base._init(self)
 end
 
+-- Cache of the positions at which lines start, so that walking a document in
+-- reading order (which is what the parser does) only ever scans it once.
 local linecache = {}
-local lno, col, lastpos
 local function resetCache ()
-   lno = 1
-   col = 1
-   lastpos = 0
-   linecache = { { lno = 1, pos = 1 } }
+   -- A document's first character is on its first line, even when it is a line
+   -- break: files starting with blank lines are perfectly legal.
+   linecache = { { pos = 1, lno = 1 } }
 end
 
+-- Return the line and column of the character at byte offset `pos` of `str`.
 local function getline (str, pos)
-   local start = 1
-   lno = 1
-   if pos > lastpos then
-      lno = linecache[#linecache].lno
-      start = linecache[#linecache].pos + 1
-      col = 1
-   else
-      for j = 1, #linecache - 1 do
-         if linecache[j + 1].pos >= pos then
-            lno = linecache[j].lno
-            col = pos - linecache[j].pos
-            return lno, col
-         end
+   local start, lno = 1, 1
+   for j = #linecache, 1, -1 do
+      if linecache[j].pos <= pos then
+         start, lno = linecache[j].pos, linecache[j].lno
+         break
       end
    end
-   for i = start, pos do
-      if string.sub(str, i, i) == "\n" then
+   for i = start, pos - 1 do
+      if string.byte(str, i) == 10 then
+         start = i + 1
          lno = lno + 1
-         col = 1
-         linecache[#linecache + 1] = { pos = i, lno = lno }
-         lastpos = i
+         linecache[#linecache + 1] = { pos = start, lno = lno }
       end
-      col = col + 1
    end
-   return lno, col
+   return lno, pos - start + 1
 end
 
 local function ast_from_parse_tree (tree, doc, depth)
