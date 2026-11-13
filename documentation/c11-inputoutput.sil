@@ -220,6 +220,6 @@ The base outputter provides an identity implementation.
 
 Inputters likewise have to do their part: a node that should be locatable must carry a \code{source} table with \code{file}, \code{lno}, and optionally \code{col} fields.
 The SIL inputter automatically attaches the position of the command currently being processed, as tracked by the trace stack, so no work is needed there.
-Positions are inherited by the boxes generated while typesetting such a node, and boxes without a position of their own are attributed to the last recorded one.
-This is why plain text at the top level of a SIL document is only located if some command or environment that came before it provided a position: the SIL inputter records positions for commands and environments, not for runs of text.
+Positions are inherited by the boxes generated while typesetting such a node, and boxes without a position of their own are attributed to the last recorded one; anything still unresolved at that point is attributed to the first line of the master document, because records that cannot be resolved to an input file are ignored by consumers.
+In practice, backward search takes you to the line of the command or environment that produced the content around the point you clicked: the SIL inputter records positions for commands and environments, but not for runs of text, so the running text of a section is located at the \autodoc:command{\section} that started it rather than at each of its lines.
 \end{document}

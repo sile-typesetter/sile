@@ -60,6 +60,7 @@ local function reset ()
    synctex.current = nil -- last known source position
    synctex.lastPoint = nil -- source position of the last point record
    synctex.count = 0 -- number of records written
+   synctex.inputFiles = {} -- cache of which files are worth recording
 end
 
 -- Last trace stack frame and position we resolved, to avoid walking the stack
@@ -98,13 +99,43 @@ function synctex:disable ()
    self.enabled = false
 end
 
+--- Whether a location designates an input document.
+-- SILE processes parts of documents from code as well (localizable strings,
+-- for instance), in which case the trace stack points at a Lua source file.
+-- Consumers have no use for those, so they are not recorded as inputs.
+-- @tparam string filename The filename to check.
+-- @treturn boolean
+function synctex:isInput (filename)
+   if not filename then
+      return false
+   end
+   local known = self.inputFiles[filename]
+   if known == nil then
+      -- The documents named on the command line are inputs by definition, the
+      -- others have to come from the file system to be of any use.
+      known = false
+      for _, master in ipairs(SILE.input.filenames or {}) do
+         if master == filename then
+            known = true
+            break
+         end
+      end
+      if not known then
+         known = not filename:match("%.lua$") and pl.path.isfile(filename) and true or false
+      end
+      self.inputFiles[filename] = known
+   end
+   return known
+end
+
 --- The tag identifying an input file, registering it if needed.
 -- @tparam string filename The input filename.
--- @treturn number The tag of the file.
+-- @treturn[1] number The tag of the file.
+-- @treturn[2] nil When the file is not an input document.
 function synctex:inputTag (filename)
    filename = filename or SILE.currentlyProcessingFile
-   if not filename then
-      return 0
+   if not self:isInput(filename) then
+      return nil
    end
    local tag = self.inputTags[filename]
    if not tag then
@@ -136,7 +167,7 @@ function synctex:position ()
    cachedFrame, cachedPosition = top, nil
    for i = #stack, 1, -1 do
       local frame = stack[i]
-      if frame.lno then
+      if frame.lno and self:isInput(frame.file) then
          cachedPosition = { file = frame.file, lno = frame.lno, col = frame.col }
          break
       end
@@ -178,6 +209,22 @@ function synctex:inherit (node, source)
       end
    end
    return node
+end
+
+--- A source position to use when nothing better is known.
+-- Material typeset outside of any located context (from a package hook, say)
+-- is attributed to the beginning of the master input document, so that every
+-- record can be resolved to a file by consumers. Records with an unknown input
+-- file are ignored by SyncTeX readers, which makes the whole file useless to
+-- them, hence this fallback.
+-- @treturn[1] table A table with `file`, `lno` and `col` fields.
+-- @treturn[2] nil
+function synctex:defaultSource ()
+   local filename = (SILE.input.filenames or {})[1]
+   if not filename then
+      return nil
+   end
+   return { file = filename, lno = 1, col = 1 }
 end
 
 --- The source position to associate with a node.
@@ -235,7 +282,7 @@ local function addRecord (self, record)
    if not self.enabled then
       return
    end
-   record.source = self:source(record.node)
+   record.source = self:source(record.node) or self:defaultSource()
    if record.source and record.source.file then
       -- Any file we come across gets a tag of its own, like TeX does.
       self:inputTag(record.source.file)
@@ -350,9 +397,12 @@ end
 
 -- The "tag,line" pair identifying the input location of a record.
 local function tagLine (tags, source)
-   local tag = source and tags[source.file] or nil
-   local line = source and source.lno or 0
-   return ("%d,%d"):format(tag or 0, line)
+   -- Records whose input file cannot be resolved are ignored by consumers, so
+   -- rather than emitting one of those, fall back to the first input file (that
+   -- is the master document, see `orderedInputs()`).
+   local tag = (source and tags[source.file]) or 1
+   local line = (source and source.lno) or 1
+   return ("%d,%d"):format(tag, line)
 end
 
 local function renderRecord (self, tags, record)

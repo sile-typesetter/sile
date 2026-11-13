@@ -35,10 +35,23 @@ describe("SILE.synctex", function ()
          SILE.synctex:enable()
       end)
 
+      it("should not record locations in code as inputs", function ()
+         assert.is_false(SILE.synctex:isInput("core/languages.lua:101"))
+         assert.is_true(SILE.synctex:isInput("test.sil"))
+      end)
+
       it("should register the master input document with the first tag", function ()
          assert.is.equal(1, SILE.synctex:inputTag("test.sil"))
-         assert.is.equal(2, SILE.synctex:inputTag("other.sil"))
          assert.is.equal(1, SILE.synctex:inputTag("test.sil"))
+      end)
+
+      it("should give further tags to the documented files it comes across", function ()
+         local other = os.tmpname() .. ".sil"
+         local file = assert(io.open(other, "w"))
+         file:write("")
+         file:close()
+         assert.is.equal(2, SILE.synctex:inputTag(other))
+         os.remove(other)
       end)
 
       it("should resolve source positions from the trace stack", function ()
@@ -216,6 +229,12 @@ describe("SILE.synctex", function ()
          assert.is_truthy(data:match("\nPostamble:\n"))
          assert.is_truthy(data:match("\nCount:%d+\n"))
          assert.is_truthy(data:match("\nPost scriptum:\n$"))
+      end)
+
+      it("should fall back to the master document for unlocated material", function ()
+         SILE.synctex:openBox("hbox", SILE.types.node.hbox({ width = 1 }), 1, 2, 3, 4, 5)
+         local data = SILE.synctex:serialize()
+         assert.is_truthy(data:match("\nh1,1:"))
       end)
 
       it("should attribute unlocated boxes to the last known position", function ()
