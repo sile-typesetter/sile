@@ -237,11 +237,15 @@ end
 -- Boxy stuff
 function typesetter:pushHorizontal (node)
    self:initline()
+   -- Remember where in the input this node comes from, so that it can be
+   -- located in the output. See SILE.synctex.
+   SILE.synctex:stamp(node)
    self.state.nodes[#self.state.nodes + 1] = node
    return node
 end
 
 function typesetter:pushVertical (vbox)
+   SILE.synctex:stamp(vbox)
    self.state.outputQueue[#self.state.outputQueue + 1] = vbox
    return vbox
 end
@@ -637,6 +641,21 @@ function typesetter:shapeAllNodes (nodelist, inplace)
    end
 end
 
+-- The input location a line box is attributed to, that is the location of the
+-- first of its nodes that carries one. See SILE.synctex.
+local function firstSource (nodes)
+   if not SILE.synctex.enabled then
+      return nil
+   end
+   for i = 1, #nodes do
+      local source = rawget(nodes[i], "source")
+      if source then
+         return source
+      end
+   end
+   return nil
+end
+
 -- Empties self.state.nodes, breaks into lines, puts lines into vbox, adds vbox to
 -- Turns a node list into a list of vboxes
 function typesetter:boxUpNodes ()
@@ -686,6 +705,7 @@ function typesetter:boxUpNodes ()
          end
       end
       local vbox = SILE.types.node.vbox({ nodes = nodes, ratio = line.ratio })
+      vbox.source = firstSource(nodes)
       local pageBreakPenalty = 0
       if #lines > 1 and index == 1 then
          pageBreakPenalty = SILE.settings:get("typesetter.widowpenalty")

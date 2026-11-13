@@ -195,4 +195,31 @@ We are not going to enter into the details here.
 First, there are quite a lot of methods to take care of.
 Moreover, the API is not fully stable here, as needs for other output formats beyond those provided in the core distribution may call for different strategies.
 Still, you might want to study the \strong{libtexpdf} outputter, by far the most complete in terms of features, which is the standard way to generate a PDF, as it names implies, using a PDF library extracted from the TeX ecosystem and adapted to SILE’s need.
+\section{Synchronizing source and output}
+
+When editing a document, it is often useful to jump from a spot in the source file to the corresponding place in the typeset output, and back again.
+Editors and PDF viewers implement such “forward” and “backward” searches by reading a side file describing where each piece of the output came from, in a format introduced by the TeX world and known as SyncTeX.
+SILE can generate a compatible file on request:
+
+\terminal{$ sile --synctex story.sil}
+
+In addition to \code{story.pdf}, this writes \code{story.synctex.gz} next to it (the file is compressed with gzip, unless \code{SILE.synctex.compression} has been set to \code{"none"}, in which case \code{story.synctex} is written instead).
+Viewers and editors supporting the format—Okular, Skim, Zathura, SumatraPDF, viewers embedded in \nohyphenation{vimtex}, etc.—will then be able to use it.
+Note that backward search matches positions with the granularity of the line in the source file that produced them, not of individual characters.
+
+\subsection{Supporting synchronization in an outputter}
+
+Records are collected by the \code{SILE.synctex} object as boxes are emitted, but each outputter is responsible for telling it about the pages of the output document.
+An outputter declares that it can do so by setting \code{outputter.supportsSynctex = true}.
+It then has to call \code{SILE.synctex:beginPage(width, height)} whenever it starts a page, and \code{SILE.synctex:write(filename)} when it is done with the document, passing the name of the output file—the SyncTeX file is written next to it.
+If the outputter does not support synchronization, \code{--synctex} is ignored with a warning.
+
+Coordinates are recorded in points, relative to the top-left corner of the page, which is the convention the format expects.
+Outputters whose coordinate system differs, or that lay pages out differently than one would expect from their nominal paper size (for example, a class printing side-by-side pages, or in a right-to-left direction), can override \code{outputter:synctexCoordinates(x, y)} to return the coordinates to record for a given position.
+The base outputter provides an identity implementation.
+
+Inputters likewise have to do their part: a node that should be locatable must carry a \code{source} table with \code{file}, \code{lno}, and optionally \code{col} fields.
+The SIL inputter automatically attaches the position of the command currently being processed, as tracked by the trace stack, so no work is needed there.
+Positions are inherited by the boxes generated while typesetting such a node, and boxes without a position of their own are attributed to the last recorded one.
+This is why plain text at the top level of a SIL document is only located if some command or environment that came before it provided a position: the SIL inputter records positions for commands and environments, not for runs of text.
 \end{document}

@@ -166,6 +166,7 @@ function hbox:outputYourself (typesetter, line)
    if not self.value.glyphString then
       return
    end
+   SILE.synctex:recordHbox(self, typesetter, outputWidth)
    if typesetter.frame:writingDirection() == "RTL" then
       typesetter.frame:advanceWritingDirection(outputWidth)
    end
@@ -319,6 +320,10 @@ function unshaped:shape ()
    local node = SILE.shaper:createNnodes(self.text, self.options)
    for i = 1, #node do
       node[i].parent = self.parent
+      -- Nodes created by the shaper never go through the typesetter, but they
+      -- still belong to the same input location as the node they were shaped
+      -- from. See SILE.synctex.
+      SILE.synctex:inherit(node[i], rawget(self, "source"))
    end
    return node
 end
@@ -852,6 +857,7 @@ end
 -- @tparam table line Line properties (notably ratio)
 function vbox:outputYourself (typesetter, line)
    typesetter.frame:advancePageDirection(self.height)
+   SILE.synctex:recordVbox(self, typesetter)
    local initial = true
    for _, node in ipairs(self.nodes) do
       if not (initial and (node.is_glue or node.is_penalty)) then
@@ -859,6 +865,7 @@ function vbox:outputYourself (typesetter, line)
          node:outputYourself(typesetter, line)
       end
    end
+   SILE.synctex:closeBox()
    typesetter.frame:advancePageDirection(self.depth)
    typesetter.frame:newLine()
 end

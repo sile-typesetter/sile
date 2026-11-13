@@ -140,6 +140,18 @@ pub struct Cli {
     )]
     pub r#use: Option<Vec<String>>,
 
+    /// Write a SyncTeX file for forward and backward search of the output document.
+    ///
+    /// The file will be written alongside the output document, with the same base name and a
+    /// `.synctex.gz` (or `.synctex`) extension. Viewers and editors that understand the format
+    /// (e.g. Okular, Skim, Zathura, vimtex) can then map locations in the source document to
+    /// locations in the output and vice versa.
+    ///
+    /// This is only supported by outputters that know the geometry of what they output, the
+    /// default `libtexpdf` backend among them.
+    #[clap(long)]
+    pub synctex: bool,
+
     /// Suppress warnings and informational messages during processing.
     #[clap(short, long)]
     pub quiet: bool,

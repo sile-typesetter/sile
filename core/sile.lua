@@ -142,6 +142,7 @@ SILE.input = {
    options = {},
    preambles = {}, -- deprecated, undocumented
    postambles = {}, -- deprecated, undocumented
+   synctex = false,
 }
 
 -- Internal libraries that are idempotent and return classes that need instantiation
@@ -277,6 +278,10 @@ SILE.finish = require("core.init").finish
 -- Internal libraries that return classes, but we have no subclasses an only ever use one instantiation of the base
 SILE.traceStack = require("core.tracestack")()
 SILE.settings = require("core.settings")()
+
+--- SyncTeX support, allowing forward and backward source/output search.
+-- @see SILE.synctex
+SILE.synctex = require("core.synctex")
 
 -- Internal libraries that run core SILE functions on load
 require("core.hyphenator-liang")

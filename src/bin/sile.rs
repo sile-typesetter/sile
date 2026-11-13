@@ -53,6 +53,7 @@ fn main() -> Result<()> {
         args.preamble,
         args.postamble,
         args.r#use,
+        args.synctex,
         args.quiet,
         args.traceback,
     )

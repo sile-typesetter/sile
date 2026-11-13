@@ -21,6 +21,7 @@ local _font
 local outputter = pl.class(base)
 outputter._name = "libtexpdf"
 outputter.extension = "pdf"
+outputter.supportsSynctex = true
 
 -- N.B. Sometimes setCoord is called before the outputter has ensured initialization.
 -- This ok for coordinates manipulation, at these points we know the page size.
@@ -55,6 +56,7 @@ function outputter:_ensureInit ()
       pdf.init(fname == "-" and "/dev/stdout" or fname, w, h, SILE.full_version)
       pdf.beginpage()
       started = true
+      SILE.synctex:beginPage(w, h)
    end
 end
 
@@ -62,6 +64,8 @@ function outputter:newPage ()
    self:_ensureInit()
    pdf.endpage()
    pdf.beginpage()
+   local sheetSize = SILE.documentState.sheetSize or SILE.documentState.paperSize
+   SILE.synctex:beginPage(sheetSize[1], sheetSize[2])
 end
 
 -- pdf structure package needs a tie in here
@@ -82,12 +86,17 @@ function outputter:finish ()
    pdf.endpage()
    self:runHooks("prefinish")
    pdf.finish()
+   SILE.synctex:write(self:getOutputFilename())
    started = false
    lastkey = false
 end
 
 function outputter.getCursor ()
    return cursorX, cursorY
+end
+
+function outputter:synctexCoordinates (x, y)
+   return trueXCoord(x), trueYCoord(y)
 end
 
 function outputter:setCursor (x, y, relative)
