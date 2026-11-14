@@ -46,6 +46,7 @@ cli.parseArguments = function ()
       "Load and initialize a class, inputter, shaper, or other module before processing the main input",
       {}
    )
+   cliargs:flag("    --synctex", "Write a SyncTeX file for forward and backward search of the output document")
    cliargs:flag("-q, --quiet", "Suppress warnings and informational messages during processing")
    cliargs:flag("-t, --traceback", "Display detailed location trace on errors and warnings")
    cliargs:flag("-h, --help", "Display this help, then exit")
@@ -96,6 +97,9 @@ cli.parseArguments = function ()
    end
    if opts.fontmanager then
       SILE.input.fontmanager = opts.fontmanager
+   end
+   if opts.synctex then
+      SILE.input.synctex = true
    end
    for _, tree in ipairs(opts["luarocks-tree"]) do
       table.insert(SILE.input.luarocksTrees, tree)

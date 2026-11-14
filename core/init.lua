@@ -43,6 +43,18 @@ local function init ()
    if not SILE.shaper then
       SILE.shaper = SILE.shapers.default()
    end
+   if SILE.input.synctex then
+      local outputter = SILE.outputter
+      if outputter and outputter.supportsSynctex then
+         SILE.synctex:enable(type(SILE.input.synctex) == "table" and SILE.input.synctex or nil)
+      else
+         SU.warn(
+            ("SyncTeX output is not supported by the %s outputter, ignoring --synctex"):format(
+               outputter and outputter._name or SILE.input.backend
+            )
+         )
+      end
+   end
    SILE.pagebuilder = SILE.pagebuilders.default()
    io.stdout:setvbuf("no")
    if SU.debugging("profile") then

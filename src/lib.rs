@@ -134,6 +134,7 @@ pub fn run(
     preambles: Option<Vec<PathBuf>>,
     postambles: Option<Vec<PathBuf>>,
     uses: Option<Vec<String>>,
+    synctex: bool,
     quiet: bool,
     traceback: bool,
 ) -> crate::Result<()> {
@@ -176,6 +177,9 @@ pub fn run(
     }
     if let Some(path) = makedeps {
         sile_input.set("makedeps", path_to_string(&path))?;
+    }
+    if synctex {
+        sile_input.set("synctex", true)?;
     }
     if let Some(path) = output {
         sile.set("outputFilename", path_to_string(&path))?;

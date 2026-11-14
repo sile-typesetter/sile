@@ -5,6 +5,12 @@ local outputter = pl.class()
 outputter.type = "outputter"
 outputter._name = "base"
 
+--- Whether this outputter can be used with SyncTeX output.
+-- Outputters able to report the geometry of the boxes they output should set
+-- this to true. See `SILE.synctex`.
+-- @tfield boolean supportsSynctex
+outputter.supportsSynctex = false
+
 function outputter:_init ()
    SU._avoid_base_class_use(self)
    self.hooks = {}
@@ -74,6 +80,19 @@ function outputter:setMetadata (_, _) end
 function outputter:setBookmark (_, _) end
 
 function outputter:drawRaw () end
+
+--- Convert a point to the coordinate system used by SyncTeX output.
+-- SyncTeX coordinates have their origin at the top left corner of the *sheet*
+-- (whereas SILE positions boxes relative to the top left corner of the
+-- *paper*, which may differ when the paper is centered on a larger sheet) and
+-- are expressed in points.
+-- @tparam number x The horizontal position, in points.
+-- @tparam number y The vertical position, in points.
+-- @treturn number The horizontal position for SyncTeX, in points.
+-- @treturn number The vertical position for SyncTeX, in points.
+function outputter:synctexCoordinates (x, y)
+   return x, y
+end
 
 function outputter:getOutputFilename ()
    local fname
